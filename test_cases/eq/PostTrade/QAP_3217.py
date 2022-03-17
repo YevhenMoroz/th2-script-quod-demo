@@ -9,10 +9,8 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -27,10 +25,7 @@ class QAP_3217(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
         self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
