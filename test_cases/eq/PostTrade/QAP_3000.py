@@ -133,8 +133,3 @@ class QAP_3000(TestCase):
         self.middle_office.compare_values({AllocationsColumns.avg_px.value: price}, allocation_avg_px,
                                           'Comparing allocation avg_px')
         # endregion
-
-        # region check fix_confirmation request (step 4)
-        fix_confirmation_message = FixMessageConfirmationReportOMS(self.data_set, self.fix_message.get_parameters())
-        fix_verifier.check_fix_message_fix_standard(fix_confirmation_message)
-        # endregion
