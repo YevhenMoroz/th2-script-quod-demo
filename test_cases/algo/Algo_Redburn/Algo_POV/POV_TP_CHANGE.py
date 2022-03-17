@@ -71,6 +71,7 @@ def execute(report_id):
         fix_manager_fh = FixManager(connectivity_fh, case_id)
 
         # Send_MarkerData
+        # if faced an issue with MDReqID (MDReqID doesn't change in FXFH_TH2 logs) in method update_MDReqID change md_req_id for the static MDReqID from the FXFH_TH2 logs
         market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
         market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=123)
         market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=50, MDEntrySize=50000, TradingSessionSubID=3, SecurityTradingStatus=3)
