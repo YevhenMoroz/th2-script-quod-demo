@@ -59,7 +59,6 @@ class QAP_3411(TestCase):
         read_log_verifier = ReadLogVerifier(self.read_log_conn, self.case_id)
         trade_rule = None
         new_order_single_rule = None
-        cl_ord_id = self.fix_message.get_parameter('ClOrdID')
         # endregion
 
         # region Create dma order
