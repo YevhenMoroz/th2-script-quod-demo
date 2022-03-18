@@ -19,6 +19,7 @@ timeouts = True
 
 
 class QAP_3359(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -36,7 +37,7 @@ class QAP_3359(TestCase):
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
 
-    @try_except(test_id=Path(__file__).name[:-3])
+    # @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         global nos_rule
         order_id_first = None
@@ -106,5 +107,5 @@ class QAP_3359(TestCase):
                                            MiddleOfficeColumns.qty.value: qty_of_first_block,
                                            MiddleOfficeColumns.price.value: agreed_price,
                                            MiddleOfficeColumns.side.value: 'Buy'
-                                           }, value_of_second_block, 'Comparing with values of  first block')
+                                           }, value_of_second_block, 'Comparing with values of  second block')
         # endregion
