@@ -43,6 +43,7 @@ class QAP_3380(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
         self.__send_fix_orders()
         split_param_1 = self.order_book.create_split_booking_parameter("100", comm_basis="Absolute", comm_rate="5",
                                                                        fee_type="ExchFees", fee_basis="Absolute",

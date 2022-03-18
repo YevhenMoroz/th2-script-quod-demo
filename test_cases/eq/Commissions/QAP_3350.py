@@ -40,6 +40,7 @@ class QAP_3350(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.set_modify_client_commission_message(account=self.account,
                                                                          comm_profile=self.abs_amt_profile
                                                                          ).send_post_request()

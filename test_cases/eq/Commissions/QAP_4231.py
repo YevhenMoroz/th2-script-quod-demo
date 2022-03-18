@@ -47,10 +47,10 @@ class QAP_4231(TestCase):
         self.__verify_commissions_of_executions(self.trades)
         self.middle_office.set_modify_ticket_details(remove_comm=True)
         self.middle_office.book_order()
-        self.__verify_fees_in_middle_office(self.middle_office)
+        self.__verify_fees_in_middle_office()
         self.middle_office.approve_block()
         self.middle_office.allocate_block()
-        self.__verify_fees_in_allocation_ticket(self.middle_office)
+        self.__verify_fees_in_allocation_ticket()
 
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
@@ -76,12 +76,13 @@ class QAP_4231(TestCase):
         trades.compare_values({TradeBookColumns.client_commission.value: ""}, commissions,
                               event_name='Check values')
 
-    def __verify_fees_in_middle_office(self, middle_office: OMSMiddleOffice):
-        commission = middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value,
-                                                       [MiddleOfficeColumns.order_id.value, self.order_id])
-        middle_office.compare_values({MiddleOfficeColumns.client_comm.value: ""}, commission, event_name='Check values')
+    def __verify_fees_in_middle_office(self):
+        commission = self.middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value,
+                                                            [MiddleOfficeColumns.order_id.value, self.order_id])
+        self.middle_office.compare_values({MiddleOfficeColumns.client_comm.value: ""}, commission,
+                                          event_name='Check values')
 
-    def __verify_fees_in_allocation_ticket(self, middle_office: OMSMiddleOffice):
-        commission = middle_office.extract_allocate_value(AllocationsColumns.client_comm.value, self.account)
-        middle_office.compare_values({AllocationsColumns.client_comm.value: "1.123"}, commission,
-                                     event_name='Check values')
+    def __verify_fees_in_allocation_ticket(self):
+        commission = self.middle_office.extract_allocate_value(AllocationsColumns.client_comm.value, self.account)
+        self.middle_office.compare_values({AllocationsColumns.client_comm.value: "1.123"}, commission,
+                                          event_name='Check values')

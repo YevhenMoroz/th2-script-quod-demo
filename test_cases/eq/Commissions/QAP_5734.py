@@ -38,6 +38,7 @@ class QAP_5734(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.commission_sender.clear_commissions()
         self.commission_sender.set_modify_client_commission_message(account=self.account).send_post_request()
         self.__send_fix_order()
         self.middle_office.book_order()

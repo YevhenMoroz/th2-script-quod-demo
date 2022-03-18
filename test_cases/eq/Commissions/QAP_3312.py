@@ -35,7 +35,7 @@ class QAP_3312(TestCase):
 
     def run_pre_conditions_and_steps(self):
         abs_amt_usd = self.data_set.get_comm_profile_by_name("abs_amt_usd")
-        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.set_modify_client_commission_message(account=self.account, comm_profile=abs_amt_usd)
         self.rest_commission_sender.send_post_request()
         self.__send_fix_order()

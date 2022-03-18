@@ -39,6 +39,7 @@ class QAP_3310(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.send_default_fee()
         self.__send_fix_orders()
         self.middle_office.book_order()
