@@ -29,7 +29,7 @@ class QAP_6149(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
-        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
