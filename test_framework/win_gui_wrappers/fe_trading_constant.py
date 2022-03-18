@@ -299,6 +299,7 @@ class MiddleOfficeColumns(Enum):
     side = 'Side'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
+    settltype = 'SettlType'
 
 
 class AllocationsColumns(Enum):
