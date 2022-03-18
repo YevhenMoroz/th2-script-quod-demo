@@ -24,7 +24,7 @@ class QAP_2078(TestCase):
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.md_request = FixMessageMarketDataRequestFX()
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
@@ -52,7 +52,6 @@ class QAP_2078(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion
