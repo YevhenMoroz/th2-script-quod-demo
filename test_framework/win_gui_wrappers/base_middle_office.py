@@ -42,6 +42,7 @@ class BaseMiddleOffice(BaseWindow):
     def clear_filter(self):
         self.extract_middle_office_blotter_values_request.clear_filter()
     # endregion
+
     # region Check
     def check_booking_toggle_manual(self):
         self.modify_ticket_details.add_commissions_details()
@@ -117,15 +118,16 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.extract_allocation_details])
         return response
 
-    def extract_block_values_from_allocation_ticket(self, filter_dict: dict, list_extraction: list = None):
-        self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request,
-                                                                                     filter_middle_office_grid=filter_dict,
-                                                                                     filter_allocations_grid=None,
-                                                                                     panels=list_extraction)
+    def extract_block_values_from_allocation_ticket(self,panels_extraction: list, blocl_filter_dict: dict=None,
+                                                    alloc_filter_dict: dict=None):
+        self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
+        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(blocl_filter_dict)
+        self.allocation_ticket_extraction_details.set_filter_allocations_grid(alloc_filter_dict)
+        self.allocation_ticket_extraction_details.set_panels(panels_extraction)
         result = call(self.allocation_ticket_extraction_details_call, self.allocation_ticket_extraction_details.build())
         return result
 
-    def extracting_values_from_amend_ticket(self, list_extraction, filter_dict=None, ):
+    def extracting_values_from_amend_ticket(self, list_extraction, filter_dict=Non ):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
                                                                list_extraction
