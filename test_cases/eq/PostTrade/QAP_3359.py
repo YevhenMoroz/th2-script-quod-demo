@@ -37,7 +37,7 @@ class QAP_3359(TestCase):
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         global nos_rule
         order_id_first = None
