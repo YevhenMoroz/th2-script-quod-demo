@@ -2,8 +2,9 @@ from pathlib import Path
 
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
+from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import Status, DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
