@@ -24,7 +24,7 @@ class QAP_2084(TestCase):
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.md_request = FixMessageMarketDataRequestFX()
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
