@@ -36,7 +36,8 @@ def execute(report_id):
             'LimitPriceReference': 'LTP',
             'LimitPriceOffset': '2',
             'ExcludePricePoint2': '1',
-            'Custom': 'SQX'
+            'Custom': 'SQX',
+            'AllowedVenues': 'XLON'
         }
     }
 
