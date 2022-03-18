@@ -2,8 +2,9 @@ from pathlib import Path
 
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
+from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import Status, DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
@@ -23,7 +24,7 @@ class QAP_3841(TestCase):
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.md_request = FixMessageMarketDataRequestFX()
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
