@@ -41,6 +41,7 @@ class BaseMiddleOffice(BaseWindow):
 
     def clear_filter(self):
         self.extract_middle_office_blotter_values_request.clear_filter()
+
     # endregion
 
     # region Check
@@ -118,12 +119,14 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.extract_allocation_details])
         return response
 
-    def extract_block_values_from_allocation_ticket(self,panels_extraction: list, blocl_filter_dict: dict=None,
-                                                    alloc_filter_dict: dict=None):
+    def extract_values_from_amend_allocation_ticket(self, panels_extraction: list = None,
+                                                    block_panels_extraction: list = None,
+                                                    block_filter_dict: dict = None, alloc_filter_dict: dict = None):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
-        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(blocl_filter_dict)
+        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_filter_allocations_grid(alloc_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
+        self.allocation_ticket_extraction_details.set_block_panels(block_panels_extraction)
         result = call(self.allocation_ticket_extraction_details_call, self.allocation_ticket_extraction_details.build())
         return result
 
