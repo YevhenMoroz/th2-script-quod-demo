@@ -87,6 +87,7 @@ class BaseDataSet:
     default_tif = None
     strategy_type = None
     exec_policy = None
+    commission_basis = None
 
     # endregion
 
@@ -579,4 +580,8 @@ class BaseDataSet:
             return getattr(self.exec_policy, name).value
         return ValueError(f"{self.exec_policy,} not found!")
 
+    def get_commission_basis(self, name:str):
+        if hasattr(self.commission_basis, name):
+            return getattr(self.commission_basis, name).value
+        return ValueError(f"{self.commission_basis} not found!")
     # endregion
