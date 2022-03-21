@@ -24,7 +24,8 @@ class OMSOrderTicket(BaseOrderTicket):
         self.split_limit_order_call = Stubs.win_act_order_book.splitLimit
         self.split_order_call = Stubs.win_act_order_book.splitOrder
         self.child_care_order_call = Stubs.win_act_order_book.childCare
-        self.re_order_leaves_order_call = Stubs.win_act_order_book.reOrderLeaves
+        self.re_order_call = Stubs.win_act_order_book.reOrder
+        self.re_order_leaves_call = Stubs.win_act_order_book.reOrderLeaves
         self.re_order_order_call = Stubs.win_act_order_book.reOrder
         self.extract_order_ticket_values_call = Stubs.win_act_order_ticket.extractOrderTicketValues
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
