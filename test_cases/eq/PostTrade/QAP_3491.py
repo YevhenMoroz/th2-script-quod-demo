@@ -109,7 +109,6 @@ class QAP_3491(TestCase):
 
         # region approve block (step 3)
         self.middle_office.approve_block()
-        filter_list = [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]]
         extracted_list = [MiddleOfficeColumns.sts.value,
                           MiddleOfficeColumns.match_status.value]
         actually_result = self.__extracted_values(extracted_list, filter_list,
@@ -133,7 +132,6 @@ class QAP_3491(TestCase):
         self.middle_office.set_modify_ticket_details(arr_allocation_param=arr_allocation_param)
         self.middle_office.allocate_block(filter_list)
         fix_verifier.check_fix_message_fix_standard(confirmation_message)
-        filter_list = [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]]
         extracted_list = [MiddleOfficeColumns.sts.value,
                           MiddleOfficeColumns.match_status.value,
                           MiddleOfficeColumns.summary_status.value]
