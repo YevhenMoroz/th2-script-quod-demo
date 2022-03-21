@@ -25,11 +25,11 @@ class QAP_2078(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
-        self.new_order_single = FixMessageNewOrderSingleFX()
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
         self.status_fill = Status.Fill
-        self.account = self.data_set.get_client_by_name("client_mm_4")
+        self.account = self.data_set.get_client_by_name("client_mm_1")
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.security_type = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date = self.data_set.get_settle_date_by_name("wk1")
@@ -64,7 +64,8 @@ class QAP_2078(TestCase):
         # endregion
 
         # region step 3-4
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill).add_tag(
+            {'LastMkt': '*'})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
