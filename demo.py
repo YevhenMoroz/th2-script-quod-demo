@@ -23,13 +23,11 @@ def test_run():
     pc_name = get_pc_name()  # getting PC name
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    # initializing dataset
-    data_set = OmsDataSet()  # <--- provide your dataset (OmsDataSet(), FxDataSet(), AlgoDataSet(), RetDataSet())
     # initializing FE session
     session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
+    configuration = ComponentConfiguration("DMA")  # <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
     fe_user = fe_env.user_1
@@ -37,7 +35,7 @@ def test_run():
     # endregion
 
     try:
-        base_main_window.open_fe(report_id=report_id, folder=fe_folder, user=fe_user, password=fe_pass)
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
         QAP_1016(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
                  environment=configuration.environment) \
             .execute()
