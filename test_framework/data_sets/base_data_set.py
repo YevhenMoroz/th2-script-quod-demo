@@ -87,6 +87,7 @@ class BaseDataSet:
     default_tif = None
     strategy_type = None
     exec_policy = None
+    side = None
 
     # endregion
 
@@ -128,6 +129,11 @@ class BaseDataSet:
         if hasattr(self.clients, name):
             return getattr(self.clients, name).value
         raise ValueError(f"{self.clients} not found!")
+
+    def get_side_by_name(self, name: str):
+        if hasattr(self.side, name):
+            return getattr(self.side, name).value
+        raise ValueError(f"{self.side} not found!")
 
     def get_account_by_name(self, name: str):
         if hasattr(self.accounts, name):
