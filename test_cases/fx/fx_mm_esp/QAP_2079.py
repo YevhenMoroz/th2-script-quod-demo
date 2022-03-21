@@ -31,7 +31,6 @@ class QAP_2079(TestCase):
         self.status_reject = Status.Reject
         self.price = "1.11999"
 
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1-2
@@ -51,7 +50,8 @@ class QAP_2079(TestCase):
         # endregion
 
         # region step 4-5
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject).add_tag({'LastMkt':'*'})
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject).add_tag(
+            {'LastMkt': '*'})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
