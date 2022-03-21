@@ -9,7 +9,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod310_columbia_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -241,7 +241,7 @@
                             <java_api_environment>quod317_java_api</java_api_environment>
                         </java_api_environments>
                         <rest_environments>
-                            <rest_environment></rest_environment>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
