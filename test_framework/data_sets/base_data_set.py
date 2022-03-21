@@ -191,7 +191,7 @@ class BaseDataSet:
     def get_settle_type_by_name(self, name: str):
         """
         get settle type by name from FxSettleTypes
-        example ---> get_security_type_by_name("fxspot"):
+        example ---> get_settle_types_by_name("fxspot"):
         """
         if hasattr(self.settle_types, name):
             return getattr(self.settle_types, name).value

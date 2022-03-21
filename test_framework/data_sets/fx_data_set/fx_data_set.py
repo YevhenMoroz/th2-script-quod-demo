@@ -25,4 +25,5 @@ class FxDataSet(BaseDataSet):
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    side = FxSide
 
