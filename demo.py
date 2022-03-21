@@ -27,7 +27,7 @@ def test_run():
     session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("DMA")  # <--- provide your component from XML (DMA, iceberg, etc)
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
     fe_user = fe_env.user_1
