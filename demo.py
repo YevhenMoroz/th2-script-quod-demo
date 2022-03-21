@@ -1,29 +1,17 @@
 import logging
-import time
 from getpass import getuser as get_pc_name
 from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_6148
-from test_cases.fx.fx_mm_esp.QAP_1554 import QAP_1554
-from test_cases.fx.fx_mm_esp.QAP_6145 import QAP_6145
-from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
-from test_cases.fx.fx_mm_rfq import QAP_3494
-from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
-from test_cases.fx.fx_taker_esp import QAP_5600, QAP_5537, QAP_5564, QAP_5589, QAP_5591, QAP_5598, QAP_5635
-from test_cases.fx.fx_taker_esp.QAP_3636 import QAP_3636
-from test_cases.fx.fx_taker_esp.QAP_3801 import QAP_3801
-from test_cases.fx.fx_taker_esp.QAP_3802 import QAP_3802
-from test_cases.fx.fx_taker_rfq import QAP_683
-from test_cases.fx.fx_taker_rfq.QAP_568 import QAP_568
-from test_cases.fx.send_md import QAP_MD
+from test_cases.eq.Care.QAP_1016 import QAP_1016
 from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-from test_framework.for_testing import Testing
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from test_framework.data_sets.algo_data_set.algo_data_set import AlgoDataSet
+from test_framework.data_sets.ret_data_set.ret_data_set import RetDataSet
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -36,37 +24,23 @@ def test_run():
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
-
+    data_set = OmsDataSet()  # <--- provide your dataset (OmsDataSet(), FxDataSet(), AlgoDataSet(), RetDataSet())
     # initializing FE session
-    session_id = set_session_id(target_server_win="quod_11q")
+    session_id = set_session_id(pc_name)
+    base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
-    start_time = time.time()
-    print(f"Test start")
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    fe_folder = fe_env.folder
+    fe_user = fe_env.user_1
+    fe_pass = fe_env.password_1
     # endregion
-    Stubs.frontend_is_open = True
 
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id)
-
-        # rm = RuleManager()
-        # rm.remove_rule_by_id(9)
-        # rm.add_fx_md_to("fix-fh-309-kratos")
-        # rm.print_active_rules()
-
-        # QAP_683(report_id, session_id, configuration.data_set).execute()
-        # Testing(report_id, session_id, configuration.data_set).execute()
-
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # QAP_3494.execute(report_id)
-        QAP_6149(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        end = time.time()
-        print(f"Test duration is {end - start_time} seconds")
-
+        base_main_window.open_fe(report_id=report_id, folder=fe_folder, user=fe_user, password=fe_pass)
+        QAP_1016(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
