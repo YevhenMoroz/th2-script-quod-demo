@@ -74,13 +74,13 @@ class QAP_3491(TestCase):
         # endregion
 
         # region book order (1 step)
+        self.middle_office.set_modify_ticket_details(remove_fee=True, remove_comm=True)
+        self.middle_office.book_order()
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
         post_trade_status = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
         self.__comparing_values({OrderBookColumns.post_trade_status.value: 'Booked'},
                                 {OrderBookColumns.post_trade_status.value: post_trade_status},
                                 'Comparing post trade status after book', 'self.order_book.compare_values')
-        self.middle_office.set_modify_ticket_details(remove_fee=True, remove_comm=True)
-        self.middle_office.book_order()
         block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value)
         filter_list = [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]]
         extracted_list = [MiddleOfficeColumns.sts.value,
