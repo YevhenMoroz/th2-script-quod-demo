@@ -5,28 +5,29 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+from test_framework.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
-from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
+from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
+from test_framework.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_5601(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.disclose_exec = 'Manual'
-        self.desk = "Quod Desk"
+        self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
+        self.desk = self.data_set.get_desk("desk_3")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -54,17 +55,21 @@ class QAP_5601(CommonTestCase):
         main_page.click_on_more_actions()
         time.sleep(2)
         main_page.click_on_edit()
+        time.sleep(2)
 
     def test_context(self):
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         try:
             self.precondition()
-            wizard = ClientsWizard(self.web_driver_container)
-            expected_pdf_content = [self.id, self.name,
-                                    self.disclose_exec,
-                                    ]
+
+            actual_result = [values_sub_wizard.get_id(), values_sub_wizard.get_name(),
+                             values_sub_wizard.get_disclose_exec(), assignments_sub_wizard.get_desk()]
+            time.sleep(1)
+            expected_pdf_content = ["Clients | " + self.id, self.name, self.disclose_exec, self.desk]
             time.sleep(2)
-            self.verify("Is PDF contains correctly value", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+            self.verify("All fields have same values that was filled before saving", expected_pdf_content,
+                        actual_result)
             time.sleep(2)
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

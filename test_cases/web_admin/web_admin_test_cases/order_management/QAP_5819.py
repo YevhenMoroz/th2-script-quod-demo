@@ -4,23 +4,24 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
     OrderManagementRulesDefaultResultSubWizard
-from test_cases.web_admin.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
+from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
     OrderManagementRulesPage
-from test_cases.web_admin.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
+from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
     OrderManagementRulesWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_5819(CommonTestCase):
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,39 +39,39 @@ class QAP_5819(CommonTestCase):
             wizard = OrderManagementRulesWizard(self.web_driver_container)
             default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
             default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy("DMA")
+            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_2"))
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_venue("BATS")
+            default_result_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_5"))
             time.sleep(1)
             default_result_sub_wizard.click_on_checkmark()
             time.sleep(1)
             default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy("DMA")
+            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_2"))
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_venue("BATS")
+            default_result_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_5"))
             self.verify("DMA created correctly", True, True)
             time.sleep(1)
             default_result_sub_wizard.click_on_checkmark()
             time.sleep(1)
             self.verify("Such record already exists", True, wizard.such_record_already_exists())
             time.sleep(2)
-            default_result_sub_wizard.set_venue("BINANCE")
+            default_result_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_10"))
             time.sleep(2)
             default_result_sub_wizard.click_on_checkmark()
             self.verify("DMA second created correctly", True, True)
             time.sleep(2)
             default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy("ExternalCare")
+            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_3"))
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_route("Direct")
+            default_result_sub_wizard.set_route(self.data_set.get_route("route_1"))
             default_result_sub_wizard.click_on_checkmark()
             time.sleep(1)
             self.verify("New external care created correctly", True, True)
             time.sleep(1)
             default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy("ExternalCare")
+            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_3"))
             default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_route("Direct")
+            default_result_sub_wizard.set_route(self.data_set.get_route("route_1"))
             default_result_sub_wizard.click_on_checkmark()
             time.sleep(1)
             self.verify("Such record already exists", True, wizard.such_record_already_exists())

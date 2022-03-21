@@ -1,60 +1,73 @@
 import logging
+import time
+from getpass import getuser as get_pc_name
 from datetime import datetime
-
+from pathlib import Path
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
-
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_6151, QAP_2957
-from test_cases.fx.fx_mm_esp.QAP_1418 import QAP_1418
-from test_cases.fx.fx_mm_esp.QAP_1589 import QAP_1589
-from test_cases.fx.fx_mm_esp.QAP_2077 import QAP_2077
-from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
-from test_cases.fx.fx_mm_esp.QAP_6697 import QAP_6697
-from test_cases.fx.fx_mm_rfq import for_test_77679
-from test_cases.fx.fx_mm_rfq.QAP_2472 import QAP_2472
-from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
-from test_cases.fx.fx_mm_rfq.QAP_3704 import QAP_3704
-from test_cases.fx.fx_taker_esp import QAP_5600
-
+from test_cases.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_6148
+from test_cases.fx.fx_mm_esp.QAP_1554 import QAP_1554
+from test_cases.fx.fx_mm_esp.QAP_6145 import QAP_6145
+from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
+from test_cases.fx.fx_mm_rfq import QAP_3494
+from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
+from test_cases.fx.fx_taker_esp import QAP_5600, QAP_5537, QAP_5564, QAP_5589, QAP_5591, QAP_5598, QAP_5635
+from test_cases.fx.fx_taker_esp.QAP_3636 import QAP_3636
+from test_cases.fx.fx_taker_esp.QAP_3801 import QAP_3801
+from test_cases.fx.fx_taker_esp.QAP_3802 import QAP_3802
+from test_cases.fx.fx_taker_rfq import QAP_683
+from test_cases.fx.fx_taker_rfq.QAP_568 import QAP_568
+from test_cases.fx.send_md import QAP_MD
+from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
+from test_framework.for_testing import Testing
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-timeouts = False
-
-channels = dict()
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run():
     # Generation id and time for test run
-
-    report_id = bca.create_event("amedents " + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
-
+    pc_name = get_pc_name()  # getting PC name
+    report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    logging.getLogger().setLevel(logging.WARN)
-    session_id = set_session_id()
-    start_time = datetime.now()
-    print(f"Start time :{start_time}")
-    data_set = FxDataSet()
+    # initializing dataset
+
+    # initializing FE session
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    session_id = set_session_id(target_server_win="quod_11q")
+    # region creation FE environment and initialize fe_ values
+    configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
+    start_time = time.time()
+    print(f"Test start")
+    # endregion
+    Stubs.frontend_is_open = True
 
     try:
-        get_opened_fe(report_id, session_id)
-        # QAP_5600.execute(report_id,session_id)
-        # QAP_3805.execute(report_id)
-        QAP_2077(report_id, session_id, data_set=data_set).execute()
-        # QAP_2077(report_id, data_set=data_set).execute()
-
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id)
 
         # rm = RuleManager()
-        # rm.remove_rule_by_id(15)
-        # rm.add_fx_md_to("fix-fh-314-luna")
+        # rm.remove_rule_by_id(9)
+        # rm.add_fx_md_to("fix-fh-309-kratos")
         # rm.print_active_rules()
 
-        # send_md.execute(report_id, 1.18123, 1.18223)
+        # QAP_683(report_id, session_id, configuration.data_set).execute()
+        # Testing(report_id, session_id, configuration.data_set).execute()
 
-        print(f"Duration is {datetime.now() - start_time}")
+        # QAP_MD(report_id, data_set=configuration.data_set).execute()
+        # QAP_3494.execute(report_id)
+        QAP_6149(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        end = time.time()
+        print(f"Test duration is {end - start_time} seconds")
+
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
@@ -62,6 +75,8 @@ def test_run():
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
-    test_run()
-    Stubs.factory.close()
+    try:
+        logging.basicConfig()
+        test_run()
+    finally:
+        Stubs.factory.close()

@@ -1,7 +1,5 @@
-import time
-
-from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.common_page import CommonPage
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order_book.order_book_constants import \
     OrderBookConstants
 
@@ -9,6 +7,12 @@ from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order
 class OrderBookPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
+
+    # region Headers filters
+    def click_on_arrow_down_button(self):
+        pass
+
+    # endregion
 
     # region Filter values in main page
     def get_symbol(self):
@@ -100,7 +104,7 @@ class OrderBookPage(CommonPage):
 
     # endregion
 
-    # region Auxiliary menu on the symbol
+    # region Auxiliary user_profile on the symbol
 
     def click_on_buy_button(self):
         self.find_by_xpath(OrderBookConstants.BUY_HOVER_BUTTON_XPATH).click()
@@ -122,7 +126,8 @@ class OrderBookPage(CommonPage):
 
     def click_on_re_order_button(self):
         self.find_by_xpath(OrderBookConstants.REORDER_HOVER_BUTTON_XPATH).click()
-# endregion
+
+    # endregion
 
     def click_on_copy_panel(self):
         self.find_by_xpath(OrderBookConstants.COPY_PANEL_BUTTON_XPATH).click()
@@ -139,7 +144,7 @@ class OrderBookPage(CommonPage):
     def check_order(self):
         return self.get_symbol(), self.get_account(), self.get_side(), self.get_order_qty(), self.get_price(), self.get_order_type()
 
-    #region Filter Column Buttons
+    # region Filter Column Buttons
 
     def click_on_filter_order_id_button(self):
         self.find_by_xpath(OrderBookConstants.FILTER_ORDER_ID_COLUMN_XPATH).click()
@@ -201,9 +206,9 @@ class OrderBookPage(CommonPage):
     def click_on_filter_ciordid_button(self):
         self.find_by_xpath(OrderBookConstants.FILTER_CIORDID_COLUMN_XPATH).click()
 
-    #endregion
+    # endregion
 
-    #region Filter
+    # region Filter
 
     def set_search_field(self, order_id):
         self.set_text_by_xpath(OrderBookConstants.SEARCH_FIELD_XPATH, order_id)
@@ -214,4 +219,4 @@ class OrderBookPage(CommonPage):
     def click_on_cancel_button(self):
         self.find_by_xpath(OrderBookConstants.APPLY_BUTTON_XPATH).click()
 
-    #endregion
+    # endregion

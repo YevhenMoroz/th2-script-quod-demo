@@ -154,6 +154,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             LastSpotRate='*',
             SecondaryOrderID='*',
             AvgPx='*',
+            LastMkt='*',
             ExecID='*',
             LastPx='*',
             OrderID='*',
