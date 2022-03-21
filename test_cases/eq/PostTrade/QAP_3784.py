@@ -1,198 +1,126 @@
-import time
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import set_session_id, get_base_request
 import logging
+import os
+import time
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
+    AllocationsColumns
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3784"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "49540"
-    price = "0.789"
-    client = "MOClient"
-    account = "MOClient_SA1"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR',
-            float(price), int(qty), 1)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 2, client, 2, qty, 0, price)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
+class QAP_3784(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
 
-        rule_manager.remove_rule(nos_rule2)
-    # endregion
-    # region Book
-    eq_wrappers.book_order(base_request, client, price, comm_basis="Percent", comm_rate="0.1", fees_basis="Absolute",
-                           fees_rate="1", fees_type="Tax")
-    # endregion
-    # region Verify
-    eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
-    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
-    params = {
-        'Account': client,
-        'Quantity': qty,
-        'RootCommTypeClCommBasis': '3',
-        'RootOrClientCommission': '*',
-        'RootOrClientCommissionCurrency': '*',
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'BookID': '*',
-        'NoParty': '*',
-        'NoRootMiscFeesList': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'AllocInstructionMiscBlock1': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '38601.55',
-        'BookingType': '*',
-        'AllocType': '5',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        qty = '49540'
+        price = '0.789'
+        value_for_commission = '0.1'
+        value_for_fee = '1'
+        account = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        venue_client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.fix_message.set_default_dma_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
+        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
+        self.fix_message.change_parameter('Price', price)
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('ExDestination', exec_destination)
+        self.fix_message.change_parameter('Side', '2')
+        rule_manager = RuleManager(Simulators.equity)
+        fix_verifier = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        trade_rule = None
+        new_order_single_rule = None
+        cl_ord_id = self.fix_message.get_parameter('ClOrdID')
+        # endregion
 
-    }
-    fix_verifier_bo = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
-    # endregion
-    # region Approve
-    eq_wrappers.approve_block(base_request)
-    # endregion
-    # region Verify
-    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
-    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
-    # endregion
-    # region Allocate
-    arr_allocation_param = [{"Security Account": account, "Alloc Qty": qty}]
-    eq_wrappers.allocate_order(base_request, arr_allocation_param)
-    # endregion
-    # region Verify
-    params = {
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'AllocQty': qty,
-        'AllocAccount': account,
-        'ConfirmType': 2,
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'MatchStatus': '*',
-        'ConfirmStatus': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'NoMiscFees': [
-            {'MiscFeeAmt': '1',
-             'MiscFeeCurr': '*',
-             'MiscFeeType': '2'}
-        ],
-        'AllocInstructionMiscBlock1': '*',
-        'CommissionData': {
-            'CommissionType': '3',
-            'CommCurrency': '*',
-            'Commission': '38.64'},
-        'AllocID': '*',
-        'NetMoney': '38601.55',
-        'ReportedPx': '*',
-        'CpctyConfGrp': '*',
-        'ConfirmTransType': '*',
-        'ConfirmID': '*'
-    }
-    fix_verifier_bo.CheckConfirmation(params, response, ['NoOrders', 'AllocAccount'])
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'Account': client,
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '38601.55',
-        'BookingType': '*',
-        'AllocType': '2',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
+        # region create DMA order (step 1, step 2)
+        try:
+            new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side, account, exec_destination, float(price))
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                       venue_client,
+                                                                                       exec_destination,
+                                                                                       float(price),
+                                                                                       int(qty), 0)
+            self.fix_manager.send_message_fix_standard(self.fix_message)
+        except Exception as ex:
+            logger.exception(f'{ex} - your exception')
+            bca.create_event('Exception regarding rules', self.case_id, status='FAIL')
 
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '0.77',
-                'AllocAccount': account,
-                'AllocPrice': '0.78',
-                'AllocQty': qty,
-                'NoMiscFees': [
-                    {'MiscFeeAmt': '1',
-                     'MiscFeeCurr': '*',
-                     'MiscFeeType': '2'}]
-                ,
-                'CommissionData': {
-                    'CommissionType': '3',
-                    'CommCurrency': '*',
-                    'Commission': '38.64'}
-            }
-        ],
-        'AllocInstructionMiscBlock1': '*',
-    }
-    fix_verifier_bo.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType', 'AllocTransType'])
-    # endregion
+        finally:
+            time.sleep(5)
+            rule_manager.remove_rule(trade_rule)
+            rule_manager.remove_rule(new_order_single_rule)
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        post_trade_status = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
+        exec_sts = self.order_book.extract_field(OrderBookColumns.exec_sts.value)
+        self.__comparing_values({OrderBookColumns.post_trade_status.value: 'ReadyBooked',
+                                 OrderBookColumns.exec_sts.value: 'Filled'},
+                                {OrderBookColumns.post_trade_status.value: post_trade_status,
+                                 OrderBookColumns.exec_sts.value: exec_sts},
+                                'Comparing post trade status after book', 'self.order_book.compare_values')
+        # endregion
+
+        # region book order (3 step)
+        allocation_instruction_message = FixMessageAllocationInstructionReportOMS()
+        allocation_instruction_message.set_default_ready_to_book(self.fix_message)
+        allocation_instruction_message.add_tag({'RootCommTypeClCommBasis': '*'}). \
+            add_tag({'RootOrClientCommissionCurrency': '*'}).add_tag({'RootSettlCurrFxRate': '*'}). \
+            add_tag({'RootSettlCurrAmt': '39127.14706'}).add_tag({'RootOrClientCommission': '*'}). \
+            add_tag({'NoRootMiscFeesList': [{'RootMiscFeeBasis': '*', 'RootMiscFeeCurr': '*', 'RootMiscFeeType': '*',
+                                             'RootMiscFeeRate': value_for_fee, 'RootMiscFeeAmt': value_for_fee}]})
+        fee_basis = self.data_set.get_commission_basis('comm_basis_1')
+        commission_basis = self.data_set.get_commission_basis('comm_basis_2')
+        self.middle_office.set_modify_ticket_details(comm_basis=commission_basis, comm_rate=value_for_commission,
+                                                     fee_basis=fee_basis,
+                                                     fee_rate=value_for_fee,
+                                                     fee_type=self.data_set.get_misc_fee_type_by_name('tax'),
+                                                     extract_book=True,
+                                                     toggle_manual=True)
+        values = self.middle_office.book_order()
+        fix_verifier.check_fix_message_fix_standard(allocation_instruction_message)
+        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value)
+        filter_list = [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]]
+        # endregion
+
+        # region approve and allocate block (step 4)
+        self.middle_office.approve_block()
+        confirmation_message = FixMessageConfirmationReportOMS(self.data_set)
+        confirmation_message.set_default_confirmation_new(self.fix_message)
+        confirmation_message.add_tag({'Account': '*'}).add_tag({'SettlCurrFxRate': '*'}). \
+            add_tag({'AllocInstructionMiscBlock2': '*'}).add_tag({'tag5120': '*'}). \
+            add_tag({'NoMiscFees': [{'MiscFeeAmt': value_for_fee, 'MiscFeeCurr': '*', 'MiscFeeType': '*'}]}). \
+            add_tag({'CommissionData': {'CommissionType': '3', 'Commission': '39.08', 'CommCurrency': '*'}})
+        arr_allocation_param = [{"Security Account": account, "Alloc Qty": qty}]
+        self.middle_office.set_modify_ticket_details(arr_allocation_param=arr_allocation_param)
+        self.middle_office.allocate_block(filter_list)
+        fix_verifier.check_fix_message_fix_standard(confirmation_message)
+        # endregion
+
+    def __comparing_values(self, expected_result, actually_result, verifier_message: str, eval_str):
+        eval(eval_str)(expected_result, actually_result, verifier_message)
