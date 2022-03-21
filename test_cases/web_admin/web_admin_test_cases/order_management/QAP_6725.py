@@ -38,7 +38,7 @@ class QAP_6725(CommonTestCase):
         login_page.click_login_button()
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_order_management_rules_page()
+        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
         time.sleep(2)
         order_management_page = OrderManagementRulesPage(self.web_driver_container)
         order_management_page.click_on_new_button()

@@ -4,9 +4,9 @@ import sys
 import time
 import traceback
 
+from stubs import ROOT_DIR
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
-
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
@@ -27,7 +27,7 @@ class QAP_5842(CommonTestCase):
         self.user_id = self.data_set.get_user("user_4")
         self.new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
-        self.path_to_file = 'C:\Furmuzal\Web Admin Team (Study)\Python\quod_qa\web_admin\web_admin_core\\resourses\password_for_QAP_5842.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_cases\\web_admin\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
 
     def read_password_from_file(self):
         try:
@@ -71,6 +71,8 @@ class QAP_5842(CommonTestCase):
         users_wizard.click_on_save_changes()
         time.sleep(2)
         common_page = CommonPage(self.web_driver_container)
+        common_page.click_on_info_error_message_pop_up()
+        time.sleep(1)
         common_page.click_on_user_icon()
         time.sleep(1)
         common_page.click_on_logout()

@@ -6,7 +6,7 @@ class RootConstants:
     GENERAL_TOGGLE_CSS_SELECTOR = "a[title='General']"
     SETTINGS_ITEM_XPATH = "//span[text()='Settings']"
     MDENTITLEMENTS_ITEM_XPATH = "//span[text()='MDEntitlements']"
-    ADMIN_COMMAND_ITEM_XPATH = "//span[text()='AdminCommand']"
+    SYSTEM_COMMANDS_ITEM_XPATH = "//span[text()='System Commands']"
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
     INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"

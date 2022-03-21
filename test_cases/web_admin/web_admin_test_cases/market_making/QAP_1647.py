@@ -40,11 +40,11 @@ class QAP_1647(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
-        self.symbol = self.data_set.get_symbol_by_name("instr_symbol_3")
+        self.symbol = self.data_set.get_instr_symbol("instr_symbol_3")
         self.rfq_response_stream_ttl = 2
         self.venue_at_spot_venues_tab = self.data_set.get_venue_by_name("venue_6")
         self.venue_at_forward_venues_tab = self.data_set.get_venue_by_name("venue_5")
-        self.client_at_external_clients_tab = self.data_set.get_client("CLIENT1")
+        self.client_at_external_clients_tab = self.data_set.get_client("client_1")
         self.client_at_internal_clients_tab = "HouseFill"
         self.quantity = 1000000
         self.tenor = self.data_set.get_tenor_by_name("tenor_1")

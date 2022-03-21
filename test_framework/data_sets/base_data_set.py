@@ -48,7 +48,6 @@ class BaseDataSet:
     location = None
     institution = None
     zone = None
-    client = None
     client_type = None
     email = None
     perm_role = None
@@ -64,17 +63,14 @@ class BaseDataSet:
     trading_phase_profile = None
     tick_size_xaxis_type = None
     instr_symbol = None
-    symbol = None
     instr_type = None
     preferred_venue = None
     listing_group = None
-    settle_type = None
     feed_source = None
     negative_route = None
     positive_route = None
     client_id_source = None
     route_account_name = None
-    route = None
     clearing_account_type = None
     disclose_exec = None
     account_id_source = None
@@ -88,7 +84,6 @@ class BaseDataSet:
     strategy_type = None
     exec_policy = None
     commission_amount_type = None
-    commission_profile = None
     settl_location = None
     country_code = None
     client_group = None
@@ -390,7 +385,7 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_admin_command(self, name: str):
+    def get_system_commands(self, name: str):
         if hasattr(self.admin_command, name):
             return getattr(self.admin_command, name).value
         return ValueError(f"{self.admin_command} not found!")

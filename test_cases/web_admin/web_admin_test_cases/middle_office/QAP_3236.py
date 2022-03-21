@@ -30,7 +30,7 @@ class QAP_3236(CommonTestCase):
         self.description = ''
 
         # Dimensions tab
-        self.instr_type = self.data_set.instr_type("instr_type_1")
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.venue = self.data_set.get_venue_by_name("venue_10")
         self.side = "Buy"
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")

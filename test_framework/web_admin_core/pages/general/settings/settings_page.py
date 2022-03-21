@@ -19,3 +19,6 @@ class SettingsPage(CommonPage):
 
     def get_value(self):
         return self.find_by_xpath(SettingsConstants.SETTINGS_VALUE_XPATH)
+
+    def is_setting_displayed(self):
+        return self.is_element_present(SettingsConstants.SETTINGS_FIRS_ROW)

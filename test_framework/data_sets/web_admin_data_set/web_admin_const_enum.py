@@ -8,7 +8,7 @@ class WebAdminUsers(Enum):
     user_4 = "adm01"
     user_5 = "adm02"
     user_6 = "acameron"
-    user_7 = "gbarett"
+    user_7 = "gbarrett"
     user_8 = "QA1"
     user_9 = "adm08"
     user_10 = "adm07"
@@ -82,7 +82,7 @@ class WebAdminVenues(Enum):
 
 
 class WebAdminEmail(Enum):
-    email_1 = "test"
+    email_1 = "test@test"
 
 
 class WebAdminPermRole(Enum):
@@ -196,7 +196,7 @@ class WebAdminSettleType(Enum):
 class WebAdminFeedSource(Enum):
     feed_source_1 = "ActivFinancial"
     feed_source_2 = "FeedOS"
-    feed_source_3 = "Inte raciveData"
+    feed_source_3 = "InteraciveData"
     feed_source_4 = "MarketPrizm"
     feed_source_5 = "Native Market"
     feed_source_6 = "Quod simulator"

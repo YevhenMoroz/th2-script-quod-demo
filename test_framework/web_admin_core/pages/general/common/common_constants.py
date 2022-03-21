@@ -22,3 +22,4 @@ class CommonConstants:
     ARROW_BACK_BUTTON_XPATH = '//*[@data-name="arrow-back"]'
     HEADER_XPATH = '//*[@class="fixed"]'
     USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION = '//*[@id="userFeedback"]//*[text()="User ID"]/following-sibling::td'
+    INFO_ERROR_MESSAGE_POP_UP = '//nb-toast'

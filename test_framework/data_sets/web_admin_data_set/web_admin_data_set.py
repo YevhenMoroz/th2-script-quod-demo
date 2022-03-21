@@ -45,7 +45,7 @@ class WebAdminDataSet(BaseDataSet):
     trading_phase_profile = WebAdminTradingPhaseProfile
     tick_size_xaxis_type = WebAdminTickSizeXaxisType
     instr_symbol = WebAdminInstrSymbol
-    symbol = WebAdminSymbol
+    symbols = WebAdminSymbol
     currency = WebAdminCurrency
     instr_type = WebAdminInstrType
     preferred_venue = WebAdminPreferredVenue
