@@ -318,6 +318,8 @@ class AllocationsColumns(Enum):
     match_status = 'Match Status'
     alloc_id = 'Allocation ID'
     avg_px = 'Avg Px'
+    pset = 'PSET'
+    pset_bic = 'PSET BIC'
 
 
 class SecondLevelTabs(Enum):

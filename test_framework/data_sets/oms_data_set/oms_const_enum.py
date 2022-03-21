@@ -259,3 +259,4 @@ class OMSPset(Enum):
 
 class OMSCommissionAndFeeBasis(Enum):
     comm_basis_1 = 'Absolute'
+    comm_basis_2 = 'Percentage'
