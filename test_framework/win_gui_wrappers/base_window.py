@@ -1,6 +1,6 @@
 import re
 from inspect import signature
-
+from functools import wraps
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier, VerificationMethod
 from win_gui_modules.utils import get_base_request
@@ -71,3 +71,18 @@ class BaseWindow:
                     split_normal_dictionary = dict(item.split("=") for item in split_values1.split(', '))
                     normal_split_values_arr.append(split_normal_dictionary)
             return normal_split_values_arr
+    @staticmethod
+    def split_tab_misk(split_values: dict):
+        normal_split_values_arr = list()
+        for split_key, split_value in split_values.items():
+            split_sentence = split_value.split('\n')
+            split_sentence.pop(0)
+            split_sentence.pop(0)
+            split_sentence.pop(len(split_sentence) - 1)
+            for split_values1 in split_sentence:
+                split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '').replace(' ', '')
+                print(split_values1)
+                split_normal_dictionarry = dict(item.split(":") for item in split_values1.split(', '))
+                print(split_normal_dictionarry)
+                normal_split_values_arr.append(split_normal_dictionarry)
+        return normal_split_values_arr

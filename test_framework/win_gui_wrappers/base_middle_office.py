@@ -1,3 +1,5 @@
+import typing
+
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -161,7 +163,8 @@ class BaseMiddleOffice(BaseWindow):
                                   settl_amount=None, bo_notes=None, settl_currency=None, exchange_rate=None,
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
-                                  alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None):
+                                  alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None,
+                                  pset=None):
         """
             1)extract_data can be book or alloc
             2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
@@ -218,6 +221,8 @@ class BaseMiddleOffice(BaseWindow):
             settlement_details.set_settlement_amount(exchange_rate)
         if exchange_rate_calc is not None:
             settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+        if pset:
+            settlement_details.set_pset(pset)
         if toggle_recompute:
             settlement_details.toggle_recompute()
 
@@ -259,26 +264,36 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def amend_block(self):
+    def amend_block(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.amend_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def un_book_order(self):
+    def un_book_order(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         call(self.unbook_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
 
-    def allocate_block(self):
+    def allocate_block(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.allocate_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def amend_allocate(self):
+    def amend_allocate(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.amend_allocate_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def unallocate_order(self):
+    def unallocate_order(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.unallocate_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
@@ -317,4 +332,10 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_approve_details.set_rows_number(position_of_block)
         call(self.mass_unallocate_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
+
     # endregion
+
+    def check_error_in_book(self):
+        self.modify_ticket_details.set_partial_error_message("error_in_book")
+        error = call(self.book_order_call, self.modify_ticket_details.build())
+        return error
