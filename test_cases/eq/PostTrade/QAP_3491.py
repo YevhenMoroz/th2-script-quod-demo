@@ -102,8 +102,9 @@ class QAP_3491(TestCase):
                                                      fee_type=self.data_set.get_misc_fee_type_by_name('tax'),
                                                      extract_book=True, toggle_manual=True)
         values = self.middle_office.amend_block(filter_list)
-        print('****************************************************************')
-        print(values)
+        self.middle_office.compare_values({'Fees': negative_value, 'Commission': negative_value},
+                                          {'Fees': values['book.totalFees'], 'Commission': values['book.totalComm']},
+                                          'Compare values Commission and Fees from Booking Ticket')
         # endregion
 
         # region approve block (step 3)
@@ -126,8 +127,8 @@ class QAP_3491(TestCase):
         confirmation_message.set_default_confirmation_new(self.fix_message)
         confirmation_message.add_tag({'Account': '*'}).add_tag({'SettlCurrFxRate': '*'}). \
             add_tag({'AllocInstructionMiscBlock2': '*'}).add_tag({'tag5120': '*'}). \
-            add_tag({'NoMiscFees': [{'MiscFeeAmt': negative_value,'MiscFeeCurr': '*','MiscFeeType': '*'}]}). \
-            add_tag({'CommissionData': {'CommissionType': '*', 'Commission': negative_value,'CommCurrency':'*'}})
+            add_tag({'NoMiscFees': [{'MiscFeeAmt': negative_value, 'MiscFeeCurr': '*', 'MiscFeeType': '*'}]}). \
+            add_tag({'CommissionData': {'CommissionType': '*', 'Commission': negative_value, 'CommCurrency': '*'}})
         arr_allocation_param = [{"Security Account": account, "Alloc Qty": qty}]
         self.middle_office.set_modify_ticket_details(arr_allocation_param=arr_allocation_param)
         self.middle_office.allocate_block(filter_list)
