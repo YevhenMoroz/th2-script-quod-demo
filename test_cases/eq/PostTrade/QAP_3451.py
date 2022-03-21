@@ -90,7 +90,7 @@ class QAP_3411(TestCase):
         }
         read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
         # endregion
-        # region Un-allocate
+        # region amend allocate
         self.middle_office.set_modify_ticket_details(is_alloc_amend=True,agreed_price=new_price)
         self.middle_office.amend_allocate()
         # endregion
