@@ -18,8 +18,13 @@ timeouts = True
 
 #order param
 qty = 1000
+qty_bid = 123
+qty_ask = 543
 price = 1
+price_bid = 1
+price_ask = 50
 price_nav = 700
+side = 1
 tif_day = 0
 order_type = 2
 nav_init_sweep = 10
@@ -73,8 +78,8 @@ def execute(report_id):
         # Send_MarkerData
         # if faced an issue with MDReqID (MDReqID doesn't change in FXFH_TH2 logs) in method update_MDReqID change md_req_id for the static MDReqID from the FXFH_TH2 logs
         market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=123)
-        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=50, MDEntrySize=50000, TradingSessionSubID=3, SecurityTradingStatus=3)
+        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_bid, MDEntrySize=123)
+        market_data_snap_shot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_ask, MDEntrySize=50000, TradingSessionSubID=3, SecurityTradingStatus=3)
         fix_manager_fh.send_message(market_data_snap_shot)
 
         time.sleep(3)
@@ -86,7 +91,7 @@ def execute(report_id):
         # Before set order params, check that, for example, set_POV_params() doesn't refer to the data set (will be change when this script will use a class instead of method execute)
         pov_order = FixMessageNewOrderSingleAlgo().set_POV_params()
         pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        pov_order.change_parameters(dict(Account=client, OrderQty=qty, Side=1, Price=1, Instrument=instrument))
+        pov_order.change_parameters(dict(Account=client, OrderQty=qty, Side=side, Price=price, Instrument=instrument))
         pov_order.update_fields_in_component('QuodFlatParameters', dict(ParticipateInOpeningAuctions='Y'))
         fix_manager.send_message_and_receive_response(pov_order, case_id_1)
         # endregion
@@ -94,8 +99,8 @@ def execute(report_id):
         time.sleep(1)
 
         market_data_snap_shot_2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=543)
-        market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=50, MDEntrySize=50000, TradingSessionSubID=3, SecurityTradingStatus=3)
+        market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=price_bid, MDEntrySize=543)
+        market_data_snap_shot_2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=price_ask, MDEntrySize=50000, TradingSessionSubID=3, SecurityTradingStatus=3)
         fix_manager_fh.send_message(market_data_snap_shot_2)
 
         # add time delay to change trading phase
@@ -108,27 +113,27 @@ def execute(report_id):
         # )).MDRefID
 
         # Set message to change Trading Phase
-        mdir_params_trade = {
-            'MDReqID': '555_9',     #MDRefID_1 - add, if the MDReqID issues is gone
-            'NoMDEntriesIR': [
-                {
-                    'MDUpdateAction': '0',
-                    'MDEntryType': '2',
-                    'MDEntryPx': '20',
-                    'MDEntrySize': '100',
-                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
-                    'TradingSessionSubID': '2',
-                    'SecurityTradingStatus': '3'
-                }
-            ]
-        }
-
-        # Send New Trading Phase
-        Stubs.fix_act.sendMessage(request=convert_to_request(
-            'Send MarketDataIncrementalRefresh', "fix-feed-handler-316-ganymede", report_id,
-            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-feed-handler-316-ganymede")
-        ))
+        # mdir_params_trade = {
+        #     'MDReqID': '555_9',     #MDRefID_1 - add, if the MDReqID issues is gone
+        #     'NoMDEntriesIR': [
+        #         {
+        #             'MDUpdateAction': '0',
+        #             'MDEntryType': '2',
+        #             'MDEntryPx': '20',
+        #             'MDEntrySize': '100',
+        #             'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+        #             'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+        #             'TradingSessionSubID': '2',
+        #             'SecurityTradingStatus': '3'
+        #         }
+        #     ]
+        # }
+        #
+        # # Send New Trading Phase
+        # Stubs.fix_act.sendMessage(request=convert_to_request(
+        #     'Send MarketDataIncrementalRefresh', "fix-feed-handler-316-ganymede", report_id,
+        #     message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-feed-handler-316-ganymede")
+        # ))
 
     except:
         logging.error("Error execution", exc_info=True)
