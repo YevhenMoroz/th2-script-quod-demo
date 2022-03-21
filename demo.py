@@ -38,6 +38,7 @@ def test_run():
     # initializing dataset
 
     # initializing FE session
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     session_id = set_session_id(target_server_win="quod_11q")
     # region creation FE environment and initialize fe_ values
     configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
