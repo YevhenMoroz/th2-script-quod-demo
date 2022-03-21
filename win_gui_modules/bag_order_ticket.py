@@ -71,6 +71,13 @@ class BagOrderTicketDetails:
         for details in wave_bag_details:
             self.order.subLevelDetails.append(details)
 
+    '''
+    this method use only for creation of bag order
+    '''
+
+    def set_name(self, name: str):
+        self.order.bagName = name
+
     def build(self):
         return self.order
 
@@ -190,7 +197,7 @@ class BagOrderInfo:
         self.bagorder_info = bag_mgt_pb2.BagOrderInfo()
 
     @staticmethod
-    def create(action=None, actions: list = None, sub_orders: GetOrderBagBookDetailsRequest = None):
+    def create(action=None, actions: list = None, sub_orders: GetOrderBagBookDetails = None):
         bagorder_info = BagOrderInfo()
         if action is not None:
             bagorder_info.add_single_extraction_action(action)
@@ -203,11 +210,18 @@ class BagOrderInfo:
 
         return bagorder_info
 
-    def set_sub_orders_details(self, sub_orders: GetOrderBagBookDetailsRequest):
+    def set_sub_orders_details(self, sub_orders: GetOrderBagBookDetails):
         self.bagorder_info.subOrders.CopyFrom(sub_orders.details())
 
     def set_number(self, number: int):
         self.bagorder_info.number = number
+
+    '''
+    Next method used only fot sub_orders
+    '''
+
+    def set_sub_level_tab(self, tab_name: str = None):
+        self.bagorder_info.subLevelTab = tab_name
 
     def add_extraction_actions(self, bag_order_info_list: list):
         for bag_order_info in bag_order_info_list:
@@ -238,10 +252,13 @@ class OrderBagCreationDetails:
         for row in index_of_row_list:
             self.order_bag_creation.selectedRows.append(row)
 
-    def set_order_bag_ticket_details(self, name: str):
-        order = bag_mgt_pb2.OrderBagTicketDetails()
-        order.bagName = name
-        self.order_bag_creation.orderBagTicketDetails.CopyFrom(order)
+    def set_order_bag_ticket_details(self, order: BagOrderTicketDetails):
+        # order = bag_mgt_pb2.OrderBagTicketDetails()
+        # bag_mgt_pb2.OrderBagTicketDetails()
+        # order.bagName = name
+        # if price:
+        #     order.price = price
+        self.order_bag_creation.orderBagTicketDetails.CopyFrom(order.build())
 
     def build(self):
         return self.order_bag_creation

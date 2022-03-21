@@ -15,21 +15,19 @@ from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run():
     # Generation id and time for test run
-    pc_name = get_pc_name() # getting PC name
+    pc_name = get_pc_name()  # getting PC name
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    # initializing dataset
-    data_set = OmsDataSet() # <--- provide your dataset (OmsDataSet(), FxDataSet(), AlgoDataSet(), RetDataSet())
     # initializing FE session
     session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("YOUR_COMPONENT") #  <--- provide your component from XML (DMA, iceberg, etc)
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
     fe_user = fe_env.user_1
@@ -37,8 +35,9 @@ def test_run():
     # endregion
 
     try:
-        base_main_window.open_fe(report_id=report_id, folder=fe_folder, user=fe_user, password=fe_pass)
-        QAP_1016(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment)\
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        QAP_1016(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
             .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
