@@ -13,7 +13,6 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
 
     def find_all_client_tier_instrument_filtered(self, client_tier_id: str, instrument: str):
         self.clear_message_params()
-        search = f"findClientTierInstrSymbol?queryID={client_tier_id}&#38;queryID2={instrument}"
         self.parameters = {
             'URI':
                 {
