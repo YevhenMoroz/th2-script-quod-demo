@@ -11,6 +11,9 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from datetime import datetime
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from stubs import Stubs
+from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
+from th2_grpc_common.common_pb2 import ConnectionID
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -107,33 +110,33 @@ def execute(report_id):
         time.sleep(10)
 
         # Commend MDReqID if faced an issue with MDReqID (MDReqID doesn't change in FXFH_TH2 logs)
-        # MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        #     symbol="555",
-        #     connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
-        # )).MDRefID
+        MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+            symbol="555",
+            connection_id=ConnectionID(session_alias="fix-feed-handler-316-ganymede")
+        )).MDRefID
 
         # Set message to change Trading Phase
-        # mdir_params_trade = {
-        #     'MDReqID': '555_9',     #MDRefID_1 - add, if the MDReqID issues is gone
-        #     'NoMDEntriesIR': [
-        #         {
-        #             'MDUpdateAction': '0',
-        #             'MDEntryType': '2',
-        #             'MDEntryPx': '20',
-        #             'MDEntrySize': '100',
-        #             'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-        #             'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
-        #             'TradingSessionSubID': '2',
-        #             'SecurityTradingStatus': '3'
-        #         }
-        #     ]
-        # }
-        #
-        # # Send New Trading Phase
-        # Stubs.fix_act.sendMessage(request=convert_to_request(
-        #     'Send MarketDataIncrementalRefresh', "fix-feed-handler-316-ganymede", report_id,
-        #     message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-feed-handler-316-ganymede")
-        # ))
+        mdir_params_trade = {
+            'MDReqID': MDRefID_1,     #MDRefID_1 - add, if the MDReqID issues is gone
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': '2',
+                    'MDEntryPx': '20',
+                    'MDEntrySize': '100',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                    'TradingSessionSubID': '2',
+                    'SecurityTradingStatus': '3'
+                }
+            ]
+        }
+
+        # Send New Trading Phase
+        Stubs.fix_act.sendMessage(request=convert_to_request(
+            'Send MarketDataIncrementalRefresh', "fix-feed-handler-316-ganymede", report_id,
+            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-feed-handler-316-ganymede")
+        ))
 
     except:
         logging.error("Error execution", exc_info=True)
