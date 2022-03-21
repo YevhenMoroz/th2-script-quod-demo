@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class QAP_6863(TestCase):
+class QAP_6862(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.qty = "100"
-        self.new_qty = "50"
+        self.new_qty = "150"
         self.price = "20"
         self.new_price = "15"
         self.client = self.data_set.get_client_by_name("client_pt_1")

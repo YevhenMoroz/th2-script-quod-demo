@@ -54,6 +54,24 @@ class BaseWindow:
             return normal_split_values_arr
 
     @staticmethod
+    def split_fees(split_values: dict):
+        if type(list(split_values.values())[0]) == dict:
+            response = BaseWindow.split_2lvl_values(list(split_values.values())[0])
+            return response
+        else:
+            normal_split_values_arr = list()
+            for split_key, split_value in split_values.items():
+                split_sentence = split_value.split('\n')
+                split_sentence.pop(0)
+                split_sentence.pop(len(split_sentence) - 1)
+                for split_values1 in split_sentence:
+                    split_values1 = re.findall('(\w+=[\w\d.]+)', split_values1)
+                    split_values1 = split_values1.__str__()
+                    split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '')
+                    split_normal_dictionary = dict(item.split("=") for item in split_values1.split(', '))
+                    normal_split_values_arr.append(split_normal_dictionary)
+            return normal_split_values_arr
+    @staticmethod
     def split_tab_misk(split_values: dict):
         normal_split_values_arr = list()
         for split_key, split_value in split_values.items():

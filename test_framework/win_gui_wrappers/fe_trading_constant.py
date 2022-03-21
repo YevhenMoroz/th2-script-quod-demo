@@ -110,6 +110,11 @@ class InstrType(Enum):
     nds = 'NDS'
 
 
+class ExecType(Enum):
+    trade = "Trade"
+    calculated = "Calculated"
+
+
 class QuoteBookColumns(Enum):
     quote_id = 'Id'
     account_group = 'AccountGroup'
@@ -422,3 +427,7 @@ class MenuItemFromOrderBook(Enum):
     split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
+
+
+class ClientInboxColumns(Enum):
+    order_id = "Order ID"
