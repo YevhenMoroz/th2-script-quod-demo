@@ -35,7 +35,7 @@ class QAP_3413(TestCase):
         self.pset_2 = self.data_set.get_pset('pset_2')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         nos_rule = None
         trade_rule = None

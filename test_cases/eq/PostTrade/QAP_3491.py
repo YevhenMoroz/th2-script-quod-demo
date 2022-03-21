@@ -32,7 +32,7 @@ class QAP_3491(TestCase):
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
         self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '500'
