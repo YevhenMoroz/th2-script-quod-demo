@@ -64,9 +64,9 @@ class QAP_4256(TestCase):
             # region step 1, 2
             self.__creating_order(rule_manager, account, exec_destination, price, qty)
             self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-            post_trade_status = self.order_book.extract_field(OrderBookColumns.exec_sts.value)
-            self.order_book.compare_values({OrderBookColumns.exec_sts.value: 'ReadyToBook'},
-                                           {OrderBookColumns.exec_sts.value: post_trade_status},
+            post_trade_status = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
+            self.order_book.compare_values({OrderBookColumns.post_trade_status.value: 'ReadyToBook'},
+                                           {OrderBookColumns.post_trade_status.value: post_trade_status},
                                            'Comparing values after fully filled')
             # endregion
 
@@ -85,7 +85,7 @@ class QAP_4256(TestCase):
             status = self.middle_office.extract_block_field(MiddleOfficeColumns.sts.value,
                                                             filter_list=filter_list)
             self.middle_office.compare_values({MiddleOfficeColumns.sts.value: 'Accepted'}, status,
-                                              'Comparing status after book')
+                                              'Comparing status after approve')
             # endregion
 
             # region step 5

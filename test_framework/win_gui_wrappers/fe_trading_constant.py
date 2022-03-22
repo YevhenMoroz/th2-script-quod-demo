@@ -306,6 +306,7 @@ class MiddleOfficeColumns(Enum):
     pset_bic = 'PSET BIC'
     settltype = 'SettlType'
     account_id = 'Account ID'
+    trade_date = 'TradeDate'
 
 
 class AllocationsColumns(Enum):
@@ -321,6 +322,7 @@ class AllocationsColumns(Enum):
     avg_px = 'Avg Px'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
+    trade_date = 'TradeDate'
 
 
 class SecondLevelTabs(Enum):
