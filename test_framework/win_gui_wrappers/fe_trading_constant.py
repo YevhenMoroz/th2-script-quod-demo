@@ -305,6 +305,7 @@ class MiddleOfficeColumns(Enum):
     pset = 'PSET'
     pset_bic = 'PSET BIC'
     settltype = 'SettlType'
+    account_id = 'Account ID'
 
 
 class AllocationsColumns(Enum):
