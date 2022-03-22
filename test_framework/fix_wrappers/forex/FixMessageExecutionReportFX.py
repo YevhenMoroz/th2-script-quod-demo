@@ -89,7 +89,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             SpotSettlDate=spo(),
             Price="*",
-            OrdStatus="1",
+            OrdStatus="4",
             TradeReportingIndicator="*",
             TransactTime="*",
             LastSpotRate="*",
