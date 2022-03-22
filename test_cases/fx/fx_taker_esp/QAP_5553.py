@@ -28,6 +28,10 @@ class QAP_5553(TestCase):
         self.gateway_side_sell = GatewaySide.Sell
         self.status = Status.Fill
         self.account = self.data_set.get_client_by_name("client_1")
+        self.instrument = dict(
+            Symbol=self.data_set.get_symbol_by_name('symbol_7'),
+            SecurityType=self.data_set.get_security_type_by_name('fx_spot')
+        )
         self.nostratparams = [{
             'StrategyParameterName': 'AllowedVenues',
             'StrategyParameterType': '14',
@@ -37,8 +41,8 @@ class QAP_5553(TestCase):
 
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
-            {'TimeInForce': "1", "OrderQty": self.qty, "Account": self.account,
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=self.data_set).set_default_SOR().change_parameters(
+            {"Instrument": self.instrument, 'TimeInForce': "1", "OrderQty": self.qty, "Account": self.account,
              "NoStrategyParameters": self.nostratparams})
         self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion
