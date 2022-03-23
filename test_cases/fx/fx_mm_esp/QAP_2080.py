@@ -39,8 +39,6 @@ class QAP_2080(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        # self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-        #                                     key_parameters=["MDReqID"])
         # endregion
 
         # region step 3
