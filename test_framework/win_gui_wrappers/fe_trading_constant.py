@@ -66,6 +66,8 @@ class OrderBookColumns(Enum):
     far_settl_date = 'FarSettlDate'
     last_spot_rate = 'LastSpotRate'
     settle_date = 'Settle Date'
+    day_cum_qty = 'DayCumQty'
+    day_cum_amt = 'DayCumAmt'
     # endregion
 
 
@@ -106,6 +108,11 @@ class InstrType(Enum):
     swap = 'FXSwap'
     ndf = 'NDF'
     nds = 'NDS'
+
+
+class ExecType(Enum):
+    trade = "Trade"
+    calculated = "Calculated"
 
 
 class QuoteBookColumns(Enum):
@@ -297,6 +304,7 @@ class MiddleOfficeColumns(Enum):
     side = 'Side'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
+    settltype = 'SettlType'
 
 
 class AllocationsColumns(Enum):
@@ -419,3 +427,7 @@ class MenuItemFromOrderBook(Enum):
     split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
+
+
+class ClientInboxColumns(Enum):
+    order_id = "Order ID"

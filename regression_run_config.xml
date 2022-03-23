@@ -241,7 +241,7 @@
                             <java_api_environment>quod317_java_api</java_api_environment>
                         </java_api_environments>
                         <rest_environments>
-                            <rest_environment></rest_environment>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>

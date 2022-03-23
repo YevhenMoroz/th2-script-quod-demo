@@ -1,19 +1,18 @@
 import logging
 import os
 import time
+import typing
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
+from rule_management import RuleManager, Simulators
 from test_framework.ReadLogVerifier import ReadLogVerifier
-from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,76 +20,83 @@ timeouts = True
 
 
 class QAP_3411(TestCase):
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
-        self.als_email_report = SessionAliasOMS().als_email_report
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
 
-    def QAP_3411(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        read_log_verifier = ReadLogVerifier(self.als_email_report, self.case_id)
-        main_win = BaseMainWindow(self.case_id, self.session_id)
-        mid_office = OMSMiddleOffice(self.case_id, self.session_id)
-        client = "MOClient2"
-        account1 = "MOClient2_SA1"
-        account2 = "MOClient2_SA2"
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
+        qty = '200'
+        price = '10'
+        account_first = self.data_set.get_account_by_name('client_pt_2_acc_1')
+        no_allocs: typing.Dict[str, list] = {'NoAllocs': [
+            {
+                'AllocAccount': account_first,
+                'AllocQty': str(int(int(qty) / 2)),
+            },
+            {
+                'AllocAccount': self.data_set.get_account_by_name('client_pt_2_acc_2'),
+                'AllocQty': str(int(int(qty) / 2))
+            }]}
+        account = self.data_set.get_venue_client_names_by_name('client_pt_2_venue_1')
+        self.fix_message.set_default_dma_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_2'))
+        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
+        self.fix_message.change_parameter('PreAllocGrp', no_allocs)
+        self.fix_message.change_parameter('Price', price)
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('ExDestination', exec_destination)
+        rule_manager = RuleManager(Simulators.equity)
+        read_log_verifier = ReadLogVerifier(self.read_log_conn, self.case_id)
+        trade_rule = None
+        new_order_single_rule = None
         # endregion
-        # region Open FE
-        main_win.open_fe(self.report_id, work_dir, username, password)
-        # endregion
-        # region Create care order
 
-        change_params = {'Account': client,
-                         'PreAllocGrp': {'NoAllocs': [{'AllocAccount': account1,
-                                                       'AllocQty': "50"},
-                                                      {'AllocAccount': account2,
-                                                       'AllocQty': "50"}]}}
-        nos = FixMessageNewOrderSingleOMS().set_default_dma_limit(Instrument.FR0004186856).change_parameters(
-            change_params)
-        qty = nos.get_parameters()["OrderQtyData"]["OrderQty"]
-        price = nos.get_parameters()["Price"]
+        # region Create dma order
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             client + "_PARIS", "XPAR",
-                                                                                             int(price))
-            trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_PARIS", "XPAR",
-                                                                                       int(price),
-                                                                                       int(qty), 1)
 
-            fix_manager.send_message_and_receive_response_fix_standard(nos)
+            new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side, account, exec_destination, float(price))
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                       account,
+                                                                                       exec_destination,
+                                                                                       float(price),
+                                                                                       int(qty), 0)
+            self.fix_manager.send_message_fix_standard(self.fix_message)
+        except Exception as ex:
+            logger.exception(f'{ex} - your exception')
+            bca.create_event('Exception regarding rules', self.case_id, status='FAIL')
+
         finally:
-            time.sleep(1)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rele)
+            time.sleep(10)
+            rule_manager.remove_rule(trade_rule)
+            rule_manager.remove_rule(new_order_single_rule)
         # endregion
         # region Check ALS logs Status New
         als_logs_params = {
             "ConfirmationID": "*",
             "ConfirmStatus": "New",
-            "ClientAccountID": account1
+            "ClientAccountID": account_first
         }
-        read_log_verifier.check_read_log_message(als_logs_params,["ConfirmStatus"], timeout=50000)
+        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
         # endregion
         # region Un-allocate
-        mid_office.unallocate_order()
+        self.middle_office.unallocate_order()
         # endregion
         # region Check ALS logs Status Canceled
         als_logs_params = {
             "ConfirmationID": "*",
             "ConfirmStatus": "Cancel",
-            "ClientAccountID": account1
+            "ClientAccountID": account_first
         }
         read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
         # endregion
-
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.QAP_3411()
