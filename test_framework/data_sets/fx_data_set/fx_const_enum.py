@@ -56,6 +56,7 @@ class FxClients(Enum):
     client_mm_6 = "Osmium1"  # For AutoHedger testing
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "Aurum1"  # For AutoHedger testing
+    client_mm_9 = "SWEDCUST3"
 
 
 class FxAccounts(Enum):
@@ -84,7 +85,7 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "Aurum1_1"
-    account_mm_9 = "SWEDCUST3"
+
 
 
 class FxClientTiers(Enum):
