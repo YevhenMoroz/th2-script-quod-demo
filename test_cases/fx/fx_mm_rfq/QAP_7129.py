@@ -130,7 +130,7 @@ class QAP_7129(TestCase):
         self.fix_manager_fh.send_message(self.fix_md)
         # endregion
         # region step 2
-        self.quote_request.set_swap_rfq_params()
+        self.quote_request.set_swap_rfq_params().remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
         self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol,
                                            leg_sec_type=self.security_type_fwd,
                                            settle_date=self.settle_date_wk1, settle_type=self.settle_type_wk1)
@@ -144,7 +144,7 @@ class QAP_7129(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
         # region Step 3
-        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side="1")
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single, self.status)
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
