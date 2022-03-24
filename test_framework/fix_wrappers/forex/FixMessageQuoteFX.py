@@ -135,10 +135,7 @@ class FixMessageQuoteFX(FixMessage):
                      LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0][
                          "LegSettlType"],
                      InstrumentLeg=dict(
-                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"] +
-                                   "-SPO-QUODFX" if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0][
-                                                        "LegSettlType"] == "0" else
-                         quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -154,10 +151,7 @@ class FixMessageQuoteFX(FixMessage):
                      LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1][
                          "LegSettlType"],
                      InstrumentLeg=dict(
-                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"] +
-                                   "-SPO-QUODFX" if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1][
-                                                        "LegSettlType"] == "0" else
-                         quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
