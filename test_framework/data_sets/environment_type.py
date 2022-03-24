@@ -29,4 +29,5 @@ class EnvironmentType(Enum):
     #endregion
     #region web trading
     quod315_web_trading_luna_chrome = "quod315_web_trading_luna_chrome"
+    quod320_web_trading_kuiper_chrome = "quod320_web_trading_kuiper_chrome"
     #endregion
