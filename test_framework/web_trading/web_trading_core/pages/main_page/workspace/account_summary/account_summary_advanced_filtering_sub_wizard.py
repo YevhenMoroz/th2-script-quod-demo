@@ -10,9 +10,6 @@ class AccountSummaryAdvancedFilteringSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    # TODO: implement methods, if something changed in FE part, please take a look
-
-
     def click_on_and_group_button(self):
         self.find_by_xpath(AccountSummaryConstants.AND_GROUP_BUTTON_XPATH).click()
 
@@ -49,6 +46,3 @@ class AccountSummaryAdvancedFilteringSubWizard(CommonPage):
 
     def click_on_condition_button(self):
         self.find_by_xpath(AccountSummaryConstants.CONDITION_BUTTON_XPATH).click()
-
-
-
