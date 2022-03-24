@@ -11,7 +11,6 @@ from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
 from test_cases.fx.fx_mm_rfq.QAP_3250 import QAP_3250
 from test_cases.fx.fx_mm_rfq.QAP_3704 import QAP_3704
 from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
-from test_cases.fx.fx_mm_rfq.QAP_6364 import QAP_6364
 
 from test_cases.fx.fx_mm_rfq.QAP_7125 import QAP_7125
 from test_cases.fx.fx_mm_rfq.QAP_7126 import QAP_7126
@@ -22,6 +21,7 @@ from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, 
 from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_6364 import QAP_6364
 from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
 from test_cases.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
