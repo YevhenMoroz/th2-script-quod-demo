@@ -1,8 +1,10 @@
 class OrderTicketConstants:
     SEARCH_SYMBOL_FIELD_XPATH = '//*[@id="order"]//*[@name="txtSearch1"]'
     LIST_OF_SYMBOL_XPATH = '//*[@class="igx-overlay__content"]//span[normalize-space(text())="{}"]'
-    ACCOUNTS_FIELD_XPATH = '//*[text()="Accounts"]/following-sibling::igx-select/descendant ::input'
-    LIST_OF_ACCOUNTS_XPATH = '//*[@class="igx-overlay__content"]//span[normalize-space(text())="{}"]'
+    SECURITY_ACCOUNT_FIELD_XPATH = '//*[text()="Security Account"]/following-sibling::igx-select/descendant ::input'
+    LIST_OF_SECURITY_ACCOUNTS_XPATH = '//*[@class="igx-overlay__content"]//span[normalize-space(text())="{}"]'
+    CASH_ACCOUNT_FIELD_XPATH = '//*[text()="Cash Accounts"]/following-sibling::igx-select/descendant ::input'
+    LIST_OF_CASH_ACCOUNTS_XPATH = '//*[@class="igx-overlay__content"]//span[normalize-space(text())="{}"]'
     MODE_BUY_BUTTON_XPATH = '//*[@class="inside-button"]/span[@class="make-bold"]'
     MODE_SELL_BUTTON_XPATH = '//*[@class="inside-button-sell"]/span[@class="make-bold"]'
     QUANTITY_FIELD_XPATH = '//*[@name="quantity"]'
@@ -16,3 +18,4 @@ class OrderTicketConstants:
     SELL_BUTTON_XPATH = '//*[@class="buttons"]/button'
     CLOSE_BUTTON_XPATH = '//*[@id="order"]/igx-icon'
     NOTIFICATION_ACCOUNT_XPATH = '//*[@class="notification-without-title"]'
+    OFFLINE_CHECKBOX_XPATH = '//*[@class="offline-order"]//div'
