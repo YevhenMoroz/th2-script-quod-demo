@@ -1,7 +1,7 @@
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
-class RestApiQuotingSession(RestApiMessages):
+class RestApiQuotingSessionMessages(RestApiMessages):
 
     def set_default_params(self):
         self.parameters = {
