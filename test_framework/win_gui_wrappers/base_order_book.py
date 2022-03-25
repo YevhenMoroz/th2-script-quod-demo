@@ -83,6 +83,7 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_call = None
         self.transfer_pool_details = None
         self.internal_transfer_action = None
+        self.group_modify_details = None
 
 
 
@@ -111,12 +112,11 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, row_number: int = None) -> str:
+    def extract_field(self, column_name: str, row_number: int = 1) -> str:
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
-        if row_number is not None:
-            info.set_number(row_number)
+        info.set_number(row_number)
         self.order_details.add_single_order_info(info)
         response = call(self.get_orders_details_call, self.order_details.request())
         self.clear_details([self.order_details])
@@ -292,18 +292,19 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.modify_order_details])
 
     def group_modify(self, client=None, security_account=None, routes=None, free_notes=None, filter_list=None):
+        self.group_modify_details.base.CopyFrom(self.base_request)
         if filter_list is not None:
-            self.modify_order_details.set_filter()
+            self.group_modify_details.set_filter()
         if client is not None:
-            self.modify_order_details.client = client
+            self.group_modify_details.client = client
         if security_account is not None:
-            self.modify_order_details.securityAccount = security_account
+            self.group_modify_details.securityAccount = security_account
         if routes is not None:
-            self.modify_order_details.routes = routes
+            self.group_modify_details.routes = routes
         if free_notes is not None:
-            self.modify_order_details.freeNotes = free_notes
-        call(self.group_modify_order_call, self.modify_order_details.build())
-        self.clear_details([self.modify_order_details])
+            self.group_modify_details.freeNotes = free_notes
+        call(self.group_modify_order_call, self.group_modify_details)
+        self.clear_details([self.group_modify_details])
 
     def reassign_order(self, recipient, partial_desk: bool = False):
         self.reassign_order_details.base.CopyFrom(self.base_request)
@@ -353,13 +354,15 @@ class BaseOrderBook(BaseWindow):
         call(self.disclose_flag_call, self.disclose_flag_details.build())
         self.clear_details([self.disclose_flag_details])
 
-    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None):
+    def add_to_basket(self, list_row_numbers: [] = None, basket_name=None, error_expected=False):
         if basket_name is not None:
             self.add_to_basket_details.set_basket_name(basket_name)
         if list_row_numbers is not None:
             self.add_to_basket_details.set_row_numbers(list_row_numbers)
-        call(self.add_to_basket_call, self.add_to_basket_details.build())
+        self.add_to_basket_details.set_error_expected(error_expected)
+        result = call(self.add_to_basket_call, self.add_to_basket_details.build())
         self.clear_details([self.add_to_basket_details])
+        return result
 
     def create_basket(self, orders_rows: [] = None, basket_name=None):
         """
@@ -429,11 +432,11 @@ class BaseOrderBook(BaseWindow):
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
         return result
 
-    def direct_moc_order_correct(self, qty, route):
-        call(self.direct_moc_request_correct_call, direct_moc_request_correct("UnmatchedQty", qty, route))
+    def direct_moc_order(self, qty, route, qty_type):
+        call(self.direct_moc_request_correct_call, direct_moc_request_correct(qty_type, qty, route))
 
-    def direct_loc_order_correct(self, qty, route):
-        call(self.direct_loc_request_correct_call, direct_loc_request_correct("UnmatchedQty", qty, route))
+    def direct_loc_order(self, qty, route, qty_type):
+        call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
@@ -552,12 +555,15 @@ class BaseOrderBook(BaseWindow):
                 ticket_details.set_agreed_price(agreed_price)
             return ticket_details.build()
 
-    def split_book(self, split_booking_params: list, row_numbers: list = None):
+    def split_book(self, split_booking_params: list = None, row_numbers: list = None, error_expected=False):
         if row_numbers:
             self.split_booking_details.set_rows_numbers(row_numbers)
-        self.split_booking_details.set_split_booking_parameter(split_booking_params)
-        call(self.split_booking_call, self.split_booking_details.build())
+        if split_booking_params:
+            self.split_booking_details.set_split_booking_parameter(split_booking_params)
+        self.split_booking_details.set_error_expected(error_expected)
+        result = call(self.split_booking_call, self.split_booking_details.build())
         self.clear_details([self.split_booking_details])
+        return result
 
     def direct_moc_extract_error_message(self, qty, route):
         self.extract_direct_values.extractionId = "DirectErrorMessageExtractionID"
@@ -585,8 +591,8 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extract_error_from_order_ticket])
         return result
 
-    def direct_order_correct(self, lookup: str, qty: str, price: str, qty_percent: str):
-        call(self.direct_order_correct_call, direct_order_request(lookup, qty, price, qty_percent))
+    def direct_order(self, qty: str, route: str, qty_type: str):
+        call(self.direct_order_correct_call, direct_order_request(qty_type, qty, route))
 
     def mass_book(self, positions_of_orders: list):
         self.mass_book_details.set_rows_numbers(positions_of_orders)

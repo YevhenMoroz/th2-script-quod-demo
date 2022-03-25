@@ -28,13 +28,13 @@ class QAP_2872(TestCase):
         self.dealer_intervention = None
         self.rest_message = RestApiModifyMarketMakingStatusMessages()
         self.rest_manager = RestApiManager
-        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.new_order_single = FixMessageNewOrderSingleFX()
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
         self.client = self.data_set.get_client_by_name("client_mm_5")
@@ -58,13 +58,15 @@ class QAP_2872(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1-3
+        # region step 1
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.client}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
-        # self.md_snapshot.remove_parameters(["MDTime"])
+        # endregion
+
+        # region step 2-3
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, priced=False)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

@@ -1,7 +1,7 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
     FxClientTiers, FxSymbols, DaysOfWeek, FxCurrencies, FxTenors, FxClientTiersID, FXAutoHedgers, FXAutoHedgersID, \
-    FXAlgoPolicies, FXAlgoPoliciesID, FxSecurityTypes, FxSettleTypes, FxSettleDates
+    FXAlgoPolicies, FXAlgoPoliciesID, FxSecurityTypes, FxSettleTypes, FxSettleDates, FxSide
 
 
 class FxDataSet(BaseDataSet):
@@ -25,4 +25,5 @@ class FxDataSet(BaseDataSet):
     security_types = FxSecurityTypes
     settle_types = FxSettleTypes
     settle_dates = FxSettleDates
+    side = FxSide
 

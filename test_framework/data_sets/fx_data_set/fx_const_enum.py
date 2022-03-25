@@ -247,3 +247,6 @@ class FXAlgoPoliciesID(Enum):
     algo_policy_id_2 = "200011"
     algo_policy_id_3 = "400024"
 
+class FxSide(Enum):
+    sell = "2"
+    buy = "1"

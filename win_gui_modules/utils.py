@@ -2,15 +2,25 @@ from stubs import Stubs
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ApplicationDetails, LoginDetails, CloseApplicationRequest
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 from th2_grpc_hand.rhbatch_pb2 import RhSessionID, RhTargetServer
+
+from test_framework.data_sets.constants import FrontEnd
 from .application_wrappers import OpenApplicationRequest, LoginDetailsRequest, FEDetailsRequest
 import logging
 from custom.basic_custom_actions import create_event
+from getpass import getuser as get_pc_name
 
+# TODO: delete this method once another one "set_session_id" be confirmed by all
+# def set_session_id():
+#     if Stubs.session_id is None:
+#         Stubs.session_id = Stubs.win_act.register(
+#             RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+#     return Stubs.session_id
 
-def set_session_id():
-    if Stubs.session_id is None:
-        Stubs.session_id = Stubs.win_act.register(
-            RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
+'''By default (if target_server_win is None) function automatically will find PC name of current machine'''
+def set_session_id(target_server_win: str = None):
+    pc_name = get_pc_name() if target_server_win is None else target_server_win
+    Stubs.session_id = Stubs.win_act.register(
+        RhTargetServer(target=pc_name)).sessionID
     return Stubs.session_id
 
 

@@ -1,107 +1,62 @@
 import logging
-from datetime import datetime
-
-from th2_grpc_hand import rhbatch_pb2
-
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe, switch_user
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.utils import get_base_request, close_fe, call
-from win_gui_modules.wrappers import verification, verify_ent
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.DataSet import Connectivity
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_1037(TestCase):
 
-def execute(report_id, session_id):
-    case_name = "QAP-1037"
-    seconds, nanos = timestamps()
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    order_type = "Limit"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    username2 = Stubs.custom_config['qf_trading_fe_user2']
-    password2 = Stubs.custom_config['qf_trading_fe_password2']
-    session_id2 = Stubs.win_act.register(
-        rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-    base_request = get_base_request(session_id, case_id)
-    base_request2 = get_base_request(session_id2, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    eq_wrappers.open_fe2(session_id2, report_id, work_dir, username2, password2)
-    # endregion
-    # region switch user 1
-    switch_user(session_id, case_id)
-    # endregion1
-    # region create CO
-    eq_wrappers.create_order(base_request, qty, client, lookup, order_type, 'Day', True, username, price)
-    # endregions
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.lookup = "VETO"
+        self.qty = '100'
+        self.price = '10'
+        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
 
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region send Fix Message
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region Accept CO order
+        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        # endregion
+        # region check order status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+        # region manual execution
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution()
+        # endregion
+        # region check exec status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region complete order
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).complete_order()
+        # endregion
+        # region check exec status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value})
+        # endregion
 
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_qty = ExtractionDetail("order_qty", "Qty")
-    order_price = ExtractionDetail("order_price", "Limit Price")
-    order_pts = ExtractionDetail("order_pts", "PostTradeStatus")
-    order_dfd = ExtractionDetail("order_dfd", "DoneForDay")
-    order_es = ExtractionDetail("order_es", "ExecSts")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_qty,
-                                                                                            order_price,
-                                                                                            order_pts,
-                                                                                            order_dfd,
-                                                                                            order_es
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Sent")
-                                                  ]))
 
-    # endregion
-    # region switch user 2
-    switch_user(session_id2,case_id)
-    # endregion
-    # region Accept CO
-    eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    # region ManualExecute CO
-    eq_wrappers.manual_execution(base_request2, qty, price)
-    # endregion
-    # region Complete Order
-    eq_wrappers.complete_order(base_request2)
-    # endregion
-    # region switch user
-    switch_user(session_id, case_id)
-    # endregion
-    # region Check values after complete
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Order Status", order_status.name, "Open"),
-                                                  verify_ent("Order Qty", order_qty.name, qty),
-                                                  verify_ent("Order Price", order_price.name, price),
-                                                  verify_ent("PostTradeStatus", order_pts.name, "ReadyToBook"),
-                                                  verify_ent("DoneForDay", order_dfd.name, "Yes"),
-                                                  verify_ent("ExecSts", order_es.name, "Filled")
-                                                  ]))
-    # endregion
-    # region Close FE
-    close_fe(case_id, session_id2)
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+

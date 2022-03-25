@@ -6,6 +6,7 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import GatewaySide, Status
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -15,8 +16,8 @@ from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import Fi
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
 
 qty = random_qty(1, 2, 7)
-gateway_side_sell = DataSet.GatewaySide.Sell
-status = DataSet.Status.Fill
+gateway_side_sell = GatewaySide.Sell
+status = Status.Fill
 
 
 class QAP_6593(TestCase):

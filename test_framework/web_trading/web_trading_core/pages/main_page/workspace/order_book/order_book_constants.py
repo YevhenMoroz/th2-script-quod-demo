@@ -17,7 +17,7 @@ class OrderBookConstants:
     ORDER_ORDER_ID_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_OrdID")]//span'
     ORDER_ACCOUNT_CODE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_ClientAccountGroupID")]//span'
     ORDER_SIDE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_Side")]//span'
-    ORDER_ORDER_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_OrdQty")]//span'
+    ORDER_ORDER_QTY_XPATH = '//*[@class="dockManagerContent ng-star-inserted"]//*[contains(@aria-describedby,"OrdQty")]//*[@class="ng-star-inserted"]'
     ORDER_PRICE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_Price")]//span'
     ORDER_AVG_PRICE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_AvgPrice")]//span'
     ORDER_LEAVES_QTY_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_LeavesQty")]//span'

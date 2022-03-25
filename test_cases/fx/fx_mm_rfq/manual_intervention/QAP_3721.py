@@ -9,6 +9,7 @@ from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
 from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
 from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 
 client = 'Argentina1'
 account = 'Argentina1_1'
@@ -58,3 +59,45 @@ def execute(report_id):
     except Exception:
         logging.error("Error execution", exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+
+
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+
+qty = '1000000'
+
+class QAP_3721(TestCase):
+    def __init__(self,report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        client = self.data_set.get_client_by_name('client_mm_2')
+        account = self.data_set.get_account_by_name('account_mm_2')
+        eur = self.data_set.get_currency_by_name('currency_eur')
+        gbp = self.data_set.get_currency_by_name('currency_gbp')
+        eur_gbp = self.data_set.get_symbol_by_name('symbol_3')
+        sttl_date_wk1 = self.data_set.get_settle_date_by_name('wk1')
+        sttl_date_wk2 = self.data_set.get_settle_date_by_name('wk2')
+        sttl_t_spo = self.data_set.get_settle_type_by_name('spot')
+        sttl_t_wk1 = self.data_set.get_settle_type_by_name('wk1')
+        sec_t_swap = self.data_set.get_security_type_by_name('fx_swap')
+        sec_t_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        sec_t_spo = self.data_set.get_security_type_by_name('fx_spot')
+        side = self.data_set.get_side_by_name('buy')
+        leg1_side = self.data_set.get_side_by_name('sell')
+        leg2_side = self.data_set.get_side_by_name('buy')
+
+        # region Step 1
+        # endregion
+
+        # region Step 2
+        # endregion
+
+        # region Step 3
+        # endregion
+
+        # region Step 4
+        # endregion

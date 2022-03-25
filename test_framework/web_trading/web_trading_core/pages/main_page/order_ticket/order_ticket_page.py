@@ -1,7 +1,7 @@
 import time
 
-from test_cases.web_admin.web_admin_core.pages.common_page import CommonPage
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.common_page import CommonPage
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.order_ticket.order_ticket_constants import OrderTicketConstants
 
 
@@ -11,10 +11,14 @@ class OrderTicketPage(CommonPage):
 
 
     def set_symbol(self, symbol):
-        self.find_by_xpath(OrderTicketConstants.SEARCH_SYMBOL_FIELD_XPATH).click()
+        self.set_text_by_xpath(OrderTicketConstants.SEARCH_SYMBOL_FIELD_XPATH, symbol)
+        # time.sleep(2)
+        # self.find_by_xpath(OrderTicketConstants.SEARCH_SYMBOL_FIELD_XPATH).click()
         time.sleep(2)
         self.set_text_by_xpath(OrderTicketConstants.SEARCH_SYMBOL_FIELD_XPATH, symbol)
-        self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol))
+        time.sleep(4)
+        self.find_by_xpath(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol)).click()
+        # self.select_value_from_dropdown_list()
 
     def set_account(self, account):
         self.find_by_xpath(OrderTicketConstants.ACCOUNTS_FIELD_XPATH).click()
