@@ -62,6 +62,7 @@ class QAP_6931(TestCase):
 
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
         self.execution_report.remove_parameters(["Price", "ExecRestatementReason", "SettlType"])
+        self.execution_report.add_tag({"Account": self.account, "OrdRejReason": "99"})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 

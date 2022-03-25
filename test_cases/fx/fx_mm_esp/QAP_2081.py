@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -15,7 +14,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
-class QAP_2078(TestCase):
+class QAP_2081(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
         super().__init__(report_id, session_id, data_set)
@@ -28,26 +27,14 @@ class QAP_2078(TestCase):
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
-        self.status_fill = Status.Fill
         self.account = self.data_set.get_client_by_name("client_mm_1")
-        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.security_type = self.data_set.get_security_type_by_name("fx_fwd")
-        self.settle_date = self.data_set.get_settle_date_by_name("wk1")
-        self.settle_type = self.data_set.get_settle_type_by_name("wk1")
-        self.qty = "123532"
-        self.instrument = {
-            'Symbol': self.eur_usd,
-            'SecurityType': self.security_type,
-            'Product': '4', }
-        self.no_related_symbols = [{
-            'Instrument': self.instrument,
-            'SettlType': self.settle_type}]
+        self.status_partialfill = Status.PartialFill
+        self.price = "1.18999"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
-        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
 
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
@@ -58,18 +45,14 @@ class QAP_2078(TestCase):
 
         # region step 2
         self.new_order_single.set_default().change_parameters(
-            {"Account": self.account, "Instrument": self.instrument,
-             "SettlDate": self.settle_date, "SettlType": self.settle_type, "TimeInForce": "3"})
+            {"Account": self.account, "TimeInForce": "3", "Price": self.price, "OrderQty": "55000000"})
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
-        # endregion
 
-        # region step 3-4
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill).add_tag(
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_partialfill).add_tag(
             {'LastMkt': '*'})
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod,
+                                            key_parameters=['ExecType'])
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
