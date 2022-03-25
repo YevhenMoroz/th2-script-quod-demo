@@ -3,7 +3,7 @@ from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 class RestApiQuotingSessionMessages(RestApiMessages):
 
-    def set_default_params_qsespth2(self):
+    def set_default_params_esp(self):
         self.parameters = {
             "MDUpdateType": "FUL",
             "ackOrder": "true",
@@ -46,7 +46,7 @@ class RestApiQuotingSessionMessages(RestApiMessages):
         self.message_type = 'ModifyQuotingSession'
         return self
 
-    def set_default_params_qsrfqth2(self):
+    def set_default_params_rfq(self):
         self.parameters = {
             "MDUpdateType": "FUL",
             "ackOrder": "false",
