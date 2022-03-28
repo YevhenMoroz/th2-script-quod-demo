@@ -10,6 +10,7 @@ from test_cases.web_admin.web_admin_test_cases.site.QAP_5578 import QAP_5578
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5579 import QAP_5579
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5580 import QAP_5580
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5583 import QAP_5583
+from test_cases.web_admin.web_admin_test_cases.site.QAP_6346 import QAP_6346
 
 
 class RunSite:
@@ -33,6 +34,8 @@ class RunSite:
             QAP_5580(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5583(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6346(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Site ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

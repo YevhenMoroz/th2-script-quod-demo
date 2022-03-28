@@ -90,7 +90,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     def prepare_swap_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
         no_legs = [
-            dict(LegSide=new_order_single.get_parameter("NoLegs")[0]["LegSide"],
+            dict(LegSide="2" if new_order_single.get_parameter("Side") == "1" else "1",
                  LegOrderQty=new_order_single.get_parameter("NoLegs")[0]["LegOrderQty"],
                  LegSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
                  LegSettlType=new_order_single.get_parameter("NoLegs")[0]["LegSettlType"],
@@ -99,16 +99,14 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"] +
-                               "-SPO-QUODFX" if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0" else
-                     new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
                  ),
-            dict(LegSide=new_order_single.get_parameter("NoLegs")[1]["LegSide"],
+            dict(LegSide="1" if new_order_single.get_parameter("Side") == "1" else "2",
                  LegOrderQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
                  LegSettlDate=new_order_single.get_parameter("NoLegs")[1]["LegSettlDate"],
                  LegSettlType=new_order_single.get_parameter("NoLegs")[1]["LegSettlType"],
@@ -117,9 +115,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"] +
-                               "-SPO-QUODFX" if new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0" else
-                     new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
                      LegSecurityExchange="XQFX",
@@ -140,6 +136,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             SpotSettlDate=spo(),
             Price="*",
+            LastMkt="*",
             LastSwapPoints="*",
             OrderCapacity="A",
             OrdStatus='2',

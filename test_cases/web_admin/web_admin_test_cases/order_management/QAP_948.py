@@ -33,20 +33,21 @@ class QAP_948(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_order_management_rules_page()
         page = OrderManagementRulesPage(self.web_driver_container)
         values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
         conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
         default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
         wizard = OrderManagementRulesWizard(self.web_driver_container)
+
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(2)
+        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
+        time.sleep(2)
         page.click_on_new_button()
         time.sleep(2)
         values_sub_wizard.set_name(self.name)
         time.sleep(2)
-        values_sub_wizard.set_venue(self.venue)
-        time.sleep(1)
         conditions_sub_wizard.click_on_plus()
         time.sleep(1)
         conditions_sub_wizard.set_name(self.condition_name)
@@ -69,7 +70,19 @@ class QAP_948(CommonTestCase):
         default_result_sub_wizard.set_percentage("100")
         default_result_sub_wizard.click_on_checkmark()
         time.sleep(1)
+        values_sub_wizard.set_venue(self.venue)
+        time.sleep(1)
         wizard.click_on_save_changes()
+        time.sleep(2)
+
+        if wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
+            venues = values_sub_wizard.get_all_venues_from_drop_down()
+            while wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
+                values_sub_wizard.set_venue(venues[0])
+                venues.remove(venues[0])
+                time.sleep(1)
+                wizard.click_on_save_changes()
+                time.sleep(2)
 
     def test_context(self):
 

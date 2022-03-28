@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
     OrderManagementRulesConstants
@@ -74,3 +76,9 @@ class OrderManagementRulesValuesSubWizard(CommonPage):
 
     def get_strategy_name(self):
         return self.get_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_STRATEGY_NAME_XPATH)
+
+    def get_all_venues_from_drop_down(self):
+        self.set_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_VENUE_XPATH, "")
+        time.sleep(2)
+        items = self.get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
+        return items

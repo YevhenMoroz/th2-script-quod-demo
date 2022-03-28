@@ -10,7 +10,9 @@ from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import Web
     WebAdminRouteAccountName, WebAdminRoute, WebAdminClearingAccountType, WebAdminDiscloseExec, WebAdminAccountIdSource, \
     WebAdminDefaultRoute, WebAdminDefaultExecutionStrategy, WebAdminTradConfirmGeneration, \
     WebAdminTradConfirmPreference, WebAdminNetGrossIndType, WebAdminRecipientTypes, WebAdminDefaultTif, \
-    WebAdminStrategyType, WebAdminExecPolicy
+    WebAdminStrategyType, WebAdminExecPolicy, WebAdminCommissionAmountType, WebAdminCommissionProfile, \
+    WebAdminSettlLocation, WebAdminCountryCode, WebAdminClientGroup, WebAdminInstrument, WebAdminInstrumentGroup, \
+    WebAdminCommAlgorithm, WebAdminCommType, WebAdminTenor, WebAdminCoreSpotPriceStrategy, WebAdminPartyRole
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -43,7 +45,7 @@ class WebAdminDataSet(BaseDataSet):
     trading_phase_profile = WebAdminTradingPhaseProfile
     tick_size_xaxis_type = WebAdminTickSizeXaxisType
     instr_symbol = WebAdminInstrSymbol
-    symbol = WebAdminSymbol
+    symbols = WebAdminSymbol
     currency = WebAdminCurrency
     instr_type = WebAdminInstrType
     preferred_venue = WebAdminPreferredVenue
@@ -67,3 +69,15 @@ class WebAdminDataSet(BaseDataSet):
     default_tif = WebAdminDefaultTif
     strategy_type = WebAdminStrategyType
     exec_policy = WebAdminExecPolicy
+    commission_amount_type = WebAdminCommissionAmountType
+    commission_profile = WebAdminCommissionProfile
+    settl_location = WebAdminSettlLocation
+    country_code = WebAdminCountryCode
+    client_group = WebAdminClientGroup
+    instrument = WebAdminInstrument
+    instrument_group = WebAdminInstrumentGroup
+    comm_algorithm = WebAdminCommAlgorithm
+    comm_type = WebAdminCommType
+    tenors = WebAdminTenor
+    core_spot_price_strategy = WebAdminCoreSpotPriceStrategy
+    party_role = WebAdminPartyRole

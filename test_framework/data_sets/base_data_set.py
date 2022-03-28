@@ -48,7 +48,6 @@ class BaseDataSet:
     location = None
     institution = None
     zone = None
-    client = None
     client_type = None
     email = None
     perm_role = None
@@ -64,17 +63,14 @@ class BaseDataSet:
     trading_phase_profile = None
     tick_size_xaxis_type = None
     instr_symbol = None
-    symbol = None
     instr_type = None
     preferred_venue = None
     listing_group = None
-    settle_type = None
     feed_source = None
     negative_route = None
     positive_route = None
     client_id_source = None
     route_account_name = None
-    route = None
     clearing_account_type = None
     disclose_exec = None
     account_id_source = None
@@ -87,9 +83,24 @@ class BaseDataSet:
     default_tif = None
     strategy_type = None
     exec_policy = None
-
+    commission_amount_type = None
+    settl_location = None
+    country_code = None
+    client_group = None
+    instrument = None
+    instrument_group = None
+    client_list = None
+    comm_algorithm = None
+    comm_type = None
+    core_spot_price_strategy = None
+    party_role = None
     # endregion
 
+    # region fields added by Web Trading team
+    order_type = None
+    time_in_force = None
+
+    # endregion
     def get_instruments(self):
         if self.fix_instruments:
             return self.fix_instruments.__members__
@@ -374,7 +385,7 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_admin_command(self, name: str):
+    def get_system_commands(self, name: str):
         if hasattr(self.admin_command, name):
             return getattr(self.admin_command, name).value
         return ValueError(f"{self.admin_command} not found!")
@@ -579,4 +590,71 @@ class BaseDataSet:
             return getattr(self.exec_policy, name).value
         return ValueError(f"{self.exec_policy,} not found!")
 
+    def get_commission_amount_type(self, name: str):
+        if hasattr(self.commission_amount_type, name):
+            return getattr(self.commission_amount_type, name).value
+        return ValueError(f"{self.commission_amount_type,} not found!")
+
+    def get_settl_location(self, name: str):
+        if hasattr(self.settl_location, name):
+            return getattr(self.settl_location, name).value
+        return ValueError(f"{self.settl_location,} not found!")
+
+    def get_country_code(self, name: str):
+        if hasattr(self.country_code, name):
+            return getattr(self.country_code, name).value
+        return ValueError(f"{self.country_code,} not found!")
+
+    def get_client_group(self, name: str):
+        if hasattr(self.client_group, name):
+            return getattr(self.client_group, name).value
+        return ValueError(f"{self.client_group,} not found!")
+
+    def get_instrument(self, name: str):
+        if hasattr(self.instrument, name):
+            return getattr(self.instrument, name).value
+        return ValueError(f"{self.instrument,} not found!")
+
+    def get_instrument_group(self, name: str):
+        if hasattr(self.instrument_group, name):
+            return getattr(self.instrument_group, name).value
+        return ValueError(f"{self.instrument_group,} not found!")
+
+    def get_client_list(self, name: str):
+        if hasattr(self.client_list, name):
+            return getattr(self.client_list, name).value
+        return ValueError(f"{self.client_list,} not found!")
+
+    def get_comm_algorithm(self, name: str):
+        if hasattr(self.comm_algorithm, name):
+            return getattr(self.comm_algorithm, name).value
+        return ValueError(f"{self.comm_algorithm,} not found!")
+
+    def get_comm_type(self, name: str):
+        if hasattr(self.comm_type, name):
+            return getattr(self.comm_type, name).value
+        return ValueError(f"{self.comm_type,} not found!")
+
+    def get_core_spot_price_strategy(self, name: str):
+        if hasattr(self.core_spot_price_strategy, name):
+            return getattr(self.core_spot_price_strategy, name).value
+        return ValueError(f"{self.core_spot_price_strategy,} not found!")
+
+    def get_party_role(self, name: str):
+        if hasattr(self.party_role, name):
+            return getattr(self.party_role, name).value
+        return ValueError(f"{self.party_role,} not found!")
+
+    # endregion
+
+    # region WebTrading getters
+    def get_order_type(self, name: str):
+        if hasattr(self.order_type, name):
+            return getattr(self.order_type, name).value
+        return ValueError(f"{self.order_type,} not found!")
+
+    def get_time_in_force(self, name: str):
+        if hasattr(self.time_in_force, name):
+            return getattr(self.time_in_force, name).value
+        return ValueError(f"{self.time_in_force,} not found!")
     # endregion

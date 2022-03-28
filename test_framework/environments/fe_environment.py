@@ -7,7 +7,8 @@ class FEEnvironment(BaseEnvironment):
     environment_instances = {}
 
     def __init__(self, environment_type: str = None, users: list = None, passwords: list = None, folder: str = None,
-                 desks: list = None):
+                 desks: list = None, target_server_win: str = None, main_window: str = None, login_window: str = None,
+                 exe_name: str = None):
         self.environment_type = environment_type
         self.user_1 = users[0]
         self.user_2 = users[1] if len(users) > 1 else None
@@ -18,6 +19,10 @@ class FEEnvironment(BaseEnvironment):
         self.folder = folder
         self.desk_1 = desks[0]
         self.desk_2 = desks[1] if len(desks) > 1 else None
+        self.target_server_win = target_server_win
+        self.main_window = main_window
+        self.login_window = login_window
+        self.exe_name = exe_name
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -28,7 +33,11 @@ class FEEnvironment(BaseEnvironment):
                     users=FrontEnd.USERS_317.value,
                     passwords=FrontEnd.PASSWORDS_317.value,
                     folder=FrontEnd.FOLDER_317.value,
-                    desks=FrontEnd.DESKS_317.value
+                    desks=FrontEnd.DESKS_317.value,
+                    target_server_win=FrontEnd.TARGET_SERVER_WIN.value,
+                    main_window=FrontEnd.MAIN_WIN_NAME_317.value,
+                    login_window=FrontEnd.LOGIN_WIN_NAME_317.value,
+                    exe_name=FrontEnd.EXE_NAME.value
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]

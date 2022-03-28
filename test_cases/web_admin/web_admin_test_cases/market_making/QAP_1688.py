@@ -29,7 +29,7 @@ class QAP_1688(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
-        self.symbol = "AUD/CAD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

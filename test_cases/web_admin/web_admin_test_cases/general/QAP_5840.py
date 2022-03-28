@@ -33,17 +33,17 @@ class QAP_5840(CommonTestCase):
     def step_check_only_click_at_full_screen_btn(self, page):
         common_page = CommonPage(self.web_driver_container)
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page became Full Screen", False, common_page.is_header_displayed())
         except Exception as e:
             self.verify(f"{page} page remains Normal screen", True, e.__class__.__name__)
 
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_exit_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page back to Normal screen", True, common_page.is_header_displayed())
         except Exception as e:
             self.verify(f"{page} page remains Full Screen", True, e.__class__.__name__)
@@ -59,15 +59,15 @@ class QAP_5840(CommonTestCase):
         locations_wizard = LocationsWizard(self.web_driver_container)
         desks_wizard = DesksWizard(self.web_driver_container)
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page became Full Screen", False, common_page.is_header_displayed())
         except Exception as e:
             self.verify(f"{page} page remains Normal screen", True, e.__class__.__name__)
 
         try:
-            time.sleep(2)
+            time.sleep(1)
             if page == "Institutions":
                 institution_page.click_on_new()
             elif page == "Zones":
@@ -77,13 +77,13 @@ class QAP_5840(CommonTestCase):
             elif page == "Desks":
                 desks_page.click_on_new()
 
-            time.sleep(3)
+            time.sleep(1)
             self.verify(f"{page} page back to Normal screen after click on [NEW] btn", True,
                         common_page.is_header_displayed())
 
             if page == "Institutions":
                 institution_wizard.click_on_close()
-                time.sleep(2)
+                time.sleep(1)
                 institution_wizard.click_on_no_button()
                 time.sleep(2)
             elif page == "Zones":
@@ -94,6 +94,7 @@ class QAP_5840(CommonTestCase):
                 time.sleep(2)
             elif page == "Desks":
                 desks_wizard.click_on_close_wizard()
+                time.sleep(2)
 
         except Exception as e:
             self.verify(f"{page} page remains Full Screen after click on [NEW] btn", True, e.__class__.__name__)
@@ -109,33 +110,30 @@ class QAP_5840(CommonTestCase):
         locations_wizard = LocationsWizard(self.web_driver_container)
         desks_wizard = DesksWizard(self.web_driver_container)
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page became Full Screen", False, common_page.is_header_displayed())
-        except Exception as e:
-            self.verify(f"{page} page remains Normal screen", True, e.__class__.__name__)
 
-        try:
-            time.sleep(2)
+            time.sleep(1)
             if page == "Institutions":
                 institution_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 institution_page.click_on_edit()
                 time.sleep(2)
             elif page == "Zones":
                 zones_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 zones_page.click_on_edit()
                 time.sleep(2)
             elif page == "Locations":
                 locations_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 locations_page.click_on_edit()
                 time.sleep(2)
             elif page == "Desks":
                 desks_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 desks_page.click_on_edit()
                 time.sleep(2)
 
@@ -171,33 +169,33 @@ class QAP_5840(CommonTestCase):
         desks_wizard = DesksWizard(self.web_driver_container)
 
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page became Full Screen", False, common_page.is_header_displayed())
         except Exception as e:
             self.verify(f"{page} page remains Normal screen", True, e.__class__.__name__)
 
         try:
-            time.sleep(2)
+            time.sleep(1)
             if page == "Institutions":
                 institution_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 institution_page.click_on_clone()
                 time.sleep(2)
             elif page == "Zones":
                 zones_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 zones_page.click_on_clone()
                 time.sleep(2)
             elif page == "Locations":
                 locations_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 locations_page.click_on_clone()
                 time.sleep(2)
             elif page == "Desks":
                 desks_page.click_on_more_actions()
-                time.sleep(2)
+                time.sleep(1)
                 desks_page.click_on_clone()
                 time.sleep(2)
 
@@ -205,19 +203,25 @@ class QAP_5840(CommonTestCase):
                         common_page.is_header_displayed())
 
             if page == "Institutions":
-                time.sleep(2)
                 institution_wizard.click_on_close()
-                time.sleep(3)
+                time.sleep(1)
                 institution_wizard.click_on_no_button()
                 time.sleep(2)
             elif page == "Zones":
                 zones_wizard.click_on_close()
+                time.sleep(1)
+                zones_wizard.click_on_no_button()
                 time.sleep(2)
             elif page == "Locations":
                 locations_wizard.click_on_close()
+                time.sleep(1)
+                locations_wizard.click_on_no_button()
                 time.sleep(2)
             elif page == "Desks":
                 desks_wizard.click_on_close_wizard()
+                time.sleep(1)
+                desks_wizard.click_on_no_button()
+                time.sleep(2)
 
         except Exception as e:
             self.verify(f"{page} page remains Full Screen after click on [CLONE] btn", True, e.__class__.__name__)
@@ -225,15 +229,15 @@ class QAP_5840(CommonTestCase):
     def step_check_full_screen_after_click_esc_btn(self, page):
         common_page = CommonPage(self.web_driver_container)
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_full_screen_button()
-            time.sleep(2)
+            time.sleep(1)
             self.verify(f"{page} page became Full Screen", False, common_page.is_header_displayed())
         except Exception as e:
             self.verify(f"{page} page remains Normal screen", True, e.__class__.__name__)
 
         try:
-            time.sleep(2)
+            time.sleep(1)
             common_page.click_on_esc_keyboard_button()
             time.sleep(2)
             self.verify(f"{page} page back to Normal screen after click on Esc", True,
@@ -242,39 +246,36 @@ class QAP_5840(CommonTestCase):
             self.verify(f"{page} page remains Full Screen after click on Esc", True, e.__class__.__name__)
 
     def test_context(self):
+        side_menu = SideMenu(self.web_driver_container)
         try:
             self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
             side_menu.open_institutions_page()
-            time.sleep(2)
+            time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Institutions")
             self.step_check_full_screen_after_click_on_new_btn("Institutions")
             self.step_check_full_screen_after_edit_btn("Institutions")
             self.step_check_full_screen_after_clone_btn("Institutions")
             self.step_check_full_screen_after_click_esc_btn("Institutions")
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_zones_page()
-            time.sleep(2)
+            side_menu.click_on_zones_when_site_tab_is_open()
+            time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Zones")
             self.step_check_full_screen_after_click_on_new_btn("Zones")
             self.step_check_full_screen_after_edit_btn("Zones")
             self.step_check_full_screen_after_clone_btn("Zones")
             self.step_check_full_screen_after_click_esc_btn("Zones")
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_locations_page()
-            time.sleep(2)
+            side_menu.click_on_locations_when_site_tab_is_open()
+            time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Locations")
             self.step_check_full_screen_after_click_on_new_btn("Locations")
             self.step_check_full_screen_after_edit_btn("Locations")
             self.step_check_full_screen_after_clone_btn("Locations")
             self.step_check_full_screen_after_click_esc_btn("Locations")
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_desks_page()
-            time.sleep(2)
+            side_menu.click_on_desks_when_site_tab_is_open()
+            time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Desks")
             self.step_check_full_screen_after_click_on_new_btn("Desks")
             self.step_check_full_screen_after_edit_btn("Desks")

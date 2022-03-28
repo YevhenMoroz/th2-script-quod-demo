@@ -460,7 +460,7 @@ class ExtractionPanelDetails:
 class AllocationBlockExtractionDetails:
     def __init__(self, base: EmptyRequest = None, filter_middle_office_grid: dict = None,
                  filter_allocations_grid: dict = None,
-                 panels: list = None):
+                 panels: list = None, block_panels: list = None):
         if base is not None:
             self._request = middle_office_pb2.AllocationBlockExtractionDetails(base=base)
         else:
@@ -475,19 +475,29 @@ class AllocationBlockExtractionDetails:
         if panels is not None:
             for panel in panels:
                 self._request.panels.append(panel)
+        if block_panels is not None:
+            self._request.panels.extend(block_panels)
 
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
     def set_filter_middle_office_grid(self, filter_middle_office: dict):
-        self._request.filterMiddleOfficeGrid.update(filter_middle_office)
+        if filter_middle_office is not None:
+            self._request.filterMiddleOfficeGrid.update(filter_middle_office)
 
     def set_filter_allocations_grid(self, filter_allocations_grid: dict):
-        self._request.filterAllocationsGrid.update(filter_allocations_grid)
+        if filter_allocations_grid is not None:
+            self._request.filterAllocationsGrid.update(filter_allocations_grid)
 
     def set_panels(self, panels: list):
-        for panel in panels:
-            self._request.panels.append(panel)
+        if panels is not None:
+            for panel in panels:
+                self._request.panels.append(panel)
+
+    def set_block_panels(self, panels: list):
+        if panels is not None:
+            for panel in panels:
+                self._request.blockPanels.append(panel)
 
     def build(self):
         return self._request

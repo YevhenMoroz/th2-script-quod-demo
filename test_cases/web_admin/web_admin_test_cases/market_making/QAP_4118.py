@@ -25,7 +25,7 @@ class QAP_4118(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.position_book = "QUODAH"
-        self.symbol = "AUD/TRY"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_3")
         self.hedging_strategy = "PositionLimits"
 
     def precondition(self):

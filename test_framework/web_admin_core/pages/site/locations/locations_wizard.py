@@ -37,3 +37,6 @@ class LocationsWizard(CommonPage):
 
     def click_on_ok_button(self):
         self.find_by_xpath(LocationsConstants.OK_BUTTON_XPATH).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(LocationsConstants.NO_BUTTON_XPATH).click()
