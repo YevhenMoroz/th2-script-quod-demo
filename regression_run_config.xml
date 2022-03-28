@@ -107,9 +107,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -121,9 +121,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -135,9 +135,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -149,9 +149,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -163,9 +163,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -177,9 +177,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -191,9 +191,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -205,9 +205,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -219,9 +219,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod314_luna_web_admin</web_admin_environment>
-                        </web_admin_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
             </components>
