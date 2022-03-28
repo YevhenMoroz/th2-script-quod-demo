@@ -1,6 +1,9 @@
+from test_framework.data_sets.base_data_set import BaseDataSet
+
+
 class RestApiMessages:
 
-    def __init__(self, message_type, data_set=None):
+    def __init__(self, message_type=None, data_set: BaseDataSet = None):
         self.parameters = dict()
         self.message_type = message_type
         self.data_set = data_set
