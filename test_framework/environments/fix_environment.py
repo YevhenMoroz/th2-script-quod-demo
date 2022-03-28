@@ -9,7 +9,7 @@ class FixEnvironment(BaseEnvironment):
     def __init__(self, environment_type: str = None, sell_side: str = None, sell_side2: str = None,
                  buy_side: str = None, buy_side2: str = None, feed_handler: str = None, drop_copy: str = None,
                  sell_side_rfq: str = None, sell_side_esp: str = None, buy_side_esp: str = None,
-                 feed_handler2: str = None):
+                 feed_handler2: str = None, web_admin: str = None):
         self.environment_type = environment_type
         self.sell_side = sell_side
         self.sell_side2 = sell_side2
@@ -21,6 +21,7 @@ class FixEnvironment(BaseEnvironment):
         self.sell_side_esp = sell_side_esp
         self.buy_side_esp = buy_side_esp
         self.feed_handler2 = feed_handler2
+        self.web_admin = web_admin
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -56,6 +57,7 @@ class FixEnvironment(BaseEnvironment):
                     feed_handler=Connectivity.Luna_314_Feed_Handler.value,
                     feed_handler2=Connectivity.Luna_314_Feed_Handler_Q.value,
                     drop_copy=Connectivity.Luna_314_dc.value,
+                    web_admin=Connectivity.Luna_314_wa.value
 
                 )
                 FixEnvironment.environment_instances.update(
