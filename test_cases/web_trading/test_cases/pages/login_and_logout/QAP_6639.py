@@ -15,8 +15,8 @@ class QAP_6639(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         # User must be disabled in WebAdmin
-        self.login = "user_desk"
-        self.password = "user_desk"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

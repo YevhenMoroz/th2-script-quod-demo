@@ -18,13 +18,13 @@ from custom import basic_custom_actions as bca
 
 class RunLoginAndLogout:
     def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WebTradingLoginAndLogout", root_report_id)
+        self.second_lvl_id = bca.create_event("WebTrading_Login_And_Logout", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
         try:
             start_time = time.monotonic()
-            configuration = ComponentConfiguration("WebTradingLoginAndLogout")
+            configuration = ComponentConfiguration("WebTrading_Login_And_Logout")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_trading_environment()[0].web_browser,
                 configuration.environment.get_list_web_trading_environment()[0].site_url)

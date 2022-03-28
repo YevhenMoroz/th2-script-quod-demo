@@ -29,7 +29,7 @@ class QAP_5607(CommonTestCase):
         self.order_velocity_limit_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.moving_time_window = '25'
         self.max_order_actions = '3'
-        self.client = 'CLIENT1'
+        self.client = self.data_set.get_client("client_1")
         self.side = 'Buy'
 
     def precondition(self):

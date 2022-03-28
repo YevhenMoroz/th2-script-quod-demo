@@ -49,6 +49,7 @@ class QAP_6691(TestCase):
         # endregion
         # region Step 2
         self.md_snapshot.set_params_for_md_response(self.md_request, self.bands)
+        self.md_snapshot.remove_parameters(["OrigMDTime", "OrigMDArrivalTime","OrigClientVenueID"])
         time.sleep(3)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

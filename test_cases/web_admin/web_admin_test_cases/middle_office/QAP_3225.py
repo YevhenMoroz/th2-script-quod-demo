@@ -26,7 +26,7 @@ class QAP_3225(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.settl_location = 'CASH'
+        self.settl_location = self.data_set.get_settl_location("settl_location_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -23,11 +23,11 @@ alias_gtw = "fix-sell-esp-m-314luna-stand"
 no_related_symbol = [
     {
         'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT',
+            'Symbol': 'USD/OMR',
+            'SecurityType': 'FXFWD',
             'Product': '4',
         },
-        'SettlType': '0',
+        'SettlType': '2',
     }
 ]
 client = "CLIENT1"

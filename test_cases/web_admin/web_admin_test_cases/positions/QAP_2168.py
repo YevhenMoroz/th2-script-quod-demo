@@ -26,8 +26,8 @@ class QAP_2168(CommonTestCase):
         iteration_value = now.strftime("%d/%m/%Y %H:%M:%S")
         self.id = "test 2168: " + str(iteration_value)
         self.ext_id_client = "11: " + str(iteration_value)
-        self.client = "CLIENT1"
-        self.client_id_source = "BIC"
+        self.client = self.data_set.get_client("client_1")
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

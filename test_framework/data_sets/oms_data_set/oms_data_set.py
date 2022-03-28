@@ -30,6 +30,6 @@ class OmsDataSet(BaseDataSet):
     fee = OMSFee
     commission = OMSCommission
     fee_order_scope = OMSFeeOrderScope
-    counterparts= OmsCounterparts
+    counterparts = OmsCounterparts
     qty_types = OmsQtyTypes
     pset = OMSPset
