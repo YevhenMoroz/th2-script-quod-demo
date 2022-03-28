@@ -12,11 +12,16 @@ from test_cases.fx.fx_mm_esp.QAP_6145 import QAP_6145
 from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_mm_rfq import QAP_3494
 from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
+from test_cases.fx.fx_mm_rfq.QAP_7125 import QAP_7125
+from test_cases.fx.fx_mm_rfq.QAP_7126 import QAP_7126
+from test_cases.fx.fx_mm_rfq.QAP_7129 import QAP_7129
+from test_cases.fx.fx_mm_rfq.QAP_7130 import QAP_7130
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_taker_esp import QAP_5600, QAP_5537, QAP_5564, QAP_5589, QAP_5591, QAP_5598, QAP_5635
 from test_cases.fx.fx_taker_esp.QAP_3636 import QAP_3636
 from test_cases.fx.fx_taker_esp.QAP_3801 import QAP_3801
 from test_cases.fx.fx_taker_esp.QAP_3802 import QAP_3802
+from test_cases.fx.fx_taker_esp.QAP_6593 import QAP_6593
 from test_cases.fx.fx_taker_rfq import QAP_683
 from test_cases.fx.fx_taker_rfq.QAP_568 import QAP_568
 from test_cases.fx.send_md import QAP_MD
@@ -62,8 +67,9 @@ def test_run():
         # Testing(report_id, session_id, configuration.data_set).execute()
 
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # QAP_3494.execute(report_id)
-        QAP_6149(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        QAP_7129(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
 
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
