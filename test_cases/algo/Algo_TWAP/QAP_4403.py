@@ -99,7 +99,7 @@ def send_incremental(symbol: str, case_id: str, market_data):
 
 def execute(report_id):
     try:
-        now = datetime.today() - timedelta(hours=2)
+        now = datetime.today() - timedelta(hours=3)
 
 
         rule_list = rule_creation();
