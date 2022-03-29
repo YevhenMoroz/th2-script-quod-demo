@@ -20,33 +20,29 @@ class Connectivity(Enum):
     Luna_314_wa = "rest_wa314luna"
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
+    Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
+    Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
+    Columbia_310_Buy_Side = 'fix-bs-310-columbia'
+
+
 
 class FrontEnd(Enum):
     # 317 site
-    USER_317 = ""
-    USER_317_1 = ""
-    USER_317_2 = ""
-    PASSWORD_317 = ""
-    PASSWORD_317_1 = ""
-    PASSWORD_317_2 = ""
+    USERS_317 = []
+    PASSWORDS_317 = []
     FOLDER_317 = ""
-    DESK_317 = ""
+    DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WEB = "web"
-    TARGET_SERVER_WIN_YEHOR_SAMOILENKO = "quod_02q"
+    TARGET_SERVER_WIN = None  # by default we can set up here value of Jenkins machine
     # region quod314
-    USER_314 = ""
-    USER_314_1 = ""
-    USER_314_2 = ""
-    PASSWORD_314 = ""
-    PASSWORD_314_1 = ""
-    PASSWORD_314_2 = ""
+    USERS_314 = ["ostronov"]
+    PASSWORDS_314 = ["ostronov"]
     FOLDER_314 = ""
-    DESK_314 = ""
+    DESKS_314 = ["Aspect"]
     MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
     LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
     # common values
@@ -90,6 +86,40 @@ class Status(Enum):
     Fill = "Fill"
     PartialFill = "PartialFill"
     Reject = "Reject"
-    CancelRequest = "CancelReplace"
+    CancelReplace = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+
+class Reference(Enum):
+    LastTradePrice = 'LTP'
+    Primary = 'PRM'
+    Market = 'MKT'
+    Mid = 'MID'
+    Open = 'OPN'
+    Close = 'CLO'
+    DayHight = 'DHI'
+    DayLow = 'DLO'
+    Manual = 'MAN'
+    Limit = 'LMT'
+
+class TimeInForce(Enum):
+    Day = 0
+    GoodTillCancel = 1
+    AtTheOpening = 2
+    ImmediateOrCancel = 3
+    FillOrKill = 4
+    GoodTillCrossing = 5
+    GoodTillDate = 6
+    AtTheClose = 7
+    ValidForAuction = 100
+
+class WebAdminURL(Enum):
+    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+
+
+class WebBrowser(Enum):
+    chrome = "chrome"
+    firefox = "firefox"
+
+class WebTradingURL(Enum):
+    luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"

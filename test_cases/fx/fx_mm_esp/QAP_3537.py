@@ -7,7 +7,7 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_framework.data_sets.constants import DirectionEnum
 
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -29,7 +29,7 @@ class QAP_3537(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
-        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
@@ -47,7 +47,7 @@ class QAP_3537(TestCase):
                 'Symbol': self.data_set.get_symbol_by_name('symbol_1'),
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
-            'SettlType': self.data_set.get_settle_type_by_name('fx_spot'), }]
+            'SettlType': self.data_set.get_settle_type_by_name('fx_spot')}]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
         # endregion
         # region Step 1

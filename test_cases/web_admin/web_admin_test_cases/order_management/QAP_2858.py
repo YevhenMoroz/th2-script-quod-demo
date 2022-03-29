@@ -3,28 +3,31 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.order_management.execution_strategies.execution_strategies_lit_passive_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_lit_passive_sub_wizard import \
     ExecutionStrategiesLitPassiveSubWizard
-from test_cases.web_admin.web_admin_core.pages.order_management.execution_strategies.execution_strategies_page import \
+from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_page import \
     ExecutionStrategiesPage
-from test_cases.web_admin.web_admin_core.pages.order_management.execution_strategies.execution_strategies_wizard import \
+from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_wizard import \
     ExecutionStrategiesWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_2858(CommonTestCase):
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.strategy_type = "Quod LitDark"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.strategy_type = self.data_set.get_strategy_type("Quod LitDark")
         self.parameter_at_passive_lit_block = "Post Mode"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login("adm03")
-        login_page.set_password("adm03")
+        login_page.set_login(self.login)
+        login_page.set_password(self.password)
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)

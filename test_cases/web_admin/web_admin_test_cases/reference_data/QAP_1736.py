@@ -5,32 +5,35 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
-from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+from test_framework.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
     ListingsCurrencySubWizard
-from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
-from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
+from test_framework.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
+from test_framework.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_1736(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm02"
-        self.password = "adm02"
-        self.symbol = "EUR/USD"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_symbol = "EUR/USD"
-        self.venue = "BRU"
-        self.currency = "AFN"
-        self.instr_type = "Bond"
+        self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_2")
+        self.venue = self.data_set.get_venue_by_name("venue_3")
+        self.currency = self.data_set.get_currency_by_name("currency_1")
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.preferred_security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
@@ -67,7 +70,7 @@ class QAP_1736(CommonTestCase):
             self.precondition()
             page = ListingsPage(self.web_driver_container)
             try:
-                page.click_on_load()
+                page.click_on_load_button()
                 time.sleep(2)
                 page.click_on_more_actions()
                 time.sleep(2)

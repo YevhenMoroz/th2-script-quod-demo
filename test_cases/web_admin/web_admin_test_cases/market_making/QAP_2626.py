@@ -5,24 +5,25 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
     QuotingSessionsValuesSubWizard
-from test_cases.web_admin.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_wizard import \
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_wizard import \
     QuotingSessionsWizard
-from test_cases.web_admin.web_admin_core.pages.login.login_page import LoginPage
-from test_cases.web_admin.web_admin_core.pages.root.side_menu import SideMenu
-from test_cases.web_admin.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
 class QAP_2626(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "adm03"
-        self.password = "adm03"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.concurrently_active_quotes = 100
         self.quote_update_interval = 300
@@ -44,7 +45,6 @@ class QAP_2626(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-
         try:
             self.precondition()
             wizard = QuotingSessionsWizard(self.web_driver_container)

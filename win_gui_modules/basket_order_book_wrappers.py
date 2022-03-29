@@ -19,17 +19,22 @@ class ExtractOrderDataDetails:
         return self._request
 
 
-class ExtractChildOrderDataDetails:
-    def __init__(self, extract_order_data: ExtractOrderDataDetails = None, rows_number: int = None):
+class ExtractSubLvlDataDetails:
+    def __init__(self, extract_order_data: ExtractOrderDataDetails = None, rows_number: int = None,
+                 tab_name: str = None):
         self._request = basket_book_pb2.ExtractChildOrderDataDetails()
         self._request.extractDetails.CopyFrom(extract_order_data)
         self._request.rowsNumber = rows_number
+        self._request.tabName = tab_name
 
     def set_extract_order_data(self, extract_order_data: ExtractOrderDataDetails):
         self._request.extractDetails.CopyFrom(extract_order_data)
 
     def set_rows_number(self, rows_number: int):
         self._request.rowsNumber = rows_number
+
+    def set_tab_name(self, tab_name: str):
+        self._request.tabName = tab_name
 
     def build(self):
         return self._request
@@ -116,9 +121,15 @@ class WaveBasketDetails:
     def set_route(self, route: str):
         self._request.route = route
 
-    def set_row_details(self, row_details: list):
+    def set_row_details_list(self, row_details: list):
         for row_detail in row_details:
             self._request.rowsDetails.append(row_detail)
+
+    def set_row_details(self, row_details):
+        self._request.rowsDetails.append(row_details)
+
+    def set_sub_lvl_rows(self, sub_lvl_rows: list):
+        self._request.subLvlRows.extend(sub_lvl_rows)
 
     def build(self):
         return self._request

@@ -183,13 +183,12 @@ class RFQTile(AggregatesRatesTile):
 
     def check_diff(self, near_date: str = None, far_date: str = None):
         self.verifier.set_event_name("Check diff")
-        if near_date and far_date is not None:
-            dif = str(datetime.strptime(far_date, '%Y-%m-%d %H:%M:%S') - datetime.strptime(near_date,
-                                                                                           '%Y-%m-%d %H:%M:%S'))[:6]
-            self.extraction_request.extract_swap_diff_days(dif)
-            response = call(self.extract_call, self.extraction_request.build())
-            extracted_diff = response[dif]
-            self.verifier.compare_values("Difference", dif, extracted_diff)
+        dif = str(datetime.strptime(far_date, '%Y-%m-%d %H:%M:%S') - datetime.strptime(near_date,
+                                                                                       '%Y-%m-%d %H:%M:%S'))[:6]
+        self.extraction_request.extract_swap_diff_days(dif)
+        response = call(self.extract_call, self.extraction_request.build())
+        extracted_diff = response[dif]
+        self.verifier.compare_values("Difference", dif, extracted_diff)
         self.verifier.verify()
         self.clear_details([self.extraction_request])
         self.set_default_params()
