@@ -26,8 +26,8 @@ class QAP_2165(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = "test 2165: " + str(iteration_value)
         self.ext_id_client = "65: " + str(iteration_value)
-        self.client = "CLIENT1"
-        self.client_id_source = "BIC"
+        self.client = self.data_set.get_client("client_1")
+        self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

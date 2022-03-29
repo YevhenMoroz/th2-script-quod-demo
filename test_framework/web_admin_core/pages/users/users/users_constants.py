@@ -77,7 +77,7 @@ class UsersConstants:
     GENERATE_PASSWORD_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate Password"]/preceding-sibling::span'
     CONFIRM_FOLLOW_UP_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Confirm Follow Up"]/preceding-sibling::span'
     FIRST_TIME_LOGIN_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="firstTimeLogin"]//span[contains(@class,"custom-checkbox")]'
-    PING_REQUIRED_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Ping Required"]/preceding-sibling::span'
+    PING_REQUIRED_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Ping Required *"]/preceding-sibling::span'
 
     # User details
     FIRST_NAME_AT_USER_DETAILS_SUB_WIZARD = '//*[text()="First Name"]/preceding-sibling::input'
@@ -112,8 +112,8 @@ class UsersConstants:
     DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
     CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
     TYPE_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Type *"]'
-    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '//*[@class= "accountGroup ng2-smart-th ng-star-inserted"]//*[@placeholder="Filter"]'
-    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = "//*[@class= 'ng2-smart-th userRoleAccountGroupType ng-star-inserted']//*[@placeholder='Filter']"
+    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
+    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
 
     # Venue trader
     PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'

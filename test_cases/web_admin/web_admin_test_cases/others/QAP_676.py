@@ -31,9 +31,9 @@ class QAP_676(CommonTestCase):
         self.party_sub_id_type = "BIC"
         self.party_id_source = "BIC"
         self.venue_counterpart_id = "2"
-        self.party_role = "Exchange"
+        self.party_role = self.data_set.get_party_role("party_role_1")
         self.party_role_qualifier = "Bank"
-        self.venue = "AMEX"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -130,4 +130,3 @@ class QAP_676(CommonTestCase):
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
             print(" Search in ->  " + self.__class__.__name__)
-

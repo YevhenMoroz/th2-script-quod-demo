@@ -24,7 +24,7 @@ class QAP_5922(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.mic = "BARX"
-        self.venue = "ADX"
+        self.venue = self.data_set.get_venue_by_name("venue_6")
         self.main_security_id_source = 'Blmbrg'
 
     def precondition(self):

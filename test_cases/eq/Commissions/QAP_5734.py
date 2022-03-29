@@ -8,7 +8,6 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.fe_trading_constant import AllocationsColumns
@@ -19,13 +18,14 @@ logger.setLevel(logging.INFO)
 
 
 class QAP_5734(TestCase):
+
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, data_set):
-        super().__init__(report_id, session_id, data_set)
-        session_alias = SessionAliasOMS()
-        self.ss_connectivity = session_alias.ss_connectivity
-        self.bs_connectivity = session_alias.bs_connectivity
-        self.wa_connectivity = session_alias.wa_connectivity
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_4")
         self.case_id = create_event(self.__class__.__name__, self.report_id)
@@ -38,6 +38,7 @@ class QAP_5734(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.commission_sender.clear_commissions()
         self.commission_sender.set_modify_client_commission_message(account=self.account).send_post_request()
         self.__send_fix_order()
         self.middle_office.book_order()

@@ -40,86 +40,86 @@ class QAP_3136(CommonTestCase):
         self.value = "test"
 
 
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    wizard = VenuesWizard(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_venues_page()
-    time.sleep(2)
-    page = VenuesPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-    description_sub_wizard.set_name(self.name)
-    description_sub_wizard.set_id(self.id)
-    description_sub_wizard.set_type(self.type)
-    wizard.click_on_save_changes()
-    time.sleep(2)
-    page.set_name_filter(self.name)
-    time.sleep(2)
-    page.click_on_more_actions()
-    time.sleep(2)
-    page.click_on_edit()
-    time.sleep(2)
-    profiles = VenuesProfilesSubWizard(self.web_driver_container)
-    routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
-    profiles.click_on_routing_param_group()
-    time.sleep(2)
-    routing_param_groups.click_on_plus_button()
-    time.sleep(2)
-    routing_param_groups.set_name(self.name_at_routing_param_groups)
-    routing_param_groups.click_on_positive_rotes()
-    time.sleep(1)
-    routing_param_groups.set_positive_routes(self.positive_routes)
-    time.sleep(1)
-    routing_param_groups.click_on_negative_routes()
-    time.sleep(1)
-    routing_param_groups.set_negative_routes(self.negative_routes)
-    time.sleep(1)
-    routing_param_groups.click_on_plus_button_at_parameters()
-    time.sleep(2)
-    routing_param_groups.set_parameter(self.parameter)
-    routing_param_groups.set_value(self.value)
-    time.sleep(1)
-    routing_param_groups.click_on_checkmark_at_parameters()
-    time.sleep(2)
-    routing_param_groups.click_on_checkmark()
-    time.sleep(2)
-    wizard.click_on_go_back_button()
-
-
-def test_context(self):
-    profiles = VenuesProfilesSubWizard(self.web_driver_container)
-    routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
-
-    try:
-        self.precondition()
-
-        try:
-            profiles.set_routing_param_group(self.name_at_routing_param_groups)
-            self.verify("Routing param group created and selected in list", True, True)
-        except Exception as e:
-            self.verify("Routing param group NOT created !!", True, e.__class__.__name__)
-
-        profiles.click_on_routing_param_group()
-        routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        wizard = VenuesWizard(self.web_driver_container)
         time.sleep(2)
-        actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
-                         routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
-                         routing_param_groups.get_value()]
-        expected_result = [self.name_at_routing_param_groups, self.positive_routes[0] + ", " + self.positive_routes[1],
-                           self.negative_routes[0] + ", " + self.negative_routes[1], self.parameter, self.value]
+        side_menu.open_venues_page()
+        time.sleep(2)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        description_sub_wizard.set_name(self.name)
+        description_sub_wizard.set_id(self.id)
+        description_sub_wizard.set_type(self.type)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name_filter(self.name)
+        time.sleep(2)
+        page.click_on_more_actions()
+        time.sleep(2)
+        page.click_on_edit()
+        time.sleep(2)
+        profiles = VenuesProfilesSubWizard(self.web_driver_container)
+        routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
+        profiles.click_on_routing_param_group()
+        time.sleep(2)
+        routing_param_groups.click_on_plus_button()
+        time.sleep(2)
+        routing_param_groups.set_name(self.name_at_routing_param_groups)
+        routing_param_groups.click_on_positive_rotes()
+        time.sleep(1)
+        routing_param_groups.set_positive_routes(self.positive_routes)
+        time.sleep(1)
+        routing_param_groups.click_on_negative_routes()
+        time.sleep(1)
+        routing_param_groups.set_negative_routes(self.negative_routes)
+        time.sleep(1)
+        routing_param_groups.click_on_plus_button_at_parameters()
+        time.sleep(2)
+        routing_param_groups.set_parameter(self.parameter)
+        routing_param_groups.set_value(self.value)
+        time.sleep(1)
+        routing_param_groups.click_on_checkmark_at_parameters()
+        time.sleep(2)
+        routing_param_groups.click_on_checkmark()
+        time.sleep(2)
+        wizard.click_on_go_back_button()
+
+
+    def test_context(self):
+        profiles = VenuesProfilesSubWizard(self.web_driver_container)
+        routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
 
         try:
-            self.verify("Data saved correctly", expected_result, actual_result)
-        except Exception as e:
-            self.verify("Data saved incorrect!", True, e.__class__.__name__)
+            self.precondition()
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+            try:
+                profiles.set_routing_param_group(self.name_at_routing_param_groups)
+                self.verify("Routing param group created and selected in list", True, True)
+            except Exception as e:
+                self.verify("Routing param group NOT created !!", True, e.__class__.__name__)
+
+            profiles.click_on_routing_param_group()
+            routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
+            time.sleep(2)
+            actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
+                             routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
+                             routing_param_groups.get_value()]
+            expected_result = [self.name_at_routing_param_groups, self.positive_routes[0] + ", " + self.positive_routes[1],
+                               self.negative_routes[0] + ", " + self.negative_routes[1], self.parameter, self.value]
+
+            try:
+                self.verify("Data saved correctly", expected_result, actual_result)
+            except Exception as e:
+                self.verify("Data saved incorrect!", True, e.__class__.__name__)
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

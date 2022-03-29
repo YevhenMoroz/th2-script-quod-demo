@@ -17,8 +17,9 @@ class DesksWizard(CommonPage):
 
     def click_on_close_wizard(self):
         self.find_by_xpath(DesksConstants.CLOSE_WIZARD_XPATH).click()
-        time.sleep(2)
-        self.find_by_xpath(DesksConstants.OK_BUTTON_XPATH).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(DesksConstants.NO_BUTTON_XPATH).click()
 
     def is_incorrect_or_missing_value_message_displayed(self):
         if self.find_by_xpath(

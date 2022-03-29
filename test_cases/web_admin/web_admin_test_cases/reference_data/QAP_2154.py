@@ -20,42 +20,42 @@ class QAP_2154(CommonTestCase):
         self.listing = "a"
 
 
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_listings_page()
-    time.sleep(2)
-    listing_page = ListingsPage(self.web_driver_container)
-    listing_page.set_listing_in_global_filter(self.listing)
-    time.sleep(2)
-    listing_page.click_on_load_button()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_listings_page()
+        time.sleep(2)
         listing_page = ListingsPage(self.web_driver_container)
-        try:
-            listing_page.click_on_enable_disable_button()
-            time.sleep(2)
-            self.verify("Listing disable correctly", False, listing_page.is_toggle_button_enabled_disabled())
-        except Exception as e:
-            self.verify("Listing not disable", True, e.__class__.__name__)
+        listing_page.set_listing_in_global_filter(self.listing)
+        time.sleep(2)
+        listing_page.click_on_load_button()
+        time.sleep(2)
 
+
+    def test_context(self):
         try:
-            time.sleep(1)
-            listing_page.click_on_enable_disable_button()
-            time.sleep(2)
-            self.verify("Listing enable correctly", True, listing_page.is_toggle_button_enabled_disabled())
+            self.precondition()
+            listing_page = ListingsPage(self.web_driver_container)
+            try:
+                listing_page.click_on_enable_disable_button()
+                time.sleep(2)
+                self.verify("Listing disable correctly", False, listing_page.is_toggle_button_enabled_disabled())
+            except Exception as e:
+                self.verify("Listing not disable", True, e.__class__.__name__)
+
+            try:
+                time.sleep(1)
+                listing_page.click_on_enable_disable_button()
+                time.sleep(2)
+                self.verify("Listing enable correctly", True, listing_page.is_toggle_button_enabled_disabled())
+            except Exception:
+                self.verify("Listing not enable", True, False)
+
         except Exception:
-            self.verify("Listing not enable", True, False)
-
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

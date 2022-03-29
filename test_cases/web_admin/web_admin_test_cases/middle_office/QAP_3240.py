@@ -29,7 +29,7 @@ class QAP_3240(CommonTestCase):
         self.commission_profile_name_buffer_to_delete = str
         self.commission_profile_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.comm_xunit = "Amount"
-        self.comm_algorithm = "Flat"
+        self.comm_algorithm = self.data_set.get_comm_algorithm("comm_algorithm_1")
         self.base_value = "12"
 
     def precondition(self):

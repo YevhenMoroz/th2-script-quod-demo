@@ -9,7 +9,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod310_columbia_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -107,9 +107,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -121,9 +121,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -135,9 +135,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -149,9 +149,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -163,9 +163,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -177,9 +177,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -191,9 +191,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -205,9 +205,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -219,9 +219,9 @@
                         <fe_environments>
                             <fe_environment>quod314_luna_fe</fe_environment>
                         </fe_environments>
-                        <web_admin_rest_api_environments>
+                        <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
-                        </web_admin_rest_api_environments>
+                        </rest_environments>
                     </environments>
                 </component>
             </components>
@@ -241,7 +241,7 @@
                             <java_api_environment>quod317_java_api</java_api_environment>
                         </java_api_environments>
                         <rest_environments>
-                            <rest_environment></rest_environment>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
@@ -359,7 +359,7 @@
         </product_line>
         <product_line name="web_trading" run="True">
             <components>
-                <component name="RunLoginAndLogout" run="True">
+                <component name="WebTrading_Login_And_Logout" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -367,7 +367,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTradingOrderTicketAndBook" run="True">
+                <component name="WebTrading_OrderTicket_And_Book" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -375,7 +375,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTradingOther" run="True">
+                <component name="WebTrading_Other" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -383,7 +383,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTradingPositions" run="True">
+                <component name="WebTrading_Positions" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -391,7 +391,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTradingTrades" run="True">
+                <component name="WebTrading_Trades" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -399,7 +399,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                 <component name="WebTradingUserProfile" run="True">
+                 <component name="WebTrading_UserProfile" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -407,7 +407,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                 <component name="WebTradingWatchList" run="True">
+                 <component name="WebTrading_WatchList" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
