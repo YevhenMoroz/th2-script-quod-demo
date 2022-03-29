@@ -31,9 +31,9 @@ class ProfileConstants:
     # endregion
 
     # region - Security
-    OLD_PASSWORD_FIELD_XPATH = '//*[@name="oldPassword"]'
-    NEW_PASSWORD_FIELD_XPATH = '//*[@name="newPassword"]'
-    CONFIRM_PASSWORD_FIELD_XPATH = '//*[@name="confirmPassword"]'
+    OLD_PASSWORD_FIELD_XPATH = '//*[@name="oldPassword" and @type="password"]'
+    NEW_PASSWORD_FIELD_XPATH = '//*[@name="newPassword" and @type="password"]'
+    CONFIRM_PASSWORD_FIELD_XPATH = '//*[@name="confirmPassword" and @type="password"]'
     # endregion
 
     # region - Terms and Condition
