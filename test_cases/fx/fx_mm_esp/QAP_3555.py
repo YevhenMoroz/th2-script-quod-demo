@@ -24,6 +24,7 @@ class QAP_3555(TestCase):
         self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.verifier = Verifier(self.test_id)
         self.mdentryid_event = "Always new MDEntryID"
+        self.verifier.set_event_name(self.mdentryid_event)
 
         self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
         self.settle_type = self.data_set.get_settle_type_by_name('spot')
@@ -58,7 +59,6 @@ class QAP_3555(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_2 = no_md_entries[0].get("MDEntryID")
-        self.verifier.set_event_name(self.mdentryid_event)
         self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2,
                                      verification_method=VerificationMethod.NOT_EQUALS)
         self.verifier.verify()
