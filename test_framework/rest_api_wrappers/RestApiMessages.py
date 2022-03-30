@@ -39,6 +39,14 @@ class RestApiMessages:
         self.parameters.pop(parameter_name)
         return self
 
+    def remove_parameters(self, parameter_name_list: list):
+        """
+        Method for removing list of parameter from message
+        """
+        for par in parameter_name_list:
+            self.parameters.pop(par)
+        return self
+
     def add_value_to_component(self, component_name, values_list):
         """
         Method for adding new values to the component of message
