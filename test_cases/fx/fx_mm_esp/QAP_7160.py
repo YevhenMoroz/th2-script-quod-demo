@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
@@ -44,6 +45,10 @@ class QAP_7160(TestCase):
                 "Product": "4", },
             "SettlType": self.settle_type, }]
         self.bands_gbp_usd = ["1000000"]
+        self.minus_2 = (datetime.now() - timedelta(hours=2))
+        self.minus_1 = (datetime.now() - timedelta(hours=1))
+        self.timestamp_2 = str(datetime.timestamp(self.minus_2)).replace(".", "")[:13]
+        self.timestamp_1 = str(datetime.timestamp(self.minus_1)).replace(".", "")[:13]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -52,7 +57,7 @@ class QAP_7160(TestCase):
         self.msg_prams = self.rest_manager.send_get_request(self.modify_client_tier)
         self.msg_prams = self.rest_manager.parse_response_details(self.msg_prams, {"clientTierID": self.client_id})
         self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams) \
-            .change_params({"TODStartTime": "1648612800000", "TODEndTime": "1648616400000"})
+            .change_params({"TODStartTime": self.timestamp_2, "TODEndTime": self.timestamp_1})
         self.rest_manager.send_post_request(self.modify_client_tier)
         # endregion
         # region Step 2
