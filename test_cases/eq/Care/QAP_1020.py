@@ -51,7 +51,7 @@ class QAP_1020(TestCase):
         self.order_ticket.amend_order(filter_list =[OrderBookColumns.order_id.value, order_id])
         # endregion
         # region cancel order
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).cancel_order()
+        self.order_book.cancel_order(filter_list=[OrderBookColumns.order_id.value, order_id])
         # endregion
         # region check cancel status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
