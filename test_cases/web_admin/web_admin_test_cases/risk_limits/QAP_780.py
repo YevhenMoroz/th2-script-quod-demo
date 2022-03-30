@@ -27,10 +27,10 @@ class QAP_780(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.external_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.currency = "EUR"
+        self.currency = self.data_set.get_currency_by_name("currency_3")
         self.max_quantity = "10"
         self.max_amount = "7"
-        self.user = "adm07"
+        self.user = self.data_set.get_user("user_10")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -30,7 +30,8 @@ class FixMessageNewOrderMultiLegFX(FixMessage):
             "TimeInForce": "3",
             "OrdType": "D",
             "TransactTime": datetime.utcnow().isoformat(),
-            "Price": quote_price if quote_price is not None else price,
+            "Price": quote_price if quote_price is not None else quote.get_parameter(
+                "OfferPx") if side == "1" else quote.get_parameter("BidPx"),
             "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"],
             "NoLegs": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"],

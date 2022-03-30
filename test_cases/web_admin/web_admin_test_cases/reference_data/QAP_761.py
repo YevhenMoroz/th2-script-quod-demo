@@ -39,72 +39,72 @@ class QAP_761(CommonTestCase):
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile_1")
 
 
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    side_menu.open_subvenues_page()
-    time.sleep(2)
-    page = SubVenuesPage(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-    description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
-    time.sleep(2)
-    description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
-    time.sleep(2)
-    wizard = SubVenuesWizard(self.web_driver_container)
-    wizard.click_on_save_changes()
-    time.sleep(2)
-    side_menu.open_listing_groups_page()
-    time.sleep(2)
-    page = ListingGroupsPage(self.web_driver_container)
-
-    description_sub_wizard = ListingGroupsDescriptionSubWizard(self.web_driver_container)
-    details_sub_wizard = ListingGroupsDetailsSubWizard(self.web_driver_container)
-
-    page.click_on_new()
-    time.sleep(1)
-    description_sub_wizard.set_name(self.name)
-    description_sub_wizard.set_sub_venue(self.sub_venue)
-    description_sub_wizard.set_ext_id_venue(self.ext_id_client)
-    description_sub_wizard.click_on_news_checkbox()
-    time.sleep(1)
-    details_sub_wizard.set_trading_status(self.trading_status)
-    details_sub_wizard.set_trading_phase(self.trading_phase)
-    details_sub_wizard.set_price_limit_profile(self.price_limit_profile)
-    details_sub_wizard.set_tick_size_profile(self.tick_size_profile)
-    details_sub_wizard.set_trading_phase_profile(self.trading_phase_profile)
-    time.sleep(1)
-
-
-def test_context(self):
-    try:
-        self.precondition()
-        page = ListingGroupsPage(self.web_driver_container)
-        wizard = ListingGroupsWizard(self.web_driver_container)
-        expected_pdf_values = ["test",
-                               self.sub_venue,
-                               self.ext_id_client,
-                               self.trading_status,
-                               self.trading_phase,
-                               self.price_limit_profile,
-                               self.tick_size_profile,
-                               self.trading_phase_profile]
-
-        self.verify("Is pdf contains values", True,
-                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values))
-
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_subvenues_page()
         time.sleep(2)
+        page = SubVenuesPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+        description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
+        time.sleep(2)
+        description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
+        time.sleep(2)
+        wizard = SubVenuesWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         time.sleep(2)
-        page.set_name(self.name)
+        side_menu.open_listing_groups_page()
         time.sleep(2)
-        self.verify("Is entity saved correctly and displayed in main page", self.name, page.get_name())
+        page = ListingGroupsPage(self.web_driver_container)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+        description_sub_wizard = ListingGroupsDescriptionSubWizard(self.web_driver_container)
+        details_sub_wizard = ListingGroupsDetailsSubWizard(self.web_driver_container)
+
+        page.click_on_new()
+        time.sleep(1)
+        description_sub_wizard.set_name(self.name)
+        description_sub_wizard.set_sub_venue(self.sub_venue)
+        description_sub_wizard.set_ext_id_venue(self.ext_id_client)
+        description_sub_wizard.click_on_news_checkbox()
+        time.sleep(1)
+        details_sub_wizard.set_trading_status(self.trading_status)
+        details_sub_wizard.set_trading_phase(self.trading_phase)
+        details_sub_wizard.set_price_limit_profile(self.price_limit_profile)
+        details_sub_wizard.set_tick_size_profile(self.tick_size_profile)
+        details_sub_wizard.set_trading_phase_profile(self.trading_phase_profile)
+        time.sleep(1)
+
+
+    def test_context(self):
+        try:
+            self.precondition()
+            page = ListingGroupsPage(self.web_driver_container)
+            wizard = ListingGroupsWizard(self.web_driver_container)
+            expected_pdf_values = ["test",
+                                   self.sub_venue,
+                                   self.ext_id_client,
+                                   self.trading_status,
+                                   self.trading_phase,
+                                   self.price_limit_profile,
+                                   self.tick_size_profile,
+                                   self.trading_phase_profile]
+
+            self.verify("Is pdf contains values", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values))
+
+            time.sleep(2)
+            wizard.click_on_save_changes()
+            time.sleep(2)
+            page.set_name(self.name)
+            time.sleep(2)
+            self.verify("Is entity saved correctly and displayed in main page", self.name, page.get_name())
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

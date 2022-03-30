@@ -22,7 +22,7 @@ from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_c
     ClientTierConstants
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_constants import \
     QuotingSessionsConstants
-from test_framework.web_admin_core.pages.general.admin_command.admin_command_constants import AdminCommandConstants
+from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import SystemCommandsConstants
 from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \
     MDEntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -169,10 +169,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(QuotingSessionsConstants.QUOTING_SESSIONS_PAGE_TITLE_XPATH)
 
-    def open_admin_command_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ADMIN_COMMAND_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+    def open_system_commands_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SYSTEM_COMMANDS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AdminCommandConstants.ADMIN_COMMAND_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(SystemCommandsConstants.SYSTEM_COMMANDS_PAGE_TITLE_XPATH)
 
     def open_mdentitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.MDENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
@@ -208,11 +208,17 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH,
                        RootConstants.ORDER_MANAGEMENT_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(ExecutionStrategiesConstants.EXECUTION_STRATEGIES_PAGE_TITLE_XPATH)
+        
+    def click_on_execution_strategies_when_order_management_tab_is_open(self):
+        self.click_menu_item(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH)
 
     def open_order_management_rules_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_MANAGEMENT_RULES_ITEM_XPATH,
                        RootConstants.ORDER_MANAGEMENT_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(OrderManagementRulesConstants.ORDER_MANAGEMENT_RULES_TITLE_XPATH)
+
+    def click_on_order_management_rules_when_order_management_tab_is_open(self):
+        self.click_menu_item(RootConstants.ORDER_MANAGEMENT_RULES_ITEM_XPATH)
 
     def open_counterparts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.COUNTERPARTS_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
@@ -353,14 +359,23 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.ZONES_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(ZonesConstants.ZONES_PAGE_TITLE_XPATH)
 
+    def click_on_zones_when_site_tab_is_open(self):
+        self.click_menu_item(RootConstants.ZONES_ITEM_XPATH)
+
     def open_locations_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.LOCATIONS_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(LocationsConstants.LOCATIONS_PAGE_TITLE_XPATH)
 
+    def click_on_locations_when_site_tab_is_open(self):
+        self.click_menu_item(RootConstants.LOCATIONS_ITEM_XPATH)
+
     def open_desks_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.DESKS_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(DesksConstants.DESKS_PAGE_TITLE_XPATH)
+
+    def click_on_desks_when_site_tab_is_open(self):
+        self.click_menu_item(RootConstants.DESKS_ITEM_XPATH)
 
     def open_user_sessions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.USER_SESSIONS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,

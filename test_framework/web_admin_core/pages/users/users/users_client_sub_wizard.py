@@ -51,14 +51,8 @@ class UsersClientSubWizard(CommonPage):
         return self.find_by_xpath(UsersConstants.ERROR_MESSAGE_IN_FOOTER).text
 
     def add_new_client(self, client, type):
-        self.set_client(client)
-        self.set_type(type)
-        time.sleep(1)
-        self.click_on_checkmark_button()
-
-    def add_non_existing_client(self, client, type):
-        self.set_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, client)
-        self.set_text_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, type)
+        self.set_combobox_value(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, client)
+        self.set_combobox_value(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, type)
         time.sleep(1)
         self.click_on_checkmark_button()
 

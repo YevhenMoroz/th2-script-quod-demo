@@ -9,6 +9,7 @@ from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -26,25 +27,27 @@ class QAP_4855(CommonTestCase):
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = self.data_set.get_client_type("client_type_1")
         self.desks = [self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_3")]
+        self.email = self.data_set.get_email("email_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_users_page()
-        users_page = UsersPage(self.web_driver_container)
         time.sleep(2)
+        users_page = UsersPage(self.web_driver_container)
         users_page.click_on_new_button()
         time.sleep(2)
         user_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
         user_login_sub_wizard.set_user_id(self.user_id)
         time.sleep(1)
-        user_login_sub_wizard.set_generate_pin_code_checkbox()
+        user_login_sub_wizard.set_ping_required_checkbox()
         time.sleep(1)
-        user_login_sub_wizard.set_generate_password_checkbox()
+        user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
+        user_details_sub_wizard.set_mail(self.email)
+        time.sleep(1)
         assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
-        time.sleep(1)
         assignments_sub_wizard.click_on_desks()
         time.sleep(1)
         assignments_sub_wizard.set_desks(self.desks)
@@ -56,7 +59,11 @@ class QAP_4855(CommonTestCase):
             users_wizard = UsersWizard(self.web_driver_container)
             try:
                 users_wizard.click_on_save_changes()
-                self.verify("New user saved correctly", True, True)
+                time.sleep(2)
+                users_page = UsersPage(self.web_driver_container)
+                users_page.set_user_id(self.user_id)
+                time.sleep(2)
+                self.verify("New user saved correctly", self.user_id, users_page.get_user_id())
             except Exception as e:
                 self.verify("New user not saved", True, e.__class__.__name__)
 

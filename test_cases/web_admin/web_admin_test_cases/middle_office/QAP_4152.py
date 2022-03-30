@@ -22,8 +22,8 @@ class QAP_4152(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.comm_type = "AbsoluteAmount"
-        self.comm_algorithm = "SlidingScale"
+        self.comm_type = self.data_set.get_comm_type("comm_type_2")
+        self.comm_algorithm = self.data_set.get_comm_algorithm("comm_algorithm_2")
         self.base_value = "10"
         self.min_commission = "35"
         self.upper_limit = "50"

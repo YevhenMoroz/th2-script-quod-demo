@@ -28,12 +28,12 @@ class QAP_3238(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.commission_amount_type = "Broker"
+        self.commission_amount_type = self.data_set.get_commission_amount_type("commission_amount_type_1")
         self.commission_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.commission_profile_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.comm_xunit = "Amount"
-        self.comm_type = "Percentage"
-        self.comm_algorithm = "Flat"
+        self.comm_type = self.data_set.get_comm_type("comm_type_1")
+        self.comm_algorithm = self.data_set.get_comm_algorithm("comm_algorithm_1")
         self.base_value = "144"
 
     def precondition(self):
