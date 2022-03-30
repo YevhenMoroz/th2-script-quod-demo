@@ -46,7 +46,7 @@ class QAP_1081(TestCase):
             {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
         # region manual execution
-        self.order_book.manual_execution(qty=self.qty)
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution(qty=self.qty)
         # endregion
         # region check order partially filled status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
