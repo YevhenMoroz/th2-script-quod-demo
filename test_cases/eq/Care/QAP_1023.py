@@ -43,7 +43,7 @@ class QAP_1023(TestCase):
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.sent.value})
         # region Reassign order
-        self.order_book.reassign_order(self.desk, partial_desk=False)
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).reassign_order(self.desk, partial_desk=False)
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.sent.value})
         # endregion
