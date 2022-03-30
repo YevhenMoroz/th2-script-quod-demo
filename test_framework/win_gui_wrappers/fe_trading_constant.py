@@ -217,6 +217,7 @@ class ExecSts(Enum):
     held = 'Held'
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
+    sent = 'Sent'
 
 
 class Status(Enum):
