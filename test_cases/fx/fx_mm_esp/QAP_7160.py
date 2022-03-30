@@ -73,10 +73,10 @@ class QAP_7160(TestCase):
                                             key_parameters=["MDReqID"])
 
         # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, "Unsubscribe")
-        # self.modify_client_tier.remove_parameter("TODStartTime").remove_parameter("TODEndTime")
-        self.modify_client_tier.remove_parameters(["TODStartTime","TODEndTime"])
+        self.modify_client_tier.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_client_tier)
