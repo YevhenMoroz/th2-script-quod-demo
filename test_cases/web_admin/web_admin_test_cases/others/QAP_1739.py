@@ -22,8 +22,8 @@ class QAP_1739(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.first_venue = "EURONEXT AMSTERDAM"
-        self.second_venue = "AMERICAN STOCK EXCHANGE"
+        self.first_venue = self.data_set.get_venue_by_name("venue_9")
+        self.second_venue = self.data_set.get_venue_by_name("venue_8")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -21,9 +21,9 @@ class QAP_679(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.symbol = "EUR/PHP"
-        self.user = "adm02"
-        self.venue = "AMEX"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_6")
+        self.user = self.data_set.get_user("user_5")
+        self.venue = self.data_set.get_venue_by_name("venue_1")
         self.md_source = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):

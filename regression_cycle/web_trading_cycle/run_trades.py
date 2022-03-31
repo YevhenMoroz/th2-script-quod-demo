@@ -11,13 +11,13 @@ from test_cases.web_trading.test_cases.pages.main_page.workspace.order_ticket_an
 
 class RunTrades:
     def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WebTradingTrades", root_report_id)
+        self.second_lvl_id = bca.create_event("WebTrading_Trades", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
         try:
             start_time = time.monotonic()
-            configuration = ComponentConfiguration("WebTradingTrades")
+            configuration = ComponentConfiguration("WebTrading_Trades")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_trading_environment()[0].web_browser,
                 configuration.environment.get_list_web_trading_environment()[0].site_url)

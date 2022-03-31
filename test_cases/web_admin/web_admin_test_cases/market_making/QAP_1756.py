@@ -36,7 +36,7 @@ class QAP_1756(CommonTestCase):
         self.concurrently_active_quotes_age = "10"
         self.broadcast_client_client_tier_id = "TEST"
         self.client_tier = "Gold"
-        self.symbol = "EUR/USD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.client_client_tier_id = "test"
 
     def precondition(self):

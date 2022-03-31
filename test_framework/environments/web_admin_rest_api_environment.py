@@ -12,24 +12,15 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
 
     @staticmethod
     def get_instance(env: EnvironmentType):
-        if env.value == EnvironmentType.quod315_luna_web_admin.value:
-            if EnvironmentType.quod315_luna_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+        if env.value == EnvironmentType.quod314_luna_web_admin.value:
+            if EnvironmentType.quod314_luna_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
                 site_environment = WebAdminRestApiEnvironment(
-                    environment_type=EnvironmentType.quod315_luna_web_admin.value,
-                    session_alias_wa=Connectivity.Luna_315_web_admin.value
+                    environment_type=EnvironmentType.quod314_luna_web_admin.value,
+                    session_alias_wa=Connectivity.Luna_314_wa.value
                 )
                 WebAdminRestApiEnvironment.environment_instances.update(
-                    {EnvironmentType.quod315_luna_web_admin.value: site_environment})
-            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod315_luna_web_admin.value]
-        elif env.value == EnvironmentType.quod320_kuiper_web_admin.value:
-            if EnvironmentType.quod320_kuiper_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
-                site_environment = WebAdminRestApiEnvironment(
-                    environment_type=EnvironmentType.quod320_kuiper_web_admin.value,
-                    session_alias_wa=Connectivity.Kuiper_320_web_admin.value
-                )
-                WebAdminRestApiEnvironment.environment_instances.update(
-                    {EnvironmentType.quod320_kuiper_web_admin.value: site_environment})
-            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod320_kuiper_web_admin.value]
+                    {EnvironmentType.quod314_luna_web_admin.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod314_luna_web_admin.value]
         elif env.value == EnvironmentType.quod317_ganymede_web_admin.value:
             if EnvironmentType.quod317_ganymede_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
                 site_environment = WebAdminRestApiEnvironment(

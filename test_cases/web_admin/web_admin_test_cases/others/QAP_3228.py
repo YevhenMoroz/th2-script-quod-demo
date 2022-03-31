@@ -29,16 +29,16 @@ class QAP_3228(CommonTestCase):
         self.party_sub_id_type = "BIC"
         self.party_id_source = "BIC"
         self.venue_counterpart_id = "2"
-        self.party_role = "Exchange"
+        self.party_role = self.data_set.get_party_role("party_role_1")
         self.party_role_qualifier = "Bank"
-        self.venue = "AMEX"
+        self.venue = self.data_set.get_venue_by_name("venue_1")
         ######
         self.new_party_id_source = "MIC"
         self.new_venue_counterpart_id = "14"
         self.new_party_role = "DeskID"
         self.new_ext_id_client = "2"
         self.new_party_role_qualifier = "Current"
-        self.new_venue = "BATS"
+        self.new_venue = self.data_set.get_venue_by_name("venue_5")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

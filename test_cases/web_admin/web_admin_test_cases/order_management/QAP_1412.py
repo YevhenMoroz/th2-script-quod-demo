@@ -28,7 +28,7 @@ class QAP_1412(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_order_management_rules_page()
+        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
         page = OrderManagementRulesPage(self.web_driver_container)
 
         page.click_on_new_button()

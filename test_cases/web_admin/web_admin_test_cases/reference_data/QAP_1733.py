@@ -27,49 +27,49 @@ class QAP_1733(CommonTestCase):
         self.cum_trading_limit_percentage_new = str(random.randint(0, 100))
 
 
-def precondition(self):
-    login_page = LoginPage(self.web_driver_container)
-    login_page.login_to_web_admin(self.login, self.password)
-    side_menu = SideMenu(self.web_driver_container)
-    time.sleep(2)
-    side_menu.open_instr_symbol_info_page()
-    time.sleep(2)
-    page = InstrSymbolInfoPage(self.web_driver_container)
-    wizard = InstrSymbolInfoWizard(self.web_driver_container)
-    page.click_on_new()
-    time.sleep(2)
-    wizard.set_instr_symbol(self.instr_symbol)
-    wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
-    wizard.click_on_save_changes()
-    time.sleep(2)
-
-
-def test_context(self):
-    try:
-        self.precondition()
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        time.sleep(2)
+        side_menu.open_instr_symbol_info_page()
+        time.sleep(2)
         page = InstrSymbolInfoPage(self.web_driver_container)
+        wizard = InstrSymbolInfoWizard(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(2)
+        wizard.set_instr_symbol(self.instr_symbol)
+        wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+
+
+    def test_context(self):
         try:
-            page.set_instr_symbol(self.instr_symbol)
-            time.sleep(3)
-            page.click_on_more_actions()
-            time.sleep(2)
-            page.click_on_delete(True)
-            self.verify("Delete button working", True, True)
-        except Exception as e:
-            self.verify("Delete button does not works", True, e.__class__.__name__)
+            self.precondition()
+            page = InstrSymbolInfoPage(self.web_driver_container)
+            try:
+                page.set_instr_symbol(self.instr_symbol)
+                time.sleep(3)
+                page.click_on_more_actions()
+                time.sleep(2)
+                page.click_on_delete(True)
+                self.verify("Delete button working", True, True)
+            except Exception as e:
+                self.verify("Delete button does not works", True, e.__class__.__name__)
 
-        try:
-            time.sleep(2)
-            page.set_instr_symbol(self.instr_symbol)
+            try:
+                time.sleep(2)
+                page.set_instr_symbol(self.instr_symbol)
 
-            time.sleep(2)
-            self.verify("Entity is not displayed after delete", False, page.is_instr_symbol_present())
-        except Exception as e:
-            self.verify("Entity stayed after delete", True, e.__class__.__name__)
+                time.sleep(2)
+                self.verify("Entity is not displayed after delete", False, page.is_instr_symbol_present())
+            except Exception as e:
+                self.verify("Entity stayed after delete", True, e.__class__.__name__)
 
-    except Exception:
-        basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                          status='FAILED')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-        print(" Search in ->  " + self.__class__.__name__)
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

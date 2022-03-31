@@ -1,7 +1,7 @@
-class AdminCommandConstants:
-    ADMIN_COMMAND_PAGE_TITLE_XPATH = "//span[text()='Admin Command']"
+class SystemCommandsConstants:
+    SYSTEM_COMMANDS_PAGE_TITLE_XPATH = "//span[text()='System Commands']"
 
-    ADMIN_COMMAND_XPATH = '//*[@id="adminCommand"]'
+    SYSTEM_COMMANDS_XPATH = '//*[@id="adminCommand"]'
     COMPONENT_ID_XPATH = '//*[@formcontrolname="componentID"]'
 
     PLUS_BUTTON_XPATH = '//*[@data-name="plus"]'

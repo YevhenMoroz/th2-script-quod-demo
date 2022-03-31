@@ -27,13 +27,13 @@ class QAP_6500(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.default_client = "POOJA"
+        self.default_client = self.data_set.get_client("client_2")
         # Order info
-        self.instrument = 'VALECHAENG-RL'
-        self.account = 'POOJA'
+        self.instrument = self.data_set.get_instrument("instrument_1")
+        self.account = self.data_set.get_account_by_name("account_1")
         self.quantity = random.randint(0, 300)
         self.price = random.randint(0, 200)
-        self.order_type = 'Limit'
+        self.order_type = self.data_set.get_order_type("order_type_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

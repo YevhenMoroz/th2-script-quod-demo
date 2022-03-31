@@ -19,6 +19,8 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             self.__set_fill_sell(new_order_single)
         elif status is Status.Reject:
             self.__set_reject_sell(new_order_single)
+        elif status is Status.PartialFill:
+            self.__set_partialfill_sell(new_order_single)
         else:
             raise Exception(f"Incorrect Status")
         return self
@@ -39,6 +41,55 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SpotSettlDate=spo(),
             Price="*",
             OrdStatus="2",
+            TradeReportingIndicator="*",
+            TransactTime="*",
+            LastSpotRate="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            OrderCapacity="A",
+            SettlDate="*",
+            TradeDate=datetime.today().strftime("%Y%m%d"),
+            ExecType="F",
+            LeavesQty=0,
+            GrossTradeAmt="*",
+            ExDestination="*",
+            QtyType=0,
+            Instrument=new_order_single.get_parameter("Instrument"),
+            NoParty="*",
+
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        if new_order_single.get_parameter('SettlType') != "0":
+            super().add_tag({"LastForwardPoints": "*"})
+        return self
+
+    def __set_partialfill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            CumQty="*",
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst="1",
+            LastQty="*",
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            SettlType=new_order_single.get_parameter("SettlType"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            SpotSettlDate=spo(),
+            Price="*",
+            OrdStatus="4",
             TradeReportingIndicator="*",
             TransactTime="*",
             LastSpotRate="*",
