@@ -39,6 +39,7 @@ class BaseDataSet:
     verifier_key_parameters = None
     fee_order_scope = None
     pset = None
+    basket_templates = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -87,7 +88,6 @@ class BaseDataSet:
     default_tif = None
     strategy_type = None
     exec_policy = None
-
     # endregion
 
     def get_instruments(self):
@@ -577,6 +577,11 @@ class BaseDataSet:
     def get_exec_policy(self, name: str):
         if hasattr(self.exec_policy, name):
             return getattr(self.exec_policy, name).value
-        return ValueError(f"{self.exec_policy,} not found!")
+        return ValueError(f"{self.exec_policy} not found!")
+
+    def get_basket_template(self, name: str):
+        if hasattr(self.basket_templates, name):
+            return getattr(self.basket_templates, name).value
+        return ValueError(f"{self.basket_templates} not found!")
 
     # endregion
