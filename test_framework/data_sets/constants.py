@@ -51,10 +51,10 @@ class FrontEnd(Enum):
     TARGET_SERVER_WIN = find_target_server()
     
     # region quod314
-    USERS_314 = []
-    PASSWORDS_314 = []
+    USERS_314 = ["QA1"]
+    PASSWORDS_314 = ["QA1"]
     FOLDER_314 = ""
-    DESKS_314 = []
+    DESKS_314 = ["Q"]
     MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
     LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
     # common values
@@ -137,3 +137,4 @@ class WebBrowser(Enum):
 
 class WebTradingURL(Enum):
     luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
+    kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"

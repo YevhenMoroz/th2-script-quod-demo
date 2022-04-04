@@ -34,16 +34,6 @@ class WebAdminEnvironment(BaseEnvironment):
                 WebAdminEnvironment.environment_instances.update(
                     {EnvironmentType.quod306_web_admin_saturn_chrome.value: web_admin_environment})
             return WebAdminEnvironment.environment_instances[EnvironmentType.quod306_web_admin_saturn_chrome.value]
-        #TODO: Olexandr Stronov must move or delete this part of code
-        # elif env.value == EnvironmentType.quod314_luna_web_admin.value:
-        #     if EnvironmentType.quod314_luna_web_admin.value not in WebAdminEnvironment.environment_instances.keys():
-        #         site_environment = WebAdminEnvironment(
-        #             environment_type=EnvironmentType.quod314_luna_web_admin.value,
-        #             wa_alias=Connectivity.Luna_314_wa.value
-        #         )
-        #         WebAdminEnvironment.environment_instances.update(
-        #             {EnvironmentType.quod314_luna_web_admin.value: site_environment})
-        #     return WebAdminEnvironment.environment_instances[EnvironmentType.quod314_luna_web_admin.value]
         else:
             raise Exception('Environment not found')
 
