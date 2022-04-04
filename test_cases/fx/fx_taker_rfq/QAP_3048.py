@@ -1,197 +1,137 @@
-import logging
+import random
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRFQTileRequest, ContextAction, PlaceRFQRequest, \
-    RFQTileOrderSide
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
-    FXOrdersDetails, FXOrderInfo
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.win_gui_wrappers.forex.fx_trade_book import FXTradeBook
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as ob, Side, \
+    TradeBookColumns as tb
 
 
-def create_or_get_rfq(base_request, service):
-    call(service.createRFQTile, base_request.build())
+class QAP_3048(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None):
+        super().__init__(report_id, session_id, data_set)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rfq_tile = RFQTile(self.test_id, self.session_id)
+        self.order_book = FXOrderBook(self.test_id, self.session_id)
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.trade_book = FXTradeBook(self.test_id, self.session_id)
+        self.qty = str(random.randint(1000000, 2000000))
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        eur_currency = self.data_set.get_currency_by_name('currency_eur')
+        usd_currency = self.data_set.get_currency_by_name('currency_usd')
+        eur_usd_symbol = self.data_set.get_symbol_by_name('symbol_1')
+        tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
+        tenor_1w = self.data_set.get_tenor_by_name('tenor_1w')
+        tenor_2w = self.data_set.get_tenor_by_name('tenor_2w')
+        tenor_tom = self.data_set.get_tenor_by_name('tenor_tom')
+        venue = self.data_set.get_venue_by_name('venue_1')
+        client = self.data_set.get_client_by_name("client_1")
 
-def send_rfq(base_request, service):
-    call(service.sendRFQOrder, base_request.build())
+        # region Step 1
+        self.rfq_tile.crete_tile().modify_rfq_tile(from_cur=eur_currency, to_cur=usd_currency,
+                                                   near_qty=self.qty, near_tenor=tenor_spot,
+                                                   client=client, single_venue=venue)
+        # endregion
+        # region Step 2
+        self.rfq_tile.send_rfq()
+        self.rfq_tile.place_order(side=Side.buy.value)
 
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.tenor.value: tenor_spot}, 'Checking tenor value in quote request book')
 
-def place_order_tob(base_request, service):
-    rfq_request = PlaceRFQRequest(details=base_request)
-    rfq_request.set_action(RFQTileOrderSide.BUY)
-    call(service.placeRFQOrder, rfq_request.build())
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.tenor.value: tenor_spot}, 'Checking tenor value in order book')
 
+        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+            extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
-def modify_rfq_tile(base_request, service, qty, cur1, cur2, tenor, client, venue):
-    modify_request = ModifyRFQTileRequest(details=base_request)
-    modify_request.set_quantity_as_string(qty)
-    modify_request.set_from_currency(cur1)
-    modify_request.set_to_currency(cur2)
-    modify_request.set_near_tenor(tenor)
-    modify_request.set_client(client)
-    action = ContextAction.create_venue_filter(venue)
-    modify_request.add_context_action(action)
-    call(service.modifyRFQTile, modify_request.build())
+        self.trade_book.set_filter(
+            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            {tb.tenor.value: tenor_spot}, 'Checking tenor value in trade book')
+        # endregion
+        # region Step 3
+        self.rfq_tile.modify_rfq_tile(near_tenor=tenor_1w)
+        self.rfq_tile.send_rfq()
+        self.rfq_tile.place_order(side=Side.buy.value)
 
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.tenor.value: tenor_1w}, 'Checking tenor value in quote request book')
 
-def check_quote_request_b(base_request, service, case_id, qty, tenor, near_tenor, far_tenor):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty])
-    qr_tenor = ExtractionDetail("quoteRequestBook.tenor", "Tenor")
-    qr_near_tenor = ExtractionDetail("quoteRequestBook.nearLegTenor", "Near Leg Tenor")
-    qr_far_tenor = ExtractionDetail("quoteRequestBook.farLegTenor", "Far Leg Tenor")
-    qrb.add_extraction_details([qr_tenor, qr_near_tenor, qr_far_tenor])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.tenor.value: tenor_1w}, 'Checking tenor value in order book')
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Tenor", tenor, response[qr_tenor.name])
-    verifier.compare_values("Near Leg Tenor", near_tenor, response[qr_near_tenor.name])
-    verifier.compare_values("Tenor", far_tenor, response[qr_far_tenor.name])
-    verifier.verify()
+        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+            extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
+        self.trade_book.set_filter(
+            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            {tb.tenor.value: tenor_1w}, 'Checking tenor value in trade book')
+        # endregion
+        # region Step 4
+        self.rfq_tile.modify_rfq_tile(near_tenor=tenor_spot, far_tenor=tenor_1w)
+        self.rfq_tile.send_rfq()
+        self.rfq_tile.place_order(side=Side.buy.value)
 
-def check_trades_book(base_request, ob_act, case_id, qty, tenor, near_tenor, far_tenor):
-    execution_details = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    execution_details.set_default_params(base_request)
-    execution_details.set_extraction_id(extraction_id)
-    execution_details.set_filter(["Qty", qty])
-    trades_tenor = ExtractionDetail("tradeBook.tenor", "Tenor")
-    trades_near_tenor = ExtractionDetail("tradeBook.nearLegTenor", "Near Leg Tenor")
-    trades_far_tenor = ExtractionDetail("tradeBook.farLegTenor", "Far Leg Tenor")
-    execution_details.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[trades_tenor, trades_near_tenor, trades_far_tenor])))
-    response = call(ob_act.getTradeBookDetails, execution_details.request())
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.tenor.value: tenor_spot,
+             qrb.near_tenor.value: tenor_spot,
+             qrb.far_tenor.value: tenor_1w}, 'Checking tenor value in quote request book')
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Trade Book")
-    verifier.compare_values("Tenor", tenor, response[trades_tenor.name])
-    verifier.compare_values("Near Leg Tenor", near_tenor, response[trades_near_tenor.name])
-    verifier.compare_values("Tenor", far_tenor, response[trades_far_tenor.name])
-    verifier.verify()
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.tenor.value: tenor_spot,
+             ob.near_tenor.value: tenor_spot,
+             ob.far_tenor.value: tenor_1w}, 'Checking tenor value in order book')
 
+        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+            extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
-def check_my_orders(base_request, ob_act, case_id, qty, tenor, near_tenor, far_tenor):
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    main_order_details.set_extraction_id(extraction_id)
-    main_order_details.set_filter(["Qty", qty])
-    my_order_tenor = ExtractionDetail("myOrders.tenor", "Tenor")
-    my_order_near_tenor = ExtractionDetail("myOrders.nearLegTenor", "Near Leg Tenor")
-    my_order_far_tenor = ExtractionDetail("myOrders.farLegTenor", "Far Leg Tenor")
-    main_order_details.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[my_order_tenor, my_order_near_tenor, my_order_far_tenor])))
-    response = call(ob_act.getMyOrdersDetails, main_order_details.request())
+        self.trade_book.set_filter(
+            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            {tb.tenor.value: tenor_spot,
+             tb.near_tenor.value: tenor_spot,
+             tb.far_tenor.value: tenor_1w}, 'Checking tenor value in trade book')
+        # endregion
+        # region Step 5
+        self.rfq_tile.modify_rfq_tile(near_tenor=tenor_tom, far_tenor=tenor_2w)
+        self.rfq_tile.send_rfq()
+        self.rfq_tile.place_order(side=Side.buy.value)
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check My Order book")
-    verifier.compare_values("Tenor", tenor, response[my_order_tenor.name])
-    verifier.compare_values("Near Leg Tenor", near_tenor, response[my_order_near_tenor.name])
-    verifier.compare_values("Tenor", far_tenor, response[my_order_far_tenor.name])
-    verifier.verify()
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, eur_usd_symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.tenor.value: tenor_tom,
+             qrb.near_tenor.value: tenor_tom,
+             qrb.far_tenor.value: tenor_2w}, 'Checking tenor value in quote request book')
 
+        self.order_book.set_filter(
+            [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
+            {ob.tenor.value: tenor_tom,
+             ob.near_tenor.value: tenor_tom,
+             ob.far_tenor.value: tenor_2w}, 'Checking tenor value in order book')
 
-def check_order_book(base_request, ob_act, case_id, qty, tenor, near_tenor, far_tenor):
-    ob_details = FXOrdersDetails()
-    ob_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    ob_details.set_extraction_id(extraction_id)
-    ob_details.set_filter(["Qty", qty])
-    order_tenor = ExtractionDetail("myOrders.tenor", "Tenor")
-    order_near_tenor = ExtractionDetail("myOrders.nearLegTenor", "Near Leg Tenor")
-    order_far_tenor = ExtractionDetail("myOrders.farLegTenor", "Far Leg Tenor")
-    ob_details.add_single_order_info(
-        FXOrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[order_tenor, order_near_tenor, order_far_tenor])))
-    response = call(ob_act.getOrdersDetails, ob_details.request())
+        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+            extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("Tenor", tenor, response[order_tenor.name])
-    verifier.compare_values("Near Leg Tenor", near_tenor, response[order_near_tenor.name])
-    verifier.compare_values("Tenor", far_tenor, response[order_far_tenor.name])
-    verifier.verify()
+        self.trade_book.set_filter(
+            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            {tb.tenor.value: tenor_tom,
+             tb.near_tenor.value: tenor_tom,
+             tb.far_tenor.value: tenor_2w}, 'Checking tenor value in trade book')
+        # endregion
 
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-    base_rfq_details = BaseTileDetails(base=case_base_request)
-
-    ob_act = Stubs.win_act_order_book
-    ob_fx_act = Stubs.win_act_order_book_fx
-    ar_service = Stubs.win_act_aggregated_rates_service
-    modify_request = ModifyRFQTileRequest(details=base_rfq_details)
-
-    from_curr = "EUR"
-    to_curr = "USD"
-    qty_1 = str(random_qty(1, 2, 7))
-    try:
-        # Step 1
-        create_or_get_rfq(base_rfq_details, ar_service)
-        modify_rfq_tile(base_rfq_details, ar_service, qty_1, from_curr, to_curr,
-                        "Spot", "ASPECT_CITI", "CITI")
-        send_rfq(base_rfq_details, ar_service)
-        place_order_tob(base_rfq_details, ar_service)
-        # Step 2
-        check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "Spot", "", "")
-        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "", "")
-        check_trades_book(case_base_request, ob_act, case_id, qty_1, "Spot", "", "")
-        check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "Spot", "", "")
-        # Step 3
-        modify_request.set_near_tenor("1W")
-        call(ar_service.modifyRFQTile, modify_request.build())
-        send_rfq(base_rfq_details, ar_service)
-        place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "1W", "", "")
-        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "1W", "", "")
-        check_trades_book(case_base_request, ob_act, case_id, qty_1, "1W", "", "")
-        check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "1W", "", "")
-        # Step 4
-        modify_request.set_near_tenor("Spot")
-        modify_request.set_far_leg_tenor("1W")
-        call(ar_service.modifyRFQTile, modify_request.build())
-        send_rfq(base_rfq_details, ar_service)
-        place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "Spot", "Spot", "1W")
-        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "Spot", "Spot", "1W")
-        check_trades_book(case_base_request, ob_act, case_id, qty_1, "Spot", "Spot", "1W")
-        check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "Spot", "Spot", "1W")
-        # Step 5
-        modify_request.set_near_tenor("TOM")
-        modify_request.set_far_leg_tenor("2W")
-        call(ar_service.modifyRFQTile, modify_request.build())
-        send_rfq(base_rfq_details, ar_service)
-        place_order_tob(base_rfq_details, ar_service)
-        check_order_book(case_base_request, ob_fx_act, case_id, qty_1, "TOM,", "TOM", "2W")
-        # check_my_orders(case_base_request, ob_act, case_id, qty_1, "TOM,", "TOM", "2W")
-        check_trades_book(case_base_request, ob_act, case_id, qty_1, "TOM", "TOM", "2W")
-        check_quote_request_b(case_base_request, ar_service, case_id, qty_1, "TOM", "TOM", "2W")
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRFQTile, base_rfq_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rfq_tile.close_tile()
