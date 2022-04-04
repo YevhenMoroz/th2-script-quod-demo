@@ -144,7 +144,7 @@ class CommonPage:
         Method was created for searching elements in DOM for #shadow-root tags
         '''
         search_button = self.web_driver_container.get_driver().execute_script(css_path)
-        search_button.click()
+        return search_button
 
     def is_element_present(self, xpath):
         try:
