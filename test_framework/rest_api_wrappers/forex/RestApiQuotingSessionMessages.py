@@ -3,6 +3,9 @@ from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 class RestApiQuotingSessionMessages(RestApiMessages):
 
+    def __init__(self, data_set=None):
+        super().__init__('ModifyQuotingSession', data_set)
+
     def set_default_params_esp(self):
         self.parameters = {
             "MDUpdateType": "FUL",
