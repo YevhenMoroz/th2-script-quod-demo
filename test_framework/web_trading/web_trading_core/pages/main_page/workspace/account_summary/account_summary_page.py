@@ -8,14 +8,15 @@ class AccountSummaryPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    # TODO: implement methods, if something changed in FE part, please take a look
-
     # region Filter values in main page
     def get_cash_account(self):
         return self.find_by_xpath(AccountSummaryConstants.USER_CASH_ACCOUNT_COLUMN_XPATH).text
 
     def get_currency(self):
         return self.find_by_xpath(AccountSummaryConstants.USER_CURRENCY_COLUMN_XPATH).text
+
+    def get_cash_balance(self):
+        return self.find_by_xpath(AccountSummaryConstants.USER_CURRENCY_CASH_BALANCE_XPATH).text
 
     def get_available_cash(self):
         return self.find_by_xpath(AccountSummaryConstants.USER_AVAILABLE_CASH_COLUMN_XPATH).text
@@ -28,6 +29,12 @@ class AccountSummaryPage(CommonPage):
 
     def get_buying_power(self):
         return self.find_by_xpath(AccountSummaryConstants.USER_BUYING_POWER_COLUMN_XPATH).text
+
+    def get_security_account(self):
+        return self.find_by_xpath(AccountSummaryConstants.USER_SECURITY_ACCOUNT_XPATH).text
+
+    def get_total_security_value(self):
+        return self.find_by_xpath(AccountSummaryConstants.USER_TOTAL_SECURITY_VALUE_XPATH).text
 
     # endregion
 
