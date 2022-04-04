@@ -145,6 +145,7 @@ class TradeBookColumns(Enum):
     venue = 'Venue'
     qty = 'Qty'
     side = 'Side'
+    tenor = 'Tenor'
     exec_price = 'ExecPrice'
     last_market = 'LastMkt'
     instrument_type = 'InstrType'
@@ -184,6 +185,8 @@ class QuoteRequestBookColumns(Enum):
     client = 'Client'
     client_tier = 'ClientTier'
     tenor = 'Tenor'
+    near_tenor = 'Near Leg Tenor'
+    far_tenor = 'Far Leg Tenor'
     # region Quotes sub-level
     quote_id = 'ID'
     account_group = 'AccountGroup'
