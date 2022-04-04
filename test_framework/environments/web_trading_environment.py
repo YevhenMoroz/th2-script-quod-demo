@@ -24,6 +24,16 @@ class WebTradingEnvironment(BaseEnvironment):
                 WebTradingEnvironment.environment_instances.update(
                     {EnvironmentType.quod315_web_trading_luna_chrome.value: web_admin_environment})
             return WebTradingEnvironment.environment_instances[EnvironmentType.quod315_web_trading_luna_chrome.value]
+        elif env.value == EnvironmentType.quod320_web_trading_kuiper_chrome.value:
+            if EnvironmentType.quod320_web_trading_kuiper_chrome.value not in WebTradingEnvironment.environment_instances.keys():
+                web_admin_environment = WebTradingEnvironment(
+                    environment_type=EnvironmentType.quod320_web_trading_kuiper_chrome.value,
+                    web_browser=WebBrowser.chrome.value,
+                    site_url=WebTradingURL.kuiper_320.value
+                )
+                WebTradingEnvironment.environment_instances.update(
+                    {EnvironmentType.quod320_web_trading_kuiper_chrome.value: web_admin_environment})
+            return WebTradingEnvironment.environment_instances[EnvironmentType.quod320_web_trading_kuiper_chrome.value]
         else:
             raise Exception('Environment not found')
 

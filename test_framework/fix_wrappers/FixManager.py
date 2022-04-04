@@ -12,6 +12,7 @@ from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
 
 
 class FixManager:
@@ -177,6 +178,8 @@ class FixManager:
                 response_fix_message = FixMessageNewOrderMultiLegFX()
             elif message_type == FIXMessageType.MarketDataRequestReject.value:
                 response_fix_message = FixMessageMarketDataRequestRejectFX()
+            elif message_type == FIXMessageType.QuoteRequestReject.value:
+                response_fix_message = FixMessageQuoteRequestRejectFX()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
