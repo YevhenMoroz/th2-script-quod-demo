@@ -1,11 +1,13 @@
 import random
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.fx_trade_book import FXTradeBook
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as ob, Side, \
@@ -14,8 +16,8 @@ from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 
 class QAP_3048(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)
@@ -52,11 +54,11 @@ class QAP_3048(TestCase):
             [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
             {ob.tenor.value: tenor_spot}, 'Checking tenor value in order book')
 
-        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+        exec_id1 = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
         self.trade_book.set_filter(
-            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            [tb.exec_id.value, exec_id1[ob.exec_id.value]]).check_trade_fields_list(
             {tb.tenor.value: tenor_spot}, 'Checking tenor value in trade book')
         # endregion
         # region Step 3
@@ -72,11 +74,11 @@ class QAP_3048(TestCase):
             [ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]).check_order_fields_list(
             {ob.tenor.value: tenor_1w}, 'Checking tenor value in order book')
 
-        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+        exec_id2 = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
         self.trade_book.set_filter(
-            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            [tb.exec_id.value, exec_id2[ob.exec_id.value]]).check_trade_fields_list(
             {tb.tenor.value: tenor_1w}, 'Checking tenor value in trade book')
         # endregion
         # region Step 4
@@ -96,11 +98,11 @@ class QAP_3048(TestCase):
              ob.near_tenor.value: tenor_spot,
              ob.far_tenor.value: tenor_1w}, 'Checking tenor value in order book')
 
-        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+        exec_id3 = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
         self.trade_book.set_filter(
-            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            [tb.exec_id.value, exec_id3[ob.exec_id.value]]).check_trade_fields_list(
             {tb.tenor.value: tenor_spot,
              tb.near_tenor.value: tenor_spot,
              tb.far_tenor.value: tenor_1w}, 'Checking tenor value in trade book')
@@ -122,11 +124,11 @@ class QAP_3048(TestCase):
              ob.near_tenor.value: tenor_tom,
              ob.far_tenor.value: tenor_2w}, 'Checking tenor value in order book')
 
-        exec_id = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
+        exec_id4 = self.order_book.set_filter([ob.symbol.value, eur_usd_symbol, ob.qty.value, self.qty]). \
             extract_second_lvl_fields_list({ob.exec_id.value: ''})
 
         self.trade_book.set_filter(
-            [tb.exec_id.value, exec_id]).check_trade_fields_list(
+            [tb.exec_id.value, exec_id4[ob.exec_id.value]]).check_trade_fields_list(
             {tb.tenor.value: tenor_tom,
              tb.near_tenor.value: tenor_tom,
              tb.far_tenor.value: tenor_2w}, 'Checking tenor value in trade book')
