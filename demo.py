@@ -4,10 +4,8 @@ from getpass import getuser as get_pc_name
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.fx.fx_mm_rfq import QAP_4505, QAP_5848
-from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
-from test_cases.fx.fx_mm_rfq.QAP_7287 import QAP_7287
-from test_cases.fx.send_md import QAP_MD
+from test_cases.fx.fx_taker_rfq.QAP_3048 import QAP_3048
+
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
@@ -25,7 +23,7 @@ def test_run():
 
     # initializing FE session
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
-    session_id = set_session_id(target_server_win="quod_11q")
+    session_id = set_session_id(target_server_win="rnenakho")
     window_name = "Quod Financial - Quod site 314"
     # region creation FE environment and initialize fe_ values
     configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
@@ -47,7 +45,8 @@ def test_run():
 
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set).execute()
-
+        QAP_3048(report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment).execute()
 
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
