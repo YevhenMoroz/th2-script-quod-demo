@@ -15,7 +15,6 @@ from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
 from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from test_cases.fx.fx_mm_rfq import QAP_3003, QAP_3250, QAP_1552, QAP_1746, QAP_4509, QAP_4510, QAP_2296
-from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
 from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3766, QAP_3734
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
@@ -25,7 +24,6 @@ from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
 from test_cases.fx.fx_mm_rfq import QAP_4505, QAP_5848
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7287 import QAP_7287
-from test_cases.fx.send_md import QAP_MD
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
