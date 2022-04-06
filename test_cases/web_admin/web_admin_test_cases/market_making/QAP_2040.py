@@ -23,8 +23,8 @@ class QAP_2040(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "VWAPPriceOptimized"
-        self.new_core_spot_price_strategy = "VWAPSpeedOptimized"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_1")
+        self.new_core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

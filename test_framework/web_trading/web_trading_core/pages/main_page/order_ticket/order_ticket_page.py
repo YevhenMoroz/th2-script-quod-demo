@@ -20,10 +20,15 @@ class OrderTicketPage(CommonPage):
         self.find_by_xpath(OrderTicketConstants.LIST_OF_SYMBOL_XPATH.format(symbol)).click()
         # self.select_value_from_dropdown_list()
 
-    def set_account(self, account):
-        self.find_by_xpath(OrderTicketConstants.ACCOUNTS_FIELD_XPATH).click()
+    def set_security_account(self, security_account):
+        self.find_by_xpath(OrderTicketConstants.SECURITY_ACCOUNT_FIELD_XPATH).click()
         time.sleep(2)
-        self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_ACCOUNTS_XPATH.format(account))
+        self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_SECURITY_ACCOUNTS_XPATH.format(security_account))
+
+    def set_cash_account(self, cash_account):
+        self.find_by_xpath(OrderTicketConstants.CASH_ACCOUNT_FIELD_XPATH).click()
+        time.sleep(2)
+        self.select_value_from_dropdown_list(OrderTicketConstants.LIST_OF_CASH_ACCOUNTS_XPATH.format(cash_account))
 
     def click_on_buy_mode_button(self):
         self.find_by_xpath(OrderTicketConstants.MODE_BUY_BUTTON_XPATH).click()
@@ -62,6 +67,7 @@ class OrderTicketPage(CommonPage):
     def get_error_notification(self):
         return self.find_by_xpath(OrderTicketConstants.NOTIFICATION_ACCOUNT_XPATH).text
 
+    #TODO: check, rely on update webTrading can be deprecated
     def create_order(self, symbol, account, quantity, price, order_type):
         self.set_symbol(symbol)
         time.sleep(2)
@@ -75,3 +81,6 @@ class OrderTicketPage(CommonPage):
         time.sleep(2)
         self.set_order_type(order_type)
         time.sleep(2)
+
+    def click_on_offline_checkbox(self):
+        self.find_by_xpath(OrderTicketConstants.OFFLINE_CHECKBOX_XPATH).click()

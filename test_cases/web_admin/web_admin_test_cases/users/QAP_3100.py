@@ -3,6 +3,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -18,27 +19,41 @@ class QAP_3100(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = self.data_set.get_user("acameron")
+        self.user_id = self.data_set.get_user("user_6")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
         side_menu.open_users_page()
         time.sleep(2)
         users_page = UsersPage(self.web_driver_container)
         users_page.set_user_id(self.user_id)
         time.sleep(2)
-        users_page.click_on_enable_disable_button()
-        time.sleep(2)
+
+    def check_verify(self):
+        users_page = UsersPage(self.web_driver_container)
+        if not users_page.is_user_enable_disable():
+            users_page.click_on_enable_disable_button()
+            time.sleep(2)
+            self.verify("User enable", True, users_page.is_user_enable_disable())
+        else:
+            users_page.click_on_enable_disable_button()
+            time.sleep(2)
+            self.verify("User disable", False, users_page.is_user_enable_disable())
 
     def test_context(self):
         try:
             self.precondition()
+
             users_page = UsersPage(self.web_driver_container)
-            self.verify("After disabled ", "User {} Disabled".format(self.user_id), users_page.get_disabled_massage())
             users_wizard = UsersWizard(self.web_driver_container)
+            common_page = CommonPage(self.web_driver_container)
+
+            self.check_verify()
+            common_page.click_on_info_error_message_pop_up()
+            time.sleep(1)
             users_wizard.click_on_logout_button()
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.login, self.password)
@@ -47,9 +62,8 @@ class QAP_3100(CommonTestCase):
             side_menu.open_users_page()
             users_page.set_user_id(self.user_id)
             time.sleep(2)
-            users_page.click_on_enable_disable_button()
-            time.sleep(2)
-            self.verify("After enabled ", "User {} Enabled".format(self.user_id), users_page.get_enabled_massage())
+            self.check_verify()
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

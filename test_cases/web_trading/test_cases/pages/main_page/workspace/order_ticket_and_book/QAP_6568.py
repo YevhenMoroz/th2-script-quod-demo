@@ -21,9 +21,9 @@ class QAP_6568(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.quantity = '11'
         self.price = "22"
-        self.symbol = "AADIIND-Z  "
-        self.order_type = " Limit "
-        self.time_in_force = "Day "
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.order_type = self.data_set.get_order_type("order_type_1")
+        self.time_in_force = self.data_set.get_time_in_force("time_in_force_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

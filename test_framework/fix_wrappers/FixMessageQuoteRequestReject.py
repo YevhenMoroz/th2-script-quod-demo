@@ -5,5 +5,5 @@ from test_framework.fix_wrappers.FixMessage import FixMessage
 
 class FixMessageQuoteRequestReject(FixMessage):
     def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
-        super().__init__(message_type=FIXMessageType.MarketDataRequest.value, data_set=data_set)
+        super().__init__(message_type=FIXMessageType.QuoteRequestReject.value, data_set=data_set)
         super().change_parameters(parameters)

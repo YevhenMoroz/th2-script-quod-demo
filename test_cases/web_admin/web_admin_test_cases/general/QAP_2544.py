@@ -17,28 +17,25 @@ class QAP_2544(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.settings = "CURRENCYSWAPPRICING"
+        self.settings = "Treshold"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_settings_page()
-        time.sleep(2)
+        time.sleep(1)
         settings_page = SettingsPage(self.web_driver_container)
         settings_page.set_settings(self.settings)
-        time.sleep(2)
+        time.sleep(1)
 
     def test_context(self):
 
         try:
             self.precondition()
             settings_page = SettingsPage(self.web_driver_container)
-            try:
-                settings_page.get_settings()
-                self.verify("Error", True, True)
-            except Exception as e:
-                self.verify("Row not displayed , it's ok", "TimeoutException", e.__class__.__name__)
+
+            self.verify("Row not displayed", False, settings_page.is_setting_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

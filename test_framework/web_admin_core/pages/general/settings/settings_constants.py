@@ -6,3 +6,4 @@ class SettingsConstants:
 
     SETTINGS_VALUE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     SETTINGS_VALUE_XPATH = '//*[@col-id="settingValue"]//span//span[4]'
+    SETTINGS_FIRS_ROW = '//*[@ref ="eCenterContainer"]//*[@row-index = "0"]'

@@ -32,6 +32,11 @@ class DesksPage(CommonPage):
     def click_on_new(self):
         self.find_by_xpath(DesksConstants.NEW_BUTTON_XPATH).click()
 
+    def click_on_disable_enable_button(self):
+        self.find_by_xpath(DesksConstants.ENABLE_DISABLE_BUTTON_XPATH).click()
+        time.sleep(1)
+        self.click_on_ok_xpath()
+
     def set_name_filter(self, value):
         self.set_text_by_xpath(DesksConstants.NAME_FILTER_AT_MAIN_PAGE_XPATH, value)
 
@@ -40,3 +45,6 @@ class DesksPage(CommonPage):
 
     def set_location_filter(self, value):
         self.set_text_by_xpath(DesksConstants.LOCATION_FILTER_AT_MAIN_PAGE_XPATH, value)
+
+    def is_desk_enable_disable(self):
+        return self.is_toggle_button_enabled(DesksConstants.ENABLE_DISABLE_BUTTON_XPATH)

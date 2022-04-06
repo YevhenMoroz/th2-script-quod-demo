@@ -1,68 +1,61 @@
+import logging
 import time
+from datetime import datetime
+from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
-from custom import basic_custom_actions as bca
-from stubs import Stubs
-from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, ExecSts
+from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
+from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+
+alias_gtw = "fix-sell-esp-m-314luna-stand"
+
+no_related_symbol = [
+    {
+        'Instrument': {
+            'Symbol': 'USD/PHP',
+            'SecurityType': 'FXNDF',
+            'Product': '4',
+        },
+        'SettlType': 'W2',
+    }
+]
+client = "Iridium1"
+bands = ["1000000", "5000000", "10000000"]
 
 
-class QAP_6151(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
-        self.fix_act = Stubs.fix_act
-        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
-        self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
-        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
-        self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
-        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
-        self.settle_type = self.data_set.get_settle_type_by_name('wk2')
-        self.usd_php = self.data_set.get_symbol_by_name('symbol_ndf_1')
-        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.client = self.data_set.get_client_by_name("client_tier_3")
-        self.no_related_symbol = [
-            {
-                'Instrument': {
-                    'Symbol': self.usd_php,
-                    'SecurityType': self.settle_type,
-                    'Product': '4',
-                },
-                'SettlType': self.settle_type,
-            }
-        ]
-        self.bands = ["1000000", "5000000", "10000000"]
+def execute(report_id):
+    case_name = Path(__file__).name[:-3]
+    case_id = bca.create_event(case_name, report_id)
+    fix_manager_gtw = FixManager(alias_gtw, case_id)
+    fix_verifier = FixVerifier(alias_gtw, case_id)
+    try:
+        market_data_request = FixMessageMarketDataRequestFX().set_md_req_parameters_maker(). \
+            change_parameters({'SenderSubID': client}). \
+            update_repeating_group('NoRelatedSymbols', no_related_symbol)
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
-        # region Step 1
-        self.fix_subscribe.set_md_req_parameters_maker(). \
-            change_parameters({"SenderSubID": self.data_set.get_client_by_name(self.client)}). \
-            update_repeating_group('NoRelatedSymbols', self.no_related_symbol)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands)
-        time.sleep(3)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
-        self.fix_subscribe.set_md_uns_parameters_maker()
-        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
+        fix_manager_gtw.send_message_and_receive_response(market_data_request, case_id)
+        md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        md_snapshot.set_params_for_md_response(market_data_request, bands, ndf=True)
+
+        time.sleep(4)
+        fix_verifier.check_fix_message(fix_message=md_snapshot, direction=DirectionEnum.FromQuod,
+                                       key_parameters=["MDReqID"])
 
 
-
-
-
+    except Exception:
+        logging.error('Error execution', exc_info=True)
+        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    finally:
+        market_data_request.change_parameters({"SubscriptionRequestType": "2"})
+        fix_manager_gtw.send_message(market_data_request)

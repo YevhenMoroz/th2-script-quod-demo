@@ -18,31 +18,31 @@ class QAP_3145(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.user_id = self.data_set.get_user("user_1")
+        self.user_id = self.data_set.get_user("user_5")
         self.perm_role = self.data_set.get_perm_role("perm_role_1")
         self.email = self.data_set.get_email("email_1")
+        self.user = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.set_login(self.data_set.get_user("user_5"))
-        login_page.set_password(self.data_set.get_password("password_2"))
-        login_page.click_login_button()
-        login_page.check_is_login_successful()
-        side_menu = SideMenu(self.web_driver_container)
+        login_page.login_to_web_admin(self.user, self.password)
         time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
         side_menu.open_users_page()
         time.sleep(2)
         users_page = UsersPage(self.web_driver_container)
         users_page.set_user_id(self.user_id)
-        time.sleep(3)
+        time.sleep(1)
         users_page.click_on_more_actions()
-        time.sleep(2)
+        time.sleep(1)
         users_page.click_on_edit_at_more_actions()
         time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
+
             role_wizard = UsersRoleSubWizard(self.web_driver_container)
             users_page = UsersPage(self.web_driver_container)
             details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
@@ -53,12 +53,12 @@ class QAP_3145(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
             users_page.set_user_id(self.user_id)
-            time.sleep(3)
+            time.sleep(1)
             users_page.click_on_more_actions()
-            time.sleep(2)
+            time.sleep(1)
             users_page.click_on_edit_at_more_actions()
             time.sleep(2)
-            self.verify("Is Perm Role saved correctly ?", self.perm_role, role_wizard.get_perm_role())
+            self.verify("Perm Role saved correctly", self.perm_role, role_wizard.get_perm_role())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

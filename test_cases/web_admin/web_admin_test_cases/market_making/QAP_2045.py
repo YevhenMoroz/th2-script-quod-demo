@@ -35,9 +35,9 @@ class QAP_2045(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
-        self.symbol = "AUD/CAD"
-        self.tenor = "Spot"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.tenor = self.data_set.get_tenor_by_name("tenor_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

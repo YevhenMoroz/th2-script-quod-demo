@@ -3,7 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-from test_framework.data_sets.constants import GatewaySide, Status
+from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce
@@ -22,9 +22,9 @@ defaultmdsymbol_spo_barx = 'EUR/USD:SPO:REG:BARX'
 defaultmdsymbol_spo_citi = 'EUR/USD:SPO:REG:CITI'
 # Gateway Side
 
-gateway_side_sell = GatewaySide.Sell
+gateway_side_sell = DataSet.GatewaySide.Sell
 # Status
-status = Status.Fill
+status = DataSet.Status.Fill
 no_md_entries_spo_barx = [
     {
         "MDEntryType": "0",

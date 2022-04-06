@@ -178,3 +178,5 @@ class UsersPage(CommonPage):
     def get_lock_unlock_status(self):
         return self.find_by_xpath(UsersConstants.LOCK_UNLOCK_BUTTON_XPATH).get_attribute("data-name")
 
+    def is_user_enable_disable(self):
+        return self.is_toggle_button_enabled(UsersConstants.ENABLE_DISABLE_BUTTON_XPATH)

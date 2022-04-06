@@ -1,3 +1,5 @@
+from selenium.webdriver import ActionChains
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.main_page_constants import MainPageConstants
@@ -45,3 +47,8 @@ class MainPage(CommonPage):
 
     def get_username(self):
         return self.find_by_xpath(MainPageConstants.USER_NAME_XPATH).text
+
+    def offset_horizontal_slide(self):
+        slider = self.find_by_xpath(MainPageConstants.HORIZONTAL_SCROLL)
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.drag_and_drop_by_offset(slider, 400, 0).perform()

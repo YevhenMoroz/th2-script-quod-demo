@@ -1,6 +1,9 @@
+from test_framework.data_sets.base_data_set import BaseDataSet
+
+
 class RestApiMessages:
 
-    def __init__(self, message_type=None, data_set=None):
+    def __init__(self, message_type=None, data_set: BaseDataSet = None):
         self.parameters = dict()
         self.message_type = message_type
         self.data_set = data_set
@@ -34,6 +37,14 @@ class RestApiMessages:
         Method for removing parameter from message
         """
         self.parameters.pop(parameter_name)
+        return self
+
+    def remove_parameters(self, parameter_name_list: list):
+        """
+        Method for removing list of parameter from message
+        """
+        for par in parameter_name_list:
+            self.parameters.pop(par)
         return self
 
     def add_value_to_component(self, component_name, values_list):

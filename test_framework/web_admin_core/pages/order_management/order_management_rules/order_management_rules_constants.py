@@ -23,6 +23,8 @@ class OrderManagementRulesConstants:
     CAN_NOT_CONTAIN_MORE_THAN_10_CONDITIONS = "//*[text()='Can not contain more than 10 conditions']"
     TOTAL_PERCENTAGE_IS_GREATER_THAN_100 = "//*[text()='Total percentage is greater than 100']"
     IS_GATING_RULE_ALREADY_HAS_THE_SAME_CRITERIA_MESSAGE_DISPLAYED = "//*[text()='A gating rule already has the same criteria']"
+    DROP_DOWN_ENTITY_XPATH = "//*[@class='option-list']//span"
+    ERROR_MESSAGE_XPATH = "//*[@outline='danger']"
 
     # criteria
     SAVE_CHANGE_CRITERIA_AT_MAIN_MENU_XPATH = "//*[text()='Change criteria']"

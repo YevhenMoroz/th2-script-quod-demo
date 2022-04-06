@@ -1,12 +1,12 @@
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_02_NEX, EXP_LIM_03_NEX, EXP_LIM_04_NEX, EXP_LIM_05_NEX, EXP_LIM_06_NEX, EXP_TWAP_01, EXP_VWAP_01, EXP_POV_01
+from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_02_NEX, EXP_LIM_03_NEX, EXP_LIM_04_NEX, EXP_LIM_05_NEX, EXP_LIM_06_NEX, EXP_TWAP_01, EXP_VWAP_01, EXP_POV_01, EXP_DMA_01
 from test_cases.algo.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
     TWAP_NAV_02, TWAP_NAV_01, QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_MAXShares, QA_TWAP_NAV_WW_01_sell, \
     QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_01_buy, QA_TWAP_NAV_WW_02_buy, QA_TWAP_NAV_WW_03_buy, \
     QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, MULT_TWAP_BA_01
 from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
-    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_AUC_PAR, VWAP_AUC_SIX, VWAP_AUC_XET
+    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, \
     POV_SCAP_01, MULT_POV_BA_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_VO_01, OPN_WW_01, \
@@ -148,6 +148,7 @@ def test_run():
         # endregion
 
         # region Expiry Client ralgouirement
+        EXP_DMA_01.execute(report_id)
         EXP_LIM_01.execute(report_id)
         EXP_LIM_02_NEX.execute(report_id)
         EXP_LIM_03_NEX.execute(report_id)
@@ -214,12 +215,6 @@ def test_run():
         TWAP_AUC_01.execute(report_id)
         VWAP_AUC_01.execute(report_id)
         POV_AUC_01.execute(report_id)
-        # endregion
-
-        # region VWAP Auc
-        VWAP_AUC_SIX.execute(report_id)
-        VWAP_AUC_PAR.execute(report_id)
-        VWAP_AUC_XET.execute(report_id)
         # endregion
 
         # region Multilisting Benchmark orders

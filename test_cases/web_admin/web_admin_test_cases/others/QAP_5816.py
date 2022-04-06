@@ -22,7 +22,7 @@ class QAP_5816(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.mic = "BARX"
-        self.venue = "ADX"
+        self.venue = self.data_set.get_venue_by_name("venue_6")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

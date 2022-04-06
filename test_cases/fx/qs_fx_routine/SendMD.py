@@ -65,7 +65,7 @@ def execute(report_id):
                     "MDEntryPx": 1.18599,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
+                    "MDQuoteType": 1,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
@@ -74,46 +74,46 @@ def execute(report_id):
                     "MDEntryPx": 1.18810,
                     "MDEntrySize": 1000000,
                     "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
+                    "MDQuoteType": 1,
                     'SettlDate': tsd.spo(),
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
-                # {
-                #     "MDEntryType": "0",
-                #     "MDEntryPx": 1.18397,
-                #     "MDEntrySize": 5000000,
-                #     "MDEntryPositionNo": 2,
-                #     "MDQuoteType": 1,
-                #     'SettlDate': tsd.spo(),
-                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                # },
-                # {
-                #     "MDEntryType": "1",
-                #     "MDEntryPx": 1.18909,
-                #     "MDEntrySize": 5000000,
-                #     "MDEntryPositionNo": 2,
-                #     "MDQuoteType": 1,
-                #     'SettlDate': tsd.spo(),
-                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                # },
-                # {
-                #     "MDEntryType": "0",
-                #     "MDEntryPx": 1.18251,
-                #     "MDEntrySize": 12000000,
-                #     "MDEntryPositionNo": 3,
-                #     "MDQuoteType": 1,
-                #     'SettlDate': tsd.spo(),
-                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                # },
-                # {
-                #     "MDEntryType": "1",
-                #     "MDEntryPx": 1.18999,
-                #     "MDEntrySize": 12000000,
-                #     "MDEntryPositionNo": 3,
-                #     "MDQuoteType": 1,
-                #     'SettlDate': tsd.spo(),
-                #     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                # }
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.18397,
+                    "MDEntrySize": 2000000,
+                    "MDEntryPositionNo": 2,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18909,
+                    "MDEntrySize": 2000000,
+                    "MDEntryPositionNo": 2,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.18251,
+                    "MDEntrySize": 5000000,
+                    "MDEntryPositionNo": 3,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18999,
+                    "MDEntrySize": 5000000,
+                    "MDEntryPositionNo": 3,
+                    "MDQuoteType": 1,
+                    'SettlDate': tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                }
             ]
         }
         print(mdu_params_spo)
@@ -291,43 +291,43 @@ def execute(report_id):
         #         request=RequestMDRefID(
         #             symbol=symbol,
         #             connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID
-
-
-
-        mdu_params_FWD = {
-            "MDReqID": simulator.getMDRefIDForConnection314(
-                request=RequestMDRefID(
-                    symbol=symbol,
-                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
-            'Instrument': {
-                'Symbol': instrument,
-                'SecurityType': sec_type
-            },
-            "NoMDEntries": [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.18039,
-                    "MDEntrySize": 1000000,
-                    "MDEntrySpotRate": 1.18038,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
-                    'SettlDate': tsd.wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18051,
-                    "MDEntrySize": 1000000,
-                    "MDEntrySpotRate": 1.18052,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
-                    'SettlDate': tsd.wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
-        }
+        #
+        #
+        #
+        # mdu_params_FWD = {
+        #     "MDReqID": simulator.getMDRefIDForConnection314(
+        #         request=RequestMDRefID(
+        #             symbol=symbol,
+        #             connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
+        #     'Instrument': {
+        #         'Symbol': instrument,
+        #         'SecurityType': sec_type
+        #     },
+        #     "NoMDEntries": [
+        #         {
+        #             "MDEntryType": "0",
+        #             "MDEntryPx": 1.18039,
+        #             "MDEntrySize": 1000000,
+        #             "MDEntrySpotRate": 1.18038,
+        #             "MDEntryForwardPoints": 0.0002,
+        #             "MDEntryPositionNo": 1,
+        #             "MDQuoteType": 0,
+        #             'SettlDate': tsd.wk1(),
+        #             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        #         },
+        #         {
+        #             "MDEntryType": "1",
+        #             "MDEntryPx": 1.18051,
+        #             "MDEntrySize": 1000000,
+        #             "MDEntrySpotRate": 1.18052,
+        #             "MDEntryForwardPoints": 0.0002,
+        #             "MDEntryPositionNo": 1,
+        #             "MDQuoteType": 0,
+        #             'SettlDate': tsd.wk1(),
+        #             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+        #         },
+        #     ]
+        # }
         # print(mdu_params_FWD)
         # act.sendMessage(
         #     bca.convert_to_request(

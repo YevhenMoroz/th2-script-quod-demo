@@ -1,4 +1,14 @@
 from enum import Enum
+from xml.etree import ElementTree
+
+from stubs import ROOT_DIR
+
+
+def find_target_server():
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
+    target_server = root.find(f".//target_server_win").text
+    return target_server
 
 
 class Connectivity(Enum):
@@ -26,10 +36,11 @@ class Connectivity(Enum):
 
 
 
+
 class FrontEnd(Enum):
     # 317 site
-    USERS_317 = []
-    PASSWORDS_317 = []
+    USERS_317 = [""]
+    PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
@@ -37,19 +48,19 @@ class FrontEnd(Enum):
     # common values
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
-    TARGET_SERVER_WIN = None  # by default we can set up here value of Jenkins machine
+    TARGET_SERVER_WIN = find_target_server()
+    
     # region quod314
-    USERS_314 = ["ostronov"]
-    PASSWORDS_314 = ["ostronov"]
+    USERS_314 = ["QA1"]
+    PASSWORDS_314 = ["QA1"]
     FOLDER_314 = ""
-    DESKS_314 = ["Aspect"]
+    DESKS_314 = ["Q"]
     MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
     LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
     # common values
     # target_server values
     TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
     # endregion
-
 
 
 class DirectionEnum(Enum):
@@ -90,6 +101,7 @@ class Status(Enum):
     Cancel = "Cancel"
     Eliminate = "Eliminate"
 
+
 class Reference(Enum):
     LastTradePrice = 'LTP'
     Primary = 'PRM'
@@ -102,6 +114,7 @@ class Reference(Enum):
     Manual = 'MAN'
     Limit = 'LMT'
 
+
 class TimeInForce(Enum):
     Day = 0
     GoodTillCancel = 1
@@ -113,6 +126,7 @@ class TimeInForce(Enum):
     AtTheClose = 7
     ValidForAuction = 100
 
+
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
 
@@ -123,3 +137,4 @@ class WebBrowser(Enum):
 
 class WebTradingURL(Enum):
     luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
+    kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"

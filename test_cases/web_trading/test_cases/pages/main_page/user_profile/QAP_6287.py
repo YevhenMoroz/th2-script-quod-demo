@@ -17,9 +17,9 @@ class QAP_6287(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "web_trading_test3"
-        self.password = "Web3_trading_test"
-        self.client = "POOJA"
+        self.login = self.data_set.get_user("web_trading_test3")
+        self.password = self.data_set.get_password("Web3_trading_test")
+        self.client = self.data_set.get_client("client_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

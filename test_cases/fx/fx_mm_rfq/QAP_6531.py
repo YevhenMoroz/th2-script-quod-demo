@@ -47,8 +47,10 @@ class QAP_6531(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+
+
         # Step 1
-        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
+        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
         quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
                                       settle_type=self.settle_type_tomorrow,
                                       settle_date=self.settle_date_tom, leg_qty=self.qty1)
@@ -69,8 +71,7 @@ class QAP_6531(TestCase):
         quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
                                       settle_type=self.settle_type_tomorrow,
                                       settle_date=self.settle_date_tom, leg_qty=self.qty2)
-        quote_request.update_far_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_spot,
-                                     settle_type=self.settle_type_spot,
+        quote_request.update_far_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_spot, settle_type=self.settle_type_spot,
                                      settle_date=self.settle_date_spo, leg_qty=self.qty2)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency="USD", Instrument=self.instrument, OrderQty=self.qty2)

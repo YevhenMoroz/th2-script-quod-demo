@@ -187,3 +187,9 @@ class CommonPage:
         return true if field is required or false if not
         '''
         return self.find_by_xpath(field_xpath).get_attribute("required") == "true"
+
+    def get_all_items_from_drop_down(self, xpath) -> list:
+        items = self.find_elements_by_xpath(xpath)
+        items_list = [_.text for _ in items]
+        return items_list
+

@@ -2,13 +2,12 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.tenor_settlement_date import spo
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
 class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
 
-    def __init__(self, parameters: dict = None, data_set: BaseDataSet = FxDataSet()):
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
         super().__init__(data_set=data_set)
         super().change_parameters(parameters)
 

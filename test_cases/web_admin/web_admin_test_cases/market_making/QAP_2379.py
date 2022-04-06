@@ -27,7 +27,7 @@ class QAP_2379(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.margin_format = "SysCurrPerMillion"
 
     def precondition(self):

@@ -1,11 +1,9 @@
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import ExecSts
+from test_framework.win_gui_wrappers.fe_trading_constant import ExecSts, Side
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns as ob
-from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
 
@@ -17,12 +15,11 @@ class QAP_Example(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)
-        self.case_from_currency = data_set.get_currency_by_name("currency_eur")
-        self.case_to_currency = data_set.get_currency_by_name("currency_usd")
+        self.case_from_currency = self.data_set.get_currency_by_name("currency_eur")
+        self.case_to_currency = self.data_set.get_currency_by_name("currency_usd")
+        self.case_near_tenor = self.data_set.get_tenor_by_name("Spot")
         self.case_qty = "1000000"
-        self.case_near_tenor = RatesColumnNames.ask_spot
-        self.fix_env = environment.get_list_fix_environment()[0]
-        self.sell_side = self.fix_env.sell_side
+        self.sell_side = Side.sell.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

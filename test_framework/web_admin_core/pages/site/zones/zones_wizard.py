@@ -38,6 +38,9 @@ class ZonesWizard(CommonPage):
     def click_on_ok_button(self):
         self.find_by_xpath(ZonesConstants.OK_BUTTON_XPATH).click()
 
+    def click_on_no_button(self):
+        self.find_by_xpath(ZonesConstants.NO_BUTTON_XPATH).click()
+
     def is_such_record_exists_massage_displayed(self):
         if self.find_by_xpath(
                 ZonesConstants.SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH).text == "Such a record already exists":

@@ -10,7 +10,7 @@ class InstitutionsConstants:
     NO_BUTTON_XPATH = '//*[text()="No"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
-    MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
+    MORE_ACTIONS_XPATH = "//*[@row-index='0']//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"

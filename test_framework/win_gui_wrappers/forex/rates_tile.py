@@ -105,15 +105,6 @@ class RatesTile(AggregatesRatesTile):
         call(self.ar_service.modifyRatesTile, self.modify_request.build())
         self.clear_details([self.modify_request])
 
-    def click_on_buy_full_amount(self, qty: str):
-        """
-        Click on Full Amount Qty Buy side on ESP tile
-        """
-        action = self.action_rates_tile.click_on_full_amounts_buy_button(qty)
-        self.modify_request.add_action(action)
-        call(self.ar_service.modifyRatesTile, self.modify_request.build())
-
-
     def click_on_tob_buy(self):
         """
         Click on Top of Book Buy side on ESP tile
