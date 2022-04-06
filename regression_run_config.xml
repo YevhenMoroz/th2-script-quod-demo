@@ -250,102 +250,90 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
-                <component name="" run="True">
+                <component name="PositionValidity" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
-                        <fix_environments>
-                            <fix_environment></fix_environment>
-                        </fix_environments>
                         <fe_environments>
-                            <fe_environment></fe_environment>
+                            <fe_environment>quod315_fe</fe_environment>
                         </fe_environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                        </trading_rest_api_environments>
                     </environments>
                 </component>
-            </components>
-        </product_line>
-        <product_line name="web_admin" run="False">
-            <components>
-                <component name="WA_General" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                 <component name="DMA_Trading_Api" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                    </environments>
                 </component>
-                <component name="WA_Site" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="MarketData_Trading_Api" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                    </environments>
                 </component>
-                <component name="WA_Users" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Positions_Trading_Api" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                    </environments>
                 </component>
-                <component name="WA_Reference_Data" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Site_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
-                <component name="WA_Client_Accounts" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Users_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
-                <component name="WA_Order_Management" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Client/Accounts_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
-                 <component name="WA_Middle_Office" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Risk_Limits_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
-                 <component name="WA_Market_Making" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Positions_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
-                 <component name="WA_Risk_Limits" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
-                </component>
-                 <component name="WA_Positions" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
+                <component name="Others_API" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
                 </component>
                  <component name="WA_Others" run="True">
                     <data_set>WebAdminDataSet</data_set>
