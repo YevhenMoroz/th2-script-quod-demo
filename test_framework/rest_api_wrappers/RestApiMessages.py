@@ -1,6 +1,6 @@
 class RestApiMessages:
 
-    def __init__(self, message_type, data_set=None):
+    def __init__(self, message_type=None, data_set=None):
         self.parameters = dict()
         self.message_type = message_type
         self.data_set = data_set

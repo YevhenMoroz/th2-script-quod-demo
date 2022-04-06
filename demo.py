@@ -1,42 +1,29 @@
 import logging
 import time
 from datetime import datetime
-from pathlib import Path
+
+import rule_management
+from MyFiles.SendMD import SendMD
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_6151, QAP_2957
-from test_cases.fx.fx_mm_esp.QAP_1418 import QAP_1418
-from test_cases.fx.fx_mm_esp.QAP_1589 import QAP_1589
-from test_cases.fx.fx_mm_esp.QAP_1643 import QAP_1643
-from test_cases.fx.fx_mm_esp.QAP_2049 import QAP_2049
-from test_cases.fx.fx_mm_esp.QAP_2077 import QAP_2077
-from test_cases.fx.fx_mm_esp.QAP_2080 import QAP_2080
-from test_cases.fx.fx_mm_esp.QAP_2087 import QAP_2087
-from test_cases.fx.fx_mm_esp.QAP_2815 import QAP_2815
-from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
+from test_cases.fx.fx_mm_autohedging import QAP_2326, QAP_3147, QAP_3146, QAP_2470, QAP_3017, QAP_3039, QAP_3067, \
+    QAP_3233, QAP_3354, QAP_3819, QAP_4122
+from test_cases.fx.fx_mm_esp import QAP_2966
+from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
 from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
-from test_cases.fx.fx_mm_esp.QAP_6155 import QAP_6155
-from test_cases.fx.fx_mm_esp.QAP_6353 import QAP_6353
-from test_cases.fx.fx_mm_esp.QAP_6697 import QAP_6697
-from test_cases.fx.fx_mm_esp.QAP_6931 import QAP_6931
-from test_cases.fx.fx_mm_esp.QAP_6932 import QAP_6932
-from test_cases.fx.fx_mm_esp.QAP_6933 import QAP_6933
-from test_cases.fx.fx_mm_esp.QAP_7073 import QAP_7073
-from test_cases.fx.fx_mm_esp.QAP_7081 import QAP_7081
-from test_cases.fx.fx_mm_rfq import for_test_77679
-from test_cases.fx.fx_mm_rfq.QAP_2472 import QAP_2472
-from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
-from test_cases.fx.fx_mm_rfq.QAP_3704 import QAP_3704
-from test_cases.fx.fx_taker_esp import QAP_5600
-from test_cases.fx.fx_taker_esp.QAP_3636 import QAP_3636
-from test_cases.fx.fx_taker_esp.QAP_3801 import QAP_3801
-from test_cases.fx.fx_taker_esp.QAP_3802 import QAP_3802
-from test_cases.fx.fx_taker_esp.QAP_5553 import QAP_5553
-from test_cases.fx.fx_taker_esp.QAP_6593 import QAP_6593
+from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
+from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
+from test_cases.fx.fx_mm_rfq import QAP_3003, QAP_3250, QAP_1552, QAP_1746, QAP_4509, QAP_4510, QAP_2296
+from test_cases.fx.fx_mm_rfq.QAP_5992 import QAP_5992
+from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3766, QAP_3734
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
+from test_cases.fx.fx_taker_esp import QAP_3141, QAP_3140, QAP_3418, QAP_3414, QAP_3415
+from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
+from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-# from test_framework.for_testing import Testing
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -46,43 +33,63 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(f'amedents ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    pc_name = get_pc_name()  # getting PC name
+    report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
 
     # initializing FE session
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
-    session_id = set_session_id(target_server_win="amedents")
-    # region environment and fe values
+    session_id = set_session_id(target_server_win="quod_11q")
+    # region creation FE environment and initialize fe_ values
     configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
-    start_time = datetime.now()
-    print(f"Start time: {start_time}")
+    start_time = time.time()
+    print(f"Test start")
     # endregion
     Stubs.frontend_is_open = True
 
     try:
-        # get_opened_fe(report_id, session_id)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        get_opened_fe(report_id, session_id)
 
-        # QAP_7081(report_id, session_id, data_set=configuration.data_set).execute()
-        QAP_7073(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_3494.execute(report_id)
-
-        # rm = RuleManager()
-        # rm.remove_rule_by_id(9)
-        # rm.add_fx_md_to("fix-fh-309-kratos")
-        # rm.print_active_rules()
-
-        print(f"Duration is {datetime.now() - start_time}")
+        # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_4149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_3142(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_3761(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_3147.execute(report_id, session_id)
+        QAP_3146.execute(report_id, session_id)
+        # QAP_3140.execute(report_id)
+        # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # send_rfq.execute(report_id)
+        # SendMD(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # rule_management.RuleManager.print_active_rules()
+        # QAP_4509.execute(report_id)
+        # QAP_4510.execute(report_id)
+        # QAP_2296.execute(report_id)
+        # stop_fxfh()
+        # QAP_3414.execute(report_id)
+        # QAP_3415.execute(report_id)
+        # QAP_3418.execute(report_id)
+        # start_fxfh()
+        # prepare_position()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         Stubs.win_act.unregister(session_id)
 
-
 if __name__ == '__main__':
-    try:
-        logging.basicConfig()
-        test_run()
-    finally:
-        Stubs.factory.close()
+    logging.basicConfig()
+    test_run()
+    Stubs.factory.close()
+
+
+
+
+
+
+
+
