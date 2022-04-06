@@ -24,7 +24,7 @@ class QAP_2835(TestCase):
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
         self.trade_book = FXTradeBook(self.test_id, self.session_id)
         self.qty = str(random.randint(1000000, 2000000))
-        self.origin1 = 'TradingFE'
+        self.origin1 = 'DotNET'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
