@@ -28,13 +28,17 @@ class Connectivity(Enum):
     Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_wa = "rest_wa314luna"
+    Luna_315_web_admin = 'rest_wa315luna'
+    Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
+    Luna_315_desktop_trading_web_socket = 'api_session_desktop315luna'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
-
-
+    Kuiper_320_web_admin = 'rest_wa320kuiper'
+    Kuiper_320_web_trading_http = 'rest_wt320kuiper'
+    Kuiper_320_web_trading_web_socket = 'api_session_320kuiper'
 
 
 class FrontEnd(Enum):
