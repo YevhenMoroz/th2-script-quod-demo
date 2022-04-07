@@ -286,6 +286,14 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
+                <component name="Others_Trading_Api" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                    </environments>
+                </component>
                 <component name="Site_API" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
