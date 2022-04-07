@@ -55,8 +55,7 @@ class FixEnvironment(BaseEnvironment):
                     buy_side_esp=Connectivity.Luna_314_ss_esp_t.value,
                     feed_handler=Connectivity.Luna_314_Feed_Handler.value,
                     feed_handler2=Connectivity.Luna_314_Feed_Handler_Q.value,
-                    drop_copy=Connectivity.Luna_314_dc.value,
-
+                    drop_copy=Connectivity.Luna_314_dc.value
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod314_luna_standard.value: site_environment})

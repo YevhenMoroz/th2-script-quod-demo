@@ -7,9 +7,10 @@ class ZonesConstants:
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
+    NO_BUTTON_XPATH = '//*[text()="No"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
-    MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
+    MORE_ACTIONS_XPATH = "//*[@row-index = '0']//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"

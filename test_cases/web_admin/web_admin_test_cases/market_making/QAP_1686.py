@@ -22,7 +22,7 @@ class QAP_1686(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.symbol = "EUR/USD"
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

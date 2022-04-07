@@ -25,7 +25,7 @@ class QAP_3009(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.core_spot_price_strategy = "Direct"
+        self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.day = "Monday"
         self.from_time = "00:00:00"
         self.to_time = "00:30:00"

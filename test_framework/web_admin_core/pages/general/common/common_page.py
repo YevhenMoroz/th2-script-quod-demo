@@ -111,3 +111,8 @@ class CommonPage(CommonPage):
         self.web_driver_container.get_driver().switch_to.window(window_after)
         inst = self.web_driver_container.get_driver().current_url
         return link == inst
+
+    def click_on_info_error_message_pop_up(self):
+        while self.is_element_present(CommonConstants.INFO_ERROR_MESSAGE_POP_UP) != False:
+             self.find_by_xpath(CommonConstants.INFO_ERROR_MESSAGE_POP_UP).click()
+             time.sleep(2)

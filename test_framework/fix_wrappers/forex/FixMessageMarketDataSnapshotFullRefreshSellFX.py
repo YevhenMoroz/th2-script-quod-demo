@@ -1,4 +1,4 @@
-from custom.tenor_settlement_date import spo, wk1, wk2, spo_ndf, wk1_ndf, wk2_ndf
+from custom.tenor_settlement_date import spo, wk1, wk2, spo_ndf, wk1_ndf, wk2_ndf, today
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 
@@ -31,8 +31,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                         "MDEntryID": "*",
                         "MDEntrySize": qty,
                         "QuoteEntryID": "*",
-                        "MDOriginType": 1,
-                        "MDQuoteType": 1,
+                        "MDOriginType": "1",
+                        "MDQuoteType": "1",
                         "MDEntryPositionNo": md_entry_position,
                         "MDEntryDate": "*",
                         "MDEntryType": md_entry_type
@@ -52,6 +52,9 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                         elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W2":
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "W2"
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk2()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "1":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "1"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = today()
                         # TODO add more SettleType`s
                     if ndf is not False:
                         self.get_parameter("NoMDEntries")[band]["SettlType"] = "0"

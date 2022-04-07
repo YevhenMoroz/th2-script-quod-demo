@@ -33,7 +33,7 @@ class QAP_4272(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
         self.user = self.data_set.get_user("user_9")
-        self.client = self.data_set.client("client_1")
+        self.client = self.data_set.get_client("client_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

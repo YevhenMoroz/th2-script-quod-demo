@@ -35,10 +35,10 @@ class QAP_3237(CommonTestCase):
         self.description = "description"
         self.comm_xunit = "Amount"
         self.venue_commission_profile_id = "test"
-        self.comm_type = "Percentage"
-        self.comm_algorithm = "Flat"
+        self.comm_type = self.data_set.get_comm_type("comm_type_1")
+        self.comm_algorithm = self.data_set.get_comm_algorithm("comm_algorithm_1")
         self.max_commission = "50"
-        self.currency = "AED"
+        self.currency = self.data_set.get_currency_by_name("currency_2")
         self.rounding_direction = "RoundDown"
         self.rounding_precision = "2"
         self.rounding_modulus = "1"

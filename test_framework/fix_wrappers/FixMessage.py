@@ -20,6 +20,7 @@ class FixMessage:
 
     def change_parameter(self, parameter_name: str, new_parameter_value) -> None:
         self.__parameters[parameter_name] = new_parameter_value
+        return self
 
     def change_parameters(self, parameter_list: dict):
         if parameter_list is not None:
@@ -117,4 +118,3 @@ class FixMessage:
 
     def get_data_set(self):
         return self.__data_set
-
