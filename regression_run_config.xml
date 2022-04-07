@@ -334,15 +334,99 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                <component name="WA_Others" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                        <environments>
-                            <web_admin_environments>
-                                <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            </web_admin_environments>
-                        </environments>
-                </component>
              </components>
+        </product_line>
+        <product_line name="web_admin" run="False">
+            <components>
+                <component name="WA_General" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Site" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Users" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Reference_Data" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Client_Accounts" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Order_Management" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                 <component name="WA_Middle_Office" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                 <component name="WA_Market_Making" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                 <component name="WA_Risk_Limits" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                 <component name="WA_Positions" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                 <component name="WA_Others" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+            </components>
         </product_line>
         <product_line name="web_trading" run="True">
             <components>
