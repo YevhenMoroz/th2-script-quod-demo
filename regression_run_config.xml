@@ -262,7 +262,7 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                 <component name="DMA_Trading_Api" run="True">
+                <component name="DMA_Trading_Api" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
@@ -408,21 +408,6 @@
                         <web_trading_environments>
                             <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
                         </web_trading_environments>
-                    </environments>
-                </component>
-            </components>
-        </product_line>
-        <product_line name="mobile_android" run="False">
-            <components>
-                <component name="" run="True">
-                    <data_set></data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment></fix_environment>
-                        </fix_environments>
-                        <fe_environments>
-                            <fe_environment></fe_environment>
-                        </fe_environments>
                     </environments>
                 </component>
             </components>
