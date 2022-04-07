@@ -334,7 +334,7 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                 <component name="WA_Others" run="True">
+                <component name="WA_Others" run="True">
                     <data_set>WebAdminDataSet</data_set>
                         <environments>
                             <web_admin_environments>
@@ -386,7 +386,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                 <component name="WebTrading_UserProfile" run="True">
+                <component name="WebTrading_UserProfile" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -394,7 +394,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                 <component name="WebTrading_WatchList" run="True">
+                <component name="WebTrading_WatchList" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
