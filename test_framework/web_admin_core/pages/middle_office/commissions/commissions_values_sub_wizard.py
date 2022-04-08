@@ -35,4 +35,4 @@ class CommissionsValuesSubWizard(CommonPage):
     def get_all_venue_list_from_drop_menu(self):
         self.find_by_xpath(CommissionsConstants.VALUES_TAB_VENUE_LIST_XPATH).click()
         time.sleep(2)
-        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)

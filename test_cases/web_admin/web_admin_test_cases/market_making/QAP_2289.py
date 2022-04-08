@@ -52,7 +52,7 @@ class QAP_2289(CommonTestCase):
         try:
             self.precondition()
             client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+
             try:
                 client_tiers_main_page.set_name(self.name)
                 self.verify("Is client tier created correctly? ", True, True)
@@ -60,7 +60,7 @@ class QAP_2289(CommonTestCase):
                 self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
             time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
+            time.sleep(2)
             client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_main_page.click_on_new()
             time.sleep(2)
@@ -80,19 +80,19 @@ class QAP_2289(CommonTestCase):
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
             time.sleep(2)
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity_filter(5000000)
-            time.sleep(3)
+            time.sleep(1)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_edit()
-            time.sleep(2)
+            time.sleep(1)
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(4000000)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
-            time.sleep(3)
+            time.sleep(1)
+            client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity_filter("")
+            time.sleep(1)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_plus()
             client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(4000000)
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_published_checkbox()
             client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
             self.verify("Qty added. Web admin FE can have duplicate quantities", True, True)
-            # self.verify("Qty did not add !!!Error", False,
-            # client_tiers_instrument_wizard.is_such_record_exists_massage_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

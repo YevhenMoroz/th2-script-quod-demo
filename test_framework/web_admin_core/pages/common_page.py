@@ -82,10 +82,7 @@ class CommonPage:
         self.find_by_xpath(xpath).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
-        checkbox_state_span = self.get_checkbox_state_span(checkbox_xpath)
-        checkbox_state_span_attribute = checkbox_state_span.get_attribute("class")
-
-        return CommonConstants.CHECKED_ATTRIBUTE in checkbox_state_span_attribute
+        return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
 
     def toggle_checkbox(self, checkbox_xpath: str):
         checkbox_state_span = self.get_checkbox_state_span(checkbox_xpath)
@@ -184,7 +181,12 @@ class CommonPage:
         '''
         return self.find_by_xpath(field_xpath).get_attribute("required") == "true"
 
-    def get_all_items_from_drop_down(self, xpath) -> list:
+    def _get_all_items_from_drop_down(self, xpath) -> list:
+        items = self.find_elements_by_xpath(xpath)
+        items_list = [_.text for _ in items]
+        return items_list
+
+    def _get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
         items_list = [_.text for _ in items]
         return items_list

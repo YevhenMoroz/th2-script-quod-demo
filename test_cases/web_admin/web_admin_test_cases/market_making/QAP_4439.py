@@ -19,7 +19,7 @@ class QAP_4439(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.strategy = "BasicMaker"
+        self.strategy = "Default"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,12 +38,9 @@ class QAP_4439(CommonTestCase):
             instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
             instruments_sub_wizard.click_on_plus_button()
             time.sleep(2)
-            try:
-                instruments_sub_wizard.set_hedging_execution_strategy(self.strategy)
-                self.verify("Default strategy selected correctly", True, True)
 
-            except Exception as e:
-                self.verify("Default strategy", True, e.__class__.__name__)
+            self.verify("Default strategy has italic font", True, instruments_sub_wizard
+                            .is_default_execution_strategy_has_italic_font(self.strategy))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

@@ -28,4 +28,4 @@ class ClientTiersValuesSubWizard(CommonPage):
     def get_all_core_spot_price_strategy_from_drop_menu(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH).click()
         time.sleep(2)
-        return self.get_all_items_from_drop_down(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH)
+        return self._get_all_items_from_drop_down(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH)

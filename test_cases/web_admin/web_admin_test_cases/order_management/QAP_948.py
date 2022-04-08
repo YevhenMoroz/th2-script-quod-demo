@@ -76,7 +76,7 @@ class QAP_948(CommonTestCase):
         time.sleep(2)
 
         if wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-            venues = values_sub_wizard.get_all_venues_from_drop_down()
+            venues = values_sub_wizard.get_all_venues_from_drop_menu()
             while wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
                 values_sub_wizard.set_venue(venues[0])
                 venues.remove(venues[0])

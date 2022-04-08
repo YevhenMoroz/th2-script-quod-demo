@@ -28,6 +28,7 @@ class QAP_6290(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.desk = self.data_set.get_desk("desk_3")
         self.middle_office_desk = "Quod Desk"
@@ -41,10 +42,12 @@ class QAP_6290(CommonTestCase):
         page = ClientsPage(self.web_driver_container)
         page.click_on_new()
 
+        time.sleep(2)
         wizard_values = ClientsValuesSubWizard(self.web_driver_container)
         wizard_values.set_id(self.id)
         wizard_values.set_name(self.name)
         wizard_values.set_disclose_exec(self.disclose_exec)
+        wizard_values.set_ext_id_client(self.ext_id_client)
 
         wizard_assignments = ClientsAssignmentsSubWizard(self.web_driver_container)
         wizard_assignments.set_desk(self.desk)

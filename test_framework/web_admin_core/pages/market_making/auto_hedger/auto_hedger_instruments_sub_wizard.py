@@ -105,3 +105,9 @@ class AutoHedgerInstrumentsSubWizard(CommonPage):
     def get_hedging_execution_strategy_max_duration(self):
         return self.get_text_by_xpath(
             AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH)
+
+    def is_default_execution_strategy_has_italic_font(self, value):
+        self.find_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH).click()
+        self.set_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH, value)
+        attribute_value = self.find_by_xpath(AutoHedgerConstants.DROP_DOWN_MENU_XPATH).get_attribute("class")
+        return True if 'italic' in attribute_value else False
