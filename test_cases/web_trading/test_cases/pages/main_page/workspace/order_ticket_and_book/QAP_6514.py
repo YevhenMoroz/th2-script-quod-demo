@@ -15,10 +15,11 @@ from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order
 
 class QAP_6514(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
-        self.login = "QA5"
-        self.password = "QA5"
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = "QA1"
+        self.password = "QA1"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -62,7 +63,6 @@ class QAP_6514(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-
             self.verify("Is order created and displayed with defined parameters? ", self.order1, self.order2)
 
         except Exception:

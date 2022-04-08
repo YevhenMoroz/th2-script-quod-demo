@@ -20,3 +20,5 @@ class MainPageConstants:
     NEW_WORKSPACE_CSS = '*[aria-label="New Workspace"]'
     NEW_WORKSPACE_CLOSE_BUTTON_CSS = 'return document.querySelector("igc-dockmanager").shadowRoot.querySelector("*[aria-controls=\'tab-panel-2\']").shadowRoot.querySelector("*[title=\'Close\']")'
     # endregion
+
+    HORIZONTAL_SCROLL = "//*[@class='igx-grid__scroll']//igx-horizontal-virtual-helper[@class='igx-vhelper--horizontal ng-star-inserted']//div[@class='igx-vhelper__placeholder-content']"

@@ -16,20 +16,24 @@ from test_framework.web_trading.web_trading_core.pages.main_page.menu.profile.pr
 
 
 class QAP_6296(CommonTestCase):
-    PATH_TO_TEMPORARY_PASSWORD_RESET_FILE = f'{ROOT_DIR}\\test_cases\\web_admin\\web_admin_core\\resourses\\temporary_password_reset_QAP_6296.txt'
+    PATH_TO_TEMPORARY_PASSWORD_RESET_FILE = f'{ROOT_DIR}\\test_cases\\web_trading\\resources\\temporary_password_reset_QAP_6296.txt'
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = self.data_set.get_user("user_1")
-        self.password = self.data_set.get_password("password_1")
+        self.login = self.data_set.get_user("user_5")
+        self.password = self.data_set.get_password("password_5")
         self.password_for_reset = str
         self.new_password = '!new1234' + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.set_login(self.login)
-        login_page.set_password(self.password)
+        # this give us ability to enter first time with right password
+        try:
+            login_page.set_password(self.password)
+        except Exception:
+            login_page.set_password(login_page.get_password_from_file(self.PATH_TO_TEMPORARY_PASSWORD_RESET_FILE))
         login_page.click_login_button()
         main_page = MainPage(self.web_driver_container)
         main_page.click_on_menu_button()
@@ -53,6 +57,7 @@ class QAP_6296(CommonTestCase):
         time.sleep(2)
         profile_page.click_on_close_button()
         main_page.click_on_menu_button()
+        time.sleep(2)
         menu_page.click_on_logout_button()
         time.sleep(2)
         menu_page.click_on_yes_button()

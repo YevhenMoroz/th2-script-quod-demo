@@ -6,12 +6,14 @@ class WebTradingUsers(Enum):
     user_2 = "user_desk"
     user_3 = "web_trading_test1"
     user_4 = "web_trading_test3"
+    user_5 = "QA5"
 
 class WebTradingPasswords(Enum):
     password_1 = "QA1"
     password_2 = "user_desk"
     password_3 = "Web1_trading_test"
     password_4 = "Web3_trading_test"
+    password_5 = "QA5"
 
 
 class WebTradingSymbol(Enum):

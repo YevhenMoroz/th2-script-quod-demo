@@ -2,7 +2,8 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsClients, OmsAccounts, \
     OmsWashbookAccounts, OmsRecipients, OmsFixInstruments, OmsListingId, OmsInstrumentId, OmsMic, OmsCurrency, \
     OmsVenueClientNames, OmsRoutes, OmsLookupForVenues, OmsVenueClientAccounts, OMSCommissionProfiles, OMSFeeType, \
-    OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes
+    OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
+    OMSCommissionAndFeeBasis, OMSBasketTemplates
 
 
 class OmsDataSet(BaseDataSet):
@@ -33,3 +34,5 @@ class OmsDataSet(BaseDataSet):
     counterparts = OmsCounterparts
     qty_types = OmsQtyTypes
     pset = OMSPset
+    commission_basis = OMSCommissionAndFeeBasis
+    basket_templates = OMSBasketTemplates

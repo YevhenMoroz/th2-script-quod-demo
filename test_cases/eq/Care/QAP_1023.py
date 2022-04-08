@@ -27,7 +27,7 @@ class QAP_1023(TestCase):
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.username2 = environment.get_list_fe_environment()[0].user_2
-        self.desk = environment.get_list_fe_environment()[0].desk_3
+        self.desk = environment.get_list_fe_environment()[0].desk_2
         self.qty = "900"
         self.price = "40"
         self.order_type = "Limit"

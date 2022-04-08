@@ -57,16 +57,12 @@ class CommonPage:
 
         text_field.send_keys(value)
 
-    def set_checkbox_list(self, checkbox_xpath: str, values: tuple):
+    def set_checkbox_list(self, checkbox_xpath: str, values: list):
         """
         Method was created for setting checkbox list,
         concatenates the xpath to the checkbox through its values
         """
-        result = list(values)
-        result.clear()
-        for item in range(len(values)):
-            result.append(checkbox_xpath.format(values[item]))
-        return result
+        return [checkbox_xpath.format(item) for item in values]
 
     def set_combobox_value(self, combobox_xpath: str, value: str):
         """
@@ -144,7 +140,7 @@ class CommonPage:
         Method was created for searching elements in DOM for #shadow-root tags
         '''
         search_button = self.web_driver_container.get_driver().execute_script(css_path)
-        search_button.click()
+        return search_button
 
     def is_element_present(self, xpath):
         try:
