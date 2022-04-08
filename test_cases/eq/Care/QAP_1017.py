@@ -3,7 +3,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from th2_grpc_hand import rhbatch_pb2
-from custom.basic_custom_actions import create_event, timestamps
 from stubs import Stubs
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
