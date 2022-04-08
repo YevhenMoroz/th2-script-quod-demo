@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import typing
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -29,19 +30,27 @@ class QAP_3413(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.pset = self.data_set.get_pset('pset_1')
         self.pset_2 = self.data_set.get_pset('pset_2')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        nos_rule, trade_rule = None
+        nos_rule = None
+        trade_rule = None
         qty = '300'
         price = '10'
+        account_first = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        no_allocs: typing.Dict[str, list] = {'NoAllocs': [
+            {
+                'AllocAccount': account_first,
+                'AllocQty': qty,
+            }]}
+        self.fix_message.change_parameter('PreAllocGrp', no_allocs)
         self.fix_message.set_default_dma_limit()
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_8'))
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
         self.fix_message.change_parameter('Price', price)
 
         cl_ord_id = self.fix_message.get_parameter('ClOrdID')
@@ -59,18 +68,17 @@ class QAP_3413(TestCase):
                                                                                        int(qty),
                                                                                        delay=0)
             self.fix_manager.send_message_fix_standard(self.fix_message)
-            order_id_first = self.order_book.extract_field(OrderBookColumns.order_id.value)
-
         except Exception as e:
             logger.error(f'{e}')
 
         finally:
-            time.sleep(5)
+            time.sleep(10)
             rule_manager.remove_rule(nos_rule)
             rule_manager.remove_rule(trade_rule)
         # endregion
 
         # region Book order and verify value after that (step 1, step 2)
+        order_id_first = self.order_book.extract_field(OrderBookColumns.order_id.value)
         self.middle_office.set_modify_ticket_details(pset=self.pset[0])
         self.middle_office.book_order()
         block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value)
@@ -97,7 +105,7 @@ class QAP_3413(TestCase):
 
         # region amend PSET for block (step 3, step 4)
         self.middle_office.set_modify_ticket_details(pset=self.pset_2[0])
-        self.middle_office.book_order()
+        self.middle_office.amend_block(filter_list)
         extracted_list = [MiddleOfficeColumns.pset.value,
                           MiddleOfficeColumns.pset_bic.value]
         actually_result = self.__extracted_values(extracted_list, filter_list,
@@ -116,7 +124,7 @@ class QAP_3413(TestCase):
         actually_result = self.__extracted_values(extracted_list, filter_list,
                                                   'self.middle_office.extract_list_of_block_fields')
         expected_result = {MiddleOfficeColumns.sts.value: 'Accepted',
-                           MiddleOfficeColumns.pset_bic.value: 'Matched'}
+                           MiddleOfficeColumns.match_status.value: 'Matched'}
         self.__comparing_values(expected_result, actually_result,
                                 'Comparing values after approve  block of MiddleOffice',
                                 'self.middle_office.compare_values')
