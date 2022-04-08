@@ -257,6 +257,10 @@ class OMSPset(Enum):
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
 
 
+class OMSCommissionAndFeeBasis(Enum):
+    comm_basis_1 = 'Absolute'
+    comm_basis_2 = 'Percentage'
+
 class OMSBasketTemplates(Enum):
     template1 = "Test Template"  # This is a test template with header and default value
     template2 = "Test Template 2"  # This is a test template without header and default value

@@ -18,14 +18,14 @@ timeouts = True
 class QAP_1037(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.lookup = "VETO"
+        self.lookup = self.data_set.get_lookup_by_name("lookup_1")
         self.qty = '100'
         self.price = '10'
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
@@ -37,7 +37,7 @@ class QAP_1037(TestCase):
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region Accept CO order
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        self.client_inbox.accept_order()
         # endregion
         # region check order status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(

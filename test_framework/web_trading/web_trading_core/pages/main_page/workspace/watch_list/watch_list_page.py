@@ -1,3 +1,5 @@
+from selenium.webdriver import ActionChains
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.workspace.watch_list.watch_list_constants import \
@@ -143,8 +145,14 @@ class WatchListPage(CommonPage):
 
     def click_on_times_and_sales_button(self):
         self.find_by_xpath(WatchListConstants.TIMES_AND_SALES_HOVER_BUTTON_XPATH).click()
-# endregion
 
-#TODO: pay attention!
+    # endregion
+
+    # TODO: pay attention!
     def horizontal_scroll(self):
         self.scroll(WatchListConstants.HORIZONTAL_SCROLL_XPATH, WatchListConstants.SCROLL_END_XPATH)
+
+    def offset_horizontal_slide(self):
+        slider = self.find_by_xpath(WatchListConstants.HORIZONTAL_SCROLL_XPATH)
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.drag_and_drop_by_offset(slider, 200, 0).perform()

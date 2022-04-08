@@ -27,7 +27,7 @@ class WebAdminDataSet(BaseDataSet):
     location = WebAdminLocations
     institution = WebAdminInstitutions
     zone = WebAdminZones
-    client = WebAdminClients
+    clients = WebAdminClients
     client_type = WebAdminClientType
     venues = WebAdminVenues
     email = WebAdminEmail
@@ -50,13 +50,13 @@ class WebAdminDataSet(BaseDataSet):
     instr_type = WebAdminInstrType
     preferred_venue = WebAdminPreferredVenue
     listing_group = WebAdminListingGroup
-    settle_type = WebAdminSettleType
+    settle_types = WebAdminSettleType
     feed_source = WebAdminFeedSource
     negative_route = WebAdminNegativeRoutes
     positive_route = WebAdminPositiveRoutes
     client_id_source = WebAdminClientIdSource
     route_account_name = WebAdminRouteAccountName
-    route = WebAdminRoute
+    routes = WebAdminRoute
     clearing_account_type = WebAdminClearingAccountType
     disclose_exec = WebAdminDiscloseExec
     account_id_source = WebAdminAccountIdSource
@@ -70,7 +70,7 @@ class WebAdminDataSet(BaseDataSet):
     strategy_type = WebAdminStrategyType
     exec_policy = WebAdminExecPolicy
     commission_amount_type = WebAdminCommissionAmountType
-    commission_profile = WebAdminCommissionProfile
+    commission_profiles = WebAdminCommissionProfile
     settl_location = WebAdminSettlLocation
     country_code = WebAdminCountryCode
     client_group = WebAdminClientGroup
