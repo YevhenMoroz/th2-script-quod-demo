@@ -154,5 +154,8 @@ class BasketMenuItemDetails:
     def set_extraction_Id(self, extraction_Id: str):
         self._request.extractionId = extraction_Id
 
+    def set_sub_lvl_tab(self, sub_lvl_tab: str):
+        self._request.subLvlTab = sub_lvl_tab
+
     def build(self):
         return self._request

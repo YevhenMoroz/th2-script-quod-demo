@@ -81,17 +81,23 @@ class BaseBasketOrderBook(BaseWindow):
         self.clear_details([self.extract_basket_data_details])
         return result
 
-    def is_menu_item_present(self, menu_item, basket_count: list, filter_dict=None):
+    def is_menu_item_present(self, menu_item: str, row_count: list = None, sub_lvl_tab: str = None,
+                             filter_dict: dict = None):
         """
         check order context menu and return a bool value
         """
-        self.menu_item_details.set_selected_rows(basket_count)
+        if row_count is None:
+            row_count = [1]
+        self.menu_item_details.set_selected_rows(row_count)
         self.menu_item_details.set_menu_item(menu_item)
         if filter_dict is not None:
             self.menu_item_details.set_filter(filter_dict)
+        if sub_lvl_tab is not None:
+            self.menu_item_details.set_sub_lvl_tab(sub_lvl_tab)
         result = call(self.is_menu_item_present_call, self.menu_item_details.build())
         self.clear_details([self.menu_item_details])
         return result['isMenuItemPresent']
+
     # endregion
 
     # region Set
