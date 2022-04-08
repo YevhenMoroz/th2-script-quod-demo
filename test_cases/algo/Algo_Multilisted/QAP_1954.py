@@ -41,7 +41,7 @@ class QAP_1954(TestCase):
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
 
-        now = datetime.today() - timedelta(hours=2)
+        now = datetime.today() - timedelta(hours=3)
         self.ExpireDate=(now + timedelta(days=1)).strftime("%Y%m%d")
         # endregion
 

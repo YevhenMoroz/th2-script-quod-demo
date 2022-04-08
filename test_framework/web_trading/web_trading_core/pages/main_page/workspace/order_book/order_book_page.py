@@ -1,3 +1,6 @@
+import time
+
+from selenium.webdriver.common.action_chains import ActionChains
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_framework.web_trading.web_trading_core.pages.main_page.workspace.order_book.order_book_constants import \
@@ -16,7 +19,7 @@ class OrderBookPage(CommonPage):
 
     # region Filter values in main page
     def get_symbol(self):
-        return self.find_by_xpath(OrderBookConstants.ORDER_SYMBOL_XPATH).text
+        return self.find_element_in_shadow_root(OrderBookConstants.ORDER_SYMBOL_XPATH)
 
     def get_instr_type(self):
         return self.find_by_xpath(OrderBookConstants.ORDER_INSTR_TYPE_XPATH).text
@@ -133,7 +136,7 @@ class OrderBookPage(CommonPage):
         self.find_by_xpath(OrderBookConstants.COPY_PANEL_BUTTON_XPATH).click()
 
     def click_on_maximize_button(self):
-        self.find_element_in_shadow_root(OrderBookConstants.MAXIMIZE_BUTTON_CSS)
+        self.find_element_in_shadow_root(OrderBookConstants.MAXIMIZE_BUTTON_CSS).click()
 
     def click_on_minimize_button(self):
         self.find_element_in_shadow_root(OrderBookConstants.MINIMIZE_BUTTON_CSS)
@@ -220,3 +223,9 @@ class OrderBookPage(CommonPage):
         self.find_by_xpath(OrderBookConstants.APPLY_BUTTON_XPATH).click()
 
     # endregion
+
+    def hover_over_an_order(self):
+        action = ActionChains(self.web_driver_container.get_driver())
+        time.sleep(2)
+        action.move_by_offset(160, 260).perform()
+        time.sleep(5)

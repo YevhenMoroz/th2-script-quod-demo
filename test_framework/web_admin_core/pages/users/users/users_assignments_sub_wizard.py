@@ -13,7 +13,10 @@ class UsersAssignmentsSubWizard(CommonPage):
     def set_desks(self, value):
         result = self.set_checkbox_list(UsersConstants.DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD, value)
         for item in range(len(result)):
-            self.find_by_xpath(result[item]).click()
+            if "selected" in self.find_by_xpath(result[item]).get_attribute("class"):
+                pass
+            else:
+                self.find_by_xpath(result[item]).click()
 
     def set_location(self, value):
         self.set_combobox_value(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, value)

@@ -13,7 +13,7 @@ class MainPage(CommonPage):
         self.find_by_xpath(MainPageConstants.PLUS_BUTTON_XPATH).click()
 
     def click_on_close_new_workspace_button(self):
-        self.find_element_in_shadow_root(MainPageConstants.NEW_WORKSPACE_CLOSE_BUTTON_CSS)
+        self.find_element_in_shadow_root(MainPageConstants.NEW_WORKSPACE_CLOSE_BUTTON_CSS).click()
 
     def click_on_buy_button(self):
         self.find_by_xpath(MainPageConstants.BUY_BUTTON_XPATH).click()
