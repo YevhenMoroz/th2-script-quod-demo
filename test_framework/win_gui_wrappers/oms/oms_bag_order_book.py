@@ -22,5 +22,5 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.modify_wave_bag_call = Stubs.win_act_bag_management_service.orderBagWaveModification
         self.order_bag_wave_extraction_call = Stubs.win_act_bag_management_service.orderBagWaveExtraction
         self.order_bag_creation_details = OrderBagCreationDetails(self.base_request)
-        self.order_bag_creation_call = Stubs.win_act_bag_management_service.splitBagByQtyPriority
         self.order_bag_extraction_call = Stubs.win_act_bag_management_service.orderBagBookExtraction
+        self.order_bag_modification_call = Stubs.win_act_bag_management_service.modifyBag
