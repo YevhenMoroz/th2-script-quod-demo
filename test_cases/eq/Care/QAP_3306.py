@@ -1,100 +1,99 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, TimeInForce, \
+    PostTradeStatuses
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def get_params(response, qty, order_sts, side, account):
-    params = {
-        'Account': account,
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'ExpireDate': '*',
-        'OrdStatus': order_sts,
-        'TradeDate': '*',
-        'Side': side,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastCapacity': '*',
-        'LastMkt': '*',
-        'ChildOrderID': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*',
-        'VenueType': '*'
-    }
-    return params
+
+class QAP_3306(TestCase):
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3306"
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.qty1 = "100"
+        self.qty2 = "70"
+        self.qty3 = "30"
+        self.price = "5"
+        self.price2 = "7"
+        self.last_mkt = "BAML"
+        self.fix_message1 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
+        self.fix_message1.change_parameter('OrderQtyData', {'OrderQty': self.qty1})
+        self.fix_message2 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
+        self.fix_message2.change_parameter('OrderQtyData', {'OrderQty': self.qty2})
+        self.fix_message2.change_parameter("Side", "2")
+        self.fix_message3 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
+        self.fix_message3.change_parameter('OrderQtyData', {'OrderQty': self.qty3})
+        self.fix_message3.change_parameter("Side", "2")
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.cl_ord_id = self.fix_message1.get_parameter('ClOrdID')
+        self.rule_manager = RuleManager()
 
-    # region Declarations
-    qty3 = "100"
-    qty2 = "70"
-    qty1 = "30"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregionA
-    # region Create CO
-    fix_message1 = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty1), 0)
-    eq_wrappers.accept_order(lookup, qty1, "0")
-    fix_message2 = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 1, int(qty2), 0)
-    eq_wrappers.accept_order(lookup, qty2, "0")
-    fix_message3 = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 1, int(qty3), 0)
-    eq_wrappers.accept_order(lookup, qty3, "0")
-    response1 = fix_message1.pop('response')
-    response2 = fix_message2.pop('response')
-    response3 = fix_message3.pop('response')
-    # endregion
-    # region Manual Cross
-    eq_wrappers.manual_cross_orders(base_request, qty2, price, [1, 2], "BSML")
-    # endregion
-    # region Verify
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(get_params(response2, qty2, "2", 2, client), response1,
-                                         None)
-    # endregion
-    # region Manual Cross
-    eq_wrappers.manual_cross_orders(base_request, qty3, price, [1, 3], "BSML")
-    # endregion
-    # region Verify
-    fix_verifier_ss.CheckExecutionReport(get_params(response1, qty1, "2", 2, client), response1,
-                                         None)
-    # endregion
+
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region create CO1 order
+        self.fix_manager.send_message_fix_standard(self.fix_message1)
+        order_id1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept first order
+        self.client_inbox.accept_order()
+        # endregion
+        # region create CO2 order
+        self.fix_manager.send_message_fix_standard(self.fix_message2)
+        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept second order
+        self.client_inbox.accept_order()
+        # endregion
+        # region create CO3 order
+        self.fix_manager.send_message_fix_standard(self.fix_message3)
+        order_id3 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept third order
+        self.client_inbox.accept_order()
+        # endregion
+        # region man cross CO1 and CO2
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]]).manual_cross_orders([3,2], self.qty2, self.price, self.last_mkt)
+        # endregion
+        # region check partially filled CO1 status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        # endregion
+        # region check filled CO2 status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region man cross CO1 and CO3
+        self.order_book.set_filter([OrderBookColumns.leaves_qty.value, self.qty3])
+        self.order_book.manual_cross_orders([2, 1], self.qty3, self.price2, self.last_mkt)
+        # endregion
+        # region check filled CO1 status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region check filled CO3 status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id3]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
