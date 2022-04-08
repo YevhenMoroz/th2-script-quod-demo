@@ -29,7 +29,7 @@ class QAP_5581(TestCase):
         client = self.data_set.get_client_by_name("client_co_1")
         username = self.fe_env.user_1
         basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-        basket_template_name = self.data_set.get_basket_template("template4")
+        basket_template_name = self.data_set.get_basket_template("template5")
         path = os.path.abspath("test_cases/eq/Basket/Basket_import_files/BasketTemplate_withCustomDelimiter.csv")
         # endregion
         # region Create basket

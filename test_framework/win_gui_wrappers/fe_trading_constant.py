@@ -206,6 +206,9 @@ class BasketBookColumns(Enum):
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    """Template ticket"""
+    name = "Name"
+    description = "Description"
 
 
 class ExecSts(Enum):
@@ -437,3 +440,9 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+
+
+class SymbolSource(Enum):
+    isin = 'ISIN'
+    blmbrg = "Blmbrg"
+    sedol = "SEDOL"

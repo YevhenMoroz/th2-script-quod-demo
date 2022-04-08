@@ -50,8 +50,10 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def get_basket_template_details(self, templ_name, column_names: []):
-        self.extract_template_details(self.base_request, {'Name': templ_name}, column_names)
+    def get_basket_template_details(self, templ_filter: dict, column_names: list):
+        self.extract_template_details.set_base_details(self.base_request)
+        self.extract_template_details.set_filter(templ_filter)
+        self.extract_template_details.set_column_names(column_names)
         result = call(self.extract_template_data_call, self.extract_template_details.build())
         self.clear_details([self.extract_template_details])
         return result
@@ -195,8 +197,9 @@ class BaseBasketOrderBook(BaseWindow):
             self.templates_details.set_filter(templ_filter)
         call(self.clone_template_call, self.templates_details.build())
 
-    def remove_basket_template(self, name):
-        self.simple_request(self.base_request, {'Name': name})
+    def remove_basket_template(self, templ_filter):
+        self.simple_request.set_default_params(self.base_request)
+        self.simple_request.set_filter(templ_filter)
         call(self.remove_template_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
