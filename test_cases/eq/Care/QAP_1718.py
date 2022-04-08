@@ -44,7 +44,7 @@ class QAP_1718(TestCase):
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        self.client_inbox.accept_order()
         # endregion
         # region check order open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
