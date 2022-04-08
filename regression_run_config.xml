@@ -288,7 +288,7 @@
                         </read_log_environments>
                     </environments>
                 </component>
-                <component name="Commission" run="True">
+                <component name="Commissions" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
