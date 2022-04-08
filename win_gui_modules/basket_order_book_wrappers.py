@@ -133,3 +133,26 @@ class WaveBasketDetails:
 
     def build(self):
         return self._request
+
+
+class BasketMenuItemDetails:
+    def __init__(self, base_request=None):
+        if base_request is not None:
+            self._request = basket_book_pb2.BasketMenuItemDetails(base=base_request)
+        else:
+            self._request = basket_book_pb2.BasketMenuItemDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_menu_item(self, menu_item: str):
+        self._request.menuItem = menu_item
+
+    def set_selected_rows(self, selected_rows):
+        self._request.selectedRows.extend(selected_rows)
+
+    def set_extraction_Id(self, extraction_Id: str):
+        self._request.extractionId = extraction_Id
+
+    def build(self):
+        return self._request

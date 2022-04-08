@@ -24,6 +24,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.basket_wave_row_details = None
         self.wave_basket_details = None
         self.extract_child_details = None
+        self.menu_item_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -40,6 +41,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.wave_basket_call = None
         self.amend_template_call = None
         self.clone_template_call = None
+        self.is_menu_item_present_call = None
 
     # endregion
     # region Common func
@@ -79,6 +81,17 @@ class BaseBasketOrderBook(BaseWindow):
         self.clear_details([self.extract_basket_data_details])
         return result
 
+    def is_menu_item_present(self, menu_item, basket_count: list, filter_dict=None):
+        """
+        check order context menu and return a bool value
+        """
+        self.menu_item_details.set_selected_rows(basket_count)
+        self.menu_item_details.set_menu_item(menu_item)
+        if filter_dict is not None:
+            self.menu_item_details.set_filter(filter_dict)
+        result = call(self.is_menu_item_present_call, self.menu_item_details.build())
+        self.clear_details([self.menu_item_details])
+        return result['isMenuItemPresent']
     # endregion
 
     # region Set
