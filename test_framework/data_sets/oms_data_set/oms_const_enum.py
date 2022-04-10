@@ -31,6 +31,13 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    instrument_tag_5120 = dict(
+        Symbol='test123',
+        SecurityID='FR0010436584',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS',
+    )
 
 
 class OmsInstrumentId(Enum):
