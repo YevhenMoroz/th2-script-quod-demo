@@ -34,7 +34,7 @@ class QAP_6154(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '6154'
@@ -114,6 +114,7 @@ class QAP_6154(TestCase):
         # region allocate order and verifying it via FIX
         self.middle_office.allocate_block()
         fix_allocation_instruction.set_default_preliminary(self.fix_message)
+        fix_allocation_instruction.change_parameter('NoAllocs', '*')
         fix_varifier.check_fix_message_fix_standard(fix_allocation_instruction)
         fix_confirmation_message = FixMessageConfirmationReportOMS(self.data_set)
         fix_confirmation_message.set_default_confirmation_new(self.fix_message)
