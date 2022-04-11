@@ -71,6 +71,9 @@ class BagOrderTicketDetails:
         for details in wave_bag_details:
             self.order.subLevelDetails.append(details)
 
+    def clear(self, on_deleting=False):
+        self.order.clear = on_deleting
+
     '''
     this method use only for creation of bag order
     '''
@@ -253,11 +256,6 @@ class OrderBagCreationDetails:
             self.order_bag_creation.selectedRows.append(row)
 
     def set_order_bag_ticket_details(self, order: BagOrderTicketDetails):
-        # order = bag_mgt_pb2.OrderBagTicketDetails()
-        # bag_mgt_pb2.OrderBagTicketDetails()
-        # order.bagName = name
-        # if price:
-        #     order.price = price
         self.order_bag_creation.orderBagTicketDetails.CopyFrom(order.build())
 
     def build(self):
