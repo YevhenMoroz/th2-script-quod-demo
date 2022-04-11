@@ -83,6 +83,8 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_details = None
         self.internal_transfer_action = None
         self.group_modify_details = None
+        self.mass_manual_execution_call = None
+        self.mass_manual_execution_details = None
 
     # endregion
 
@@ -597,3 +599,8 @@ class BaseOrderBook(BaseWindow):
         self.mass_book_details.set_rows_numbers(positions_of_orders)
         call(self.mass_book_call, self.mass_book_details.build())
         self.clear_details([self.mass_book_details])
+
+    def mass_manual_execution(self, price: str, rows: int):
+        self.mass_manual_execution_details.set_price(price)
+        self.mass_manual_execution_details.set_count_of_selected_rows(rows)
+        call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())

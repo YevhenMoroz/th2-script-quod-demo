@@ -11,7 +11,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -83,6 +83,8 @@ class OMSOrderBook(BaseOrderBook):
         self.internal_transfer_action = InternalTransferActionDetails(self.base_request, self.transfer_pool_details.build())
         self.group_modify_details = GroupModifyDetails()
         self.direct_order_correct_call = Stubs.win_act_order_book.orderBookDirectOrder
+        self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
+        self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
 
 
         # endregion
