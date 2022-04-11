@@ -4,9 +4,11 @@ from getpass import getuser as get_pc_name
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.fx.fx_mm_esp.QAP_7160 import QAP_7160
 from test_cases.fx.fx_mm_rfq import QAP_4505, QAP_5848
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7287 import QAP_7287
+from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_cases.fx.send_md import QAP_MD
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -35,18 +37,19 @@ def test_run():
     Stubs.frontend_is_open = True
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id, window_name)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id, window_name)
 
         # rm = RuleManager()
         # rm.print_active_rules()
 
         # Testing(report_id, session_id, configuration.data_set).execute()
-
+        # QAP_6(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set).execute()
+        QAP_7160(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
         end = time.time()
