@@ -4,9 +4,9 @@ from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_
 from test_cases.algo.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
     TWAP_NAV_02, TWAP_NAV_01, QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_MAXShares, QA_TWAP_NAV_WW_01_sell, \
     QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_01_buy, QA_TWAP_NAV_WW_02_buy, QA_TWAP_NAV_WW_03_buy, \
-    QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, MULT_TWAP_BA_01
+    QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, MULT_TWAP_BA_01, TWAP_BA_LSE, TWAP_BA_COPENHAGEN, TWAP_BA_DUBLIN, TWAP_BA_XETRA, TWAP_BA_SIX, TWAP_BA_LISBON, TWAP_BA_HELSINKI
 from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
-    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01
+    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_BA_LSE, VWAP_BA_SIX, VWAP_BA_COPENHAGEN, VWAP_BA_HELSINKI, VWAP_BA_DUBLIN, VWAP_BA_XETRA, VWAP_BA_LISBON, VWAP_BA_XETRA
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, \
     POV_SCAP_01, MULT_POV_BA_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_VO_01, OPN_WW_01, \
@@ -222,6 +222,23 @@ def test_run():
         MULT_VWAP_BA_01.execute(report_id)
         MULT_POV_BA_01.execute(report_id)
         MULT_BA_01.execute(report_id)
+        # endregion
+
+        # region Calum's orders
+        TWAP_BA_LSE.execute(report_id)
+        VWAP_BA_LSE.execute(report_id)
+        TWAP_BA_COPENHAGEN.execute(report_id)
+        VWAP_BA_COPENHAGEN.execute(report_id)
+        TWAP_BA_DUBLIN.execute(report_id)
+        VWAP_BA_DUBLIN.execute(report_id)
+        TWAP_BA_HELSINKI.execute(report_id)
+        VWAP_BA_HELSINKI.execute(report_id)
+        TWAP_BA_LISBON.execute(report_id)
+        VWAP_BA_LISBON.execute(report_id)
+        TWAP_BA_SIX.execute(report_id)
+        VWAP_BA_SIX.execute(report_id)
+        TWAP_BA_XETRA.execute(report_id)
+        VWAP_BA_XETRA.execute(report_id)
         # endregion
 
         # # region TWAP NAV WW

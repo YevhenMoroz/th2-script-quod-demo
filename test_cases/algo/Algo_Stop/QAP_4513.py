@@ -94,7 +94,7 @@ def rule_destroyer(list_rules):
 def execute(report_id):
     try:
         rule_list = rule_creation()
-        now = datetime.today() - timedelta(hours=2)
+        now = datetime.today() - timedelta(hours=3)
         case_id = bca.create_event(os.path.basename(__file__), report_id)
 
         fix_manager_310 = FixManager(connectivity_sell_side, case_id)
