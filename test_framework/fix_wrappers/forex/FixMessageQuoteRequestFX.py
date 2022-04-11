@@ -61,7 +61,6 @@ class FixMessageQuoteRequestFX(FixMessage):
             "NoRelatedSymbols": [{
                 "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
-                "OrderQty": "1000000",
                 "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "Instrument": {
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
