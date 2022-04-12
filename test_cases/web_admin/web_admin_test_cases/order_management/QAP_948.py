@@ -30,6 +30,9 @@ class QAP_948(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_7")
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.condition_logic_value = 'Client'
+        self.first_criteria = "Venue"
+        self.default_result_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,6 +47,15 @@ class QAP_948(CommonTestCase):
         time.sleep(2)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
         time.sleep(2)
+
+        if self.first_criteria not in page.get_settings_values():
+            page.click_on_change_criteria()
+            time.sleep(1)
+            page.set_first_criteria(self.first_criteria)
+            time.sleep(1)
+            page.click_on_change_criteria_for_saving(True)
+
+        time.sleep(2)
         page.click_on_new_button()
         time.sleep(2)
         values_sub_wizard.set_name(self.name)
@@ -55,6 +67,7 @@ class QAP_948(CommonTestCase):
         conditions_sub_wizard.set_qty_precision("100")
         conditions_sub_wizard.click_on_add_condition()
         time.sleep(2)
+        conditions_sub_wizard.set_right_side_list_at_conditional_logic(self.condition_logic_value)
         conditions_sub_wizard.set_right_side_at_conditional_logic("CLIENT1")
         conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
         conditions_sub_wizard.set_exec_policy("DMA")
@@ -63,7 +76,7 @@ class QAP_948(CommonTestCase):
         conditions_sub_wizard.click_on_checkmark_at_results_sub_wizard()
         time.sleep(1)
         conditions_sub_wizard.click_on_checkmark()
-        default_result_sub_wizard.set_default_result_name("test")
+        default_result_sub_wizard.set_default_result_name(self.default_result_name)
         default_result_sub_wizard.click_on_plus()
         time.sleep(1)
         default_result_sub_wizard.set_exec_policy("Care")
@@ -78,8 +91,9 @@ class QAP_948(CommonTestCase):
         if wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
             venues = values_sub_wizard.get_all_venues_from_drop_menu()
             while wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-                values_sub_wizard.set_venue(venues[0])
-                venues.remove(venues[0])
+                venue = random.choice(venues)
+                values_sub_wizard.set_venue(venue)
+                venues.remove(venue)
                 time.sleep(1)
                 wizard.click_on_save_changes()
                 time.sleep(2)

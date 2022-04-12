@@ -53,6 +53,12 @@ class OrderManagementRulesValuesSubWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_CLIENT_XPATH)
 
+    def get_all_clients_from_drop_menu(self):
+        self.set_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_CLIENT_XPATH, "")
+        time.sleep(2)
+        items = self._get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
+        return items
+
     def set_user(self, value):
         self.set_combobox_value(OrderManagementRulesConstants.VALUES_TAB_USER_XPATH, value)
 

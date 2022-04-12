@@ -13,11 +13,9 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
 
     def click_on_plus(self):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_PLUS_XPATH).click()
-        time.sleep(1)
 
     def click_on_checkmark(self):
-        self.find_by_xpath(
-            OrderManagementRulesConstants.CONDITIONS_TAB_CHECKMARK_XPATH).click()
+        self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CHECKMARK_XPATH).click()
 
     def click_on_close(self):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CANCEL_XPATH).click()
@@ -61,37 +59,31 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_OR_RADIO_BUTTON).click()
 
     def click_on_add_condition(self):
-        self.find_by_xpath(
-            OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH).click()
-        time.sleep(1)
+        self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH)\
+            .click()
 
     def set_conditional_logic(self, value):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH).click()
         time.sleep(2)
-        path = OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH.format(
-            value)
-        self.select_value_from_dropdown_list(
-            path)
-        time.sleep(2)
+        self.select_value_from_dropdown_list(OrderManagementRulesConstants
+                                             .CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH
+                                             .format(value))
 
-    def set_left_side_at_conditional_logic(self, entity):
-        path = OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH.format(
-            entity)
-        self.select_value_from_dropdown_list(
-            path)
+    def set_left_side_at_conditional_logic(self, value):
+        self.select_value_from_dropdown_list(OrderManagementRulesConstants
+                                             .CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH
+                                             .format(value))
 
     def set_right_side_at_conditional_logic(self, value):
         self.set_combobox_value(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH, value)
         time.sleep(1)
 
     def set_right_side_list_at_conditional_logic(self, value):
-        self.find_by_xpath("(//button[@class='select-button'])[1]").click()
-        time.sleep(2)
-        path = "//*[@class='cdk-overlay-container']//nb-option[text()=' {} ']".format(
-            value)
-        self.select_value_from_dropdown_list(
-            path)
-        time.sleep(2)
+        self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH).click()
+        time.sleep(1)
+        self.select_value_from_dropdown_list(OrderManagementRulesConstants
+                                             .CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH
+                                             .format(value))
 
     def click_on_left_side(self):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH).click()
