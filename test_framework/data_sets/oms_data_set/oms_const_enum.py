@@ -31,6 +31,13 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    instrument_tag_5120 = dict(
+        Symbol='test123',
+        SecurityID='FR0010436584',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS',
+    )
 
 
 class OmsInstrumentId(Enum):
@@ -246,6 +253,7 @@ class OMSCommission(Enum):
     commission2 = 2
     commission3 = 3
 
+
 class OmsQtyTypes(Enum):
     qty_type_1 = "UnmatchedQty"
     qty_type_2 = "OrderQty"
@@ -255,3 +263,13 @@ class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
 
+
+class OMSCommissionAndFeeBasis(Enum):
+    comm_basis_1 = 'Absolute'
+    comm_basis_2 = 'Percentage'
+
+class OMSBasketTemplates(Enum):
+    template1 = "Test Template"  # This is a test template with header and default value
+    template2 = "Test Template 2"  # This is a test template without header and default value
+    template3 = "TemplateWithCurrencyAndVenue"  # Template for testing set upped currency and venue
+    template4 = "Test Template csv"  # This is a test template without header and custom delimiter

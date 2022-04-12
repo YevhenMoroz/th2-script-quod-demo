@@ -217,6 +217,7 @@ class ExecSts(Enum):
     held = 'Held'
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
+    sent = 'Sent'
 
 
 class Status(Enum):
@@ -305,6 +306,8 @@ class MiddleOfficeColumns(Enum):
     pset = 'PSET'
     pset_bic = 'PSET BIC'
     settltype = 'SettlType'
+    account_id = 'Account ID'
+    trade_date = 'TradeDate'
 
 
 class AllocationsColumns(Enum):
@@ -318,6 +321,9 @@ class AllocationsColumns(Enum):
     match_status = 'Match Status'
     alloc_id = 'Allocation ID'
     avg_px = 'Avg Px'
+    pset = 'PSET'
+    pset_bic = 'PSET BIC'
+    trade_date = 'TradeDate'
 
 
 class SecondLevelTabs(Enum):
