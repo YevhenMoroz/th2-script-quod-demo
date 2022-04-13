@@ -267,3 +267,9 @@ class OMSPset(Enum):
 class OMSCommissionAndFeeBasis(Enum):
     comm_basis_1 = 'Absolute'
     comm_basis_2 = 'Percentage'
+
+class OMSBasketTemplates(Enum):
+    template1 = "Test Template"  # This is a test template with header and default value
+    template2 = "Test Template 2"  # This is a test template without header and default value
+    template3 = "TemplateWithCurrencyAndVenue"  # Template for testing set upped currency and venue
+    template4 = "Test Template csv"  # This is a test template without header and custom delimiter

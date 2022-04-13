@@ -7,8 +7,8 @@ from test_framework.environments.java_api_environment import JavaApiEnvironment
 from test_framework.environments.read_log_envirenment import ReadLogEnvironment
 from test_framework.environments.web_admin_environment import WebAdminEnvironment
 from test_framework.environments.web_admin_rest_api_environment import WebAdminRestApiEnvironment
+from test_framework.environments.trading_rest_api_environment import TradingRestApiEnvironment
 from test_framework.environments.web_trading_environment import WebTradingEnvironment
-
 
 class FullEnvironment:
 
@@ -17,6 +17,7 @@ class FullEnvironment:
         self.__list_fe_environment = list()
         self.__list_web_admin_environment = list()
         self.__list_web_admin_rest_api_environment = list()
+        self.__list_trading_rest_api_environment = list()
         self.__list_web_trading_environment = list()
         self.__list_java_api_environment = list()
         self.__list_read_log_environment = list()
@@ -34,6 +35,9 @@ class FullEnvironment:
                 if instance.tag == "web_admin_rest_api_environment":
                     self.__list_web_admin_rest_api_environment.append(
                         WebAdminRestApiEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "trading_rest_api_environment":
+                    self.__list_trading_rest_api_environment.append(
+                        TradingRestApiEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "web_trading_environment":
                     self.__list_web_trading_environment.append(
                         WebTradingEnvironment.get_instance(EnvironmentType[instance.text]))
@@ -56,6 +60,9 @@ class FullEnvironment:
 
     def get_list_web_admin_rest_api_environment(self) -> typing.List[WebAdminRestApiEnvironment]:
         return self.__list_web_admin_rest_api_environment
+
+    def get_list_trading_rest_api_environment(self) -> typing.List[TradingRestApiEnvironment]:
+        return self.__list_trading_rest_api_environment
 
     def get_list_web_trading_environment(self) -> typing.List[WebTradingEnvironment]:
         return self.__list_web_trading_environment

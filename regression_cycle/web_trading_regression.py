@@ -4,6 +4,7 @@ from datetime import timedelta
 from xml.etree import ElementTree
 
 from custom import basic_custom_actions as bca
+from regression_cycle.web_trading_cycle.run_account_summary import RunAccountSummary
 from regression_cycle.web_trading_cycle.run_login_and_logout import RunLoginAndLogout
 from regression_cycle.web_trading_cycle.run_order_ticket_and_book import RunOrderTicketAndBook
 from regression_cycle.web_trading_cycle.run_other import RunOther
@@ -20,7 +21,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    report_id = bca.create_event('Web Trading regression_cycle', parent_id)
     tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
     root = tree.getroot()
     try:
@@ -29,16 +30,19 @@ def test_run(parent_id=None):
             RunLoginAndLogout(report_id).execute()
         if eval(root.find(".//component[@name='WebTrading_OrderTicket_And_Book']").attrib["run"]):
             RunOrderTicketAndBook(report_id).execute()
-        if eval(root.find(".//component[@name='WebTrading_Other']").attrib["run"]):
-            RunOther(report_id).execute()
-        if eval(root.find(".//component[@name='WebTrading_Positions']").attrib["run"]):
-            RunPositions(report_id).execute()
-        if eval(root.find(".//component[@name='WebTrading_Trades']").attrib["run"]):
-            RunTrades(report_id).execute()
-        if eval(root.find(".//component[@name='WebTrading_UserProfile']").attrib["run"]):
-            RunUserProfile(report_id).execute()
-        if eval(root.find(".//component[@name='WebTrading_WatchList']").attrib["run"]):
-            RunWatchList(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_Other']").attrib["run"]):
+        #     RunOther(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_Positions']").attrib["run"]):
+        #     RunPositions(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_Trades']").attrib["run"]):
+        #     RunTrades(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_UserProfile']").attrib["run"]):
+        #     RunUserProfile(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_WatchList']").attrib["run"]):
+        #     RunWatchList(report_id).execute()
+        # if eval(root.find(".//component[@name='WebTrading_Account_Summary']").attrib["run"]):
+        #     RunAccountSummary(report_id).execute()
+
 
         end_time = time.monotonic()
         print("Test cases completed\n" +

@@ -74,8 +74,11 @@ class AccountSummaryConstants:
     # region Orders fields
     USER_CASH_ACCOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_cashAccount")]//span'
     USER_CURRENCY_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_currency")]//span'
+    USER_CURRENCY_CASH_BALANCE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_cashAccountBalance")]//span'
     USER_AVAILABLE_CASH_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_availableCash")]//span'
     USER_TRANSACTION_HOLDING_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_holdingAmount")]//span'
     USER_RESERVED_AMOUNT_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_reservedAmount")]//span'
     USER_BUYING_POWER_COLUMN_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_buyingPower")]//span'
+    USER_SECURITY_ACCOUNT_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_Account")]//span'
+    USER_TOTAL_SECURITY_VALUE_XPATH = '//*[@data-rowindex="0"]//*[contains(@aria-describedby,"_positionAmounts_IncrementalMarkToMarketAmount")]//span'
     # endregion

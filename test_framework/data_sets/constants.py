@@ -28,13 +28,17 @@ class Connectivity(Enum):
     Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_wa = "rest_wa314luna"
+    Luna_315_web_admin = 'rest_wa315luna'
+    Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
+    Luna_315_desktop_trading_web_socket = 'api_session_desktop315luna'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
-
-
+    Kuiper_320_web_admin = 'rest_wa320kuiper'
+    Kuiper_320_web_trading_http = 'rest_wt320kuiper'
+    Kuiper_320_web_trading_web_socket = 'api_session_320kuiper'
 
 
 class FrontEnd(Enum):
@@ -51,10 +55,10 @@ class FrontEnd(Enum):
     TARGET_SERVER_WIN = find_target_server()
     
     # region quod314
-    USERS_314 = []
-    PASSWORDS_314 = []
+    USERS_314 = ["QA1"]
+    PASSWORDS_314 = ["QA1"]
     FOLDER_314 = ""
-    DESKS_314 = []
+    DESKS_314 = ["Q"]
     MAIN_WIN_NAME_314 = "Quod Financial - Quod site 314"
     LOGIN_WIN_NAME_314 = "Login to Quod Financial (Quod site 314)"
     # common values
@@ -137,3 +141,4 @@ class WebBrowser(Enum):
 
 class WebTradingURL(Enum):
     luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
+    kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"
