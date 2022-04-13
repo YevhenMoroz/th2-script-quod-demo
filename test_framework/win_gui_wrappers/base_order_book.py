@@ -361,7 +361,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [] = None, basket_name=None):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None):
         """
         orders_rows - select rows from order book
         """
@@ -369,6 +369,8 @@ class BaseOrderBook(BaseWindow):
             self.create_basket_details.set_name(basket_name)
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
+        if rows_for_delete is not None:
+            self.create_basket_details.set_row_details(rows_for_delete)
         call(self.create_basket_call, self.create_basket_details.build())
         self.clear_details([self.create_basket_details])
 
