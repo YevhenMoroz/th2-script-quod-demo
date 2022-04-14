@@ -176,3 +176,26 @@ class FixMessageQuoteFX(FixMessage):
         self.update_repeating_group("NoLegs", temp)
 
         return self
+
+    def prepare_params_for_deposit_and_loan(self, quote_request: FixMessageQuoteRequestFX):
+        temp = dict(
+            QuoteID="*",
+            QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+            OfferPx="*",
+            Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Symbol"],
+                            Product=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Product"])
+
+        )
+        super().change_parameters(temp)
+        return self
+
+    def set_params_for_deposit_and_loan(self, quote_request: FixMessageQuoteRequestFX):
+        self.prepare_params_for_deposit_and_loan(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSym")[0]:
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferPx": "*"})
+        elif quote_request.get_parameter("NoRelatedSym")[0]["Side"] == "1":
+            self.remove_parameter("BidPx")
+        elif quote_request.get_parameter("NoRelatedSym")[0]["Side"] == "2":
+            self.remove_parameter("OfferPx")
+        return self
