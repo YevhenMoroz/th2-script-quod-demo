@@ -32,7 +32,7 @@ class QAP_1092(TestCase):
         self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '200'
@@ -69,7 +69,7 @@ class QAP_1092(TestCase):
         self.verifying(qty_after_cancel, name_of_bag, False, 'canceling')
         # endregion
 
-    def verifying(self, qty_of_bag, name_of_bag, need_order_bag_id: bool, action: str):
+    def __verifying(self, qty_of_bag, name_of_bag, need_order_bag_id: bool, action: str):
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.ord_bag_name.value,
                                                                           OrderBagColumn.id.value,
                                                                           OrderBagColumn.unmatched_qty.value,
