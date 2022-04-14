@@ -52,7 +52,7 @@ class QAP_1084(TestCase):
         # endregion
         #
         # region create Bag and extract values from it
-        self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag='Bag_1')
+        self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag='QAP_1084')
         self.bag_order_book.create_bag()
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.order_bag_qty.value,
                                                                           OrderBagColumn.ord_bag_name.value])

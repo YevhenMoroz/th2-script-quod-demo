@@ -49,7 +49,7 @@ class QAP_1085(TestCase):
         qty_of_bag = str(int(qty) * 3)
         qty_of_bag_after_modification = str(int(qty) * 2)
         orders_id = []
-        name_of_bag = 'Bag_B'
+        name_of_bag = 'QAP_1085'
         # endregion
         # region create 3 CO order
         self.fix_message.change_parameter("HandlInst", '3')

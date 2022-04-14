@@ -24,3 +24,4 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.order_bag_creation_details = OrderBagCreationDetails(self.base_request)
         self.order_bag_extraction_call = Stubs.win_act_bag_management_service.orderBagBookExtraction
         self.order_bag_modification_call = Stubs.win_act_bag_management_service.modifyBag
+        self.order_bag_cancel_bag_call = Stubs.win_act_bag_management_service.cancelBag
