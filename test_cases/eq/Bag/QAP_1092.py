@@ -61,12 +61,12 @@ class QAP_1092(TestCase):
         # region create Bag and extract values from it (precondition)
         self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag=name_of_bag, price=price)
         self.bag_order_book.create_bag()
-        order_bag_id = self.verifying(qty_of_bag, name_of_bag, True, 'creating')
+        order_bag_id = self.__verifying(qty_of_bag, name_of_bag, True, 'creating')
         # endregion
 
         # region cancel bag (step 1, step 2)
         self.bag_order_book.cancel_bag([OrderBagColumn.id.value, order_bag_id])
-        self.verifying(qty_after_cancel, name_of_bag, False, 'canceling')
+        self.__verifying(qty_after_cancel, name_of_bag, False, 'canceling')
         # endregion
 
     def __verifying(self, qty_of_bag, name_of_bag, need_order_bag_id: bool, action: str):
