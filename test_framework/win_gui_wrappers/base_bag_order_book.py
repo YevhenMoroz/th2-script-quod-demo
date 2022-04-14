@@ -37,6 +37,7 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_extraction_call = None
         self.extraction_bag_order_action_static = None
         self.order_bag_modification_call = None
+        self.order_bag_cancel_bag_call = None
 
     # endregion
 
@@ -169,3 +170,8 @@ class BaseBagOrderBook(BaseWindow):
         self.bag_wave_creation.add_bag_ticket_details(self.bag_book_details)
         call(self.order_bag_modification_call, self.bag_wave_creation.build())
         self.clear_details([self.bag_wave_creation, self.bag_book_details])
+
+    def cancel_bag(self, filter_list: list):
+        self.bag_wave_creation.set_filter = filter_list
+        call(self.order_bag_cancel_bag_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
