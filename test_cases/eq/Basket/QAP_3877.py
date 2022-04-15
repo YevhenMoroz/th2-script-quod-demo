@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns, BasketBookColumns, \
-    BasketSecondTabName
+    BasketSecondLvlTabName
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -168,7 +168,7 @@ class QAP_3877(TestCase):
         unmatched_qty_of_third_order = self.oms_basket_book.get_basket_sub_lvl_value(3,
 
                                                                                      OrderBookColumns.unmatched_qty.value,
-                                                                                     BasketSecondTabName.orders.value,
+                                                                                     BasketSecondLvlTabName.orders.value,
                                                                                      {
                                                                                          BasketBookColumns.client_basket_id.value:
                                                                                              client_basket_id}
