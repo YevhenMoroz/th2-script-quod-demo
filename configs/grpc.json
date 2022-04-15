@@ -389,6 +389,21 @@
           "act_booking_blotter"
         ]
       }
+    },
+    "Win_Act_Risk_Management": {
+      "service-class": "RiskManagementServiceService",
+      "endpoints": {
+        "act_risk_management": {
+          "host": "localhost",
+          "port": 8080
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_risk_management"
+        ]
+      }
     }
   }
 }
