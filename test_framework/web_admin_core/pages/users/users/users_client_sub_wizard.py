@@ -28,6 +28,9 @@ class UsersClientSubWizard(CommonPage):
     def set_client(self, value):
         self.set_combobox_value(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, value)
 
+    def set_non_existing_client(self, value):
+        self.set_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, value)
+
     def get_client(self):
         return self.get_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD)
 

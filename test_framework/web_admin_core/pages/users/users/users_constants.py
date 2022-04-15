@@ -64,7 +64,7 @@ class UsersConstants:
     # Login sub wizard
 
     USER_ID_AT_LOGIN_SUB_WIZARD = '//*[text()="User ID *"]/preceding-sibling::input'
-    EXT_ID_CLIENT_AT_LOGIN_SUB_WIZARD = '//*[text()="Ext ID Client"]/preceding-sibling::input'
+    EXT_ID_CLIENT_AT_LOGIN_SUB_WIZARD = '//*[text()="Ext ID Client *"]/preceding-sibling::input'
     EXT_ID_VENUE_AT_LOGIN_SUB_WIZARD = '//*[text()="Ext ID Venue"]/preceding-sibling::input'
     EXT_ENTITLEMENT_AT_LOGIN_SUB_WIZARD = '//*[text()="Ext Entitlement Key"]/preceding-sibling::input'
     PIN_CODE_AT_LOGIN_SUB_WIZARD = '//*[text()="PIN Code *"]/preceding-sibling::input'
