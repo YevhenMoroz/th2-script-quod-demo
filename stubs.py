@@ -17,6 +17,7 @@ from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceServic
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
+from th2_grpc_act_gui_quod.risk_management_service import RiskManagementServiceService
 from th2_grpc_act_gui_quod.trades_service import TradesServiceService
 from th2_grpc_act_fix_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
@@ -71,6 +72,7 @@ class Stubs:
     win_act_basket_ticket = factory.grpc_router.get_service(BasketTicketServiceService)
     win_act_bag_management_service = factory.grpc_router.get_service(BagManagementServiceService)
     win_act_booking_blotter_service = factory.grpc_router.get_service(BookingsBlotterServiceService)
+    win_act_risk_management = factory.grpc_router.get_service(RiskManagementServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 
