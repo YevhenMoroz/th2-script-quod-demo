@@ -169,7 +169,7 @@ def execute(report_id, session_id):
     from_curr = "GBP"
     to_curr = "CAD"
     tenor = "1W"
-    venue = "HSB"
+    venue = "HSBC"
     instrument = "GBP/CAD-1W"
     client_tier = "Silver"
 
