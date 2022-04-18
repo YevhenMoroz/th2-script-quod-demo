@@ -17,6 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
 
 
 class QAP_6149(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
