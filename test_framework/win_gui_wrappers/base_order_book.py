@@ -222,14 +222,14 @@ class BaseOrderBook(BaseWindow):
                                          verification_method)
         self.verifier.verify()
 
-    def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
+    def is_menu_item_present(self, menu_item, orders_count: list, filter_dict=None):
         """
         check order context menu and return a bool value
         """
         self.menu_item_details.set_selected_rows(orders_count)
         self.menu_item_details.set_menu_item(menu_item)
-        if filter_list is not None:
-            self.menu_item_details.set_filter(filter_list)
+        if filter_dict is not None:
+            self.menu_item_details.set_filter(filter_dict)
         result = call(self.is_menu_item_present_call, self.menu_item_details.build())
         self.clear_details([self.menu_item_details])
         return result['isMenuItemPresent']
@@ -363,7 +363,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [] = None, basket_name=None):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None):
         """
         orders_rows - select rows from order book
         """
@@ -371,6 +371,8 @@ class BaseOrderBook(BaseWindow):
             self.create_basket_details.set_name(basket_name)
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
+        if rows_for_delete is not None:
+            self.create_basket_details.set_row_details(rows_for_delete)
         call(self.create_basket_call, self.create_basket_details.build())
         self.clear_details([self.create_basket_details])
 

@@ -206,6 +206,11 @@ class BasketBookColumns(Enum):
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    """Template ticket"""
+    name = "Name"
+    description = "Description"
+    """Context menu"""
+    remove_from_basket = "Remove from Basket"
 
 
 class ExecSts(Enum):
@@ -415,7 +420,7 @@ class OrderBagColumn(Enum):
     leaves_qty = 'LeavesQty'
 
 
-class BasketSecondTabName(Enum):
+class BasketSecondLvlTabName(Enum):
     orders = 'Orders'
 
 
@@ -437,3 +442,10 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = "ClOrdId"
+
+
+class SymbolSource(Enum):
+    isin = 'ISIN'
+    blmbrg = "Blmbrg"
+    sedol = "SEDOL"
