@@ -48,6 +48,7 @@ class OMSOrderBook(BaseOrderBook):
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
         self.manual_execution_order_call = Stubs.win_act_order_book.manualExecution
+        self.house_fill_call = Stubs.win_act_order_book.houseFill
         self.is_menu_item_present_call = Stubs.win_act_order_book.isMenuItemPresent
         self.group_modify_order_call = Stubs.win_act_order_book.groupModify
         self.get_orders_details_call = Stubs.win_act_order_book.getOrdersDetails
