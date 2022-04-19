@@ -45,6 +45,7 @@ class BaseOrderBook(BaseWindow):
         self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
+        self.house_fill_call = None
         self.is_menu_item_present_call = None
         self.group_modify_order_call = None
         self.get_orders_details_call = None
@@ -370,7 +371,7 @@ class BaseOrderBook(BaseWindow):
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
         if rows_for_delete is not None:
-            self.create_basket_details.set_row_details(rows_for_delete)
+            self.create_basket_details.set_rows_for_delete(rows_for_delete)
         call(self.create_basket_call, self.create_basket_details.build())
         self.clear_details([self.create_basket_details])
 
@@ -394,6 +395,29 @@ class BaseOrderBook(BaseWindow):
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
+        return result
+
+    def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+        execution_details = self.manual_executing_details.add_executions_details()
+        if qty is not None:
+            execution_details.set_quantity(qty)
+        if price is not None:
+            execution_details.set_price(price)
+        if execution_firm is not None:
+            execution_details.set_executing_firm(execution_firm)
+        if contra_firm is not None:
+            execution_details.set_contra_firm(contra_firm)
+        if settl_date is not None:
+            execution_details.set_settlement_date_offset(settl_date)
+        if last_capacity is not None:
+            execution_details.set_last_capacity(last_capacity)
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
+        result = call(self.house_fill_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
 

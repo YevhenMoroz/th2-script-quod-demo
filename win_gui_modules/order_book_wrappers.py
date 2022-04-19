@@ -928,10 +928,11 @@ class CreateBasketDetails:
     def set_name(self, name: str):
         self._request.name = name
 
-    def set_row_details(self, delete_rows: int):
+    def set_rows_for_delete(self, delete_rows: int):
         i = 0
         while i < delete_rows:
             self._request.rowsDetails.append(RowDetails(delete_row=True).build())
+            i += 1
 
     def build(self):
         return self._request
