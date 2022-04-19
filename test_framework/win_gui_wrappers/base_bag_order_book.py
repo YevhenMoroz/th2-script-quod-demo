@@ -101,7 +101,7 @@ class BaseBagOrderBook(BaseWindow):
 
     def extract_from_order_bag_book_and_other_tab(self, extraction_id, extraction_fields: list = None,
                                                   sub_extraction_fields: list = None, sub_filter: list = None,
-                                                  filter: list = None, tab_name: str = None):
+                                                  filter: list = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
         if filter is not None:
