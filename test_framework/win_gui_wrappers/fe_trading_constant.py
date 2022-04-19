@@ -444,6 +444,8 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = 'ClOrdId'
+    qty = 'Qty'
 
 
 class BagStatuses(Enum):

@@ -17,7 +17,8 @@ class FieldForExtraction(Enum):
 class ExtractPositionsDetails:
     def __init__(self, base_request=None):
         if base_request:
-            self.__position_details = risk_management_pb2.ExtractPositionsDetails(base_request)
+            self.__position_details = risk_management_pb2.ExtractPositionsDetails()
+            self.__position_details.base.CopyFrom(base_request)
         else:
             self.__position_details = risk_management_pb2.ExtractPositionsDetails()
 
