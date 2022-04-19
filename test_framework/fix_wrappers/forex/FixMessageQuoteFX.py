@@ -107,7 +107,6 @@ class FixMessageQuoteFX(FixMessage):
             QuoteMsgID="*",
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
             OfferPx="*",
-            OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             ValidUntilTime="*",
             OfferSpotRate="*",
@@ -161,12 +160,22 @@ class FixMessageQuoteFX(FixMessage):
         self.prepare_params_for_swap(quote_request)
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
             self.add_tag({"BidSwapPoints": "*"})
-            self.add_tag({"BidSize": "*"})
             self.add_tag({"BidPx": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
             self.add_tag({"Side": "1"})
+            temp[0].pop('LegOfferPx')
+            temp[0].pop('LegOfferForwardPoints')
+            temp[1].pop('LegBidPx')
+            temp[1].pop('LegBidForwardPoints')
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"Side": "2"})
+            temp[0].pop('LegBidPx')
+            temp[0].pop('LegBidForwardPoints')
+            temp[1].pop('LegOfferPx')
+            temp[1].pop('LegOfferForwardPoints')
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"BidSwapPoints": "*"})
+            self.remove_parameters(["OfferPx", "OfferSwapPoints"])
         if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "0":
             temp[0].pop('LegOfferForwardPoints')
             temp[0].pop('LegBidForwardPoints')
