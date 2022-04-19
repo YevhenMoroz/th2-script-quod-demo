@@ -21,6 +21,7 @@ class QAP_919(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.client = self.data_set.get_client("client_1")
+        self.non_existing_client = "NONEXISTCLIENT"
         self.type = self.data_set.get_client_type("client_type_1")
         self.empty_data_error_message = "Incorrect or missing values"
         self.duplicate_error_message = "Such a record already exists"
@@ -52,15 +53,24 @@ class QAP_919(CommonTestCase):
             except Exception as e:
                 self.verify("Error message for empty data is not displayed", True, e.__class__.__name__)
             time.sleep(1)
-            client_sub_wizard.add_new_client(self.client, self.type)
-            time.sleep(2)
+            client_sub_wizard.set_non_existing_client(self.non_existing_client)
+            time.sleep(1)
+            client_sub_wizard.set_type(self.type)
+            time.sleep(1)
+            client_sub_wizard.click_on_checkmark_button()
+            time.sleep(1)
             try:
                 self.verify("Non existing client is not add",
                             self.empty_data_error_message, client_sub_wizard.get_error_message())
             except Exception as e:
                 self.verify("Non existing client add", True, e.__class__.__name__)
+            client_sub_wizard.set_client(self.client)
+            time.sleep(1)
+            client_sub_wizard.click_on_checkmark_button()
+            time.sleep(1)
             users_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
             users_login_sub_wizard.set_ext_id_client("")
+            time.sleep(2)
             client_sub_wizard.click_on_plus_button()
             time.sleep(2)
             client_sub_wizard.add_new_client(self.client, self.type)

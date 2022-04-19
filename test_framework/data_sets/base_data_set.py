@@ -48,6 +48,7 @@ class BaseDataSet:
     location = None
     institution = None
     zone = None
+    client = None
     client_type = None
     email = None
     perm_role = None
@@ -63,14 +64,17 @@ class BaseDataSet:
     trading_phase_profile = None
     tick_size_xaxis_type = None
     instr_symbol = None
+    symbol = None
     instr_type = None
     preferred_venue = None
     listing_group = None
+    settle_type = None
     feed_source = None
     negative_route = None
     positive_route = None
     client_id_source = None
     route_account_name = None
+    route = None
     clearing_account_type = None
     disclose_exec = None
     account_id_source = None
@@ -99,8 +103,10 @@ class BaseDataSet:
     # region fields added by Web Trading team
     order_type = None
     time_in_force = None
+    commission_basis = None
 
     # endregion
+
     def get_instruments(self):
         if self.fix_instruments:
             return self.fix_instruments.__members__
@@ -657,4 +663,9 @@ class BaseDataSet:
         if hasattr(self.time_in_force, name):
             return getattr(self.time_in_force, name).value
         return ValueError(f"{self.time_in_force,} not found!")
+
+    def get_commission_basis(self, name:str):
+        if hasattr(self.commission_basis, name):
+            return getattr(self.commission_basis, name).value
+        return ValueError(f"{self.commission_basis} not found!")
     # endregion

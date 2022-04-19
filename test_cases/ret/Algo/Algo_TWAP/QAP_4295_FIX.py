@@ -19,7 +19,7 @@ def execute(report_id):
 
     # Send NewOrderSingle
 
-    now = datetime.today() - timedelta(hours=2)
+    now = datetime.today() - timedelta(hours=3)
 
 
     twap_params = {

@@ -88,7 +88,7 @@ class QAP_1960(TestCase):
         self.rule_list = [nos_rule, ocrr_rule, ocr_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=2)
+        now = datetime.today() - timedelta(hours=3)
 
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
