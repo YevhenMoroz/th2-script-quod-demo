@@ -462,3 +462,13 @@ class SymbolSource(Enum):
 
 class WaveColumns(Enum):
     status = 'Status'
+
+
+class BookingBlotterColumns(Enum):
+    give_up_broker = 'Give-up Broker'
+    qty = 'Qty'
+    order_id = 'Order ID'
+
+
+class BookingOrderResult(Enum):
+    multi = 'Multi'

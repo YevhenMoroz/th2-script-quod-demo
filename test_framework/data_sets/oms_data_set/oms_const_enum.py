@@ -276,3 +276,7 @@ class OMSBasketTemplates(Enum):
     template3 = "Test Template 2"  # This is a test template without header and default value
     template4 = "TemplateWithCurrencyAndVenue"  # Template for testing set upped currency and venue
     template5 = "Test Template csv"  # This is a test template without header and custom delimiter
+
+
+class OMSGiveUpBrokers(Enum):
+    give_up_broker_1 = 'GiveUpBrokerForVS'
