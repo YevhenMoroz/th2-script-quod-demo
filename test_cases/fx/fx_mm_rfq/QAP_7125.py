@@ -103,8 +103,7 @@ class QAP_7125(TestCase):
         self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="GBP", Instrument=self.instrument,
-                                                           OrderQty=self.qty)
+                                                           Currency="GBP", Instrument=self.instrument)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
