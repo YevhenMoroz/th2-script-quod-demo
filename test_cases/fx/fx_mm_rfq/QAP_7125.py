@@ -49,44 +49,64 @@ class QAP_7125(TestCase):
         self.md_req_id_fwd = "GBP/USD:FXF:WK1:HSBC"
 
         self.no_md_entries_spot = [{
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.1815,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18151,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                }]
+            "MDEntryType": "0",
+            "MDEntryPx": 1.1815,
+            "MDEntrySize": 1000000,
+            "MDQuoteType": 1,
+            "MDEntryPositionNo": 1,
+            "SettlDate": self.settle_date_spot,
+            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+        },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            }]
         self.no_md_entries_fwd = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.1813,
-                    "MDEntrySize": 50000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    "MDEntryForwardPoints": "0.00003",
-                    "SettlDate": self.settle_date_wk1,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18165,
-                    "MDEntrySize": 50000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    "MDEntryForwardPoints": "0.00004",
-                    "SettlDate": self.settle_date_wk1,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                }]
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1815,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00001",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00002",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1813,
+                "MDEntrySize": 50000000,
+                "MDEntryPositionNo": 2,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00003",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18165,
+                "MDEntrySize": 50000000,
+                "MDEntryPositionNo": 2,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00004",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            }]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
