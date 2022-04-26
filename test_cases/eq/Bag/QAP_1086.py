@@ -53,7 +53,7 @@ class QAP_1086(TestCase):
         # endregion
 
         # region create 3 CO order
-        for i in range(4):
+        for i in range(3):
             self.fix_manager.send_message_fix_standard(self.fix_message)
             self.client_inbox.accept_order(lookup, qty, price,
                                            filter={'ClientName': self.data_set.get_client_by_name('client_pt_1')})

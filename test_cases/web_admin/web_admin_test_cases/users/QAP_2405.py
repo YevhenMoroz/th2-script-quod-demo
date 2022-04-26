@@ -2,6 +2,7 @@ import random
 import sys
 import time
 import traceback
+import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -23,16 +24,15 @@ class QAP_2405(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = ''.join("test " + str(random.randint(1, 1000)))
-        self.password_at_login_wizard = ''.join("pass" + str(random.randint(1, 1000)))
+        self.user_for_clone = self.data_set.get_user("user_7")
+        self.ext_id_client = ''.join("EID" + str(random.randint(1, 1000)))
+        self.new_user_id = ''.join("UID" + str(random.randint(1, 1000)))
         self.perm_role = "Permissions for administrator users"
-        self.desks = (self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_3"))
-        self.new_user_id = ''.join("id" + str(random.randint(1, 1000)))
-        self.new_password = ''.join("pass" + str(random.randint(1, 1000)))
-        self.pin_code = "333"
-        self.email = "test"
+        self.desk = [self.data_set.get_desk("desk_3"), self.data_set.get_desk("desk_1")]
+        self.email = self.data_set.get_email("email_1")
+        self.first_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.last_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
-        #TODO:Check step regarding to set pin code (this field is not exist)
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
@@ -41,54 +41,40 @@ class QAP_2405(CommonTestCase):
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
         time.sleep(2)
-        users_page.click_on_new_button()
         login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
-        time.sleep(2)
-        login_sub_wizard.set_user_id(self.user_id)
-        time.sleep(2)
-        login_sub_wizard.set_pin_code(self.pin_code)
-        time.sleep(1)
-        login_sub_wizard.set_password(self.password)
-        time.sleep(2)
-        role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
-        role_sub_wizard.set_perm_role(self.perm_role)
-        time.sleep(2)
-        assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
-        assignments_sub_wizard.click_on_desks()
-        time.sleep(2)
-        user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
-        user_details_sub_wizard.set_mail(self.email)
-        time.sleep(1)
-        assignments_sub_wizard.set_desks(self.desks)
-        time.sleep(1)
         users_wizard = UsersWizard(self.web_driver_container)
-        users_wizard.click_on_save_changes()
-        time.sleep(3)
-        users_page.set_user_id(self.user_id)
+        users_page.set_user_id(self.user_for_clone)
         time.sleep(2)
         users_page.click_on_more_actions()
         users_page.click_on_clone_at_more_actions()
         time.sleep(2)
         login_sub_wizard.set_user_id(self.new_user_id)
-        time.sleep(2)
-        login_sub_wizard.set_pin_code(self.pin_code)
-        time.sleep(2)
-        login_sub_wizard.set_password(self.new_password)
-        time.sleep(2)
-        login_sub_wizard.set_password_expiration("11/10/2022")
+        login_sub_wizard.set_ext_id_client(self.ext_id_client)
+        login_sub_wizard.set_password_expiration("")
+        details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
+        details_tab.set_first_name(self.first_name)
+        details_tab.set_last_name(self.last_name)
+        details_tab.set_mail(self.email)
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.click_on_desks()
+        time.sleep(1)
+        assignments_tab.set_desks(self.desk)
+        time.sleep(1)
+        assignments_tab.click_on_desks()
+        time.sleep(1)
+        permission_tab = UsersRoleSubWizard(self.web_driver_container)
+        permission_tab.set_perm_role(self.perm_role)
         time.sleep(1)
         users_wizard.click_on_save_changes()
-        time.sleep(2)
-        users_wizard.click_on_logout_button()
-        time.sleep(3)
-        login_page.login_to_web_admin(self.new_user_id, self.new_password)
-        time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
-            login_page = LoginPage(self.web_driver_container)
-            self.verify("Login to web adm with new user", True, login_page.check_is_web_admin_preloaded())
+
+            users_page = UsersPage(self.web_driver_container)
+            users_page.set_user_id(self.new_user_id)
+
+            self.verify("User has been cloned", users_page.set_user_id(self.new_user_id), users_page.get_user_id())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

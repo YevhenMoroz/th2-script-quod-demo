@@ -246,6 +246,7 @@ class OMSCommission(Enum):
     commission2 = 2
     commission3 = 3
 
+
 class OmsQtyTypes(Enum):
     qty_type_1 = "UnmatchedQty"
     qty_type_2 = "OrderQty"
@@ -255,3 +256,7 @@ class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
 
+
+class OMSCommissionAndFeeBasis(Enum):
+    comm_basis_1 = 'Absolute'
+    comm_basis_2 = 'Percentage'

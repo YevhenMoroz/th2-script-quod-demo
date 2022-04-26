@@ -61,7 +61,6 @@ class FixMessageQuoteRequestFX(FixMessage):
             "NoRelatedSymbols": [{
                 "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
-                "OrderQty": "1000000",
                 "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "Instrument": {
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
@@ -125,4 +124,38 @@ class FixMessageQuoteRequestFX(FixMessage):
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlDate"] = settle_date
         if leg_qty is not None:
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"] = leg_qty
+        return self
+
+    def set_deposit_and_loan_param(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "ClOrdID": bca.client_orderid(14),
+            "NumOfCompetitors": "1",
+            "InCompetition": "N",
+            "NoRelatedSym": [{
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_currency_by_name("currency_usd"),
+                    "Product": "9"
+                },
+                "NoPartyIDs": [
+                    {
+                        "PartyID": "CLIENT1",
+                        "PartyIDSource": "D",
+                        "PartyRole": "1"
+                    },
+                    {
+                        "PartyID": "CLIENT1",
+                        "PartyIDSource": "D",
+                        "PartyRole": "3"
+                    }
+                ],
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "Side": "2",
+                "DayCount": "30/360",
+                "OrderQty": "1000000",
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
         return self

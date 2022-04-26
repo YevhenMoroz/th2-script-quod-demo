@@ -26,7 +26,7 @@ class FixMessageNewOrderMultiLegFX(FixMessage):
             "HandlInst": "1",
             "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
             quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
-            "OrderQty": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
+            "OrderQty": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
             "TimeInForce": "3",
             "OrdType": "D",
             "TransactTime": datetime.utcnow().isoformat(),

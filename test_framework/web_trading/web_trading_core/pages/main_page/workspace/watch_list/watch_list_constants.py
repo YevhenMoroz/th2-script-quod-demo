@@ -6,7 +6,7 @@ class WatchListConstants:
     COPY_PANEL_BUTTON_XPATH = '//*[@class="copy-workspace-icon"]/img'
     FIELD_CHOOSER_XPATH = '//*[@name="btnColumnHiding"]'
     ADVANCED_FILTERING_BUTTON_XPATH = '//*[@name="btnAdvancedFiltering"]'
-    HORIZONTAL_SCROLL_XPATH = '//*[@class="igx-vhelper--horizontal ng-star-inserted"]/div[@class="igx-vhelper__placeholder-content"]'
+    HORIZONTAL_SCROLL_XPATH = '//*[@class="igx-vhelper--horizontal ng-star-inserted"]'  #/div[@class="igx-vhelper__placeholder-content"]
     SCROLL_END_XPATH = '//*[@class="igx-grid__scroll-end"]'
     SEARCH_SYMBOL_INPUT_XPATH = '//*[@id="style-3"]//igx-input-group//input'
     TRADED_LISTINGS_BUTTON_XPATH = '//*[@class="trading-listing"]/igx-switch'
