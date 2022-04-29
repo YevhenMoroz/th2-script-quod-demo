@@ -94,11 +94,11 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().change_parameters(quote_request_swap_params)
         return self
 
-    def update_near_leg(self, leg_symbol: str = None, leg_sec_type: bool = False, leg_side: str = None,
+    def update_near_leg(self, leg_symbol: str = None, leg_sec_type: str = None, leg_side: str = None,
                         settle_type: str = None, settle_date: str = None, leg_qty: str = None):
         if leg_symbol is not None:
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["InstrumentLeg"]["LegSymbol"] = leg_symbol
-        if leg_sec_type:
+        if leg_sec_type is not None:
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["InstrumentLeg"]["LegSecurityType"] = leg_sec_type
         if leg_side is not None:
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSide"] = leg_side

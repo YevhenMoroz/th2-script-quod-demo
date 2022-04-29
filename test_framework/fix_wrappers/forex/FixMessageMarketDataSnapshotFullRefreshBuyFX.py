@@ -26,7 +26,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 },
                 {
                     "MDEntryType": "1",
@@ -35,7 +35,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 },
                 {
                     "MDEntryType": "0",
@@ -44,7 +44,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 },
                 {
                     "MDEntryType": "1",
@@ -53,7 +53,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 },
                 {
                     "MDEntryType": "0",
@@ -62,7 +62,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 },
                 {
                     "MDEntryType": "1",
@@ -71,7 +71,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
                 }
             ]
         }
