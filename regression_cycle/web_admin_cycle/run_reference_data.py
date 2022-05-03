@@ -81,7 +81,7 @@ class ReferenceData:
                      environment=configuration.environment).run()
             QAP_1736(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
-
+            # TODO:
             # В ТК не упоминается об проверки ПДФ выгрузки. Мне кажется кейс не совсем актуален.
             # // Сделать вместо проверки ПДФ, сделать через эдит
             QAP_1737(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

@@ -57,7 +57,7 @@ class VenuesConstants:
     DARK_ALGO_COM_PER_UNIT_COMM_AMT_XPATH = '//*[@id="darkAlgoPerUnitCommAmt"]'
     DARK_ALGO_COM_COMM_BASIS_POINT_XPATH = '//*[@id="darkAlgoCommBasisPoints"]'
     DARK_ALGO_COM_SPREAD_DISCOUNT_PROPORTION_XPATH = '//*[@id="darkAlgoSpreadDiscount"]'
-    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//label'
+    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//span'
 
     # --Profiles tab--
     PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH = '//*[@id="priceLimitProfile"]'
@@ -376,11 +376,11 @@ class VenuesConstants:
     STATUS_METRICS_TAB_ENABLE_METRIC_CHECKBOX_XPATH = '//*[text()="Enable Metric"]/parent::label//input'
 
     # --Exchange codes sub wizard--
-    EXCHANGE_CODES_TAB_PLUS_BUTTON_XPATH = '//*[@class="nb-plus ng2-add-btn"]'
-    EXCHANGE_CODES_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
-    EXCHANGE_CODES_TAB_CLOSE_BUTTON_XPATH = '//*[@class="nb-close ng2-cancel-btn"]'
-    EXCHANGE_CODES_TAB_EDIT_BUTTON_XPATH = '//*[@class="nb-edit ng2-edit-btn"]'
-    EXCHANGE_CODES_TAB_DELETE_BUTTON_XPATH = '//*[@class="nb-trash]'
+    EXCHANGE_CODES_TAB_PLUS_BUTTON_XPATH = '//*[@data-name="plus"]'
+    EXCHANGE_CODES_TAB_CHECKMARK_BUTTON_XPATH = '//*[@data-name="checkmark"]'
+    EXCHANGE_CODES_TAB_CLOSE_BUTTON_XPATH = '//p-table//*[@data-name="close"]'
+    EXCHANGE_CODES_TAB_EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
+    EXCHANGE_CODES_TAB_DELETE_BUTTON_XPATH = '//*[@data-name="trash-2"]'
     EXCHANGE_CODES_TAB_VENUE_XPATH = '//*[@placeholder="Venue"]'
     EXCHANGE_CODES_TAB_EXCHANGE_CODE_MIC_XPATH = '//*[@placeholder="Exchange Code (MIC) *"]'
     EXCHANGE_CODES_TAB_REUTERS_EXCHANGE_CODE_XPATH = '//*[@placeholder="Reuters Exchange Code"]'

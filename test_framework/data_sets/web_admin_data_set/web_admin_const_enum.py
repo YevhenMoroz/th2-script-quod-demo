@@ -24,8 +24,8 @@ class WebAdminComponentId(Enum):
     component_id_1 = "SATS"
 
 
-class WebAdminAdminCommands(Enum):
-    admin_command_1 = "ChangeLogLevel"
+class WebAdminSystemCommands(Enum):
+    system_command_1 = "ChangeLogLevel"
 
 
 # endregion

@@ -34,7 +34,7 @@ class ClientsConstants:
     MAIN_PAGE_DISCLOSE_EXEC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@col-id="clearingAccountType"]//span//span[4]'
-    MAIN_PAGE_CLIENT_NAME = '//*[@col-id="accountGroupName"]//span[@class="ag-group-value"]'
+    MAIN_PAGE_CLIENT_NAME = '//*[@class="breadcrumbs entity-title"]'
 
     # values tab
     VALUES_TAB_ID_XPATH = '//*[@id="accountGroupID"]'

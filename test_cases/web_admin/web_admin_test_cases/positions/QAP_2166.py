@@ -26,6 +26,7 @@ class QAP_2166(CommonTestCase):
         self.user = self.data_set.get_user("user_4")
         self.desk = self.data_set.get_desk("desk_1")
         self.institution = self.data_set.get_institution("institution_1")
+        self.account = ''
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,8 +44,8 @@ class QAP_2166(CommonTestCase):
         time.sleep(1)
         wizard.set_execution_policy(self.execution_policy)
         time.sleep(1)
-        account = random.choice(wizard.get_all_account_from_drop_menu())
-        wizard.set_account(account)
+        self.account = random.choice(wizard.get_all_account_from_drop_menu())
+        wizard.set_account(self.account)
         time.sleep(1)
         wizard.set_client(self.client)
         time.sleep(1)
@@ -54,15 +55,14 @@ class QAP_2166(CommonTestCase):
         time.sleep(1)
         wizard.set_institution(self.institution)
         time.sleep(1)
-        return {"account": account}
 
     def test_context(self):
         try:
-            test_data = self.precondition()
+            self.precondition()
             wizard = WashBookRulesWizard(self.web_driver_container)
             page = WashBookRulesPage(self.web_driver_container)
 
-            expected_content = [self.name, self.client, self.instr_type, self.execution_policy, test_data["account"],
+            expected_content = [self.name, self.client, self.instr_type, self.execution_policy, self.account,
                                 self.user, self.desk]
             self.verify("Is pdf contains values ", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_content))
@@ -77,7 +77,6 @@ class QAP_2166(CommonTestCase):
                               page.get_desk()]
             self.verify_arrays_of_data_objects("Is data saved correctly in main page", headers, expected_content,
                                                actual_content)
-
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
