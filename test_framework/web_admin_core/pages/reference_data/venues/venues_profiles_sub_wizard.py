@@ -10,17 +10,26 @@ class VenuesProfilesSubWizard(CommonPage):
     def set_price_limit_profile(self, value):
         self.set_combobox_value(VenuesConstants.PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH, value)
 
+    def set_price_limit_profile_custom_value(self, value):
+        self.set_text_by_xpath(VenuesConstants.PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH, value)
+
     def get_price_limit_profile(self):
         return self.get_text_by_xpath(VenuesConstants.PROFILES_TAB_PRICE_LIMIT_PROFILE_XPATH)
 
     def set_tick_size_profile(self, value):
         self.set_combobox_value(VenuesConstants.PROFILES_TAB_TICK_SIZE_PROFILE_XPATH, value)
 
+    def set_tick_size_profile_custom_value(self, value):
+        self.set_text_by_xpath(VenuesConstants.PROFILES_TAB_TICK_SIZE_PROFILE_XPATH, value)
+
     def get_tick_size_profile(self):
         return self.get_text_by_xpath(VenuesConstants.PROFILES_TAB_TICK_SIZE_PROFILE_XPATH)
 
     def set_holiday(self, value):
         self.set_combobox_value(VenuesConstants.PROFILES_TAB_HOLIDAY_XPATH, value)
+
+    def set_holiday_custom_value(self, value):
+        self.set_text_by_xpath(VenuesConstants.PROFILES_TAB_HOLIDAY_XPATH, value)
 
     def get_holiday(self):
         return self.get_text_by_xpath(VenuesConstants.PROFILES_TAB_HOLIDAY_XPATH)
@@ -34,11 +43,17 @@ class VenuesProfilesSubWizard(CommonPage):
     def set_trading_phase_profile(self, value):
         self.set_combobox_value(VenuesConstants.PROFILES_TAB_TRADING_PHASE_PROFILE_XPATH, value)
 
+    def set_trading_phase_profile_custom_value(self, value):
+        self.set_text_by_xpath(VenuesConstants.PROFILES_TAB_TRADING_PHASE_PROFILE_XPATH, value)
+
     def get_trading_phase_profile(self):
         return self.get_text_by_xpath(VenuesConstants.PROFILES_TAB_TRADING_PHASE_PROFILE_XPATH)
 
     def set_routing_param_group(self, value):
         self.set_combobox_value(VenuesConstants.PROFILES_TAB_ROUTING_PARAM_GROUP_XPATH, value)
+
+    def set_routing_param_group_custom_value(self, value):
+        self.set_text_by_xpath(VenuesConstants.PROFILES_TAB_ROUTING_PARAM_GROUP_XPATH, value)
 
     def get_routing_param_group(self):
         return self.get_text_by_xpath(VenuesConstants.PROFILES_TAB_ROUTING_PARAM_GROUP_XPATH)

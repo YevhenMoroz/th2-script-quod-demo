@@ -18,6 +18,7 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_2971 import QA
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3136 import QAP_3136
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_3399 import QAP_3399
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4153 import QAP_4153
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4341 import QAP_4341
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4709 import QAP_4709
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4861 import QAP_4861
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QAP_4862
@@ -106,6 +107,8 @@ class ReferenceData:
             QAP_3399(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_4153(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_4341(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_4709(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

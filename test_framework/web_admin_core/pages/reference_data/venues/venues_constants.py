@@ -17,6 +17,7 @@ class VenuesConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    NOT_FOUND_OPTION_IN_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option'
 
     # --Main page--
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
