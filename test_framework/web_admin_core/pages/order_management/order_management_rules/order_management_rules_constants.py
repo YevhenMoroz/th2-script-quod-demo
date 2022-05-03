@@ -32,14 +32,15 @@ class OrderManagementRulesConstants:
     FIRST_CRITERIA_FIELD_AT_CHANGE_CRITERIA_TAB_XPATH = '//*[@id="gatingRuleCriterion1"]'
     SECOND_CRITERIA_FIELD_AT_CHANGE_CRITERIA_TAB_XPATH = '//*[@id="gatingRuleCriterion2"]'
     THIRD_CRITERIA_FIELD_AT_CHANGE_CRITERIA_TAB_XPATH = '//*[@id="gatingRuleCriterion3"]'
+
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_ENABLED_FILTER_LIST_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//select//option[text()="{}"]'
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//select'
     MAIN_PAGE_LISTING_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
+    MAIN_PAGE_SETTINGS_VALUES_XPATH = '//*[@class="title left"]//following-sibling::span'
 
     # Values tab
-
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="gatingRuleName"]'
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="gatingRuleDescription"]'
     VALUES_TAB_LISTING_GROUP_XPATH = '//*[@id="listingGroup"]'
@@ -52,8 +53,7 @@ class OrderManagementRulesConstants:
     VALUES_TAB_ACCOUNT_XPATH = '//*[@id="account"]'
     VALUES_TAB_STRATEGY_NAME_XPATH = '//*[@id="externalStrategyName"]'
 
-    # Condititons tab
-
+    # Conditions tab
     CONDITIONS_TAB_PLUS_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-plus condition-add-btn"]'
     CONDITIONS_TAB_CANCEL_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-close condition-cancel-btn"]'
     CONDITIONS_TAB_CHECKMARK_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
@@ -70,7 +70,7 @@ class OrderManagementRulesConstants:
     CONDITIONS_TAB_OR_RADIO_BUTTON = '//*[text()="OR"]/preceding-sibling::span'
     CONDITIONS_TAB_CONDITIONAL_LOGIC_ADD_CONDITION_BUTTON_XPATH = '//*[@class="sub-form-accordion"]//*[@data-name="plus"]'
     CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH = '//*[@class = "field-wrapper ng-star-inserted"]//button'
-    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
+    CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()=' {} ']"
     CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH = '//*[@name="autocomplete"]'
     CONDITIONS_TAB_CONDITIONAL_LOGIC_XPATH = "//*[@class='operator-wrapper ng-star-inserted']"
     CONDITIONS_TAB_CONDITIONAL_LOGIC_LIST_XPATH = "//*[@class='cdk-overlay-container']//nb-option[text()='{}']"
@@ -97,7 +97,6 @@ class OrderManagementRulesConstants:
     RESULTS_SUB_WIZARD_ROUTE_XPATH = '//*[@id="routeresult-table"]'
 
     # Default result
-
     DEFAULT_RESULT_TAB_DEFAULT_RESULT_NAME = '//*[@formcontrolname = "gatingRuleCondName"]'
     DEFAULT_RESULT_TAB_QTY_PRECISION = '//*[@formcontrolname = "qtyPrecision"]'
     DEFAULT_RESULT_TAB_HOLD_ORDER_CHECKBOX = '//*[text()="Hold Order"]/preceding-sibling::span'

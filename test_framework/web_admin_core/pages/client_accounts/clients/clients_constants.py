@@ -37,7 +37,7 @@ class ClientsConstants:
     MAIN_PAGE_CLIENT_NAME = '//*[@col-id="accountGroupName"]//span[@class="ag-group-value"]'
 
     # values tab
-    VALUES_TAB_ID_XPATH = '//*[@class="breadcrumbs entity-title"]'
+    VALUES_TAB_ID_XPATH = '//*[@id="accountGroupID"]'
     VALUES_NAME_XPATH = '//*[@formcontrolname="accountGroupName"]'
     VALUES_TAB_EXT_ID_CLIENT_XPATH = '//*[@formcontrolname="clientAccountGroupID"]'
     VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@id="clearingAccountType"]'

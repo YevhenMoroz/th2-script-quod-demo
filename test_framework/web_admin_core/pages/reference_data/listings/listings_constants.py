@@ -138,6 +138,7 @@ class ListingsConstants:
     FEATURE_TAB_CROSS_THROUGH_EUR_CHECKBOX_XPATH = '//*[text()="Cross Through EUR"]/preceding-sibling::span'
     FEATURE_TAB_CROSS_THROUGH_USD_TO_EUR_CHECKBOX_XPATH = '//*[text()="Cross Through USD To EUR"]/preceding-sibling::span'
     FEATURE_TAB_ALGO_INCLUDED_CHECKBOX_XPATH = '//*[text()="Algo Included"]/preceding-sibling::span'
+    FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH = '//*[@formcontrolname="contractMultiplier"]'
 
     # Validations tab
     VALIDATIONS_TAB_PRICE_LIMIT_XPATH = '//*[@id="priceLimitProfile"]'
