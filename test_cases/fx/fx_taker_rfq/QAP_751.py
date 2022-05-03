@@ -3,6 +3,8 @@ import random
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
@@ -15,8 +17,8 @@ from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 
 class QAP_751(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rfq_tile = RFQTile(self.test_id, self.session_id)
         self.order_book = FXOrderBook(self.test_id, self.session_id)

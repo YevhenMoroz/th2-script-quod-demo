@@ -132,7 +132,7 @@ class FxSettleTypes(Enum):
 class FxTenors(Enum):
     tenor_spot = "Spot"
     tenor_tod = "Today"
-    tenor_tom = "Tom"
+    tenor_tom = "TOM"
     tenor_1w = "1W"
     tenor_2w = "2W"
     tenor_3w = "3W"
