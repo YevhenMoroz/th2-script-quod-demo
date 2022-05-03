@@ -1,6 +1,6 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf
 
 
 class FxInstruments(Enum):
@@ -132,7 +132,7 @@ class FxSettleTypes(Enum):
 class FxTenors(Enum):
     tenor_spot = "Spot"
     tenor_tod = "Today"
-    tenor_tom = "Tom"
+    tenor_tom = "TOM"
     tenor_1w = "1W"
     tenor_2w = "2W"
     tenor_3w = "3W"
@@ -148,10 +148,12 @@ class FxSettleDates(Enum):
     today = today()
     tomorrow = tom()
     spot = spo()
+    spo = spo_ndf()
     wk1 = wk1()
     wk2 = wk2()
     wk3 = wk3()
-    wk_ndf = wk1_ndf()
+    wk1_ndf = wk1_ndf()
+    wk2_ndf = wk2_ndf()
     # TODO add more settle dates
 
 
