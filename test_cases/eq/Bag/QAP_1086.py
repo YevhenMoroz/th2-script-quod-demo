@@ -49,7 +49,7 @@ class QAP_1086(TestCase):
         qty_of_bag = str(int(qty) * 3)
         qty_of_bag_after_modification = str(int(qty) * 4)
         orders_id = []
-        name_of_bag = 'Bag_I'
+        name_of_bag = 'QAP_1086'
         # endregion
 
         # region create 3 CO order

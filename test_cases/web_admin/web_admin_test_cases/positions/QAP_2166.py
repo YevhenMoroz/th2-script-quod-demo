@@ -22,7 +22,6 @@ class QAP_2166(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = self.data_set.get_instr_type("instr_type_9")
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_1")
-        self.account = "House_1"
         self.client = self.data_set.get_client("client_1")
         self.user = self.data_set.get_user("user_4")
         self.desk = self.data_set.get_desk("desk_1")
@@ -44,7 +43,8 @@ class QAP_2166(CommonTestCase):
         time.sleep(1)
         wizard.set_execution_policy(self.execution_policy)
         time.sleep(1)
-        wizard.set_account(self.account)
+        account = random.choice(wizard.get_all_account_from_drop_menu())
+        wizard.set_account(account)
         time.sleep(1)
         wizard.set_client(self.client)
         time.sleep(1)
@@ -54,14 +54,15 @@ class QAP_2166(CommonTestCase):
         time.sleep(1)
         wizard.set_institution(self.institution)
         time.sleep(1)
+        return {"account": account}
 
     def test_context(self):
         try:
-            self.precondition()
+            test_data = self.precondition()
             wizard = WashBookRulesWizard(self.web_driver_container)
             page = WashBookRulesPage(self.web_driver_container)
 
-            expected_content = [self.name, self.client, self.instr_type, self.execution_policy, self.account,
+            expected_content = [self.name, self.client, self.instr_type, self.execution_policy, test_data["account"],
                                 self.user, self.desk]
             self.verify("Is pdf contains values ", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_content))

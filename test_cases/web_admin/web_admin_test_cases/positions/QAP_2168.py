@@ -1,7 +1,8 @@
 import sys
 import time
 import traceback
-from datetime import datetime
+import random
+import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_page import WashBookPage
@@ -10,6 +11,7 @@ from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+from test_framework.web_admin_core.pages.positions.wash_books.wash_books_assignments_sub_waizard import WashBookAssignmentsSubWizard
 
 
 class QAP_2168(CommonTestCase):
@@ -18,14 +20,9 @@ class QAP_2168(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        now = datetime.now()
-        '''
-        iteration_value this variable was created for concatenation id and ext_id_client values,
-        because this values must be unique all time
-        '''
-        iteration_value = now.strftime("%d/%m/%Y %H:%M:%S")
-        self.id = "test 2168: " + str(iteration_value)
-        self.ext_id_client = "11: " + str(iteration_value)
+        self.institution = self.data_set.get_institution("institution_1")
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client = self.data_set.get_client("client_1")
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
 
@@ -48,6 +45,9 @@ class QAP_2168(CommonTestCase):
         wash_book_wizard.set_client_at_values_tab(self.client)
         time.sleep(1)
         wash_book_wizard.set_client_id_source_at_values_tab(self.client_id_source)
+        time.sleep(1)
+        wash_book_wizard_assignment_tab = WashBookAssignmentsSubWizard(self.web_driver_container)
+        wash_book_wizard_assignment_tab.set_institution(self.institution)
         time.sleep(1)
         wash_book_wizard.click_on_save_changes()
         time.sleep(1)

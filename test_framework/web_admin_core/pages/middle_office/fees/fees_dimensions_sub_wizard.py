@@ -39,7 +39,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_venue_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_VENUE_XPATH).click()
         time.sleep(2)
-        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_venue_list(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_VENUE_LIST_XPATH, value)
@@ -53,7 +53,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_venue_list_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_VENUE_LIST_XPATH).click()
         time.sleep(2)
-        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_instrument_list(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_INSTRUMENT_LIST_XPATH, value)

@@ -33,6 +33,7 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_760 import QAP
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_761 import QAP_761
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_762 import QAP_762
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_763 import QAP_763
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6714 import QAP_6714
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -113,6 +114,8 @@ class ReferenceData:
             QAP_4862(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5815(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6714(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_6299(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

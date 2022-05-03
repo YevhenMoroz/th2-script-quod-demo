@@ -39,6 +39,8 @@ class BaseDataSet:
     verifier_key_parameters = None
     fee_order_scope = None
     pset = None
+    basket_templates = None
+    give_up_brokers = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -374,6 +376,11 @@ class BaseDataSet:
             return getattr(self.qty_types, name).value
         raise ValueError(f"{self.qty_types} not found!")
 
+    def get_give_up_broker(self, name: str):
+        if hasattr(self.give_up_brokers, name):
+            return getattr(self.give_up_brokers, name).value
+        raise ValueError(f"{self.give_up_brokers} not found!")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):
@@ -391,7 +398,7 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_system_commands(self, name: str):
+    def get_admin_command(self, name: str):
         if hasattr(self.admin_command, name):
             return getattr(self.admin_command, name).value
         return ValueError(f"{self.admin_command} not found!")
@@ -594,7 +601,12 @@ class BaseDataSet:
     def get_exec_policy(self, name: str):
         if hasattr(self.exec_policy, name):
             return getattr(self.exec_policy, name).value
-        return ValueError(f"{self.exec_policy,} not found!")
+        return ValueError(f"{self.exec_policy} not found!")
+
+    def get_basket_template(self, name: str):
+        if hasattr(self.basket_templates, name):
+            return getattr(self.basket_templates, name).value
+        return ValueError(f"{self.basket_templates} not found!")
 
     def get_commission_amount_type(self, name: str):
         if hasattr(self.commission_amount_type, name):

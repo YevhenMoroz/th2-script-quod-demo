@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.reference_data.listings.listings_constants import ListingsConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -12,6 +14,17 @@ class ListingsFeatureSubWizard(CommonPage):
 
     def get_order_book_visibility(self):
         return self.get_text_by_xpath(ListingsConstants.FEATURE_TAB_ORDER_BOOK_VISIBILITY_XPATH)
+
+    def set_contract_multiplier(self, value):
+        self.find_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH).send_keys(value)
+
+    def get_contract_multiplier(self):
+        return self.get_text_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH)
+
+    def is_contract_multiplier_empty(self):
+        if "has-value" in self.find_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH).get_attribute("class"):
+            return False
+        return True
 
     def set_forward_point_divisor(self, value):
         self.set_text_by_xpath(ListingsConstants.FEATURE_TAB_FORWARD_POINT_DIVISOR_XPATH, value)

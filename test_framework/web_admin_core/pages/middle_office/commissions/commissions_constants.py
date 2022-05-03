@@ -20,6 +20,7 @@ class CommissionsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -36,10 +37,6 @@ class CommissionsConstants:
     MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH = '//*[@class="boolean-filter ng-untouched ng-pristine ng-valid"]'
-
-
-
-
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
 
     # dimensions tab
@@ -59,6 +56,7 @@ class CommissionsConstants:
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="clCommissionName"]'
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="clCommissionDescription"]'
     VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH = '//*[text()="Re-Calculate for Allocations"]/preceding-sibling::span'
+    VALUES_TAB_VENUE_LIST_XPATH = '//*[@id="venueList"]'
 
     # commission profiles
     COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = "//*[@class='commissionProfileName ng2-smart-th ng-star-inserted']//input"

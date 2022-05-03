@@ -58,6 +58,11 @@ class WashBookRulesWizard(CommonPage):
 
     def get_account(self):
         return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH)
+    
+    def get_all_account_from_drop_menu(self):
+        self.find_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH).click()
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_client(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_CLIENT_XPATH, value)

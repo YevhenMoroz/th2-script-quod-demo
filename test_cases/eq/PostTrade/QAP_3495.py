@@ -1,15 +1,16 @@
 import logging
 import os
+import typing
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixMessage import FixMessage
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
+    AllocationsColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -18,57 +19,115 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP3595(TestCase):
-    def __init__(self, report_id, session_id, file_name):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+class QAP_3495(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
 
-    def qap_3495(self):
+    # @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        base_window = BaseWindow(self.case_id, self.session_id)
-        oms_order_book = OMSOrderBook(self.case_id, self.session_id)
-        oms_middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        client = 'MOClient4'
-        fix_message = FixMessageNewOrderSingleOMS()
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        fix_message.set_default_care_limit()
+        qty = '1000'
+        price = '10'
+        exec_price = '2'
+        client_name = self.data_set.get_client_by_name('client_pt_4')
+        no_allocs: dict = {'NoAllocs': [
+            {
+                'AllocAccount': self.data_set.get_account_by_name('client_pt_4_acc_1'),
+                'AllocQty': qty
+            }]}
+        self.fix_message.set_default_care_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
+        self.fix_message.change_parameter('Account', client_name)
+        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
+        self.fix_message.change_parameter('Price', price)
+        self.fix_message.change_parameter('PreAllocGrp', no_allocs)
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('ExDestination', exec_destination)
+        compare_eval = 'self.middle_office.compare_values'
+        orders_id = list()
         # endregion
-        # region open FE
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
-        # endregion
-        # region create DMA order and execute them
-        try:
-            fix_manager.send_message_fix_standard(fix_message)
-            fix_manager.send_message_fix_standard(fix_message)
-            fix_manager.send_message_fix_standard(fix_manager)
-        except Exception:
-            logger.info('Oh shit, I am sorry')
-        # endregion
-        # endregion
-        # region extract orderID from order_book and compare values after autoBook
 
-        order_id = oms_order_book.extract_field('Order ID')
-        oms_order_book.complete_order(filter_list=['Order ID', order_id])
-        post_trade_status = oms_order_book.extract_field('PostTradeStatus')
-        done_for_day = oms_order_book.extract_field('DoneForDay')
-        actually_dictionary_of_result = {'PostTradeStatus': post_trade_status, 'DoneForDay': done_for_day}
-        oms_order_book.compare_values({'PostTradeStatus': 'Booked', 'DoneForDay': 'Yes'}, actually_dictionary_of_result,
-                                      'Compare value after autoBook')
+        # region_create_orders(precondition)
+        for i in range(3):
+            self.fix_manager.send_message_fix_standard(self.fix_message)
+            self.client_inbox.accept_order(filter={'ClientName': client_name})
+            self.order_book.set_filter([OrderBookColumns.qty.value, qty])
+            orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
 
         # endregion
-        # region check price after book
-        price_of_block = oms_middle_office.extract_block_field('AvgPx', ['Order ID', order_id], 1)
-        actually_dictionary_of_result = {'AvgPx': price_of_block}
-        print(price_of_block)
-        oms_middle_office.compare_values({'AvgPx': '1.124'}, price_of_block, 'Check Price of block')
-        # # endregion
 
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_3495()
+        # region mass manual execution and  verify expected result(step 1 , 2)
+        self.order_book.mass_manual_execution(exec_price, len(orders_id))
+        self.order_book.complete_order(row_count=len(orders_id), filter_list=[OrderBookColumns.qty.value, qty])
+        self.__verifying_value_of_orders(orders_id, [OrderBookColumns.post_trade_status.value,
+                                                     OrderBookColumns.exec_sts.value], ['ReadyToBook', 'Filled'])
+        # endregion
+
+        # region book order and approve block (step 3)
+        self.middle_office.set_modify_ticket_details(selected_row_count=len(orders_id))
+        self.middle_office.book_order()
+        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value)
+        self.__verifying_value_of_orders(orders_id, [OrderBookColumns.post_trade_status.value], ['Booked'])
+        self.middle_office.set_filter(
+            [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]])
+        self.middle_office.clear_filter()
+        value_of_block = self.middle_office.extract_list_of_block_fields([MiddleOfficeColumns.sts.value,
+                                                                          MiddleOfficeColumns.match_status.value],
+                                                                         row_number=1)
+        expected_result = {MiddleOfficeColumns.sts.value: 'ApprovalPending',
+                           MiddleOfficeColumns.match_status.value: 'Unmatched'}
+        self.__comparing_values(expected_result, value_of_block, 'Comparing value after book',
+                                compare_eval)
+        # endregion
+
+        # region step 4
+        self.middle_office.approve_block()
+        filter_list = [MiddleOfficeColumns.block_id.value, '122000000034']
+        extracted_list = [MiddleOfficeColumns.sts.value,
+                          MiddleOfficeColumns.match_status.value,
+                          MiddleOfficeColumns.summary_status.value]
+        actually_result = self.__extracted_values(extracted_list, filter_list,
+                                                  'self.middle_office.extract_list_of_block_fields')
+        expected_result = {MiddleOfficeColumns.summary_status.value: 'MatchedAgreed',
+                           MiddleOfficeColumns.sts.value: 'Accepted',
+                           MiddleOfficeColumns.match_status.value: 'Matched'}
+        self.__comparing_values(expected_result, actually_result,
+                                'Comparing values after approve for block of MiddleOffice',
+                                compare_eval)
+        extraction_fields = [AllocationsColumns.alloc_qty.value]
+        expected_results = [{AllocationsColumns.alloc_qty.value: str(int(qty) * 3).replace('0', ',', 1).__add__('0')}]
+        self.__verifying_allocation(extraction_fields, expected_results)
+        # endregion
+
+    def __comparing_values(self, expected_result, actually_result, verifier_message: str, eval_str):
+        eval(eval_str)(expected_result, actually_result, verifier_message)
+
+    def __extracted_values(self, fields, filter_values, method_for_eval):
+        return eval(method_for_eval)(fields, filter_values)
+
+    def __verifying_allocation(self, extraction_fields, expected_result):
+        count = 0
+        for field in extraction_fields:
+            value = self.middle_office.extract_allocate_value(field)
+            self.__comparing_values(expected_result[count], value, f'Comparing for Allocation{value}',
+                                    'self.middle_office.compare_values')
+            count = count+1
+
+    def __verifying_value_of_orders(self, orders_id: list, fields: typing.List[str], expected_values: typing.List[str]):
+        for order in range(len(orders_id)):
+            for count in range(len(fields)):
+                self.order_book.set_filter([OrderBookColumns.order_id.value, orders_id[order]])
+                value = self.order_book.extract_field(fields[count])
+                expected_result = {fields[count]: expected_values[count]}
+                actually_result = {fields[count]: value}
+                comparing_message = f'Comparing values of order {orders_id[order]}'
+                self.__comparing_values(expected_result, actually_result, comparing_message,
+                                        'self.order_book.compare_values')

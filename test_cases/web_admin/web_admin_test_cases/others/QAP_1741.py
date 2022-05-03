@@ -27,7 +27,6 @@ class QAP_1741(CommonTestCase):
         login_page.set_login(self.login)
         login_page.set_password(self.password)
         login_page.click_login_button()
-        login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_routes_page()
         time.sleep(2)
@@ -41,13 +40,14 @@ class QAP_1741(CommonTestCase):
         routes_main_menu.set_name_at_filter(self.name)
         time.sleep(2)
         routes_main_menu.click_on_more_actions()
+        time.sleep(1)
         routes_main_menu.click_on_edit_at_more_actions()
-        routes_wizard.set_name_at_values_tab(self.new_name)
         time.sleep(2)
+        routes_wizard.set_name_at_values_tab(self.new_name)
         routes_wizard.click_on_save_changes()
         time.sleep(2)
         routes_main_menu.set_name_at_filter(self.new_name)
-        time.sleep(2)
+        time.sleep(1)
 
     def test_context(self):
         try:
@@ -65,6 +65,7 @@ class QAP_1741(CommonTestCase):
             routes_main_menu.click_on_more_actions()
             time.sleep(1)
             routes_main_menu.click_on_delete_at_more_actions()
+            time.sleep(1)
             routes_main_menu.click_on_ok()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

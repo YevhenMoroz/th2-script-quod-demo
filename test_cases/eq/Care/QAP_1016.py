@@ -23,7 +23,6 @@ class QAP_1016(TestCase):
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.client = self.data_set.get_client_by_name('client_co_1')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')
-
         self.order_type = OrderType.limit.value
         self.qty = "900"
         self.price = "20"
@@ -39,8 +38,7 @@ class QAP_1016(TestCase):
         self.order_ticket.create_order(lookup=self.lookup)
         # endregion
         # region Check values in OrderBook
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        self.order_book.check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.open.value, OrderBookColumns.qty.value: self.qty,
              OrderBookColumns.client_name.value: self.client, OrderBookColumns.limit_price.value: self.price})
         # endregion
