@@ -40,6 +40,7 @@ class BaseDataSet:
     fee_order_scope = None
     pset = None
     basket_templates = None
+    give_up_brokers = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -374,6 +375,11 @@ class BaseDataSet:
         if hasattr(self.qty_types, name):
             return getattr(self.qty_types, name).value
         raise ValueError(f"{self.qty_types} not found!")
+
+    def get_give_up_broker(self, name: str):
+        if hasattr(self.give_up_brokers, name):
+            return getattr(self.give_up_brokers, name).value
+        raise ValueError(f"{self.give_up_brokers} not found!")
 
     # region WebAdmin getters
 

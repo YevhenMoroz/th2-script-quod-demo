@@ -45,6 +45,7 @@ class BaseOrderBook(BaseWindow):
         self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
+        self.house_fill_call = None
         self.is_menu_item_present_call = None
         self.group_modify_order_call = None
         self.get_orders_details_call = None
@@ -83,6 +84,8 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_details = None
         self.internal_transfer_action = None
         self.group_modify_details = None
+        self.mass_manual_execution_call = None
+        self.mass_manual_execution_details = None
 
     # endregion
 
@@ -220,14 +223,14 @@ class BaseOrderBook(BaseWindow):
                                          verification_method)
         self.verifier.verify()
 
-    def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
+    def is_menu_item_present(self, menu_item, orders_count: list, filter_dict=None):
         """
         check order context menu and return a bool value
         """
         self.menu_item_details.set_selected_rows(orders_count)
         self.menu_item_details.set_menu_item(menu_item)
-        if filter_list is not None:
-            self.menu_item_details.set_filter(filter_list)
+        if filter_dict is not None:
+            self.menu_item_details.set_filter(filter_dict)
         result = call(self.is_menu_item_present_call, self.menu_item_details.build())
         self.clear_details([self.menu_item_details])
         return result['isMenuItemPresent']
@@ -361,7 +364,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [] = None, basket_name=None):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None,):
         """
         orders_rows - select rows from order book
         """
@@ -369,6 +372,8 @@ class BaseOrderBook(BaseWindow):
             self.create_basket_details.set_name(basket_name)
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
+        if rows_for_delete is not None:
+            self.create_basket_details.set_rows_for_delete(rows_for_delete)
         call(self.create_basket_call, self.create_basket_details.build())
         self.clear_details([self.create_basket_details])
 
@@ -392,6 +397,29 @@ class BaseOrderBook(BaseWindow):
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
+        return result
+
+    def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+        execution_details = self.manual_executing_details.add_executions_details()
+        if qty is not None:
+            execution_details.set_quantity(qty)
+        if price is not None:
+            execution_details.set_price(price)
+        if execution_firm is not None:
+            execution_details.set_executing_firm(execution_firm)
+        if contra_firm is not None:
+            execution_details.set_contra_firm(contra_firm)
+        if settl_date is not None:
+            execution_details.set_settlement_date_offset(settl_date)
+        if last_capacity is not None:
+            execution_details.set_last_capacity(last_capacity)
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
+        result = call(self.house_fill_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
 
@@ -572,17 +600,17 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    def set_order_ticket_details(self, qty, type, price):
-        order_ticket_details = self.order_ticket_details()
-        order_ticket_details.set_quantity(qty)
-        order_ticket_details.set_order_type(type)
-        order_ticket_details.set_limit(price)
-        self.modify_order_details.set_order_details(order_ticket_details)
-        return self.modify_order_details
-
-    def split_limit_order(self):
-        call(self.split_limit_call, self.modify_order_details.build())
-        # self.clear_details([self.modify_order_details])
+    # def set_order_ticket_details(self, qty, type, price):
+    #     order_ticket_details = self.order_ticket_details()
+    #     order_ticket_details.set_quantity(qty)
+    #     order_ticket_details.set_order_type(type)
+    #     order_ticket_details.set_limit(price)
+    #     self.modify_order_details.set_order_details(order_ticket_details)
+    #     return self.modify_order_details
+    #
+    # def split_limit_order(self):
+    #     call(self.split_limit_call, self.modify_order_details.build())
+    #     # self.clear_details([self.modify_order_details])
 
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
@@ -597,3 +625,8 @@ class BaseOrderBook(BaseWindow):
         self.mass_book_details.set_rows_numbers(positions_of_orders)
         call(self.mass_book_call, self.mass_book_details.build())
         self.clear_details([self.mass_book_details])
+
+    def mass_manual_execution(self, price: str, rows: int):
+        self.mass_manual_execution_details.set_price(price)
+        self.mass_manual_execution_details.set_count_of_selected_rows(rows)
+        call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())

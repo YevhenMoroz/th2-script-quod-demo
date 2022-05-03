@@ -97,7 +97,7 @@ tif = TimeInForce
 exe_sts = ExecSts
 
 
-def execute(report_id, session_id):
+def execute(report_id, session_id, data_set):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     fix_manager_gtw = FixManager(alias_gtw, case_id)
@@ -124,7 +124,7 @@ def execute(report_id, session_id):
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD ")
 
         # STEP 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set = data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '1', 'OrderQty': '10000000'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)

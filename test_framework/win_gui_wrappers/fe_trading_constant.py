@@ -12,6 +12,7 @@ class OrderBookColumns(Enum):
     security_id = "Security Id"
     symbol = "Symbol"
     side = "Side"
+    ccy_side = "CCY1 Side"
     lookup = "Lookup"
     stop_price = "Stop Price"
     inst_type = "InstType"
@@ -20,6 +21,8 @@ class OrderBookColumns(Enum):
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
     cd_sts = "CDSts"
+    near_leg_qty = "NearLegQty"
+    far_leg_qty = "FarLegQty"
     qty = "Qty"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
@@ -45,6 +48,8 @@ class OrderBookColumns(Enum):
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
     beneficiary = 'Beneficiary'
+    net_amount = 'NetAmount'
+    net_price = 'NetPrice'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -140,6 +145,7 @@ class TradeBookColumns(Enum):
     venue = 'Venue'
     qty = 'Qty'
     side = 'Side'
+    tenor = 'Tenor'
     exec_price = 'ExecPrice'
     last_market = 'LastMkt'
     instrument_type = 'InstrType'
@@ -179,6 +185,8 @@ class QuoteRequestBookColumns(Enum):
     client = 'Client'
     client_tier = 'ClientTier'
     tenor = 'Tenor'
+    near_tenor = 'Near Leg Tenor'
+    far_tenor = 'Far Leg Tenor'
     # region Quotes sub-level
     quote_id = 'ID'
     account_group = 'AccountGroup'
@@ -206,6 +214,11 @@ class BasketBookColumns(Enum):
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    """Template ticket"""
+    name = "Name"
+    description = "Description"
+    """Context menu"""
+    remove_from_basket = "Remove from Basket"
 
 
 class ExecSts(Enum):
@@ -329,6 +342,7 @@ class AllocationsColumns(Enum):
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
+    orders_tab = 'Orders'
 
 
 class PostTradeStatuses(Enum):
@@ -413,9 +427,10 @@ class OrderBagColumn(Enum):
     ord_bag_name = 'OrdBagName'
     id = 'Id'
     leaves_qty = 'LeavesQty'
+    bag_status = 'BagStatus'
 
 
-class BasketSecondTabName(Enum):
+class BasketSecondLvlTabName(Enum):
     orders = 'Orders'
 
 
@@ -437,3 +452,31 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = 'ClOrdId'
+    qty = 'Qty'
+
+
+class BagStatuses(Enum):
+    new = 'New'
+    terminated = 'Terminated'
+    cl_ord_id = "ClOrdId"
+
+
+class SymbolSource(Enum):
+    isin = 'ISIN'
+    blmbrg = "Blmbrg"
+    sedol = "SEDOL"
+
+
+class WaveColumns(Enum):
+    status = 'Status'
+
+
+class BookingBlotterColumns(Enum):
+    give_up_broker = 'Give-up Broker'
+    qty = 'Qty'
+    order_id = 'Order ID'
+
+
+class BookingOrderResult(Enum):
+    multi = 'Multi'
