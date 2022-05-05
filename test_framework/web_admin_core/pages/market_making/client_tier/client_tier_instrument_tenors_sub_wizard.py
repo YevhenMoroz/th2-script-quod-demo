@@ -37,6 +37,10 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
     def get_tenor(self):
         return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH)
 
+    def click_on_created_tenor(self, value):
+        self.find_by_xpath(ClientTierConstants
+                           .CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CREATED_TENOR_ENTITY_XPATH.format(value)).click()
+
     def set_min_spread(self, value: int):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MIN_SPREAD_XPATH, str(value))
 
@@ -80,6 +84,10 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         return self.get_text_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CLIENT_PRICE_SLIPPAGE_RANGE_XPATH)
 
+    def is_client_price_slippage_range_field_enabled(self):
+        return self.is_field_enabled(ClientTierConstants.
+                                     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CLIENT_PRICE_SLIPPAGE_RANGE_XPATH)
+
     def click_on_minimum_price_checkbox(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_MINIMUM_PRICE_CHECKBOX_XPATH).click()
 
@@ -122,6 +130,9 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
 
     # base margins tab
 
+    def click_on_plus_button_at_base_margin_tab(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PLUS_BUTTON_XPATH).click()
+
     def click_on_edit_at_base_margins_tab(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EDIT_BUTTON_XPATH).click()
 
@@ -140,12 +151,18 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH).click()
 
+    def set_quantity_at_base_margin_tab(self, value):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH, value)
+
     def get_quantity_at_base_margins_tab(self):
         return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH).text
 
     def set_quantity_filter_at_base_margins_tab(self, value: int):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH,
                                str(value))
+
+    def get_all_list_quantity_at_base_margin_tab(self):
+        return self._get_all_items_from_table_column(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_TABLE_ROW_XPATH)
 
     def set_bid_margin_at_base_margins_tab(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_XPATH,value)

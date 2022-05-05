@@ -84,6 +84,8 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_details = None
         self.internal_transfer_action = None
         self.group_modify_details = None
+        self.mass_manual_execution_call = None
+        self.mass_manual_execution_details = None
 
     # endregion
 
@@ -362,7 +364,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None,):
         """
         orders_rows - select rows from order book
         """
@@ -598,17 +600,17 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    def set_order_ticket_details(self, qty, type, price):
-        order_ticket_details = self.order_ticket_details()
-        order_ticket_details.set_quantity(qty)
-        order_ticket_details.set_order_type(type)
-        order_ticket_details.set_limit(price)
-        self.modify_order_details.set_order_details(order_ticket_details)
-        return self.modify_order_details
-
-    def split_limit_order(self):
-        call(self.split_limit_call, self.modify_order_details.build())
-        # self.clear_details([self.modify_order_details])
+    # def set_order_ticket_details(self, qty, type, price):
+    #     order_ticket_details = self.order_ticket_details()
+    #     order_ticket_details.set_quantity(qty)
+    #     order_ticket_details.set_order_type(type)
+    #     order_ticket_details.set_limit(price)
+    #     self.modify_order_details.set_order_details(order_ticket_details)
+    #     return self.modify_order_details
+    #
+    # def split_limit_order(self):
+    #     call(self.split_limit_call, self.modify_order_details.build())
+    #     # self.clear_details([self.modify_order_details])
 
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
@@ -623,3 +625,8 @@ class BaseOrderBook(BaseWindow):
         self.mass_book_details.set_rows_numbers(positions_of_orders)
         call(self.mass_book_call, self.mass_book_details.build())
         self.clear_details([self.mass_book_details])
+
+    def mass_manual_execution(self, price: str, rows: int):
+        self.mass_manual_execution_details.set_price(price)
+        self.mass_manual_execution_details.set_count_of_selected_rows(rows)
+        call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())

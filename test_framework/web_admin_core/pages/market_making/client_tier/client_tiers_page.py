@@ -10,6 +10,9 @@ class ClientTiersPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
+    def set_client_tiers_global_filter(self, value):
+        self.set_text_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_GLOBAL_FILTER_XPATH, value)
+
     # region more actions
     def click_on_more_actions(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_MORE_ACTIONS_XPATH).click()

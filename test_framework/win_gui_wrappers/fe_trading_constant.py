@@ -334,6 +334,7 @@ class AllocationsColumns(Enum):
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
+    orders_tab = 'Orders'
 
 
 class PostTradeStatuses(Enum):
@@ -418,6 +419,7 @@ class OrderBagColumn(Enum):
     ord_bag_name = 'OrdBagName'
     id = 'Id'
     leaves_qty = 'LeavesQty'
+    bag_status = 'BagStatus'
 
 
 class BasketSecondLvlTabName(Enum):
@@ -442,6 +444,13 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = 'ClOrdId'
+    qty = 'Qty'
+
+
+class BagStatuses(Enum):
+    new = 'New'
+    terminated = 'Terminated'
     cl_ord_id = "ClOrdId"
 
 
@@ -449,3 +458,17 @@ class SymbolSource(Enum):
     isin = 'ISIN'
     blmbrg = "Blmbrg"
     sedol = "SEDOL"
+
+
+class WaveColumns(Enum):
+    status = 'Status'
+
+
+class BookingBlotterColumns(Enum):
+    give_up_broker = 'Give-up Broker'
+    qty = 'Qty'
+    order_id = 'Order ID'
+
+
+class BookingOrderResult(Enum):
+    multi = 'Multi'

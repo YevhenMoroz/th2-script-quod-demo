@@ -28,6 +28,11 @@ class ClientTiersInstrumentSweepableQuantitiesSubWizard(CommonPage):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_DELETE_BUTTON_XPATH).click()
 
+    def click_on_delete_by_value(self, value):
+        self.find_by_xpath(ClientTierConstants
+                           .CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_DELETE_BY_VALUE_BUTTON_XPATH.format(value)
+                           ).click()
+
     def set_quantity(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_QUANTITY_XPATH,
                                value)
