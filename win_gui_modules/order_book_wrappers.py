@@ -617,9 +617,9 @@ class MenuItemDetails:
 
 
 class ManualExecutingDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.ManualExecutionDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.ManualExecutionDetails(base=base_request)
         else:
             self._request = order_book_pb2.ManualExecutionDetails()
 
@@ -644,9 +644,9 @@ class ManualExecutingDetails:
 
 
 class CompleteOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.CompleteOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.CompleteOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.CompleteOrdersDetails()
 
