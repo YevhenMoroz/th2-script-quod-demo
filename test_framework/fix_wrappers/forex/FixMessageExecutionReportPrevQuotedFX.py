@@ -172,6 +172,44 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # endregion
 
+    # region DepositAndLoan
+    def set_params_from_deposit_and_loan(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+        if status is Status.Fill:
+            self.__set_fill_deposit(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
+        return self
+
+    def __set_fill_deposit(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            Side=new_order_single.get_parameter('Side'),
+            SecondaryClOrdID=new_order_single.get_parameter('SecondaryClOrdID'),
+            OrdStatus='2',
+            TransactTime='*',
+            AvgPx='*',
+            ExecID='*',
+            LastPx='*',
+            OrderID='*',
+            LastMkt='XQFX',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='2',
+            LeavesQty=0,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            NoPartyIDs="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            Product="9"
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
+    # endregion
+
     def add_party_role(self):
         party = dict(
             PartyRole="*",
