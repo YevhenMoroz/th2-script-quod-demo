@@ -57,6 +57,7 @@ class FxClients(Enum):
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "Aurum1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
+    client_mm_10 = "CLIENT1"  # For Deposit And Loan
 
 
 class FxAccounts(Enum):
@@ -85,7 +86,6 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "Aurum1_1"
-
 
 
 class FxClientTiers(Enum):
@@ -250,4 +250,3 @@ class FXAlgoPoliciesID(Enum):
     algo_policy_id_1 = "400019"
     algo_policy_id_2 = "200011"
     algo_policy_id_3 = "400024"
-
