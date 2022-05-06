@@ -313,6 +313,9 @@ class MiddleOfficeColumns(Enum):
     settltype = 'SettlType'
     account_id = 'Account ID'
     trade_date = 'TradeDate'
+    settl_currency = 'SettlCurrency'
+    exchange_rate = 'Exchange Rate'
+    settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
 
 
 class AllocationsColumns(Enum):
