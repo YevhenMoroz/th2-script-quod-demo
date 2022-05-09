@@ -6,6 +6,7 @@ from pandas.tseries.offsets import BusinessDay as bd
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderType
 
 
 class OrderModificationRequest(JavaApiMessage):
@@ -20,7 +21,7 @@ class OrderModificationRequest(JavaApiMessage):
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderModificationRequestBlock': {
                 'OrdID': order_id,
-                'OrdType': 'LMT',
+                'OrdType': OrderType.limit.value,
                 'Price': price,
                 'TimeInForce': 'DAY',
                 'PositionEffect': 'O',
@@ -29,7 +30,7 @@ class OrderModificationRequest(JavaApiMessage):
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'MaxPriceLevels': '1',
                 'BookingType': 'REG',
-                'SettlCurrency': 'EUR',
+                'SettlCurrency': data_set.get_currency_by_name('currency_1'),
                 'CancelChildren': 'N',
                 'ModifyChildren': 'N',
                 'RouteID': 1,

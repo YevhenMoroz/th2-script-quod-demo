@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns, OrderType
 from test_framework.win_gui_wrappers.oms.oms_bag_order_book import OMSBagOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_1087(TestCase):
+class QAP_1088(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -39,8 +39,8 @@ class QAP_1087(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '1087'
-        new_qty_for_one_order = '1090'
+        qty = '1088'
+        new_qty_for_one_order = '1085'
         price = '10'
         client = self.data_set.get_client_by_name('client_pt_1')
         self.fix_message.set_default_dma_limit()
@@ -52,9 +52,9 @@ class QAP_1087(TestCase):
         self.fix_message.change_parameter('ExDestination', exec_destination)
         self.fix_message.change_parameter("HandlInst", '3')
         qty_of_bag = str(int(qty) * 2)
-        qty_of_bag_after_modification = str(int(qty_of_bag) + 3)
-        qty_of_bag = QAP_1087.__adjustment_of_value(qty_of_bag)
-        qty_of_bag_after_modification = QAP_1087.__adjustment_of_value(qty_of_bag_after_modification)
+        qty_of_bag_after_modification = str(int(qty_of_bag) - 3)
+        qty_of_bag = QAP_1088._adjustment_of_value(qty_of_bag)
+        qty_of_bag_after_modification = QAP_1088._adjustment_of_value(qty_of_bag_after_modification)
         orders_id = []
         name_of_bag = 'Bag_QAP_1087'
         filter_for_client_inbox = {OrderBookColumns.qty.value: qty}
@@ -89,7 +89,7 @@ class QAP_1087(TestCase):
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderModificationRequestBlock': {
                 'OrdID': orders_id[0],
-                'OrdType': 'LMT',
+                'OrdType': OrderType.limit.value,
                 'Price': price,
                 'TimeInForce': 'DAY',
                 'PositionEffect': 'O',
@@ -98,7 +98,7 @@ class QAP_1087(TestCase):
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'MaxPriceLevels': '1',
                 'BookingType': 'REG',
-                'SettlCurrency': self.data_set.get_currency_by_name('currency_1'),
+                'SettlCurrency':  self.data_set.get_currency_by_name('currency_1'),
                 'CancelChildren': 'N',
                 'ModifyChildren': 'N',
                 'RouteID': 1,
@@ -142,7 +142,7 @@ class QAP_1087(TestCase):
             return order_bag_id
 
     @staticmethod
-    def __adjustment_of_value(string_value: str):
+    def _adjustment_of_value(string_value: str):
         new_value = str()
         for i in range(len(string_value)):
             if i is 1:
