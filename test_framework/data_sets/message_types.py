@@ -28,3 +28,4 @@ class ORSMessageType(Enum):
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
     OrderModificationRequest = 'Order_OrderModificationRequest'
+    OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
