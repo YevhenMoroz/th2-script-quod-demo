@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-
+from datetime import datetime
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
@@ -15,7 +14,7 @@ class OrderModificationRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.OrderModificationRequest.value)
         super().change_parameters(parameters)
 
-    def set_param(self, data_set: BaseDataSet,order_id, price, new_qty, client) -> None:
+    def set_param(self, data_set: BaseDataSet, order_id, price, new_qty, client) -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',

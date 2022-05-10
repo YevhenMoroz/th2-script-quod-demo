@@ -29,3 +29,4 @@ class ORSMessageType(Enum):
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
+    OrderCancelRequest = 'Order_OrderCancelRequest'
