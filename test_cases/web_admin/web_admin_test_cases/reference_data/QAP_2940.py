@@ -30,7 +30,7 @@ class QAP_2940(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
-        self.password = self.data_set.get_password("user_1")
+        self.password = self.data_set.get_password("password_1")
         self.venue_name = self.data_set.get_venue_by_name("venue_5")
         self.feed_source = self.data_set.get_feed_source("feed_source_8")
         self.sub_venue_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

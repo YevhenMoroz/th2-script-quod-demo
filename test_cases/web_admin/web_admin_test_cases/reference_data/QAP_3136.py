@@ -27,18 +27,18 @@ class QAP_3136(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = self.data_set.get_venue_type("venue_type_1")
         self.mic = self.data_set.get_mic_by_name("mic_3")
         self.country = self.data_set.get_country("country_3")
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.negative_routes = (self.data_set.get_negative_route("negative_routes_1"),
-                                self.data_set.get_negative_route("negative_routes_2"))
+        self.negative_routes = (self.data_set.get_negative_route("negative_route_1"),
+                                self.data_set.get_negative_route("negative_route_2"))
         self.positive_routes = (self.data_set.get_positive_route("positive_route_1"),
                                 self.data_set.get_positive_route("positive_route_2"))
         self.parameter = "All"
         self.value = "test"
-
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -54,6 +54,7 @@ class QAP_3136(CommonTestCase):
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
         description_sub_wizard.set_id(self.id)
+        description_sub_wizard.set_client_venue_id(self.client_venue_id)
         description_sub_wizard.set_type(self.type)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -88,7 +89,6 @@ class QAP_3136(CommonTestCase):
         routing_param_groups.click_on_checkmark()
         time.sleep(2)
         wizard.click_on_go_back_button()
-
 
     def test_context(self):
         profiles = VenuesProfilesSubWizard(self.web_driver_container)

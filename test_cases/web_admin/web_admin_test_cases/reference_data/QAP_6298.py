@@ -25,15 +25,14 @@ class QAP_6298(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-
         self.type = self.data_set.get_venue_type("venue_type_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = self.name + "1ID"
-
-        self.cost_per_trade = "10.1"
-        self.per_unit_comm_amt = "12.2"
-        self.comm_basis_point = "13.3"
-        self.spread_discount_proportion = "14.4"
+        self.cost_per_trade = round(random.uniform(0.1, 20), 2)
+        self.per_unit_comm_amt = round(random.uniform(0.1, 20), 2)
+        self.comm_basis_point = round(random.uniform(0.1, 20), 2)
+        self.spread_discount_proportion = round(random.uniform(0.1, 20), 2)
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,6 +46,7 @@ class QAP_6298(CommonTestCase):
 
         venues_wizard_values = VenuesValuesSubWizard(self.web_driver_container)
         venues_wizard_values.set_name(self.name)
+        venues_wizard_values.set_client_venue_id(self.client_venue_id)
         venues_wizard_values.set_id(self.id)
         venues_wizard_values.set_type(self.type)
 
@@ -74,8 +74,8 @@ class QAP_6298(CommonTestCase):
             page.click_on_edit()
             time.sleep(2)
             venues_wizard_dark = VenuesDarkAlgoCommissionSubWizard(self.web_driver_container)
-            expected_values_after_saved = [self.cost_per_trade, self.per_unit_comm_amt, self.comm_basis_point,
-                                           self.spread_discount_proportion]
+            expected_values_after_saved = [str(self.cost_per_trade), str(self.per_unit_comm_amt),
+                                           str(self.comm_basis_point), str(self.spread_discount_proportion)]
             actual_result = [venues_wizard_dark.get_cost_per_trade(), venues_wizard_dark.get_per_unit_comm_amt(),
                              venues_wizard_dark.get_comm_basis_point(),
                              venues_wizard_dark.get_spread_discount_proportion()]
@@ -85,7 +85,6 @@ class QAP_6298(CommonTestCase):
             time.sleep(2)
             self.verify("Check-box \"Is Comm Per Unit\" is enable", True,
                         venues_wizard_dark.is_comm_per_unit_checkbox_selected())
-
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

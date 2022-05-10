@@ -11,6 +11,7 @@ class CounterpartsConstants:
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH = '//*[text()="{}"]'
 
     # ----------------COUNTERPARTS WIZARD---------------
     NAME_AT_VALUES_TAB_XPATH = '//input[@id="counterpartName"]'
@@ -25,7 +26,7 @@ class CounterpartsConstants:
     SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'
     CLEAR_CHANGES_XPATH = '//button[text()="Clear Changes"]'
     DOWNLOAD_PDF_XPATH = '//*[@data-name="download"]'
-    DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = "//*[@data-name='download']"
+    DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = '//*[@class="cdk-overlay-pane"]//*[@data-name="download"]'
 
     # ----------SUB_COUNTERPARTS_TAB----------
     PLUS_AT_SUB_COUNTERPARTS_TAB_XPATH = '//nb-accordion//nb-accordion-item[2]//*[@data-name="plus"]'
