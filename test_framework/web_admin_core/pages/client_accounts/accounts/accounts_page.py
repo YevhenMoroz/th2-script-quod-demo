@@ -80,4 +80,4 @@ class AccountsPage(CommonPage):
         time.sleep(2)
 
     def is_searched_account_found(self, value):
-        return True if self.find_by_xpath(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value)) else False
+        return self.is_element_present(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value))

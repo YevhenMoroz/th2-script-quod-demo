@@ -6,7 +6,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -33,7 +33,7 @@ class QAP_4284(CommonTestCase):
         time.sleep(2)
         users_page.click_on_new_button()
         time.sleep(2)
-        login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+        login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         login_sub_wizard.set_generate_pin_code_checkbox()
         time.sleep(1)
         login_sub_wizard.set_generate_password_checkbox()

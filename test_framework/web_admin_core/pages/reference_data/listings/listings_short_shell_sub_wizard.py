@@ -10,6 +10,9 @@ class ListingsShortShellSubWizard(CommonPage):
     def click_on_allow_short_sell(self):
         self.find_by_xpath(ListingsConstants.SHORT_SELL_TAB_ALLOW_SHORT_SELL_CHECKBOX_XPATH).click()
 
+    def is_allow_short_sell_checked(self):
+        return self.is_checkbox_selected(ListingsConstants.SHORT_SELL_TAB_ALLOW_SHORT_SELL_CHECKBOX_XPATH)
+
     def set_disable_update_time(self,value):
         self.set_text_by_xpath(ListingsConstants.SHORT_SELL_TAB_DISABLE_UPDATE_TIME_XPATH,value)
 
