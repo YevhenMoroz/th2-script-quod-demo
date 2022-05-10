@@ -37,6 +37,8 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_extraction_call = None
         self.extraction_bag_order_action_static = None
         self.order_bag_modification_call = None
+        self.order_bag_cancel_bag_call = None
+        self.order_bag_dissociate_bag_call = None
 
     # endregion
 
@@ -71,7 +73,7 @@ class BaseBagOrderBook(BaseWindow):
             self.bag_book_details.add_pegs_details(self.pegs_details.build())
         if wave_filter is not None:
             self.bag_wave_creation.set_filter(wave_filter)
-        self.bag_wave_creation.add_bag_ticket_details(self.base_request, self.bag_book_details.build())
+        self.bag_wave_creation.add_bag_ticket_details(self.bag_book_details)
         return self.bag_wave_creation
 
     # endregion
@@ -99,7 +101,7 @@ class BaseBagOrderBook(BaseWindow):
 
     def extract_from_order_bag_book_and_other_tab(self, extraction_id, extraction_fields: list = None,
                                                   sub_extraction_fields: list = None, sub_filter: list = None,
-                                                  filter: list = None, tab_name: str = None, tab_name_second=None):
+                                                  filter: list = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
         if filter is not None:
@@ -114,8 +116,6 @@ class BaseBagOrderBook(BaseWindow):
         lvl_1 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=fields)
         bag_order_info_second_level = self.bag_order_info()
         bag_order_info_second_level.add_single_extraction_action(lvl_2)
-        if tab_name:
-            bag_order_info_second_level.set_sub_orders_details(tab_name)
         order_bag_book_details = GetOrderBagBookDetails.create(info=bag_order_info_second_level)
         if sub_filter is not None:
             order_bag_book_details.set_filter(sub_filter)
@@ -147,7 +147,7 @@ class BaseBagOrderBook(BaseWindow):
             call(politic_of_creation, self.order_bag_creation_details.build())
         else:
             call(EnumBagCreationPolitic.SPLIT_BY_AVG_PX, self.order_bag_creation_details.build())
-        self.clear_details([self.order_bag_creation_details, self.bag_book_details])
+        self.clear_details([self.order_bag_creation_details])
 
     # TODO rewrite it
     def modify_bag(self, price: int = None, name: str = None, on_deleting: bool = False,
@@ -169,3 +169,13 @@ class BaseBagOrderBook(BaseWindow):
         self.bag_wave_creation.add_bag_ticket_details(self.bag_book_details)
         call(self.order_bag_modification_call, self.bag_wave_creation.build())
         self.clear_details([self.bag_wave_creation, self.bag_book_details])
+
+    def cancel_bag(self, filter_list: list):
+        self.bag_wave_creation.set_filter = filter_list
+        call(self.order_bag_cancel_bag_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
+
+    def dissociate_bag(self, filter_list):
+        self.bag_wave_creation.set_filter = filter_list
+        call(self.order_bag_dissociate_bag_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])

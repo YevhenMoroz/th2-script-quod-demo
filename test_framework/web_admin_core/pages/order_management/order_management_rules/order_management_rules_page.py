@@ -34,6 +34,9 @@ class OrderManagementRulesPage(CommonPage):
     def set_third_criteria(self, value):
         self.set_combobox_value(OrderManagementRulesConstants.THIRD_CRITERIA_FIELD_AT_CHANGE_CRITERIA_TAB_XPATH, value)
 
+    def get_settings_values(self):
+        return self.find_by_xpath(OrderManagementRulesConstants.MAIN_PAGE_SETTINGS_VALUES_XPATH).text
+
     # left menu
     def click_on_enabled_disable(self, confirmation):
         self.find_by_xpath(OrderManagementRulesConstants.ENABLE_DISABLE_BUTTON_XPATH).click()

@@ -22,6 +22,7 @@ from test_framework.rest_api_wrappers.forex.RestApiClientTierMessages import Res
 
 
 class QAP_7167(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
