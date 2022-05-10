@@ -15,6 +15,7 @@ class OrderSubmitOMS(OrderSubmit):
         self.data_set = data_set
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'NewOrderSingleBlock': {
                 'Side': 'Buy',
                 'QtyType': 'Units',
