@@ -24,6 +24,7 @@ class BaseOrderBook(BaseWindow):
         self.modify_order_details = None
         self.manual_cross_details = None
         self.cancel_order_details = None
+        self.refresh_order_details = None
         self.rows_numbers_for_grid = None
         self.suspend_order_details = None
         self.disclose_flag_details = None
@@ -63,6 +64,7 @@ class BaseOrderBook(BaseWindow):
         self.add_to_basket_call = None
         self.create_basket_call = None
         self.cancel_order_call = None
+        self.refresh_order_call = None
         self.manual_cross_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
@@ -251,6 +253,12 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
+    def refresh_order(self, filter_list: list = None):
+        if filter_list is not None:
+            self.modify_order_details.set_filter(filter_list)
+        call(self.refresh_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
+
     def transfer_order(self, desk: str, partial_desk: bool = False, filter_list: list = None):
         self.transfer_order_details.set_default_params(self.base_request)
         if filter_list is not None:
@@ -364,7 +372,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None,):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None, ):
         """
         orders_rows - select rows from order book
         """
@@ -401,7 +409,7 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
