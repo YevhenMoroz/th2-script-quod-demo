@@ -423,8 +423,6 @@ class OrderBagColumn(Enum):
     id = 'Id'
     leaves_qty = 'LeavesQty'
     bag_status = 'BagStatus'
-    client_name = 'Client Name'
-    client_desk = 'Client Desc'
 
 
 class BasketSecondLvlTabName(Enum):
