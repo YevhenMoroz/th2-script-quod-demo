@@ -101,6 +101,9 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Set
+    def set_external_algo_twap_details(self, strategy_type, urgency):
+        self.wave_basket_details.set_external_twap_stratagy(strategy_type, urgency)
+
     def basket_row_details(self, row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
                            price=None, capacity=None, stop_price=None):
         if not remove_row:
