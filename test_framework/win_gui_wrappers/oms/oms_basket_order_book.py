@@ -16,7 +16,7 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.imported_file_mapping_field = FieldNumber
         self.imported_file_mapping_field_details = ImportedFileMappingFieldDetails
         self.templates_details = TemplatesDetails()
-        self.row_details = RowDetails()
+        self.row_details = RowDetails
         self.file_details = FileDetails
         self.simple_request = SimpleRequest()
         self.extract_order_data_details = ExtractOrderDataDetails
