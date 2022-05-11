@@ -5,6 +5,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_instruments_sub_wizard import \
     AutoHedgerInstrumentsSubWizard
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_page import AutoHedgerPage
@@ -46,30 +47,27 @@ class QAP_2158(CommonTestCase):
         time.sleep(2)
         values_sub_wizard = AutoHedgerValuesSubWizard(self.web_driver_container)
         values_sub_wizard.set_name(self.name)
-        time.sleep(2)
+        time.sleep(1)
         values_sub_wizard.set_position_book(self.position_book)
         time.sleep(2)
         instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
         instruments_sub_wizard.click_on_plus_button()
-        time.sleep(2)
+        time.sleep(1)
         instruments_sub_wizard.set_symbol(self.symbol)
         time.sleep(1)
         instruments_sub_wizard.set_hedging_strategy(self.hedging_strategy)
-        time.sleep(1)
         instruments_sub_wizard.set_long_threshold_qty(self.long_threshold_qty)
-        time.sleep(1)
         instruments_sub_wizard.set_long_residual_qty(self.long_residual_qty)
-        time.sleep(1)
         instruments_sub_wizard.set_short_threshold_qty(self.short_threshold_qty)
-        time.sleep(1)
         instruments_sub_wizard.set_short_residual_qty(self.short_residual_qty)
-        time.sleep(1)
         instruments_sub_wizard.click_on_checkmark_button()
-        time.sleep(2)
+        time.sleep(1)
         wizard.click_on_save_changes()
-        time.sleep(12)
-        main_page.click_on_user_icon()
         time.sleep(2)
+        common_page = CommonPage(self.web_driver_container)
+        common_page.click_on_info_error_message_pop_up()
+        main_page.click_on_user_icon()
+        time.sleep(1)
         main_page.click_on_logout()
         time.sleep(2)
         login_page.login_to_web_admin(self.login, self.password)
@@ -77,11 +75,11 @@ class QAP_2158(CommonTestCase):
         side_menu.open_auto_hedger_page()
         time.sleep(2)
         main_page.set_name_filter(self.name)
-        time.sleep(2)
+        time.sleep(1)
         main_page.click_on_more_actions()
-        time.sleep(2)
+        time.sleep(1)
         main_page.click_on_edit()
-        time.sleep(2)
+        time.sleep(1)
 
     def test_context(self):
         try:
@@ -95,8 +93,8 @@ class QAP_2158(CommonTestCase):
             expected_result_values = [self.name,
                                       self.position_book,
                                       self.symbol,
-                                      self.hedging_strategy,
                                       self.long_threshold_qty,
+                                      self.hedging_strategy,
                                       self.long_residual_qty,
                                       self.short_threshold_qty,
                                       self.short_residual_qty]
@@ -104,12 +102,11 @@ class QAP_2158(CommonTestCase):
             actual_result_values = [values_sub_wizard.get_name(),
                                     values_sub_wizard.get_position_book(),
                                     instruments_sub_wizard.get_symbol(),
-                                    instruments_sub_wizard.get_hedging_strategy(),
                                     instruments_sub_wizard.get_long_threshold_qty(),
+                                    instruments_sub_wizard.get_hedging_strategy(),
                                     instruments_sub_wizard.get_long_residual_qty(),
                                     instruments_sub_wizard.get_short_threshold_qty(),
-                                    instruments_sub_wizard.get_short_residual_qty()
-                                    ]
+                                    instruments_sub_wizard.get_short_residual_qty()]
             self.verify("Is values saved correctly after relogin", expected_result_values, actual_result_values)
 
         except Exception:

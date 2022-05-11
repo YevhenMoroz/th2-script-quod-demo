@@ -29,6 +29,7 @@ class QAP_4158(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.wait_for_button_to_become_active()
         page = OrderManagementRulesPage(self.web_driver_container)
         time.sleep(2)
         page.click_on_change_criteria()
@@ -42,7 +43,7 @@ class QAP_4158(CommonTestCase):
         page.click_on_change_criteria_for_saving(True)
         time.sleep(1)
         side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
-        time.sleep(2)
+        side_menu.wait_for_button_to_become_active()
         page.click_on_new_button()
         time.sleep(2)
 

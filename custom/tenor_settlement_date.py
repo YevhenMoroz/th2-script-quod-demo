@@ -172,7 +172,7 @@ def ndf_wk3_front_end():
 
 
 def ndf_m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=21)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def ndf_m2_front_end():
@@ -208,7 +208,7 @@ def fixing_ndf_wk3_front_end():
 
 
 def fixing_ndf_m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=22)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=20)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def fixing_ndf_m2_front_end():
