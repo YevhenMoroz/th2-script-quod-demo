@@ -35,6 +35,7 @@ class QAP_2800(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.wait_for_button_to_become_active()
         page = OrderManagementRulesPage(self.web_driver_container)
         page.click_on_new_button()
         time.sleep(2)
@@ -64,9 +65,6 @@ class QAP_2800(CommonTestCase):
                 time.sleep(1)
                 conditions_sub_wizard.click_on_checkmark()
             self.verify("11 condition doesn't created", True, wizard.can_not_contain_more_than_10_conditions_message())
-
-
-
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier without name",
                                               self.test_case_id,

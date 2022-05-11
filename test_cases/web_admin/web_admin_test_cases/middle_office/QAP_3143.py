@@ -27,6 +27,13 @@ class QAP_3143(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.venue_list = ''
+        self.instr_type = ''
+        self.venue = ''
+        self.side = ''
+        self.client = ''
+        self.commission_amount_type = ''
+        self.commission_profile = ''
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,39 +50,32 @@ class QAP_3143(CommonTestCase):
         commission_wizard_value_tab.set_description(self.description)
         commission_wizard_value_tab.click_on_re_calculate_for_allocations()
         time.sleep(2)
-        venue_list = random.choice(commission_wizard_value_tab.get_all_venue_list_from_drop_menu())
-        commission_wizard_value_tab.set_venue_list(venue_list)
-
+        self.venue_list = random.choice(commission_wizard_value_tab.get_all_venue_list_from_drop_menu())
+        commission_wizard_value_tab.set_venue_list(self.venue_list)
         commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
-        instr_type = random.choice(commission_wizard_dimensions_tab.get_all_instr_types_from_drop_menu())
-        commission_wizard_dimensions_tab.set_instr_type(instr_type)
-        venue = random.choice(commission_wizard_dimensions_tab.get_all_venues_from_drop_menu())
-        commission_wizard_dimensions_tab.set_venue(venue)
-        side = random.choice(commission_wizard_dimensions_tab.get_all_side_from_drop_menu())
-        commission_wizard_dimensions_tab.set_side(side)
-        execution_policy = random.choice(commission_wizard_dimensions_tab.get_all_execution_policy_from_drop_menu())
-        commission_wizard_dimensions_tab.set_execution_policy(execution_policy)
-        client = random.choice(commission_wizard_dimensions_tab.get_all_client_from_drop_menu())
-        commission_wizard_dimensions_tab.set_client(client)
-        commission_amount_type = random.choice(
+        self.instr_type = random.choice(commission_wizard_dimensions_tab.get_all_instr_types_from_drop_menu())
+        commission_wizard_dimensions_tab.set_instr_type(self.instr_type)
+        self.venue = random.choice(commission_wizard_dimensions_tab.get_all_venues_from_drop_menu())
+        commission_wizard_dimensions_tab.set_venue(self.venue)
+        self.side = random.choice(commission_wizard_dimensions_tab.get_all_side_from_drop_menu())
+        commission_wizard_dimensions_tab.set_side(self.side)
+        self.execution_policy = random.choice(commission_wizard_dimensions_tab.get_all_execution_policy_from_drop_menu())
+        commission_wizard_dimensions_tab.set_execution_policy(self.execution_policy)
+        self.client = random.choice(commission_wizard_dimensions_tab.get_all_client_from_drop_menu())
+        commission_wizard_dimensions_tab.set_client(self.client)
+        self.commission_amount_type = random.choice(
             commission_wizard_dimensions_tab.get_all_commission_amount_type_from_drop_menu())
-        commission_wizard_dimensions_tab.set_commission_amount_type(commission_amount_type)
-        commission_profile = random.choice(
+        commission_wizard_dimensions_tab.set_commission_amount_type(self.commission_amount_type)
+        self.commission_profile = random.choice(
             commission_wizard_dimensions_tab.get_all_commission_profile_from_drop_menu())
-        commission_wizard_dimensions_tab.set_commission_profile(commission_profile)
-
+        commission_wizard_dimensions_tab.set_commission_profile(self.commission_profile)
         commission_wizard = CommissionsWizard(self.web_driver_container)
         commission_wizard.click_on_save_changes()
-
-        return {"venue_list": venue_list, "instr_type": instr_type, "venue": venue, "side": side,
-                "execution_policy": execution_policy, "client": client,
-                "commission_amount_type": commission_amount_type, "commission_profile": commission_profile}
 
     def test_context(self):
 
         try:
-            test_data = self.precondition()
-
+            self.precondition()
             commission_page = CommissionsPage(self.web_driver_container)
             commission_page.set_name(self.name)
             time.sleep(1)
@@ -87,13 +87,13 @@ class QAP_3143(CommonTestCase):
             actual_result = [self.name,
                              self.description,
                              True,
-                             test_data["venue_list"],
-                             test_data["instr_type"],
-                             test_data["venue"],
-                             test_data["side"],
-                             test_data["client"],
-                             test_data["commission_amount_type"],
-                             test_data["commission_profile"]]
+                             self.venue_list,
+                             self.instr_type,
+                             self.venue,
+                             self.side,
+                             self.client,
+                             self.commission_amount_type,
+                             self.commission_profile]
 
             commission_wizard_value_tab = CommissionsValuesSubWizard(self.web_driver_container)
             commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
@@ -123,20 +123,19 @@ class QAP_3143(CommonTestCase):
             actual_result_after_change_name = [self.new_name,
                                                self.description,
                                                "true",
-                                               test_data["venue_list"],
-                                               test_data["instr_type"],
-                                               test_data["venue"],
-                                               test_data["side"],
-                                               test_data["client"],
-                                               test_data["commission_amount_type"],
-                                               test_data["commission_profile"]]
+                                               self.venue_list,
+                                               self.instr_type,
+                                               self.venue,
+                                               self.side,
+                                               self.client,
+                                               self.commission_amount_type,
+                                               self.commission_profile]
 
             time.sleep(2)
             excepted_result_after_change_name = commission_page.click_download_pdf_entity_button_and_check_pdf(
                 actual_result_after_change_name)
             time.sleep(1)
             self.verify("Is PDF contains all data", True, excepted_result_after_change_name)
-
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

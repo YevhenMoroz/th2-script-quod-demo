@@ -21,7 +21,6 @@ class QAP_6934(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-
         self.product_complex = "SimpleInstrument"
 
     def precondition(self):

@@ -19,13 +19,11 @@ class QAP_1733(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.instr_symbol = self.data_set.get_instr_symbol("instr_symbol_1")
         self.cum_trading_limit_percentage = str(random.randint(0, 100))
         self.cum_trading_limit_percentage_new = str(random.randint(0, 100))
-
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,6 +41,16 @@ class QAP_1733(CommonTestCase):
         wizard.click_on_save_changes()
         time.sleep(2)
 
+        if wizard.is_error_message_displayed():
+            all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
+            while wizard.is_error_message_displayed():
+                wizard.click_on_error_message_pop_up()
+                self.instr_symbol = random.choice(all_instr_symbol)
+                wizard.set_instr_symbol(self.instr_symbol)
+                all_instr_symbol.remove(self.instr_symbol)
+                time.sleep(1)
+                wizard.click_on_save_changes()
+                time.sleep(2)
 
     def test_context(self):
         try:

@@ -30,6 +30,7 @@ class QAP_4265(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
+        side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)

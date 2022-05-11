@@ -39,6 +39,7 @@ class QAP_5815(CommonTestCase):
         time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.click_on_mic_manage_button()
+        time.sleep(2)
         exchange_codes_sub_wizard = VenuesExchangeCodesSubWizard(self.web_driver_container)
         exchange_codes_sub_wizard.click_on_plus_button()
         exchange_codes_sub_wizard.set_venue(self.venue)

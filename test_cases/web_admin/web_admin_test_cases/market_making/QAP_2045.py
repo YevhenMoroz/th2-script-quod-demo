@@ -39,8 +39,8 @@ class QAP_2045(CommonTestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.tenor_1 = self.data_set.get_tenor_by_name("tenor_1")
         self.tenor_2 = self.data_set.get_tenor_by_name("tenor_2")
-        self.sweepable_quantities = [1000000, 5000000, 10000000]
-        self.base_margin_quantity = 1111111
+        self.sweepable_quantities = [111111, 2222222, 33333333]
+        self.base_margin_quantity = 4444444
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
