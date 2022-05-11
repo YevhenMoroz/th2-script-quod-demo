@@ -24,7 +24,6 @@ class BaseOrderBook(BaseWindow):
         self.modify_order_details = None
         self.manual_cross_details = None
         self.cancel_order_details = None
-        self.refresh_order_details = None
         self.rows_numbers_for_grid = None
         self.suspend_order_details = None
         self.disclose_flag_details = None
