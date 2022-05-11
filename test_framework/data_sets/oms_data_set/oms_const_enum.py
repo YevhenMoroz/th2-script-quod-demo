@@ -280,3 +280,7 @@ class OMSBasketTemplates(Enum):
 
 class OMSGiveUpBrokers(Enum):
     give_up_broker_1 = 'GiveUpBrokerForVS'
+
+
+class OMSClientDesks(Enum):
+    client_desk_1 = 'Fully Manual'

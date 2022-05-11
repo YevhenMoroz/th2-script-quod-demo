@@ -100,6 +100,7 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
+    client_desks = None
     # endregion
 
     # region fields added by Web Trading team
@@ -380,6 +381,11 @@ class BaseDataSet:
         if hasattr(self.give_up_brokers, name):
             return getattr(self.give_up_brokers, name).value
         raise ValueError(f"{self.give_up_brokers} not found!")
+
+    def get_client_desk(self, name: str):
+        if hasattr(self.client_desks, name):
+            return getattr(self.client_desks, name).value
+        raise ValueError(f"{self.client_desks} not found!")
 
     # region WebAdmin getters
 
@@ -676,7 +682,7 @@ class BaseDataSet:
             return getattr(self.time_in_force, name).value
         return ValueError(f"{self.time_in_force,} not found!")
 
-    def get_commission_basis(self, name:str):
+    def get_commission_basis(self, name: str):
         if hasattr(self.commission_basis, name):
             return getattr(self.commission_basis, name).value
         return ValueError(f"{self.commission_basis} not found!")
