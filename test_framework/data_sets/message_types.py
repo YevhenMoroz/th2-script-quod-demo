@@ -27,3 +27,8 @@ class ORSMessageType(Enum):
     OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
+
+
+class ESMessageType(Enum):
+    OrdReport = 'Gateway_OrdReport'
+    ExecutionReport = 'Gateway_ExecutionReport'
