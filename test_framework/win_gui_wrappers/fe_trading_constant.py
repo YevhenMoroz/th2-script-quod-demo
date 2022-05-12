@@ -68,6 +68,9 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    is_locked ="IsLocked"
+    basket_name = "Basket Name"
+    basket_id = "Basket ID"
     # endregion
 
 
@@ -440,6 +443,7 @@ class MenuItemFromOrderBook(Enum):
     split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
+    add_to_basket = 'Add to Basket'
 
 
 class ClientInboxColumns(Enum):
