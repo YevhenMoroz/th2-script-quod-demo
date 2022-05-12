@@ -19,7 +19,7 @@ class QAP_2578(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.user_id = self.data_set.get_user("user_4")
-        self.password_expiration = "08.08.2026"
+        self.password_expiration = "8/8/2026"
         self.email = self.data_set.get_email("email_1")
         self.user = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")

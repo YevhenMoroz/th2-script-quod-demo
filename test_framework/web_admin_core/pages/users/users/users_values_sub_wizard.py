@@ -46,7 +46,7 @@ class UsersValuesSubWizard(CommonPage):
         self.set_text_by_xpath(UsersConstants.PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD, value)
 
     def get_password_expiration(self):
-        return self.get_text_by_xpath(UsersConstants.PASSWORD_AT_LOGIN_SUB_WIZARD)
+        return self.get_text_by_xpath(UsersConstants.PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD)
 
     def set_counterpart(self, value):
         self.set_combobox_value(UsersConstants.COUNTERPART_AT_LOGIN_SUB_WIZARD, value)

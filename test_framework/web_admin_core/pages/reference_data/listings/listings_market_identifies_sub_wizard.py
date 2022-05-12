@@ -59,7 +59,7 @@ class ListingsMarketIdentifiersSubWizard(CommonPage):
         return self.get_text_by_xpath(ListingsConstants.MARKET_IDENTIFIERS_TAB_INTERACTIVE_DATA_ID_XPATH)
 
     def set_security_id_source(self, value):
-        self.set_text_by_xpath(ListingsConstants.MARKET_IDENTIFIERS_TAB_SECURITY_ID_SOURCE_XPATH, value)
+        self.set_combobox_value(ListingsConstants.MARKET_IDENTIFIERS_TAB_SECURITY_ID_SOURCE_XPATH, value)
 
     def get_security_id_source(self):
         return self.get_text_by_xpath(ListingsConstants.MARKET_IDENTIFIERS_TAB_SECURITY_ID_SOURCE_XPATH)
