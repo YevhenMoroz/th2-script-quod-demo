@@ -86,7 +86,6 @@ class QAP_3306(TestCase):
             {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
         # endregion
         # region man cross CO1 and CO3
-        self.order_book.set_filter([OrderBookColumns.leaves_qty.value, self.qty3])
         self.order_book.manual_cross_orders([2, 1], self.qty3, self.price2, self.last_mkt)
         # endregion
         # region check filled CO1 status
