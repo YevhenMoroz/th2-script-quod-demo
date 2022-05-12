@@ -4,18 +4,12 @@ from pathlib import Path
 from rule_management import RuleManager
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import  OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.fix_wrappers.FixManager import FixManager
-
-from stubs import Stubs
-from win_gui_modules.order_ticket import ExtractOrderTicketErrorsRequest
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base
 
 
 logger = logging.getLogger(__name__)
@@ -37,7 +31,6 @@ class QAP_2592(TestCase):
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
-        self.base_request = get_base_request(self.session_id, self.test_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
 
 
@@ -71,14 +64,11 @@ class QAP_2592(TestCase):
         self.order_ticket.set_order_details(qty="0")
         self.order_ticket.split_order()
         # endregion
-        extract_errors_request = ExtractOrderTicketErrorsRequest(self.base_request)
-        extract_errors_request.extract_error_message()
-        result = call(Stubs.win_act_order_ticket.extractOrderTicketErrors, extract_errors_request.build())
-        verifier = Verifier(self.test_id)
-        verifier.set_event_name("Check value")
-        verifier.compare_values("Order ID from View",
-                                'Quantity cannot be negative or null', result['ErrorMessage']
-                                )
-        verifier.verify()
+        # region extract error
+        result = self.order_ticket.extract_order_ticket_errors()
+        print(result)
+        self.order_book.compare_values({"ErrorMessage": 'Quantity cannot be negative or null'}, result, "Check value")
+        # endregion
+
 
 
