@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
-from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails, GroupModifyDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails, GroupModifyDetails, MassExecSummaryAveragePriceDetails
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
@@ -11,7 +11,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassExecSummaryDetails, MassManualExecutionDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -36,6 +36,7 @@ class OMSOrderBook(BaseOrderBook):
         self.add_to_basket_details = AddToBasketDetails(self.base_request)
         self.create_basket_details = CreateBasketDetails(self.base_request)
         self.reassign_order_details = ReassignOrderDetails()
+        self.mass_execution_summary_details = MassExecSummaryDetails()
         self.manual_executing_details = ManualExecutingDetails(self.base_request)
         self.second_level_tab_details = SecondLevelTabDetails()
         self.second_level_extraction_details = SecondLevelExtractionDetails()
@@ -44,8 +45,10 @@ class OMSOrderBook(BaseOrderBook):
         self.extract_direct_values = ExtractDirectsValuesRequest()
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
+        self.mass_execution_summary_call = Stubs.win_act_order_book.massExecSummary
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
+        self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
         self.manual_execution_order_call = Stubs.win_act_order_book.manualExecution
         self.house_fill_call = Stubs.win_act_order_book.houseFill
