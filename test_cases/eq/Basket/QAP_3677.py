@@ -58,7 +58,7 @@ class QAP_3677(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # region create basket
-        self.order_book.create_basket([1, 2], self.basket_name)
+        self.order_book.create_basket(orders_rows=[1, 2], basket_name=self.basket_name)
         # endregion
         # region get basket id
         basket_id = self.basket_book.get_basket_value(BasketBookColumns.id.value)
