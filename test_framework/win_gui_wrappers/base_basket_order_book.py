@@ -220,7 +220,6 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.clone_template_call, self.templates_details.build())
 
     def remove_basket_template(self, templ_filter):
-        self.simple_request.set_default_params(self.base_request)
         self.simple_request.set_filter(templ_filter)
         call(self.remove_template_call, self.simple_request.build())
         self.clear_details([self.simple_request])
@@ -244,19 +243,23 @@ class BaseBasketOrderBook(BaseWindow):
         self.clear_details([self.basket_ticket_details])
 
     def complete_basket(self, filter_list=None):
-        call(self.complete_basket_call, self.simple_request(self.base_request, filter_list).build())
+        self.simple_request.set_filter(filter_list)
+        call(self.complete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
     def un_complete(self, filter_list=None):
-        call(self.uncomplete_basket_call, self.simple_request(self.base_request, filter_list).build())
+        self.simple_request.set_filter(filter_list)
+        call(self.uncomplete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
     def book_basket(self, filter_list=None):
-        call(self.book_basket_call, self.simple_request(self.base_request, filter_list).build())
+        self.simple_request.set_filter(filter_list)
+        call(self.book_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
     def cancel_basket(self, filter_list=None):
-        call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
+        self.simple_request.set_filter(filter_list)
+        call(self.cancel_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
     def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):
