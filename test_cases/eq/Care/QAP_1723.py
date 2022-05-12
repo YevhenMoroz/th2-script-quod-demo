@@ -1,13 +1,9 @@
 import logging
-
-from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest, OrderTicketExtractedValue
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from win_gui_modules.utils import get_base_request, call
-
+from win_gui_modules.utils import get_base_request
 from custom.verifier import Verifier
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderType, OrderBookColumns, DiscloseExec, TimeInForce
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -57,6 +53,7 @@ class QAP_1723(TestCase):
         verifier.set_event_name("Check value")
         verifier.compare_values("Availability Disclose flag in order ticket", "False", result["DISCLOSE_FLAG"])
         verifier.verify()
+        # endregion
 
 
 
