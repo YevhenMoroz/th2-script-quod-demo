@@ -51,6 +51,6 @@ class QAP_2611(TestCase):
         # endregion
         # region check washbook and account id
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.washbook.value: self.washbook, OrderBookColumns.account_id.value: self.account})
+            {OrderBookColumns.washbook.value: self.washbook, OrderBookColumns.account_id.value: self.account, OrderBookColumns.client_name.value: self.client})
         # endregion
 
