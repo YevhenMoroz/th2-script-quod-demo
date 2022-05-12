@@ -41,6 +41,10 @@ class BaseDataSet:
     pset = None
     basket_templates = None
     give_up_brokers = None
+    fee_type_in_booking_ticket = None
+    client_desks = None
+    middle_office_status = None
+    middle_office_match_status = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -100,7 +104,6 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
-    client_desks = None
     # endregion
 
     # region fields added by Web Trading team
@@ -386,6 +389,21 @@ class BaseDataSet:
         if hasattr(self.client_desks, name):
             return getattr(self.client_desks, name).value
         raise ValueError(f"{self.client_desks} not found!")
+
+    def get_fee_type_from_booking_ticket(self, name: str):
+        if hasattr(self.fee_type_in_booking_ticket, name):
+            return getattr(self.fee_type_in_booking_ticket, name).value
+        raise ValueError(f"{self.fee_type_in_booking_ticket} not found!")
+
+    def get_middle_office_status(self, name: str):
+        if hasattr(self.middle_office_status, name):
+            return getattr(self.middle_office_status, name).value
+        raise ValueError(f"{self.middle_office_status} not found!")
+
+    def get_middle_office_match_status(self, name: str):
+        if hasattr(self.middle_office_match_status, name):
+            return getattr(self.middle_office_match_status, name).value
+        raise ValueError(f"{self.middle_office_match_status} not found!")
 
     # region WebAdmin getters
 

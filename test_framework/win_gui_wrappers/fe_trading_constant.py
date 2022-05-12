@@ -346,6 +346,7 @@ class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
     orders_tab = 'Orders'
+    alloc_instruction_qties = "Alloc Instruction Qties"
 
 
 class PostTradeStatuses(Enum):
@@ -481,7 +482,15 @@ class BookingBlotterColumns(Enum):
     give_up_broker = 'Give-up Broker'
     qty = 'Qty'
     order_id = 'Order ID'
+    status = 'Status'
+    match_status = 'Match Status'
+    summary_status = "Summary Status"
 
 
 class BookingOrderResult(Enum):
     multi = 'Multi'
+
+
+class AllocInstructionQties(Enum):
+    booking_qty = 'Booking Qty'
+    give_up_broker = 'Give-up Broker'

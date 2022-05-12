@@ -3,7 +3,8 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OmsWashbookAccounts, OmsRecipients, OmsFixInstruments, OmsListingId, OmsInstrumentId, OmsMic, OmsCurrency, \
     OmsVenueClientNames, OmsRoutes, OmsLookupForVenues, OmsVenueClientAccounts, OMSCommissionProfiles, OMSFeeType, \
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
-    OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks
+    OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
+    OMSNetGrossInd, OMSStatus, OMSMatchStatus
 
 
 class OmsDataSet(BaseDataSet):
@@ -38,3 +39,7 @@ class OmsDataSet(BaseDataSet):
     basket_templates = OMSBasketTemplates
     give_up_brokers = OMSGiveUpBrokers
     client_desks = OMSClientDesks
+    fee_type_in_booking_ticket = OMSBookingTicketFeeType
+    net_gross_ind_type = OMSNetGrossInd
+    middle_office_status = OMSStatus
+    middle_office_match_status = OMSMatchStatus
