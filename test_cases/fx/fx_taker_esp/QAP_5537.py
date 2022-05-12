@@ -102,7 +102,7 @@ alias_fh = "fix-fh-q-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
 
 
-def execute(report_id, session_id):
+def execute(report_id, session_id, data_set):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     try:
@@ -118,7 +118,7 @@ def execute(report_id, session_id):
             no_md_entries_spo_db)). \
             send_market_data_spot(even_name_custom='Send Market Data SPOT DB')
 
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=data_set).set_default_SOR().change_parameters(
             {'OrderQty': '2000000'}).update_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
              'StrategyParameterValue': 'EBS-CITI/DB'}])

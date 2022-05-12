@@ -45,7 +45,7 @@ class BaseDataSet:
     user = None
     password = None
     component_id = None
-    admin_command = None
+    system_command = None
     desk = None
     location = None
     institution = None
@@ -398,10 +398,10 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_admin_command(self, name: str):
-        if hasattr(self.admin_command, name):
-            return getattr(self.admin_command, name).value
-        return ValueError(f"{self.admin_command} not found!")
+    def get_system_command(self, name: str):
+        if hasattr(self.system_command, name):
+            return getattr(self.system_command, name).value
+        return ValueError(f"{self.system_command} not found!")
 
     def get_desk(self, name: str):
         if hasattr(self.desk, name):

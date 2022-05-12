@@ -28,6 +28,8 @@ class QAP_1692(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.external_client = ''
+        self.internal_client = ''
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -35,40 +37,35 @@ class QAP_1692(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_client_tier_page()
-
         client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
         client_tier_instrument_main_page.click_on_new()
         time.sleep(2)
-
         client_tier_instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
         client_tier_instrument_values_tab.set_symbol(self.symbol)
-
         client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
             self.web_driver_container)
         client_tier_external_clients_sub_wizard.click_on_plus()
         time.sleep(2)
-        external_client = random.choice(client_tier_external_clients_sub_wizard.get_all_external_client_from_drop_menu())
-        client_tier_external_clients_sub_wizard.set_client(external_client)
+        self.external_client = random.choice(client_tier_external_clients_sub_wizard
+                                             .get_all_external_client_from_drop_menu())
+        client_tier_external_clients_sub_wizard.set_client(self.external_client)
         time.sleep(1)
         client_tier_external_clients_sub_wizard.click_on_checkmark()
         time.sleep(1)
-        
         client_tier_internal_client_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(self.web_driver_container)
         client_tier_internal_client_sub_wizard.click_on_plus()
         time.sleep(2)
-        internal_client = random.choice(client_tier_internal_client_sub_wizard.get_all_internal_client_from_drop_menu())
-        client_tier_internal_client_sub_wizard.set_client(internal_client)
+        self.internal_client = random.choice(client_tier_internal_client_sub_wizard
+                                             .get_all_internal_client_from_drop_menu())
+        client_tier_internal_client_sub_wizard.set_client(self.internal_client)
         time.sleep(1)
         client_tier_internal_client_sub_wizard.click_on_checkmark()
-
         client_tier_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
         client_tier_instrument_wizard.click_on_save_changes()
-        
-        return {"external_client": external_client, "internal_client": internal_client}
 
     def test_context(self):
         try:
-            test_data = self.precondition()
+            self.precondition()
 
             client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_main_page.set_symbol(self.symbol)
@@ -79,17 +76,17 @@ class QAP_1692(CommonTestCase):
             time.sleep(2)
             client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
                 self.web_driver_container)
-            client_tier_external_clients_sub_wizard.set_client_filter(test_data["external_client"])
+            client_tier_external_clients_sub_wizard.set_client_filter(self.external_client)
             time.sleep(1)
-            self.verify("External client saved", test_data["external_client"],
+            self.verify("External client saved", self.external_client,
                         client_tier_external_clients_sub_wizard.get_client())
             client_tier_external_clients_sub_wizard.click_on_delete()
             time.sleep(1)
             client_tier_internal_client_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(
                 self.web_driver_container)
-            client_tier_internal_client_sub_wizard.set_client_filter(test_data["internal_client"])
+            client_tier_internal_client_sub_wizard.set_client_filter(self.internal_client)
             time.sleep(1)
-            self.verify("Internal client saved", test_data["internal_client"],
+            self.verify("Internal client saved", self.internal_client,
                         client_tier_internal_client_sub_wizard.get_client())
             client_tier_internal_client_sub_wizard.click_on_delete()
 

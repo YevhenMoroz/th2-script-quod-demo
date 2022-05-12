@@ -25,6 +25,8 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_4382 import Q
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_4864 import QAP_4864
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5443 import QAP_5443
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5601 import QAP_5601
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5913 import QAP_5913
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_6143 import QAP_6143
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_6278 import QAP_6278
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_6290 import QAP_6290
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -90,6 +92,10 @@ class RunClientsAccounts:
             QAP_5443(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5601(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5913(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6143(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_6278(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

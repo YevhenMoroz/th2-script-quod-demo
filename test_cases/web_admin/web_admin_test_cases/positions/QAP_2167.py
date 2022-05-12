@@ -26,6 +26,7 @@ class QAP_2167(CommonTestCase):
         self.user = self.data_set.get_user("user_4")
         self.desk = self.data_set.get_desk("desk_1")
         self.institution = self.data_set.get_institution("institution_1")
+        self.account = ''
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -43,8 +44,8 @@ class QAP_2167(CommonTestCase):
         time.sleep(1)
         wizard.set_execution_policy(self.execution_policy)
         time.sleep(1)
-        account = random.choice(wizard.get_all_account_from_drop_menu())
-        wizard.set_account(account)
+        self.account = random.choice(wizard.get_all_account_from_drop_menu())
+        wizard.set_account(self.account)
         time.sleep(1)
         wizard.set_client(self.client)
         time.sleep(1)
@@ -56,18 +57,17 @@ class QAP_2167(CommonTestCase):
         time.sleep(1)
         wizard.click_on_save_changes()
         time.sleep(2)
-        return {"account": account}
 
     def test_context(self):
         try:
-            test_data = self.precondition()
+            self.precondition()
 
             page = WashBookRulesPage(self.web_driver_container)
             page.set_name_at_filter(self.name)
             time.sleep(2)
             page.click_on_more_actions()
             expected_pdf_content = [self.name, self.client, self.instr_type, self.execution_policy,
-                                    test_data["account"], self.user, self.desk]
+                                    self.account, self.user, self.desk]
             self.verify("Is pdf contains values ", True,
                         page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
         except Exception:

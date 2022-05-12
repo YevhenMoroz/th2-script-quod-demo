@@ -54,12 +54,13 @@ class CounterpartsPage(CommonPage):
     def get_name_value(self):
         return self.find_by_xpath(CounterpartsConstants.NAME_VALUE_XPATH).text
 
-    def check_that_name_value_row_is_not_exist(self):
-        """
-        The method will return the name of the exception that was thrown because the row with the value is empty
-        """
-        try:
-            self.get_name_value()
-        except Exception as e:
-            actual_exception = type(e).__name__
-            return str(actual_exception)
+    def is_counterpart_present_by_name(self, value):
+        return self.is_element_present(CounterpartsConstants.COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH.format(value))
+
+    def click_download_pdf_entity_button_and_check_pdf(self, value):
+        self.clear_download_directory()
+        self.click_on_more_actions()
+        time.sleep(1)
+        self.find_by_xpath(CounterpartsConstants.DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH).click()
+        time.sleep(2)
+        return self.is_pdf_contains_value(value)

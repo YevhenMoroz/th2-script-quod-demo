@@ -33,26 +33,28 @@ class QAP_802(CommonTestCase):
         time.sleep(2)
         counterparts_main_menu = CounterpartsPage(self.web_driver_container)
         counterparts_main_menu.click_on_new()
+        time.sleep(2)
         counterparts_wizard = CounterpartsWizard(self.web_driver_container)
         counterparts_wizard.set_name_value_at_values_tab(self.name)
-        counterparts_wizard.click_on_save_changes()
-        counterparts_main_menu.click_on_more_actions()
-        counterparts_main_menu.click_on_delete_and_confirmation(False)
         time.sleep(1)
-        counterparts_main_menu.set_name_filter_value(self.name)
-        time.sleep(2)
-        counterparts_main_menu.click_on_more_actions()
-        counterparts_main_menu.click_on_delete_and_confirmation(True)
+        counterparts_wizard.click_on_save_changes()
 
     def test_context(self):
         try:
             self.precondition()
-            time.sleep(3)
+            time.sleep(2)
             counterparts_main_menu = CounterpartsPage(self.web_driver_container)
             counterparts_main_menu.set_name_filter_value(self.name)
-            time.sleep(2)
-            self.verify("After deleted", "TimeoutException",
-                        counterparts_main_menu.check_that_name_value_row_is_not_exist())
+            time.sleep(1)
+            self.verify("Counterpart entity is present", "True",
+                        counterparts_main_menu.is_counterpart_present_by_name(self.name))
+            counterparts_main_menu.click_on_more_actions()
+            time.sleep(1)
+            counterparts_main_menu.click_on_delete_and_confirmation(True)
+            time.sleep(1)
+            self.verify("Counterparts deleted", "False",
+                        counterparts_main_menu.is_counterpart_present_by_name(self.name))
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

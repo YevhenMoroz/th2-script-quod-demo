@@ -76,9 +76,29 @@ class QAP_7126(TestCase):
         self.no_md_entries_fwd = [
             {
                 "MDEntryType": "0",
+                "MDEntryPx": 1.1815,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00001",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00002",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "0",
                 "MDEntryPx": 1.1813,
                 "MDEntrySize": 50000000,
-                "MDEntryPositionNo": 1,
+                "MDEntryPositionNo": 2,
                 "MDQuoteType": 1,
                 "MDEntryForwardPoints": "0.00003",
                 "SettlDate": self.settle_date_wk1,
@@ -88,7 +108,7 @@ class QAP_7126(TestCase):
                 "MDEntryType": "1",
                 "MDEntryPx": 1.18165,
                 "MDEntrySize": 50000000,
-                "MDEntryPositionNo": 1,
+                "MDEntryPositionNo": 2,
                 "MDQuoteType": 1,
                 "MDEntryForwardPoints": "0.00004",
                 "SettlDate": self.settle_date_wk1,
@@ -138,8 +158,7 @@ class QAP_7126(TestCase):
         self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
                                           settle_date=self.settle_date_wk2, settle_type=self.settle_type_wk2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="GBP", Instrument=self.instrument,
-                                                           OrderQty=self.qty)
+                                                           Currency="GBP", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
 
         # endregion

@@ -122,8 +122,10 @@ class AccountsWizard(CommonPage):
         return self.is_pdf_contains_value(value)
 
     def is_incorrect_or_missing_value_message_displayed(self):
-        if self.find_by_xpath(
-                AccountsConstants.INCORRECT_OR_MISSING_VALUES_XPATH).text == "Incorrect or missing values":
-            return True
-        else:
-            return False
+        return self.find_by_xpath(AccountsConstants.INCORRECT_OR_MISSING_VALUES_XPATH).is_displayed()
+
+    def click_on_dummy_checkbox(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_DUMMY_CHECKBOX_XPATH).click()
+
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(AccountsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()

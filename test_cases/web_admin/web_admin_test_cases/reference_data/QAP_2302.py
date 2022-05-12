@@ -41,6 +41,24 @@ class QAP_2302(CommonTestCase):
         wizard.click_on_save_changes()
         time.sleep(2)
 
+        if wizard.is_error_message_displayed():
+            all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
+            while wizard.is_error_message_displayed():
+                wizard.click_on_error_message_pop_up()
+                self.instr_symbol = random.choice(all_instr_symbol)
+                wizard.set_instr_symbol(self.instr_symbol)
+                all_instr_symbol.remove(self.instr_symbol)
+                time.sleep(1)
+                wizard.click_on_save_changes()
+                time.sleep(2)
+
+    def post_condition(self):
+        page = InstrSymbolInfoPage(self.web_driver_container)
+        page.set_instr_symbol(self.instr_symbol)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_delete(True)
+
     def test_context(self):
         try:
             self.precondition()
@@ -60,6 +78,9 @@ class QAP_2302(CommonTestCase):
             expected_values = [self.instr_symbol, self.md_max_spread]
             actual_values = [page.get_instr_symbol(), page.get_md_max_spread()]
             self.verify("Is entity edited and saved correctly", expected_values, actual_values)
+
+            self.post_condition()
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

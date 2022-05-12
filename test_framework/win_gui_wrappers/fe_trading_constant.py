@@ -12,6 +12,7 @@ class OrderBookColumns(Enum):
     security_id = "Security Id"
     symbol = "Symbol"
     side = "Side"
+    ccy_side = "CCY1 Side"
     lookup = "Lookup"
     stop_price = "Stop Price"
     inst_type = "InstType"
@@ -20,6 +21,8 @@ class OrderBookColumns(Enum):
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
     cd_sts = "CDSts"
+    near_leg_qty = "NearLegQty"
+    far_leg_qty = "FarLegQty"
     qty = "Qty"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
@@ -45,6 +48,8 @@ class OrderBookColumns(Enum):
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
     beneficiary = 'Beneficiary'
+    net_amount = 'NetAmount'
+    net_price = 'NetPrice'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -143,6 +148,7 @@ class TradeBookColumns(Enum):
     venue = 'Venue'
     qty = 'Qty'
     side = 'Side'
+    tenor = 'Tenor'
     exec_price = 'ExecPrice'
     last_market = 'LastMkt'
     instrument_type = 'InstrType'
@@ -182,6 +188,8 @@ class QuoteRequestBookColumns(Enum):
     client = 'Client'
     client_tier = 'ClientTier'
     tenor = 'Tenor'
+    near_tenor = 'Near Leg Tenor'
+    far_tenor = 'Far Leg Tenor'
     # region Quotes sub-level
     quote_id = 'ID'
     account_group = 'AccountGroup'

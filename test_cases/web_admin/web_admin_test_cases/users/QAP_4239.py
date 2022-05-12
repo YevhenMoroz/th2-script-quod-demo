@@ -24,6 +24,7 @@ class QAP_4239(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = self.data_set.get_email("email_1")
         self.desks = [self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_2")]
 
@@ -46,6 +47,7 @@ class QAP_4239(CommonTestCase):
 
             user_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
             user_login_sub_wizard.set_user_id(self.user_id)
+            user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
             time.sleep(1)
             user_login_sub_wizard.set_ping_required_checkbox()
             time.sleep(1)
