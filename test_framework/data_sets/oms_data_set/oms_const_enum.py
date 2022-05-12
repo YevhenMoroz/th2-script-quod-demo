@@ -92,6 +92,7 @@ class OmsClients(Enum):
 class OmsVenueClientNames(Enum):
     """Base"""
     client_1_venue_1 = "XPAR_CLIENT1"
+    client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
