@@ -110,7 +110,7 @@ class QAP_1984(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_multilisting_order_params, key_parameters=self.key_params_cl,message_name='Sell side ExecReport PendingNew')
 
         new_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_new)
-        pending_multilisting_order_params.add_tag(dict(StopPx=self.stop_price))
+        new_multilisting_order_params.add_tag(dict(StopPx=self.stop_price))
         self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
