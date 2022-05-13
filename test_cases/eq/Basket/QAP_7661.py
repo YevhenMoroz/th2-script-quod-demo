@@ -8,7 +8,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, BasketBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
