@@ -35,7 +35,7 @@ class AlgoFixInstruments(Enum):
     )
 
     instrument_5 = dict(
-        Symbol='FR0000121121_EUR',
+        Symbol='RF',
         SecurityID='FR0000121121',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
