@@ -21,3 +21,17 @@ class ExtractBookingDataDetails:
 
     def build(self):
         return self.__booking_details
+
+
+class ExtractSubLvlDetails:
+    def __init__(self):
+        self.__extract_sub_level_details = bookings_blotter_pb2.ExtractSubLvlDataDetails()
+
+    def set_sub_level_details(self, booking_details: ExtractBookingDataDetails, tab_name: str,
+                              rows_number_in_second_tab: int = 1):
+        self.__extract_sub_level_details.rowsNumber = rows_number_in_second_tab
+        self.__extract_sub_level_details.tabName = tab_name
+        self.__extract_sub_level_details.extractDetails.CopyFrom(booking_details.build())
+
+    def build(self):
+        return self.__extract_sub_level_details
