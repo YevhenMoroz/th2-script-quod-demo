@@ -35,5 +35,5 @@ class BaseChildOrderBook(BaseWindow):
         result = call(self.extract_child_order_book_sub_lvl_data_call,
                       self.extract_child_order_book_sub_lvl_data_details.build())
         self.clear_details([self.extract_child_order_book_data_details, self.extract_child_order_book_sub_lvl_data_call])
-        return result
+        return result[str(row_count)]
     # endregion
