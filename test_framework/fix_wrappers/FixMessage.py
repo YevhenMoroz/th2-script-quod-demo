@@ -12,6 +12,9 @@ class FixMessage:
     def get_message_type(self) -> str:
         return self.__message_type
 
+    def is_parameter_exist(self, key: str) -> bool:
+        return key in self.__parameters
+
     def get_parameter(self, parameter_name: str):
         return self.__parameters[parameter_name]
 

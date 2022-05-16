@@ -16,6 +16,7 @@ class UsersConstants:
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
     OK_BUTTON_XPATH = "//*[text()='Ok']"
     LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
+    DISPLAYED_USER_XPATH = "//*[text()='{}']"
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -72,6 +73,7 @@ class UsersConstants:
     PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD = '//*[text()="Password Expiration"]/preceding-sibling::input'
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
+    NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="excludedUserRolesPosValidity"]//button'
 
     GENERATE_PIN_CODE_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate PIN Code"]/preceding-sibling::span'
     GENERATE_PASSWORD_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate Password"]/preceding-sibling::span'

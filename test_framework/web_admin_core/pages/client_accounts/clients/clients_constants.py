@@ -132,11 +132,11 @@ class ClientsConstants:
 
     # Instr types
 
-    INSTR_TYPES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-plus"]'
-    INSTR_TYPES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    INSTR_TYPES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    INSTR_TYPES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-edit"]'
-    INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-trash"]'
+    INSTR_TYPES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    INSTR_TYPES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    INSTR_TYPES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="close"]'
+    INSTR_TYPES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     INSTR_TYPES_TAB_INSTR_TYPE_XPATH = '//*[@placeholder="Instr Type *"]'
     INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH = '//*[@class="instrType ng2-smart-th ng-star-inserted"]//input'
@@ -179,9 +179,10 @@ class ClientsConstants:
     ROUTES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     ROUTES_TAB_ROUTE_XPATH = '//*[@placeholder="Route *"]'
-    ROUTES_TAB_ROUTE_FILTER_XPATH = '//*[@class="ng2-smart-th route ng-star-inserted"]//input'
+    ROUTES_TAB_ROUTE_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[1]'
     ROUTES_TAB_ROUTE_CLIENT_NAME_XPATH = '//*[@placeholder="Route Client Name *"]'
-    ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th routeActGrpName ng-star-inserted"]//input'
+    ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[2]'
+    ROUTES_TAB_ROUTE_AGENT_FEE_EXEMPTION = '//*[text()=" Agent Fee Exemption "]//following::span[contains(@class, "custom-checkbox")]'
 
     # Trade confirm
     TRADE_CONFIRM_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="plus"]'

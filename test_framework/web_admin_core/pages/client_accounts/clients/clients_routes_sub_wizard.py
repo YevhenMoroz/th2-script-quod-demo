@@ -39,3 +39,9 @@ class ClientsRoutesSubWizard(CommonPage):
 
     def set_route_client_name_filter(self, value):
         self.set_text_by_xpath(ClientsConstants.ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH, value)
+
+    def click_on_agent_fee_exemption_checkbox(self):
+        self.find_by_xpath(ClientsConstants.ROUTES_TAB_ROUTE_AGENT_FEE_EXEMPTION).click()
+
+    def is_agent_fee_exemption_selected(self):
+        return self.is_checkbox_selected(ClientsConstants.ROUTES_TAB_ROUTE_AGENT_FEE_EXEMPTION)

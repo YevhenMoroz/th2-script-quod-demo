@@ -8,7 +8,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
@@ -40,7 +40,7 @@ class QAP_4855(CommonTestCase):
         users_page = UsersPage(self.web_driver_container)
         users_page.click_on_new_button()
         time.sleep(2)
-        user_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+        user_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         user_login_sub_wizard.set_user_id(self.user_id)
         user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)

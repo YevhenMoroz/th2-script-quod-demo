@@ -24,20 +24,16 @@ class QAP_3610(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
-
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
-
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
         self.status = Status.Fill
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
-
+        self.quote = FixMessageQuoteFX()
         self.account = self.data_set.get_client_by_name("client_mm_1")
         self.symbol_1 = self.data_set.get_symbol_by_name("symbol_1")
-        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        self.note = "no forward points for client tier '2400009' on GBP/USD WK1 on QUODFX - manual intervention required"
         self.qty_1 = "1000000"
         self.qty_2 = "2000000"
         self.instrument = {
@@ -53,21 +49,18 @@ class QAP_3610(TestCase):
         self.quote_request.update_near_leg(leg_qty=self.qty_1, leg_symbol=self.symbol_1)
         self.quote_request.update_far_leg(leg_qty=self.qty_2, leg_symbol=self.symbol_1)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="EUR", Instrument=self.instrument,
-                                                           OrderQty=self.qty_1)
-        self.fix_manager_sel.send_message(self.quote_request)
+                                                           Currency="EUR", Instrument=self.instrument)
+        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
 
         # region Step 2
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
                                             key_parameters=["MDReqID"])
-        quote = FixMessageQuoteFX().set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
 
         # region Step 3
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)

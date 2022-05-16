@@ -139,12 +139,12 @@ class FixMessageQuoteRequestFX(FixMessage):
                 },
                 "NoPartyIDs": [
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "1"
                     },
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "3"
                     }

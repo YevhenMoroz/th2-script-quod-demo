@@ -62,6 +62,7 @@ class WebAdminClients(Enum):
     client_3 = "CLIENT3"
     client_4 = "BrokerACA"
     client_5 = "QAP5913"
+    client_6 = "QAP6706"
 
 
 class WebAdminClientType(Enum):
