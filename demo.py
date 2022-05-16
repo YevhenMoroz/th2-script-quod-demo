@@ -62,14 +62,17 @@ def test_run():
         #     get_opened_fe(report_id, session_id, window_name)
         # #
         # rm = RuleManager()
+        # rm.remove_rule_by_id(11)
+        # rm.add_TRADE_ESP("fix-bs-esp-314-luna-standard")
         # rm.print_active_rules()
 
         # Testing(report_id, session_id, configuration.data_set).execute()
         # DepositAndLoan.execute(report_id)
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
+        QAP_MD(report_id, data_set=configuration.data_set).execute()
         # QAP_7160(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set).execute()
-        QAP_7168(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # DepAndLoan(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7168(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
 
