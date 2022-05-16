@@ -336,6 +336,9 @@ class MiddleOfficeColumns(Enum):
     settltype = 'SettlType'
     account_id = 'Account ID'
     trade_date = 'TradeDate'
+    settl_currency = 'SettlCurrency'
+    exchange_rate = 'Exchange Rate'
+    settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
 
 
 class AllocationsColumns(Enum):
@@ -358,6 +361,7 @@ class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
     orders_tab = 'Orders'
+    alloc_instruction_qties = "Alloc Instruction Qties"
 
 
 class PostTradeStatuses(Enum):
@@ -443,6 +447,8 @@ class OrderBagColumn(Enum):
     id = 'Id'
     leaves_qty = 'LeavesQty'
     bag_status = 'BagStatus'
+    client_name = 'Client Name'
+    client_desk = 'Client Desc'
 
 
 class BasketSecondLvlTabName(Enum):
@@ -492,7 +498,15 @@ class BookingBlotterColumns(Enum):
     give_up_broker = 'Give-up Broker'
     qty = 'Qty'
     order_id = 'Order ID'
+    status = 'Status'
+    match_status = 'Match Status'
+    summary_status = "Summary Status"
 
 
 class BookingOrderResult(Enum):
     multi = 'Multi'
+
+
+class AllocInstructionQties(Enum):
+    booking_qty = 'Booking Qty'
+    give_up_broker = 'Give-up Broker'

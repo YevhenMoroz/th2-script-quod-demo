@@ -58,6 +58,8 @@ from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbala
     UnbalancedRatesConstants
 from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_constants import \
     InstrSymbolInfoConstants
+from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_constants import \
+    VenueListsConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_group.instrument_group_constants import \
     InstrumentGroupConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_list.instrument_list_constants import \
@@ -297,6 +299,11 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingsConstants.LISTINGS_PAGE_TITLE_XPATH)
+
+    def open_venue_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(VenueListsConstants.MainPage.TITLE_XPATH)
 
     def open_recover_historical_volume_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RECOVER_HISTORICAL_VOLUME_ITEM_XPATH,

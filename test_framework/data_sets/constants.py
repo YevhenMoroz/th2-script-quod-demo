@@ -27,6 +27,7 @@ class Connectivity(Enum):
     Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
     Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
+    Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'

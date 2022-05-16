@@ -5,7 +5,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
@@ -38,7 +38,7 @@ class QAP_2578(CommonTestCase):
         time.sleep(1)
         users_page.click_on_edit_at_more_actions()
         time.sleep(2)
-        users_login_wizard = UsersLoginSubWizard(self.web_driver_container)
+        users_login_wizard = UsersValuesSubWizard(self.web_driver_container)
         users_login_wizard.set_password_expiration("")
         time.sleep(1)
         user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
@@ -58,7 +58,7 @@ class QAP_2578(CommonTestCase):
             time.sleep(1)
             users_page.click_on_edit_at_more_actions()
             time.sleep(2)
-            users_login_wizard = UsersLoginSubWizard(self.web_driver_container)
+            users_login_wizard = UsersValuesSubWizard(self.web_driver_container)
             users_login_wizard.set_password_expiration(self.password_expiration)
             time.sleep(2)
             users_wizard = UsersWizard(self.web_driver_container)

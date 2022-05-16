@@ -281,3 +281,24 @@ class OMSBasketTemplates(Enum):
 
 class OMSGiveUpBrokers(Enum):
     give_up_broker_1 = 'GiveUpBrokerForVS'
+
+
+class OMSClientDesks(Enum):
+    client_desk_1 = 'Fully Manual'
+
+
+class OMSBookingTicketFeeType(Enum):
+    fee_type_in_booking_ticket_1 = "Regulatory"
+
+
+class OMSNetGrossInd(Enum):
+    net_ind = 'Net'
+    gross_ind = 'Gross'
+
+
+class OMSStatus(Enum):
+    status_1 = 'Accepted'
+
+
+class OMSMatchStatus(Enum):
+    match_status_1 = 'Unmatched'

@@ -13,6 +13,9 @@ class InstitutionsValuesSubWizard(CommonPage):
     def get_institution_name(self):
         return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_INSTITUTION_NAME)
 
+    def is_institution_name_field_displayed(self):
+        return self.is_element_present(InstitutionsConstants.VALUES_TAB_INSTITUTION_NAME)
+
     def set_lei(self, value):
         self.set_text_by_xpath(InstitutionsConstants.VALUES_TAB_LEI_NAME, value)
 

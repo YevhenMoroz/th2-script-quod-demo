@@ -86,4 +86,4 @@ class ClientsPage(CommonPage):
         time.sleep(2)
 
     def is_searched_client_found(self, value):
-        return True if self.find_by_xpath(ClientsConstants.DISPLAYED_CLIENT_XPATH.format(value)) else False
+        return self.is_element_present(ClientsConstants.DISPLAYED_CLIENT_XPATH.format(value))
