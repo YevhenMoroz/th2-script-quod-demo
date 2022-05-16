@@ -58,6 +58,12 @@ class BagOrderTicketDetails:
     def set_price(self, price: str):
         self.order.price = price
 
+    def set_tif(self, tif: str):
+        self.order.tif = tif
+
+    def set_expire_date(self, expire_date: str):
+        self.order.expireDate = expire_date
+
     def confirm_ticket_creation(self):
         self.order.confirm = OrderBagTicketDetails.Confirmation.OK
 
