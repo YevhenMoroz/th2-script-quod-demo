@@ -53,6 +53,7 @@ class QAP_1962(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
@@ -106,11 +107,9 @@ class QAP_1962(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order, direction=self.ToQuod,message_name='Sell side NewOrderSingle')
 
         pending_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_pending)
-        pending_multilisting_order_params.add_tag(dict(StopPx=self.stop_price))
         self.fix_verifier_sell.check_fix_message(pending_multilisting_order_params, key_parameters=self.key_params_cl,message_name='Sell side ExecReport PendingNew')
 
         new_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_new)
-        new_multilisting_order_params.add_tag(dict(StopPx=self.stop_price))
         self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -177,23 +176,21 @@ class QAP_1962(TestCase):
         self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params,direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+        # region check Eliminate
+        case_id_3 = bca.create_event("Eliminate Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
-        cancel_request_multilisting_order = FixMessageOrderCancelRequest(self.multilisting_order)
 
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel first dma child order
-        cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
-
-        cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single( self.multilisting_order, self.gateway_side_sell, self.status_cancel)
-        cancel_multilisting_order_params.change_parameters(dict(TimeInForce=self.tif_gtc))
-        self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
+        # region Check child Eliminate
+        eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_eliminate)
+        self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod,"Buy side ExecReport Eliminate child order")
         # endregion
 
+        # region check parent Eliminate
+        eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, key_parameters=self.key_params, message_name="Sell side ExecReport Eliminate")
+        # endregion
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         RuleManager.remove_rules(self.rule_list)
