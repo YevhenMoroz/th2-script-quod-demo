@@ -41,11 +41,9 @@ class QAP_4272(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_execution_strategies_page()
-        time.sleep(1)
-        # step 1
+        side_menu.wait_for_button_to_become_active()
         execution_strategies_main_menu = ExecutionStrategiesPage(self.web_driver_container)
         execution_strategies_main_menu.click_on_new_button()
-        # step 2
         execution_strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
         time.sleep(1)
         execution_strategies_wizard.set_name(self.name)
@@ -53,16 +51,13 @@ class QAP_4272(CommonTestCase):
         execution_strategies_wizard.set_strategy_type(self.strategy_type)
         time.sleep(1)
         execution_strategies_wizard.set_client(self.client)
-        # step 3
         execution_strategies_wizard.click_on_lit_passive()
         time.sleep(2)
-        # step 4
         execution_strategies_lit_passive = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         execution_strategies_lit_passive.click_on_plus_button()
         execution_strategies_lit_passive.set_parameter("Stat Market Share CalcType")
         execution_strategies_lit_passive.set_value_by_dropdown_list_at_sub_wizard("Daily")
         execution_strategies_lit_passive.click_on_checkmark_button()
-        # step 5
         execution_strategies_lit_passive = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         execution_strategies_lit_passive.click_on_plus_button()
         execution_strategies_lit_passive.set_parameter("Post Mode")
@@ -74,7 +69,6 @@ class QAP_4272(CommonTestCase):
         execution_strategies_lit_passive.set_value("22")
         execution_strategies_lit_passive.click_on_checkmark_button()
         time.sleep(2)
-        # step 6
         execution_strategies_lit_passive.click_on_go_back_button()
         time.sleep(2)
 
@@ -91,14 +85,6 @@ class QAP_4272(CommonTestCase):
             self.verify("Check that new entity at lit passive saved correctly",
                         expected_parameter_and_value_at_lit_passive_block,
                         actual_parameter_and_value_at_lit_passive_block)
-            # step 7
-            # execution_strategies_wizard.click_on_general()
-            # execution_strategies_general = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
-            # execution_strategies_general.click_on_plus_button()
-            # execution_strategies_general.set_parameter("SweepingPercentage")
-            # execution_strategies_general.set_value_at_sub_wizard("33")
-            # execution_strategies_general.click_on_checkmark_button()
-            # execution_strategies_general.click_on_go_back_button()
 
             execution_strategies_wizard.click_on_lit_general()
             execution_strategies_lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
@@ -123,26 +109,13 @@ class QAP_4272(CommonTestCase):
             execution_strategies_lit_sweeping.set_value("12")
             execution_strategies_lit_sweeping.click_on_checkmark_button()
             execution_strategies_lit_sweeping.click_on_go_back_button()
-
-            # step 8
             time.sleep(2)
             execution_strategies_wizard.click_on_save_changes()
             time.sleep(2)
-            # step 9
-
             execution_strategies_main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             execution_strategies_main_menu.click_on_more_actions()
             execution_strategies_main_menu.click_on_edit_at_more_actions()
-            # expected_parameter_and_value_at_general_block = ["SweepingPercentage: ", "33"]
-            # actual_parameter_and_value_at_general_block = [
-            #     execution_strategies_wizard.get_parameter_name_at_general_block(),
-            #     execution_strategies_wizard.get_parameter_value_at_general_block()]
-
-            # self.verify("Check that values correctly saved  in General block after click on save changes button",
-            #             expected_parameter_and_value_at_general_block,
-            #             actual_parameter_and_value_at_general_block)
-
             expected_parameter_and_value_at_lit_general_block = ["CrossCurrency: ", "Default"]
             actual_parameter_and_value_at_lit_general_block = [
                 execution_strategies_wizard.get_parameter_name_at_lit_general_block(),

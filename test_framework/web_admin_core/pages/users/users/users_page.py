@@ -180,3 +180,6 @@ class UsersPage(CommonPage):
 
     def is_user_enable_disable(self):
         return self.is_toggle_button_enabled(UsersConstants.ENABLE_DISABLE_BUTTON_XPATH)
+
+    def is_searched_user_found(self, value):
+        return self.is_element_present(UsersConstants.DISPLAYED_USER_XPATH.format(value))

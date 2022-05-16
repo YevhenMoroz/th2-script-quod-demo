@@ -1,4 +1,6 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_02_NEX, EXP_LIM_03_NEX, EXP_LIM_04_NEX, EXP_LIM_05_NEX, EXP_LIM_06_NEX, EXP_TWAP_01, EXP_VWAP_01, EXP_POV_01, EXP_DMA_01
 from test_cases.algo.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
@@ -66,8 +68,8 @@ def test_run():
         MOO_LSE.execute(report_id)
         MOC_LSE.execute(report_id)
         #MADRID
-        MOO_MAD.execute(report_id)
-        MOC_MAD.execute(report_id)
+        # MOO_MAD.execute(report_id)
+        # MOC_MAD.execute(report_id)
         #MILAN
         MOO_MIL.execute(report_id)
         MOC_MIL.execute(report_id)
@@ -121,6 +123,8 @@ def test_run():
         QA_OPN_LIM_PRM.execute(report_id)
         QA_OPN_Market.execute(report_id)
         # endregion
+
+        time.sleep(5)
 
         # region CLO Additional
         CLO_SCO_MID.execute(report_id)
@@ -194,6 +198,8 @@ def test_run():
         POV_MinMax_01.execute(report_id)
         POV_SCAP_01.execute(report_id)
         # endregion
+
+        time.sleep(7)
 
         # region OPN Client
         OPN_FPC_01.execute(report_id)

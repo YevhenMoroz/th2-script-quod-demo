@@ -28,18 +28,7 @@ class ClientsWizard(CommonPage):
         return self.is_pdf_contains_value(value)
 
     def is_incorrect_or_missing_value_message_displayed(self):
-        if self.find_by_xpath(
-                ClientsConstants.INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH).text == "Incorrect or missing values":
-            return True
-        else:
-            return False
+        return self.find_by_xpath(ClientsConstants.INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH).is_displayed()
 
     def is_request_failed_message_displayed(self):
-        if self.find_by_xpath(
-                ClientsConstants.REQUEST_FAILED_MESSAGE_XPATH).text == "Request failed, verify the input data. " \
-                                                                                    "If the problem persists, " \
-                                                                                    "please contact the administrator " \
-                                                                                    "for full details":
-            return True
-        else:
-            return False
+        return self.find_by_xpath(ClientsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()

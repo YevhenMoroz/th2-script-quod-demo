@@ -3,7 +3,7 @@ from test_framework.web_admin_core.pages.users.users.users_constants import User
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-class UsersLoginSubWizard(CommonPage):
+class UsersValuesSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
@@ -53,6 +53,12 @@ class UsersLoginSubWizard(CommonPage):
 
     def get_counterpart(self):
         return self.get_text_by_xpath(UsersConstants.COUNTERPART_AT_LOGIN_SUB_WIZARD)
+
+    def set_non_visible_position_flattening_periods(self, value: list):
+        self.set_checkbox_list(UsersConstants.NON_VISIBLE_POSITION_FLATTENING_PERIODS, value)
+
+    def get_non_visible_position_flattening_periods(self):
+        return self.get_text_by_xpath(UsersConstants.NON_VISIBLE_POSITION_FLATTENING_PERIODS)
 
     # checkboxes
     def set_generate_pin_code_checkbox(self):

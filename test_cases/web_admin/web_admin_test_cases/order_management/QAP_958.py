@@ -31,7 +31,7 @@ class QAP_958(CommonTestCase):
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
-        time.sleep(2)
+        side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
