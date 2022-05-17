@@ -24,7 +24,7 @@ from th2_grpc_sim import sim_pb2_grpc as core_test
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
 
 
