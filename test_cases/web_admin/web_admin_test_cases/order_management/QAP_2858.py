@@ -21,7 +21,7 @@ class QAP_2858(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.strategy_type = self.data_set.get_strategy_type("Quod LitDark")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
         self.parameter_at_passive_lit_block = "Post Mode"
 
     def precondition(self):
@@ -36,7 +36,7 @@ class QAP_2858(CommonTestCase):
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        time.sleep(1)
+        time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_lit_passive()
         passive_at_lit_block = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
