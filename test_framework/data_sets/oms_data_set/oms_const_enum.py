@@ -145,6 +145,11 @@ class OmsAccounts(Enum):
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
 
 
+class AlgoParametersExternal(Enum):
+    parameter_name = "ParameterName"
+    parameter_value = "ParameterValue"
+
+
 class OmsWashbookAccounts(Enum):
     washbook_account_1 = "DMA Washbook"
     washbook_account_2 = "CareWB"
