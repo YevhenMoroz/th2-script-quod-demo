@@ -16,9 +16,9 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.imported_file_mapping_field = FieldNumber
         self.imported_file_mapping_field_details = ImportedFileMappingFieldDetails
         self.templates_details = TemplatesDetails()
-        self.row_details = RowDetails()
+        self.row_details = RowDetails
         self.file_details = FileDetails
-        self.simple_request = SimpleRequest()
+        self.simple_request = SimpleRequest(self.base_request)
         self.extract_order_data_details = ExtractOrderDataDetails
         self.remove_from_basket_details = RemoveChildOrderFromBasketDetails
         self.extract_basket_data_details = basket_order_book_wrappers.ExtractOrderDataDetails()
@@ -46,5 +46,6 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.imported_file_mapping_details = ImportedFileMappingDetails
         self.extract_child_details = ExtractChildOrderDataDetails
         self.clone_template_call = Stubs.win_act_basket_ticket.cloneTemplate
+        self.create_basket_from_order_book_call = Stubs.win_act_order_book.createBask
         self.is_menu_item_present_call = Stubs.win_act_basket_order_book.isMenuItemPresentBasket
     # endregion

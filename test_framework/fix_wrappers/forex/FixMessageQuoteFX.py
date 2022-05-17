@@ -197,6 +197,7 @@ class FixMessageQuoteFX(FixMessage):
             QuoteID="*",
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
             OfferPx="*",
+            BidPx="*",
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Symbol"],
                             Product=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Product"])
 

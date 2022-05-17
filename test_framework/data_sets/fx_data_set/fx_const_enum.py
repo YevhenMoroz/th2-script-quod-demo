@@ -1,6 +1,7 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
+    broken_w1w2, spo_ndf
 
 
 class FxInstruments(Enum):
@@ -57,6 +58,7 @@ class FxClients(Enum):
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "Aurum1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
+    client_mm_10 = "CLIENT1"  # For Deposit And Loan
 
 
 class FxAccounts(Enum):
@@ -85,7 +87,6 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "Aurum1_1"
-
 
 
 class FxClientTiers(Enum):
@@ -126,6 +127,7 @@ class FxSettleTypes(Enum):
     wk2 = "W2"
     wk3 = "W3"
     m1 = "M1"
+    broken = "B"
     # TODO add more settle types
 
 
@@ -152,8 +154,12 @@ class FxSettleDates(Enum):
     wk1 = wk1()
     wk2 = wk2()
     wk3 = wk3()
+    spo_ndf = spo_ndf()
     wk1_ndf = wk1_ndf()
     wk2_ndf = wk2_ndf()
+    broken_1 = broken_1()
+    broken_2 = broken_2()
+    broken_w1w2 = broken_w1w2()
     # TODO add more settle dates
 
 
@@ -250,4 +256,3 @@ class FXAlgoPoliciesID(Enum):
     algo_policy_id_1 = "400019"
     algo_policy_id_2 = "200011"
     algo_policy_id_3 = "400024"
-
