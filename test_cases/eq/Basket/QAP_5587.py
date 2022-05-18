@@ -1,120 +1,100 @@
-import logging
-import os
 import time
-
-from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
-from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
-
-from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
+from rule_management import RuleManager, Simulators
+from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageListStatusOMS import FixMessageListStatusOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from win_gui_modules.common_wrappers import GridScrollingDetails
-from win_gui_modules.utils import call
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+import logging
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_5587(TestCase):
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ja_connectivity = SessionAliasOMS().ja_connectivity
+        self.fe_env = self.environment.get_list_fe_environment()[0]
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.main_window = BaseMainWindow(self.test_id, self.session_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.message_list = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
+        self.client = self.message_list.get_parameters()["ListOrdGrp"]["NoOrders"][0]["Account"]
+        self.price = self.message_list.get_parameters()["ListOrdGrp"]["NoOrders"][0]["Price"]
+        self.qty = self.message_list.get_parameters()["ListOrdGrp"]["NoOrders"][0]["OrderQtyData"]["OrderQty"]
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.route = OmsRoutes.route_1.value
 
-    def qap_5587(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        cl_inbox = OMSClientInbox(self.case_id, self.session_id)
-        main_window = BaseMainWindow(self.case_id, self.session_id)
-        basket_book = OMSBasketOrderBook(self.case_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        nol = FixMessageNewOrderListOMS().set_default_order_list()
-        client = nol.get_parameters()["ListOrdGrp"]["NoOrders"][0]["Account"]
-        price = nol.get_parameters()["ListOrdGrp"]["NoOrders"][0]["Price"]
-        qty = nol.get_parameters()["ListOrdGrp"]["NoOrders"][0]["OrderQtyData"]["OrderQty"]
-        lokup = "VETO"
-        # endregion
-        # region Open FE
-        main_window.open_fe(self.report_id, work_dir, username, password)
-        # endregion
-        # region Send NewOrderList
-        fix_manager.send_message_and_receive_response_fix_standard(nol)
+        # region Create basket
+        self.fix_manager.send_message_fix_standard(self.message_list)
         # endregion
         # region Set-up parameters for ListStatus
-        list_status = FixMessageListStatusOMS().set_default_list_status(nol)
+        list_status = FixMessageListStatusOMS().set_default_list_status(self.message_list)
         # endregion
         # region Check ListStatus
-        fix_verifier.check_fix_message_fix_standard(list_status)
+        self.fix_verifier.check_fix_message_fix_standard(list_status)
         # endregion
         # region Accept orders
-        cl_inbox.accept_order(lokup, qty, price)
-        cl_inbox.accept_order(lokup, qty, price)
+        self.cl_inbox.accept_order()
+        self.cl_inbox.accept_order()
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new_list(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_new_list(nol, 1)
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message_list)
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message_list, 1)
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report1)
-        fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
         # endregion
         # region Send wave request
-        basket_id = basket_book.get_basket_value("Id")
-        basket_ord_id = basket_book.get_basket_orders_value(2, "Id")
-        wave_list_params = {
-            'SEND_SUBJECT': 'QUOD.ORS.FE',
-            'OrderListWaveCreationRequestBlock': {
-                'ParentOrdrList': {'ParentOrdrBlock': [
-                    {'ParentOrdID': basket_ord_id["1"]}, {'ParentOrdID': basket_ord_id["2"]}
-                ]},
-                'OrderListID': basket_id,
-                'PercentQtyToRelease': "1.000000000",
-                'QtyPercentageProfile': "RemainingQty"
-            }
-        }
+        basket_id = self.basket_book.get_basket_value(BasketBookColumns.id.value)
+        basket_ord_id1 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(OrderBookColumns.order_id.value,1)
+        basket_ord_id2 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(
+            OrderBookColumns.order_id.value, 2)
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             client + "_PARIS", "XPAR",
-                                                                                             int(price))
-            trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_PARIS", "XPAR",
-                                                                                       int(price), int(qty), 2)
-            Stubs.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-                message=bca.message_to_grpc_fix_standard("Order_OrderListWaveCreationRequest",
-                                                         wave_list_params, self.ja_connectivity),
-                parent_event_id=self.case_id))
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                             self.client + "_PARIS", "XPAR",
+                                                                                             int(self.price))
+            trade_rele = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                       self.client + "_PARIS", "XPAR",
+                                                                                       int(self.price), int(self.qty), 2)
+            self.basket_book.wave_basket(route=self.route)
         finally:
             time.sleep(1)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rele)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rele)
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report3 = FixMessageExecutionReportOMS().set_default_filled_list(nol)
-        exec_report4 = FixMessageExecutionReportOMS().set_default_filled_list(nol, 1)
+        exec_report3 = FixMessageExecutionReportOMS(self.data_set).set_default_filled_list(self.message_list)
+        exec_report3.change_parameter("LastMkt", "*")
+        exec_report4 = FixMessageExecutionReportOMS(self.data_set).set_default_filled_list(self.message_list, 1)
+        exec_report4.change_parameter("LastMkt", "*")
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-        fix_verifier.check_fix_message_fix_standard(exec_report4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        self.fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        self.fix_verifier.check_fix_message_fix_standard(exec_report4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
 
-    #@try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_5587()
+
