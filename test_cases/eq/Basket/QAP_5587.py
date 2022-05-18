@@ -1,6 +1,13 @@
 import time
+import logging
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
+from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes, OmsMic, OmsVenueClientNames
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
@@ -10,17 +17,12 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessage
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-import logging
-from pathlib import Path
-from custom import basic_custom_actions as bca
-from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_5587(TestCase):
@@ -43,6 +45,8 @@ class QAP_5587(TestCase):
         self.rule_manager = RuleManager(Simulators.equity)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.route = OmsRoutes.route_1.value
+        self.mic = OmsMic.mic_1.value
+        self.rule_client = OmsVenueClientNames.client_co_1_venue_1.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -70,16 +74,20 @@ class QAP_5587(TestCase):
         # endregion
         # region Send wave request
         basket_id = self.basket_book.get_basket_value(BasketBookColumns.id.value)
-        basket_ord_id1 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(OrderBookColumns.order_id.value,1)
+        basket_ord_id1 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(
+            OrderBookColumns.order_id.value, 1)
         basket_ord_id2 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(
             OrderBookColumns.order_id.value, 2)
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                             self.client + "_PARIS", "XPAR",
-                                                                                             int(self.price))
+                                                                                                  self.rule_client,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
             trade_rele = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       self.client + "_PARIS", "XPAR",
-                                                                                       int(self.price), int(self.qty), 2)
+                                                                                            self.rule_client,
+                                                                                            self.mic,
+                                                                                            int(self.price),
+                                                                                            int(self.qty), 2)
             self.basket_book.wave_basket(route=self.route)
         finally:
             time.sleep(1)
@@ -93,8 +101,8 @@ class QAP_5587(TestCase):
         exec_report4.change_parameter("LastMkt", "*")
         # endregion
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-        self.fix_verifier.check_fix_message_fix_standard(exec_report4, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        self.fix_verifier.check_fix_message_fix_standard(exec_report3,
+                                                         key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        self.fix_verifier.check_fix_message_fix_standard(exec_report4,
+                                                         key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
-
-
