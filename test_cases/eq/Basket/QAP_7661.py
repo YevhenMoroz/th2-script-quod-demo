@@ -6,10 +6,13 @@ from custom import basic_custom_actions as bca, basic_custom_actions
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
+
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, BasketBookColumns, ExecSts
+from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, ExecSts, SecondLevelTabs, \
+    AlgoParametersExternal, OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+from test_framework.win_gui_wrappers.oms.oms_child_order_book import OMSChildOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -32,6 +35,7 @@ class QAP_7661(TestCase):
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.oms_basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
+        self.child_book = OMSChildOrderBook(self.test_id, self.session_id)
         self.str_name = 'Urgency'
         self.ex_str_name = '14'
         self.params1 = {
@@ -75,7 +79,7 @@ class QAP_7661(TestCase):
             "TransactTime": datetime.utcnow().isoformat(),
             "Price": "20",
             "Currency": self.data_set.get_currency_by_name("currency_1"),
-            "TargetStrategy": "1021",  # 2021 = TWAP_ASIA
+            "TargetStrategy": "1022",  # 2021 = TWAP_EMEA
             "StrategyParametersGrp": {"NoStrategyParameters": [
                 {
                     'StrategyParameterName': 'Urgency',
@@ -86,7 +90,6 @@ class QAP_7661(TestCase):
         }
         self.fix_message.change_parameter('ListOrdGrp', {'NoOrders': [self.params1, self.params2]})
         self.route = OmsRoutes.route_1.value
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -101,7 +104,39 @@ class QAP_7661(TestCase):
         # endregion
         # region wave basket
         self.oms_basket_book.wave_basket(route=self.route)
+        child_order_id1 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_2lvl_fields(
+            SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1])
+        child_order_id2 = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_2lvl_fields(
+            SecondLevelTabs.child_tab.value,
+            [OrderBookColumns.order_id.value], [1])
         # endregion
         # region check value
-        self.oms_basket_book.check_basket_sub_lvl_field(1, BasketBookColumns.status_wave.value, BasketBookColumns.waves_tab.value, ExecSts.new.value)
+        parameter_value1 = self.child_book.get_child_order_sub_lvl_value(1,
+                                                                         AlgoParametersExternal.parameter_value.value,
+                                                                         SecondLevelTabs.algo_parameters_external.value,
+                                                                         child_book_filter={
+                                                                             OrderBookColumns.order_id.value:
+                                                                                 child_order_id1[0]['ID']})
+        parameter_name1 = self.child_book.get_child_order_sub_lvl_value(1,
+                                                                        AlgoParametersExternal.parameter_name.value,
+                                                                        SecondLevelTabs.algo_parameters_external.value,
+                                                                        child_book_filter={
+                                                                            OrderBookColumns.order_id.value: child_order_id1[0]['ID']})
+        self.child_book.compare_values({"1": "LOW", "2": "Urgency"},
+                                       {"1": parameter_value1, "2": parameter_name1},
+                                       "Check Parameters 1")
+        parameter_value2 = self.child_book.get_child_order_sub_lvl_value(1,
+                                                                         AlgoParametersExternal.parameter_value.value,
+                                                                         SecondLevelTabs.algo_parameters_external.value,
+                                                                         child_book_filter={
+                                                                             OrderBookColumns.order_id.value:
+                                                                                 child_order_id2[0]['ID']})
+        parameter_name2 = self.child_book.get_child_order_sub_lvl_value(1,
+                                                                        AlgoParametersExternal.parameter_name.value,
+                                                                        SecondLevelTabs.algo_parameters_external.value,
+                                                                        child_book_filter={
+                                                                            OrderBookColumns.order_id.value:
+                                                                                child_order_id2[0]['ID']})
+        self.child_book.compare_values({"1": "LOW", "2": "Urgency"}, {"1": parameter_value2, "2": parameter_name2},
+                                       "Check Parameters 2")
         # endregion
