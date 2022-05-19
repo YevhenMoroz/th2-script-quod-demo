@@ -2,7 +2,8 @@ from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from custom.verifier import VerificationMethod
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.middle_office_wrappers import ExtractionPanelDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter
+from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, SplitBookingParameter, \
+    InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
     direct_moc_request, direct_order_request
@@ -62,6 +63,7 @@ class BaseOrderBook(BaseWindow):
         self.add_to_basket_call = None
         self.create_basket_call = None
         self.cancel_order_call = None
+        self.refresh_order_call = None
         self.manual_cross_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
@@ -88,7 +90,7 @@ class BaseOrderBook(BaseWindow):
         self.unmatch_and_transfer_details = None
         self.unmatch_and_transfer_call = None
 
-        # endregion
+    # endregion
 
     # region Common func
     def set_order_details(self):
@@ -175,7 +177,6 @@ class BaseOrderBook(BaseWindow):
     def extract_2lvl_fields(self, tab: str, column_names: list, rows: list, filter_dict: dict = None):
         """
         return arr of dict for avery rows
-        like shown: [{'ExecID': 'EV1220519103255102001'}]
         """
         self.second_level_tab_details.set_tab_name(tab)
         self.second_level_tab_details.set_columns_names(column_names)
@@ -252,6 +253,12 @@ class BaseOrderBook(BaseWindow):
             self.cancel_order_details.set_filter(filter_list)
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
+
+    def refresh_order(self, filter_list: list = None):
+        if filter_list is not None:
+            self.modify_order_details.set_filter(filter_list)
+        call(self.refresh_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
 
     def transfer_order(self, desk: str, partial_desk: bool = False, filter_list: list = None):
         self.transfer_order_details.set_default_params(self.base_request)
@@ -366,7 +373,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None, ):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None,):
         """
         orders_rows - select rows from order book
         """
@@ -403,7 +410,7 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)

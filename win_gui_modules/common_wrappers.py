@@ -172,7 +172,8 @@ class SimpleRequest:
         self._request.base.CopyFrom(base)
 
     def set_filter(self, filter: dict):
-        self._request.filter.update(filter)
+        if filter is not None:
+            self._request.filter.update(filter)
 
     def build(self):
         return self._request

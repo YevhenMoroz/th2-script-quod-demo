@@ -30,3 +30,8 @@ class ORSMessageType(Enum):
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
+
+
+class ESMessageType(Enum):
+    OrdReport = 'Gateway_OrdReport'
+    ExecutionReport = 'Gateway_ExecutionReport'
