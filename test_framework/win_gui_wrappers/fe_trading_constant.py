@@ -167,6 +167,7 @@ class TradeBookColumns(Enum):
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
     exec_type = 'ExecType'
+    unmatched_qty = 'UnmatchedQty'
 
 
 class QuoteRequestBookColumns(Enum):

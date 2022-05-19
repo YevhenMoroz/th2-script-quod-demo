@@ -11,7 +11,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails,\
+    UnmatchAndTransferDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -81,11 +82,13 @@ class OMSOrderBook(BaseOrderBook):
         self.transfer_order_call = Stubs.win_act_order_book.transferOrder
         self.transfer_pool_details = TransferPoolDetailsCLass()
         self.transfer_pool_call = Stubs.care_orders_action.internalTransferAction
-        self.internal_transfer_action = InternalTransferActionDetails(self.base_request, self.transfer_pool_details.build())
+        self.internal_transfer_action = InternalTransferActionDetails(self.base_request,
+                                                                      self.transfer_pool_details.build())
         self.group_modify_details = GroupModifyDetails()
         self.direct_order_correct_call = Stubs.win_act_order_book.orderBookDirectOrder
         self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
         self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
-
+        self.unmatch_and_transfer_details = UnmatchAndTransferDetails(self.base_request)
+        self.unmatch_and_transfer_call = Stubs.win_act_order_book.unmatchAndTransfer
 
         # endregion
