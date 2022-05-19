@@ -4,7 +4,7 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OmsVenueClientNames, OmsRoutes, OmsLookupForVenues, OmsVenueClientAccounts, OMSCommissionProfiles, OMSFeeType, \
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
-    OMSNetGrossInd, OMSStatus, OMSMatchStatus
+    OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy
 
 
 class OmsDataSet(BaseDataSet):
@@ -43,3 +43,4 @@ class OmsDataSet(BaseDataSet):
     net_gross_ind_type = OMSNetGrossInd
     middle_office_status = OMSStatus
     middle_office_match_status = OMSMatchStatus
+    exec_policy = OMSExecutionPolicy
