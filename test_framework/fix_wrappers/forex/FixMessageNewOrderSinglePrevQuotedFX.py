@@ -85,7 +85,7 @@ class FixMessageNewOrderSinglePrevQuotedFX(FixMessageNewOrderSingle):
             # "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
             # quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
             "Side": "2",
-            "OrderQty": "1000000",
+            "OrderQty": quote_request.get_parameter("NoRelatedSym")[0]["OrderQty"],
             "OrdType": "D",
             "NoPartyIDs": [
                 {

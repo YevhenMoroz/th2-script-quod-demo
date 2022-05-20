@@ -14,7 +14,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     # region SINGLE
-    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
+                                         status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
         else:
@@ -174,7 +175,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
     # endregion
 
     # region DepositAndLoan
-    def set_params_from_deposit_and_loan(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+    def set_params_from_deposit_and_loan(self, new_order_single: FixMessageNewOrderSingle,
+                                         status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_deposit(new_order_single)
         else:
