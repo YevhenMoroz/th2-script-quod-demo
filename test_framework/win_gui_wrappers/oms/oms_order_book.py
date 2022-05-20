@@ -90,6 +90,6 @@ class OMSOrderBook(BaseOrderBook):
         self.direct_order_correct_call = Stubs.win_act_order_book.orderBookDirectOrder
         self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
         self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
-
+        self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
 
         # endregion
