@@ -49,44 +49,64 @@ class QAP_7125(TestCase):
         self.md_req_id_fwd = "GBP/USD:FXF:WK1:HSBC"
 
         self.no_md_entries_spot = [{
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.1815,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18151,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                }]
+            "MDEntryType": "0",
+            "MDEntryPx": 1.1815,
+            "MDEntrySize": 1000000,
+            "MDQuoteType": 1,
+            "MDEntryPositionNo": 1,
+            "SettlDate": self.settle_date_spot,
+            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+        },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            }]
         self.no_md_entries_fwd = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.1813,
-                    "MDEntrySize": 50000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    "MDEntryForwardPoints": "0.00003",
-                    "SettlDate": self.settle_date_wk1,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18165,
-                    "MDEntrySize": 50000000,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 1,
-                    "MDEntryForwardPoints": "0.00004",
-                    "SettlDate": self.settle_date_wk1,
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
-                }]
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1815,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00001",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00002",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1813,
+                "MDEntrySize": 50000000,
+                "MDEntryPositionNo": 2,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00003",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18165,
+                "MDEntrySize": 50000000,
+                "MDEntryPositionNo": 2,
+                "MDQuoteType": 1,
+                "MDEntryForwardPoints": "0.00004",
+                "SettlDate": self.settle_date_wk1,
+                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            }]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -103,8 +123,7 @@ class QAP_7125(TestCase):
         self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="GBP", Instrument=self.instrument,
-                                                           OrderQty=self.qty)
+                                                           Currency="GBP", Instrument=self.instrument)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])

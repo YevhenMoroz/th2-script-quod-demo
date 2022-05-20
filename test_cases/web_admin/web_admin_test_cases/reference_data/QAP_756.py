@@ -23,13 +23,13 @@ class QAP_756(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = self.data_set.get_venue_type("venue_type_1")
-        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.mic = "AMTS"
         self.country = self.data_set.get_country("country_1")
-        self.new_mic = self.data_set.get_mic_by_name("mic_2")
+        self.new_mic = "BAML"
         self.new_country = self.data_set.get_country("country_2")
-
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -46,6 +46,7 @@ class QAP_756(CommonTestCase):
         description_sub_wizard.set_name(self.name)
         time.sleep(1)
         description_sub_wizard.set_id(self.id)
+        description_sub_wizard.set_client_venue_id(self.client_venue_id)
         time.sleep(1)
         description_sub_wizard.set_type(self.type)
         time.sleep(1)

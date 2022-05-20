@@ -9,7 +9,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -62,7 +62,7 @@ class QAP_5842(CommonTestCase):
         time.sleep(1)
         users_page.click_on_edit_at_more_actions()
         time.sleep(2)
-        users_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+        users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         if not users_login_sub_wizard.is_first_time_login_checkbox_selected():
             time.sleep(1)
             users_login_sub_wizard.set_first_time_login_checkbox()

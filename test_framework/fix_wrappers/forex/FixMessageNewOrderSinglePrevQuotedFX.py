@@ -69,3 +69,37 @@ class FixMessageNewOrderSinglePrevQuotedFX(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_deposit_and_loan(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
+                                     price: str = None,
+                                     side: str = None) -> FixMessageNewOrderSingle:
+        # quote_price = None
+        # if "Side" in quote_request.get_parameter("NoRelatedSymbols")[0]:
+        #     if quote.get_parameter("Side") == "1":
+        #         quote_price = quote.get_parameter("OfferPx")
+        #     else:
+        #         quote_price = quote.get_parameter("BidPx")
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(15),
+            "SecondaryClOrdID": quote.get_parameter("QuoteReqID"),
+            # "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
+            # quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
+            "Side": "2",
+            "OrderQty": "1000000",
+            "OrdType": "D",
+            "NoPartyIDs": [
+                {
+                    "PartyID": "CLIENT1",
+                    "PartyIDSource": "D",
+                    "PartyRole": "1"
+                }
+            ],
+            "TransactTime": datetime.utcnow().isoformat(),
+            # "Price": quote_price if quote_price is not None else price,
+            "Instrument": quote_request.get_parameter("NoRelatedSym")[0]["Instrument"],
+            # "SettlDate": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            # "SettlType": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
+            "QuoteID": quote.get_parameter("QuoteID")
+        }
+        super().change_parameters(base_parameters)
+        return self

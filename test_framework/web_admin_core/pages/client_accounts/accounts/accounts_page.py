@@ -78,3 +78,6 @@ class AccountsPage(CommonPage):
         time.sleep(2)
         self.click_on_load_button()
         time.sleep(2)
+
+    def is_searched_account_found(self, value):
+        return self.is_element_present(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value))

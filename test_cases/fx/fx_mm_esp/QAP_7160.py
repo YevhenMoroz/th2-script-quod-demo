@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
@@ -60,6 +61,7 @@ class QAP_7160(TestCase):
         self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams) \
             .change_params({"TODStartTime": self.timestamp_2, "TODEndTime": self.timestamp_1})
         self.rest_manager.send_post_request(self.modify_client_tier)
+        time.sleep(5)
         # endregion
         # region Step 2
         self.fix_subscribe.set_md_req_parameters_maker(). \

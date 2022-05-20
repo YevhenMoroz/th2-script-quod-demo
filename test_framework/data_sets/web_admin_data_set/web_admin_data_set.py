@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import WebAdminUsers, \
-    WebAdminPasswords, WebAdminComponentId, WebAdminAdminCommands, WebAdminDesks, \
+    WebAdminPasswords, WebAdminComponentId, WebAdminSystemCommands, WebAdminDesks, \
     WebAdminZones, WebAdminLocations, WebAdminInstitutions, WebAdminClients, WebAdminClientType, WebAdminVenues, \
     WebAdminEmail, WebAdminPermRole, WebAdminFirstUserName, WebAdminVenueId, WebAdminVenueType, WebAdminMic, \
     WebAdminCountry, WebAdminSubVenue, WebAdminTradingStatus, WebAdminTradingPhase, WebAdminPriceLimitProfile, \
@@ -12,7 +12,8 @@ from test_framework.data_sets.web_admin_data_set.web_admin_const_enum import Web
     WebAdminTradConfirmPreference, WebAdminNetGrossIndType, WebAdminRecipientTypes, WebAdminDefaultTif, \
     WebAdminStrategyType, WebAdminExecPolicy, WebAdminCommissionAmountType, WebAdminCommissionProfile, \
     WebAdminSettlLocation, WebAdminCountryCode, WebAdminClientGroup, WebAdminInstrument, WebAdminInstrumentGroup, \
-    WebAdminCommAlgorithm, WebAdminCommType, WebAdminTenor, WebAdminCoreSpotPriceStrategy, WebAdminPartyRole
+    WebAdminCommAlgorithm, WebAdminCommType, WebAdminTenor, WebAdminCoreSpotPriceStrategy, WebAdminPartyRole, \
+    WebAdminClientList
 
 
 class WebAdminDataSet(BaseDataSet):
@@ -22,13 +23,14 @@ class WebAdminDataSet(BaseDataSet):
     user = WebAdminUsers
     password = WebAdminPasswords
     component_id = WebAdminComponentId
-    admin_command = WebAdminAdminCommands
+    system_command = WebAdminSystemCommands
     desk = WebAdminDesks
     location = WebAdminLocations
     institution = WebAdminInstitutions
     zone = WebAdminZones
     clients = WebAdminClients
     client_type = WebAdminClientType
+    client_list = WebAdminClientList
     venues = WebAdminVenues
     email = WebAdminEmail
     perm_role = WebAdminPermRole

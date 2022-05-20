@@ -102,8 +102,7 @@ class QAP_7130(TestCase):
         self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="GBP", Instrument=self.instrument,
-                                                           OrderQty=self.qty)
+                                                           Currency="GBP", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
 
         # endregion

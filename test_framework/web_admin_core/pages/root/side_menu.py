@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
 from test_framework.web_admin_core.pages.client_accounts.cash_accounts.cash_accounts_constants import \
     CashAccountsConstants
@@ -22,7 +24,8 @@ from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_c
     ClientTierConstants
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_constants import \
     QuotingSessionsConstants
-from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import SystemCommandsConstants
+from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import \
+    SystemCommandsConstants
 from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \
     MDEntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -55,6 +58,8 @@ from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbala
     UnbalancedRatesConstants
 from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_constants import \
     InstrSymbolInfoConstants
+from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_constants import \
+    VenueListsConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_group.instrument_group_constants import \
     InstrumentGroupConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_list.instrument_list_constants import \
@@ -208,7 +213,7 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH,
                        RootConstants.ORDER_MANAGEMENT_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(ExecutionStrategiesConstants.EXECUTION_STRATEGIES_PAGE_TITLE_XPATH)
-        
+
     def click_on_execution_strategies_when_order_management_tab_is_open(self):
         self.click_menu_item(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH)
 
@@ -294,6 +299,11 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingsConstants.LISTINGS_PAGE_TITLE_XPATH)
+
+    def open_venue_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(VenueListsConstants.MainPage.TITLE_XPATH)
 
     def open_recover_historical_volume_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RECOVER_HISTORICAL_VOLUME_ITEM_XPATH,
@@ -397,3 +407,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(CashPositionsConstants.CASH_POSITIONS_PAGE_TITLE_XPATH)
 
+    def wait_for_button_to_become_active(self):
+        i = 0
+        while i < 30:
+            if not self.is_field_enabled(ExecutionStrategiesConstants.NEW_BUTTON_AT_MAIN_MENU_XPATH):
+                i += 1
+                time.sleep(0.5)
+            else:
+                break

@@ -64,6 +64,7 @@ class OMSOrderBook(BaseOrderBook):
         self.add_to_basket_call = Stubs.win_act_order_book.addToBasket
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
+        self.refresh_order_call = Stubs.win_act_order_book.refreshOrder
         self.manual_cross_call = Stubs.win_act_order_book.manualCross
         self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
         self.mass_book_call = Stubs.win_act_order_book.massBook

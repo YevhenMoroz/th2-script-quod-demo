@@ -41,7 +41,7 @@ class QAP_6593(TestCase):
         account = self.data_set.get_client_by_name("client_1")
         # endregion
         # region Step 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=self.data_set).set_default_SOR().change_parameters(
             {'TimeInForce': "3", "OrderQty": qty, "Account": account})
         self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion

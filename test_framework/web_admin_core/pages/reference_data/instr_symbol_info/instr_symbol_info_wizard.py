@@ -35,6 +35,12 @@ class InstrSymbolInfoWizard(CommonPage):
     def get_instr_symbol(self):
         return self.get_text_by_xpath(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH)
 
+    def get_all_instr_symbols_from_drop_menu(self):
+        self.find_by_xpath(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH).click()
+        self.set_text_by_xpath(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(InstrSymbolInfoConstants.DROP_DOWN_MENU_XPATH)
+
     def set_cum_trading_limit_percentage(self, value):
         self.set_text_by_xpath(InstrSymbolInfoConstants.WIZARD_CUM_TRADING_LIMIT_PERCENTAGE_XPATH, value)
 
@@ -61,3 +67,9 @@ class InstrSymbolInfoWizard(CommonPage):
 
     def is_instrsymbol_field_enabled(self):
         return self.is_field_enabled(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH)
+
+    def is_error_message_displayed(self):
+        return self.is_element_present(InstrSymbolInfoConstants.WIZARD_ERROR_MESSAGE_XPATH)
+
+    def click_on_error_message_pop_up(self):
+        self.find_by_xpath(InstrSymbolInfoConstants.WIZARD_ERROR_MESSAGE_XPATH).click()

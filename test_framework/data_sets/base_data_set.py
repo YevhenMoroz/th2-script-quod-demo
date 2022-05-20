@@ -41,11 +41,15 @@ class BaseDataSet:
     pset = None
     basket_templates = None
     give_up_brokers = None
+    fee_type_in_booking_ticket = None
+    client_desks = None
+    middle_office_status = None
+    middle_office_match_status = None
     # region fields added by Web Admin team
     user = None
     password = None
     component_id = None
-    admin_command = None
+    system_command = None
     desk = None
     location = None
     institution = None
@@ -381,6 +385,26 @@ class BaseDataSet:
             return getattr(self.give_up_brokers, name).value
         raise ValueError(f"{self.give_up_brokers} not found!")
 
+    def get_client_desk(self, name: str):
+        if hasattr(self.client_desks, name):
+            return getattr(self.client_desks, name).value
+        raise ValueError(f"{self.client_desks} not found!")
+
+    def get_fee_type_from_booking_ticket(self, name: str):
+        if hasattr(self.fee_type_in_booking_ticket, name):
+            return getattr(self.fee_type_in_booking_ticket, name).value
+        raise ValueError(f"{self.fee_type_in_booking_ticket} not found!")
+
+    def get_middle_office_status(self, name: str):
+        if hasattr(self.middle_office_status, name):
+            return getattr(self.middle_office_status, name).value
+        raise ValueError(f"{self.middle_office_status} not found!")
+
+    def get_middle_office_match_status(self, name: str):
+        if hasattr(self.middle_office_match_status, name):
+            return getattr(self.middle_office_match_status, name).value
+        raise ValueError(f"{self.middle_office_match_status} not found!")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):
@@ -398,10 +422,10 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_admin_command(self, name: str):
-        if hasattr(self.admin_command, name):
-            return getattr(self.admin_command, name).value
-        return ValueError(f"{self.admin_command} not found!")
+    def get_system_command(self, name: str):
+        if hasattr(self.system_command, name):
+            return getattr(self.system_command, name).value
+        return ValueError(f"{self.system_command} not found!")
 
     def get_desk(self, name: str):
         if hasattr(self.desk, name):
@@ -676,7 +700,7 @@ class BaseDataSet:
             return getattr(self.time_in_force, name).value
         return ValueError(f"{self.time_in_force,} not found!")
 
-    def get_commission_basis(self, name:str):
+    def get_commission_basis(self, name: str):
         if hasattr(self.commission_basis, name):
             return getattr(self.commission_basis, name).value
         return ValueError(f"{self.commission_basis} not found!")

@@ -5,6 +5,7 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -19,21 +20,22 @@ from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages
 
 
 class QAP_6153(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
-        self.rest_connectivity = SessionAliasFX().wa_connectivity
-        self.rest_manager = RestApiManager(self.rest_connectivity, self.test_id)
-        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.rest_env = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.rest_manager = RestApiManager(self.rest_env.session_alias_wa, self.test_id)
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.rest_massage = RestApiClientTierInstrSymbolMessages()
         self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.settle_type = self.data_set.get_settle_type_by_name('fx_spot')
+        self.settle_type = self.data_set.get_settle_type_by_name('spot')
         self.no_related_symbols = [{
             'Instrument': {
                 'Symbol': self.nok_sek,

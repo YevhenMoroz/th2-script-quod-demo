@@ -117,7 +117,7 @@ def execute(report_id, session_id):
     from_curr = "GBP"
     to_curr = "AUD"
     tenor = "Spot"
-    venue = "HSB"
+    venue = "HSBC"
     instrument = "GBP/AUD-Spot"
     client_tier = "Silver"
 

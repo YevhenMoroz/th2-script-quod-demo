@@ -12,6 +12,7 @@ class OrderBookColumns(Enum):
     security_id = "Security Id"
     symbol = "Symbol"
     side = "Side"
+    ccy_side = "CCY1 Side"
     lookup = "Lookup"
     stop_price = "Stop Price"
     inst_type = "InstType"
@@ -20,6 +21,8 @@ class OrderBookColumns(Enum):
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
     cd_sts = "CDSts"
+    near_leg_qty = "NearLegQty"
+    far_leg_qty = "FarLegQty"
     qty = "Qty"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
@@ -45,6 +48,8 @@ class OrderBookColumns(Enum):
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
     beneficiary = 'Beneficiary'
+    net_amount = 'NetAmount'
+    net_price = 'NetPrice'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -140,6 +145,7 @@ class TradeBookColumns(Enum):
     venue = 'Venue'
     qty = 'Qty'
     side = 'Side'
+    tenor = 'Tenor'
     exec_price = 'ExecPrice'
     last_market = 'LastMkt'
     instrument_type = 'InstrType'
@@ -179,6 +185,8 @@ class QuoteRequestBookColumns(Enum):
     client = 'Client'
     client_tier = 'ClientTier'
     tenor = 'Tenor'
+    near_tenor = 'Near Leg Tenor'
+    far_tenor = 'Far Leg Tenor'
     # region Quotes sub-level
     quote_id = 'ID'
     account_group = 'AccountGroup'
@@ -313,6 +321,9 @@ class MiddleOfficeColumns(Enum):
     settltype = 'SettlType'
     account_id = 'Account ID'
     trade_date = 'TradeDate'
+    settl_currency = 'SettlCurrency'
+    exchange_rate = 'Exchange Rate'
+    settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
 
 
 class AllocationsColumns(Enum):
@@ -335,6 +346,7 @@ class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
     orders_tab = 'Orders'
+    alloc_instruction_qties = "Alloc Instruction Qties"
 
 
 class PostTradeStatuses(Enum):
@@ -420,6 +432,8 @@ class OrderBagColumn(Enum):
     id = 'Id'
     leaves_qty = 'LeavesQty'
     bag_status = 'BagStatus'
+    client_name = 'Client Name'
+    client_desk = 'Client Desc'
 
 
 class BasketSecondLvlTabName(Enum):
@@ -468,7 +482,15 @@ class BookingBlotterColumns(Enum):
     give_up_broker = 'Give-up Broker'
     qty = 'Qty'
     order_id = 'Order ID'
+    status = 'Status'
+    match_status = 'Match Status'
+    summary_status = "Summary Status"
 
 
 class BookingOrderResult(Enum):
     multi = 'Multi'
+
+
+class AllocInstructionQties(Enum):
+    booking_qty = 'Booking Qty'
+    give_up_broker = 'Give-up Broker'

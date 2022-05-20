@@ -8,7 +8,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
@@ -24,6 +24,7 @@ class QAP_4239(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = self.data_set.get_email("email_1")
         self.desks = [self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_2")]
 
@@ -44,8 +45,9 @@ class QAP_4239(CommonTestCase):
         try:
             self.precondition()
 
-            user_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+            user_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
             user_login_sub_wizard.set_user_id(self.user_id)
+            user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
             time.sleep(1)
             user_login_sub_wizard.set_ping_required_checkbox()
             time.sleep(1)

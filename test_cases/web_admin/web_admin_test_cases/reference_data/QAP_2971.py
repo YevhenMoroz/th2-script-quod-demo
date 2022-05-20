@@ -28,10 +28,10 @@ class QAP_2971(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = "DarkPool"
         self.trading_phase_profile_desc = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.trading_phase = self.data_set.get_trading_phase("trading_phase_3")
-
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -46,8 +46,8 @@ class QAP_2971(CommonTestCase):
         time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
-        time.sleep(1)
         description_sub_wizard.set_id(self.id)
+        description_sub_wizard.set_client_venue_id(self.client_venue_id)
         time.sleep(1)
         description_sub_wizard.set_type(self.type)
         wizard.click_on_save_changes()
@@ -58,7 +58,6 @@ class QAP_2971(CommonTestCase):
         time.sleep(2)
         page.click_on_edit()
         time.sleep(2)
-
 
     def test_context(self):
         wizard = VenuesWizard(self.web_driver_container)
