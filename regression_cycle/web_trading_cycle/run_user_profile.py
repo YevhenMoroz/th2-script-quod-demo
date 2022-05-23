@@ -28,7 +28,7 @@ class RunUserProfile:
                      environment=configuration.environment).run()
 
             end_time = time.monotonic()
-            print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+            print("Run User Profile ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)
