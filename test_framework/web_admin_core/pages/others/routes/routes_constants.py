@@ -31,7 +31,6 @@ class RoutesConstants:
     # ------Edit------
 
     # --Values tab--
-    VENUE_FILTER_AT_VALUES_TAB_XPATH  ='//*[@class="ng2-smart-th venue ng-star-inserted"]//*[@placeholder="Filter"]'
     DOWNLOAD_PDF_AT_ROUTES_WIZARD = '//*[@data-name="download"]'
     CLOSE_PAGE_AT_ROUTES_WIZARD = '//*[@data-name="close"]'
     SAVE_CHANGES_AT_VALUES_TAB_XPATH = '//*[text()="Save Changes"]'
@@ -53,11 +52,11 @@ class RoutesConstants:
 
     # --Venues tab--
     EXISTING_VENUE_AT_VENUES_TAB = '//*[@class="venue-table-body"]//td[@class="ng-star-inserted"]'
-    CHECK_MARK_AT_VENUES_TAB ='//*[@class="venue-table-body"]//*[@class="nb-checkmark"]'
+    CHECK_MARK_AT_VENUES_TAB ='//nb-accordion-item-header[normalize-space(text()) = "Venues"]//parent::*//*[@data-name="checkmark"]'
     VENUE_AT_VENUES_TAB_XPATH = '//*[@placeholder="Venue *"]'
-    PLUS_BUTTON_AT_VENUES_TAB_XPATH = '//*[@class="nb-plus ng2-main-add-btn"]'
-    EDIT_VENUE_AT_VENUES_TAB_XPATH = '//*[@class="ng2-smart-action ng2-smart-action-edit-edit ng-star-inserted"]//*[@class= "nb-edit ng2-main-edit-btn" ][1]'
-    DELETE_VENUE_AT_VENUES_TAB_XPATH = '//*[@class="ng2-smart-row selected ng-star-inserted"]//*[@class= "nb-trash" ][1]'
+    PLUS_BUTTON_AT_VENUES_TAB_XPATH = '//nb-accordion-item-header[normalize-space(text()) = "Venues"]//parent::*//*[@data-name="plus"]'
+    EDIT_VENUE_AT_VENUES_TAB_XPATH = '//nb-accordion-item-header[normalize-space(text()) = "Venues"]//parent::*//*[@data-name="edit"]'
+    DELETE_VENUE_AT_VENUES_TAB_XPATH = '//nb-accordion-item-header[normalize-space(text()) = "Venues"]//parent::*//*[@data-name="trash-2"]'
     VENUE_FILTER_AT_VENUES_TAB_XPATH = '//*[@class="venue-table-body"]//*[@placeholder="Filter"]'
     # -Venues edit/new wizard-
 

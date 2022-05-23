@@ -1,0 +1,17 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from test_framework.mobile_android_core.pages.login.login_constant import LoginConstants
+
+class Waits:
+
+    def __init__(self, driver, time=5):
+        self.appium_driver = driver
+        self.wait = WebDriverWait(self.appium_driver, time)
+
+    def WaitUntilClickableByXPath(self, xpath):
+        self.wait.until(EC.element_to_be_clickable((By.XPATH,LoginConstants.EMAIL)))
+
+    # def WaitUntilPresentByXPath(self,xpath):
+    #     return self.wait.until(EC.ele)
+

@@ -20,7 +20,7 @@ class QAP_2183(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.id = f"QAP-2183_{''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))}"
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client = self.data_set.get_client("client_1")
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -40,13 +40,9 @@ class QAP_2183(CommonTestCase):
         time.sleep(2)
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_id(self.id)
-        time.sleep(2)
         accounts_wizard.set_client_id_source(self.client_id_source)
-        time.sleep(2)
         accounts_wizard.set_ext_id_client(self.ext_id_client)
-        time.sleep(1)
         accounts_wizard.set_clearing_account_type(self.clearing_type[-1])
-        time.sleep(2)
         accounts_wizard.set_client(self.client)
         time.sleep(2)
 
@@ -56,12 +52,8 @@ class QAP_2183(CommonTestCase):
         try:
             self.precondition()
             try:
-                for i in self.clearing_type:
-                    accounts_wizard.set_clearing_account_type(i)
-                    time.sleep(1)
-                self.verify(f"\"Clearing Account Type\" drop-down contains {self.clearing_type}", True, True)
+
                 accounts_wizard.click_save_button()
-                self.verify("Account saved correctly", True, True)
                 time.sleep(2)
                 accounts_main_page.set_id(self.id)
                 time.sleep(2)

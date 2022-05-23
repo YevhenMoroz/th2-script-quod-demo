@@ -8,10 +8,8 @@ class RoutesStrategyTypeSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def set_strategy_type_at_strategy_type_tab(self, value: tuple):
-        result = tuple(self.set_checkbox_list(RoutesConstants.CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH, value))
-        for item in range(len(result)):
-            self.find_by_xpath(result[item]).click()
+    def set_strategy_type_at_strategy_type_tab(self, value: list):
+        self.set_checkbox_list(RoutesConstants.CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH, value)
 
     def set_default_scenario_at_strategy_type_tab(self, value):
         self.set_combobox_value(RoutesConstants.DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH, value)

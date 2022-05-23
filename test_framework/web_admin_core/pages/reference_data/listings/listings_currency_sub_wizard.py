@@ -31,20 +31,9 @@ class ListingsCurrencySubWizard(CommonPage):
     def get_quote_currency(self):
         return self.get_text_by_xpath(ListingsConstants.CURRENCY_TAB_QUOTE_CURRENCY_XPATH)
 
-    def set_instr_currency(self, value):
-        self.set_combobox_value(ListingsConstants.CURRENCY_TAB_INSTR_CURRENCY_XPATH, value)
-
-    def get_instr_currency(self):
-        return self.get_text_by_xpath(ListingsConstants.CURRENCY_TAB_INSTR_CURRENCY_XPATH)
-
     def set_strike_currency(self, value):
         self.set_combobox_value(ListingsConstants.CURRENCY_TAB_STRIKE_CURRENCY_XPATH, value)
 
     def get_strike_currency(self):
         return self.get_text_by_xpath(ListingsConstants.CURRENCY_TAB_STRIKE_CURRENCY_XPATH)
 
-    def set_quote_currency(self, value):
-        self.set_combobox_value(ListingsConstants.CURRENCY_TAB_QUOTE_CURRENCY_XPATH, value)
-
-    def get_quote_currency(self):
-        return self.get_text_by_xpath(ListingsConstants.CURRENCY_TAB_QUOTE_CURRENCY_XPATH)
