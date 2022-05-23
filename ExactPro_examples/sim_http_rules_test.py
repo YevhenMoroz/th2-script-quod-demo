@@ -1,6 +1,6 @@
 import grpc
 from google.protobuf.empty_pb2 import Empty
-from th2_grpc_sim_http.sim_template_pb2 import TemplateHttpLogonRule, TemplateHttpAnswerRule, PartySettlement1, \
+from th2_grpc_sim_http_quod.sim_template_pb2 import TemplateHttpLogonRule, TemplateHttpAnswerRule, PartySettlement1, \
     PartySettlement2, SettlementInstructions1, SettlementInstructions2, TemplateDeleteRule
 from th2_grpc_sim import sim_pb2_grpc as core_http
 from stubs import Stubs
@@ -12,6 +12,7 @@ from th2_grpc_sim.sim_pb2 import *
 simulator = Stubs.simulator_http
 coreHttp = core_http.SimStub(grpc.insecure_channel("10.0.22.22:31123"))
 
+#region rules
 Logon = simulator.createHttpLogonRule(request=TemplateHttpLogonRule(connection_id=ConnectionID(session_alias='http-server')))
 Delete = simulator.createDeleteRule(request=TemplateDeleteRule(connection_id=ConnectionID(session_alias='http-server')))
 
@@ -60,7 +61,7 @@ Answer = simulator.createHttpAnswerRule(
                                                                                          InstitutionBIC="OMGOUS33XXX"
                                                                                          )),
     ))
-
+#endregion
 
 
 
@@ -70,9 +71,9 @@ print(running_rules, "Rules running:", len(running_rules))
 input()
 
 # remove rules
-coreHttp.removeRule(Logon)
-coreHttp.removeRule(Answer)
-coreHttp.removeRule(Delete)
+# coreHttp.removeRule(Logon)
+# coreHttp.removeRule(Answer)
+# coreHttp.removeRule(Delete)
 
 # for i in range(3, 10):
 #     coreHttp.removeRule(RuleID(id=i))
