@@ -44,7 +44,7 @@ class UsersConstants:
     LAST_NAME_AT_MAIN_PAGE = "//*[@col-id='lastName']//*[@class='ag-group-value']"
     EXT_ID_CLIENT_AT_MAIN_PAGE = "//*[@col-id='clientUserID']//*[@class='ag-group-value']"
     EXT_ID_VENUE_AT_MAIN_PAGE = "//*[@col-id='venueUserID']//*[@class='ag-group-value']"
-    PASSWORD_EXPIRY_DATE_AT_MAIN_PAGE = "//*[@col-id='passwdExpiryDate_ext'][@class='ag-cell ag-cell-not-inline-editing ag-cell-with-height ag-cell-value']"
+    PASSWORD_EXPIRY_DATE_AT_MAIN_PAGE = "//div[@col-id='passwdExpiryDate_ext'][span]/span"
     FIRST_LOGIN_AT_MAIN_PAGE = "//*[@col-id='firstTimeLogin']//*[@class='custom-checkbox']"
     PING_AT_MAIN_PAGE = "//*[@col-id='pingRequired']//*[@class='custom-checkbox']"
     ADDRESS_AT_MAIN_PAGE = "//*[@col-id='address']//*[@class='ag-group-value']"

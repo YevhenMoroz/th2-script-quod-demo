@@ -18,15 +18,15 @@ class QAP_6491(CommonTestCase):
         self.password = "User_Ret2"
 
     def precondition(self):
-        login_page = LoginPage(self.appium_driver)
-        login_page.login_to_mobile_trading(self.email, self.password)
         time.sleep(2)
-        main_page = MainPage(self.appium_driver)
-        main_page.click_on_create_new_order()
 
     def test_context(self):
         try:
-            self.precondition()
+            #self.precondition()
+            login_page = LoginPage(self.appium_driver)
+            login_page.login_to_mobile_trading(self.email, self.password)
+            time.sleep(2)
+            self.verify("Authentication Failure", )
             self.verify("Login successful", True, True)
 
         except Exception as e:

@@ -54,7 +54,9 @@ class QAP_1582(CommonTestCase):
         general_block_wizard.set_value_at_sub_wizard("333")
         general_block_wizard.click_on_checkmark_button()
         general_block_wizard.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
+        time.sleep(2)
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)
         main_menu.set_enabled_at_filter_field("true")
@@ -86,6 +88,7 @@ class QAP_1582(CommonTestCase):
             finally:
                 time.sleep(1)
                 strategies_wizard.click_on_close_button()
+                time.sleep(2)
                 main_menu.set_name_at_filter_field(self.name)
                 time.sleep(2)
                 main_menu.set_enabled_at_filter_field("true")

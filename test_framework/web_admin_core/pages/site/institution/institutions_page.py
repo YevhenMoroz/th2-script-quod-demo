@@ -80,7 +80,7 @@ class InstitutionsPage(CommonPage):
         self.select_value_from_dropdown_list(InstitutionsConstants.MAIN_PAGE_ENABLED_FILTER_XPATH, value)
 
     def is_enable_disable_toggle_enabled(self):
-        return self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).is_enabled()
+        return True if "true" in self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).get_attribute("aria-checked") else False
 
     def is_searched_instrument_found(self, value):
         return self.is_element_present(InstitutionsConstants.DISPLAYED_USER_XPATH.format(value))

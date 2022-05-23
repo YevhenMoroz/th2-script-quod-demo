@@ -47,10 +47,10 @@ class QAP_6278(CommonTestCase):
         time.sleep(2)
         routes_tab.set_route_account_name(self.acc_route_name)
         routes_tab.set_route(self.route)
-        time.sleep(2)
         routes_tab.click_create_entity_button()
 
         wizard.click_save_button()
+        time.sleep(2)
 
     def test_context(self):
         try:
@@ -58,11 +58,9 @@ class QAP_6278(CommonTestCase):
 
             main_page = AccountsPage(self.web_driver_container)
 
-            main_page.load_account_from_global_filter(self.id)
+            main_page.set_id(self.id)
+            time.sleep(2)
             self.verify("Account was found by Name", self.id, main_page.get_id_grid_value())
-
-            main_page.load_account_from_global_filter(self.acc_route_name)
-            self.verify("Account was found by Route", self.id, main_page.get_id_grid_value())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
