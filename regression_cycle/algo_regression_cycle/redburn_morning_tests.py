@@ -42,7 +42,6 @@ def test_run():
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         #region Calums venues
-
         #AMSTERDAM
         MOO_AMS.execute(report_id)
         MOC_AMS.execute(report_id)

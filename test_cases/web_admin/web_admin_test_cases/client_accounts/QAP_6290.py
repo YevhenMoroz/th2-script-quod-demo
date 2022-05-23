@@ -57,20 +57,16 @@ class QAP_6290(CommonTestCase):
 
         wizard_page = ClientsWizard(self.web_driver_container)
         wizard_page.click_on_save_changes()
+        time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
 
             page = ClientsPage(self.web_driver_container)
-            try:
-                time.sleep(2)
-                page.set_name(self.name)
-                self.verify("Created account found", self.name, page.get_client_name())
-
-            except:
-                page.load_client_from_global_filter(self.name)
-                self.verify("Created account found", self.name, page.get_client_name())
+            page.set_name(self.name)
+            time.sleep(2)
+            self.verify("Created account found", self.name, page.get_client_name())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

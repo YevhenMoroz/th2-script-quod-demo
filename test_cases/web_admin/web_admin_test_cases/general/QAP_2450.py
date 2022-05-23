@@ -39,14 +39,14 @@ class QAP_2450(CommonTestCase):
         system_commands_page.click_on_checkmark()
         time.sleep(2)
         system_commands_page.click_on_send()
-        time.sleep(10)
+        time.sleep(30)
 
     def test_context(self):
 
         try:
             self.precondition()
             system_commands_page = SystemCommandsPage(self.web_driver_container)
-            self.verify("That row not exist", True, system_commands_page.is_error_displayed())
+            self.verify("Error message is displayed", True, system_commands_page.is_error_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

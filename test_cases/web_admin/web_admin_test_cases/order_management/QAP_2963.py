@@ -53,10 +53,11 @@ class QAP_2963(CommonTestCase):
         dark_block.set_value(self.value)
         dark_block.click_on_checkmark_button()
         dark_block.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
-        time.sleep(3)
+        time.sleep(2)
         main_menu.set_name_at_filter_field(self.name)
-        time.sleep(3)
+        time.sleep(1)
         main_menu.click_on_more_actions()
         main_menu.click_on_edit_at_more_actions()
 
@@ -72,7 +73,7 @@ class QAP_2963(CommonTestCase):
                         actual_parameter_and_value_at_dark_block)
             strategies_wizard.click_on_save_changes()
             main_menu.set_name_at_filter_field(self.name)
-            time.sleep(3)
+            time.sleep(1)
             main_menu.click_on_enable_disable_button()
             main_menu.click_on_ok_button()
         except Exception:

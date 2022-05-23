@@ -27,6 +27,7 @@ class QAP_2225(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.venue = self.data_set.get_venue_by_name("venue_1")
@@ -50,6 +51,7 @@ class QAP_2225(CommonTestCase):
         values_sub_wizard.set_id(self.id)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         assignments_sub_wizard.set_desk(self.desk)
@@ -91,8 +93,6 @@ class QAP_2225(CommonTestCase):
             main_page.click_on_more_actions()
             time.sleep(2)
             main_page.click_on_edit()
-            time.sleep(2)
-            venues_sub_wizard.set_venue_client_name(self.venue_client_name)
             time.sleep(2)
 
             self.verify("Venue is delete", False,

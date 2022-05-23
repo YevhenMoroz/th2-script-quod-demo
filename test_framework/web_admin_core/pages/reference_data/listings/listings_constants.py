@@ -59,18 +59,18 @@ class ListingsConstants:
     VALUES_TAB_INSTR_SETTL_DATE_XPATH = '//*[@formcontrolname="instrSettlDate"]'
 
     # Translation tab
-    TRANSLATION_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Translation "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-plus"]'
-    TRANSLATION_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Translation "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-checkmark"]'
-    TRANSLATION_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Translation "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-close"]'
-    TRANSLATION_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Translation "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-edit"]'
-    TRANSLATION_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Translation "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-trash"]'
+    TRANSLATION_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
+    TRANSLATION_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="checkmark"]'
+    TRANSLATION_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="close""]'
+    TRANSLATION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="edit"]'
+    TRANSLATION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="trash-2"]'
 
     TRANSLATION_TAB_LANGUAGE_FILTER_XPATH = '//*[@class="lang ng2-smart-th ng-star-inserted"]//input'
     TRANSLATION_TAB_LANGUAGE_XPATH = '//*[@placeholder="Language *"]'
     TRANSLATION_TAB_NAME_FILTER_XPATH = '//*[@class="langListingGroupName ng2-smart-th ng-star-inserted"]//input'
     TRANSLATION_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
     TRANSLATION_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="listingGroupDesc ng2-smart-th ng-star-inserted"]//input'
-    TRANSLATION_TAB_DESCRIPTION_XPATH = '//*[@placeholder="Description"]'
+    TRANSLATION_TAB_DESCRIPTION_XPATH = '//*[@placeholder="Description *"]'
 
     # Attachment tab
     ATTACHMENT_TAB_VENUE_XPATH = '//*[@id="venue"]'
@@ -90,7 +90,7 @@ class ListingsConstants:
     DARK_ALGO_COM_PER_UNIT_COMM_AMT_XPATH = '//*[@id="darkAlgoPerUnitCommAmt"]'
     DARK_ALGO_COM_COMM_BASIS_POINT_XPATH = '//*[@id="darkAlgoCommBasisPoints"]'
     DARK_ALGO_COM_SPREAD_DISCOUNT_PROPORTION_XPATH = '//*[@id="darkAlgoSpreadDiscount"]'
-    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//label'
+    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//span[1]'
 
     # Market Data
     MARKET_DATA_TAB_SOURCE_XPATH = '//*[@formcontrolname="MDSource"]'

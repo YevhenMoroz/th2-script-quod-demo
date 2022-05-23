@@ -426,8 +426,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == '2':
+        if new_order_single.get_parameter('OrdType') != '1' or new_order_single.get_parameter('OrdType') != '3':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == '3' or new_order_single.get_parameter('OrdType') == '4':
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(

@@ -184,36 +184,36 @@ class VenuesConstants:
 
     # --Routing param groups sub tab--
 
-    ROUTING_PARAM_GROUPS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Routing Param Groups "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    ROUTING_PARAM_GROUPS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Routing Param Groups "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    ROUTING_PARAM_GROUPS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Routing Param Groups "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    ROUTING_PARAM_GROUPS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Routing Param Groups "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    ROUTING_PARAM_GROUPS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Routing Param Groups "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    ROUTING_PARAM_GROUPS_TAB_PLUS_BUTTON_XPATH = '(//app-inline-table//*[@nbtooltip="Add"])[1]'
+    ROUTING_PARAM_GROUPS_TAB_CHECKMARK_BUTTON_XPATH = '//app-inline-table[1]//*[@data-name="checkmark"]'
+    ROUTING_PARAM_GROUPS_TAB_CLOSE_BUTTON_XPATH = '//app-inline-table[1]//*[@data-name="close"]'
+    ROUTING_PARAM_GROUPS_TAB_EDIT_BUTTON_XPATH = '//app-inline-table[1]//*[@data-name="edit"]'
+    ROUTING_PARAM_GROUPS_TAB_DELETE_BUTTON_XPATH = '//app-inline-table[1]//*[@data-name="trash-2"]'
 
     ROUTING_PARAM_GROUPS_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
-    ROUTING_PARAM_GROUPS_TAB_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th routingParamGroupName ng-star-inserted"]//input'
+    ROUTING_PARAM_GROUPS_TAB_NAME_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[1]'
     ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH = '//*[text()="Positive Routes *"]'
-    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH = '//*[@class="ng2-smart-th positiveRoute_ext ng-star-inserted"]//input'
+    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[2]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *"]'
-    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '//*[@class="negativeRoute_ext ng2-smart-th ng-star-inserted"]//input'
+    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[3]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH = "//*[@class='cdk-overlay-pane']//*[text()='{}']"
-    CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[2]'
-    CREATED_POSITIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[3]'
-    CREATED_NEGATIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[1]//td[4]'
+    CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[normalize-space(text()) = "Routing Param Groups"]//following::td[2]//span'
+    CREATED_POSITIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[normalize-space(text()) = "Routing Param Groups"]//following::td[3]//span'
+    CREATED_NEGATIVE_ROUTES_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[normalize-space(text()) = "Routing Param Groups"]//following::td[4]//span'
 
     # --Routing parameters tab--
-    ROUTING_PARAMETERS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    ROUTING_PARAMETERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    ROUTING_PARAMETERS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    ROUTING_PARAMETERS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    ROUTING_PARAMETERS_TAB_PLUS_DELETE_BUTTON_XPATH = '//*[text()="Parameters"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    ROUTING_PARAMETERS_TAB_PLUS_BUTTON_XPATH = '(//app-inline-table//*[@nbtooltip="Add"])[2]'
+    ROUTING_PARAMETERS_TAB_CHECKMARK_BUTTON_XPATH = '//app-inline-table[2]//*[@data-name="checkmark"]'
+    ROUTING_PARAMETERS_TAB_CLOSE_BUTTON_XPATH = '//app-inline-table[2]//*[@data-name="close"]'
+    ROUTING_PARAMETERS_TAB_EDIT_BUTTON_XPATH = '//app-inline-table[2]//*[@data-name="edit"]'
+    ROUTING_PARAMETERS_TAB_PLUS_DELETE_BUTTON_XPATH = '//app-inline-table[2]//*[@data-name="trash-2"]'
 
     ROUTING_PARAMETERS_TAB_PARAMETER_XPATH = '//*[@placeholder="Parameter *"]'
-    ROUTING_PARAMETERS_TAB_PARAMETER_FILTER_XPATH = '//*[@class="customParam ng2-smart-th ng-star-inserted"]//input'
+    ROUTING_PARAMETERS_TAB_PARAMETER_FILTER_XPATH = '(//*[normalize-space(text()) = "Parameters"]//following::tr[2]//*[@placeholder="Filter"])[1]'
     ROUTING_PARAMETERS_TAB_VALUE_XPATH = '//*[@placeholder="Value *"]'
-    ROUTING_PARAMETERS_TAB_VALUE_FILTER_XPATH = '//*[@class="customParamValue ng2-smart-th ng-star-inserted"]//input'
-    CREATED_PARAMETER_ROUTING_PARAMETERS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[2]//td[2]'
-    CREATED_VALUE_ROUTING_PARAM_GROUPS_TAB_XPATH = '(//*[@class="venue-routing-param-group-settings"]//tbody)[2]//td[3]'
+    ROUTING_PARAMETERS_TAB_VALUE_FILTER_XPATH = '(//*[normalize-space(text()) = "Parameters"]//following::tr[2]//*[@placeholder="Filter"])[2]'
+    CREATED_PARAMETER_ROUTING_PARAMETERS_TAB_XPATH = '//*[contains(text(), "Parameters")]//following::td[2]//span'
+    CREATED_VALUE_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[contains(text(), "Parameters")]//following::td[3]//span'
 
     # --Spport feed types tab--
     SUPPORT_FEED_TYPES_TAB_STATUS_CHECKBOX_XPATH = '//*[@formcontrolname="supportStatus"]//input'

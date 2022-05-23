@@ -51,32 +51,34 @@ class QAP_1737(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.symbol = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
+        self.symbol = 'QAP1737'
+        self.new_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = 'QAP1737'
         self.instr_symbol = 'ASC'
         self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.security_exchange = 'CHIX'
         self.settle_type = ['Cash', 'Future']
-        self.strike_price = [random.randint(1, 11) for _ in range(2)]
+        self.strike_price = [str(random.randint(1, 11)) for _ in range(2)]
         self.language = ['Afar', 'German']
         self.language_description = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
                                      for _ in range(2)]
         self.venue = self.data_set.get_venue_by_name("venue_3")
         self.sub_venue = ['Forward', 'QAP_Test160']
         self.currency = self.data_set.get_currency_by_name("currency_1")
-        self.base_currency = ['AED', 'ZAR']
-        self.per_unit_comm_amt = [random.randint(1, 11) for _ in range(2)]
+        self.instr_currency = ['AED', 'ZAR']
+        self.per_unit_comm_amt = [str(random.randint(1, 11)) for _ in range(2)]
         self.quote_book_symbol = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
                                   for _ in range(2)]
         self.security_id = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
         self.security_id_source = ['Belgian', 'Dutch']
-        self.tick_denominator = [random.randint(1, 11) for _ in range(2)]
-        self.contract_multiplier = [random.randint(1, 11) for _ in range(2)]
-        self.min_trade_vol = [random.randint(1, 11) for _ in range(2)]
+        self.tick_denominator = [str(random.randint(1, 11)) for _ in range(2)]
+        self.contract_multiplier = [str(random.randint(1, 11)) for _ in range(2)]
+        self.min_trade_vol = [str(random.randint(1, 11)) for _ in range(2)]
         self.trading_phase = ["200", "210"]
         self.misk_0 = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
                        for _ in range(2)]
         self.counterpart = ['TCOther', 'TC Counterpart']
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -86,17 +88,18 @@ class QAP_1737(CommonTestCase):
         side_menu.open_listings_page()
         time.sleep(2)
         main_page = ListingsPage(self.web_driver_container)
-        main_page.set_listing_in_global_filter(self.lookup_symbol)
+        main_page.load_client_from_global_filter(self.lookup_symbol)
         time.sleep(2)
 
         if not main_page.is_searched_listing_found(self.lookup_symbol):
             main_page.click_on_new()
             time.sleep(2)
             values_tab = ListingsValuesSubWizard(self.web_driver_container)
-            values_tab.set_symbol(self.symbol[0])
+            values_tab.set_symbol(self.symbol)
             values_tab.set_lookup_symbol(self.lookup_symbol)
             values_tab.set_instr_symbol(self.instr_symbol)
             values_tab.set_instr_type(self.instr_type)
+            values_tab.set_security_exchange(self.security_exchange)
             values_tab.set_settl_type(self.settle_type[0])
             values_tab.set_strike_price(self.strike_price[0])
             
@@ -112,7 +115,7 @@ class QAP_1737(CommonTestCase):
 
             currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
             currency_tab.set_currency(self.currency)
-            currency_tab.set_base_currency(self.base_currency[0])
+            currency_tab.set_instr_currency(self.instr_currency[0])
 
             dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
             dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt[0])
@@ -153,6 +156,8 @@ class QAP_1737(CommonTestCase):
             wizard = ListingsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(2)
+            main_page.load_client_from_global_filter(self.lookup_symbol)
+            time.sleep(2)
 
         main_page.click_on_more_actions()
         time.sleep(1)
@@ -161,7 +166,7 @@ class QAP_1737(CommonTestCase):
 
     def post_conditions(self):
         values_tab = ListingsValuesSubWizard(self.web_driver_container)
-        values_tab.set_symbol(self.symbol[0])
+        values_tab.set_symbol(self.symbol)
         values_tab.set_settl_type(self.settle_type[0])
         values_tab.set_strike_price(self.strike_price[0])
 
@@ -174,7 +179,7 @@ class QAP_1737(CommonTestCase):
         attachment_tab.set_sub_venue(self.sub_venue[0])
 
         currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-        currency_tab.set_base_currency(self.base_currency[0])
+        currency_tab.set_instr_currency(self.instr_currency[0])
 
         dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
         dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt[0])
@@ -222,7 +227,7 @@ class QAP_1737(CommonTestCase):
             self.precondition()
 
             values_tab = ListingsValuesSubWizard(self.web_driver_container)
-            values_tab.set_symbol(self.symbol[1])
+            values_tab.set_symbol(self.new_symbol)
             values_tab.set_settl_type(self.settle_type[1])
             values_tab.set_strike_price(self.strike_price[1])
 
@@ -236,7 +241,7 @@ class QAP_1737(CommonTestCase):
             attachment_tab.set_sub_venue(self.sub_venue[1])
 
             currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-            currency_tab.set_base_currency(self.base_currency[1])
+            currency_tab.set_instr_currency(self.instr_currency[1])
 
             dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
             dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt[1])
@@ -291,7 +296,7 @@ class QAP_1737(CommonTestCase):
             actual_result = [values_tab.get_symbol(), values_tab.get_settl_type(),
                              values_tab.get_strike_price(), translation_tab.get_language(),
                              translation_tab.get_description(), attachment_tab.get_sub_venue(),
-                             currency_tab.get_base_currency(), dark_algo_commission_tab.get_per_unit_comm_amt(),
+                             currency_tab.get_instr_currency(), dark_algo_commission_tab.get_per_unit_comm_amt(),
                              market_data_tab.get_quote_book_symbol(), market_identifiers_tab.get_security_id(),
                              market_identifiers_tab.get_security_id_source(), format_tab.get_tick_denominator(),
                              feature_tab.get_contract_multiplier(), feature_tab.is_async_indicator_checked(),
@@ -300,11 +305,11 @@ class QAP_1737(CommonTestCase):
                              misc_tab.get_misc_0(), counterpart_tab.get_counterpart(),
                              fee_type_exemption.is_levy_fee_exemption()]
 
-            excepted_result = [self.symbol[1], self.settle_type[1], self.strike_price[1], self.language[1],
-                               self.language_description[1], self.sub_venue[1], self.base_currency[1],
+            excepted_result = [self.new_symbol, self.settle_type[1], self.strike_price[1], self.language[1],
+                               self.language_description[1], self.sub_venue[1], self.instr_currency[1],
                                self.per_unit_comm_amt[1], self.quote_book_symbol[1], self.security_id[1],
                                self.security_id_source[1], self.tick_denominator[1], self.contract_multiplier[1],
-                               False, False, self.min_trade_vol[1], self.trading_phase[1], False, self.misk_0[1],
+                               True, True, self.min_trade_vol[1], self.trading_phase[1], False, self.misk_0[1],
                                self.counterpart[1], False]
 
             self.verify("Edit data is correct", actual_result, excepted_result)

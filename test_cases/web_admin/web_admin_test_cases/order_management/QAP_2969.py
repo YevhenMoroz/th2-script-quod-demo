@@ -63,6 +63,7 @@ class QAP_2969(CommonTestCase):
             expected_parameter_at_dark_block = "TestSuperStrategy1"
             self.verify("Saved dark broker strategy", expected_parameter_at_dark_block, dark_block.get_value())
             dark_block.click_on_go_back_button()
+            time.sleep(2)
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
@@ -72,6 +73,7 @@ class QAP_2969(CommonTestCase):
             expected_parameter_at_lit_general_block = "test1582"
             self.verify("Saved Broker Strategy", expected_parameter_at_lit_general_block, lit_general.get_value())
             lit_general.click_on_go_back_button()
+            time.sleep(2)
             expected_parameter_and_value_at_dark_block = ["DarkOpeningBrokerStrategy: ",
                                                           expected_parameter_at_dark_block]
             actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),

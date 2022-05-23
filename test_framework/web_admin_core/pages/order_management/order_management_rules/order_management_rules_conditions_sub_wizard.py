@@ -78,12 +78,12 @@ class OrderManagementRulesConditionsSubWizard(CommonPage):
         self.set_combobox_value(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_RIGHT_SIDE_XPATH, value)
         time.sleep(1)
 
-    def set_right_side_list_at_conditional_logic(self, value):
-        self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH).click()
+    def set_right_side_list_at_conditional_logic(self, value: list):
+        self.find_by_xpath(OrderManagementRulesConstants
+                           .CONDITIONS_TAB_CONDITIONAL_LOGIC_SELECTION_FIELD_FOR_IN_NOT_IN_LOGIC_XPATH).click()
         time.sleep(1)
-        self.select_value_from_dropdown_list(OrderManagementRulesConstants
-                                             .CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH
-                                             .format(value))
+        self.set_checkbox_list(OrderManagementRulesConstants
+                               .CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_LIST_OF_ENTITY_XPATH, value)
 
     def click_on_left_side(self):
         self.find_by_xpath(OrderManagementRulesConstants.CONDITIONS_TAB_CONDITIONAL_LOGIC_LEFT_SIDE_XPATH).click()

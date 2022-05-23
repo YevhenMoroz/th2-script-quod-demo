@@ -21,13 +21,12 @@ class QAP_5842(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        #TODO:change logic of path_to_file, it must be suitable
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.user_id = self.data_set.get_user("user_4")
-        self.new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_password = 'Qwe!'.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
-        self.path_to_file = f'{ROOT_DIR}\\test_cases\\web_admin\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
 
     def read_password_from_file(self):
         try:
@@ -90,17 +89,18 @@ class QAP_5842(CommonTestCase):
         try:
             self.precondition()
             common_page = CommonPage(self.web_driver_container)
-            users_page = UsersPage(self.web_driver_container)
             login_page = LoginPage(self.web_driver_container)
             common_page.set_old_password_at_login_page(self.current_password)
             common_page.set_new_password_at_login_page(self.new_password)
+            common_page.set_confirm_new_password(self.new_password)
+            common_page.click_on_change_password()
+            time.sleep(2)
+            common_page.click_on_back()
             time.sleep(1)
-            users_page.click_on_ok()
-            self.write_password_in_file()
-            time.sleep(4)
             login_page.login_to_web_admin(self.user_id, self.new_password)
             time.sleep(2)
             self.verify("User password edited correctly", True, True)
+            self.write_password_in_file()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

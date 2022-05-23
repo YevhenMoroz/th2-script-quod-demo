@@ -218,7 +218,7 @@ class BaseMiddleOffice(BaseWindow):
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
         if exchange_rate is not None:
-            settlement_details.set_settlement_amount(exchange_rate)
+            settlement_details.set_exchange_rate(exchange_rate)
         if exchange_rate_calc is not None:
             settlement_details.set_exchange_rate_calc(exchange_rate_calc)
         if pset:
