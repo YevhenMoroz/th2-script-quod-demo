@@ -42,6 +42,24 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_6 = dict(
+        Symbol='FR0000121220',
+        SecurityID='FR0000121220',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_7 = dict(
+        Symbol='ORp',
+        SecurityID='FR0000120321',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -53,6 +71,7 @@ class AlgoClients(Enum):
     client_1 = "CLIENT1"
     client_2 = "CLIENT2"
     client_3 = "CLIENT3"
+    client_4 = "KEPLER"
 
 
 class AlgoAccounts(Enum):
@@ -62,6 +81,10 @@ class AlgoAccounts(Enum):
     account_4 = "TRQX_CLIENT1"
     account_5 = "TRQX_CLIENT2"
     account_6 = "TRQX_CLIENT3"
+    account_7 = "BATSDARK_KEPLER"
+    account_8 = "CHIXDELTA_KEPLER"
+    account_9 = "KEPLER"
+    account_10 = "TQDARK_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -83,11 +106,30 @@ class AlgoMic(Enum):
     mic_1 = "XPAR"
     mic_2 = "TRQX"
     mic_3 = "XLON"
+    mic_4 = "BATD" # BATS DARKPOOL UK
+    mic_5 = "CHID" # CHIX DARKPOOL UK
+    mic_6 = "CEUD"  # CBOE DARKPOOL EU
+    mic_7 = "XPOS" # ITG
+    mic_8 = "TQEM" # TURQUOISE DARKPOOL EU
+    mic_9 = "TRQM" # TURQUIOSE DARKPOOL UK
+
+
 
 class AlgoListingId(Enum):
     listing_1 = "1015"
     listing_2 = "734"
     listing_3 = "3416"
+    listing_4 = "2011151" # BATS DARKPOOL UK FR0000121220
+    listing_5 = "2001405" # CHIX DARKPOOL UK FR0000121220
+    listing_6 = "437810481"  # CBOE DARKPOOL EU FR0000121220
+    listing_7 = "438237397" # ITG FR0000121220
+    listing_8 = "459820485" # TURQUOISE DARKPOOL EU FR0000121220
+    listing_9 = "2012996" # BATS DARKPOOL UK FR0000120321
+    listing_10 = "2001595" # CHIX DARKPOOL UK FR0000120321
+    listing_11 = "437810538" # CBOE DARKPOOL EU FR0000120321
+    listing_12 = "" # ITG FR0000120321
+    listing_13 = "" # TURQUOISE DARKPOOL EU FR0000120321
+    listing_14 = "" # TURQUOISE DARKPOOL UK FR0000120321
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
