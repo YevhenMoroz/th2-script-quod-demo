@@ -6,11 +6,13 @@ from test_cases.fx.fx_mm_rfq import QAP_1537, QAP_1539, QAP_1540, QAP_1542, QAP_
     QAP_2992, QAP_3003, QAP_3005, QAP_3106, QAP_3108, \
     QAP_3109, QAP_3110, QAP_3111, QAP_3112, QAP_3113, QAP_3234, QAP_3409, QAP_3494, QAP_4085, \
     QAP_4228, QAP_4509, QAP_4510, QAP_3565, QAP_4223, QAP_4777, QAP_4748, QAP_2382, QAP_5345, QAP_3004, QAP_5848
+# from test_cases.fx.fx_mm_rfq.QAP_1542 import QAP_1542
 from test_cases.fx.fx_mm_rfq.QAP_2472 import QAP_2472
 from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
 from test_cases.fx.fx_mm_rfq.QAP_3250 import QAP_3250
 from test_cases.fx.fx_mm_rfq.QAP_3704 import QAP_3704
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3766 import QAP_3766
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_5992 import QAP_5992
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_6364 import QAP_6364
 
@@ -18,7 +20,7 @@ from test_cases.fx.fx_mm_rfq.QAP_7125 import QAP_7125
 from test_cases.fx.fx_mm_rfq.QAP_7126 import QAP_7126
 from test_cases.fx.fx_mm_rfq.QAP_7129 import QAP_7129
 from test_cases.fx.fx_mm_rfq.QAP_7130 import QAP_7130
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3766, QAP_3747, QAP_3734, QAP_3805, \
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3739, QAP_3689, QAP_3747, QAP_3734, QAP_3805, \
     QAP_3807, QAP_3850, QAP_3811, QAP_3851, QAP_3806
 from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
@@ -45,7 +47,7 @@ def test_run(parent_id=None):
     data_set = FxDataSet()
     configuration = ComponentConfiguration("RFQ_MM")
     report_id = bca.create_event('FX_MM_RFQ', parent_id)
-    session_id = set_session_id()
+    session_id = set_session_id(target_server_win="ostronov")
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     try:
 
@@ -75,7 +77,7 @@ def test_run(parent_id=None):
         # region Interpolation
         update_settings_and_restart_qs("Interpolation")
         QAP_3689.execute(report_id)
-        QAP_3766.execute(report_id)
+        QAP_3766(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3747.execute(report_id)
         QAP_3734.execute(report_id, session_id)
         QAP_3805.execute(report_id)
@@ -112,9 +114,9 @@ def test_run(parent_id=None):
         QAP_5345.execute(report_id)
 
         QAP_1537.execute(report_id, case_params)
-        QAP_1539.execute(report_id, session_id)
+
         QAP_1540.execute(report_id, case_params)
-        QAP_1542.execute(report_id, case_params)
+        # QAP_1542(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_1552.execute(report_id)
         QAP_1746.execute(report_id)
         QAP_1978.execute(report_id)
