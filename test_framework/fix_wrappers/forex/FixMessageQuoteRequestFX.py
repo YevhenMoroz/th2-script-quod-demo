@@ -159,3 +159,42 @@ class FixMessageQuoteRequestFX(FixMessage):
         }
         super().change_parameters(quote_request_params)
         return self
+
+    def set_early_redemption_params(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NumOfCompetitors": "1",
+            "InCompetition": "N",
+            "VenueType": "I",
+            "NoRelatedSym": [{
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SymbolSfx": "SD/CD",
+                    "SecurityType": "FOR",
+                    "Product": "4"
+                },
+                "NoPartyIDs": [
+                    {
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
+                        "PartyIDSource": "D",
+                        "PartyRole": "1"
+                    },
+                    {
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
+                        "PartyIDSource": "D",
+                        "PartyRole": "3"
+                    }
+                ],
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlDate2": self.get_data_set().get_settle_date_by_name("wk2"),
+                "Side": "2",
+                "Price": "1.18153",
+                "OrderQty": "1000000",
+                "OrderQty2": "1000000",
+                "QuoteRequestType": "100",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
+        return self
