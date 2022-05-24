@@ -93,6 +93,14 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="mp_dark" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
             </components>
         </product_line>
         <product_line name="fx" run="False">
