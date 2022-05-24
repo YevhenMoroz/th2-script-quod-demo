@@ -41,9 +41,8 @@ class QAP_2960(CommonTestCase):
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        time.sleep(1)
+        time.sleep(2)
         strategies_wizard.set_name(self.name)
-        time.sleep(1)
         strategies_wizard.set_user(self.user)
         strategies_wizard.set_strategy_type(self.strategy_type)
         time.sleep(1)
@@ -54,6 +53,7 @@ class QAP_2960(CommonTestCase):
         dark_block.set_value_by_dropdown_list_at_sub_wizard(self.value)
         dark_block.click_on_checkmark_button()
         dark_block.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(1)
@@ -71,10 +71,12 @@ class QAP_2960(CommonTestCase):
             self.verify("After saved at Dark block", expected_parameter_and_value_at_dark_block,
                         actual_parameter_and_value_at_dark_block)
             strategies_wizard.click_on_save_changes()
+            time.sleep(2)
             main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             main_menu.click_on_enable_disable_button()
+            time.sleep(1)
             main_menu.click_on_ok_button()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

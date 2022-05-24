@@ -31,7 +31,7 @@ class CaseParamsSellRfq:
     quotes_sequence_params=None
 
     def __init__(self, client, case_id, side: str = '', leg1_side: str = '', leg2_side: str = '',
-                 leg1_ordqty='', leg2_ordqty='',
+                 leg1_ordqty='', leg2_ordqty='', orderqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, leg1_settltype=0, leg2_settltype=0, settldate='', leg1_settldate='',
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',

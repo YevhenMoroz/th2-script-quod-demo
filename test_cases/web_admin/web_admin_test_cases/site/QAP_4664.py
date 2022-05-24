@@ -7,6 +7,7 @@ import string
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
 from test_framework.web_admin_core.pages.site.institution.institutions_wizard import InstitutionsWizard
 from test_framework.web_admin_core.pages.site.institution.institution_values_sub_wizard \
@@ -83,29 +84,29 @@ class QAP_4664(CommonTestCase):
             self.verify("Cloned Instrument is created and displayed", True,
                         main_page.is_searched_instrument_found(self.new_institution_name))
 
-            main_page.click_on_enable_disable_button()
-            time.sleep(1)
-            self.verify("Instrument has been disable", False, main_page.is_enable_disable_toggle_enabled())
-            main_page.click_on_enable_disable_button()
-            time.sleep(1)
-            self.verify("Instrument has been enable", True, main_page.is_enable_disable_toggle_enabled())
-
             main_page.click_on_more_actions()
             time.sleep(1)
             main_page.click_on_edit()
             time.sleep(2)
             wizard.click_on_values_tab()
             time.sleep(1)
-            self.verify("Values tab is collapsed", False, value_tab.is_institution_name_field_displayed())
+            self.verify("Values tab is collapsed", False, value_tab.is_tab_collapsed())
 
+            common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_info_error_message_pop_up()
             wizard.click_on_close()
             time.sleep(1)
-            wizard.click_on_no_button()
+            wizard.click_on_ok_button()
             time.sleep(2)
             main_page.click_on_download_csv()
-            actual_result = True if self.new_institution_name in main_page.get_csv_context() else False
+            time.sleep(2)
+            actual_result = False
+            for i in main_page.get_csv_context():
+                if self.institution_name in i.values():
+                    actual_result = True
 
             self.verify("Download CSV button is worked", True, actual_result)
+            main_page.clear_download_directory()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

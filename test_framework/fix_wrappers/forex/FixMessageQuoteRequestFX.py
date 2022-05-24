@@ -149,8 +149,8 @@ class FixMessageQuoteRequestFX(FixMessage):
                         "PartyRole": "3"
                     }
                 ],
-                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
-                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk2"),
                 "Side": "2",
                 "DayCount": "30/360",
                 "OrderQty": "1000000",

@@ -14,6 +14,8 @@ from test_framework.web_admin_core.pages.reference_data.listings.listings_values
     ListingsValuesSubWizard
 from test_framework.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
+from test_framework.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+    ListingsCurrencySubWizard
 
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -32,6 +34,9 @@ class QAP_6299(CommonTestCase):
         self.symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = self.symbol + "1LS"
         self.inst_symbol = self.symbol + "2IS"
+        self.inst_type = "Bond"
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.currency = "AED"
 
         self.cost_per_trade = "10.1"
         self.per_unit_comm_amt = "12.2"
@@ -47,14 +52,20 @@ class QAP_6299(CommonTestCase):
         time.sleep(2)
         page = ListingsPage(self.web_driver_container)
         page.click_on_new()
+        time.sleep(2)
 
         listing_wizard_value = ListingsValuesSubWizard(self.web_driver_container)
         listing_wizard_value.set_symbol(self.symbol)
         listing_wizard_value.set_lookup_symbol(self.lookup_symbol)
         listing_wizard_value.set_instr_symbol(self.inst_symbol)
+        listing_wizard_value.set_instr_type(self.inst_type)
+        listing_wizard_value.set_security_exchange(self.security_exchange)
 
         listing_wizard_attachment = ListingsAttachmentSubWizard(self.web_driver_container)
         listing_wizard_attachment.set_venue(self.venue)
+
+        listing_wizard_currency = ListingsCurrencySubWizard(self.web_driver_container)
+        listing_wizard_currency.set_currency(self.currency)
 
         listing_wizard_dark = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
         listing_wizard_dark.set_cost_per_trade(self.cost_per_trade)

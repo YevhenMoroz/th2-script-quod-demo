@@ -53,6 +53,7 @@ class QAP_2961(CommonTestCase):
         lit_dark_block.set_value(self.value)
         lit_dark_block.click_on_checkmark_button()
         lit_dark_block.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)

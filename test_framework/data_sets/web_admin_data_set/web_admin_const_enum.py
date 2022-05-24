@@ -297,7 +297,7 @@ class WebAdminExecPolicy(Enum):
     exec_policy_2 = "DMA"
     exec_policy_3 = "ExternalCare"
     exec_policy_4 = "Algorithmic"
-    exec_policy_5 = "Sor"
+    exec_policy_5 = "SOR"
     exec_policy_6 = "ExternalAlgo"
 
 
