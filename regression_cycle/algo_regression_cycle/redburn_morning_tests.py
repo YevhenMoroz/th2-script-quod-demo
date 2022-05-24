@@ -67,9 +67,9 @@ def test_run():
         #LSE
         MOO_LSE.execute(report_id)
         MOC_LSE.execute(report_id)
-        #MADRID
-        MOO_MAD.execute(report_id)
-        MOC_MAD.execute(report_id)
+        # #MADRID
+        # MOO_MAD.execute(report_id)
+        # MOC_MAD.execute(report_id)
         #MILAN
         MOO_MIL.execute(report_id)
         MOC_MIL.execute(report_id)
