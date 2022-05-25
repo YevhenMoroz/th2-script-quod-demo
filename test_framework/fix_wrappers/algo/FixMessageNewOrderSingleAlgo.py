@@ -404,7 +404,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_6"),
             'TargetStrategy': '1010',
-            'ClientAlgoPolicyID': 'QA_MPDark',
+            'ClientAlgoPolicyID': 'QA_MPDark2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536'
         }
