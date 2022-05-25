@@ -77,10 +77,10 @@ class QAP_3524(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-side-319-kepler', self.account_chix, self.ex_destination_chix, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-side-319-kepler', self.account_bats, self.ex_destination_bats, self.price)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest('fix-buy-side-319-kepler', self.account_chix, self.ex_destination_chix, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest('fix-buy-side-319-kepler', self.account_bats, self.ex_destination_bats, True)
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
+        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         self.rule_list = [nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
         # endregion
 
