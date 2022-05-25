@@ -26,6 +26,7 @@ from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
 from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
 from test_cases.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
 
@@ -72,6 +73,8 @@ def test_run(parent_id=None):
         # region Manual Intervention
         update_settings_and_restart_qs("Manual Intervention")
         QAP_3721.execute(report_id)
+        QAP_6571(report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment).execute()
         # endregion
 
         # region Interpolation
