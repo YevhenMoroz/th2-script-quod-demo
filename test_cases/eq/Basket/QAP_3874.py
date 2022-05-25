@@ -3,7 +3,6 @@ import string
 import logging
 import time
 from pathlib import Path
-
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
