@@ -7,7 +7,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes, OmsMic, OmsVenueClientNames
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
@@ -44,9 +43,9 @@ class QAP_5587(TestCase):
         self.qty = self.message_list.get_parameters()["ListOrdGrp"]["NoOrders"][0]["OrderQtyData"]["OrderQty"]
         self.rule_manager = RuleManager(Simulators.equity)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.route = OmsRoutes.route_1.value
-        self.mic = OmsMic.mic_1.value
-        self.rule_client = OmsVenueClientNames.client_co_1_venue_1.value
+        self.route = self.data_set.get_route("route_1")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.rule_client = self.data_set.get_venue_client_names_by_name("client_co_1_venue_1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
