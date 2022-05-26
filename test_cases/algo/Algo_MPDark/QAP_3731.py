@@ -49,6 +49,7 @@ class QAP_3732(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
+        self.status_cancel_replace = Status.CancelReplace
         self.status_cancel = Status.Cancel
         # endregion
 
