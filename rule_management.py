@@ -12,7 +12,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason
+
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -354,6 +355,16 @@ class RuleManager:
                                                               account=account,
                                                               exdestination=ex_destination,
                                                               price=price
+                                                              ))
+
+    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject"):
+        return self.sim.createNewOrdSingleExecutionReportRejectWithReason(
+            request=TemplateNewOrdSingleExecutionReportRejectWithReason(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination,
+                                                              price=price,
+                                                              reason=reason,
+                                                              text=text
                                                               ))
 
     def add_fx_md_to(self, session: str):
