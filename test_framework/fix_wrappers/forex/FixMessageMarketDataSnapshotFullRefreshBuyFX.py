@@ -150,3 +150,107 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_md_for_deposit_and_loan_spot(self):
+        base_parameters = {
+            "MDReqID": "USD:SPO:REG:D3",
+            "Instrument": {
+                "Symbol": "USD",
+                "SecurityType": "FXSPOT"
+            },
+            "NoMDEntries": [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 0.1,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 0.1,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": tsd.spo(),
+                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_md_for_deposit_and_loan_fwd(self):
+        base_parameters = {
+            "MDReqID": "USD:FXF:WK1:D3",
+            "Instrument": {
+                "Symbol": "USD",
+                "SecurityType": "FXFWD"
+            },
+            "NoMDEntries": [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 0.04,
+                    "MDEntrySize": 1000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000001",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 0.05,
+                    "MDEntrySize": 1000000,
+                    "MDEntryPositionNo": 1,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000001",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 0.03,
+                    "MDEntrySize": 5000000,
+                    "MDEntryPositionNo": 2,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000002",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 0.06,
+                    "MDEntrySize": 5000000,
+                    "MDEntryPositionNo": 2,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000002",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 0.02,
+                    "MDEntrySize": 10000000,
+                    "MDEntryPositionNo": 3,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000003",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 0.07,
+                    "MDEntrySize": 10000000,
+                    "MDEntryPositionNo": 3,
+                    "MDQuoteType": 1,
+                    "MDEntryForwardPoints": "0.0000003",
+                    "SettlDate": wk1(),
+                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self

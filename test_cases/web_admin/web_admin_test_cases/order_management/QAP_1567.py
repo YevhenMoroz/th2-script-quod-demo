@@ -64,6 +64,7 @@ class QAP_1567(CommonTestCase):
         aggressive_lit_block.click_on_checkmark_at_actions_sub_wizard()
         aggressive_lit_block.click_on_checkmark_button()
         aggressive_lit_block.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
         time.sleep(2)
         main_menu.set_enabled_at_filter_field("true")
@@ -85,6 +86,7 @@ class QAP_1567(CommonTestCase):
         general_block.set_value_at_sub_wizard(self.new_value)
         general_block.click_on_checkmark_button()
         general_block.click_on_go_back_button()
+        time.sleep(2)
 
     def test_context(self):
         try:

@@ -14,7 +14,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     # region SINGLE
-    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
+                                         status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
         else:
@@ -73,7 +74,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # endregion
     # region SWAP
-    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX, status: Status):
+    def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX,
+                                       status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell_swap(new_order_single)
         else:
@@ -166,6 +168,45 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityIDSource="8",
             Product="4",
             SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
+    # endregion
+
+    # region DepositAndLoan
+    def set_params_from_deposit_and_loan(self, new_order_single: FixMessageNewOrderSingle,
+                                         status: Status = Status.Fill):
+        if status is Status.Fill:
+            self.__set_fill_deposit(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
+        return self
+
+    def __set_fill_deposit(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            Side=new_order_single.get_parameter('Side'),
+            SecondaryClOrdID=new_order_single.get_parameter('SecondaryClOrdID'),
+            OrdStatus='2',
+            TransactTime='*',
+            AvgPx='*',
+            ExecID='*',
+            LastPx='*',
+            OrderID='*',
+            LastMkt='XQFX',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='2',
+            LeavesQty=0,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            NoPartyIDs="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            Product="9"
         )
         super().update_fields_in_component("Instrument", instrument)
         return self

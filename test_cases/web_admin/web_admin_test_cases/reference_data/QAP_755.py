@@ -23,8 +23,9 @@ class QAP_755(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = self.data_set.get_venue_type("venue_type_1")
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -38,10 +39,9 @@ class QAP_755(CommonTestCase):
         time.sleep(2)
         description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
-        time.sleep(1)
         description_sub_wizard.set_id(self.id)
-        time.sleep(1)
         description_sub_wizard.set_type(self.type)
+        description_sub_wizard.set_client_venue_id(self.client_venue_id)
         time.sleep(1)
 
     def test_context(self):

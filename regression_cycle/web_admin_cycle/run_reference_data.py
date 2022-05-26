@@ -25,6 +25,9 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_4862 import QA
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_5815 import QAP_5815
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6298 import QAP_6298
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6299 import QAP_6299
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6426 import QAP_6426
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6427 import QAP_6427
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6428 import QAP_6428
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_6934 import QAP_6934
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_755 import QAP_755
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_756 import QAP_756
@@ -82,12 +85,8 @@ class ReferenceData:
                      environment=configuration.environment).run()
             QAP_1736(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
-            # TODO:
-            # В ТК не упоминается об проверки ПДФ выгрузки. Мне кажется кейс не совсем актуален.
-            # // Сделать вместо проверки ПДФ, сделать через эдит
             QAP_1737(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
-
             QAP_2154(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_2302(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -123,6 +122,12 @@ class ReferenceData:
             QAP_6299(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_6298(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6426(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6427(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6428(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_6934(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

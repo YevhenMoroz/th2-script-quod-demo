@@ -68,7 +68,6 @@ class QAP_4272(CommonTestCase):
         execution_strategies_lit_passive.set_parameter("Stat Market Share TimeHorizon")
         execution_strategies_lit_passive.set_value("22")
         execution_strategies_lit_passive.click_on_checkmark_button()
-        time.sleep(2)
         execution_strategies_lit_passive.click_on_go_back_button()
         time.sleep(2)
 
@@ -85,6 +84,7 @@ class QAP_4272(CommonTestCase):
             self.verify("Check that new entity at lit passive saved correctly",
                         expected_parameter_and_value_at_lit_passive_block,
                         actual_parameter_and_value_at_lit_passive_block)
+            time.sleep(2)
 
             execution_strategies_wizard.click_on_lit_general()
             execution_strategies_lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
@@ -93,7 +93,7 @@ class QAP_4272(CommonTestCase):
             execution_strategies_lit_general.set_value_by_dropdown_list_at_sub_wizard("Default")
             execution_strategies_lit_general.click_on_checkmark_button()
             execution_strategies_lit_general.click_on_go_back_button()
-
+            time.sleep(2)
             execution_strategies_wizard.click_on_lit_aggressive()
             execution_strategies_lit_aggressive = ExecutionStrategiesLitAggressiveSubWizard(self.web_driver_container)
             execution_strategies_lit_aggressive.click_on_plus_button()
@@ -101,7 +101,7 @@ class QAP_4272(CommonTestCase):
             execution_strategies_lit_aggressive.set_value_by_dropdown_list_at_sub_wizard("Daily")
             execution_strategies_lit_aggressive.click_on_checkmark_button()
             execution_strategies_lit_aggressive.click_on_go_back_button()
-
+            time.sleep(2)
             execution_strategies_wizard.click_on_lit_sweeping()
             execution_strategies_lit_sweeping = ExecutionStrategiesLitSweepingSubWizard(self.web_driver_container)
             execution_strategies_lit_sweeping.click_on_plus_button()
@@ -111,7 +111,8 @@ class QAP_4272(CommonTestCase):
             execution_strategies_lit_sweeping.click_on_go_back_button()
             time.sleep(2)
             execution_strategies_wizard.click_on_save_changes()
-            time.sleep(2)
+            side_menu = SideMenu(self.web_driver_container)
+            side_menu.wait_for_button_to_become_active()
             execution_strategies_main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             execution_strategies_main_menu.click_on_more_actions()

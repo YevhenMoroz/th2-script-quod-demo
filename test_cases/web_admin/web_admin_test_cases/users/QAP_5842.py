@@ -9,7 +9,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -21,13 +21,12 @@ class QAP_5842(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        #TODO:change logic of path_to_file, it must be suitable
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.user_id = self.data_set.get_user("user_4")
-        self.new_password = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_password = 'Qwe!'.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
-        self.path_to_file = f'{ROOT_DIR}\\test_cases\\web_admin\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
 
     def read_password_from_file(self):
         try:
@@ -62,7 +61,7 @@ class QAP_5842(CommonTestCase):
         time.sleep(1)
         users_page.click_on_edit_at_more_actions()
         time.sleep(2)
-        users_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+        users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         if not users_login_sub_wizard.is_first_time_login_checkbox_selected():
             time.sleep(1)
             users_login_sub_wizard.set_first_time_login_checkbox()
@@ -90,17 +89,18 @@ class QAP_5842(CommonTestCase):
         try:
             self.precondition()
             common_page = CommonPage(self.web_driver_container)
-            users_page = UsersPage(self.web_driver_container)
             login_page = LoginPage(self.web_driver_container)
             common_page.set_old_password_at_login_page(self.current_password)
             common_page.set_new_password_at_login_page(self.new_password)
+            common_page.set_confirm_new_password(self.new_password)
+            common_page.click_on_change_password()
+            time.sleep(2)
+            common_page.click_on_back()
             time.sleep(1)
-            users_page.click_on_ok()
-            self.write_password_in_file()
-            time.sleep(4)
             login_page.login_to_web_admin(self.user_id, self.new_password)
             time.sleep(2)
             self.verify("User password edited correctly", True, True)
+            self.write_password_in_file()
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

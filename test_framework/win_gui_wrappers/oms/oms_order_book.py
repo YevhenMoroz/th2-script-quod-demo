@@ -64,6 +64,7 @@ class OMSOrderBook(BaseOrderBook):
         self.add_to_basket_call = Stubs.win_act_order_book.addToBasket
         self.create_basket_call = Stubs.win_act_order_book.createBasket
         self.cancel_order_call = Stubs.win_act_order_book.cancelOrder
+        self.refresh_order_call = Stubs.win_act_order_book.refreshOrder
         self.manual_cross_call = Stubs.win_act_order_book.manualCross
         self.mass_unbook_call = Stubs.win_act_order_book.massUnbook
         self.mass_book_call = Stubs.win_act_order_book.massBook
@@ -86,6 +87,6 @@ class OMSOrderBook(BaseOrderBook):
         self.direct_order_correct_call = Stubs.win_act_order_book.orderBookDirectOrder
         self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
         self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
-
+        self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
 
         # endregion

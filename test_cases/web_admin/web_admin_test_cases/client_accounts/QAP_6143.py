@@ -25,7 +25,7 @@ class QAP_6143(CommonTestCase):
 
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_1")
-        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -35,19 +35,21 @@ class QAP_6143(CommonTestCase):
         side_menu.open_accounts_page()
         main_page = AccountsPage(self.web_driver_container)
         main_page.set_id(self.account_id)
+        time.sleep(1)
 
         if not main_page.is_searched_account_found(self.account_id):
             main_page.click_new_button()
             time.sleep(2)
             values_sub_wizard = AccountsWizard(self.web_driver_container)
             values_sub_wizard.set_id(self.account_id)
-            values_sub_wizard.set_ext_id_client(self.ext_id_client)
+            values_sub_wizard.set_ext_id_client(self.ext_id_client[0])
             values_sub_wizard.set_client_id_source(self.client_id_source)
             values_sub_wizard.click_on_dummy_checkbox()
             wizard = AccountsWizard(self.web_driver_container)
             wizard.click_save_button()
             time.sleep(2)
             main_page.set_id(self.account_id)
+            time.sleep(1)
 
         main_page.click_more_actions_button()
         time.sleep(1)
@@ -60,7 +62,7 @@ class QAP_6143(CommonTestCase):
 
             values_sub_wizard = AccountsWizard(self.web_driver_container)
             values_sub_wizard.set_id(self.id)
-            values_sub_wizard.set_ext_id_client(self.ext_id_client)
+            values_sub_wizard.set_ext_id_client(self.ext_id_client[1])
             values_sub_wizard.set_client_id_source(self.client_id_source)
 
             wizard = AccountsWizard(self.web_driver_container)

@@ -1,4 +1,5 @@
 import os
+import time
 
 import pyperclip
 from selenium.webdriver import ActionChains
@@ -36,17 +37,17 @@ class CommonPage:
             expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
 
     def get_text_by_xpath(self, xpath: str):
-        element = self.find_by_xpath(xpath)
-
-        value_from_clipboard = pyperclip.paste()
-        element.click()
-        element.send_keys(Keys.CONTROL, "A")
-        element.send_keys(Keys.CONTROL, "C")
-
-        value_from_element = pyperclip.paste()
-
-        pyperclip.copy(value_from_clipboard)
-        return value_from_element
+        if "button" in xpath:
+            return self.find_by_xpath(xpath).text
+        else:
+            element = self.find_by_xpath(xpath)
+            value_from_clipboard = pyperclip.paste()
+            element.click()
+            element.send_keys(Keys.CONTROL, "A")
+            element.send_keys(Keys.CONTROL, "C")
+            value_from_element = pyperclip.paste()
+            pyperclip.copy(value_from_clipboard)
+            return value_from_element
 
     def set_text_by_xpath(self, xpath: str, value: str, is_clear_before: bool = True):
         text_field = self.find_by_xpath(xpath)
@@ -57,12 +58,15 @@ class CommonPage:
 
         text_field.send_keys(value)
 
-    def set_checkbox_list(self, checkbox_xpath: str, values: list):
+    def set_checkbox_list(self, xpath: str, values: list):
         """
         Method was created for setting checkbox list,
         concatenates the xpath to the checkbox through its values
         """
-        return [checkbox_xpath.format(item) for item in values]
+        if not self.is_element_present(CommonConstants.COMBOBOX_DROP_DOWN_XPATH):
+            self.find_by_xpath(xpath).click()
+        time.sleep(1)
+        [self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(i)).click() for i in values]
 
     def set_combobox_value(self, combobox_xpath: str, value: str):
         """
@@ -70,9 +74,8 @@ class CommonPage:
         in active input field.
         """
         self.set_text_by_xpath(combobox_xpath, value)
-        option_xpath = CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)
-        option = self.find_by_xpath(option_xpath)
-        option.click()
+        time.sleep(1)
+        self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)).click()
 
     def select_value_from_dropdown_list(self, xpath: str):
         """

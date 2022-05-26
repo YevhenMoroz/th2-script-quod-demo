@@ -139,18 +139,18 @@ class FixMessageQuoteRequestFX(FixMessage):
                 },
                 "NoPartyIDs": [
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "1"
                     },
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "3"
                     }
                 ],
-                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
-                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk2"),
                 "Side": "2",
                 "DayCount": "30/360",
                 "OrderQty": "1000000",

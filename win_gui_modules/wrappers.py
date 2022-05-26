@@ -122,14 +122,21 @@ def direct_loc_request(qty_type: str, qty_percentage: str, route: str,
     return request
 
 
-def direct_child_care(qty_type: str, qty_percentage: str, recipient: str, route: str,
-                      direct_values: ExtractDirectsValuesRequest = None):
+def direct_child_care(qty_type: str, qty_percentage: str, recipient: str, route: str,select_rows:list,
+                      filter: dict = None):
     request = act_ui_win_pb2.DirectChildCareDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.qtyType = qty_type
-    request.qtyPercentage = qty_percentage
-    request.recipient = recipient
-    request.route = route
-    request.directsValues.CopyFrom(direct_values)
+    if qty_type:
+        request.qtyType = qty_type
+    if qty_percentage:
+        request.qtyPercentage = qty_percentage
+    if recipient:
+        request.recipient = recipient
+    if route:
+        request.route = route
+    if select_rows:
+        request.selectedRows.extend(select_rows)
+    if filter:
+        request.filter.CopyFrom(client_inbox_filter(filter=filter))
 
     return request
 

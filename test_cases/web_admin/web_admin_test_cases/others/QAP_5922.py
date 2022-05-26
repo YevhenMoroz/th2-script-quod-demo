@@ -64,9 +64,9 @@ class QAP_5922(CommonTestCase):
             venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
             venues_sub_wizard.click_on_edit_at_venues_tab()
             time.sleep(2)
-            expected_data_result = [self.mic, self.main_security_id_source]
-            actual_data_result = [venues_sub_wizard.get_mic_at_venues_tab_at_venues_tab(),
-                                  venues_sub_wizard.get_main_security_id_source_at_venues_tab()]
+            expected_data_result = [self.main_security_id_source, self.mic]
+            actual_data_result = [venues_sub_wizard.get_main_security_id_source_at_venues_tab(),
+                                  venues_sub_wizard.get_mic_at_venues_tab_at_venues_tab()]
 
             self.verify("Is venue saved correctly", expected_data_result, actual_data_result)
         except Exception:

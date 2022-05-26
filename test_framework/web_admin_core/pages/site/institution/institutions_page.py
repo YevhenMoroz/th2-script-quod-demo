@@ -38,6 +38,9 @@ class InstitutionsPage(CommonPage):
     def click_on_new(self):
         self.find_by_xpath(InstitutionsConstants.NEW_BUTTON_XPATH).click()
 
+    def click_on_download_csv(self):
+        self.find_by_xpath(InstitutionsConstants.DOWNLOAD_CSV_BUTTON_XPATH).click()
+
     def click_on_user_icon(self):
         self.find_by_xpath(InstitutionsConstants.USER_ICON_AT_RIGHT_CORNER).click()
 
@@ -45,7 +48,9 @@ class InstitutionsPage(CommonPage):
         self.find_by_xpath(InstitutionsConstants.LOGOUT_BUTTON_XPATH).click()
 
     def click_on_enable_disable_button(self):
-        return self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_XPATH).click()
+        self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_XPATH).click()
+        time.sleep(1)
+        self.find_by_xpath(InstitutionsConstants.OK_BUTTON_XPATH).click()
 
     def set_institution_name(self, value):
         self.set_text_by_xpath(InstitutionsConstants.MAIN_PAGE_INSTITUTION_NAME_FILTER_XPATH, value)
@@ -75,7 +80,7 @@ class InstitutionsPage(CommonPage):
         self.select_value_from_dropdown_list(InstitutionsConstants.MAIN_PAGE_ENABLED_FILTER_XPATH, value)
 
     def is_enable_disable_toggle_enabled(self):
-        return self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).is_enabled()
+        return True if "true" in self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).get_attribute("aria-checked") else False
 
-    def set_global_filter(self):
-        self.find_by_xpath(InstitutionsConstants)
+    def is_searched_instrument_found(self, value):
+        return self.is_element_present(InstitutionsConstants.DISPLAYED_USER_XPATH.format(value))

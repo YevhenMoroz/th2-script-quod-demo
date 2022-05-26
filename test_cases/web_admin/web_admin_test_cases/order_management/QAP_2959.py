@@ -54,6 +54,7 @@ class QAP_2959(CommonTestCase):
         dark_block.set_value_by_dropdown_list_at_sub_wizard(self.value)
         dark_block.click_on_checkmark_button()
         dark_block.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(1)
