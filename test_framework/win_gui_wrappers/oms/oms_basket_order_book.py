@@ -46,6 +46,6 @@ class OMSBasketOrderBook(BaseBasketOrderBook):
         self.imported_file_mapping_details = ImportedFileMappingDetails
         self.extract_child_details = ExtractChildOrderDataDetails
         self.clone_template_call = Stubs.win_act_basket_ticket.cloneTemplate
-        self.create_basket_from_order_book_call = Stubs.win_act_order_book.createBask
+        self.create_basket_from_order_book_call = Stubs.win_act_order_book.createBasket
         self.is_menu_item_present_call = Stubs.win_act_basket_order_book.isMenuItemPresentBasket
     # endregion
