@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 
-from test_cases.wrapper.ret_wrappers import verifier
+from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
