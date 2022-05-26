@@ -3,7 +3,6 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
@@ -31,7 +30,7 @@ class QAP_3875(TestCase):
         self.route = self.data_set.get_route('route_2')
         self.client_id = self.fix_message.get_parameter('ClOrdID')
         self.user = environment.get_list_fe_environment()[0].user_1
-        self.route = OmsRoutes.route_2.value
+        self.route = self.data_set.get_route("route_2")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
