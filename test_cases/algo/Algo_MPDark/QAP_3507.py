@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -9,19 +8,12 @@ from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets import constants
 
-from datetime import datetime, timedelta
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from custom.basic_custom_actions import convert_to_request, message_to_grpc
-from stubs import Stubs
-from test_framework.data_sets import constants
 
 class QAP_3507(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -32,10 +24,58 @@ class QAP_3507(TestCase):
         self.fix_env1 = self.environment.get_list_fix_environment()[0]
 
         # region th2 components
-        self.fix_manager_sell = FixManager('fix-sell-side-319-kepler', self.test_id)
-        self.fix_manager_feed_handler = FixManager('fix-fh-319-kepler', self.test_id)
-        self.fix_verifier_sell = FixVerifier('fix-sell-side-319-kepler', self.test_id)
-        self.fix_verifier_buy = FixVerifier('fix-buy-side-319-kepler', self.test_id)
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        # endregion
+
+        # region order parameters
+        # weights BATSPERIODIC=50/CHIXDELTA=50
+        self.qty = 10000
+        self.qty_1_2_child = 5000
+        self.qty_3_4_child = 2500
+        self.price = 20
+        self.last_price = 20
+        self.traded_price = 20
+        self.traded_qty = 5000
+        self.delay = 10
+        # endregion
+
+        # region Gateway Side
+        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_sell = GatewaySide.Sell
+        # endregion
+
+        # region Status
+        self.status_pending = Status.Pending
+        self.status_new = Status.New
+        self.status_fill = Status.Fill
+        self.status_cancel = Status.Cancel
+        # endregion
+
+        # region instrument
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_6")
+        # endregion
+
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
+
+        # region venue param
+        self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
+        self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
+        self.client = self.data_set.get_client_by_name("client_4")
+        self.account_bats = self.data_set.get_account_by_name("account_7")
+        self.account_chix = self.data_set.get_account_by_name("account_8")
+        self.s_bats = self.data_set.get_listing_id_by_name("listing_4")
+        self.s_chix = self.data_set.get_listing_id_by_name("listing_5")
+        # endregion
+
+        # region Key parameters
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
         self.rule_list = []
@@ -44,20 +84,129 @@ class QAP_3507(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-side-319-kepler', "BATSDARK_KEPLER", "BATD", 20)
-        nos_trade = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty('fix-buy-side-319-kepler', "CHIXDELTA_KEPLER", "CHID", 20, 20, 5000, 5000, 10)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport('fix-buy-side-319-kepler', False)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew('fix-buy-side-319-kepler', "CHIXDELTA_KEPLER", "CHID", 20)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest('fix-buy-side-319-kepler', "BATSDARK_KEPLER", "BATD", True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest('fix-buy-side-319-kepler', "CHIXDELTA_KEPLER", "CHID", True)
-        self.rule_list = [nos_1_rule, nos_trade, ocrr_rule, nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price, self.traded_price, self.qty_1_2_child, self.traded_qty, self.delay)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
+        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
+        self.rule_list = [nos_1_rule, nos_trade_rule, nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
         # endregion
 
-        # TODO test steps
+        # region Send NewOrderSingle (35=D) for MP Dark order
+        case_id_1 = bca.create_event("Create MP Dark Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     RuleManager.remove_rules(self.rule_list)
+        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
+        self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
+
+        time.sleep(3)
+        # endregion
+
+        # region Check Sell side
+        self.fix_verifier_sell.check_fix_message(self.MP_Dark_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        pending_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(pending_MP_Dark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
+
+        new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
+        self.fix_verifier_sell.check_fix_message(new_MP_Dark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
+        # endregion
+
+        # region Check 1 child DMA order on venue CHIX DARKPOOL UK
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
+
+        self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_1_order.change_parameters(dict(OrderQty=self.qty_1_2_child, Price=self.price, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 order')
+
+        pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
+
+        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # endregion
+
+        # region Check 1 child DMA order on venue BATS DARKPOOL UK
+        self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_2_order.change_parameters(dict(OrderQty=self.qty_1_2_child, Price=self.price, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2 order')
+
+        time.sleep(2)
+
+        pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
+
+        new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
+        # endregion
+
+        # region check fill second dma child order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Fill child DMA 2 Order", self.test_id))
+        # Fill Order
+        fill_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_fill)
+        fill_dma_2_order.change_parameters(dict(CumQty=self.qty_1_2_child, LeavesQty=0, LastQty=self.qty_1_2_child, LastPx=self.last_price))
+        self.fix_verifier_buy.check_fix_message(fill_dma_2_order, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
+
+        # region check cancel first dma child order
+        cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        # endregion
+
+
+        # region Check 2 child DMA order on venue CHIX DARKPOOL UK
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
+
+        self.dma_3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_3_order.change_parameters(dict(OrderQty=self.qty_3_4_child, Price=self.price, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_3_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 3 order')
+
+        pending_dma_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 3 order')
+
+        new_dma_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_dma_3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3 order')
+        # endregion
+
+        # region Check 2 child DMA order on venue BATS DARKPOOL UK
+        self.dma_4_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_4_order.change_parameters(dict(OrderQty=self.qty_3_4_child, Price=self.price, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_4_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 4 order')
+
+        time.sleep(2)
+
+        pending_dma_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_4_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_4_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 4 order')
+
+        new_dma_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_4_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_dma_4_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 4 order')
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region Cancel Algo Order
+        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_3)
+        cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
+
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
+        self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        # region check cancel third dma child order
+        cancel_dma_3_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_3_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 3 order")
+        # endregion
+
+        # region check cancel fourth dma child order
+        cancel_dma_4_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_4_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_4_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 4 order")
+        # endregion
+
+        RuleManager.remove_rules(self.rule_list)
+
+
 
 
 
