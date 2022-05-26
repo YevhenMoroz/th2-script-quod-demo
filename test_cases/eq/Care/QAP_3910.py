@@ -4,7 +4,6 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsClients
 from test_framework.fix_wrappers.FixManager import FixManager
 from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -36,7 +35,7 @@ class QAP_3910(TestCase):
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.fix_message_dma.change_parameter('OrderQtyData', {'OrderQty': self.qty})
         self.fix_message_dma.change_parameter("Price", self.price)
-        self.fix_message_dma.change_parameter('Account', OmsClients.client_co_1.value)
+        self.fix_message_dma.change_parameter('Account', self.data_set.get_client_by_name("client_co_1"))
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_co_1_venue_1')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
