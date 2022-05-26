@@ -6,7 +6,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.oms_data_set.oms_const_enum import OMSCurrency
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -43,9 +42,9 @@ class QAP_6385(TestCase):
         # endregion
         # region Check Basket book
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
-            {OrderBookColumns.currency.value: OMSCurrency.usd.value})
+            {OrderBookColumns.currency.value: self.data_set.get_currency_by_name("usd")})
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
-            {OrderBookColumns.currency.value: OMSCurrency.uah.value})
+            {OrderBookColumns.currency.value: self.data_set.get_currency_by_name("uah")})
         # endregion
 
 
