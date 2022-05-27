@@ -119,17 +119,6 @@ class AlgoListingId(Enum):
     listing_1 = "1015"
     listing_2 = "734"
     listing_3 = "3416"
-    listing_4 = "2011151" # BATS DARKPOOL UK FR0000121220
-    listing_5 = "2001405" # CHIX DARKPOOL UK FR0000121220
-    listing_6 = "437810481"  # CBOE DARKPOOL EU FR0000121220
-    listing_7 = "438237397" # ITG FR0000121220
-    listing_8 = "459820485" # TURQUOISE DARKPOOL EU FR0000121220
-    listing_9 = "2012996" # BATS DARKPOOL UK FR0000120321
-    listing_10 = "2001595" # CHIX DARKPOOL UK FR0000120321
-    listing_11 = "437810538" # CBOE DARKPOOL EU FR0000120321
-    listing_12 = "" # ITG FR0000120321
-    listing_13 = "" # TURQUOISE DARKPOOL EU FR0000120321
-    listing_14 = "" # TURQUOISE DARKPOOL UK FR0000120321
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -141,3 +130,4 @@ class AlgoCurrency(Enum):
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_mp_dark_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
