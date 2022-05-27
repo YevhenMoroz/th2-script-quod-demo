@@ -30,7 +30,7 @@ class QAP_3529(TestCase):
         # endregion
 
         # region order parameters
-        # weights CHIXDELTA=6/BATSDARK=3/CBOE=1
+        # weights CHIXDELTA=6/BATSDARK=3/ITG=1
         self.qty = 10000
         self.qty_1_child = 600000
         self.qty_2_child = 300000
@@ -61,17 +61,17 @@ class QAP_3529(TestCase):
         # region venue param
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
-        self.ex_destination_cboe = self.data_set.get_mic_by_name("mic_6")
+        self.ex_destination_itg = self.data_set.get_mic_by_name("mic_7")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account_bats = self.data_set.get_account_by_name("account_7")
         self.account_chix = self.data_set.get_account_by_name("account_8")
-        self.account_cboe = self.data_set.get_account_by_name("account_9")
+        self.account_itg = self.data_set.get_account_by_name("account_9")
         self.s_bats = self.data_set.get_listing_id_by_name("listing_4")
         self.s_chix = self.data_set.get_listing_id_by_name("listing_5")
-        self.s_cboe = self.data_set.get_listing_id_by_name("listing_6")
+        self.s_itg = self.data_set.get_listing_id_by_name("listing_7")
         # endregion
 
-        # region Key parameters
+        # region Key parameters`
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
@@ -84,10 +84,10 @@ class QAP_3529(TestCase):
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
-        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_cboe, self.ex_destination_cboe, self.price)
+        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg, self.ex_destination_itg, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_cboe, self.ex_destination_cboe, True)
+        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg, self.ex_destination_itg, True)
         self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
         # endregion
 
