@@ -21,7 +21,7 @@ class EnvironmentType(Enum):
     quod320_fe = "quod320_fe"
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
     quod320_kuiper_web_trading = "quod320_kuiper_web_trading"
-    quod319_kuiper_standard = "quod319_kuiper_standard"
+    quod319_kuiper_kepler = "quod319_kuiper_kepler"
 
 
     #region web admin
