@@ -19,6 +19,7 @@ class FIXMessageType(Enum):
     Quote = "Quote"
     MarketDataRequestReject = "MarketDataRequestReject"
     OrderCancelReject = "OrderCancelReject"
+    QuoteCancel = "QuoteCancel"
 
 
 class ORSMessageType(Enum):
