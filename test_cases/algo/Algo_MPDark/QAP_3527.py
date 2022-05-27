@@ -84,7 +84,7 @@ class QAP_3527(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # TODO edit rule for ITG (TIF=DAY), rule for eliminate
+        # TODO edit rule for ITG (TIF=DAY), rule for eliminate instead FOK rule
         # region Rule creation
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
