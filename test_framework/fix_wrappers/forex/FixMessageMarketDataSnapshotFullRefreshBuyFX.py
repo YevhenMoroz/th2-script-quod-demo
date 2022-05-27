@@ -26,7 +26,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -35,7 +36,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "0",
@@ -44,7 +46,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -53,7 +56,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "0",
@@ -62,7 +66,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -71,7 +76,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
                     "SettlDate": tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 }
             ]
         }
@@ -94,7 +100,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000001",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -104,7 +111,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000001",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "0",
@@ -114,7 +122,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000002",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -124,7 +133,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000002",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "0",
@@ -134,7 +144,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000003",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 },
                 {
                     "MDEntryType": "1",
@@ -144,7 +155,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDQuoteType": 1,
                     "MDEntryForwardPoints": "0.0000003",
                     "SettlDate": wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                    "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                    "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 }
             ]
         }
