@@ -40,8 +40,8 @@ class Connectivity(Enum):
     Kuiper_320_web_admin = 'rest_wa320kuiper'
     Kuiper_320_web_trading_http = 'rest_wt320kuiper'
     Kuiper_320_web_trading_web_socket = 'api_session_320kuiper'
-    Kuiper_319_Sell_Side = 'fix-sell-side-319-kepler'
-    Kuiper_319_Buy_Side = 'fix-buy-side-319-kepler'
+    Kepler_319_Sell_Side = 'fix-sell-side-319-kepler'
+    Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
 
 
