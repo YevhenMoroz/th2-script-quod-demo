@@ -56,7 +56,6 @@ class QAP_3733(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
-        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
@@ -98,18 +97,20 @@ class QAP_3733(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        # TODO edit rule for itg, tqdarkeu, tqdark (TIF=Day), add cancel
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
         nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, self.price)
-        nos_1_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, False, self.price)
-        nos_2_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_tqdarkeu, False, self.price)
-        nos_3_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_tqdark, self.ex_destination_tqdark, False, self.price)
+        nos_4_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
+        nos_5_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_tqdarkeu, self.price)
+        nos_6_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_tqdark, self.ex_destination_tqdark, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_1_fok_rule, nos_2_fok_rule, nos_3_fok_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
+        ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True)
+        ocr_5_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_tqdarkeu, True)
+        ocr_6_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_tqdark, self.ex_destination_tqdark, True)
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_5_rule, nos_6_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule, ocr_6_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -255,20 +256,18 @@ class QAP_3733(TestCase):
         self.fix_verifier_buy.check_fix_message(cancel_dma_3_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 3 order")
         # endregion
 
-        # TODO check cancel, not eliminate
-
         # region check cancel fourth dma child order
-        cancel_dma_4_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_4_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_dma_4_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_4_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_4_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 4 order")
         # endregion
 
         # region check cancel fifth dma child order
-        cancel_dma_5_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_5_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_dma_5_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_5_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_5_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 5 order")
         # endregion
         
         # region check cancel sixth dma child order
-        cancel_dma_6_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_6_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_dma_6_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_6_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_6_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 6 order")
         # endregion
 
