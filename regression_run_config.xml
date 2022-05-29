@@ -644,5 +644,57 @@
                 </component>
             </components>
         </product_line>
+        <product_line name="mobile_android" run="True">
+            <components>
+                <component name="Mobile_Account" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_LoginLogout" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Market" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_OrderTicket_OrderBook" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Others" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Portfolio" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
     </product_lines>
 </regression>

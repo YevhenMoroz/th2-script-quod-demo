@@ -9,6 +9,7 @@ from test_framework.environments.web_admin_environment import WebAdminEnvironmen
 from test_framework.environments.web_admin_rest_api_environment import WebAdminRestApiEnvironment
 from test_framework.environments.trading_rest_api_environment import TradingRestApiEnvironment
 from test_framework.environments.web_trading_environment import WebTradingEnvironment
+from test_framework.environments.mobile_android_environment import MobileEnvironment
 
 class FullEnvironment:
 
@@ -19,6 +20,7 @@ class FullEnvironment:
         self.__list_web_admin_rest_api_environment = list()
         self.__list_trading_rest_api_environment = list()
         self.__list_web_trading_environment = list()
+        self.__list_mobile_environment = list()
         self.__list_java_api_environment = list()
         self.__list_read_log_environment = list()
 
@@ -41,6 +43,9 @@ class FullEnvironment:
                 if instance.tag == "web_trading_environment":
                     self.__list_web_trading_environment.append(
                         WebTradingEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "mobile_environment":
+                    self.__list_mobile_environment.append(
+                        MobileEnvironment.get_instance(EnvironmentType[instance.text]))
                 if instance.tag == "java_api_environment":
                     self.__list_java_api_environment.append(
                         JavaApiEnvironment.get_instance(EnvironmentType[instance.text]))
@@ -66,6 +71,9 @@ class FullEnvironment:
 
     def get_list_web_trading_environment(self) -> typing.List[WebTradingEnvironment]:
         return self.__list_web_trading_environment
+
+    def get_list_mobile_environment(self) -> typing.List[MobileEnvironment]:
+        return self.__list_mobile_environment
 
     def get_list_java_api_environment(self) -> typing.List[JavaApiEnvironment]:
         return self.__list_java_api_environment
