@@ -30,7 +30,7 @@ class QAP_7162(TestCase):
         self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
 
         self.eur_gbp = self.data_set.get_symbol_by_name('symbol_3')
-        self.gbp = self.data_set.get_currency_by_name("currency_gbp")
+        self.eur = self.data_set.get_currency_by_name("currency_eur")
         self.client_tier_iridium = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
         self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
@@ -46,7 +46,7 @@ class QAP_7162(TestCase):
             },
             "SettlDate": self.settle_date_spot,
             "SettlType": self.settle_type_spot,
-            "Currency": self.gbp,
+            "Currency": self.eur,
             "QuoteType": "1",
             "OrderQty": "1000000",
             "OrdType": "D"}]
