@@ -242,23 +242,23 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.create_basket_via_import_call, self.basket_ticket_details.build())
         self.clear_details([self.basket_ticket_details])
 
-    def complete_basket(self, filter_list=None):
-        self.simple_request.set_filter(filter_list)
+    def complete_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
         call(self.complete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def un_complete(self, filter_list=None):
-        self.simple_request.set_filter(filter_list)
+    def un_complete(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
         call(self.uncomplete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def book_basket(self, filter_list=None):
-        self.simple_request.set_filter(filter_list)
+    def book_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
         call(self.book_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def cancel_basket(self, filter_list=None):
-        self.simple_request.set_filter(filter_list)
+    def cancel_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
         call(self.cancel_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
