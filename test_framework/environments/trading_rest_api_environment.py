@@ -23,6 +23,16 @@ class TradingRestApiEnvironment(BaseEnvironment):
                 TradingRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod315_luna_trading_desktop.value: site_environment})
             return TradingRestApiEnvironment.environment_instances[EnvironmentType.quod315_luna_trading_desktop.value]
+        elif env.value == EnvironmentType.quod315_luna_web_trading.value:
+            if EnvironmentType.quod315_luna_web_trading not in TradingRestApiEnvironment.environment_instances.keys():
+                site_environment = TradingRestApiEnvironment(
+                    environment_type=EnvironmentType.quod315_luna_web_trading.value,
+                    session_alias_http=Connectivity.Luna_315_web_trading_http.value,
+                    session_alias_web_socket=Connectivity.Luna_315_web_trading_web_socket.value
+                )
+                TradingRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod315_luna_web_trading.value: site_environment})
+            return TradingRestApiEnvironment.environment_instances[EnvironmentType.quod315_luna_web_trading.value]
         elif env.value == EnvironmentType.quod320_kuiper_web_trading.value:
             if EnvironmentType.quod320_kuiper_web_trading not in TradingRestApiEnvironment.environment_instances.keys():
                 site_environment = TradingRestApiEnvironment(

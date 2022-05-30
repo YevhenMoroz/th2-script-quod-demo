@@ -32,6 +32,30 @@ class ORSMessageType(Enum):
     OrderCancelRequest = 'Order_OrderCancelRequest'
 
 
+class TradingRestApiMessageType(Enum):
+    NewOrderSingle = "NewOrderSingle"
+    NewOrderSingleReply = "NewOrderReply"
+    OrderUpdate = "OrderUpdate"
+    NewOrderSingleSimulate = "NewOrderSingleSimulate"
+    NewOrderSingleSimulateReply = "NewOrderSingleSimulateReply"
+    OrderModificationRequest = "OrderModificationRequest"
+    OrderModificationReply = "OrderModificationReply"
+    MarketDataRequest = "MarketDataRequest"
+    MarketDataReply = "MarketDataReply"
+    MarketQuoteRequest = "MarketQuoteRequest"
+    MarketQuoteReply = "MarketQuoteReply"
+    MarketDataSnapshotFullRefresh = "MarketDataSnapshotFullRefresh"
+    PositionRequest = "PositionRequest"
+    PositionReply = "PositionReply"
+    PositionReport = "PositionReport"
+    OrderArchiveMassStatusRequest = 'OrderArchiveMassStatusRequest'
+    OrderArchiveMassStatusRequestReply = 'OrderArchiveMassStatusRequestReply'
+    VenueListRequest = "VenueListRequest"
+    VenueListReply = "VenueListReply"
+    HistoricalMarketDataRequest = 'HistoricalMarketDataRequest'
+    HistoricalMarketDataReply = 'HistoricalMarketDataReply'
+
+
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
