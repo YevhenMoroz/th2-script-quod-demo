@@ -84,6 +84,17 @@ class FixEnvironment(BaseEnvironment):
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod310_columbia_standard.value: site_environment})
                 return FixEnvironment.environment_instances[EnvironmentType.quod310_columbia_standard.value]
+        elif env.value == EnvironmentType.quod319_kuiper_kepler.value:
+            if EnvironmentType.quod319_kuiper_kepler.value not in FixEnvironment.environment_instances.keys():
+                site_environment = FixEnvironment(
+                    environment_type=EnvironmentType.quod319_kuiper_kepler.value,
+                    sell_side=Connectivity.Kepler_319_Sell_Side.value,
+                    buy_side=Connectivity.Kepler_319_Buy_Side.value,
+                    feed_handler=Connectivity.Kuiper_319_Feed_Handler.value
+                )
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod319_kuiper_kepler.value: site_environment})
+                return FixEnvironment.environment_instances[EnvironmentType.quod319_kuiper_kepler.value]
         else:
             raise Exception('No such environment')
 

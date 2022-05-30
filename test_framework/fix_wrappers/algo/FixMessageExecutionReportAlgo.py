@@ -26,6 +26,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_buy(new_order_single)
             elif status is Status.Eliminate:
                 self.__set_eliminate_buy(new_order_single)
+            elif status is Status.Reject:
+                self.__set_reject_buy(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         elif side is GatewaySide.Sell:
@@ -592,6 +594,30 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             CxlQty=new_order_single.get_parameter('OrderQty'),
             Instrument='*'
             # Instrument=new_order_single.get_parameter('Instrument'),
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') == '2':
+            temp.update(Price = new_order_single.get_parameter("Price"))
+        temp.update(
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            Side=new_order_single.get_parameter('Side'),
+            Text='order canceled',
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExDestination=new_order_single.get_parameter('ExDestination')
         )
         super().change_parameters(temp)
         return self
