@@ -12,6 +12,7 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_3497(TestCase):
@@ -32,9 +33,7 @@ class QAP_3497(TestCase):
         # region order parameters
         # weights BATS = 60, CHIX = 30, CBOE = 10
         self.qty = 10000
-        self.qty_1_child = 6000
-        self.qty_2_child = 3000
-        self.qty_3_child = 1000
+        self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 60, 30, 10)
         self.price = 20
         # endregion
 
