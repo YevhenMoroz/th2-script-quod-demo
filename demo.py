@@ -61,10 +61,10 @@ def test_run():
     Stubs.frontend_is_open = True
 
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id, window_name)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id, window_name)
 
         # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
