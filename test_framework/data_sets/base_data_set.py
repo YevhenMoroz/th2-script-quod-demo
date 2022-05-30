@@ -2,11 +2,14 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
+    trading_api_instruments = None
     fix_instruments = None
+    instruments = None
     venues = None
     clients = None
     accounts = None
     washbook_accounts = None
+    washbook_rules = None
     recipients = None
     listing_id = None
     instrument_id = None
@@ -133,9 +136,18 @@ class BaseDataSet:
         if self.washbook_accounts:
             return self.washbook_accounts.__members__
 
+    def get_washbook_rule(self):
+        if self.washbook_rules:
+            return self.washbook_rules.__members__
+
     def get_recipients(self):
         if self.recipients:
             return self.recipients.__members__
+
+    def get_trading_api_instrument_by_name(self, name: str):
+        if hasattr(self.trading_api_instruments, name):
+            return getattr(self.trading_api_instruments, name).value
+        raise ValueError(f"{self.trading_api_instruments} not found!")
 
     def get_fix_instrument_by_name(self, name: str):
         if hasattr(self.fix_instruments, name):
@@ -161,6 +173,11 @@ class BaseDataSet:
         if hasattr(self.washbook_accounts, name):
             return getattr(self.washbook_accounts, name).value
         raise ValueError(f"{self.washbook_accounts} not found!")
+
+    def get_washbook_rule_by_name(self, name: str):
+        if hasattr(self.washbook_rules, name):
+            return getattr(self.washbook_rules, name).value
+        raise ValueError(f"{self.washbook_rules} not found!")
 
     def get_recipient_by_name(self, name: str):
         if hasattr(self.recipients, name):

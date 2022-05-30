@@ -30,6 +30,7 @@ class QAP_6931(TestCase):
         self.execution_report = FixMessageExecutionReportFX()
         self.account = self.data_set.get_client_by_name("client_mm_2")
         self.usd_sek = self.data_set.get_symbol_by_name('symbol_8')
+        self.currency = self.data_set.get_currency_by_name("currency_usd")
         self.security_type = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date = self.data_set.get_settle_date_by_name("wk1")
         self.settle_type = self.data_set.get_settle_type_by_name("wk1")
@@ -56,13 +57,13 @@ class QAP_6931(TestCase):
         self.new_order_single.set_default().change_parameters(
             {"Account": self.account, "Instrument": self.instrument,
              "SettlDate": self.settle_date, "SettlType": self.settle_type, "TimeInForce": "3", "OrdType": "1",
-             "OrderQty": self.qty})
+             "OrderQty": self.qty, "Currency":self.currency})
         self.new_order_single.remove_parameter("Price")
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
-        self.execution_report.remove_parameters(["Price", "ExecRestatementReason", "SettlType"])
-        self.execution_report.add_tag({"Account": self.account, "OrdRejReason": "99"})
+        self.execution_report.remove_parameters(["Price"])
+        self.execution_report.add_tag({"LastMkt": "XQFX"})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 

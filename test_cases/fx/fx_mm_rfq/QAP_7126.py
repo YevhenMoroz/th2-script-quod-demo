@@ -163,7 +163,7 @@ class QAP_7126(TestCase):
 
         # endregion
         # region Step 3
-        self.quote_rb.set_filter([self.qty_col, self.qty, self.inst_col, self.instrument]). \
+        self.quote_rb.set_filter([self.qty_col, self.qty, self.inst_col, self.symbol]). \
             check_quote_book_fields_list({self.notes_col: self.note})
         # endregion
 
