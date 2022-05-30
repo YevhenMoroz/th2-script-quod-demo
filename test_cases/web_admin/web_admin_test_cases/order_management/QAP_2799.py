@@ -8,14 +8,8 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_conditions_sub_wizard import \
     OrderManagementRulesConditionsSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
-    OrderManagementRulesDefaultResultSubWizard
 from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
     OrderManagementRulesPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_values_sub_wizard import \
-    OrderManagementRulesValuesSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
-    OrderManagementRulesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -31,20 +25,17 @@ class QAP_2799(CommonTestCase):
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.conditional_logic = " NOT IN "
         self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.client = " QUODAH "
+        self.client = ["QUODAH"]
         self.percentage = "100"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
+        side_menu.wait_for_button_to_become_active()
         page = OrderManagementRulesPage(self.web_driver_container)
-        values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
         conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-        default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
-        wizard = OrderManagementRulesWizard(self.web_driver_container)
-
         page.click_on_new_button()
         time.sleep(2)
         conditions_sub_wizard.click_on_plus()
@@ -72,20 +63,10 @@ class QAP_2799(CommonTestCase):
 
         try:
             self.precondition()
-            page = OrderManagementRulesPage(self.web_driver_container)
             conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-            values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
-            wizard = OrderManagementRulesWizard(self.web_driver_container)
-            page = OrderManagementRulesPage(self.web_driver_container)
-            default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
             try:
                 conditions_sub_wizard.click_on_checkmark()
                 self.verify("Entity created correctly", True, True)
-
-
-
-
-
             except Exception:
                 self.verify("Entity NOT created ", True, False)
 

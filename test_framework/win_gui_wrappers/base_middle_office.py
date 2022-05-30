@@ -218,7 +218,7 @@ class BaseMiddleOffice(BaseWindow):
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
         if exchange_rate is not None:
-            settlement_details.set_settlement_amount(exchange_rate)
+            settlement_details.set_exchange_rate(exchange_rate)
         if exchange_rate_calc is not None:
             settlement_details.set_exchange_rate_calc(exchange_rate_calc)
         if pset:
@@ -252,14 +252,16 @@ class BaseMiddleOffice(BaseWindow):
             extraction_details.extract_total_fees(extract_data + ".totalFees")
             extraction_details.extract_agreed_price(extract_data + ".agreedPrice")
             extraction_details.extract_pset_bic(extract_data + ".psetBic")
-            extraction_details.extract_exchange_rate(extract_data + ".settlementType")
-            extraction_details.extract_settlement_type(extract_data + ".exchangeRate")
+            extraction_details.extract_exchange_rate(extract_data + ".exchangeRate")
+            extraction_details.extract_settlement_type(extract_data + ".settlementType")
         return self.modify_ticket_details
 
     # endregion
 
     # region Action
-    def book_order(self):
+    def book_order(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.book_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response

@@ -214,6 +214,11 @@ class BasketBookColumns(Enum):
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    """Template ticket"""
+    name = "Name"
+    description = "Description"
+    """Context menu"""
+    remove_from_basket = "Remove from Basket"
 
 
 class ExecSts(Enum):
@@ -225,6 +230,7 @@ class ExecSts(Enum):
     held = 'Held'
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
+    sent = 'Sent'
 
 
 class Status(Enum):
@@ -315,6 +321,9 @@ class MiddleOfficeColumns(Enum):
     settltype = 'SettlType'
     account_id = 'Account ID'
     trade_date = 'TradeDate'
+    settl_currency = 'SettlCurrency'
+    exchange_rate = 'Exchange Rate'
+    settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
 
 
 class AllocationsColumns(Enum):
@@ -336,6 +345,8 @@ class AllocationsColumns(Enum):
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
+    orders_tab = 'Orders'
+    alloc_instruction_qties = "Alloc Instruction Qties"
 
 
 class PostTradeStatuses(Enum):
@@ -420,9 +431,12 @@ class OrderBagColumn(Enum):
     ord_bag_name = 'OrdBagName'
     id = 'Id'
     leaves_qty = 'LeavesQty'
+    bag_status = 'BagStatus'
+    client_name = 'Client Name'
+    client_desk = 'Client Desc'
 
 
-class BasketSecondTabName(Enum):
+class BasketSecondLvlTabName(Enum):
     orders = 'Orders'
 
 
@@ -444,3 +458,39 @@ class MenuItemFromOrderBook(Enum):
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = 'ClOrdId'
+    qty = 'Qty'
+
+
+class BagStatuses(Enum):
+    new = 'New'
+    terminated = 'Terminated'
+    cl_ord_id = "ClOrdId"
+
+
+class SymbolSource(Enum):
+    isin = 'ISIN'
+    blmbrg = "Blmbrg"
+    sedol = "SEDOL"
+
+
+class WaveColumns(Enum):
+    status = 'Status'
+
+
+class BookingBlotterColumns(Enum):
+    give_up_broker = 'Give-up Broker'
+    qty = 'Qty'
+    order_id = 'Order ID'
+    status = 'Status'
+    match_status = 'Match Status'
+    summary_status = "Summary Status"
+
+
+class BookingOrderResult(Enum):
+    multi = 'Multi'
+
+
+class AllocInstructionQties(Enum):
+    booking_qty = 'Booking Qty'
+    give_up_broker = 'Give-up Broker'

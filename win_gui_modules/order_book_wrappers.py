@@ -6,6 +6,7 @@ from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
+from win_gui_modules.basket_ticket_wrappers import RowDetails
 from win_gui_modules.common_wrappers import CommissionsDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
@@ -616,9 +617,9 @@ class MenuItemDetails:
 
 
 class ManualExecutingDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.ManualExecutionDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.ManualExecutionDetails(base=base_request)
         else:
             self._request = order_book_pb2.ManualExecutionDetails()
 
@@ -643,9 +644,9 @@ class ManualExecutingDetails:
 
 
 class CompleteOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.CompleteOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.CompleteOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.CompleteOrdersDetails()
 
@@ -927,9 +928,11 @@ class CreateBasketDetails:
     def set_name(self, name: str):
         self._request.name = name
 
-    def set_row_details(self, row_details: list):
-        for detail in row_details:
-            self._request.rowsDetails.append(detail)
+    def set_rows_for_delete(self, delete_rows: int):
+        i = 0
+        while i < delete_rows:
+            self._request.rowsDetails.append(RowDetails(delete_row=True).build())
+            i += 1
 
     def build(self):
         return self._request

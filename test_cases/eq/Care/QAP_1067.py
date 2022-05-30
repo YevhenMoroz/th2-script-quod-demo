@@ -4,7 +4,6 @@ from stubs import Stubs
 from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, OrderType
@@ -19,13 +18,13 @@ timeouts = True
 class QAP_1067(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.ss_connectivity)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -35,7 +34,7 @@ class QAP_1067(TestCase):
         # region create CO order
         self.fix_manager.send_message_fix_standard(self.fix_message)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        self.client_inbox.accept_order('O', 'M', 'S')
+        self.client_inbox.accept_order()
         # endregion
         # region check order has open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(

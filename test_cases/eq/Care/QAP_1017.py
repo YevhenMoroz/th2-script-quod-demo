@@ -20,8 +20,8 @@ timeouts = True
 
 class QAP_1017(TestCase):
 
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.client = self.data_set.get_client_by_name('client_co_1')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')

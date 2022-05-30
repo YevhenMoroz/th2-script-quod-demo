@@ -4,7 +4,6 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
@@ -98,14 +97,14 @@ tif = TimeInForce
 exe_sts = ExecSts
 
 
-def execute(report_id, session_id):
+def execute(report_id, session_id, data_set):
     case_name = Path(__file__).name[:-3]
     case_id = bca.create_event(case_name, report_id)
     fix_manager_gtw = FixManager(alias_gtw, case_id)
     fix_manager_fh = FixManager(alias_fh, case_id)
     fix_verifier = FixVerifier(alias_gtw, case_id)
     try:
-        data_set = FxDataSet()
+
         # Send market data to the BARX venue EUR/USD spot
         market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
             .update_repeating_group('NoMDEntries', no_md_entries_spo_barx). \
@@ -125,7 +124,7 @@ def execute(report_id, session_id):
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD ")
 
         # STEP 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set = data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '3', 'OrderQty': '5000000'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
@@ -147,7 +146,7 @@ def execute(report_id, session_id):
              ob_col.limit_price.value: "1.1814",
              ob_col.qty.value: "5,000,000"})
         # STEP 2
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set = data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '3', 'OrderQty': '5000000', 'Side': '2', 'Price': '1.18079'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)

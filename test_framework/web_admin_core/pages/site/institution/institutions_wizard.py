@@ -42,3 +42,6 @@ class InstitutionsWizard(CommonPage):
 
     def click_on_cancel(self):
         self.find_by_xpath(InstitutionsConstants.CANCEL_BUTTON_XPATH).click()
+
+    def click_on_values_tab(self):
+        self.find_by_xpath(InstitutionsConstants.VALUES_TAB).click()

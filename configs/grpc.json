@@ -374,6 +374,51 @@
           "act_basket_ticket"
         ]
       }
+    },
+    "Win_Act_Booking_Blotter": {
+      "service-class": "BookingsBlotterServiceService",
+      "endpoints": {
+        "act_booking_blotter": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_booking_blotter"
+        ]
+      }
+    },
+    "Win_Act_Risk_Management": {
+      "service-class": "RiskManagementServiceService",
+      "endpoints": {
+        "act_risk_management": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_risk_management"
+        ]
+      }
+    },
+     "Win_Act_Child_Order_Book": {
+      "service-class": "ChildOrderBookServiceService",
+      "endpoints": {
+        "act_child_order_book": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_child_order_book"
+        ]
+      }
     }
   }
 }

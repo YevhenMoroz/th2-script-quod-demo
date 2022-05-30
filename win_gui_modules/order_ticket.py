@@ -234,7 +234,7 @@ class FXOrderDetails:
 
     def add_synthetic_strategy(self) -> QuodSyntheticStrategy:
         self.order.algoOrderParams.CopyFrom(order_ticket_fx_pb2.FXAlgoOrderDetails())
-        self.order.algoOrderParams.strategyType = "Quod Synthetic OrdType"
+        self.order.algoOrderParams.strategyType = "Synthetic OrdType"
         self.order.algoOrderParams.syntheticOrdType.CopyFrom(order_ticket_fx_pb2.FXSyntheticOrdTypeStrategy())
         return QuodSyntheticStrategy(self.order.algoOrderParams.syntheticOrdType)
 

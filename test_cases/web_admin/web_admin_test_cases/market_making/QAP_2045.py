@@ -37,7 +37,10 @@ class QAP_2045(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
-        self.tenor = self.data_set.get_tenor_by_name("tenor_1")
+        self.tenor_1 = self.data_set.get_tenor_by_name("tenor_1")
+        self.tenor_2 = self.data_set.get_tenor_by_name("tenor_2")
+        self.sweepable_quantities = [111111, 2222222, 33333333]
+        self.base_margin_quantity = 4444444
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -55,68 +58,100 @@ class QAP_2045(CommonTestCase):
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
+        self.verify(f"Client tier {self.name} has been created", True, True)
+
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+
+        time.sleep(2)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_new()
+        time.sleep(2)
+        client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tier_instrument_sweepable_quantities.click_on_plus()
+        client_tier_instrument_sweepable_quantities.set_quantity(self.sweepable_quantities[0])
+        client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+        time.sleep(1)
+        client_tier_instrument_sweepable_quantities.click_on_checkmark()
+        client_tier_instrument_sweepable_quantities.click_on_plus()
+        client_tier_instrument_sweepable_quantities.set_quantity(self.sweepable_quantities[1])
+        client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+        time.sleep(1)
+        client_tier_instrument_sweepable_quantities.click_on_checkmark()
+        client_tier_instrument_sweepable_quantities.click_on_plus()
+        client_tier_instrument_sweepable_quantities.set_quantity(self.sweepable_quantities[2])
+        client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+        time.sleep(1)
+
+        client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor_1)
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.set_quantity_at_base_margin_tab(self.base_margin_quantity)
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus()
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor_2)
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
+        time.sleep(2)
+        client_tiers_instrument_wizard.click_on_save_changes()
+        time.sleep(2)
+
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.click_on_more_actions()
+
+        time.sleep(2)
+        client_tier_instrument_main_page.set_symbol(self.symbol)
+        time.sleep(1)
+        client_tier_instrument_main_page.click_on_more_actions()
+        time.sleep(1)
+        client_tier_instrument_main_page.click_on_edit()
 
     def test_context(self):
         try:
             self.precondition()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+
             client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
                 self.web_driver_container)
-            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            try:
-                client_tiers_main_page.set_name(self.name)
-                self.verify("Is client tier created correctly? ", True, True)
-            except Exception as e:
-                self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
+
+            client_tier_instrument_sweepable_quantities.click_on_delete_by_value(self.sweepable_quantities[1])
             time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
-            client_tier_instrument_main_page.click_on_new()
-            time.sleep(2)
-            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tier_instrument_sweepable_quantities.click_on_plus()
-            client_tier_instrument_sweepable_quantities.set_quantity(1000000)
-            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
-            time.sleep(1)
-            client_tier_instrument_sweepable_quantities.click_on_checkmark()
-            client_tier_instrument_sweepable_quantities.click_on_plus()
-            client_tier_instrument_sweepable_quantities.set_quantity(5000000)
-            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
-            time.sleep(1)
-            client_tier_instrument_sweepable_quantities.click_on_checkmark()
-            client_tier_instrument_sweepable_quantities.click_on_plus()
-            client_tier_instrument_sweepable_quantities.set_quantity(10000000)
-            client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
-            time.sleep(1)
-            client_tier_instrument_sweepable_quantities.click_on_checkmark()
-            client_tier_instrument_sweepable_quantities.set_quantity_filter(5000000)
-            time.sleep(2)
-            client_tier_instrument_sweepable_quantities.click_on_delete()
-            client_tiers_instrument_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.click_on_edit()
-            time.sleep(2)
+
             client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            client_tier_instrument_tenors_sub_wizard.click_on_plus()
+            client_tier_instrument_tenors_sub_wizard.click_on_created_tenor(self.tenor_1)
             time.sleep(2)
-            client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor)
-            time.sleep(4)
-            client_tier_instrument_tenors_sub_wizard.set_quantity_filter_at_base_margins_tab(5000000)
+            all_quantity_at_base_margin = client_tier_instrument_tenors_sub_wizard. \
+                get_all_list_quantity_at_base_margin_tab()
+
+            actual_result = False if str(self.sweepable_quantities[1]) in all_quantity_at_base_margin else True
+
+            self.verify(f"Deleted Quantity is not displayed inside {self.tenor_1}", True, actual_result)
+
             time.sleep(2)
-            try:
-                client_tier_instrument_tenors_sub_wizard.click_on_edit_at_base_margins_tab()
-                self.verify("Erorr, quantity does not deleted !!!", True, False)
-            except TimeoutException as e:
-                error_name = e.__class__.__name__
-                self.verify("Quantity is not displayed and deleted successful", "TimeoutException", error_name)
+            client_tier_instrument_tenors_sub_wizard.click_on_created_tenor(self.tenor_2)
+            time.sleep(2)
+            all_quantity_at_base_margin = client_tier_instrument_tenors_sub_wizard. \
+                get_all_list_quantity_at_base_margin_tab()
+
+            actual_result = False if str(self.sweepable_quantities[1]) in all_quantity_at_base_margin else True
+
+            self.verify(f"Deleted Quantity is not displayed inside {self.tenor_2}", True, actual_result)
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

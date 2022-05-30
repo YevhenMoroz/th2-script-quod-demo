@@ -7,7 +7,9 @@ from th2_grpc_act_gui_quod.ar_operations_service import AggregatedRatesOperation
 from th2_grpc_act_gui_quod.bag_mgt_service import BagManagementServiceService
 from th2_grpc_act_gui_quod.basket_book_service import BasketBookServiceService
 from th2_grpc_act_gui_quod.basket_ticket_service import BasketTicketServiceService
+from th2_grpc_act_gui_quod.bookings_blotter_service import BookingsBlotterServiceService
 from th2_grpc_act_gui_quod.care_orders_service import CareOrdersServiceService
+from th2_grpc_act_gui_quod.child_order_book_service import ChildOrderBookServiceService
 from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerInterventionOperationsService
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
@@ -16,6 +18,7 @@ from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceServic
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
+from th2_grpc_act_gui_quod.risk_management_service import RiskManagementServiceService
 from th2_grpc_act_gui_quod.trades_service import TradesServiceService
 from th2_grpc_act_fix_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
@@ -69,6 +72,9 @@ class Stubs:
     win_act_basket_order_book = factory.grpc_router.get_service(BasketBookServiceService)
     win_act_basket_ticket = factory.grpc_router.get_service(BasketTicketServiceService)
     win_act_bag_management_service = factory.grpc_router.get_service(BagManagementServiceService)
+    win_act_booking_blotter_service = factory.grpc_router.get_service(BookingsBlotterServiceService)
+    win_act_risk_management = factory.grpc_router.get_service(RiskManagementServiceService)
+    win_act_child_order_book = factory.grpc_router.get_service(ChildOrderBookServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 

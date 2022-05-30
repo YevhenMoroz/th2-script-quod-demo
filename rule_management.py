@@ -24,7 +24,7 @@ from th2_grpc_sim import sim_pb2_grpc as core_test
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
 
 
@@ -98,12 +98,15 @@ class RuleManager:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
 
-    def remove_rule(self, rule):
-        self.core.removeRule(rule)
+    @staticmethod
+    def remove_rule(rule):
+        Stubs.core.removeRule(rule)
 
-    def remove_rules(self, list_rules: list):
+    @staticmethod
+    def remove_rules(list_rules: list):
+        rule_manager = RuleManager()
         for rule in list_rules:
-            self.remove_rule(rule)
+            rule_manager.remove_rule(rule)
 
     # ------------------------
 
@@ -401,7 +404,8 @@ class RuleManager:
 if __name__ == '__main__':
     rule_manager = RuleManager()
     # rule_manager.remove_all_rules()
-    rule_manager_eq = RuleManager(Simulators.equity)
+    # rule_manager_eq = RuleManager(Simulators.equity)
+    # rule_manager.remove_rule_by_id(33)
     rule_manager.print_active_rules()
-    print("_________________________")
-    rule_manager_eq.print_active_rules()
+    # print("_________________________")
+    # rule_manager_eq.print_active_rules()

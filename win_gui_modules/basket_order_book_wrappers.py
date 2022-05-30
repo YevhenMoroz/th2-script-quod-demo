@@ -1,4 +1,4 @@
-from th2_grpc_act_gui_quod import basket_book_pb2
+from th2_grpc_act_gui_quod import basket_book_pb2, order_ticket_pb2
 
 
 class ExtractOrderDataDetails:
@@ -130,6 +130,39 @@ class WaveBasketDetails:
 
     def set_sub_lvl_rows(self, sub_lvl_rows: list):
         self._request.subLvlRows.extend(sub_lvl_rows)
+
+    def set_external_twap_stratagy(self, strategy_type, urgency):
+        self._request.algoWaveDetails.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self._request.algoWaveDetails.strategyType = strategy_type
+        self._request.algoWaveDetails.twapStrategy.CopyFrom(order_ticket_pb2.TWAPStrategyParams())
+        self._request.algoWaveDetails.twapStrategy.aggressivity = urgency
+
+
+    def build(self):
+        return self._request
+
+
+class BasketMenuItemDetails:
+    def __init__(self, base_request=None):
+        if base_request is not None:
+            self._request = basket_book_pb2.BasketMenuItemDetails(base=base_request)
+        else:
+            self._request = basket_book_pb2.BasketMenuItemDetails()
+
+    def set_filter(self, table_filter: dict):
+        self._request.filter.update(table_filter)
+
+    def set_menu_item(self, menu_item: str):
+        self._request.menuItem = menu_item
+
+    def set_selected_rows(self, selected_rows):
+        self._request.selectedRows.extend(selected_rows)
+
+    def set_extraction_Id(self, extraction_Id: str):
+        self._request.extractionId = extraction_Id
+
+    def set_sub_lvl_tab(self, sub_lvl_tab: str):
+        self._request.subLvlTab = sub_lvl_tab
 
     def build(self):
         return self._request

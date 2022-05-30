@@ -28,6 +28,7 @@ class QAP_5601(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.desk = self.data_set.get_desk("desk_3")
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,6 +45,7 @@ class QAP_5601(CommonTestCase):
         values_sub_wizard.set_id(self.id)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         assignments_sub_wizard.set_desk(self.desk)

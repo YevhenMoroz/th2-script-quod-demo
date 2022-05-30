@@ -47,7 +47,6 @@ class QAP_1083(TestCase):
         # region create 3 CO order
         for i in range(3):
             if i >= 2:
-                print(i)
                 self.fix_message.change_parameter('Side', '2')
                 self.fix_manager.send_message_fix_standard(self.fix_message)
                 self.client_inbox.accept_order(lookup, qty, price)

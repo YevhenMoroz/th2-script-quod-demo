@@ -22,11 +22,11 @@ class QAP_2167(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.account = "TEST"
         self.client = self.data_set.get_client("client_1")
         self.user = self.data_set.get_user("user_4")
         self.desk = self.data_set.get_desk("desk_1")
         self.institution = self.data_set.get_institution("institution_1")
+        self.account = ''
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,6 +44,7 @@ class QAP_2167(CommonTestCase):
         time.sleep(1)
         wizard.set_execution_policy(self.execution_policy)
         time.sleep(1)
+        self.account = random.choice(wizard.get_all_account_from_drop_menu())
         wizard.set_account(self.account)
         time.sleep(1)
         wizard.set_client(self.client)
@@ -60,12 +61,13 @@ class QAP_2167(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
+
             page = WashBookRulesPage(self.web_driver_container)
             page.set_name_at_filter(self.name)
             time.sleep(2)
             page.click_on_more_actions()
-            expected_pdf_content = [self.name, self.client, self.instr_type, self.execution_policy, self.account,
-                                    self.user, self.desk]
+            expected_pdf_content = [self.name, self.client, self.instr_type, self.execution_policy,
+                                    self.account, self.user, self.desk]
             self.verify("Is pdf contains values ", True,
                         page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
         except Exception:

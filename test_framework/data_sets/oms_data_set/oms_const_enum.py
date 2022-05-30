@@ -31,6 +31,13 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    instrument_tag_5120 = dict(
+        Symbol='test123',
+        SecurityID='FR0010436584',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS',
+    )
 
 
 class OmsInstrumentId(Enum):
@@ -96,6 +103,7 @@ class OmsVenueClientNames(Enum):
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
+    client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
@@ -260,3 +268,36 @@ class OMSPset(Enum):
 class OMSCommissionAndFeeBasis(Enum):
     comm_basis_1 = 'Absolute'
     comm_basis_2 = 'Percentage'
+
+
+class OMSBasketTemplates(Enum):
+    template1 = "Default Template"
+    template2 = "Test Template"  # This is a test template with header and default value
+    template3 = "Test Template 2"  # This is a test template without header and default value
+    template4 = "TemplateWithCurrencyAndVenue"  # Template for testing set upped currency and venue
+    template5 = "Test Template csv"  # This is a test template without header and custom delimiter
+
+
+class OMSGiveUpBrokers(Enum):
+    give_up_broker_1 = 'GiveUpBrokerForVS'
+
+
+class OMSClientDesks(Enum):
+    client_desk_1 = 'Fully Manual'
+
+
+class OMSBookingTicketFeeType(Enum):
+    fee_type_in_booking_ticket_1 = "Regulatory"
+
+
+class OMSNetGrossInd(Enum):
+    net_ind = 'Net'
+    gross_ind = 'Gross'
+
+
+class OMSStatus(Enum):
+    status_1 = 'Accepted'
+
+
+class OMSMatchStatus(Enum):
+    match_status_1 = 'Unmatched'

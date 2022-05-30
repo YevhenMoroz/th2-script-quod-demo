@@ -18,3 +18,14 @@ class FixMessageQuoteRequestRejectFX(FixMessageQuoteRequestReject):
         }
         super().change_parameters(quote_reject_params)
         return self
+
+    def set_deposit_reject_params(self, quote_request: FixMessageQuoteRequestFX, text: str = None):
+        quote_reject_params = {
+            "QuoteReqID": quote_request.get_parameter("QuoteReqID"),
+            "QuoteRequestRejectReason": "3",
+            "VenueType": "I",
+            "Text": text if text is not None else "*",
+
+        }
+        super().change_parameters(quote_reject_params)
+        return self

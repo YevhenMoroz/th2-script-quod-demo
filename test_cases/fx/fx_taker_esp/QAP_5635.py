@@ -99,7 +99,7 @@ no_md_entries_spo_ebs = [
 ]
 
 
-def execute(report_id, session_id):
+def execute(report_id, session_id, data_set):
     try:
         data_set = FxDataSet()
         case_name = Path(__file__).name[:-3]

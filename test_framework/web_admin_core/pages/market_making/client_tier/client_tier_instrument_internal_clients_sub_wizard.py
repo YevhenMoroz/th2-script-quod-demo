@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -32,4 +34,9 @@ class ClientTiersInstrumentInternalClientsSubWizard(CommonPage):
                                value)
 
     def get_client(self):
-        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH)
+        return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH).text
+
+    def get_all_internal_client_from_drop_menu(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH).click()
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(ClientTierConstants.DROP_DOWN_MENU_XPATH)

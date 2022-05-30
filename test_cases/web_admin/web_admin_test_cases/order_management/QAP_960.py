@@ -33,7 +33,7 @@ class QAP_960(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
-        time.sleep(2)
+        side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
@@ -44,6 +44,7 @@ class QAP_960(CommonTestCase):
         time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_general()
+        time.sleep(2)
         general_block_wizard = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
         general_block_wizard.click_on_plus_button()
         general_block_wizard.set_on_visible_checkbox()
@@ -58,6 +59,7 @@ class QAP_960(CommonTestCase):
         time.sleep(1)
         general_block_wizard.click_on_checkmark_button()
         general_block_wizard.click_on_go_back_button()
+        time.sleep(2)
 
     def test_context(self):
         try:

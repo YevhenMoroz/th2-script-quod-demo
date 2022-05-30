@@ -16,4 +16,4 @@ class SystemCommandsConstants:
     VALUE_XPATH = '//*[@placeholder="Value *"]'
 
     SEND_BUTTON_XPATH = '//*[text()="Send"]'
-    ERROR_XPATH = '//*[text()="Request failed, verify the input data. If the problem persists, please contact the administrator for full details"]'
+    ERROR_XPATH = '//nb-toast[contains(@class, "danger")]'

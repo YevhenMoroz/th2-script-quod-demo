@@ -3,12 +3,10 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
     FixMessageOrderCancelReplaceRequestOMS
-from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -21,16 +19,14 @@ timeouts = True
 class QAP_1075(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.qty2 = "1000"
-        self.price = self.fix_message.get_parameter('Price')
-        self.lookup = "VETO"
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
 
@@ -42,14 +38,14 @@ class QAP_1075(TestCase):
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        self.client_inbox.accept_order()
         # endregion
         # region check order open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
         # region manual execution
-        self.order_book.manual_execution(self.qty)
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution(self.qty)
         # endregion
         # region check order partially filled status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
@@ -62,7 +58,7 @@ class QAP_1075(TestCase):
         self.fix_manager.send_message_fix_standard(fix_message_cancel_replace)
         # endregion
         # region reject order via FIX
-        self.client_inbox.reject_order(self.lookup, self.qty2, self.price)
+        self.client_inbox.reject_order()
         # endregion
         # region check old values
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(

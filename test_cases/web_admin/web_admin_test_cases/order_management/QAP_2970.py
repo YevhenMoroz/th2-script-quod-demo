@@ -42,6 +42,7 @@ class QAP_2970(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
+        side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         time.sleep(2)
@@ -72,6 +73,7 @@ class QAP_2970(CommonTestCase):
             expected_parameter_at_dark_block = "TestSuperStrategy1=2/test1582=1"
             self.verify("Saved dark broker strategy", expected_parameter_at_dark_block, dark_block.get_value())
             dark_block.click_on_go_back_button()
+            time.sleep(2)
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
@@ -81,6 +83,7 @@ class QAP_2970(CommonTestCase):
             expected_parameter_at_lit_general_block = "TestSuperStrategy1"
             self.verify("Saved BrokerStrategy", expected_parameter_at_lit_general_block, lit_general.get_value())
             lit_general.click_on_go_back_button()
+            time.sleep(2)
             expected_parameter_and_value_at_dark_block = ["DarkBrokerStrategies: ", expected_parameter_at_dark_block]
             actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
                                                         strategies_wizard.get_parameter_value_at_dark_block()]

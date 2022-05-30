@@ -29,9 +29,10 @@ class QAP_6491(CommonTestCase):
             self.precondition()
             self.verify("Login successful", True, True)
 
-        except Exception:
+        except Exception as e:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
             print(" Search in ->  " + self.__class__.__name__)
+            print(e.__class__)

@@ -24,8 +24,8 @@ class WebAdminComponentId(Enum):
     component_id_1 = "SATS"
 
 
-class WebAdminAdminCommands(Enum):
-    admin_command_1 = "ChangeLogLevel"
+class WebAdminSystemCommands(Enum):
+    system_command_1 = "ChangeLogLevel"
 
 
 # endregion
@@ -61,6 +61,8 @@ class WebAdminClients(Enum):
     client_2 = "CLIENT2"
     client_3 = "CLIENT3"
     client_4 = "BrokerACA"
+    client_5 = "QAP5913"
+    client_6 = "QAP6706"
 
 
 class WebAdminClientType(Enum):
@@ -295,7 +297,7 @@ class WebAdminExecPolicy(Enum):
     exec_policy_2 = "DMA"
     exec_policy_3 = "ExternalCare"
     exec_policy_4 = "Algorithmic"
-    exec_policy_5 = "Sor"
+    exec_policy_5 = "SOR"
     exec_policy_6 = "ExternalAlgo"
 
 

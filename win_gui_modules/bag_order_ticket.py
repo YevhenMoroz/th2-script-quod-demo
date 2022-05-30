@@ -58,6 +58,12 @@ class BagOrderTicketDetails:
     def set_price(self, price: str):
         self.order.price = price
 
+    def set_tif(self, tif: str):
+        self.order.tif = tif
+
+    def set_expire_date(self, expire_date: str):
+        self.order.expireDate = expire_date
+
     def confirm_ticket_creation(self):
         self.order.confirm = OrderBagTicketDetails.Confirmation.OK
 
@@ -70,6 +76,9 @@ class BagOrderTicketDetails:
     def modify_wave_bag_details(self, wave_bag_details: List[SubLevelDetails]):
         for details in wave_bag_details:
             self.order.subLevelDetails.append(details)
+
+    def clear(self, on_deleting=False):
+        self.order.clear = on_deleting
 
     '''
     this method use only for creation of bag order
@@ -253,11 +262,6 @@ class OrderBagCreationDetails:
             self.order_bag_creation.selectedRows.append(row)
 
     def set_order_bag_ticket_details(self, order: BagOrderTicketDetails):
-        # order = bag_mgt_pb2.OrderBagTicketDetails()
-        # bag_mgt_pb2.OrderBagTicketDetails()
-        # order.bagName = name
-        # if price:
-        #     order.price = price
         self.order_bag_creation.orderBagTicketDetails.CopyFrom(order.build())
 
     def build(self):

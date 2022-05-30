@@ -7,7 +7,7 @@ from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_client_sub_wizard import \
     UsersClientSubWizard
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -68,7 +68,7 @@ class QAP_919(CommonTestCase):
             time.sleep(1)
             client_sub_wizard.click_on_checkmark_button()
             time.sleep(1)
-            users_login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+            users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
             users_login_sub_wizard.set_ext_id_client("")
             time.sleep(2)
             client_sub_wizard.click_on_plus_button()

@@ -24,6 +24,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.basket_wave_row_details = None
         self.wave_basket_details = None
         self.extract_child_details = None
+        self.menu_item_details = None
         self.manage_templates_call = None
         self.extract_template_data_call = None
         self.remove_template_call = None
@@ -40,6 +41,7 @@ class BaseBasketOrderBook(BaseWindow):
         self.wave_basket_call = None
         self.amend_template_call = None
         self.clone_template_call = None
+        self.is_menu_item_present_call = None
 
     # endregion
     # region Common func
@@ -50,8 +52,10 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def get_basket_template_details(self, templ_name, column_names: []):
-        self.extract_template_details(self.base_request, {'Name': templ_name}, column_names)
+    def get_basket_template_details(self, templ_filter: dict, column_names: list):
+        self.extract_template_details.set_base_details(self.base_request)
+        self.extract_template_details.set_filter(templ_filter)
+        self.extract_template_details.set_column_names(column_names)
         result = call(self.extract_template_data_call, self.extract_template_details.build())
         self.clear_details([self.extract_template_details])
         return result
@@ -77,9 +81,29 @@ class BaseBasketOrderBook(BaseWindow):
         self.clear_details([self.extract_basket_data_details])
         return result
 
+    def is_menu_item_present(self, menu_item: str, row_count: list = None, sub_lvl_tab: str = None,
+                             filter_dict: dict = None):
+        """
+        check order context menu and return a bool value
+        """
+        if row_count is None:
+            row_count = [1]
+        self.menu_item_details.set_selected_rows(row_count)
+        self.menu_item_details.set_menu_item(menu_item)
+        if filter_dict is not None:
+            self.menu_item_details.set_filter(filter_dict)
+        if sub_lvl_tab is not None:
+            self.menu_item_details.set_sub_lvl_tab(sub_lvl_tab)
+        result = call(self.is_menu_item_present_call, self.menu_item_details.build())
+        self.clear_details([self.menu_item_details])
+        return result['isMenuItemPresent']
+
     # endregion
 
     # region Set
+    def set_external_algo_twap_details(self, strategy_type, urgency):
+        self.wave_basket_details.set_external_twap_stratagy(strategy_type, urgency)
+
     def basket_row_details(self, row_filter=None, remove_row=False, symbol=None, side=None, qty=None, ord_type=None,
                            price=None, capacity=None, stop_price=None):
         if not remove_row:
@@ -195,8 +219,8 @@ class BaseBasketOrderBook(BaseWindow):
             self.templates_details.set_filter(templ_filter)
         call(self.clone_template_call, self.templates_details.build())
 
-    def remove_basket_template(self, name):
-        self.simple_request(self.base_request, {'Name': name})
+    def remove_basket_template(self, templ_filter):
+        self.simple_request.set_filter(templ_filter)
         call(self.remove_template_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
@@ -218,20 +242,24 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.create_basket_via_import_call, self.basket_ticket_details.build())
         self.clear_details([self.basket_ticket_details])
 
-    def complete_basket(self, filter_list=None):
-        call(self.complete_basket_call, self.simple_request(self.base_request, filter_list).build())
+    def complete_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
+        call(self.complete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def un_complete(self, filter_list=None):
-        call(self.uncomplete_basket_call, self.simple_request(self.base_request, filter_list).build())
+    def un_complete(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
+        call(self.uncomplete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def book_basket(self, filter_list=None):
-        call(self.book_basket_call, self.simple_request(self.base_request, filter_list).build())
+    def book_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
+        call(self.book_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def cancel_basket(self, filter_list=None):
-        call(self.cancel_basket_call, self.simple_request(self.base_request, filter_list).build())
+    def cancel_basket(self, filter_dict=None):
+        self.simple_request.set_filter(filter_dict)
+        call(self.cancel_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
     def remove_from_basket(self, filter_dict: dict = None, rows_numbers: list = None):

@@ -23,7 +23,8 @@ class QAP_3399(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.id = self.data_set.get_venue_id("venue_id_1")
+        self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = self.data_set.get_venue_type("venue_type_1")
         self.country = self.data_set.get_country("country_1")
         self.new_country = self.data_set.get_country("country_2")
@@ -43,6 +44,7 @@ class QAP_3399(CommonTestCase):
         description_sub_wizard.set_name(self.name)
         time.sleep(1)
         description_sub_wizard.set_id(self.id)
+        description_sub_wizard.set_client_venue_id(self.client_venue_id)
         time.sleep(1)
         description_sub_wizard.set_type(self.type)
         time.sleep(1)
@@ -84,7 +86,6 @@ class QAP_3399(CommonTestCase):
             self.verify("Is main page contains correctly values",
                         expected_values_from_main_page,
                         actual_values_from_main_page)
-
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

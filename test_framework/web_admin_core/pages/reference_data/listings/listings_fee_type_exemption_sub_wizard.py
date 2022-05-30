@@ -10,8 +10,17 @@ class ListingsFeeTypeExemptionSubWizard(CommonPage):
     def click_on_stamp_fee_exemption(self):
         self.find_by_xpath(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH).click()
 
+    def is_stamp_fee_exemption(self):
+        return self.is_checkbox_selected(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH)
+
     def click_on_levy_fee_exemption(self):
         self.find_by_xpath(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH).click()
 
+    def is_levy_fee_exemption(self):
+        return self.is_checkbox_selected(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH)
+
     def click_on_per_transac_fee_exemption(self):
         self.find_by_xpath(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH).click()
+
+    def is_per_tranac_fee_exemption(self):
+        return self.is_checkbox_selected(ListingsConstants.FEE_TYPE_EXEMPTION_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH)

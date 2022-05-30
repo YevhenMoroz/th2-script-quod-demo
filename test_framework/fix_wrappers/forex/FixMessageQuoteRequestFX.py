@@ -94,6 +94,45 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().change_parameters(quote_request_swap_params)
         return self
 
+    def set_swap_fwd_fwd(self):
+        quote_request_swap_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NoRelatedSymbols": [{
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
+                "Side": "1",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_swap")
+                },
+                "NoLegs": [
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_fwd"),
+                        },
+                        "LegSide": "2",
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("wk1"),
+                        "LegOrderQty": "1000000"
+                    },
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_fwd")
+                        },
+                        "LegSide": "1",
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk2"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("wk2"),
+                        "LegOrderQty": "1000000"
+                    }
+                ]
+            }
+            ]
+        }
+        super().change_parameters(quote_request_swap_params)
+        return self
+
     def update_near_leg(self, leg_symbol: str = None, leg_sec_type: str = None, leg_side: str = None,
                         settle_type: str = None, settle_date: str = None, leg_qty: str = None):
         if leg_symbol is not None:
@@ -139,21 +178,60 @@ class FixMessageQuoteRequestFX(FixMessage):
                 },
                 "NoPartyIDs": [
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "1"
                     },
                     {
-                        "PartyID": "CLIENT1",
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
                         "PartyIDSource": "D",
                         "PartyRole": "3"
                     }
                 ],
-                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
-                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "MaturityDate": self.get_data_set().get_settle_date_by_name("wk2"),
                 "Side": "2",
                 "DayCount": "30/360",
                 "OrderQty": "1000000",
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
+        return self
+
+    def set_early_redemption_params(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NumOfCompetitors": "1",
+            "InCompetition": "N",
+            "VenueType": "I",
+            "NoRelatedSym": [{
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SymbolSfx": "SD/CD",
+                    "SecurityType": "FOR",
+                    "Product": "4"
+                },
+                "NoPartyIDs": [
+                    {
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
+                        "PartyIDSource": "D",
+                        "PartyRole": "1"
+                    },
+                    {
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
+                        "PartyIDSource": "D",
+                        "PartyRole": "3"
+                    }
+                ],
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1"),
+                "SettlDate2": self.get_data_set().get_settle_date_by_name("wk2"),
+                "Side": "2",
+                "Price": "1.18153",
+                "OrderQty": "1000000",
+                "OrderQty2": "1000000",
+                "QuoteRequestType": "100",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
             }
             ]
         }

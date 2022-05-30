@@ -1,13 +1,17 @@
 import logging
-import time
 from getpass import getuser as get_pc_name
 from datetime import datetime
+from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.fx.fx_taker_rfq.QAP_3048 import QAP_3048
-
+from test_cases.eq.Care.QAP_1016 import QAP_1016
 from test_framework.configurations.component_configuration import ComponentConfiguration
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
+from test_framework.data_sets.algo_data_set.algo_data_set import AlgoDataSet
+from test_framework.data_sets.ret_data_set.ret_data_set import RetDataSet
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
+from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,38 +23,22 @@ def test_run():
     pc_name = get_pc_name()  # getting PC name
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
-    # initializing dataset
-
     # initializing FE session
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
-    session_id = set_session_id(target_server_win="rnenakho")
-    window_name = "Quod Financial - Quod site 314"
+    session_id = set_session_id(pc_name)
+    base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
-    start_time = time.time()
-    print(f"Test start")
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    fe_folder = fe_env.folder
+    fe_user = fe_env.user_1
+    fe_pass = fe_env.password_1
     # endregion
-    Stubs.frontend_is_open = True
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id, window_name)
-
-        # rm = RuleManager()
-        # rm.print_active_rules()
-
-        # Testing(report_id, session_id, configuration.data_set).execute()
-
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # Send_RFQ(report_id, data_set=configuration.data_set).execute()
-        QAP_3048(report_id, session_id=session_id, data_set=configuration.data_set,
-                 environment=configuration.environment).execute()
-
-        end = time.time()
-        print(f"Test duration is {end - start_time} seconds")
-
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        QAP_1016(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

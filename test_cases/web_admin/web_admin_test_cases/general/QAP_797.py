@@ -15,8 +15,8 @@ class QAP_797(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = "wrong password"
-        self.unsuccessful_message = "Request failed, verify the input data. If the problem persists, " \
-                                    "please contact the administrator for full details"
+        self.unsuccessful_message = "logon failure, invalid credentials. Error code=QUOD-17512." \
+                                    " If the problem persists, please contact the administrator for full details"
 
     def test_context(self):
         try:

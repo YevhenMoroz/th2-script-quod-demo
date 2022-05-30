@@ -19,6 +19,7 @@ class ListingsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     ERROR_MESSAGE_WIZARD_XPATH = "//*[@outline='danger']"
+    DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
 
     # Main page
     MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH = '//*[text()="Listing"]/preceding-sibling::input'
@@ -57,6 +58,20 @@ class ListingsConstants:
     VALUES_TAB_CALL_PUT_XPATH = '//*[@id="callPut"]'
     VALUES_TAB_INSTR_SETTL_DATE_XPATH = '//*[@formcontrolname="instrSettlDate"]'
 
+    # Translation tab
+    TRANSLATION_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
+    TRANSLATION_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="checkmark"]'
+    TRANSLATION_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="close""]'
+    TRANSLATION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="edit"]'
+    TRANSLATION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="trash-2"]'
+
+    TRANSLATION_TAB_LANGUAGE_FILTER_XPATH = '//*[@class="lang ng2-smart-th ng-star-inserted"]//input'
+    TRANSLATION_TAB_LANGUAGE_XPATH = '//*[@placeholder="Language *"]'
+    TRANSLATION_TAB_NAME_FILTER_XPATH = '//*[@class="langListingGroupName ng2-smart-th ng-star-inserted"]//input'
+    TRANSLATION_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
+    TRANSLATION_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="listingGroupDesc ng2-smart-th ng-star-inserted"]//input'
+    TRANSLATION_TAB_DESCRIPTION_XPATH = '//*[@placeholder="Description *"]'
+
     # Attachment tab
     ATTACHMENT_TAB_VENUE_XPATH = '//*[@id="venue"]'
     ATTACHMENT_TAB_PREFERRED_VENUE_XPATH = '//*[@id="preferredVenue"]'
@@ -75,7 +90,7 @@ class ListingsConstants:
     DARK_ALGO_COM_PER_UNIT_COMM_AMT_XPATH = '//*[@id="darkAlgoPerUnitCommAmt"]'
     DARK_ALGO_COM_COMM_BASIS_POINT_XPATH = '//*[@id="darkAlgoCommBasisPoints"]'
     DARK_ALGO_COM_SPREAD_DISCOUNT_PROPORTION_XPATH = '//*[@id="darkAlgoSpreadDiscount"]'
-    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//label'
+    DARK_ALGO_COM_IS_COMM_PER_UNIT_XPATH = '//*[@formcontrolname = "darkAlgoIsCommPerUnit"]//span[1]'
 
     # Market Data
     MARKET_DATA_TAB_SOURCE_XPATH = '//*[@formcontrolname="MDSource"]'
@@ -129,15 +144,23 @@ class ListingsConstants:
     # Feature tab
     FEATURE_TAB_ORDER_BOOK_VISIBILITY_XPATH = '//*[@id="orderBookVisibility"]'
     FEATURE_TAB_FORWARD_POINT_DIVISOR_XPATH = '//*[@formcontrolname="forwardPointDivisor"]'
+    FEATURE_TAB_COMPOSITE_LISTING_ID_XPATH = '//*[@id="compositeListingID"]'
+    FEATURE_TAB_COMPOSITE_VENUE_NAME_XPATH = '//*[@id="compositeVenueName"]'
+    FEATURE_TAB_DEFAULT_TRADING_SESSION_XPATH = '//*[@id="defaultVenueTradingSessionID"]'
+    FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH = '//*[@formcontrolname="contractMultiplier"]'
 
-    FEATURE_TAB_ASYNC_INDICATOR_CHECKBOX_XPATH = '//*[text()="Async Indicator"]/preceding-sibling::span'
-    FEATURE_TAB_CROSS_THROUGH_USD_CHECKBOX_XPATH = '//*[text()="Cross Through USD"]/preceding-sibling::span'
-    FEATURE_TAB_CROSS_THROUGH_EUR_TO_USD_CHECKBOX_XPATH = '//*[text()="Cross Through EUR To USD"]/preceding-sibling::span'
+    FEATURE_TAB_ASYNC_INDICATOR_CHECKBOX_XPATH = '//*[text()=" Async Indicator "]/preceding-sibling::span'
+    FEATURE_TAB_CROSS_THROUGH_USD_CHECKBOX_XPATH = '//*[text()=" Cross Through USD "]/preceding-sibling::span'
+    FEATURE_TAB_CROSS_THROUGH_EUR_TO_USD_CHECKBOX_XPATH = '//*[text()=" Cross Through EUR To USD "]/preceding-sibling::span'
+    FEATURE_TAB_IS_REFINITIV_COMPOSITE_XPATH = '//*[text()=" Is Refinitiv Composite "]/preceding-sibling::span'
 
-    FEATURE_TAB_IMPLIED_IN_SUPPORT_CHECKBOX_XPATH = '//*[text()="Implied In Support"]/preceding-sibling::span'
-    FEATURE_TAB_CROSS_THROUGH_EUR_CHECKBOX_XPATH = '//*[text()="Cross Through EUR"]/preceding-sibling::span'
-    FEATURE_TAB_CROSS_THROUGH_USD_TO_EUR_CHECKBOX_XPATH = '//*[text()="Cross Through USD To EUR"]/preceding-sibling::span'
-    FEATURE_TAB_ALGO_INCLUDED_CHECKBOX_XPATH = '//*[text()="Algo Included"]/preceding-sibling::span'
+    FEATURE_TAB_IMPLIED_IN_SUPPORT_CHECKBOX_XPATH = '//*[text()=" Implied In Support "]/preceding-sibling::span'
+    FEATURE_TAB_CROSS_THROUGH_EUR_CHECKBOX_XPATH = '//*[text()=" Cross Through EUR "]/preceding-sibling::span'
+    FEATURE_TAB_CROSS_THROUGH_USD_TO_EUR_CHECKBOX_XPATH = '//*[text()=" Cross Through USD To EUR "]/preceding-sibling::span'
+
+    FEATURE_TAB_ALGO_INCLUDED_CHECKBOX_XPATH = '//*[text()=" Algo Included "]/preceding-sibling::span'
+    FEATURE_TAB_PERSIST_HISTORIC_TIME_SALES_XPATH = '//*[text()=" Persist Historic Time & Sales "]/preceding-sibling::span'
+    FEATURE_TAB_IS_BLOOMBERG_COMPOSITE_XPATH = '//*[text()=" Is Bloomberg Composite "]/preceding-sibling::span'
 
     # Validations tab
     VALIDATIONS_TAB_PRICE_LIMIT_XPATH = '//*[@id="priceLimitProfile"]'
@@ -151,6 +174,12 @@ class ListingsConstants:
     VALIDATIONS_TAB_ROUND_LOT_XPATH = '//*[@formcontrolname="roundLot"]'
     VALIDATIONS_TAB_MANAGE_PRICE_LIMIT_PROFILE_XPATH = '//*[@form-control-name="priceLimitProfile"]/parent::div/following-sibling::div//button'
     VALIDATIONS_TAB_MANAGE_TICK_SIZE_PROFILE_XPATH = '//*[@form-control-name="tickSizeProfile"]/parent::div/following-sibling::div//button'
+
+    # Status tab
+    STATUS_TAB_TRADING_PHASE_XPATH = '//*[@id="tradingPhase"]'
+    STATUS_TAB_TRADING_SESSION_XPATH = 'id="tradingSession"'
+    STATUS_TAB_TRADING_STATUS_XPATH = '//*[@id="tradingStatus"]'
+    STATUS_TAB_EXTERNAL_TRADING_STATUS_PHASE_XPATH = '//*[@id="externalTradingStatus"]'
 
     # Short Sell
     SHORT_SELL_TAB_ALLOW_SHORT_SELL_CHECKBOX_XPATH = '//*[text()="Allow Short Sell"]/preceding-sibling::span'

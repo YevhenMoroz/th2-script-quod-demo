@@ -11,6 +11,7 @@ class ModifyBagOrderRequest(JavaApiMessage):
     def set_default(self, order_bag_id, price: str, bag_name: str) -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderBagModificationRequestBlock': {
                 'OrderBagOrderList': {
                     'OrderBagOrderBlock': [
