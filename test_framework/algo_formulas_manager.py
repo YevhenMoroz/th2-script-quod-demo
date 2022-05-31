@@ -1,4 +1,5 @@
 import math
+from functools import wraps
 
 
 class AlgoFormulasManager:
@@ -55,7 +56,48 @@ class AlgoFormulasManager:
         return reserve
 
     @staticmethod
-    def get_child_qty_on_venue_weights(parent_qty, *venue_weights):
+    def prohibit_float_arguments(func):
+        @wraps(func)
+        def wrapper(*args):
+            for val in args:
+                if type(val) == float:
+                    raise ValueError('Float arguments are prohibited')
+                if type(val) == str:
+                    raise ValueError('String arguments are prohibited')
+                if val < 0:
+                    raise ValueError('Negative arguments are prohibited')
+            return func(*args)
+        return wrapper
+
+    # @staticmethod
+    # # @prohibit_float_arguments
+    # def get_child_qty_on_venue_weights(parent_qty: int, minqty: int = None, *venue_weights: list) -> list:
+    #     sum_of_weight = 0
+    #     count_of_venue = 0
+    #     qty_list = []
+    #
+    #     for i in venue_weights:
+    #         sum_of_weight += i
+    #         count_of_venue += 1
+    #
+    #     if minqty is None:
+    #         one_weight = parent_qty / sum_of_weight
+    #         j = 0
+    #         while j < len(venue_weights):
+    #             qty_list.append(one_weight * venue_weights[j])
+    #             j += 1
+    #     else:
+    #         qty_for_distribution = parent_qty - minqty * count_of_venue
+    #         one_weight = qty_for_distribution / sum_of_weight
+    #         j = 0
+    #         while j < len(venue_weights):
+    #             qty_list.append(one_weight * venue_weights[j] + minqty)
+    #             j += 1
+    #
+    #     return qty_list
+
+    @staticmethod
+    def get_child_qty_on_venue_weights(parent_qty: int, *venue_weights: list) -> list:
         sum_of_weight = 0
         for i in venue_weights:
             sum_of_weight += i
@@ -85,6 +127,9 @@ class AlgoFormulasManager:
             qty_list.append(int(one_weight * k + min_qty))
 
         return qty_list
+
+
+
 
 
 
