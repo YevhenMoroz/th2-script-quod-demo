@@ -39,8 +39,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_fill_sell(new_order_single)
             elif status is Status.PartialFill:
                 self.__set_partial_fill_sell(new_order_single)
-            elif status is Status.CancelReplace:
-                self.__set_cancel_replace_sell(new_order_single)
             elif status is Status.Reject:
                 self.__set_reject_buy(new_order_single)
             elif status is Status.Cancel:
@@ -71,6 +69,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
+        # if new_order_single.is_parameter_exist('PartyRole'):
+        #     temp.update(PartyRole=new_order_single.get_parameter('PartyRole'))
+        # if new_order_single.is_parameter_exist('PartyID'):
+        #     temp.update(PartyID=new_order_single.get_parameter('PartyID'))
+        # if new_order_single.is_parameter_exist('PartyIDSource'):
+        #     temp.update(PartyIDSource=new_order_single.get_parameter('PartyIDSource'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -454,6 +458,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
+        if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID=new_order_single.get_parameter('ClientAlgoPolicyID'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx=0,
@@ -493,6 +499,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = order_cancel_replace.get_parameter("Price"))
         if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
+        if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID=order_cancel_replace.get_parameter('ClientAlgoPolicyID'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx=0,
