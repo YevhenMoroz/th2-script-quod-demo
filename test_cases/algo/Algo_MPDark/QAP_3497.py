@@ -32,8 +32,12 @@ class QAP_3497(TestCase):
 
         # region order parameters
         # weights BATS = 60, CHIX = 30, CBOE = 10
+        self.weights_list = [60, 30, 10]
         self.qty = 10000
+        # self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.weights_list)
         self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 60, 30, 10)
+        # self.qty_list = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weights_list)
+        # self.qty_1_child, self.qty_2_child, self.qty_3_child = [int(i) for i in qty_list]
         self.price = 20
         # endregion
 
@@ -71,7 +75,7 @@ class QAP_3497(TestCase):
         self.key_params_with_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_without_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_mp_dark_child")
-        self.verifier_key_parameters_NOS = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS")
+        self.verifier_key_parameters_with_only_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS")
         # endregion
 
         self.rule_list = []
@@ -103,7 +107,7 @@ class QAP_3497(TestCase):
         # endregion
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.MP_Dark_order, self.verifier_key_parameters_NOS, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.MP_Dark_order, self.verifier_key_parameters_with_only_cl_ord_id, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
         er_pending_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
@@ -117,7 +121,7 @@ class QAP_3497(TestCase):
         # region Check child DMA order on venue BATS DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_1_child, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -131,7 +135,7 @@ class QAP_3497(TestCase):
         # endregion
 
         # region Check child DMA order on venue CHIX DARKPOOL UK
-        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_2_child, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
@@ -147,7 +151,7 @@ class QAP_3497(TestCase):
         # endregion
 
         # region Check child DMA order on venue CBOE DARKPOOL EU
-        self.dma_cboe_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_cboe_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_cboe_order.change_parameters(dict(Account=self.account_cboe, ExDestination=self.ex_destination_cboe, OrderQty=self.qty_3_child, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_cboe_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
@@ -188,6 +192,7 @@ class QAP_3497(TestCase):
         # endregion
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
         # endregion
 
