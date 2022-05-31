@@ -13,6 +13,7 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_3504(TestCase):
@@ -35,10 +36,8 @@ class QAP_3504(TestCase):
         self.qty = 12000
         self.dec_qty = 5000
         self.minQty = 1000
-        self.qty_1_chix_child = 8000
-        self.qty_1_bats_child = 4000
-        self.qty_2_chix_child = 2800
-        self.qty_2_bats_child = 2200
+        self.qty_1_chix_child, self.qty_1_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights_with_min_qty(self.qty, self.minQty, 7, 3)
+        self.qty_2_chix_child, self.qty_2_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights_with_min_qty(self.dec_qty, self.minQty, 7, 3)
         self.price = 20
         # endregion
 
@@ -117,8 +116,8 @@ class QAP_3504(TestCase):
         # region Check 1 child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_1_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_chix_order.change_parameters(dict(OrderQty=self.qty_1_chix_child, Price=self.price, Instrument=self.instrument))
+        self.dma_1_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
+        self.dma_1_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_1_chix_child, Price=self.price, Instrument=self.instrument))
         self.dma_1_chix_order.add_tag(dict(MinQty=self.minQty))
         self.fix_verifier_buy.check_fix_message(self.dma_1_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -130,8 +129,8 @@ class QAP_3504(TestCase):
         # endregion
 
         # region Check 1 child DMA order on venue BATS DARKPOOL UK
-        self.dma_1_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_bats_order.change_parameters(dict(OrderQty=self.qty_1_bats_child, Price=self.price, Instrument=self.instrument))
+        self.dma_1_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
+        self.dma_1_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_1_bats_child, Price=self.price, Instrument=self.instrument))
         self.dma_1_bats_order.add_tag(dict(MinQty=self.minQty))
         self.fix_verifier_buy.check_fix_message(self.dma_1_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
@@ -173,8 +172,8 @@ class QAP_3504(TestCase):
         # region Check 2 child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_2_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_chix_order.change_parameters(dict(OrderQty=self.qty_2_chix_child, Price=self.price, Instrument=self.instrument))
+        self.dma_2_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
+        self.dma_2_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_2_chix_child, Price=self.price, Instrument=self.instrument))
         self.dma_2_chix_order.add_tag(dict(MinQty=self.minQty))
         self.fix_verifier_buy.check_fix_message(self.dma_2_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
@@ -186,8 +185,8 @@ class QAP_3504(TestCase):
         # endregion
 
         # region Check 2 child DMA order on venue BATS DARKPOOL UK
-        self.dma_2_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_bats_order.change_parameters(dict(OrderQty=self.qty_2_bats_child, Price=self.price, Instrument=self.instrument))
+        self.dma_2_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
+        self.dma_2_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_2_bats_child, Price=self.price, Instrument=self.instrument))
         self.dma_2_bats_order.add_tag(dict(MinQty=self.minQty))
         self.fix_verifier_buy.check_fix_message(self.dma_2_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 4 order')
 
@@ -220,8 +219,8 @@ class QAP_3504(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_bats_order, self.key_params_with_ex_destination, self.ToQuod, "Buy Side ExecReport Cancel child DMA 4 order")
         # endregion
 
-        cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
+        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
+        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
         # endregion
 
         RuleManager.remove_rules(self.rule_list)
