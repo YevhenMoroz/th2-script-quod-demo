@@ -69,12 +69,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        # if new_order_single.is_parameter_exist('PartyRole'):
-        #     temp.update(PartyRole=new_order_single.get_parameter('PartyRole'))
-        # if new_order_single.is_parameter_exist('PartyID'):
-        #     temp.update(PartyID=new_order_single.get_parameter('PartyID'))
-        # if new_order_single.is_parameter_exist('PartyIDSource'):
-        #     temp.update(PartyIDSource=new_order_single.get_parameter('PartyIDSource'))
+        if new_order_single.is_parameter_exist('NoPartyIDs'):
+            temp.update(NoPartyIDs=new_order_single.add_fields_into_repeating_group('NoPartyIDs', ['PartyID', 'PartyIDSource', 'PartyRole']))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -413,10 +409,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(SecondaryAlgoPolicyID=order_cancel_replace.get_parameter('ClientAlgoPolicyID'))
-        if order_cancel_replace.is_parameter_exist('SettlDate'):
-            temp.update(SettlDate=order_cancel_replace.get_parameter('SettlDate'))
         if order_cancel_replace.is_parameter_exist('SettlType'):
             temp.update(SettlType=order_cancel_replace.get_parameter('SettlType'))
+        if order_cancel_replace.is_parameter_exist('SettlDate'):
+            temp.update(SettlDate=order_cancel_replace.get_parameter('SettlDate'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
