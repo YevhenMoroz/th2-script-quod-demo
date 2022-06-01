@@ -406,7 +406,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1010',
             'ClientAlgoPolicyID': 'QA_MPDark2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536'
+            'ShortCode': '17536',
+            # 'NoPartyIDs': {
+            #     'PartyID': 'gtw01',
+            #     'PartyIDSource': 'D',
+            #     'PartyRole': '36'
+            # }
         }
         super().change_parameters(base_parameters)
         return self
