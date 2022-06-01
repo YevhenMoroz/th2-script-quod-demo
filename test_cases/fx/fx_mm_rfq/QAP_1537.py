@@ -40,7 +40,7 @@ class QAP_1537(TestCase):
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                            OrderQty=self.qty, Account=self.account,
                                                            Instrument=self.instrument)
-        self.fix_manager_sel.send_message(self.quote_request)
+        self.fix_manager_sel.send_message_and_receive_response(self.quote_request)
         # endregion
         # region Step 2
         time.sleep(120)
