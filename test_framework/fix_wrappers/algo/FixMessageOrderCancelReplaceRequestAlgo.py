@@ -9,7 +9,11 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
     def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None):
         super().__init__()
         if new_order_single is not None:
-            self.update_fix_message(new_order_single.get_parameters())
+            if new_order_single.is_parameter_exist('NoStrategyParameters'):
+                self.update_fix_message(new_order_single.get_parameters())
+            else:
+                self.update_fix_message_without_no_strategy_params(new_order_single.get_parameters())
+
         super().change_parameters(parameters)
 
     def update_fix_message(self, parameters: dict):
@@ -32,3 +36,26 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
         )
         super().change_parameters(temp)
         return self
+
+    def update_fix_message_without_no_strategy_params(self, parameters: dict):
+        temp = dict(
+            Account=parameters['Account'],
+            ClOrdID=parameters['ClOrdID'],
+            HandlInst=parameters['HandlInst'],
+            Side=parameters['Side'],
+            OrderQty=parameters['OrderQty'],
+            TimeInForce=parameters['TimeInForce'],
+            OrdType=parameters['OrdType'],
+            TransactTime=datetime.utcnow().isoformat(),
+            ClientAlgoPolicyID=parameters['ClientAlgoPolicyID'],
+            OrderCapacity=parameters['OrderCapacity'],
+            Price=parameters['Price'],
+            Currency=parameters['Currency'],
+            Instrument=parameters['Instrument'],
+            OrigClOrdID=parameters["ClOrdID"],
+            TargetStrategy=parameters['TargetStrategy'],
+            # NoPartyIDs=parameters['NoPartyIDs']
+        )
+        super().change_parameters(temp)
+        return self
+
