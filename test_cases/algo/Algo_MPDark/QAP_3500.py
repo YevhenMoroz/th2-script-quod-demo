@@ -124,9 +124,9 @@ class QAP_3500(TestCase):
         self.dma_1_chix_order.add_tag(dict(MinQty=self.minQty))
         self.fix_verifier_buy.check_fix_message(self.dma_1_chix_order, key_parameters=self.key_params_with_cl_ord_id_and_ex_destination, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        er_pending_er_new_dma_1_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_chix_order, self.gateway_side_buy, self.status_pending)
-        er_pending_er_new_dma_1_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix))
-        self.fix_verifier_buy.check_fix_message(er_pending_er_new_dma_1_chix_order_params, key_parameters=self.key_params_with_cl_ord_id_and_ex_destination, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
+        er_pending_new_dma_1_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_chix_order, self.gateway_side_buy, self.status_pending)
+        er_pending_new_dma_1_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix))
+        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_1_chix_order_params, key_parameters=self.key_params_with_cl_ord_id_and_ex_destination, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
         er_new_dma_1_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_chix_order, self.gateway_side_buy, self.status_pending)
         er_new_dma_1_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix))
