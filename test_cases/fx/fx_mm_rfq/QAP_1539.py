@@ -1,84 +1,72 @@
-import logging
-from custom import basic_custom_actions as bca
+import time
 from pathlib import Path
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
+from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb, \
+    QuoteBookColumns as qb, QuoteStatus as qs
 
 
-def check_quote_request_b(base_request, service, case_id, status, qty):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty])
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb.add_extraction_details([qrb_status])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
+class QAP_1539(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.quote_cancel = FixMessageQuoteCancelFX()
+        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
+        self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.qty = str(random_qty(from_number=1, to_number=9, len=6))
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_spot
+        }
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Status", status, response[qrb_status.name])
-    verifier.verify()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.quote_request.set_rfq_params()
 
-
-def check_quote_book(base_request, service, case_id, status, qty):
-    qb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qb.set_extraction_id(extraction_id)
-    qb.set_filter(["OrdQty", qty])
-    qb_quote_status = ExtractionDetail("quoteBook.quotestatus", "QuoteStatus")
-    qb.add_extraction_details([qb_quote_status])
-    response = call(service.getQuoteBookDetails, qb.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Quote book")
-    verifier.compare_values("QuoteStatus", status, response[qb_quote_status.name])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    set_base(session_id, case_id)
-
-    ar_service = Stubs.win_act_aggregated_rates_service
-    case_base_request = get_base_request(session_id, case_id)
-
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    client = 'Palladium1'
-    settle_type = '0'
-    symbol = 'EUR/USD'
-    currency = 'EUR'
-    security_type = 'FXSPOT'
-    side = ''
-    order_qty = random_qty(1, 5, 7)
-    settle_date = spo()
-
-    try:
-        # Step 1-2
-        params = CaseParamsSellRfq(client, case_id, side=side, orderqty=order_qty, symbol=symbol,
-                                   securitytype=security_type,
-                                   settldate=settle_date, settltype=settle_type, currency=currency)
-
-        rfq = FixClientSellRfq(params). \
-            send_request_for_quote(). \
-            verify_quote_pending()
-        rfq.send_quote_cancel()
-        # Step 3
-        # TODO Wait for new QRB check
-        check_quote_request_b(case_base_request, ar_service, case_id, "Terminated", order_qty)
-        # Step 4
-        check_quote_book(case_base_request, ar_service, case_id, "Canceled", order_qty)
-
-    except Exception:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           OrderQty=self.qty, Account=self.account,
+                                                           Instrument=self.instrument)
+        self.fix_manager_sel.send_message_and_receive_response(self.quote_request)
+        self.quote.set_params_for_quote(quote_request=self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion
+        # region Step 2
+        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.fix_manager_sel.send_message(self.quote_cancel)
+        # endregion
+        time.sleep(10)
+        # region Step 3
+        self.quote_request_book.set_filter(
+            [qrb.instrument_symbol.value, self.symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
+            {qrb.instrument_symbol.value: self.symbol,
+             qrb.quote_status.value: qs.canceled.value,
+             qrb.status.value: qs.terminated.value}, 'Checking that regular currency RFQ is placed')
+        # endregion
+        # region Step 4
+        self.quote_book.set_filter(
+            [qb.security_id.value, self.symbol, qb.ord_qty.value, self.qty]).check_quote_book_fields_list(
+            {qb.security_id.value: self.symbol,
+             qb.quote_status.value: qs.canceled.value,
+             qb.ord_qty.value: f'{self.qty[:3]},{self.qty[3:]}'}, 'Checking currency value in quote book')
+        # endregion
