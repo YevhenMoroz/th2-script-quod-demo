@@ -130,5 +130,5 @@ class AlgoCurrency(Enum):
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
-    verifier_key_parameters_mp_dark_child = ['ClOrdID', 'ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_mp_dark_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS = ['ClOrdID']
