@@ -20,9 +20,15 @@ class QAP_6877(CommonTestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        # region - preconditions
+        # endregion
+        # region - test details
         login_page = LoginPage(self.appium_driver)
         login_page.open_login_page(self.login)
         self.appium_driver.wait_time(2)
         self.verify("Login successful", True, True)
         self.verify("Verify: E-mail widget is unclickable", "false",
                     login_page.get_attribute_of_element_by_xpath(LoginConstants.EMAIL_LOGIN, "clickable"))
+        # endregion
+        # region - postconditions
+        # endregion
