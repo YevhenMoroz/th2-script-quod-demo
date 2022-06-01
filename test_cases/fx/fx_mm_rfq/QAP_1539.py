@@ -55,7 +55,6 @@ class QAP_1539(TestCase):
         self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
         self.fix_manager_sel.send_message(self.quote_cancel)
         # endregion
-        time.sleep(10)
         # region Step 3
         self.quote_request_book.set_filter(
             [qrb.instrument_symbol.value, self.symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
