@@ -159,9 +159,9 @@ class GridScrollingDetails:
 
 
 class SimpleRequest:
-    def __init__(self, base: EmptyRequest = None, filter: dict = None):
-        if base is not None:
-            self._request = common_pb2.SimpleRequest(base=base)
+    def __init__(self, base_request: EmptyRequest = None, filter: dict = None):
+        if base_request is not None:
+            self._request = common_pb2.SimpleRequest(base=base_request)
         else:
             self._request = common_pb2.SimpleRequest()
 

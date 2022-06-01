@@ -3,6 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
@@ -78,6 +79,7 @@ def execute(report_id, session_id):
     fix_manager_gtw = FixManager(alias_gtw, case_id)
     fix_manager_fh = FixManager(alias_fh, case_id)
     fix_verifier = FixVerifier(alias_gtw, case_id)
+    data_set = FxDataSet()
     try:
 
         # Send market data to the BARX venue EUR/USD spot

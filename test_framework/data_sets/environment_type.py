@@ -4,7 +4,9 @@ from enum import Enum
 class EnvironmentType(Enum):
     quod315_fe = "quod315_fe"
     quod315_luna_web_admin = "quod315_luna_web_admin"
+    quod315_luna_web_admin_site = "quod315_luna_web_admin_site"
     quod315_luna_trading_desktop = "quod315_luna_trading_desktop"
+    quod315_luna_web_trading = "quod315_luna_web_trading"
     quod316_ganymede_standard = "quod316_ganymede_standard"
     quod316_ganymede_redburn = "quod316_ganymede_redburn"
     quod310_columbia_standard = "quod310_columbia_standard"
@@ -20,6 +22,7 @@ class EnvironmentType(Enum):
     quod317_read_log = 'quod317_read_log'
     quod320_fe = "quod320_fe"
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
+    quod320_kuiper_web_admin_site = "quod320_kuiper_web_admin_site"
     quod320_kuiper_web_trading = "quod320_kuiper_web_trading"
 
 

@@ -1,54 +1,71 @@
-import logging
-from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, wk1, wk1_ndf, wk2_ndf
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from stubs import Stubs
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
+class QAP_5345(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.quote = FixMessageQuoteFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_ndf_1")
+        self.currency = self.data_set.get_currency_by_name('currency_usd')
+        self.security_type_ndf = self.data_set.get_security_type_by_name("fx_ndf")
+        self.security_type_nds = self.data_set.get_security_type_by_name("fx_nds")
+        self.settle_date_wk1_ndf = self.data_set.get_settle_date_by_name("wk1_ndf")
+        self.settle_date_wk2_ndf = self.data_set.get_settle_date_by_name("wk2_ndf")
+        self.settle_type_wk1 = self.data_set.get_settle_type_by_name("wk1")
+        self.settle_type_wk2 = self.data_set.get_settle_type_by_name("wk2")
+        self.qty = "1000000"
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_nds
+        }
 
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    order_qty = "1000000"
-    symbol = "USD/PHP"
-    security_type = "FXNDS"
-    security_type_leg = "FXNDF"
-    settle_type_w1 = "W1"
-    settle_type_w2 = "W2"
-    currency = "USD"
-    settle_currency = "PHP"
-    side = "1"
-    leg1_side = "2"
-    leg2_side = "1"
-    settle_date_leg1 = wk1_ndf()
-    settle_date_leg2 = wk2_ndf()
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-    presentday = datetime.now()
-    tomorrow = (presentday + timedelta(1)).strftime('%Y%m%d')
-    try:
-        params_swap = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                        orderqty=order_qty, leg1_ordqty=order_qty, leg2_ordqty=order_qty,
-                                        currency=currency, settlcurrency=settle_currency,
-                                        leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
-                                        settldate=settle_date_leg1, leg1_settldate=settle_date_leg1,
-                                        leg2_settldate=settle_date_leg2,
-                                        symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                        securitytype=security_type, leg1_securitytype=security_type_leg,
-                                        leg2_securitytype=security_type_leg,
-                                        securityid=symbol, account=account)
-        rfq = FixClientSellRfq(params_swap)
-        rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
-        price = rfq.extract_filed("OfferPx")
-        rfq.send_new_order_multi_leg(price=price, side=side)
-        rfq.verify_order_pending_swap(price)
-        rfq.verify_order_filled_swap(spot_settl_d=tomorrow, price=price)
-    # Step 2
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.quote_request.set_swap_rfq_params()
 
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+                                                           Instrument=self.instrument, Currency=self.currency)
+        self.quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_ndf,
+                                           settle_date=self.settle_date_wk1_ndf, leg_qty=self.qty,
+                                           settle_type=self.settle_type_wk1)
+        self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_ndf,
+                                          settle_date=self.settle_date_wk2_ndf, leg_qty=self.qty,
+                                          settle_type=self.settle_type_wk2)
+        response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        # TODO Create separate message for NDS quote
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion
+        # region Step 2
+        # TODO Create separate message for NDS order
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side="1")
+        self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
