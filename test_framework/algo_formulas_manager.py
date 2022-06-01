@@ -55,19 +55,20 @@ class AlgoFormulasManager:
         reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
         return reserve
 
-    @staticmethod
-    def prohibit_float_arguments(func):
-        @wraps(func)
-        def wrapper(*args):
-            for val in args:
-                if type(val) == float:
-                    raise ValueError('Float arguments are prohibited')
-                if type(val) == str:
-                    raise ValueError('String arguments are prohibited')
-                if val < 0:
-                    raise ValueError('Negative arguments are prohibited')
-            return func(*args)
-        return wrapper
+    # TODO need review and edit
+    # @staticmethod
+    # def prohibit_float_arguments(func):
+    #     @wraps(func)
+    #     def wrapper(*args):
+    #         for val in args:
+    #             if type(val) == float:
+    #                 raise ValueError('Float arguments are prohibited')
+    #             if type(val) == str:
+    #                 raise ValueError('String arguments are prohibited')
+    #             if val < 0:
+    #                 raise ValueError('Negative arguments are prohibited')
+    #         return func(*args)
+    #     return wrapper
 
     # @staticmethod
     # # @prohibit_float_arguments
@@ -96,6 +97,7 @@ class AlgoFormulasManager:
     #
     #     return qty_list
 
+    # Two different formulas for dark venue weights
     @staticmethod
     def get_child_qty_on_venue_weights(parent_qty: int, *venue_weights: list) -> list:
         sum_of_weight = 0
