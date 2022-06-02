@@ -1,59 +1,67 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo, wk1, wk2
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_4510(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)  # dropcopy verification, possibly will need a manager too
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-    client_tier = "Argentina1"
-    account = "Argentina1_1"
-    symbol = "GBP/USD"
-    security_type_swap = "FXSWAP"
-    security_type_fwd = "FXFWD"
-    settle_date_spo = spo()
-    settle_date_w1 = wk1()
-    settle_date_w2 = wk2()
-    settle_type_w1 = "W1"
-    settle_type_w2 = "W2"
-    currency = "GBP"
-    settle_currency = "USD"
+        self.status = Status.Fill
+        self.account = self.data_set.get_client_by_name("client_mm_1")
+        self.symbol_1 = self.data_set.get_symbol_by_name("symbol_1")
+        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        self.qty_1 = "1000000"
+        self.qty_2 = "2000000"
+        self.instrument = {
+            "Symbol": self.symbol_1,
+            "SecurityType": self.security_type_swap
+        }
 
-    side = "2"
-    leg1_side = "1"
-    leg2_side = "2"
-    qty_1 = random_qty(1, 2, 7)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
 
-    try:
-        # Step 1-2
-        params_swap = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                        orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_1,
-                                        currency=currency, settlcurrency=settle_currency,
-                                        leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
-                                        settldate=settle_date_w1, leg1_settldate=settle_date_w1,
-                                        leg2_settldate=settle_date_w2,
-                                        symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                        securitytype=security_type_swap, leg1_securitytype=security_type_fwd,
-                                        leg2_securitytype=security_type_fwd,
-                                        securityid=symbol, account=account)
+        self.quote_request.set_swap_rfq_params()
+        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        # endregion
 
-        rfq = FixClientSellRfq(params_swap)
-        rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
-        price = rfq.extract_filed("BidPx")
-        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint_response1.checkpoint
-        rfq.send_new_order_multi_leg(price, side=side)
-        rfq.verify_order_pending_swap(price)
-        rfq.verify_order_filled_swap(price)
-        rfq.verify_order_filled_swap_drop_copy(side=side, price=price, check_point=checkpoint_id1,
-                                               spot_date=settle_date_spo)
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # region Step 2
+        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
+                                            key_parameters=["MDReqID"])
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion
+
+        # region Step 3
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier_dc.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
