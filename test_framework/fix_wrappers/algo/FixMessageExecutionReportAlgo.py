@@ -409,10 +409,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(SecondaryAlgoPolicyID=order_cancel_replace.get_parameter('ClientAlgoPolicyID'))
-        if order_cancel_replace.is_parameter_exist('SettlType'):
-            temp.update(SettlType=order_cancel_replace.get_parameter('SettlType'))
-        if order_cancel_replace.is_parameter_exist('SettlDate'):
-            temp.update(SettlDate=order_cancel_replace.get_parameter('SettlDate'))
+        # if order_cancel_replace.is_parameter_exist('SettlType'):
+        #     temp.update(SettlType=order_cancel_replace.get_parameter('SettlType'))
+        # if order_cancel_replace.is_parameter_exist('SettlDate'):
+        #     temp.update(SettlDate=order_cancel_replace.get_parameter('SettlDate'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
