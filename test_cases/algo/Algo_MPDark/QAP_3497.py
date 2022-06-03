@@ -34,8 +34,8 @@ class QAP_3497(TestCase):
         # weights BATS = 60, CHIX = 30, CBOE = 10
         self.weights_list = [60, 30, 10]
         self.qty = 10000
-        # self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.weights_list)
-        self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 60, 30, 10)
+        self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 1,  self.weights_list)
+        # self.qty_1_child, self.qty_2_child, self.qty_3_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 60, 30, 10)
         # self.qty_list = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weights_list)
         # self.qty_1_child, self.qty_2_child, self.qty_3_child = [int(i) for i in qty_list]
         self.price = 20
@@ -111,10 +111,12 @@ class QAP_3497(TestCase):
 
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
         er_pending_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
+        er_pending_new_MP_Dark_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport PendingNew')
 
         er_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
         er_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
+        er_new_MP_Dark_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport New')
         # endregion
 
