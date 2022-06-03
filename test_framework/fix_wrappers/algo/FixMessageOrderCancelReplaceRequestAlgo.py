@@ -13,6 +13,8 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
                 self.update_fix_message(new_order_single.get_parameters())
             else:
                 self.update_fix_message_without_no_strategy_params(new_order_single.get_parameters())
+                if new_order_single.is_parameter_exist('SettlType'):
+                    self.update_fix_message_without_no_strategy_params(dict(SettlDate=new_order_single.get_parameter('SettlType')))
 
         super().change_parameters(parameters)
 
