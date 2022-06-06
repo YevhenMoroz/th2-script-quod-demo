@@ -439,7 +439,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
-        call(self.manual_cross_call, self.manual_cross_details.build())
+        result = call(self.manual_cross_call, self.manual_cross_details.build())
+        return result["Footer value"]
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)

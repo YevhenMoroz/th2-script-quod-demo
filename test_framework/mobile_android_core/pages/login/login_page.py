@@ -45,39 +45,9 @@ class LoginPage(CommonPage):
         except Exception as e:
             print("Login fail " + e.__class__.__name__)
 
-    # def get_attribute_email(self, name):
-    #     try:
-    #         return self.get_attribute_of_element_by_xpath(LoginConstants.EMAIL_LOGIN, name)
-    #     except Exception as e:
-    #         print(e)
-    #
-    # def get_attribute_auth(self, name):
-    #     try:
-    #         return self.get_attribute_of_element_by_xpath(LoginConstants.AUTHENTICATION_FAILURE, name)
-    #     except Exception as e:
-    #         print(e)
-    #
-    # def get_attribute_incorrect_password(self, name):
-    #     try:
-    #         return self.get_attribute_of_element_by_xpath(LoginConstants.INCORRECT_PASSWORD, name)
-    #     except Exception as e:
-    #         print(e)
-    #
-    # def get_attribute_invalid_email(self, name):
-    #     try:
-    #         # print(self.get_element_by_xpath(LoginConstants.EMAIL_LOGIN, "clickable"))
-    #         return self.get_attribute_of_element_by_xpath(LoginConstants.INVALID_EMAIL, name)
-    #     except Exception as e:
-    #         print(e)
-
     def open_login_page(self, email):
-        try:
-            self.set_email(email)
-            self.appium_driver.wait_time(1)
-            # self.appium_driver.implicitly_wait(1)
-            self.click_on_continue_button()
-
-        except Exception as e:
-            print("Login fail " + e.__class__.__name__)
+        self.set_email(email)
+        self.appium_driver.wait_time(1)
+        self.click_on_continue_button()
 
 
