@@ -26,7 +26,7 @@ class QAP_4510(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
-        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)  # dropcopy verification, possibly will need a manager too
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.quote = FixMessageQuoteFX()
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
