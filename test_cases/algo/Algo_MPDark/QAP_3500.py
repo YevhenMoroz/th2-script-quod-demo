@@ -36,10 +36,10 @@ class QAP_3500(TestCase):
         self.qty = 12000
         self.inc_qty = 22000
         self.minQty = 1000
-        self.chix_weight = 6
-        self.bats_weight = 4
-        self.qty_1_chix_child, self.qty_1_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.minQty, self.chix_weight, self.bats_weight)
-        self.qty_2_chix_child, self.qty_2_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.inc_qty, self.minQty, self.chix_weight, self.bats_weight)
+        self.weight_chix = 6
+        self.weight_bats = 4
+        self.qty_1_chix_child, self.qty_1_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.minQty, self.weight_chix, self.weight_bats)
+        self.qty_2_chix_child, self.qty_2_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.inc_qty, self.minQty, self.weight_chix, self.weight_bats)
         self.price = 20
         # endregion
 
@@ -183,6 +183,8 @@ class QAP_3500(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_bats_order, self.key_params_with_ex_destination, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
         # endregion
 
+        time.sleep(1)
+
         # region Check 2 child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("New Child DMA order", self.test_id))
 
@@ -239,6 +241,7 @@ class QAP_3500(TestCase):
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
+        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport Cancel')
         # endregion
 
