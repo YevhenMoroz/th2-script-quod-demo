@@ -33,7 +33,9 @@ class QAP_3524(TestCase):
         # region order parameters
         # weights CHIX = 70, BATS = 30,
         self.qty = 1000000
-        self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, 70, 30)
+        self.chix_weight = 70
+        self.bats_weight = 30
+        self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.chix_weight, self.bats_weight)
         self.price = 20
         # endregion
 
@@ -63,8 +65,6 @@ class QAP_3524(TestCase):
         self.client = self.data_set.get_client_by_name("client_4")
         self.account_bats = self.data_set.get_account_by_name("account_7")
         self.account_chix = self.data_set.get_account_by_name("account_8")
-        self.s_bats = self.data_set.get_listing_id_by_name("listing_4")
-        self.s_chix = self.data_set.get_listing_id_by_name("listing_5")
         # endregion
 
         # region Key parameters
@@ -105,17 +105,19 @@ class QAP_3524(TestCase):
 
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
         er_pending_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
+        er_pending_new_MP_Dark_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport PendingNew')
 
         er_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
         er_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
+        er_new_MP_Dark_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_chix_child, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination_and_cl_ord_id, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -129,7 +131,7 @@ class QAP_3524(TestCase):
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
-        self.dma_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_bats_child, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination_and_cl_ord_id, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
@@ -166,6 +168,7 @@ class QAP_3524(TestCase):
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
+        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
 
         RuleManager.remove_rules(self.rule_list)
