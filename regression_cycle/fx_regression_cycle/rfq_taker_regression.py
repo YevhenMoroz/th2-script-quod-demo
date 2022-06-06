@@ -1,10 +1,16 @@
 from test_cases.fx.fx_taker_rfq import QAP_567, QAP_577, QAP_605, QAP_612, QAP_636, QAP_683, QAP_687, QAP_708, \
-    QAP_718, QAP_992, QAP_1585, QAP_1713, QAP_2419, QAP_2514, QAP_2728, QAP_2729, QAP_2774, QAP_2826, \
-    QAP_2835, QAP_2847, QAP_3589, QAP_2836, \
+    QAP_718, QAP_1585, QAP_2419, QAP_2847, QAP_3589, QAP_2836, \
     QAP_3048
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_rfq.QAP_1713 import QAP_1713
+from test_cases.fx.fx_taker_rfq.QAP_2514 import QAP_2514
+from test_cases.fx.fx_taker_rfq.QAP_2728 import QAP_2728
+from test_cases.fx.fx_taker_rfq.QAP_2729 import QAP_2729
+from test_cases.fx.fx_taker_rfq.QAP_2774 import QAP_2774
+from test_cases.fx.fx_taker_rfq.QAP_2826 import QAP_2826
+from test_cases.fx.fx_taker_rfq.QAP_2835 import QAP_2835
 from test_cases.fx.fx_taker_rfq.QAP_564 import QAP_564
 from test_cases.fx.fx_taker_rfq.QAP_565 import QAP_565
 from test_cases.fx.fx_taker_rfq.QAP_566 import QAP_566
@@ -58,6 +64,7 @@ from test_cases.fx.fx_taker_rfq.QAP_848 import QAP_848
 from test_cases.fx.fx_taker_rfq.QAP_849 import QAP_849
 from test_cases.fx.fx_taker_rfq.QAP_850 import QAP_850
 from test_cases.fx.fx_taker_rfq.QAP_982 import QAP_982
+from test_cases.fx.fx_taker_rfq.QAP_992 import QAP_992
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.import_layouts.layout_loader import LayoutLoader
 
@@ -141,20 +148,20 @@ def test_run(parent_id=None):
         QAP_849(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_850(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_982(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_992.execute(report_id, session_id)
+        QAP_992(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_1585.execute(report_id, session_id)
-        QAP_1713.execute(report_id, session_id)
+        QAP_1713(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_2419.execute(report_id, session_id)
-        QAP_2514.execute(report_id, session_id)
-        QAP_2728.execute(report_id, session_id)
-        QAP_2729.execute(report_id, session_id)
-        QAP_2774.execute(report_id, session_id)
-        QAP_2826.execute(report_id, session_id)
-        QAP_2835.execute(report_id, session_id)
+        QAP_2514(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_2728(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_2729(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_2774(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_2826(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_2835(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_2836.execute(report_id, session_id)
-        QAP_2847.execute(report_id, session_id)
-        QAP_3048.execute(report_id, session_id)
-        QAP_3589.execute(report_id, session_id)
+        # QAP_2847.execute(report_id, session_id)
+        # QAP_3048.execute(report_id, session_id)
+        # QAP_3589.execute(report_id, session_id)
         # QAP_708.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)

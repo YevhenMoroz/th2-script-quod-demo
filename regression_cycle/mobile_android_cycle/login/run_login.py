@@ -1,7 +1,10 @@
 import traceback
 from custom import basic_custom_actions as bca
 from test_cases.mobile_android.pages.login.QAP_6491 import QAP_6491
+from test_cases.mobile_android.pages.login.QAP_6877 import QAP_6877
+from test_cases.mobile_android.pages.login.QAP_6878 import QAP_6878
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
+from test_framework.configurations.component_configuration import ComponentConfiguration
 
 
 class RunLogin:
@@ -13,7 +16,16 @@ class RunLogin:
 
     def execute(self):
         try:
-            QAP_6491(self.appium_driver, self.second_lvl_id).run()
-
+            configuration = ComponentConfiguration("Mobile_LoginLogout")
+            # QAP_6348(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6491(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6876(self.appium_driver, self.second_lvl_id).run()
+            QAP_6877(self.appium_driver, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            # QAP_6878(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6879(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6880(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6881(self.appium_driver, self.second_lvl_id).run()
+            # QAP_6882(self.appium_driver, self.second_lvl_id).run()
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

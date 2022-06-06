@@ -12,7 +12,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason
+
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
 
@@ -98,12 +99,15 @@ class RuleManager:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
 
-    def remove_rule(self, rule):
-        self.core.removeRule(rule)
+    @staticmethod
+    def remove_rule(rule):
+        Stubs.core.removeRule(rule)
 
-    def remove_rules(self, list_rules: list):
+    @staticmethod
+    def remove_rules(list_rules: list):
+        rule_manager = RuleManager()
         for rule in list_rules:
-            self.remove_rule(rule)
+            rule_manager.remove_rule(rule)
 
     # ------------------------
 
@@ -353,6 +357,16 @@ class RuleManager:
                                                               price=price
                                                               ))
 
+    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject"):
+        return self.sim.createNewOrdSingleExecutionReportRejectWithReason(
+            request=TemplateNewOrdSingleExecutionReportRejectWithReason(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination,
+                                                              price=price,
+                                                              reason=reason,
+                                                              text=text
+                                                              ))
+
     def add_fx_md_to(self, session: str):
         return self.sim.createQuodDefMDRFXRule(
             request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
@@ -401,7 +415,8 @@ class RuleManager:
 if __name__ == '__main__':
     rule_manager = RuleManager()
     # rule_manager.remove_all_rules()
-    rule_manager_eq = RuleManager(Simulators.equity)
+    # rule_manager_eq = RuleManager(Simulators.equity)
+    # rule_manager.remove_rule_by_id(33)
     rule_manager.print_active_rules()
-    print("_________________________")
-    rule_manager_eq.print_active_rules()
+    # print("_________________________")
+    # rule_manager_eq.print_active_rules()

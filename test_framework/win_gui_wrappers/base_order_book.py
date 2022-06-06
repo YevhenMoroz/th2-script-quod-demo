@@ -6,7 +6,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
     InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
-    direct_moc_request, direct_order_request
+    direct_moc_request, direct_order_request, direct_child_care
 
 
 class BaseOrderBook(BaseWindow):
@@ -87,6 +87,7 @@ class BaseOrderBook(BaseWindow):
         self.group_modify_details = None
         self.mass_manual_execution_call = None
         self.mass_manual_execution_details = None
+        self.direct_child_care_call = None
 
     # endregion
 
@@ -438,7 +439,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
-        call(self.manual_cross_call, self.manual_cross_details.build())
+        result = call(self.manual_cross_call, self.manual_cross_details.build())
+        return result["Footer value"]
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
@@ -469,6 +471,11 @@ class BaseOrderBook(BaseWindow):
 
     def direct_loc_order(self, qty, route, qty_type):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
+
+    def direct_child_care_order(self, qty_percentage: str = None, recipient: str = None, route: str = None,
+                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None):
+        call(self.direct_child_care_call,
+             direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
