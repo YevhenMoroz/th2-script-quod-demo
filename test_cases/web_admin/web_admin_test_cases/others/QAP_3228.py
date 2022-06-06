@@ -64,7 +64,7 @@ class QAP_3228(CommonTestCase):
         party_roles_wizard.set_party_role_qualifier_at_party_roles_tab(self.party_role_qualifier)
         party_roles_wizard.set_venue_at_party_roles_tab(self.venue)
         counterparts_wizard.click_on_check_mark()
-        time.sleep(3)
+        time.sleep(1)
         wizard = CounterpartsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -75,15 +75,15 @@ class QAP_3228(CommonTestCase):
             self.precondition()
             counterparts_main_menu = CounterpartsPage(self.web_driver_container)
             counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
+            time.sleep(1)
             counterparts_wizard = CounterpartsWizard(self.web_driver_container)
             wizard = CounterpartsWizard(self.web_driver_container)
-            time.sleep(2)
             counterparts_main_menu.click_on_more_actions()
-            time.sleep(2)
+            time.sleep(1)
             counterparts_main_menu.click_on_edit()
             time.sleep(2)
             wizard.click_on_edit_at_party_roles_tab()
-            time.sleep(2)
+            time.sleep(1)
             party_roles_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
             party_roles_wizard.set_party_id_source_at_party_roles_tab(self.new_party_id_source)
             party_roles_wizard.set_venue_counterpart_id_at_party_roles_tab(self.new_venue_counterpart_id)
@@ -92,12 +92,10 @@ class QAP_3228(CommonTestCase):
             party_roles_wizard.set_party_role_qualifier_at_party_roles_tab(self.new_party_role_qualifier)
             party_roles_wizard.set_venue_at_party_roles_tab(self.new_venue)
             counterparts_wizard.click_on_check_mark()
-            time.sleep(2)
+            time.sleep(1)
             wizard.click_on_save_changes()
             time.sleep(2)
             counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
-            time.sleep(2)
-            counterparts_main_menu.click_on_more_actions()
             time.sleep(2)
             expected_pdf_result = [self.new_party_id_source,
                                    self.new_venue_counterpart_id,
@@ -107,7 +105,7 @@ class QAP_3228(CommonTestCase):
                                    self.new_venue]
 
             self.verify("Is party roles tab edited correctly", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
+                        counterparts_main_menu.click_download_pdf_at_more_actions_and_check_pdf(expected_pdf_result))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

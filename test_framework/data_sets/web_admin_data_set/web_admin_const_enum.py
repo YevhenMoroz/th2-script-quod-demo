@@ -89,6 +89,7 @@ class WebAdminEmail(Enum):
 
 class WebAdminPermRole(Enum):
     perm_role_1 = "Permissions for FIX Clients"
+    perm_role_2 = "Permissions for Head of Sale-Dealers role"
 
 
 class WebAdminFirstUserName(Enum):

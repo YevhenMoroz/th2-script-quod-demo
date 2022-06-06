@@ -6,7 +6,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
-from test_framework.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from test_framework.web_admin_core.pages.users.users.users_permissions_sub_wizard import UsersPermissionsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -43,7 +43,7 @@ class QAP_3145(CommonTestCase):
         try:
             self.precondition()
 
-            role_wizard = UsersRoleSubWizard(self.web_driver_container)
+            role_wizard = UsersPermissionsSubWizard(self.web_driver_container)
             users_page = UsersPage(self.web_driver_container)
             details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
             details_sub_wizard.set_mail(self.email)

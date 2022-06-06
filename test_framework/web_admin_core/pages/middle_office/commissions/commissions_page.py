@@ -72,7 +72,7 @@ class CommissionsPage(CommonPage):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH, value)
 
     def set_virtual_account(self, value):
-        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VIRTUAL_POLICY_FILTER_XPATH, value)
+        self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VIRTUAL_ACCOUNT_FILTER_XPATH, value)
 
     def set_client(self, value):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_FILTER_XPATH, value)
@@ -93,6 +93,8 @@ class CommissionsPage(CommonPage):
         self.find_by_xpath(CommissionsConstants.MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH).click()
 
     def offset_horizontal_slide(self):
-        slider = self.find_by_xpath(CommissionsConstants.HORIZONTAL_SCROLL)
+        scr_elem = self.find_by_xpath(CommissionsConstants.HORIZONTAL_SCROLL)
         action = ActionChains(self.web_driver_container.get_driver())
-        action.drag_and_drop_by_offset(slider, 400, 0).perform()
+        action.move_to_element_with_offset(scr_elem, scr_elem.size["width"]-5, 5)
+        action.click()
+        action.perform()
