@@ -65,19 +65,30 @@ class AlgoFormulasManager:
             sum_of_weight += i
             count_of_venue += 1
 
-        if minqty is None:
+        if minqty is None:                                                  # for tests without minQty
             one_weight = parent_qty / sum_of_weight
             j = 0
             while j < len(venue_weights):
                 qty_list.append(int(one_weight * venue_weights[j]))
                 j += 1
-        else:
+        else:                                                               # for tests with minQty
             qty_for_distribution = parent_qty - minqty * count_of_venue
-            one_weight = qty_for_distribution / sum_of_weight
-            j = 0
-            while j < len(venue_weights):
-                qty_list.append(int(one_weight * venue_weights[j] + minqty))
-                j += 1
+            if parent_qty - minqty < minqty:                                # for tests when parentQty - minQty < minQty (only 1 child)
+                one_weight = parent_qty
+                qty_list.append(one_weight)
+            elif qty_for_distribution <= 0:                                 # for tests when parentQty - minty * countOfVenue <= 0 (qty of each child = minQty)
+                count_of_venue = parent_qty / minqty
+                one_weight = minqty
+                j = 0
+                while j < count_of_venue:
+                    qty_list.append(int(one_weight))
+                    j += 1
+            else:                                                          # for everyone else
+                one_weight = qty_for_distribution / sum_of_weight
+                j = 0
+                while j < len(venue_weights):
+                    qty_list.append(int(one_weight * venue_weights[j] + minqty))
+                    j += 1
 
         return qty_list
 
