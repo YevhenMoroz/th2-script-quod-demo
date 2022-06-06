@@ -30,7 +30,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
             'NoParty': '*',
-            'Origin': '2'
+            'Origin': '*'
         }
         super().change_parameters(base_parameters)
         return self
