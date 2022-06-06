@@ -183,7 +183,7 @@ class QAP_3504(TestCase):
         # endregion
 
         # region Check 2 child DMA order on venue CHIX DARKPOOL UK
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
+        self.fix_verifier_buy.set_case_id(bca.create_event("New child DMA order", self.test_id))
 
         self.dma_2_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_2_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_2_chix_child, Price=self.price, Instrument=self.instrument))
@@ -238,6 +238,7 @@ class QAP_3504(TestCase):
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
+        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
         # endregion
 
