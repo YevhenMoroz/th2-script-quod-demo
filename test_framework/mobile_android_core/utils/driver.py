@@ -6,7 +6,7 @@ class AppiumDriver:
 
 
     def __init__(self):
-        self.appium_driver =None
+        self.appium_driver = None
 
     def start_appium_service(self):
         global appium_service
@@ -15,14 +15,17 @@ class AppiumDriver:
         desired_cap = {}
         desired_cap['platformName'] = 'Android'
         desired_cap['deviceName'] = 'Android'
-        desired_cap['appPackage'] = 'com.quod.trading.uat_alrajhitadawul'
+        desired_cap['appPackage'] = 'com.quod.trading.qa1'
         desired_cap['appActivity'] = 'com.quod.moorgate.moorgatemobile.MainActivity'
         self.appium_driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_cap)
-        self.appium_driver.implicitly_wait(5)
+        self.wait_time(5)
 
     def stop_appium_service(self):
         self.appium_driver.quit()
         appium_service.stop()
+
+    def wait_time(self, time=5):
+        self.appium_driver.implicitly_wait(time)
 
     def get_driver(self):
         return self.appium_driver

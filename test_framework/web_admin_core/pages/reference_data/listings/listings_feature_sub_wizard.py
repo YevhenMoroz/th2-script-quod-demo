@@ -16,7 +16,7 @@ class ListingsFeatureSubWizard(CommonPage):
         return self.get_text_by_xpath(ListingsConstants.FEATURE_TAB_ORDER_BOOK_VISIBILITY_XPATH)
 
     def set_contract_multiplier(self, value):
-        self.find_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH).send_keys(value)
+        self.set_text_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH, value)
 
     def get_contract_multiplier(self):
         return self.get_text_by_xpath(ListingsConstants.FEATURE_TAB_CONTRACT_MULTIPLIER_XPATH)

@@ -73,8 +73,9 @@ class QAP_2405(CommonTestCase):
 
             users_page = UsersPage(self.web_driver_container)
             users_page.set_user_id(self.new_user_id)
+            time.sleep(1)
 
-            self.verify("User has been cloned", users_page.set_user_id(self.new_user_id), users_page.get_user_id())
+            self.verify("User has been cloned", self.new_user_id, users_page.get_user_id())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

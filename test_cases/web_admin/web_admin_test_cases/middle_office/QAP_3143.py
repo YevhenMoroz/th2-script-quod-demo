@@ -44,7 +44,7 @@ class QAP_3143(CommonTestCase):
         time.sleep(1)
         commission_page = CommissionsPage(self.web_driver_container)
         commission_page.click_on_new()
-        time.sleep(2)
+        time.sleep(3)
         commission_wizard_value_tab = CommissionsValuesSubWizard(self.web_driver_container)
         commission_wizard_value_tab.set_name(self.name)
         commission_wizard_value_tab.set_description(self.description)
@@ -55,8 +55,6 @@ class QAP_3143(CommonTestCase):
         commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
         self.instr_type = random.choice(commission_wizard_dimensions_tab.get_all_instr_types_from_drop_menu())
         commission_wizard_dimensions_tab.set_instr_type(self.instr_type)
-        self.venue = random.choice(commission_wizard_dimensions_tab.get_all_venues_from_drop_menu())
-        commission_wizard_dimensions_tab.set_venue(self.venue)
         self.side = random.choice(commission_wizard_dimensions_tab.get_all_side_from_drop_menu())
         commission_wizard_dimensions_tab.set_side(self.side)
         self.execution_policy = random.choice(commission_wizard_dimensions_tab.get_all_execution_policy_from_drop_menu())
@@ -89,7 +87,6 @@ class QAP_3143(CommonTestCase):
                              True,
                              self.venue_list,
                              self.instr_type,
-                             self.venue,
                              self.side,
                              self.client,
                              self.commission_amount_type,
@@ -103,7 +100,6 @@ class QAP_3143(CommonTestCase):
                                commission_wizard_value_tab.is_re_calculate_for_allocations_selected(),
                                commission_wizard_value_tab.get_venue_list(),
                                commission_wizard_dimensions_tab.get_instr_type(),
-                               commission_wizard_dimensions_tab.get_venue(),
                                commission_wizard_dimensions_tab.get_side(),
                                commission_wizard_dimensions_tab.get_client(),
                                commission_wizard_dimensions_tab.get_commission_amount_type(),
@@ -125,7 +121,6 @@ class QAP_3143(CommonTestCase):
                                                "true",
                                                self.venue_list,
                                                self.instr_type,
-                                               self.venue,
                                                self.side,
                                                self.client,
                                                self.commission_amount_type,

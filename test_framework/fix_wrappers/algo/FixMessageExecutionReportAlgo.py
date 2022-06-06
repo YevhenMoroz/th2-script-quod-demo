@@ -26,6 +26,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_buy(new_order_single)
             elif status is Status.Eliminate:
                 self.__set_eliminate_buy(new_order_single)
+            elif status is Status.Reject:
+                self.__set_reject_buy(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         elif side is GatewaySide.Sell:
@@ -41,6 +43,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_reject_buy(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_sell(new_order_single)
+            elif status is Status.Eliminate:
+                self.__set_eliminate_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -57,8 +61,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_pending_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == 3 or new_order_single.get_parameter('OrdType') == 4:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
@@ -93,8 +99,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == 3 or new_order_single.get_parameter('OrdType') == 4:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
@@ -426,8 +434,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == 3 or new_order_single.get_parameter('OrdType') == 4:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
@@ -521,6 +531,74 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         return self
 
     def __set_eliminate_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') == '2':
+            temp.update(Price = new_order_single.get_parameter("Price"))
+        temp.update(
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            Side=new_order_single.get_parameter('Side'),
+            Text='order canceled',
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExDestination=new_order_single.get_parameter('ExDestination')
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_eliminate_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == 3 or new_order_single.get_parameter('OrdType') == 4:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
+        if 'DisplayInstruction' in new_order_single.get_parameters():
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
+        if new_order_single.get_parameter('TimeInForce') == 6:
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx=0,
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=0,
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            LastMkt='*',
+            Text='*',
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
+            QtyType='*',
+            NoStrategyParameters='*',
+            CxlQty=new_order_single.get_parameter('OrderQty'),
+            Instrument='*'
+            # Instrument=new_order_single.get_parameter('Instrument'),
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))

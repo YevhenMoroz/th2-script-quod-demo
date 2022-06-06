@@ -53,6 +53,7 @@ class QAP_2964(CommonTestCase):
         lit_general.set_value_by_dropdown_list_at_sub_wizard(self.value)
         lit_general.click_on_checkmark_button()
         lit_general.click_on_go_back_button()
+        time.sleep(2)
         strategies_wizard.click_on_save_changes()
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)

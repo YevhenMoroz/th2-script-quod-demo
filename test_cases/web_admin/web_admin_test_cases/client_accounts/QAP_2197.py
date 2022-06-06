@@ -1,7 +1,8 @@
 import sys
 import time
 import traceback
-from uuid import uuid1
+import random
+import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_dimensions_subwizard import \
@@ -23,10 +24,11 @@ class QAP_2197(CommonTestCase):
 
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.account = f"QAP-2197_{str(uuid1())}"
+        self.account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client = self.data_set.get_client("client_1")
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_2")
-        self.venue_account = "TestVenueAccount"
+        self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
         self.default_route = self.data_set.get_default_route("default_route_1")
@@ -40,12 +42,14 @@ class QAP_2197(CommonTestCase):
 
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_accounts_page()
+        time.sleep(2)
 
         accounts_page = AccountsPage(self.web_driver_container)
         accounts_page.click_new_button()
+        time.sleep(2)
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_id(self.account)
-        accounts_wizard.set_ext_id_client(self.account)
+        accounts_wizard.set_ext_id_client(self.ext_id_client)
         accounts_wizard.set_client(self.client)
         accounts_wizard.set_client_id_source(self.client_id_source)
 
@@ -58,44 +62,34 @@ class QAP_2197(CommonTestCase):
         accounts_dimensions_subwizard.click_create_entity_button()
 
         accounts_wizard.click_save_button()
+        time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
 
-            new_venue_account = "TestVenueAccount2"
+            new_venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
             new_venue = "ADX"
             new_account_id_source = "Other"
             new_default_route = "Credit Suisse"
             expected_pdf_content = [new_venue_account, new_venue, new_account_id_source, new_default_route]
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_accounts_page()
+
             accounts_page = AccountsPage(self.web_driver_container)
             accounts_page.filter_grid(self.account)
+            time.sleep(2)
             accounts_page.click_more_actions_button()
             accounts_page.click_edit_entity_button()
             time.sleep(2)
             accounts_wizard = AccountsWizard(self.web_driver_container)
             accounts_dimensions_subwizard = AccountsDimensionsSubWizard(self.web_driver_container)
             accounts_dimensions_subwizard.click_delete_button()
-            time.sleep(2)
-            accounts_dimensions_subwizard.filter_dimensions(venue_account=self.venue_account,
-                                                            venue=self.venue,
-                                                            account_id_source=self.account_id_source,
-                                                            default_route=self.default_route)
-
+            time.sleep(1)
             accounts_dimensions_subwizard.click_on_plus()
-            time.sleep(1)
             accounts_dimensions_subwizard.set_venue_account(new_venue_account)
-            time.sleep(1)
             accounts_dimensions_subwizard.set_venue(new_venue)
-            time.sleep(1)
             accounts_dimensions_subwizard.set_account_id_source(new_account_id_source)
-            time.sleep(1)
             accounts_dimensions_subwizard.set_default_route(new_default_route)
-            time.sleep(1)
             accounts_dimensions_subwizard.click_create_entity_button()
-            time.sleep(2)
             accounts_wizard.click_save_button()
             time.sleep(2)
             self.verify("Popup context", "Account changes saved", accounts_page.get_popup_text())
@@ -103,17 +97,14 @@ class QAP_2197(CommonTestCase):
             accounts_page.filter_grid(self.account)
             time.sleep(2)
             accounts_page.click_more_actions_button()
-            time.sleep(2)
+            time.sleep(1)
             accounts_page.click_edit_entity_button()
             time.sleep(2)
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         accounts_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
-            time.sleep(5)
-            accounts_dimensions_subwizard.filter_dimensions(venue_account=new_venue_account,
-                                                            venue=new_venue,
-                                                            account_id_source=new_account_id_source,
-                                                            default_route=new_default_route)
+            time.sleep(2)
+            accounts_dimensions_subwizard.filter_dimensions(venue_account=new_venue_account)
 
             accounts_dimensions_subwizard.click_edit_button()
             self.verify("Venue Account", new_venue_account, accounts_dimensions_subwizard.get_venue_account())

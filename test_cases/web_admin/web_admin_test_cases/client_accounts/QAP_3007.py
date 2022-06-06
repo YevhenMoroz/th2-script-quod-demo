@@ -29,6 +29,7 @@ class QAP_3007(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
+        self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.venue_client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_client_account_group_name = "48934"
@@ -50,6 +51,7 @@ class QAP_3007(CommonTestCase):
         values_sub_wizard.set_id(self.id)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client)
         time.sleep(1)
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         assignments_sub_wizard.set_desk(self.desk)

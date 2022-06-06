@@ -19,6 +19,9 @@ class CommonPage:
     def tap_by_coordinates(self, x, y):
         TouchAction(driver=self.appium_driver.get_driver()).tap(x, y).perform()
 
+    def get_attribute_of_element_by_xpath(self, xpath, element):
+        return self.find_by_xpath(xpath).get_attribute(str(element))
+
     #TODO: there must be determined coordinate (x,y)
     def swipe_right_to_left(self):
         device_size = self.appium_driver.get_driver().get_window_size()
