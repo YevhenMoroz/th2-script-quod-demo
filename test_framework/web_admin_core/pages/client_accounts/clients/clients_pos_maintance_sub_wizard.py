@@ -16,7 +16,7 @@ class ClientsPosMaintenanceSubWizard(CommonPage):
     def set_cash_maintenance(self, value):
         self.set_combobox_value(ClientsConstants.POS_MAINTENANCE_TAB_CASH_MAINTENANCE_XPATH, value)
 
-    def get_cash_maintenance(self, value):
+    def get_cash_maintenance(self):
         return self.get_text_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_CASH_MAINTENANCE_XPATH)
 
     def set_underl_position_maintenance(self, value):
@@ -39,3 +39,6 @@ class ClientsPosMaintenanceSubWizard(CommonPage):
 
     def click_on_pnl_maintenance(self):
         self.find_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_PNL_MAINTENANCE_CHECKBOX_XPATH).click()
+
+    def is_pnl_maintenance_selected(self):
+        return self.is_checkbox_selected(ClientsConstants.POS_MAINTENANCE_TAB_PNL_MAINTENANCE_CHECKBOX_XPATH)

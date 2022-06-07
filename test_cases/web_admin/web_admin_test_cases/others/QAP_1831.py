@@ -41,10 +41,10 @@ class QAP_1831(CommonTestCase):
         routes_wizard.set_name_at_values_tab(self.name)
         time.sleep(2)
         strategy_type_sub_wizard = RoutesStrategyTypeSubWizard(self.web_driver_container)
-        strategy_type_tuple = ("Custom one", "External CUSTOM1")
+        strategy_type = ["Custom one", "External CUSTOM1"]
         strategy_type_sub_wizard.click_on_strategy_type_at_strategy_type_tab()
         time.sleep(2)
-        strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(strategy_type_tuple)
+        strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(strategy_type)
         time.sleep(2)
         strategy_type_sub_wizard.click_on_default_scenario()
         strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)

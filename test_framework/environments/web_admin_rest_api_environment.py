@@ -30,6 +30,15 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                 WebAdminRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod315_luna_web_admin.value: site_environment})
             return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod315_luna_web_admin.value]
+        elif env.value == EnvironmentType.quod315_luna_web_admin_site.value:
+            if EnvironmentType.quod315_luna_web_admin_site.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+                site_environment = WebAdminRestApiEnvironment(
+                    environment_type=EnvironmentType.quod315_luna_web_admin_site.value,
+                    session_alias_wa=Connectivity.Luna_315_web_admin_site.value
+                )
+                WebAdminRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod315_luna_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod315_luna_web_admin_site.value]
         elif env.value == EnvironmentType.quod317_ganymede_web_admin.value:
             if EnvironmentType.quod317_ganymede_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
                 site_environment = WebAdminRestApiEnvironment(
@@ -48,6 +57,15 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                 WebAdminRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod320_kuiper_web_admin.value: site_environment})
             return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod320_kuiper_web_admin.value]
+        elif env.value == EnvironmentType.quod320_kuiper_web_admin_site.value:
+            if EnvironmentType.quod320_kuiper_web_admin_site.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+                site_environment = WebAdminRestApiEnvironment(
+                    environment_type=EnvironmentType.quod320_kuiper_web_admin_site.value,
+                    session_alias_wa=Connectivity.Kuiper_320_web_admin_site.value
+                )
+                WebAdminRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod320_kuiper_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod320_kuiper_web_admin_site.value]
         else:
             raise Exception('No such environment')
 

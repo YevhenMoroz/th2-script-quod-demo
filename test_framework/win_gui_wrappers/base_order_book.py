@@ -6,7 +6,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
     InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
-    direct_moc_request, direct_order_request
+    direct_moc_request, direct_order_request, direct_child_care
 
 
 class BaseOrderBook(BaseWindow):
@@ -89,6 +89,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details = None
         self.unmatch_and_transfer_details = None
         self.unmatch_and_transfer_call = None
+        self.direct_child_care_call = None
 
     # endregion
 
@@ -373,7 +374,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None,):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None):
         """
         orders_rows - select rows from order book
         """
@@ -410,7 +411,7 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -440,7 +441,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
-        call(self.manual_cross_call, self.manual_cross_details.build())
+        result = call(self.manual_cross_call, self.manual_cross_details.build())
+        return result["Footer value"]
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
@@ -471,6 +473,11 @@ class BaseOrderBook(BaseWindow):
 
     def direct_loc_order(self, qty, route, qty_type):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
+
+    def direct_child_care_order(self, qty_percentage: str = None, recipient: str = None, route: str = None,
+                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None):
+        call(self.direct_child_care_call,
+             direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
@@ -609,6 +616,17 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
+    # def set_order_ticket_details(self, qty, type, price):
+    #     order_ticket_details = self.order_ticket_details()
+    #     order_ticket_details.set_quantity(qty)
+    #     order_ticket_details.set_order_type(type)
+    #     order_ticket_details.set_limit(price)
+    #     self.modify_order_details.set_order_details(order_ticket_details)
+    #     return self.modify_order_details
+    #
+    # def split_limit_order(self):
+    #     call(self.split_limit_call, self.modify_order_details.build())
+    #     # self.clear_details([self.modify_order_details])
 
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()

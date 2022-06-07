@@ -33,10 +33,10 @@ class QAP_3136(CommonTestCase):
         self.mic = self.data_set.get_mic_by_name("mic_3")
         self.country = self.data_set.get_country("country_3")
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.negative_routes = (self.data_set.get_negative_route("negative_route_1"),
-                                self.data_set.get_negative_route("negative_route_2"))
-        self.positive_routes = (self.data_set.get_positive_route("positive_route_1"),
-                                self.data_set.get_positive_route("positive_route_2"))
+        self.negative_routes = [self.data_set.get_negative_route("negative_route_1"),
+                                self.data_set.get_negative_route("negative_route_2")]
+        self.positive_routes = [self.data_set.get_positive_route("positive_route_1"),
+                                self.data_set.get_positive_route("positive_route_2")]
         self.parameter = "All"
         self.value = "test"
 
@@ -89,6 +89,7 @@ class QAP_3136(CommonTestCase):
         routing_param_groups.click_on_checkmark()
         time.sleep(2)
         wizard.click_on_go_back_button()
+        time.sleep(2)
 
     def test_context(self):
         profiles = VenuesProfilesSubWizard(self.web_driver_container)
@@ -106,6 +107,8 @@ class QAP_3136(CommonTestCase):
             profiles.click_on_routing_param_group()
             routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
             time.sleep(2)
+            routing_param_groups.click_on_entity_at_routing_param_groups()
+            time.sleep(1)
             actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
                              routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
                              routing_param_groups.get_value()]

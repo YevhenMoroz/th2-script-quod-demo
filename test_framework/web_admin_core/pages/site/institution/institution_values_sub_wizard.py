@@ -13,6 +13,9 @@ class InstitutionsValuesSubWizard(CommonPage):
     def get_institution_name(self):
         return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_INSTITUTION_NAME)
 
+    def is_tab_collapsed(self):
+        return True if "true" in self.find_by_xpath(InstitutionsConstants.VALUES_TAB).get_attribute("aria-expanded") else False
+
     def set_lei(self, value):
         self.set_text_by_xpath(InstitutionsConstants.VALUES_TAB_LEI_NAME, value)
 

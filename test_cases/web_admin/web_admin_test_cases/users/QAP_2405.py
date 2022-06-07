@@ -8,7 +8,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
-from test_framework.web_admin_core.pages.users.users.users_login_sub_wizard import UsersLoginSubWizard
+from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
@@ -41,7 +41,7 @@ class QAP_2405(CommonTestCase):
         side_menu.open_users_page()
         users_page = UsersPage(self.web_driver_container)
         time.sleep(2)
-        login_sub_wizard = UsersLoginSubWizard(self.web_driver_container)
+        login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         users_wizard = UsersWizard(self.web_driver_container)
         users_page.set_user_id(self.user_for_clone)
         time.sleep(2)
@@ -73,8 +73,9 @@ class QAP_2405(CommonTestCase):
 
             users_page = UsersPage(self.web_driver_container)
             users_page.set_user_id(self.new_user_id)
+            time.sleep(1)
 
-            self.verify("User has been cloned", users_page.set_user_id(self.new_user_id), users_page.get_user_id())
+            self.verify("User has been cloned", self.new_user_id, users_page.get_user_id())
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

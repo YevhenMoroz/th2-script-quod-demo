@@ -1,189 +1,193 @@
-import logging
-from datetime import datetime, timedelta
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
-
-from custom.tenor_settlement_date import spo
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Argentina1'
-account = 'Argentina1_1'
-side = '2'
-leg1_side = '1'
-leg2_side = '2'
-orderqty = '3000000'
-leg1_ordqty = '1000000'
-leg2_ordqty = '3000000'
-leg1_settltype = 'W1'
-leg2_settltype = 'W2'
-
-# da = float(leg2_ordqty)
-# dr = float(leg1_ordqty)
-# ds =str(da - dr)
-# size = ds.split('.')
-# drer = size[0]
-# edr = size[1]
-
-symbol = 'EUR/USD'
-leg1_symbol = 'EUR/USD'
-leg2_symbol = 'EUR/USD'
-currency = 'EUR'
-settlcurrency = 'USD'
-securitytype_swap = 'FXSWAP'
-leg1_securitytype = 'FXSPOT'
-leg2_securitytype = 'FXFWD'
-settldate = tsd.spo()
-leg1_settldate = tsd.wk1()
-leg2_settldate = tsd.wk2()
-ttl = 15
-expire_time = (datetime.now() + timedelta(seconds=ttl) - timedelta(hours=3)).strftime("%Y%m%d-%H:%M:%S.000")
-
-defaultmdsymbol_spo = 'EUR/USD:SPO:REG:MS'
-defaultmdsymbol_wk1 = 'EUR/USD:FXF:WK1:MS'
-defaultmdsymbol_wk2 = 'EUR/USD:FXF:WK2:MS'
-no_md_entries_spo = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19599,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19810,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19397,
-        "MDEntrySize": 2000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19909,
-        "MDEntrySize": 2000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19301,
-        "MDEntrySize": 3000000,
-        "MDEntryPositionNo": 2,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19999,
-        "MDEntrySize": 3000000,
-        "MDEntryPositionNo": 2,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-
-]
-no_md_entries_wk1 = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19585,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDEntryForwardPoints": '0.0002',
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19615,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDEntryForwardPoints": '0.0002',
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-no_md_entries_wk2 = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.19575,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDEntryForwardPoints": '0.0003',
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.19625,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDEntryForwardPoints": '0.0003',
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-
-offer_spot_rate = '1.1986'
-bid_spot_rate = '1.19498'
-bid_swap_points = '0.0003'
-leg_off_fwd_p = '0.0003'
-leg_bid_fwd_p = '0.0003'
-bid_px = '0.0003'
+from custom import basic_custom_actions as bca
+from stubs import Stubs
+from datetime import datetime, timedelta
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def execute(report_id):
-    try:
-        case_name = Path(__file__).name[:-3]
-        case_id = bca.create_event(case_name, report_id)
-        try:
-            # Precondition
-            md1 = FixClientSellEsp(CaseParamsSellEsp(client, case_id, settldate=settldate, symbol=symbol))
-            md1.send_md_request().send_md_unsubscribe()
-            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol).prepare_custom_md_spot(
-                no_md_entries_spo)).send_market_data_spot()
-            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_wk1, symbol).prepare_custom_md_fwd(
-                no_md_entries_wk1)).send_market_data_fwd()
-            FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_wk2, symbol).prepare_custom_md_fwd(
-                no_md_entries_wk2)).send_market_data_fwd()
+class QAP_2382(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh = FixManager(self.fh_connectivity, self.test_id)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-            # Step 1-2
-            params = CaseParamsSellRfq(client, case_id, leg1_side=leg1_side, leg2_side=leg2_side, side=side,
-                                       orderqty=orderqty, leg1_ordqty=leg1_ordqty, leg2_ordqty=leg2_ordqty,
-                                       currency=currency, settlcurrency=settlcurrency,
-                                       leg1_settltype=leg1_settltype, leg2_settltype=leg2_settltype,
-                                       settldate=settldate, leg1_settldate=leg1_settldate,
-                                       leg2_settldate=leg2_settldate,
-                                       symbol=symbol, leg1_symbol=leg1_symbol, leg2_symbol=leg2_symbol,
-                                       securitytype=securitytype_swap, leg1_securitytype=leg1_securitytype,
-                                       leg2_securitytype=leg2_securitytype, account=account)
+        self.status = Status.Fill
+        self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.eur = self.data_set.get_currency_by_name("currency_eur")
+        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        self.qty_3m = "3000000"
+        self.buy_side = '1'
+        self.sell_side = '2'
 
-            rfq_swap = FixClientSellRfq(params)
-            rfq_swap.send_request_for_quote_swap(expire_time)
-            rfq_swap.verify_quote_pending_swap(offer_spot_rate=offer_spot_rate, bid_spot_rate=bid_spot_rate,
-                                               bid_px=bid_px,
-                                               bid_swap_points=bid_swap_points, leg_bid_fwd_p=leg_bid_fwd_p,
-                                               leg_of_fwd_p=leg_off_fwd_p)
-        except Exception as e:
-            try:
-                md1.send_md_unsubscribe()
-            except:
-                bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
-            logging.error('Error execution', exc_info=True)
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.offer_entry_px_1m = 1.19810
+        self.offer_entry_px_2m = 1.19909
+        self.bid_entry_px_1m = 1.19599
+        self.bid_entry_px_2m = 1.19397
+        self.offer_spot_rate = str(round((self.offer_entry_px_1m + self.offer_entry_px_2m)/2, 4))
+        self.bid_spot_rate = str(round((self.bid_entry_px_1m + self.bid_entry_px_2m)/2, 5))
+
+        self.instrument = {
+            "Symbol": self.eur_usd,
+            "SecurityType": self.security_type_swap
+        }
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+
+        self.md_symbol_spo = 'EUR/USD:SPO:REG:MS'
+        self.md_symbol_wk1 = 'EUR/USD:FXF:WK1:MS'
+        self.md_symbol_wk2 = 'EUR/USD:FXF:WK2:MS'
+
+        self.no_md_entries_spot = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19599,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": self.offer_entry_px_1m,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19397,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19909,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19301,
+                "MDEntrySize": 3000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19999,
+                "MDEntrySize": 3000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+
+        ]
+        self.no_md_entries_wk1 = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19585,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0002',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19615,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0002',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+        ]
+        self.no_md_entries_wk2 = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19575,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0003',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19625,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0003',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+        ]
+
+        # offer_spot_rate = '1.1986'
+        # bid_spot_rate = '1.19498'
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Precondition
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.instrument)
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
+        self.fix_md.update_MDReqID(self.md_symbol_spo, self.fh_connectivity, "FX")
+        self.fix_manager_fh.send_message(self.fix_md)
+
+        self.fix_md.update_fields_in_component("Instrument", self.instrument)
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_wk1)
+        self.fix_md.update_MDReqID(self.md_symbol_wk1, self.fh_connectivity, "FX")
+        self.fix_manager_fh.send_message(self.fix_md)
+
+        self.fix_md.update_fields_in_component("Instrument", self.instrument)
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_wk2)
+        self.fix_md.update_MDReqID(self.md_symbol_wk2, self.fh_connectivity, "FX")
+        self.fix_manager_fh.send_message(self.fix_md)
+        # endregion
+
+        # region Step 1
+        self.quote_request.set_swap_fwd_fwd()
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Side=self.sell_side,
+                                                           Account=self.acc_argentina)
+        self.quote_request.update_near_leg(leg_side=self.buy_side)
+        self.quote_request.update_far_leg(leg_qty=self.qty_3m, leg_side=self.sell_side)
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        # endregion
+
+        # region Step 2
+        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
+                                            key_parameters=["MDReqID"])
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.quote.change_parameters(
+            {"OfferSpotRate": self.offer_spot_rate, "BidSpotRate": self.bid_spot_rate})
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion

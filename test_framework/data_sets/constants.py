@@ -27,18 +27,26 @@ class Connectivity(Enum):
     Luna_314_Feed_Handler_Q = 'fix-fh-q-314-luna'
     Luna_314_ss_esp_t = 'fix-sell-esp-t-314-stand'
     Luna_314_dc = 'fix-sell-m-314luna-drop'
+    Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
     Luna_315_web_admin = 'rest_wa315luna'
+    Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
     Luna_315_desktop_trading_web_socket = 'api_session_desktop315luna'
+    Luna_315_web_trading_http = 'rest_wt315luna'
+    Luna_315_web_trading_web_socket = 'api_session_315luna'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
     Kuiper_320_web_admin = 'rest_wa320kuiper'
+    Kuiper_320_web_admin_site = 'rest_wa320kuiper_site_admin'
     Kuiper_320_web_trading_http = 'rest_wt320kuiper'
     Kuiper_320_web_trading_web_socket = 'api_session_320kuiper'
+    Kepler_319_Sell_Side = 'fix-sell-side-319-kepler'
+    Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
+    Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
 
 
 class FrontEnd(Enum):

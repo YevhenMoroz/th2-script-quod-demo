@@ -19,7 +19,6 @@ class QAP_2154(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.listing = "a"
 
-
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
@@ -32,7 +31,6 @@ class QAP_2154(CommonTestCase):
         time.sleep(2)
         listing_page.click_on_load_button()
         time.sleep(2)
-
 
     def test_context(self):
         try:
