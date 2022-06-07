@@ -84,15 +84,14 @@ class QAP_3527(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # TODO edit rule for ITG (TIF=DAY), rule for eliminate instead FOK rule
         # region Rule creation
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
-        nos_1_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, False, self.price)
+        nos_1_eliminate_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_1_fok_rule, ocr_1_rule, ocr_2_rule]
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_1_eliminate_rule, ocr_1_rule, ocr_2_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -164,17 +163,6 @@ class QAP_3527(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_itg_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         time.sleep(2)
-
-        # TODO Maybe, Sent->Eliminate without PendingNew->New
-
-        er_pending_new_dma_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_itg_order_params.change_parameters(dict(ExDestination=self.ex_destination_itg))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_itg_order_params, key_parameters=self.key_params_with_ex_destination, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 3 order')
-
-        er_new_dma_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_itg_order_params.change_parameters(dict(ExDestination=self.ex_destination_itg))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_itg_order_params, key_parameters=self.key_params_with_ex_destination, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3 order')
-        # endregion
 
         # region check eliminate third dma child order
         er_eliminate_dma_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_eliminate)
@@ -249,7 +237,7 @@ class QAP_3527(TestCase):
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
-        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*'))
+        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*')).add_tag(dict(TransactTime="*"))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_without_cl_ord_id, message_name='Sell side ExecReport Cancel')
         # endregion
 
