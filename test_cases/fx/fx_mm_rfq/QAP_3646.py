@@ -6,6 +6,7 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, Status, Side, QuoteBookColumns, \
     QuoteStatus, QuoteRequestBookColumns, TradeBookColumns
 from test_framework.win_gui_wrappers.forex.client_rfq_tile import ClientRFQTile
@@ -17,8 +18,8 @@ from test_framework.win_gui_wrappers.forex.fx_trade_book import FXTradeBook
 
 class QAP_3646(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.quote_book = FXQuoteBook(self.test_id, self.session_id)
 
@@ -40,6 +41,7 @@ class QAP_3646(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
+        # TODO Need send QuoteRequest through FIX
         self.client_rfq_tile.modify_rfq_tile(from_cur=self.gbp_cur, to_cur=self.usd_cur, client=self.client,
                                              clientTier=self.client, near_qty=self.qty_for_di,
                                              near_tenor=self.spot_tenor)
@@ -54,7 +56,7 @@ class QAP_3646(TestCase):
         time.sleep(3)
         self.dealer_intervention.send_quote()
         self.dealer_intervention.close_window()
-
+        # TODO Need check Quote through FIX
         self.quote_book.set_filter([self.bid_size_column, self.qty_for_di]).check_quote_book_fields_list({
             self.quote_sts_column: self.accepted_sts})
         # endregion
