@@ -407,11 +407,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ClientAlgoPolicyID': 'QA_MPDark2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            # 'NoPartyIDs': {
-            #     'PartyID': 'gtw01',
-            #     'PartyIDSource': 'D',
-            #     'PartyRole': '36'
-            # }
         }
         super().change_parameters(base_parameters)
         return self
@@ -434,6 +429,51 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SynthMinQty_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_SORPING',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'MinQty': '100'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_ChildMinQty_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ShortCode': '17536',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ChildOrderID': '*',
         }
         super().change_parameters(base_parameters)
         return self
