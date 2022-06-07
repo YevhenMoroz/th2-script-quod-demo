@@ -1,4 +1,5 @@
 import math
+from math import ceil
 from functools import wraps
 
 
@@ -69,7 +70,7 @@ class AlgoFormulasManager:
             one_weight = parent_qty / sum_of_weight
             j = 0
             while j < len(venue_weights):
-                qty_list.append(int(one_weight * venue_weights[j]))
+                qty_list.append(ceil(one_weight * venue_weights[j]))
                 j += 1
         else:                                                               # for tests with minQty
             qty_for_distribution = parent_qty - minqty * count_of_venue
@@ -81,13 +82,13 @@ class AlgoFormulasManager:
                 one_weight = minqty
                 j = 0
                 while j < count_of_venue:
-                    qty_list.append(int(one_weight))
+                    qty_list.append(ceil(one_weight))
                     j += 1
             else:                                                          # for everyone else
                 one_weight = qty_for_distribution / sum_of_weight
                 j = 0
                 while j < len(venue_weights):
-                    qty_list.append(int(one_weight * venue_weights[j] + minqty))
+                    qty_list.append(ceil(one_weight * venue_weights[j] + minqty))
                     j += 1
 
         return qty_list
