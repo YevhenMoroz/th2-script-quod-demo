@@ -58,7 +58,13 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
-
+    instrument_8 = dict(
+        Symbol='QUODTESTQA00',
+        SecurityID='TESTQA00',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
 
 
 class AlgoVenues(Enum):
@@ -112,6 +118,8 @@ class AlgoMic(Enum):
     mic_7 = "XPOS" # ITG
     mic_8 = "TQEM" # TURQUOISE DARKPOOL EU
     mic_9 = "TRQM" # TURQUIOSE DARKPOOL UK
+    mic_10 = "QDL1" # QUODLIT1
+    mic_11 = "QDL2" # QUODLIT2
 
 
 
@@ -119,6 +127,8 @@ class AlgoListingId(Enum):
     listing_1 = "1015"
     listing_2 = "734"
     listing_3 = "3416"
+    listing_4 = "107617192" # QUODLIT1 for QUODTESTQA00
+    listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -130,5 +140,6 @@ class AlgoCurrency(Enum):
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
-    verifier_key_parameters_mp_dark_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
-    verifier_key_parameters_NOS = ['ClOrdID']
+    verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_NOS_parent = ['ClOrdID']
