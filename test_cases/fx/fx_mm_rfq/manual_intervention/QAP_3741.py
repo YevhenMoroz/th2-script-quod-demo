@@ -58,7 +58,7 @@ class QAP_3741(TestCase):
         self.quote_request.update_far_leg(leg_qty=self.qty, settle_type=self.settle_type,
                                           settle_date=self.settle_date_2, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency=self.currency)
+                                                           Currency=self.currency, Instrument=self.instrument)
         response = self.fix_manager_sel.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
         # endregion
 
