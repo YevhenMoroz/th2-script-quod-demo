@@ -120,6 +120,8 @@ class AlgoMic(Enum):
     mic_9 = "TRQM" # TURQUIOSE DARKPOOL UK
     mic_10 = "QDL1" # QUODLIT1
     mic_11 = "QDL2" # QUODLIT2
+    mic_12 = "LISX" # CHIXLIS
+    mic_13 = "TRQL" # TQLIS
 
 
 
