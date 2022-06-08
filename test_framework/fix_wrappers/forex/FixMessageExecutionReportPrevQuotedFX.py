@@ -75,7 +75,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
     # endregion
     # region SWAP
     def set_params_from_new_order_swap(self, new_order_single: FixMessageNewOrderMultiLegFX,
-                                       status: Status):
+                                       status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell_swap(new_order_single)
         elif status is Status.Reject:
