@@ -88,9 +88,14 @@ class AlgoFormulasManager:
                 one_weight = qty_for_distribution / sum_of_weight
                 j = 0
                 while j < len(venue_weights):
-                    qty_list.append(ceil(one_weight * venue_weights[j] + minqty))
+                    qty_list.append(int(one_weight * venue_weights[j] + minqty))
                     j += 1
-
+                sum_of_qty = 0
+                for k in qty_list:
+                    sum_of_qty += k
+                different = parent_qty - sum_of_qty
+                if different > 0:
+                    qty_list[0] += different
         return qty_list
 
     # Two different formulas for dark venue weights
