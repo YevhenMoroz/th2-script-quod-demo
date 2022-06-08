@@ -99,15 +99,15 @@ class QAP_3432(TestCase):
         case_id_2 = bca.create_event("Create RFQ on buy side", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
-        # region check that RFQ send to CHIXLIS
+        # region check that RFQ send to CHIX LIS UK
         nos_chixlis_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
-        # end region
+        # endregion
 
-        # region check that RFQ send to TQLIS
+        # region check that RFQ send to TURQUOISE LIS
         nos_trql_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(nos_trql_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
-        # end region
+        # endregion
 
 
     @try_except(test_id=Path(__file__).name[:-3])

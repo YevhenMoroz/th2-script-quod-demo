@@ -491,11 +491,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Price': '20',
             'Side': '1',
             'TimeInForce': '0',
-            'TransactTime': datetime.utcnow().isoformat(),
+            'TransactTime': "*",
             "OrderCapacity": "A",
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
             "ExDestination": "LISX",
-            "CFICode": "ESXXXX",
+            "AlgoCst01": "ioi",
+            "QtyType": "0",
         }
         super().change_parameters(base_parameters)
         return self
