@@ -410,3 +410,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_RFQ_params(self):
+        base_parameters = {
+            # 'Account': self.get_data_set().get_account_by_name('account_9'),
+            'Account': "KEPLER",
+            'ClOrdID': "*",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'ExecInst': 'A',
+            'HandlInst': '1',
+            'OrderQty': '500000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'TimeInForce': '0',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
+            "ExDestination": "LISX",
+            "CFICode": "ESXXXX",
+        }
+        super().change_parameters(base_parameters)
+        return self
