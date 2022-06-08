@@ -40,7 +40,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             elif status is Status.PartialFill:
                 self.__set_partial_fill_sell(new_order_single)
             elif status is Status.Reject:
-                self.__set_reject_buy(new_order_single)
+                self.__set_reject_sell(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_sell(new_order_single)
             elif status is Status.Eliminate:
@@ -343,36 +343,28 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
     def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+            temp.update(Price=new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
+            Instrument='*',
             AvgPx=0,
             ClOrdID='*',
             CumQty=0,
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
-            HandlInst=new_order_single.get_parameter('HandlInst'),
             LastPx=0,
             LastQty=0,
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=8,
-            OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
+            Text='QATestReject',
             TimeInForce=0,
             TransactTime='*',
-            SettlDate='*',
-            Text= '*',
+            OrdRejReason='*',
             ExecType=8,
-            LeavesQty=0,
-            ExecRestatementReason='*',
+            LeavesQty='*',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
-            Instrument=new_order_single.get_parameter('Instrument'),
-            QtyType='*',
-            NoParty='*',
-            NoStrategyParameters='*',
-            SecAltIDGrp='*',
         )
         super().change_parameters(temp)
         return self
@@ -551,23 +543,26 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
     def __set_eliminate_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+            temp.update(Price=new_order_single.get_parameter("Price"))
         temp.update(
+            Account='*',
             AvgPx='*',
             ClOrdID='*',
             CumQty='0',
-            OrdType=new_order_single.get_parameter('OrdType'),
+            Currency=new_order_single.get_parameter('Currency'),
+            Instrument='*',
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             ExecID='*',
+            LastPx=0,
+            LastQty=0,
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=4,
             Side=new_order_single.get_parameter('Side'),
-            Text='order canceled',
             TransactTime='*',
             ExecType=4,
-            LeavesQty=0,
-            ExDestination=new_order_single.get_parameter('ExDestination')
+            LeavesQty='*',
+            OrderCapacity = new_order_single.get_parameter('OrderCapacity'),
         )
         super().change_parameters(temp)
         return self
@@ -616,7 +611,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
