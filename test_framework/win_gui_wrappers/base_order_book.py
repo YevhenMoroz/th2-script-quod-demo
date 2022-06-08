@@ -127,6 +127,12 @@ class BaseOrderBook(BaseWindow):
         self.set_order_details()
         return response[field.name]
 
+    def extract_absence_of_order(self):
+        response = call(self.get_orders_details_call, self.order_details.request())
+        self.clear_details([self.order_details])
+        self.set_order_details()
+        return response['Message']
+
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
         Receives dict as an argument, where the key is column name what
