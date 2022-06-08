@@ -1,4 +1,4 @@
-from test_cases.fx.fx_mm_rfq import QAP_1542, QAP_1545, QAP_1547, QAP_1548, QAP_1550, \
+from test_cases.fx.fx_mm_rfq import QAP_1545, QAP_1550, \
     QAP_1551, QAP_1562, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
     QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2104, QAP_2105, QAP_2143, \
@@ -10,6 +10,9 @@ from test_cases.fx.fx_mm_rfq import QAP_1542, QAP_1545, QAP_1547, QAP_1548, QAP_
 from test_cases.fx.fx_mm_rfq.QAP_1537 import QAP_1537
 from test_cases.fx.fx_mm_rfq.QAP_1539 import QAP_1539
 from test_cases.fx.fx_mm_rfq.QAP_1540 import QAP_1540
+from test_cases.fx.fx_mm_rfq.QAP_1542 import QAP_1542
+from test_cases.fx.fx_mm_rfq.QAP_1547 import QAP_1547
+from test_cases.fx.fx_mm_rfq.QAP_1548 import QAP_1548
 from test_cases.fx.fx_mm_rfq.QAP_2472 import QAP_2472
 from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
 from test_cases.fx.fx_mm_rfq.QAP_3250 import QAP_3250
@@ -126,7 +129,7 @@ def test_run(parent_id=None):
                  environment=configuration.environment).execute()
 
         QAP_1540(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_1542(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1542(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_1552.execute(report_id)
         QAP_1746.execute(report_id)
         QAP_1978.execute(report_id)
@@ -135,8 +138,10 @@ def test_run(parent_id=None):
         QAP_5848.execute(report_id)
 
         QAP_1545.execute(report_id, case_params, session_id)
-        QAP_1547.execute(report_id, case_params, session_id)
-        QAP_1548.execute(report_id, case_params, session_id)
+        QAP_1547(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment).execute()
+        QAP_1548(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment).execute()
         QAP_1550.execute(report_id, case_params, session_id)
         QAP_1551.execute(report_id, case_params, session_id)
         QAP_1562.execute(report_id, case_params, session_id)
