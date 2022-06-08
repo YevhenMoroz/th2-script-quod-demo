@@ -21,7 +21,7 @@ class FixMessage:
     def get_parameters(self) -> dict:
         return self.__parameters
 
-    def change_parameter(self, parameter_name: str, new_parameter_value) -> None:
+    def change_parameter(self, parameter_name: str, new_parameter_value):
         self.__parameters[parameter_name] = new_parameter_value
         return self
 
