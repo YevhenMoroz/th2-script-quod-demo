@@ -91,5 +91,5 @@ class OMSOrderBook(BaseOrderBook):
         self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
         self.unmatch_and_transfer_details = UnmatchAndTransferDetails(self.base_request)
         self.unmatch_and_transfer_call = Stubs.win_act_order_book.unmatchAndTransfer
-
+        self.get_empty_rows_call = Stubs.win_act_order_book.checkIfOBGridHaveNoRows
         # endregion
