@@ -87,6 +87,8 @@ class BaseOrderBook(BaseWindow):
         self.group_modify_details = None
         self.mass_manual_execution_call = None
         self.mass_manual_execution_details = None
+        self.unmatch_and_transfer_details = None
+        self.unmatch_and_transfer_call = None
         self.direct_child_care_call = None
 
     # endregion
@@ -124,6 +126,12 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.order_details])
         self.set_order_details()
         return response[field.name]
+
+    def extract_absence_of_order(self):
+        response = call(self.get_orders_details_call, self.order_details.request())
+        self.clear_details([self.order_details])
+        self.set_order_details()
+        return response['Message']
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
@@ -644,3 +652,9 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_price(price)
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
+
+    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict):
+        self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
+        self.unmatch_and_transfer_details.set_account_destination(account_destination)
+        call(self.unmatch_and_transfer_call, self.unmatch_and_transfer_details.build())
+        self.clear_details([self.unmatch_and_transfer_details])

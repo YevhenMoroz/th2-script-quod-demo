@@ -1,7 +1,7 @@
 from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import ExtractDirectsValuesRequest
 from th2_grpc_act_gui_quod.common_pb2 import ScrollingOperation
-from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails, GroupModifyDetails, MassExecSummaryAveragePriceDetails
+from th2_grpc_act_gui_quod.order_book_pb2 import ReassignOrderDetails, GroupModifyDetails
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_book import BaseOrderBook
@@ -11,7 +11,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails, MassExecSummaryDetails, MassManualExecutionDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassExecSummaryDetails, MassManualExecutionDetails,
+    UnmatchAndTransferDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -91,5 +92,7 @@ class OMSOrderBook(BaseOrderBook):
         self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
         self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
         self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
+        self.unmatch_and_transfer_details = UnmatchAndTransferDetails(self.base_request)
+        self.unmatch_and_transfer_call = Stubs.win_act_order_book.unmatchAndTransfer
 
         # endregion

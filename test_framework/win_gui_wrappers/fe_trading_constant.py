@@ -51,6 +51,8 @@ class OrderBookColumns(Enum):
     beneficiary = 'Beneficiary'
     net_amount = 'NetAmount'
     net_price = 'NetPrice'
+    exec_inst = 'ExecInst'
+    exec_pcy = 'ExecPcy'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -173,6 +175,7 @@ class TradeBookColumns(Enum):
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
     exec_type = 'ExecType'
+    unmatched_qty = 'UnmatchedQty'
 
 
 class QuoteRequestBookColumns(Enum):
