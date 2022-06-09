@@ -43,7 +43,7 @@ class AlgoFixInstruments(Enum):
     )
 
     instrument_6 = dict(
-        Symbol='SWp',
+        Symbol='FR0000121220', # SWp
         SecurityID='FR0000121220',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
@@ -51,7 +51,7 @@ class AlgoFixInstruments(Enum):
     )
 
     instrument_7 = dict(
-        Symbol='ORp',
+        Symbol='FR0000120321', # ORp
         SecurityID='FR0000120321',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
