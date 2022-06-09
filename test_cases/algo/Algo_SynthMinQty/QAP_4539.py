@@ -67,10 +67,7 @@ class QAP_4539(TestCase):
         # endregion
 
         # region Key parameters
-        self.key_params_with_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
-        self.key_params_without_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
-        self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_mp_dark_child")
-        self.verifier_key_parameters_with_only_cl_ord_id = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS")
+        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -114,5 +111,5 @@ class QAP_4539(TestCase):
         # region Check reject algo order
         self.fix_verifier_sell.set_case_id(bca.create_event("Reject Algo Order", self.test_id))
         er_reject_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_reject)
-        self.fix_verifier_sell.check_fix_message(er_reject_synthMinQty_order, key_parameters=self.key_params_with_cl_ord_id, message_name='Sell side ExecReport Reject')
+        self.fix_verifier_sell.check_fix_message(er_reject_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
