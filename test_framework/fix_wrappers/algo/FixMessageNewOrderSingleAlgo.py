@@ -499,3 +499,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_Iceberg_params(self):
+        base_parameters = {
+            'Account': "KEPLER",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1011',
+            # "DisplayInstruction": {
+            #     'DisplayQty': '500'
+            # },
+            'ClientAlgoPolicyID': 'SORPING_MSI_YYY',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+        }
+        super().change_parameters(base_parameters)
+        return self
