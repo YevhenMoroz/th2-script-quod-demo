@@ -31,10 +31,10 @@ class QAP_3524(TestCase):
         # endregion
 
         # region order parameters
-        # weights CHIX = 70, BATS = 30,
+        # weights CHIX = 60, BATS = 40,
         self.qty = 10000
-        self.chix_weight = 70
-        self.bats_weight = 30
+        self.chix_weight = 60
+        self.bats_weight = 40
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.chix_weight, self.bats_weight)
         self.price = 20
         # endregion
