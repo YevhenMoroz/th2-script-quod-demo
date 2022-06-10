@@ -31,15 +31,15 @@ class QAP_3733(TestCase):
         # endregion
 
         # region order parameters
-        # weights CHIX DARKPOOL UK=16/BATS DARKPOOL UK=15/CBOE DARKPOOL EU=15/ITG=15/TQDARKEU=10/TQDARK=9/
+        # weights CHIX DARKPOOL UK=20/BATS DARKPOOL UK=15/CBOE DARKPOOL EU=15/ITG=15/TQDARKEU=10/TQDARK=10/
         self.qty = 10000
         self.minQty = 1000
-        self.weight_chix = 16
+        self.weight_chix = 20
         self.weight_bats = 15
         self.weight_cboe = 15
         self.weight_itg = 15
         self.weight_tqdarkeu = 10
-        self.weight_tqdark = 9
+        self.weight_tqdark = 10
         self.qty_chix_child, self.qty_bats_child, self.qty_cboe_child, self.qty_itg_child, self.qty_tqdarkeu_child, self.qty_tqdark_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.minQty, self.weight_chix, self.weight_bats, self.weight_cboe, self.weight_itg, self.weight_tqdarkeu, self.weight_tqdark)
         self.price = 20
         # endregion
