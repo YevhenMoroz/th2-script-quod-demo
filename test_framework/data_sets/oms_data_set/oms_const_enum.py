@@ -311,3 +311,11 @@ class OMSExecutionPolicy(Enum):
 
 class OMSTimeInForce(Enum):
     time_in_force_1 = "Day "
+
+
+class OMSOrdType(Enum):
+    limit = 'Limit'
+
+
+class OMSCapacity(Enum):
+    agency = 'Agency'
