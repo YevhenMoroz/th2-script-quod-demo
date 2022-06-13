@@ -70,8 +70,14 @@ class AlgoFormulasManager:
             one_weight = parent_qty / sum_of_weight
             j = 0
             while j < len(venue_weights):
-                qty_list.append(ceil(one_weight * venue_weights[j]))
+                qty_list.append(int(one_weight * venue_weights[j]))
                 j += 1
+            sum_of_qty = 0
+            for k in qty_list:
+                sum_of_qty += k
+            different = parent_qty - sum_of_qty
+            if different > 0:
+                qty_list[0] += different
         else:                                                               # for tests with minQty
             qty_for_distribution = parent_qty - minqty * count_of_venue
             if parent_qty - minqty < minqty:                                # for tests when parentQty - minQty < minQty (only 1 child)

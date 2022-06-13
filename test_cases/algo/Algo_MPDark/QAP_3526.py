@@ -31,12 +31,12 @@ class QAP_3526(TestCase):
         # endregion
 
         # region order parameters
-        # weights CHIXDELTA=40/BATSDARK=40/ITG=20
+        # weights CHIXDELTA=6/BATSDARK=3/ITG=1
         self.qty = 10000
         self.minQty = 7000
-        self.weight_chix = 40
-        self.weight_bats = 40
-        self.weight_itg = 20
+        self.weight_chix = 6
+        self.weight_bats = 3
+        self.weight_itg = 1
         self.qty_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.minQty, self.weight_chix, self.weight_bats, self.weight_itg)[0]
         self.price = 20
         self.reason = 99
@@ -122,39 +122,38 @@ class QAP_3526(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check child DMA order on venue BATS DARKPOOL UK
+        # region Check child DMA order on venue CHIX DARKPOOL UK
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
+        self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_child, Price=self.price, Instrument=self.instrument))
+        self.dma_chix_order.add_tag(dict(MinQty=self.minQty))
+        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        # endregion
 
+        time.sleep(2)
+        # region check reject first dma child order
+        er_reject_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_reject)
+        self.fix_verifier_buy.check_fix_message(er_reject_dma_chix_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 1 order")
+        # endregion
+
+        time.sleep(3)
+
+        # region Check child DMA order on venue BATS DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_bats_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_child, Price=self.price, Instrument=self.instrument))
         self.dma_bats_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
         # endregion
 
         time.sleep(2)
 
-        # region check reject first dma child order
+        # region check reject second dma child order
         er_reject_dma_bats_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_bats_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message(er_reject_dma_bats_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 2 order")
         # endregion
 
         time.sleep(5)
-
-        # region Check child DMA order on venue CHIX DARKPOOL UK
-        self.dma_chix_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
-        self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_child, Price=self.price, Instrument=self.instrument))
-        self.dma_chix_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
-        # endregion
-
-        time.sleep(2)
-        # region check reject second dma child order
-        er_reject_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_chix_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 2 order")
-        # endregion
-
-        time.sleep(3)
 
         # region Check child DMA order on venue ITG
         self.dma_itg_order = FixMessageNewOrderSingleAlgo().set_DMA_Dark_Child_params()
