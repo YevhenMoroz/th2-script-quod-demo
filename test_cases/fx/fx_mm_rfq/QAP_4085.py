@@ -50,5 +50,6 @@ class QAP_4085(TestCase):
         self.new_order_single.change_parameter("Side", self.buy_side)
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)
+        self.execution_report.change_parameters({"Text": "order side (B) doesn't match quote"})
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
