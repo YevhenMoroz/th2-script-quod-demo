@@ -5,6 +5,7 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -18,8 +19,8 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
 
 
 class QAP_1554(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
@@ -52,7 +53,7 @@ class QAP_1554(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
-        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
+        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -72,7 +73,7 @@ class QAP_1554(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
-        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
+        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

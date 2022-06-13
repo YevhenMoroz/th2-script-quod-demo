@@ -78,6 +78,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                                        status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell_swap(new_order_single)
+        elif status is Status.Reject:
+            self.__set_reject_sell_swap(new_order_single)
         else:
             raise Exception('Incorrect Status')
         return self
@@ -88,6 +90,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             self.get_parameter("NoLegs")[0].pop("LegLastForwardPoints")
         elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0":
             self.get_parameter("NoLegs")[1].pop("LegLastForwardPoints")
+        return self
+
+    def __set_reject_sell_swap(self, new_order_single: FixMessageNewOrderSingle = None):
+        self.prepare_swap_reject_exec_report(new_order_single)
         return self
 
     def prepare_swap_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
@@ -158,6 +164,48 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SettlType="*",
             NoParty="*",
             NoLegs=no_legs,
+            Instrument=new_order_single.get_parameter('Instrument')
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
+    def prepare_swap_reject_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty="0",
+            Currency=new_order_single.get_parameter('Currency'),
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastQty="0",
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            Price="*",
+            LastMkt="*",
+            OrderCapacity="A",
+            OrdStatus='8',
+            TransactTime='*',
+            AvgPx='*',
+            ExecID='*',
+            LastPx='*',
+            OrderID='*',
+            ExecType='8',
+            ExecRestatementReason='*',
+            Text="*",
+            LeavesQty=0,
+            QtyType=0,
+            SettlType="*",
+            NoParty="*",
             Instrument=new_order_single.get_parameter('Instrument')
         )
         super().change_parameters(temp)

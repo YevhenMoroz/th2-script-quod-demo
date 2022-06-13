@@ -42,3 +42,14 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def is_institution_field_enabled(self):
         return self.find_by_xpath(UsersConstants.INSTITUTION).is_enabled()
+
+    def clear_assignments_tab(self):
+        if self.is_desks_field_enabled():
+            selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
+            self.set_desks([_.strip() for _ in selected_desks.split(",")])
+        if self.is_location_field_enabled():
+            self.set_text_by_xpath(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, "")
+        if self.is_zone_field_enabled():
+            self.set_text_by_xpath(UsersConstants.ZONE_AT_ASSIGNMENTS_SUB_WIZARD, "")
+        if self.is_institution_field_enabled():
+            self.set_text_by_xpath(UsersConstants.INSTITUTION, "")

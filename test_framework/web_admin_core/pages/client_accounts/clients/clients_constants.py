@@ -1,5 +1,6 @@
 class ClientsConstants:
     CLIENTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Clients ']"
+    WIZARD_PAGE_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
