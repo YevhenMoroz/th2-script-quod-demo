@@ -152,12 +152,25 @@ class CommonPage:
     def use_keyboard_esc_button(self):
         self.find_by_xpath("//body").send_keys(Keys.ESCAPE)
 
-    def scroll(self, source_xpath, target_xpath):
+    def horizontal_scroll(self, search_element):
         '''
         Method was created for scroll
         '''
-        action = ActionChains(self.web_driver_container)
-        action.drag_and_drop(source_xpath, target_xpath).perform()
+        scr_elem = self.find_by_xpath(CommonConstants.HORIZONTAL_SCROLL_ELEMENT_XPATH)
+        elem_size = scr_elem.size['width']
+
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.move_to_element_with_offset(scr_elem, 5, 5)
+        action.click()
+
+        c = 50
+        while elem_size/2 > c:
+            action.click_and_hold()
+            action.move_by_offset(c, 0)
+            c += 50
+            action.perform()
+            if self.is_element_present(search_element):
+                break
 
     def write_to_file(self, path_to_file, value):
         try:

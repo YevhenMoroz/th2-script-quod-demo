@@ -9,6 +9,7 @@ class CounterpartsConstants:
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
+    DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = '//*[@class="nb-overlay-left"]//*[@data-name="download"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
     COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH = '//*[text()="{}"]'

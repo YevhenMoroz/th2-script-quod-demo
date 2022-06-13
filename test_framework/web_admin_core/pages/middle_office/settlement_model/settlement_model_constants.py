@@ -18,6 +18,7 @@ class SettlementModelConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_EXCEPTION = "//*[text()='Incorrect or missing values']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'

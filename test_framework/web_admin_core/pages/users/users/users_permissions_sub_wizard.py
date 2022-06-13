@@ -3,7 +3,7 @@ from test_framework.web_admin_core.pages.users.users.users_constants import User
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-class UsersRoleSubWizard(CommonPage):
+class UsersPermissionsSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 

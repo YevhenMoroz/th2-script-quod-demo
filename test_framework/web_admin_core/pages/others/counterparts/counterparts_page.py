@@ -57,10 +57,10 @@ class CounterpartsPage(CommonPage):
     def is_counterpart_present_by_name(self, value):
         return self.is_element_present(CounterpartsConstants.COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH.format(value))
 
-    def click_download_pdf_entity_button_and_check_pdf(self, value):
+    def click_download_pdf_at_more_actions_and_check_pdf(self, value):
         self.clear_download_directory()
         self.click_on_more_actions()
         time.sleep(1)
-        self.find_by_xpath(CounterpartsConstants.DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH).click()
+        self.find_by_xpath(CounterpartsConstants.DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
