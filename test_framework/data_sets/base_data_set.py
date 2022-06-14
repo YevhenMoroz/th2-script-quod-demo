@@ -48,6 +48,7 @@ class BaseDataSet:
     client_desks = None
     middle_office_status = None
     middle_office_match_status = None
+    capacity = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -721,4 +722,9 @@ class BaseDataSet:
         if hasattr(self.commission_basis, name):
             return getattr(self.commission_basis, name).value
         return ValueError(f"{self.commission_basis} not found!")
+
+    def get_capacity(self, name: str):
+        if hasattr(self.capacity, name):
+            return getattr(self.capacity, name).value
+        return ValueError(f"{self.capacity} not found!")
     # endregion
