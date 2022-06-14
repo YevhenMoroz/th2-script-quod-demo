@@ -35,7 +35,7 @@ class AlgoFixInstruments(Enum):
     )
 
     instrument_5 = dict(
-        Symbol='RF',
+        Symbol='FR0000121121_EUR',
         SecurityID='FR0000121121',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
@@ -154,3 +154,8 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
+
+
+class ClientAlgoPolicy(Enum):
+    qa_mpdark_2 = "QA_MPDark2"
+    qa_sorping = "QA_SORPING"
