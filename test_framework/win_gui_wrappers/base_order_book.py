@@ -90,7 +90,7 @@ class BaseOrderBook(BaseWindow):
         self.unmatch_and_transfer_details = None
         self.unmatch_and_transfer_call = None
         self.direct_child_care_call = None
-
+        self.get_empty_rows_call = None
     # endregion
 
     # region Common func
@@ -116,22 +116,24 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, row_number: int = 1) -> str:
+    def extract_field(self, column_name: str, row_number: int = 1,
+                      expected_empty_rows: bool = False):
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
         info.set_number(row_number)
         self.order_details.add_single_order_info(info)
-        response = call(self.get_orders_details_call, self.order_details.request())
-        self.clear_details([self.order_details])
-        self.set_order_details()
-        return response[field.name]
+        if expected_empty_rows is False:
+            response = call(self.get_orders_details_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response[field.name]
+        else:
+            response = call(self.get_empty_rows_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response
 
-    def extract_absence_of_order(self):
-        response = call(self.get_orders_details_call, self.order_details.request())
-        self.clear_details([self.order_details])
-        self.set_order_details()
-        return response['Message']
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
@@ -194,7 +196,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details.set_tabs_details([self.second_level_tab_details.build()])
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
-        return BaseWindow.split_2lvl_values(result)
+        return BaseWindow.split_fees(result)
 
     # endregion
 
