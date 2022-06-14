@@ -86,6 +86,8 @@ class RunClientsAccounts:
                      environment=configuration.environment).run()
             QAP_3232(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_4056(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
             QAP_4381(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_4382(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
