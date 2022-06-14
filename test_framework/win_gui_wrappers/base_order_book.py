@@ -117,7 +117,7 @@ class BaseOrderBook(BaseWindow):
 
     # region Get
     def extract_field(self, column_name: str, row_number: int = 1,
-                      expected_empty_rows: bool = False) -> str:
+                      expected_empty_rows: bool = False):
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
@@ -196,7 +196,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details.set_tabs_details([self.second_level_tab_details.build()])
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
-        return BaseWindow.split_2lvl_values(result)
+        return BaseWindow.split_fees(result)
 
     # endregion
 
