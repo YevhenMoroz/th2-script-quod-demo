@@ -31,4 +31,5 @@ pyperclip
 selenium
 PyPDF2
 webdriver_manager
+datetimerange
 
