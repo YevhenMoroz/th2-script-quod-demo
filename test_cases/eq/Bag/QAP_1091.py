@@ -120,8 +120,8 @@ class QAP_1091(TestCase):
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'DFDManagementBatchBlock': {
-                'DFDOrderList': {'DFDOrderBlock': [{'OrdID': 'CO1220522183001119001'},
-                                                        {'OrdID': 'CO1220522182956119001'}]
+                'DFDOrderList': {'DFDOrderBlock': [{'OrdID': orders_id[0]},
+                                                        {'OrdID': orders_id[1]}]
                                  },
                 'SetDoneForDay': 'Y'
             }

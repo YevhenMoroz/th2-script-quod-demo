@@ -149,7 +149,7 @@ class GetOrderBagBookDetails:
         length = len(filter_list)
         i = 0
         while i < length:
-            self.orderbag_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.order_bag_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
     def add_bag_order_info(self, bag_order_info_list: list):
@@ -266,3 +266,16 @@ class OrderBagCreationDetails:
 
     def build(self):
         return self.order_bag_creation
+
+
+class OrderBagCompleteDetails:
+    def __init__(self, base_request):
+        self.order_bag_complete_details = bag_mgt_pb2.OrderBagCompleteDetails()
+        self.order_bag_complete_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_complete_details.filter.update(filter_dict)
+
+    def build(self):
+        return self.order_bag_complete_details
+# call(Stubs.win_act_bag_management_service.completeBag, order_bag_complete_details)

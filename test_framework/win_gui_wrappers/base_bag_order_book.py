@@ -39,16 +39,22 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_modification_call = None
         self.order_bag_cancel_bag_call = None
         self.order_bag_dissociate_bag_call = None
+        self.order_bag_complete_details = None
+        self.order_bag_complete_call = None
 
     # endregion
 
     # region Set details
-    def set_order_bag_wave_details(self, price=None, qty=None, display_qty=None, price_type=None,
+    def set_order_bag_wave_details(self, tif: str, expire_date: str = None, price=None, qty=None, display_qty=None,
+                                   price_type=None,
                                    price_offset=None,
                                    offset_type=None,
                                    scope=None, sub_lvl_number: int = None, sub_lvl_filter: list = None,
                                    wave_filter: list = None):
         self.bag_wave_creation.set_default_params(self.base_request)
+        self.bag_book_details.set_tif(tif)
+        if expire_date:
+            self.bag_book_details.set_expire_date(expire_date)
         if price is not None:
             self.bag_book_details.set_price(price)
         if qty is not None:
@@ -127,7 +133,8 @@ class BaseBagOrderBook(BaseWindow):
 
     # region Action
     def wave_bag(self):
-        call(self.wave_bag_creation_call, self.bag_wave_creation.build())
+        result = call(self.wave_bag_creation_call, self.bag_wave_creation.build())
+        return result
 
     def modify_wave_bag(self):
         call(self.modify_wave_bag_call, self.bag_wave_creation.build())
@@ -179,3 +186,8 @@ class BaseBagOrderBook(BaseWindow):
         self.bag_wave_creation.set_filter = filter_list
         call(self.order_bag_dissociate_bag_call, self.bag_wave_creation.build())
         self.clear_details([self.bag_wave_creation])
+
+    def complete_bag(self, filter_dict: dict):
+        self.order_bag_complete_details.set_filter(filter_dict)
+        call(self.order_bag_complete_call, self.order_bag_complete_details.build())
+        self.clear_details([self.order_bag_complete_details])
