@@ -53,6 +53,21 @@ class BaseOrderTicket(BaseWindow):
             self.order_details.set_display_qty(display_qty)
         return self.order_details
 
+    def set_twap_details(self, strategy_type, start_date=None, start_date_offset="", end_date=None,
+                         end_date_offset="", waves=None, aggressivity=None, max_participation=None):
+        twap_details = self.order_details.add_twap_strategy(strategy_type)
+        if start_date is not None:
+            twap_details.set_start_date(start_date, start_date_offset)
+        if end_date is not None:
+            twap_details.set_end_date(end_date, end_date_offset)
+        if waves is not None:
+            twap_details.set_waves(waves)
+        if aggressivity is not None:
+            twap_details.set_aggressivity(aggressivity)
+        if max_participation is not None:
+            twap_details.set_max_participation(max_participation)
+        return self.order_details
+
     # endregion
     # region Get
     def extract_order_ticket_errors(self):
