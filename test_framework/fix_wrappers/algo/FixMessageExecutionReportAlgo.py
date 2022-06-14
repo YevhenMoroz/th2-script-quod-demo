@@ -376,19 +376,19 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp.update(
             AvgPx='*',
             ClOrdID='*',
-            CumQty='0',
+            CumQty='*',
             ExecID='*',
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdType=new_order_single.get_parameter('OrdType'),
-            OrdStatus=4,
-            TimeInForce=3,
+            OrdStatus=0,
+            TimeInForce=0,
             OrigClOrdID='*',
             Side=new_order_single.get_parameter('Side'),
-            Text='order canceled',
+            Text='OCRRRule',
             TransactTime='*',
-            ExecType=4,
-            LeavesQty=0
+            ExecType=5,
+            LeavesQty="*"
         )
         super().change_parameters(temp)
         return self
