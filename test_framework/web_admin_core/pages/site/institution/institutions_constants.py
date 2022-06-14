@@ -46,6 +46,7 @@ class InstitutionsConstants:
     VALUES_TAB_CTM_BIC_NAME = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_COUNTERPART_NAME = '//*[@id="counterpart"]'
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
+    VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'
