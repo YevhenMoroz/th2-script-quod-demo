@@ -30,7 +30,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
             'NoParty': '*',
-            'Origin': '*'
+            # 'Origin': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -518,7 +518,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             # "DisplayInstruction": {
             #     'DisplayQty': '500'
             # },
-            'ClientAlgoPolicyID': 'SORPING_MSI_YYY',
+            'ClientAlgoPolicyID': 'QA_SORPING',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
         }
