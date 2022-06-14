@@ -10,3 +10,4 @@ class OMSChildOrderBook(BaseChildOrderBook):
         self.extract_child_order_book_sub_lvl_data_details = ExtractSubLvlDataDetails()
         self.extract_child_order_book_data_call = Stubs.win_act_child_order_book.extractChildOrderBookData
         self.extract_child_order_book_sub_lvl_data_call = Stubs.win_act_child_order_book.extractChildOrderBookSubLvlData
+        self.check_that_order_is_absent_call = Stubs.win_act_child_order_book.checkIfCOBGridHaveNoRows
