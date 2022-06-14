@@ -51,9 +51,9 @@ class QAP_1547(TestCase):
         self.dealer_intervention.set_list_filter(["Qty", self.qty])
         self.dealer_intervention.assign_quote(row_number=1)
         # region Step 3
-        time.sleep(10)
+        time.sleep(5)
         self.dealer_intervention.estimate_quote()
-        time.sleep(10)
+        time.sleep(5)
         # endregion
         # region Step 4
         self.dealer_intervention.send_quote()

@@ -29,12 +29,14 @@ class QAP_5353(TestCase):
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
+        self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
         self.status = Status.Fill
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.quote_request.set_swap_rfq_params()
+        self.quote_request.set_swap_rfq_params().update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                                                 Account=self.acc_argentina)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
                                             key_parameters=["MDReqID"])
@@ -47,5 +49,6 @@ class QAP_5353(TestCase):
         self.new_order_single.remove_parameter("Price")
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)
+        self.execution_report.remove_parameter("Price")
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
