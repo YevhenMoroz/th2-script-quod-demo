@@ -113,6 +113,20 @@ class QAP_1962(TestCase):
         self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
+        # region Send_MarketData
+        # self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        # market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler) # 734
+        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 2, MDUpdateAction=0, MDEntryPx=40, MDEntrySize=3000, MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))
+        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        #
+        # time.sleep(10)
+        #
+        # self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        # market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler) # 734
+        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 2, MDUpdateAction=0, MDEntryPx=40, MDEntrySize=3000, MDEntryDate=datetime.utcnow().date().strftime("%Y%m%d"), MDEntryTime=datetime.utcnow().time().strftime("%H:%M:%S"))
+        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+
+
         # region Send MD
         case_id_1 = bca.create_event("Send Market Data", self.test_id)
 
@@ -166,7 +180,7 @@ class QAP_1962(TestCase):
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         self.dma_1_order.change_parameters(dict(OrderQty=self.qty, TimeInForce=self.tif_gtc, Instrument=self.instrument, OrdType=self.order_type_mkt))
-        self.dma_1_order.remove_parameter('Price')
+        self.dma_1_order.remove_parameter('Price').remove_parameter('Origin')
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params,message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_pending)
@@ -180,9 +194,10 @@ class QAP_1962(TestCase):
         case_id_3 = bca.create_event("Eliminate Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
 
-        # region Check child Eliminate
-        eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod,"Buy side ExecReport Eliminate child order")
+        # region Check child Eliminateру
+        eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_eliminate)
+        eliminate_dma_1_order.add_tag(dict(OrdType='1', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
+        self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod, "Buy side ExecReport Eliminate child order")
         # endregion
 
         # region check parent Eliminate
