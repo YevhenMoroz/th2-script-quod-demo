@@ -1,3 +1,5 @@
+import logging
+
 from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 
 from custom import basic_custom_actions
@@ -24,6 +26,7 @@ class FixManager:
         self.__case_id = case_id
 
     def send_message(self, fix_message: FixMessage, custom_message =None ) -> None:
+        logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
         # TODO add validation(valid MsgType)
         if custom_message==None:
             message="Send "
@@ -39,6 +42,7 @@ class FixManager:
             ))
 
     def send_quote_to_dealer_and_receive_response(self, fix_message: FixMessage, case_id=None):
+        logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
         if case_id is not None:
             case_id = self.__case_id
         response = self.act.sendQuoteViaWindow(
@@ -53,6 +57,7 @@ class FixManager:
 
 
     def send_message_and_receive_response(self, fix_message: FixMessage, case_id=None) -> list:
+        logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
         if case_id == None:
             case_id = self.__case_id
 
@@ -183,7 +188,11 @@ class FixManager:
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
-
+        # logging.debug(f"Receive message {response_messages[0].get_message_type()} with params ->"
+        #               f" {response_messages[0].get_parameters()}")
+            for i in response_messages:
+                logging.info(f"Received message is {i.get_message_type()} with params ->"
+                              f" {i.get_parameters()}")
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
