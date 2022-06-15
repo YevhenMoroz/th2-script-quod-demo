@@ -8,17 +8,10 @@ from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from datetime import datetime
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from custom.basic_custom_actions import convert_to_request, message_to_grpc
-from stubs import Stubs
 from test_framework.data_sets import constants
 
 
@@ -127,53 +120,6 @@ class QAP_1962(TestCase):
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=40, MDEntrySize=3000)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-
-        # region Send MD
-        # case_id_1 = bca.create_event("Send Market Data", self.test_id)
-        #
-        # MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        #     symbol="734",
-        #     connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
-        # )).MDRefID
-        #
-        # mdir_params_trade = {
-        #     'MDReqID': MDRefID_1,
-        #     'NoMDEntriesIR': [
-        #         {
-        #             'MDUpdateAction': '0',
-        #             'MDEntryType': '2',
-        #             'MDEntryPx': '40',
-        #             'MDEntrySize': '3000',
-        #             'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-        #             'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-        #         }
-        #     ]
-        # }
-        #
-        # Stubs.fix_act.sendMessage(request=convert_to_request(
-        #     'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_1,
-        #     message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-        # ))
-        # time.sleep(10)
-        # mdir_params_trade = {
-        #     'MDReqID': MDRefID_1,
-        #     'NoMDEntriesIR': [
-        #         {
-        #             'MDUpdateAction': '0',
-        #             'MDEntryType': '2',
-        #             'MDEntryPx': '40',
-        #             'MDEntrySize': '3000',
-        #             'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-        #             'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-        #         }
-        #     ]
-        # }
-        #
-        # Stubs.fix_act.sendMessage(request=convert_to_request(
-        #     'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_1,
-        #     message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-        # ))
-
         time.sleep(2)
 
         # region Check child DMA order
@@ -195,7 +141,7 @@ class QAP_1962(TestCase):
         case_id_3 = bca.create_event("Eliminate Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
 
-        # region Check child Eliminateру
+        # region Check child Eliminate
         eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_eliminate)
         eliminate_dma_1_order.add_tag(dict(OrdType='1', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod, "Buy side ExecReport Eliminate child order")
@@ -204,7 +150,6 @@ class QAP_1962(TestCase):
         # region check parent Eliminate
         eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, key_parameters=self.key_params, message_name="Sell side ExecReport Eliminate")
-        # endregion
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
