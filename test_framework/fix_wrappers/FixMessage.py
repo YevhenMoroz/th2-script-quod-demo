@@ -114,7 +114,7 @@ class FixMessage:
                 item.update({key_in_group: new_value})
         return self
 
-    def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
+    def update_repeating_group_by_index(self, component: str, index: int = 0, **kwargs):
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
         return self
