@@ -40,8 +40,8 @@ class QAP_1962(TestCase):
         # region order parameters
         self.qty = 2000
         self.stop_price = 40
-        self.order_type_stop = 3
-        self.order_type_mkt = 1
+        self.order_type_stop = constants.OrderType.Stop.value
+        self.order_type_mkt = constants.OrderType.Market.value
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
         # endregion
 
