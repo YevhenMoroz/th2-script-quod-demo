@@ -33,6 +33,8 @@ class QAP_1962(TestCase):
         # region order parameters
         self.qty = 2000
         self.stop_price = 40
+        self.md_entry_px = 40
+        self.md_entry_size = 3000
         self.order_type_stop = constants.OrderType.Stop.value
         self.order_type_mkt = constants.OrderType.Market.value
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
@@ -110,14 +112,14 @@ class QAP_1962(TestCase):
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.s_par, self.fix_env1.feed_handler) # 734
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=40, MDEntrySize=3000)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px, MDEntrySize=self.md_entry_size)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         time.sleep(10)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.s_par, self.fix_env1.feed_handler) # 734
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=40, MDEntrySize=3000)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px, MDEntrySize=self.md_entry_size)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         time.sleep(2)
