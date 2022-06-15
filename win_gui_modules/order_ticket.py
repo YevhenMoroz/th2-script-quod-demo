@@ -10,7 +10,8 @@ from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from .algo_strategies import (TWAPStrategy, MultilistingStrategy, QuodParticipationStrategy, FXMultilistingStrategy,
-                              FXTWAPStrategy, QuodSyntheticStrategy)
+                              FXTWAPStrategy, QuodSyntheticStrategy, ExternalTWAPStrategy, SyntheticIcebergStrategy,
+                              SyntheticBlockStrategy)
 from .common_wrappers import CommissionsDetails
 
 from .utils import call
@@ -107,6 +108,24 @@ class OrderTicketDetails:
         self.order.algoOrderParams.strategyType = strategy_type
         self.order.algoOrderParams.twapStrategy.CopyFrom(order_ticket_pb2.TWAPStrategyParams())
         return TWAPStrategy(self.order.algoOrderParams.twapStrategy)
+
+    def add_external_twap_strategy(self, strategy_type: str) -> ExternalTWAPStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.externalTwapStrategy.CopyFrom(order_ticket_pb2.ExternalTWAPStrategyParams())
+        return ExternalTWAPStrategy(self.order.algoOrderParams.externalTwapStrategy)
+
+    def add_synthetic_iceberg_strategy(self, strategy_type: str) -> SyntheticIcebergStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.syntheticIcebergParams.CopyFrom(order_ticket_pb2.SyntheticIcebergParams())
+        return SyntheticIcebergStrategy(self.order.algoOrderParams.syntheticIcebergParams)
+
+    def add_synthetic_block_strategy(self, strategy_type: str) -> SyntheticBlockStrategy:
+        self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())
+        self.order.algoOrderParams.strategyType = strategy_type
+        self.order.algoOrderParams.syntheticBlockParams.CopyFrom(order_ticket_pb2.SyntheticBlockParams())
+        return SyntheticBlockStrategy(self.order.algoOrderParams.syntheticBlockParams)
 
     def add_multilisting_strategy(self, strategy_type: str) -> MultilistingStrategy:
         self.order.algoOrderParams.CopyFrom(order_ticket_pb2.AlgoOrderDetails())

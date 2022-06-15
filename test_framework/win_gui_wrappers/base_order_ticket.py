@@ -54,7 +54,8 @@ class BaseOrderTicket(BaseWindow):
         return self.order_details
 
     def set_twap_details(self, strategy_type, start_date=None, start_date_offset="", end_date=None,
-                         end_date_offset="", waves=None, aggressivity=None, max_participation=None):
+                         end_date_offset="", waves=None, aggressivity=None, max_participation=None,
+                         slice_duration_min=None, child_display_qty=None, child_min_qty=None):
         twap_details = self.order_details.add_twap_strategy(strategy_type)
         if start_date is not None:
             twap_details.set_start_date(start_date, start_date_offset)
@@ -66,7 +67,35 @@ class BaseOrderTicket(BaseWindow):
             twap_details.set_aggressivity(aggressivity)
         if max_participation is not None:
             twap_details.set_max_participation(max_participation)
+        if slice_duration_min is not None:
+            twap_details.set_slice_duration_min(slice_duration_min)
+        if child_display_qty is not None:
+            twap_details.set_child_display_qty(child_display_qty)
+        if child_min_qty is not None:
+            twap_details.set_child_min_qty(child_min_qty)
         return self.order_details
+
+    def set_external_twap_details(self, strategy_type, urgency=None, start_time=None, end_time=None):
+        """
+        works with MS TWAP(ASIA), MS TWAP(AMERICAS), MS TWAP(EMEA)
+        """
+        details = self.order_details.add_external_twap_strategy(strategy_type)
+        if urgency is not None:
+            details.set_urgency(urgency)
+        if start_time is not None:
+            details.set_start_time(start_time)
+        if end_time is not None:
+            details.set_end_time(end_time)
+        return self.order_details
+
+    def set_synthetic_iceberg_details(self, strategy_type, low_liquidity: bool = False):
+        details = self.order_details.add_synthetic_iceberg_strategy(strategy_type)
+        details.set_low_liquidity(low_liquidity)
+
+    def set_synthetic_block_details(self, strategy_type, order_mode: str = None):
+        details = self.order_details.add_synthetic_block_strategy(strategy_type)
+        if not None:
+            details.set_order_mode(order_mode)
 
     # endregion
     # region Get
