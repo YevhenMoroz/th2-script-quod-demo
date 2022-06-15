@@ -188,11 +188,10 @@ class FixManager:
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
-        # logging.debug(f"Receive message {response_messages[0].get_message_type()} with params ->"
-        #               f" {response_messages[0].get_parameters()}")
+
             for i in response_messages:
                 logging.info(f"Received message is {i.get_message_type()} with params ->"
-                              f" {i.get_parameters()}")
+                             f" {i.get_parameters()}")
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
