@@ -121,6 +121,7 @@ class QAP_1962(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         time.sleep(2)
+        # endregion
 
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 1 order", self.test_id))
