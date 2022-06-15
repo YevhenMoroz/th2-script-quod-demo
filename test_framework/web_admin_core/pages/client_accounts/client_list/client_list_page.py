@@ -56,3 +56,6 @@ class ClientListPage(CommonPage):
 
     def get_description(self):
         return self.find_by_xpath(ClientListConstants.MAIN_PAGE_DESCRIPTION_XPATH).text
+
+    def is_client_list_found(self, value):
+        return self.is_element_present(ClientListConstants.DISPLAYED_CLIENT_LIST_XPATH.format(value))

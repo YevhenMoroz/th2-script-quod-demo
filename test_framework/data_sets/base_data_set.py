@@ -5,16 +5,20 @@ class BaseDataSet:
     trading_api_instruments = None
     fix_instruments = None
     instruments = None
+    instrument_id = None
     venues = None
     clients = None
     accounts = None
+    cash_accounts = None
+    cash_account_counters = None
     washbook_accounts = None
     washbook_rules = None
     recipients = None
+    risk_limit_dimensions = None
     listing_id = None
-    instrument_id = None
     mic = None  # Market Identifier Code
     currency = None
+    settl_currency = None
     venue_client_names = None
     symbols = None
     security_types = None
@@ -48,6 +52,7 @@ class BaseDataSet:
     client_desks = None
     middle_office_status = None
     middle_office_match_status = None
+    capacity = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -120,6 +125,18 @@ class BaseDataSet:
         if self.fix_instruments:
             return self.fix_instruments.__members__
 
+    def get_instrument_id(self):
+        if self.instruments:
+            return self.instrument_id.__members__
+
+    def get_currency(self):
+        if self.currency:
+            return self.currency.__members__
+
+    def get_settl_currency(self):
+        if self.settl_currency:
+            return self.settl_currency.__members__
+
     def get_venues(self):
         if self.venues:
             return self.venues.__members__
@@ -132,6 +149,14 @@ class BaseDataSet:
         if self.accounts:
             return self.accounts.__members__
 
+    def get_cash_accounts(self):
+        if self.cash_accounts:
+            return self.cash_accounts.__members__
+
+    def get_cash_account_counters(self):
+        if self.cash_account_counters:
+            return self.cash_account_counters.__members__
+
     def get_washbook_accounts(self):
         if self.washbook_accounts:
             return self.washbook_accounts.__members__
@@ -143,6 +168,10 @@ class BaseDataSet:
     def get_recipients(self):
         if self.recipients:
             return self.recipients.__members__
+
+    def get_risk_limit_dimensions(self):
+        if self.accounts:
+            return self.accounts.__members__
 
     def get_trading_api_instrument_by_name(self, name: str):
         if hasattr(self.trading_api_instruments, name):
@@ -169,6 +198,16 @@ class BaseDataSet:
             return getattr(self.accounts, name).value
         raise ValueError(f"{self.accounts} not found!")
 
+    def get_cash_account_by_name(self, name: str):
+        if hasattr(self.cash_accounts, name):
+            return getattr(self.cash_accounts, name).value
+        raise ValueError(f"{self.cash_accounts} not found!")
+
+    def get_cash_account_counters_by_name(self, name: str):
+        if hasattr(self.cash_account_counters, name):
+            return getattr(self.cash_account_counters, name).value
+        raise ValueError(f"{self.cash_account_counters} not found!")
+
     def get_washbook_account_by_name(self, name: str):
         if hasattr(self.washbook_accounts, name):
             return getattr(self.washbook_accounts, name).value
@@ -183,6 +222,11 @@ class BaseDataSet:
         if hasattr(self.recipients, name):
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
+
+    def get_risk_limit_dimension_by_name(self, name: str):
+        if hasattr(self.risk_limit_dimensions, name):
+            return getattr(self.risk_limit_dimensions, name).value
+        raise ValueError(f"{self.risk_limit_dimensions} not found!")
 
     def get_listing_id_by_name(self, name: str):
         if hasattr(self.listing_id, name):
@@ -721,4 +765,9 @@ class BaseDataSet:
         if hasattr(self.commission_basis, name):
             return getattr(self.commission_basis, name).value
         return ValueError(f"{self.commission_basis} not found!")
+
+    def get_capacity(self, name: str):
+        if hasattr(self.capacity, name):
+            return getattr(self.capacity, name).value
+        return ValueError(f"{self.capacity} not found!")
     # endregion

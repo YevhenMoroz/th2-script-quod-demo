@@ -44,6 +44,11 @@ class ModifyTradesDetails:
     def set_default_params(self, base_request):
         self.modify_trades_details.base.CopyFrom(base_request)
 
+    def set_selected_rows(self, row_numbers: list):
+        self.modify_trades_details.selectedRows.extend(row_numbers)
+
+    def set_order_to_match(self,order_to_match:str):
+        self.modify_trades_details.orderToMatch = order_to_match
     def build(self):
         return self.modify_trades_details
 
