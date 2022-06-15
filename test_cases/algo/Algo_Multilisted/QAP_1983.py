@@ -12,12 +12,7 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from datetime import datetime
 from test_framework.data_sets import constants
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from custom.basic_custom_actions import convert_to_request, message_to_grpc
-from stubs import Stubs
 
 
 class QAP_1983(TestCase):
