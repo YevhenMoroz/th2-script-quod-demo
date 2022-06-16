@@ -102,7 +102,7 @@ class BaseOrderTicket(BaseWindow):
     def set_alloc_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
                               qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
 
-        row_count = len(alt_account) if alt_acc_checkbox else account
+        row_count = len(alt_account) if alt_acc_checkbox else len(account)
         for i in range(row_count):
             if account is not None and len(account) > i:
                 self.allocations_grid_row_details.set_account(account[i])
