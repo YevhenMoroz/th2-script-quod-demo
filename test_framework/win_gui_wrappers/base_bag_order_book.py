@@ -6,6 +6,7 @@ from enum import Enum
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo
+from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.utils import call
 
 
@@ -41,6 +42,8 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_dissociate_bag_call = None
         self.order_bag_complete_details = None
         self.order_bag_complete_call = None
+        self.order_bag_uncomplete_call = None
+        self.order_bag_book_call = None
 
     # endregion
 
@@ -107,7 +110,7 @@ class BaseBagOrderBook(BaseWindow):
 
     def extract_from_order_bag_book_and_other_tab(self, extraction_id, extraction_fields: list = None,
                                                   sub_extraction_fields: list = None, sub_filter: list = None,
-                                                  filter: list = None):
+                                                  filter: list = None, table_name: str = None):
         self.bag_order_details.set_default_params(self.base_request)
         self.bag_order_details.set_extraction_id(extraction_id)
         if filter is not None:
@@ -126,6 +129,7 @@ class BaseBagOrderBook(BaseWindow):
         if sub_filter is not None:
             order_bag_book_details.set_filter(sub_filter)
         bag_order_ingo_main = BagOrderInfo.create(action=lvl_1, sub_orders=order_bag_book_details)
+        bag_order_ingo_main.set_sub_level_tab(table_name)
         self.bag_order_details.add_single_bag_order_info(bag_order_ingo_main)
         response = call(self.order_bag_extraction_call, self.bag_order_details.build())
         self.clear_details([self.bag_order_details, self.extraction_bag_order_action])
@@ -187,7 +191,15 @@ class BaseBagOrderBook(BaseWindow):
         call(self.order_bag_dissociate_bag_call, self.bag_wave_creation.build())
         self.clear_details([self.bag_wave_creation])
 
-    def complete_bag(self, filter_dict: dict):
+    def complete_or_un_complete_bag(self, filter_dict: dict, is_complete: bool = True):
         self.order_bag_complete_details.set_filter(filter_dict)
-        call(self.order_bag_complete_call, self.order_bag_complete_details.build())
+        self.order_bag_complete_details.set_is_complete(is_complete)
+        if is_complete:
+            call(self.order_bag_complete_call, self.order_bag_complete_details.build())
+        else:
+            call(self.order_bag_uncomplete_call, self.order_bag_complete_details.build())
         self.clear_details([self.order_bag_complete_details])
+
+    def book_bag(self, modifyTicketDetails: ModifyTicketDetails):
+        call(self.order_bag_book_call, modifyTicketDetails.build())
+        self.clear_details([modifyTicketDetails])

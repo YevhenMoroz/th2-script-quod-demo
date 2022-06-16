@@ -28,4 +28,6 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.order_bag_dissociate_bag_call = Stubs.win_act_bag_management_service.dissociateBag
         self.order_bag_complete_details = OrderBagCompleteDetails(self.base_request)
         self.order_bag_complete_call = Stubs.win_act_bag_management_service.completeBag
+        self.order_bag_uncomplete_call = Stubs.win_act_bag_management_service.uncompleteBag
+        self.order_bag_book_call = Stubs.win_act_bag_management_service.bookBagOrder
 

@@ -276,6 +276,8 @@ class OrderBagCompleteDetails:
     def set_filter(self, filter_dict: dict):
         self.order_bag_complete_details.filter.update(filter_dict)
 
+    def set_is_complete(self, is_complete):
+        self.order_bag_complete_details.isComplete = is_complete
+
     def build(self):
         return self.order_bag_complete_details
-# call(Stubs.win_act_bag_management_service.completeBag, order_bag_complete_details)
