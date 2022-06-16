@@ -129,7 +129,8 @@ class BaseBagOrderBook(BaseWindow):
         if sub_filter is not None:
             order_bag_book_details.set_filter(sub_filter)
         bag_order_ingo_main = BagOrderInfo.create(action=lvl_1, sub_orders=order_bag_book_details)
-        bag_order_ingo_main.set_sub_level_tab(table_name)
+        if table_name:
+            bag_order_ingo_main.set_sub_level_tab(table_name)
         self.bag_order_details.add_single_bag_order_info(bag_order_ingo_main)
         response = call(self.order_bag_extraction_call, self.bag_order_details.build())
         self.clear_details([self.bag_order_details, self.extraction_bag_order_action])
