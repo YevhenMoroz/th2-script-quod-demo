@@ -1,8 +1,8 @@
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_bag_order_book import BaseBagOrderBook
 from win_gui_modules.bag_order_ticket import BagOrderTicketDetails, PegsOrdDetails, SubLevelDetails, BagOrderInfo, \
-    GetOrderBagBookDetailsRequest, OrderBagWaveCreationDetails, ExtractionBagFieldsDetails, ExtractionBagOrderAction, \
-    GetOrderBagBookDetails, OrderBagCreationDetails, OrderBagCompleteDetails
+    OrderBagWaveCreationDetails, ExtractionBagFieldsDetails, ExtractionBagOrderAction, \
+    GetOrderBagBookDetails, OrderBagCreationDetails, OrderBagCompleteDetails, CreateOrderDetails
 
 
 class OMSBagOrderBook(BaseBagOrderBook):
@@ -30,4 +30,6 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.order_bag_complete_call = Stubs.win_act_bag_management_service.completeBag
         self.order_bag_uncomplete_call = Stubs.win_act_bag_management_service.uncompleteBag
         self.order_bag_book_call = Stubs.win_act_bag_management_service.bookBagOrder
+        self.create_order_call = Stubs.win_act_bag_management_service.createOrder
+        self.create_order_details = CreateOrderDetails(self.base_request)
 

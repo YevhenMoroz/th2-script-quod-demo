@@ -5,8 +5,9 @@ from enum import Enum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo
+from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo, CreateOrderDetails
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import call
 
 
@@ -44,6 +45,8 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_complete_call = None
         self.order_bag_uncomplete_call = None
         self.order_bag_book_call = None
+        self.create_order_call = None
+        self.create_order_details = CreateOrderDetails(self.base_request)
 
     # endregion
 
@@ -118,9 +121,9 @@ class BaseBagOrderBook(BaseWindow):
         fields = []
         sub_fields = []
         for field in extraction_fields:
-            fields.append(self.extraction_bag_fields_details("order_bag." + field, field))
+            fields.append(self.extraction_bag_fields_details(field, field))
         for sub_field in sub_extraction_fields:
-            sub_fields.append(self.extraction_bag_fields_details("order_bag_second_level." + sub_field, sub_field))
+            sub_fields.append(self.extraction_bag_fields_details(sub_field, sub_field))
         lvl_2 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=sub_fields)
         lvl_1 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=fields)
         bag_order_info_second_level = self.bag_order_info()
@@ -154,7 +157,7 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_creation_details.set_order_bag_ticket_details(deepcopy(self.bag_book_details))
         self.clear_details([self.bag_book_details])
 
-    def create_bag(self, politic_of_creation: classmethod = None):
+    def create_bag(self, politic_of_creation: EnumBagCreationPolitic = None):
         if politic_of_creation:
             call(politic_of_creation, self.order_bag_creation_details.build())
         else:
@@ -204,3 +207,8 @@ class BaseBagOrderBook(BaseWindow):
     def book_bag(self, modifyTicketDetails: ModifyTicketDetails):
         call(self.order_bag_book_call, modifyTicketDetails.build())
         self.clear_details([modifyTicketDetails])
+
+    def set_create_order_details(self, filter_dict: dict, order_details: OrderTicketDetails):
+        self.create_order_details.set_order_details(order_details)
+        self.create_order_details.set_filter(filter_dict)
+        call(self.create_order_call, self.create_order_details.build())
