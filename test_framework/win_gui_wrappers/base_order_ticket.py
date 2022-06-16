@@ -26,6 +26,8 @@ class BaseOrderTicket(BaseWindow):
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
         self.mass_modify_order_call = None
+        self.allocations_grid_row_details = None
+        self.more_tab_allocations_details = None
 
     # endregion
 
@@ -96,6 +98,26 @@ class BaseOrderTicket(BaseWindow):
         details = self.order_details.add_synthetic_block_strategy(strategy_type)
         if not None:
             details.set_order_mode(order_mode)
+
+    def set_alloc_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
+                              qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
+
+        row_count = len(alt_account) if alt_acc_checkbox else len(account)
+        for i in range(row_count):
+            if account is not None and len(account) > i:
+                self.allocations_grid_row_details.set_account(account[i])
+            if account is not None and len(alt_account) > i:
+                self.allocations_grid_row_details.set_alt_account(alt_account[i])
+            if account is not None and len(qty) > i:
+                self.allocations_grid_row_details.set_qty(qty[i])
+            if account is not None and len(percentage) > i:
+                self.allocations_grid_row_details.set_percentage(percentage[i])
+            self.more_tab_allocations_details.set_allocations_rows_details([self.allocations_grid_row_details.build()])
+
+        self.more_tab_allocations_details.set_alt_acc_checkbox(alt_acc_checkbox)
+        if set_order_qty_change_to is not None:
+            self.more_tab_allocations_details.set_order_qty_change_to(set_order_qty_change_to)
+        return self.order_details.set_allocations_details(self.more_tab_allocations_details.build())
 
     # endregion
     # region Get

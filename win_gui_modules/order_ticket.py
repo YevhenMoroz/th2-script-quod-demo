@@ -1,7 +1,3 @@
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import OrderDetails
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import AlgoOrderDetails
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import TWAPStrategyParams
-# from th2_grpc_act_gui_quod.order_ticket_pb2 import QuodParticipationStrategyParams,
 from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
@@ -34,21 +30,23 @@ class OrderTicketExtractedValue(Enum):
 
 
 class MoreTabAllocationsDetails:
-    def __init__(self, allocations_rows: list, order_qty_change_to: str = None):
+    def __init__(self, allocations_rows: list=None, order_qty_change_to: str = None, alt_acc_checkbox: str = False):
         self.request = order_ticket_pb2.MoreTabAllocationsDetails()
 
+        self.request.altAccounts = alt_acc_checkbox
         if order_qty_change_to is not None:
             self.request.orderQtyChangeTo = order_qty_change_to
-
-        for row in allocations_rows:
-            self.request.allocationsRows.append(row)
+        if allocations_rows is not None:
+            self.request.allocationsRows.extend(allocations_rows)
 
     def set_order_qty_change_to(self, change_to: str):
         self.request.orderQtyChangeTo = change_to
 
     def set_allocations_rows_details(self, allocations_rows: list):
-        for row in allocations_rows:
-            self.request.allocationsRows.append(row)
+        self.request.allocationsRows.extend(allocations_rows)
+
+    def set_alt_acc_checkbox(self, alt_acc_checkbox: bool = False):
+        self.request.altAccounts = alt_acc_checkbox
 
     def build(self):
         return self.request
@@ -435,22 +433,34 @@ class ExtractOrderTicketErrorsRequest:
 
 
 class AllocationsGridRowDetails:
-    def __init__(self, account: str, qty: str, percentage: str = None):
+    def __init__(self, account: str = None, qty: str = None, percentage: str = None, alt_account=None):
         self.request = order_ticket_pb2.AllocationsGridRowDetails()
-        self.request.account = account
-        self.request.qty = qty
+        if account is not None:
+            self.request.account = account
+        if qty is not None:
+            self.request.qty = qty
 
         if percentage is not None:
             self.request.percentage = percentage
 
+        if alt_account is not None:
+            self.request.alt_account = alt_account
+
     def set_account(self, account: str):
-        self.request.account = account
+        if account is not None:
+            self.request.account = account
 
     def set_qty(self, qty: str):
-        self.request.qty = qty
+        if qty is not None:
+            self.request.qty = qty
 
     def set_percentage(self, percentage: str):
-        self.request.percentage = percentage
+        if percentage is not None:
+            self.request.percentage = percentage
+
+    def set_alt_account(self, alt_account: str):
+        if alt_account is not None:
+            self.request.altAccount = alt_account
 
     def build(self):
         return self.request

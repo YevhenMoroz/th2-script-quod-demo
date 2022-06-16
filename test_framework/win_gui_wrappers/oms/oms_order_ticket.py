@@ -31,6 +31,8 @@ class OMSOrderTicket(BaseOrderTicket):
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
         self.mass_modify_order_call = Stubs.win_act_order_book.massModify
+        self.allocations_grid_row_details = AllocationsGridRowDetails()
+        self.more_tab_allocations_details = MoreTabAllocationsDetails()
 
     # endregion
     # region Set
