@@ -624,18 +624,6 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    # def set_order_ticket_details(self, qty, type, price):
-    #     order_ticket_details = self.order_ticket_details()
-    #     order_ticket_details.set_quantity(qty)
-    #     order_ticket_details.set_order_type(type)
-    #     order_ticket_details.set_limit(price)
-    #     self.modify_order_details.set_order_details(order_ticket_details)
-    #     return self.modify_order_details
-    #
-    # def split_limit_order(self):
-    #     call(self.split_limit_call, self.modify_order_details.build())
-    #     # self.clear_details([self.modify_order_details])
-
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
