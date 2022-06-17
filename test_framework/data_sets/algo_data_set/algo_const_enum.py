@@ -82,6 +82,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_11 = dict(
+        Symbol='FR0000133308',
+        SecurityID='FR0000133308',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -138,6 +146,8 @@ class AlgoMic(Enum):
     mic_11 = "QDL2" # QUODLIT2
     mic_12 = "LISX" # CHIXLIS
     mic_13 = "TRQL" # TQLIS
+    mic_14 = "QDD1" # QUODDKP1
+    mic_15 = "QDD2" # QUODDKP2
 
 
 
@@ -149,6 +159,7 @@ class AlgoListingId(Enum):
     listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
     listing_6 = "1805006" # Euronext Paris for FR0010411884
     listing_7 = "1804844 " # Euronext Paris for FR0011550177
+    listing_8 = "1803699" # Euronext Paris for FR0000133308
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
