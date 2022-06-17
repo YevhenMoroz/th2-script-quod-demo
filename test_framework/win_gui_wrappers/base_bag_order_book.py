@@ -98,7 +98,7 @@ class BaseBagOrderBook(BaseWindow):
             self.bag_order_details.set_filter(filter)
         fields = []
         for field in extraction_fields:
-            fields.append(self.extraction_bag_fields_details("order_bag." + field, field))
+            fields.append(self.extraction_bag_fields_details(field, field))
 
         bag_order_info = self.bag_order_info()
         bag_order_info.set_number(1)
