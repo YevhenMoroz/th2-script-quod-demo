@@ -157,6 +157,9 @@ class OrderTicketDetails:
     def set_allocations_details(self, allocations_details: MoreTabAllocationsDetails):
         self.order.allocationsDetails.CopyFrom(allocations_details)
 
+    def set_commissions_details(self, commissions_details: CommissionsDetails):
+        self.order.commissionsParams.CopyFrom(commissions_details)
+
 
 class FXOrderDetails:
 

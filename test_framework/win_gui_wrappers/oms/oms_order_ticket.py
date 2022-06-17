@@ -1,7 +1,9 @@
+from th2_grpc_act_gui_quod import common_pb2
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
+from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTableParams
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, OrderTicketExtractedValue, ExtractOrderTicketValuesRequest, \
     ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails
@@ -33,6 +35,8 @@ class OMSOrderTicket(BaseOrderTicket):
         self.mass_modify_order_call = Stubs.win_act_order_book.massModify
         self.allocations_grid_row_details = AllocationsGridRowDetails()
         self.more_tab_allocations_details = MoreTabAllocationsDetails()
+        self.commissions_tab_table_details = CommissionsTabTableParams()
+        self.commissions_details = CommissionsDetails()
 
     # endregion
     # region Set

@@ -28,6 +28,8 @@ class BaseOrderTicket(BaseWindow):
         self.mass_modify_order_call = None
         self.allocations_grid_row_details = None
         self.more_tab_allocations_details = None
+        self.commissions_tab_table_details = None
+        self.commissions_details = None
 
     # endregion
 
@@ -99,7 +101,7 @@ class BaseOrderTicket(BaseWindow):
         if not None:
             details.set_order_mode(order_mode)
 
-    def set_alloc_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
+    def set_allocations_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
                               qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
 
         row_count = len(alt_account) if alt_acc_checkbox else len(account)
@@ -119,7 +121,27 @@ class BaseOrderTicket(BaseWindow):
             self.more_tab_allocations_details.set_order_qty_change_to(set_order_qty_change_to)
         return self.order_details.set_allocations_details(self.more_tab_allocations_details.build())
 
+    def set_commissions_tab_details(self, basis: list = [], rate: list = [], amount: list = [], currency: list = [],
+                                   is_manual=False, remove_comm=False):
+        row_count = max(len(basis), len(rate), len(amount), len(currency))
+        for i in range(row_count):
+            if len(basis) > i:
+                self.commissions_tab_table_details.set_basis(basis[i])
+            if len(rate) > i:
+                self.commissions_tab_table_details.set_rate(rate[i])
+            if len(amount) > i:
+                self.commissions_tab_table_details.set_amount(amount[i])
+            if len(currency) > i:
+                self.commissions_tab_table_details.set_currency(currency[i])
+            self.commissions_details.add_commission_params([self.commissions_tab_table_details.build()])
+        if is_manual:
+            self.commissions_details.toggle_manual()
+        if remove_comm:
+            self.commissions_details.remove_commissions()
+        return self.order_details.set_commissions_details(self.commissions_details.build())
+
     # endregion
+
     # region Get
     def extract_order_ticket_errors(self):
         extract_errors_request = self.extract_order_ticket_errors_request
