@@ -30,7 +30,7 @@ class OrderTicketExtractedValue(Enum):
 
 
 class MoreTabAllocationsDetails:
-    def __init__(self, allocations_rows: list=None, order_qty_change_to: str = None, alt_acc_checkbox: str = False):
+    def __init__(self, allocations_rows: list = None, order_qty_change_to: str = None, alt_acc_checkbox: str = False):
         self.request = order_ticket_pb2.MoreTabAllocationsDetails()
 
         self.request.altAccounts = alt_acc_checkbox
@@ -51,6 +51,37 @@ class MoreTabAllocationsDetails:
     def build(self):
         return self.request
 
+
+class AdwOrdTabDetails:
+    def __init__(self):
+        self.request = order_ticket_pb2.AdvOrdDetails()
+
+    def set_washbook(self, washbook: str):
+        if washbook is not None:
+            self.request.washbook = washbook
+
+    def set_capacity(self, capacity: str):
+        if capacity is not None:
+            self.request.capacity = capacity
+
+    def set_settl_date(self, settl_date: str):
+        if settl_date is not None:
+            self.request.settlDate = settl_date
+
+    def set_trig_px(self, trig_px: str):
+        if trig_px is not None:
+            self.request.trigPx = trig_px
+
+    def set_min_qty(self, min_qty: str):
+        if min_qty is not None:
+            self.request.minQty = min_qty
+
+    def set_qty_type(self, qty_type: str):
+        if qty_type is not None:
+            self.request.qtyType = qty_type
+
+    def build(self):
+        return self.request
 
 class OrderTicketDetails:
 
@@ -159,6 +190,9 @@ class OrderTicketDetails:
 
     def set_commissions_details(self, commissions_details: CommissionsDetails):
         self.order.commissionsParams.CopyFrom(commissions_details)
+
+    def set_adw_ord_details(self,adw_ord_details: AdwOrdTabDetails):
+        self.order.advOrdParams.CopyFrom(adw_ord_details)
 
 
 class FXOrderDetails:

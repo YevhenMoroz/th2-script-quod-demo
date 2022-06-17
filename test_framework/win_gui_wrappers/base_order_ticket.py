@@ -30,6 +30,7 @@ class BaseOrderTicket(BaseWindow):
         self.more_tab_allocations_details = None
         self.commissions_tab_table_details = None
         self.commissions_details = None
+        self.adw_ord_tab_details = None
 
     # endregion
 
@@ -102,7 +103,7 @@ class BaseOrderTicket(BaseWindow):
             details.set_order_mode(order_mode)
 
     def set_allocations_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
-                              qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
+                                    qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
 
         row_count = len(alt_account) if alt_acc_checkbox else len(account)
         for i in range(row_count):
@@ -122,7 +123,7 @@ class BaseOrderTicket(BaseWindow):
         return self.order_details.set_allocations_details(self.more_tab_allocations_details.build())
 
     def set_commissions_tab_details(self, basis: list = [], rate: list = [], amount: list = [], currency: list = [],
-                                   is_manual=False, remove_comm=False):
+                                    is_manual=False, remove_comm=False):
         row_count = max(len(basis), len(rate), len(amount), len(currency))
         for i in range(row_count):
             if len(basis) > i:
@@ -140,6 +141,15 @@ class BaseOrderTicket(BaseWindow):
             self.commissions_details.remove_commissions()
         return self.order_details.set_commissions_details(self.commissions_details.build())
 
+    def set_adv_ord_tab_details(self, washbook=None, capacity=None, settl_date=None, trig_px=None,
+                                min_qty=None, qty_type=None):
+        self.adw_ord_tab_details.set_washbook(washbook)
+        self.adw_ord_tab_details.set_capacity(capacity)
+        self.adw_ord_tab_details.set_settl_date(settl_date)
+        self.adw_ord_tab_details.set_trig_px(trig_px)
+        self.adw_ord_tab_details.set_min_qty(min_qty)
+        self.adw_ord_tab_details.set_qty_type(qty_type)
+        return self.order_details.set_adw_ord_details(self.adw_ord_tab_details.build())
     # endregion
 
     # region Get
