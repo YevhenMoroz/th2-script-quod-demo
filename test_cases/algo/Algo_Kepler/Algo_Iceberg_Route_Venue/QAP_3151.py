@@ -97,10 +97,9 @@ class QAP_3151(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_params()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_params()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price))
-        self.Iceberg_order.add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, DisplayQty=self.display_qty))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
