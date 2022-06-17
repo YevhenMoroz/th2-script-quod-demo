@@ -96,11 +96,13 @@ class BaseOrderTicket(BaseWindow):
     def set_synthetic_iceberg_details(self, strategy_type, low_liquidity: bool = False):
         details = self.order_details.add_synthetic_iceberg_strategy(strategy_type)
         details.set_low_liquidity(low_liquidity)
+        return self.order_details
 
     def set_synthetic_block_details(self, strategy_type, order_mode: str = None):
         details = self.order_details.add_synthetic_block_strategy(strategy_type)
         if not None:
             details.set_order_mode(order_mode)
+        return self.order_details
 
     def set_allocations_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
                                     qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
