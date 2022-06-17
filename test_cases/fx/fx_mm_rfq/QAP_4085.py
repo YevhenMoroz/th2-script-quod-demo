@@ -1,54 +1,55 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_4085(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-    qty_1 = random_qty(1, 3, 7)
-    qty_2 = random_qty(1, 10, 7)
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
+        self.status = Status.Reject
+        self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.buy_side = "1"
+        self.sell_side = "2"
 
-    symbol = "GBP/USD"
-    security_type_swap = "FXSWAP"
-    security_type_fwd = "FXFWD"
-    settle_date_w1 = wk1()
-    settle_date_w2 = wk2()
-    settle_type_w1 = "W1"
-    settle_type_w2 = "W2"
-    currency = "GBP"
-    settle_currency = "USD"
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_swap_rfq_params().update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                                                 Side=self.sell_side,
+                                                                                 Account=self.acc_argentina)
+        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
+                                            key_parameters=["MDReqID"])
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion
 
-    side = "2"
-    leg1_side = "1"
-    leg2_side = "2"
-
-    try:
-        params_swap = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                        orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_2,
-                                        currency=settle_currency, settlcurrency=currency,
-                                        leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
-                                        settldate=settle_date_w1, leg1_settldate=settle_date_w1,
-                                        leg2_settldate=settle_date_w2,
-                                        symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                        securitytype=security_type_swap, leg1_securitytype=security_type_fwd,
-                                        leg2_securitytype=security_type_fwd,
-                                        securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params_swap)
-        rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
-        price = rfq.extract_filed("BidPx")
-        rfq.send_new_order_multi_leg(price, side=1)
-        rfq.verify_order_rejected(text="order side (B) doesn't match quote", side=1, price=price)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # region Step 2
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
+        self.new_order_single.change_parameter("Side", self.buy_side)
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)
+        self.execution_report.change_parameters({"Text": "order side (B) doesn't match quote"})
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion

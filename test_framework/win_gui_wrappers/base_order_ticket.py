@@ -26,6 +26,8 @@ class BaseOrderTicket(BaseWindow):
         self.extract_order_ticket_values_call = None
         self.extract_order_ticket_errors_call = None
         self.mass_modify_order_call = None
+        self.allocations_grid_row_details = None
+        self.more_tab_allocations_details = None
 
     # endregion
 
@@ -52,6 +54,70 @@ class BaseOrderTicket(BaseWindow):
         if display_qty is not None:
             self.order_details.set_display_qty(display_qty)
         return self.order_details
+
+    def set_twap_details(self, strategy_type, start_date=None, start_date_offset="", end_date=None,
+                         end_date_offset="", waves=None, aggressivity=None, max_participation=None,
+                         slice_duration_min=None, child_display_qty=None, child_min_qty=None):
+        twap_details = self.order_details.add_twap_strategy(strategy_type)
+        if start_date is not None:
+            twap_details.set_start_date(start_date, start_date_offset)
+        if end_date is not None:
+            twap_details.set_end_date(end_date, end_date_offset)
+        if waves is not None:
+            twap_details.set_waves(waves)
+        if aggressivity is not None:
+            twap_details.set_aggressivity(aggressivity)
+        if max_participation is not None:
+            twap_details.set_max_participation(max_participation)
+        if slice_duration_min is not None:
+            twap_details.set_slice_duration_min(slice_duration_min)
+        if child_display_qty is not None:
+            twap_details.set_child_display_qty(child_display_qty)
+        if child_min_qty is not None:
+            twap_details.set_child_min_qty(child_min_qty)
+        return self.order_details
+
+    def set_external_twap_details(self, strategy_type, urgency=None, start_time=None, end_time=None):
+        """
+        works with MS TWAP(ASIA), MS TWAP(AMERICAS), MS TWAP(EMEA)
+        """
+        details = self.order_details.add_external_twap_strategy(strategy_type)
+        if urgency is not None:
+            details.set_urgency(urgency)
+        if start_time is not None:
+            details.set_start_time(start_time)
+        if end_time is not None:
+            details.set_end_time(end_time)
+        return self.order_details
+
+    def set_synthetic_iceberg_details(self, strategy_type, low_liquidity: bool = False):
+        details = self.order_details.add_synthetic_iceberg_strategy(strategy_type)
+        details.set_low_liquidity(low_liquidity)
+
+    def set_synthetic_block_details(self, strategy_type, order_mode: str = None):
+        details = self.order_details.add_synthetic_block_strategy(strategy_type)
+        if not None:
+            details.set_order_mode(order_mode)
+
+    def set_alloc_tab_details(self, set_order_qty_change_to=None, account: list = [], alt_account: list = [],
+                              qty: list = [], percentage: list = [], alt_acc_checkbox: bool = False):
+
+        row_count = len(alt_account) if alt_acc_checkbox else len(account)
+        for i in range(row_count):
+            if account is not None and len(account) > i:
+                self.allocations_grid_row_details.set_account(account[i])
+            if account is not None and len(alt_account) > i:
+                self.allocations_grid_row_details.set_alt_account(alt_account[i])
+            if account is not None and len(qty) > i:
+                self.allocations_grid_row_details.set_qty(qty[i])
+            if account is not None and len(percentage) > i:
+                self.allocations_grid_row_details.set_percentage(percentage[i])
+            self.more_tab_allocations_details.set_allocations_rows_details([self.allocations_grid_row_details.build()])
+
+        self.more_tab_allocations_details.set_alt_acc_checkbox(alt_acc_checkbox)
+        if set_order_qty_change_to is not None:
+            self.more_tab_allocations_details.set_order_qty_change_to(set_order_qty_change_to)
+        return self.order_details.set_allocations_details(self.more_tab_allocations_details.build())
 
     # endregion
     # region Get

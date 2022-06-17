@@ -38,7 +38,7 @@ class QAP_3152(CommonTestCase):
         page = SettlementModelPage(self.web_driver_container)
         values_sub_wizard = SettlementModelValuesSubWizard(self.web_driver_container)
         page.click_on_new()
-        time.sleep(1)
+        time.sleep(2)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_description(self.description)
         values_sub_wizard.set_settl_location(self.settl_location)
@@ -59,7 +59,7 @@ class QAP_3152(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
             page.set_name(self.name)
-            time.sleep(2)
+            time.sleep(1)
             try:
                 self.verify("entity created correctly", self.name, page.get_name())
 

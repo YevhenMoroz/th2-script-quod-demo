@@ -115,10 +115,12 @@ class ListingsPage(CommonPage):
             self.click_on_more_actions()
             time.sleep(1)
             self.click_on_edit()
+            time.sleep(2)
         except:
             self.click_on_more_actions()
             time.sleep(1)
             self.click_on_edit()
+            time.sleep(2)
 
     def is_searched_listing_found(self, value):
         return self.is_element_present(ListingsConstants.DISPLAYED_CLIENT_XPATH.format(value))
