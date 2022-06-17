@@ -37,7 +37,6 @@ class QAP_3154(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
-        self.currency = self.data_set.get_currency_by_name("currency_4")
         # endregion
 
         # region Gateway Side
@@ -52,7 +51,7 @@ class QAP_3154(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_10")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_9")
         # endregion
 
         # region Direction
@@ -98,10 +97,9 @@ class QAP_3154(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_params()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_params()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price))
-        self.Iceberg_order.add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, DisplayQty=self.display_qty))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
@@ -122,21 +120,21 @@ class QAP_3154(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
+        # region Check child Iceberg order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child Iceberg order", self.test_id))
 
-        # region Check child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
+        self.child_iceberg_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.child_iceberg_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.child_iceberg_order.add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.fix_verifier_buy.check_fix_message(self.child_iceberg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child Iceberg order')
 
-        self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        er_pending_new_child_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.child_iceberg_order, self.gateway_side_buy, self.status_pending)
+        er_pending_new_child_iceberg_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
+        self.fix_verifier_buy.check_fix_message(er_pending_new_child_iceberg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
-
-        er_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        er_new_dma_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        er_new_child_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.child_iceberg_order, self.gateway_side_buy, self.status_pending)
+        er_new_child_iceberg_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
+        self.fix_verifier_buy.check_fix_message(er_new_child_iceberg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -149,9 +147,9 @@ class QAP_3154(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_Iceberg_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_Iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        # region check cancel dma child order
-        er_cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel first DMA 1 order")
+        # region check cancel Iceberg child order
+        er_cancel_child_iceberg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.child_iceberg_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_child_iceberg_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child Iceberg order")
         # endregion
 
         er_cancel_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_cancel)
