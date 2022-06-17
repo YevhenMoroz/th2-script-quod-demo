@@ -25,8 +25,28 @@ class BaseTileDetails:
         return self.base_details
 
 
+class CommissionsTabTableParams:
+    def __init__(self):
+        self.request = common_pb2.CommissionsTabTableParams()
+
+    def set_basis(self, basis: str):
+        self.request.basis = basis
+
+    def set_rate(self, rate: str):
+        self.request.rate = rate
+
+    def set_amount(self, amount: str):
+        self.request.amount = amount
+
+    def set_currency(self, currency: str):
+        self.request.currency = currency
+
+    def build(self):
+        return self.request
+
+
 class CommissionsDetails:
-    def __init__(self, commission_details: common_pb2.CommissionsDetails()):
+    def __init__(self, commission_details: common_pb2.CommissionsDetails() = common_pb2.CommissionsDetails()):
         self.request = commission_details
 
     def toggle_manual(self):
@@ -43,11 +63,15 @@ class CommissionsDetails:
         if currency is not None:
             var.currency = currency
 
+    def add_commission_params(self, commission_params: list):
+        self.request.commissionsTableParams.extend(commission_params)
+
     def remove_commissions(self):
         self.request.removeCommissions = True
 
     def build(self):
         return self.request
+
 
 class SpreadAction(Enum):
     WIDEN_SPREAD = common_pb2.WIDEN_SPREAD
