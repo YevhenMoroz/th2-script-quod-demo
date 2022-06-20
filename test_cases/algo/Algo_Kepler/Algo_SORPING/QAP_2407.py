@@ -115,8 +115,6 @@ class QAP_2407(TestCase):
         time.sleep(3)
         # endregion
 
-        # TODO Edit next
-
         # region Send NewOrderSingle (35=D) for SORPING order
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
@@ -203,4 +201,5 @@ class QAP_2407(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        RuleManager.remove_rules(self.rule_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(self.rule_list)
