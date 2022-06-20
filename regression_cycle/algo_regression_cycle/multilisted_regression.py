@@ -1,9 +1,37 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_Multilisted import QAP_1963, QAP_1988, QAP_1954, QAP_1979, QAP_1968, QAP_1953, QAP_1983, QAP_1965, QAP_1961, QAP_1992, QAP_1967, QAP_1995, QAP_1974, QAP_2476, QAP_1996, \
-    QAP_1960, QAP_1959, QAP_1975, QAP_2982, QAP_3058, QAP_3028, QAP_3027, QAP_1977, QAP_1951, QAP_3025, QAP_1976, QAP_1984, QAP_3134, QAP_1990, QAP_1958, QAP_1957, QAP_1997, QAP_1998, QAP_3022, \
-    QAP_1962, QAP_1966, QAP_3021, QAP_1986, QAP_1969, QAP_1980, QAP_1810, QAP_1985, QAP_1952, QAP_3019
+from test_cases.algo.Algo_Multilisted import QAP_1988, QAP_1992, QAP_1967, QAP_1995, QAP_2476, QAP_1996, \
+    QAP_2982, QAP_3058, QAP_3028, QAP_3027, QAP_1977, QAP_3025, QAP_3134, QAP_1990,  QAP_1997, QAP_1998, QAP_3022, \
+    QAP_1966, QAP_3021, QAP_3019
+from test_cases.algo.Algo_Multilisted.QAP_1810 import QAP_1810
+from test_cases.algo.Algo_Multilisted.QAP_1951 import QAP_1951
+from test_cases.algo.Algo_Multilisted.QAP_1952 import QAP_1952
+from test_cases.algo.Algo_Multilisted.QAP_1953 import QAP_1953
+from test_cases.algo.Algo_Multilisted.QAP_1954 import QAP_1954
+from test_cases.algo.Algo_Multilisted.QAP_1957 import QAP_1957
+from test_cases.algo.Algo_Multilisted.QAP_1958 import QAP_1958
+from test_cases.algo.Algo_Multilisted.QAP_1959 import QAP_1959
+from test_cases.algo.Algo_Multilisted.QAP_1960 import QAP_1960
+from test_cases.algo.Algo_Multilisted.QAP_1961 import QAP_1961
+from test_cases.algo.Algo_Multilisted.QAP_1962 import QAP_1962
+from test_cases.algo.Algo_Multilisted.QAP_1963 import QAP_1963
+from test_cases.algo.Algo_Multilisted.QAP_1965 import QAP_1965
+from test_cases.algo.Algo_Multilisted.QAP_1966 import QAP_1966
+from test_cases.algo.Algo_Multilisted.QAP_1967 import QAP_1967
+from test_cases.algo.Algo_Multilisted.QAP_1968 import QAP_1968
+from test_cases.algo.Algo_Multilisted.QAP_1969 import QAP_1969
+from test_cases.algo.Algo_Multilisted.QAP_1974 import QAP_1974
+from test_cases.algo.Algo_Multilisted.QAP_1975 import QAP_1975
+from test_cases.algo.Algo_Multilisted.QAP_1976 import QAP_1976
+from test_cases.algo.Algo_Multilisted.QAP_1977 import QAP_1977
+from test_cases.algo.Algo_Multilisted.QAP_1979 import QAP_1979
+from test_cases.algo.Algo_Multilisted.QAP_1980 import QAP_1980
+from test_cases.algo.Algo_Multilisted.QAP_1983 import QAP_1983
+from test_cases.algo.Algo_Multilisted.QAP_1984 import QAP_1984
+from test_cases.algo.Algo_Multilisted.QAP_1985 import QAP_1985
+from test_cases.algo.Algo_Multilisted.QAP_1986 import QAP_1986
+from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -14,33 +42,34 @@ channels = dict()
 def test_run(parent_id= None):
     report_id = bca.create_event('Algo', parent_id)
     try:
-        QAP_1810.execute(report_id)
-        QAP_1951.execute(report_id)
-        QAP_1952.execute(report_id)
-        QAP_1953.execute(report_id)
-        QAP_1954.execute(report_id)
-        QAP_1957.execute(report_id)
-        QAP_1958.execute(report_id)
-        QAP_1959.execute(report_id)
-        QAP_1960.execute(report_id)
-        QAP_1961.execute(report_id)
-        QAP_1962.execute(report_id)
-        QAP_1963.execute(report_id)
-        QAP_1965.execute(report_id)
-        QAP_1966.execute(report_id)
-        QAP_1967.execute(report_id)
-        QAP_1968.execute(report_id)
-        QAP_1969.execute(report_id)
-        QAP_1974.execute(report_id)
-        QAP_1975.execute(report_id)
-        QAP_1976.execute(report_id)
-        QAP_1977.execute(report_id)
-        QAP_1979.execute(report_id)
-        QAP_1980.execute(report_id)
-        QAP_1983.execute(report_id)
-        QAP_1984.execute(report_id)
-        QAP_1985.execute(report_id)
-        QAP_1986.execute(report_id)
+        configuration = ComponentConfiguration("multilisted")
+        QAP_1810(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1951(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1952(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1953(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1954(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1957(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1958(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1959(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1960(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1961(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1962(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1963(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1965(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1968(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1969(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1974(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1975(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1976(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1977(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1979(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1980(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1983(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1984(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1985(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_1986(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_1988.execute(report_id)
         QAP_1990.execute(report_id)
         QAP_1992.execute(report_id)

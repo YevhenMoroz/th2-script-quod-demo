@@ -3,7 +3,7 @@
 <!--  set_name must be like that 5.1.149.162|Regression|-->
     <name>set_name</name>
     <product_lines>
-        <product_line name="algo" run="False">
+        <product_line name="algo" run="True">
             <components>
                 <component name="twap" run="True">
                     <data_set>AlgoDataSet</data_set>
