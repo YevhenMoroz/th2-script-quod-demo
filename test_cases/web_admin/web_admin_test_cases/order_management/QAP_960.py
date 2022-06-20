@@ -50,7 +50,7 @@ class QAP_960(CommonTestCase):
         general_block_wizard.set_on_visible_checkbox()
         time.sleep(1)
         general_block_wizard.set_parameter("Start time")
-        time.sleep(1)
+        general_block_wizard.set_value_at_sub_wizard("1")
         general_block_wizard.set_start_time_at_sub_wizard("Now")
         time.sleep(1)
         general_block_wizard.set_plus_or_minus_at_sub_wizard("+")
