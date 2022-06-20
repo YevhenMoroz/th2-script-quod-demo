@@ -5,6 +5,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets import constants
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -20,10 +21,10 @@ from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 
 class QAP_1562(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_rfq_connectivity
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.quote_order_book = FXOrderBook(self.test_id, self.session_id)

@@ -138,9 +138,15 @@ class TimeInForce(Enum):
     AtTheClose = 7
     ValidForAuction = 100
 
+class OrderType(Enum):
+    Market = 1
+    Limit = 2
+    Stop = 3
+    StopLimit = 4
+
 
 class WebAdminURL(Enum):
-    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+    saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
 
 
 class WebBrowser(Enum):

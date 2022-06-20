@@ -76,6 +76,7 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    isin = "ISIN"
     is_locked ="IsLocked"
     basket_name = "Basket Name"
     basket_id = "Basket ID"
@@ -236,6 +237,8 @@ class BasketBookColumns(Enum):
     description = "Description"
     """Context menu"""
     remove_from_basket = "Remove from Basket"
+    """Orders Tab"""
+    limit_price = "LmtPrice"
 
 
 class ExecSts(Enum):
@@ -365,6 +368,7 @@ class SecondLevelTabs(Enum):
     executions = 'Executions'
     orders_tab = 'Orders'
     alloc_instruction_qties = "Alloc Instruction Qties"
+    slicing_orders = 'Slicing Orders'
 
 
 class PostTradeStatuses(Enum):
@@ -513,3 +517,7 @@ class BookingOrderResult(Enum):
 class AllocInstructionQties(Enum):
     booking_qty = 'Booking Qty'
     give_up_broker = 'Give-up Broker'
+
+
+class DoneForDays(Enum):
+    yes = 'Yes'

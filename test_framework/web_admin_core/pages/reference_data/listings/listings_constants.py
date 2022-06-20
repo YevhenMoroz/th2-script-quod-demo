@@ -19,7 +19,8 @@ class ListingsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     ERROR_MESSAGE_WIZARD_XPATH = "//*[@outline='danger']"
-    DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
+    REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
+    DISPLAYED_LISTING_XPATH = "//*[text()='{}']"
 
     # Main page
     MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH = '//*[text()="Listing"]/preceding-sibling::input'

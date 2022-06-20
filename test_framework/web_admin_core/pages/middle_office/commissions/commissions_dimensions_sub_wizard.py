@@ -31,6 +31,17 @@ class CommissionsDimensionsSubWizard(CommonPage):
         time.sleep(1)
         return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
 
+    def set_venue_list(self, value):
+        self.set_combobox_value(CommissionsConstants.VALUES_TAB_VENUE_LIST_XPATH, value)
+
+    def get_venue_list(self):
+        return self.get_text_by_xpath(CommissionsConstants.VALUES_TAB_VENUE_LIST_XPATH)
+
+    def get_all_venue_list_from_drop_menu(self):
+        self.find_by_xpath(CommissionsConstants.VALUES_TAB_VENUE_LIST_XPATH).click()
+        time.sleep(2)
+        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_side(self, value):
         self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_SIDE_XPATH, value)
 

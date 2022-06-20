@@ -16,13 +16,19 @@ class QAP_6877(CommonTestCase):
     def __init__(self, driver: AppiumDriver, second_lvl_id=None, data_set=None, environment=None):
         super().__init__(driver, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = self.data_set.get_user("user_1")
+        self.login = self.data_set.get_user("user_4")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        # region - preconditions
+        # endregion
+        # region - test details
         login_page = LoginPage(self.appium_driver)
         login_page.open_login_page(self.login)
         self.appium_driver.wait_time(2)
         self.verify("Login successful", True, True)
         self.verify("Verify: E-mail widget is unclickable", "false",
                     login_page.get_attribute_of_element_by_xpath(LoginConstants.EMAIL_LOGIN, "clickable"))
+        # endregion
+        # region - postconditions
+        # endregion

@@ -28,7 +28,7 @@ class QAP_3228(CommonTestCase):
         self.ext_id_client = "3"
         self.party_sub_id_type = "BIC"
         self.party_id_source = "BIC"
-        self.venue_counterpart_id = "2"
+        self.venue_counterpart_id = "ClientLEI"+''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.party_role = self.data_set.get_party_role("party_role_1")
         self.party_role_qualifier = "Bank"
         self.venue = self.data_set.get_venue_by_name("venue_1")
