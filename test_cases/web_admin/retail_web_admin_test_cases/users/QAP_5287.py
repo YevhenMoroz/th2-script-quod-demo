@@ -7,7 +7,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
-from test_framework.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from test_framework.web_admin_core.pages.users.users.users_permissions_sub_wizard import UsersPermissionsSubWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
@@ -33,7 +33,7 @@ class QAP_5287(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            user_role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
+            user_role_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
             try:
                 self.verify("Is perm role field displayed", True, user_role_sub_wizard.is_perm_role_field_visible())
                 self.verify("Is perm op field displayed", True, user_role_sub_wizard.is_perm_op_field_visible())

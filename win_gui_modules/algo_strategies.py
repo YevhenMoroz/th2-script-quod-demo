@@ -23,6 +23,45 @@ class TWAPStrategy:
     def set_max_participation(self, max_participation: str):
         self.strategy.maxParticipation = max_participation
 
+    def set_slice_duration_min(self, slice_duration_min: str):
+        self.strategy.sliceDurationMin = slice_duration_min
+
+    def set_child_display_qty(self, child_display_qty):
+        self.strategy.childDisplayQty = child_display_qty
+
+    def set_child_min_qty(self, child_min_qty):
+        self.strategy.childMinQty = child_min_qty
+
+
+class ExternalTWAPStrategy:
+    def __init__(self, strategy: order_ticket_pb2.ExternalTWAPStrategyParams()):
+        self.strategy = strategy
+
+    def set_urgency(self, urgency: str):
+        self.strategy.urgency = urgency
+
+    def set_start_time(self, start_time: str):
+        self.strategy.startTime = start_time
+
+    def set_end_time(self, end_time: str):
+        self.strategy.endTime = end_time
+
+
+class SyntheticIcebergStrategy:
+    def __init__(self, strategy: order_ticket_pb2.SyntheticIcebergParams()):
+        self.strategy = strategy
+
+    def set_low_liquidity(self, low_liquidity: bool = False):
+        self.strategy.lowLiquidity = low_liquidity
+
+
+class SyntheticBlockStrategy:
+    def __init__(self, strategy: order_ticket_pb2.SyntheticBlockParams()):
+        self.strategy = strategy
+
+    def set_order_mode(self, order_mode: str):
+        self.strategy.orderMode = order_mode
+
 
 class MultilistingStrategy:
 

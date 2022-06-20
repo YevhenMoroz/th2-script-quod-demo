@@ -68,7 +68,7 @@ class QAP_3243(CommonTestCase):
             expected_result = [_ for _ in self.party_rule_table.values()]
             expected_result.append(self.name)
             self.verify("PDF file contains test data", "True",
-                        counterparts_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_result))
+                        counterparts_main_menu.click_download_pdf_at_more_actions_and_check_pdf(expected_result))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
