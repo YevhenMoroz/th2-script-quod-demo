@@ -17,7 +17,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_1967(TestCase):
+class QAP_1987(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -36,8 +36,10 @@ class QAP_1967(TestCase):
         self.qty = 1300
         self.price = 35
         self.stop_price = 35
+        self.inc_qty = 1700
         self.inc_price = 36
         self.inc_stop_price = 36
+        self.dec_qty = 1000
         self.dec_price = 34
         self.dec_stop_price = 34
         self.order_type_stop_lmt = constants.OrderType.StopLimit.value
@@ -150,7 +152,7 @@ class QAP_1967(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         self.multilisting_order_replace_params_dec = FixMessageOrderCancelReplaceRequestAlgo(self.multilisting_order)
-        self.multilisting_order_replace_params_dec.change_parameters(dict(Price=self.dec_price, StopPx=self.dec_stop_price))
+        self.multilisting_order_replace_params_dec.change_parameters(dict(OrderQty=self.dec_qty, Price=self.dec_price, StopPx=self.dec_stop_price))
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order_replace_params_dec, case_id_1)
 
         time.sleep(1)
@@ -187,7 +189,7 @@ class QAP_1967(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 2 order", self.test_id))
 
         self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_order.change_parameters(dict(OrderQty=self.qty, Price=self.dec_price, Instrument=self.instrument))
+        self.dma_2_order.change_parameters(dict(OrderQty=self.dec_qty, Price=self.dec_price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
@@ -202,7 +204,7 @@ class QAP_1967(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.multilisting_order_replace_params_inc = FixMessageOrderCancelReplaceRequestAlgo(self.multilisting_order)
-        self.multilisting_order_replace_params_inc.change_parameters(dict(Price=self.inc_price, StopPx=self.inc_stop_price))
+        self.multilisting_order_replace_params_inc.change_parameters(dict(OrderQty=self.inc_qty, Price=self.inc_price, StopPx=self.inc_stop_price))
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order_replace_params_inc, case_id_2)
 
         time.sleep(1)
@@ -239,7 +241,7 @@ class QAP_1967(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 3 order", self.test_id))
 
         self.dma_3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_3_order.change_parameters(dict(OrderQty=self.qty, Price=self.inc_price, Instrument=self.instrument))
+        self.dma_3_order.change_parameters(dict(OrderQty=self.inc_qty, Price=self.inc_price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_3_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         pending_dma_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_pending)
