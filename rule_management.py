@@ -104,7 +104,7 @@ class RuleManager:
 
     def remove_rules(self, list_rules: list):
         for rule in list_rules:
-            rule_manager.remove_rule(rule)
+            self.remove_rule(rule)
 
     # ------------------------
 
