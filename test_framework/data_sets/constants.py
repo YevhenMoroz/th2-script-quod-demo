@@ -146,7 +146,7 @@ class OrderType(Enum):
 
 
 class WebAdminURL(Enum):
-    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+    saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
 
 
 class WebBrowser(Enum):

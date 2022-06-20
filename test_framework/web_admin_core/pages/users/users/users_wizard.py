@@ -31,3 +31,6 @@ class UsersWizard(CommonPage):
             return True
         else:
             return False
+
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(UsersConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()

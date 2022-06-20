@@ -88,7 +88,7 @@ class QAP_1737(CommonTestCase):
         side_menu.open_listings_page()
         time.sleep(2)
         main_page = ListingsPage(self.web_driver_container)
-        main_page.load_client_from_global_filter(self.lookup_symbol)
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
         time.sleep(2)
 
         if not main_page.is_searched_listing_found(self.lookup_symbol):
@@ -156,7 +156,7 @@ class QAP_1737(CommonTestCase):
             wizard = ListingsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(2)
-            main_page.load_client_from_global_filter(self.lookup_symbol)
+            main_page.load_listing_from_global_filter(self.lookup_symbol)
             time.sleep(2)
 
         main_page.click_on_more_actions()

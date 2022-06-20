@@ -1,8 +1,8 @@
 import traceback
 from custom import basic_custom_actions as bca
-from test_cases.mobile_android.pages.login.QAP_6491 import QAP_6491
-from test_cases.mobile_android.pages.login.QAP_6877 import QAP_6877
-from test_cases.mobile_android.pages.login.QAP_6878 import QAP_6878
+from test_cases.mobile_android.pages.loginlogout.QAP_6491 import QAP_6491
+from test_cases.mobile_android.pages.loginlogout.QAP_6877 import QAP_6877
+from test_cases.mobile_android.pages.loginlogout.QAP_6878 import QAP_6878
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
