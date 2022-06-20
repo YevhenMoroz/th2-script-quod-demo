@@ -12,7 +12,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, TemplateNewOrdSingleRQFRestated
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -414,6 +414,17 @@ class RuleManager:
                                                               exdestination=ex_destination,
                                                               price=price
                                                               ))
+
+    def add_NewOrdSingleRFQExecutionReport(self, session: str, account: str, ex_destination: str, order_qty: int, restated_qty: int, new_reply: bool, restated_reply: bool):
+        return self.sim.createNewOrdSingleExecutionReportEliminate(
+            request=TemplateNewOrdSingleRQFRestated(connection_id=ConnectionID(session_alias=session),
+                                                    account=account,
+                                                    exdestination=ex_destination,
+                                                    orderQty=order_qty,
+                                                    restatedQty=restated_qty,
+                                                    newReply=new_reply,
+                                                    RestatedReply=restated_reply
+                                                    ))
     # ------------------------
 
 
