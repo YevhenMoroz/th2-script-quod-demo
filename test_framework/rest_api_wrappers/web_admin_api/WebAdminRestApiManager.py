@@ -3,8 +3,8 @@ import logging
 from google.protobuf.json_format import MessageToDict
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiMessages import WebAdminRestApiMessages
-from custom.basic_custom_actions import convert_to_post_request, convert_to_get_request
 from test_framework.old_wrappers.ret_wrappers import verifier
+from custom.basic_custom_actions import  convert_to_get_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
