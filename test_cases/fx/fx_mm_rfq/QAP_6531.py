@@ -50,7 +50,7 @@ class QAP_6531(TestCase):
 
 
         # Step 1
-        quote_request = FixMessageQuoteRequestFX().set_swap_rfq_params()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
         quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
                                       settle_type=self.settle_type_tomorrow,
                                       settle_date=self.settle_date_tom, leg_qty=self.qty1)
@@ -58,7 +58,7 @@ class QAP_6531(TestCase):
                                      settle_type=self.settle_type_wk1,
                                      settle_date=self.settle_date_wk1, leg_qty=self.qty1)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                      Currency="USD", Instrument=self.instrument, OrderQty=self.qty1)
+                                                      Currency="USD", Instrument=self.instrument)
 
         self.fix_manager_gtw.send_message(quote_request)
 

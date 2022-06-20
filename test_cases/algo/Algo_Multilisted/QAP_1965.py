@@ -9,15 +9,10 @@ from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySid
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from datetime import datetime
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from custom.basic_custom_actions import convert_to_request, message_to_grpc
-from stubs import Stubs
 from test_framework.data_sets import constants
 
 
@@ -40,10 +35,9 @@ class QAP_1965(TestCase):
         self.qty = 2000
         self.price = 40
         self.stop_price = 39.95
-        self.order_type_stop_lmt = 4
-        self.price_ask = 40
-        self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1000000
+        self.order_type_stop_lmt = constants.OrderType.StopLimit.value
+        self.md_entry_px = 40
+        self.md_entry_size = 3000
         # endregion
 
         # region Gateway Side
@@ -113,53 +107,21 @@ class QAP_1965(TestCase):
         self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Send MD
-        case_id_1 = bca.create_event("Send Market Data", self.test_id)
+        # region Send_MarketData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 734
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px, MDEntrySize=self.md_entry_size)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        MDRefID_1 = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol="734",
-            connection_id=ConnectionID(session_alias="fix-fh-310-columbia")
-        )).MDRefID
-
-        mdir_params_trade = {
-            'MDReqID': MDRefID_1,
-            'NoMDEntriesIR': [
-                {
-                    'MDUpdateAction': '0',
-                    'MDEntryType': '2',
-                    'MDEntryPx': '40',
-                    'MDEntrySize': '3000',
-                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-                }
-            ]
-        }
-
-        Stubs.fix_act.sendMessage(request=convert_to_request(
-            'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_1,
-            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-        ))
         time.sleep(10)
-        mdir_params_trade = {
-            'MDReqID': MDRefID_1,
-            'NoMDEntriesIR': [
-                {
-                    'MDUpdateAction': '0',
-                    'MDEntryType': '2',
-                    'MDEntryPx': '40',
-                    'MDEntrySize': '3000',
-                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-                }
-            ]
-        }
 
-        Stubs.fix_act.sendMessage(request=convert_to_request(
-            'Send MarketDataIncrementalRefresh', "fix-fh-310-columbia", case_id_1,
-            message_to_grpc('MarketDataIncrementalRefresh', mdir_params_trade, "fix-fh-310-columbia")
-        ))
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 734
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px, MDEntrySize=self.md_entry_size)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         time.sleep(2)
+        # endregion
 
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 1 order", self.test_id))

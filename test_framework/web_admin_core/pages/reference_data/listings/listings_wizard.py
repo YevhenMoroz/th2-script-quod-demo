@@ -33,4 +33,6 @@ class ListingsWizard(CommonPage):
     def get_error_message_inside_listing_wizard(self):
         return self.find_by_xpath(ListingsConstants.ERROR_MESSAGE_WIZARD_XPATH).text
 
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(ListingsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
 

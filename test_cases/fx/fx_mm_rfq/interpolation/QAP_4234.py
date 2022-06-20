@@ -46,7 +46,7 @@ class QAP_4234(TestCase):
         quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_wk1, leg_sec_type=security_type_fwd,
                                      settle_date=settle_date_w1, leg_qty=qty)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
-                                                      Currency="GBP", Instrument=instrument, OrderQty=qty)
+                                                      Currency="GBP", Instrument=instrument)
         self.fix_manager_gtw.send_message(quote_request)
 
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)

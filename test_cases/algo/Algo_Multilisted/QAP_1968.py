@@ -34,7 +34,7 @@ class QAP_1968(TestCase):
         self.qty = 1300
         self.price = 40
         self.last_price = 40
-        self.order_type = 1
+        self.order_type = constants.OrderType.Market.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.price_ask = 40
         self.price_bid = 30
@@ -148,7 +148,7 @@ class QAP_1968(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         fill_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_fill)
-        fill_multilisted_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty))
+        fill_multilisted_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument="*")).remove_parameter('SecAltIDGrp').remove_parameter('SecondaryClOrdID')
         self.fix_verifier_sell.check_fix_message(fill_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Fill')
         # endregion
 
