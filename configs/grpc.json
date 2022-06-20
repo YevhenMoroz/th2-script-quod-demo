@@ -94,8 +94,8 @@
       "service-class": "ActUIWinService",
       "endpoints": {
         "act_win": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -109,8 +109,8 @@
       "service-class": "OrderTicketServiceService",
       "endpoints": {
         "act_order_ticket": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -124,8 +124,8 @@
       "service-class": "OrderTicketFxServiceService",
       "endpoints": {
         "act_order_ticket_fx": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -139,8 +139,8 @@
       "service-class": "FxDealingPositionsServiceService",
       "endpoints": {
         "act_fx_dealing_positions": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -154,8 +154,8 @@
       "service-class": "OrderBookServiceService",
       "endpoints": {
         "act_order_book": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -169,8 +169,8 @@
       "service-class": "OrderBookFXServiceService",
       "endpoints": {
         "act_order_book_fx": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -184,8 +184,8 @@
       "service-class": "AggregatedRatesOperationsService",
       "endpoints": {
         "act_rfq": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -199,8 +199,8 @@
       "service-class": "ClientPricingOperationsService",
       "endpoints": {
         "act_client_pricing": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -214,8 +214,8 @@
       "service-class": "MiddleOfficeOperationsService",
       "endpoints": {
         "act_middle_office": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -229,8 +229,8 @@
       "service-class": "DealerInterventionOperationsService",
       "endpoints": {
         "act_dealer_interventions": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -244,8 +244,8 @@
       "service-class": "LayoutPanelServiceService",
       "endpoints": {
         "act_layout": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -259,8 +259,8 @@
       "service-class": "TradesServiceService",
       "endpoints": {
         "win_wct_trades_service": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -274,8 +274,8 @@
       "service-class": "CareOrdersServiceService",
       "endpoints": {
         "act_care_order": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -334,8 +334,8 @@
       "service-class": "BasketBookServiceService",
       "endpoints": {
         "act_basket_order_book": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -349,8 +349,8 @@
       "service-class": "BagManagementServiceService",
       "endpoints": {
         "act_order_bag_book": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -364,8 +364,8 @@
       "service-class": "BasketTicketServiceService",
       "endpoints": {
         "act_basket_ticket": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -379,8 +379,8 @@
       "service-class": "BookingsBlotterServiceService",
       "endpoints": {
         "act_booking_blotter": {
-           "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -394,8 +394,8 @@
       "service-class": "RiskManagementServiceService",
       "endpoints": {
         "act_risk_management": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
@@ -405,12 +405,12 @@
         ]
       }
     },
-    "Win_Act_Child_Order_Book": {
+     "Win_Act_Child_Order_Book": {
       "service-class": "ChildOrderBookServiceService",
       "endpoints": {
         "act_child_order_book": {
-          "host": "localhost",
-          "port": 8080
+          "host": "10.0.22.24",
+          "port": 32223
         }
       },
       "strategy": {
