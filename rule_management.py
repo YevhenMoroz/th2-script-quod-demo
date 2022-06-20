@@ -99,15 +99,12 @@ class RuleManager:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
 
-    @staticmethod
-    def remove_rule(rule):
-        Stubs.core.removeRule(rule)
+    def remove_rule(self, rule):
+        self.core.removeRule(rule)
 
-    @staticmethod
-    def remove_rules(list_rules: list):
-        rule_manager = RuleManager()
+    def remove_rules(self, list_rules: list):
         for rule in list_rules:
-            rule_manager.remove_rule(rule)
+            self.remove_rule(rule)
 
     # ------------------------
 

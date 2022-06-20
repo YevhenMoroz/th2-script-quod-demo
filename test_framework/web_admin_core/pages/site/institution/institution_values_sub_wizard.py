@@ -36,3 +36,12 @@ class InstitutionsValuesSubWizard(CommonPage):
 
     def click_on_manage_counterpart(self):
         self.find_by_xpath(InstitutionsConstants.VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH).click()
+
+    def set_client_time_zone(self, value):
+        self.set_combobox_value(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH, value)
+
+    def get_client_time_zone(self):
+        return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH)
+
+    def get_all_client_time_zone_from_drop_menu(self):
+        return self._get_all_items_from_drop_down(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH)

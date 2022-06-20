@@ -19,15 +19,15 @@ class RetTradingApiInstruments(Enum):
     )
 
     instrument_3 = dict(
-        InstrSymbol="TASI",
-        SecurityID="TASI",
+        InstrSymbol="SBIN-EQ[NSE]",
+        SecurityID="3045",
         SecurityIDSource="ExchSymb",
-        InstrType="Index",
+        InstrType="Equity",
         SecurityExchange="XNSE"
     )
     instrument_4 = dict(
-        InstrSymbol="SPICEJET-IQ[NSE]",
-        SecurityID="11564",
+        InstrSymbol="SBIN-EQ[NSE]",
+        SecurityID="3045",
         SecurityIDSource="ExchSymb",
         InstrType="Equity",
         SecurityExchange="XNSE"
@@ -47,13 +47,18 @@ class RetInstrumentID(Enum):
     instrument_id_1 = "mdfW1JW540Y24GIzFiwmeQ"
     # TCS-IQ[NSE]
     instrument_id_2 = "ePKRr68Nr7pDFdVkx6amaQ"
-    # TASI
-    instrument_id_3 = "_kRAMqAgQauzyJvU7V6R9w"
+    # SBIN-EQ[NSE]
+    instrument_id_3 = "0ihdikxdDxvmz9PFjLsDRw"
 
 
 class RetCurrency(Enum):
     currency_1 = "INR"
     currency_2 = "SAR"
+
+
+class RetSettlCurrency(Enum):
+    settl_currency_1 = "INR"
+    settl_currency_2 = "SAR"
 
 
 class RetVenues(Enum):
@@ -77,6 +82,15 @@ class RetAccounts(Enum):
     account_5 = "api_account_test_desk"
 
 
+class RetCashAccounts(Enum):
+    cash_account_1 = "api_cash_account_INR"
+
+
+class RetCashAccountCounters(Enum):
+    # CashAccountID for "api_cash_account_INR"
+    cash_account_counter_1 = 1
+
+
 class RetWashbookAccounts(Enum):
     washbook_account_1 = "CareWB"
     washbook_account_2 = "DMAWashbook"
@@ -96,6 +110,25 @@ class RetRecipients(Enum):
     recipient_user_3 = "QA3"
     recipient_user_4 = "QA4"
     recipient_user_5 = "QA5"
+
+
+class RetRiskLimitDimensions(Enum):
+    risk_limit_dimension_1 = dict(
+        clientListID=600010,
+        deskID=2,
+        venueID="BSE",
+        subVenueID=17,
+        listingGroupID=1,
+        listingID=1209116,
+        instrType="EQU",
+        standardTradingPhase="OPN",
+        routeID=1110,
+        executionPolicy="D",
+        positionType="L",
+        posValidity="DEL",
+        settlType="BDA",
+        side="B"
+    )
 
 
 class DirectionEnum(Enum):

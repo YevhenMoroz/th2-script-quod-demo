@@ -183,3 +183,6 @@ class UsersPage(CommonPage):
 
     def is_searched_user_found(self, value):
         return self.is_element_present(UsersConstants.DISPLAYED_USER_XPATH.format(value))
+
+    def is_online_status_displayed(self):
+        return self.is_element_present(UsersConstants.ONLINE_STATUS_XPATH)

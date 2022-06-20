@@ -1,0 +1,23 @@
+{
+  "currentDevice":"emulator",
+  "emulator": {
+    "platformName" : "Android",
+    "deviceName": "Android"
+  },
+  "iPhone11": {
+    "platformName" : "iOS",
+    "platformVersion" : "15.5",
+    "deviceName": "iPhone",
+    "udid": "00008030-00066DEC0AC0C02E"
+  },
+  "iPhoneSE2020": {
+    "platformName" : "iOS",
+    "platformVersion" : "15.5",
+    "deviceName": "iPhone",
+    "udid": "00008030-0014504A3405402E"
+  },
+  "SamsungA32": {
+    "platformName" : "Android",
+    "deviceName": "SamsungA32"
+  }
+}

@@ -29,7 +29,7 @@ class FeesPage(CommonPage):
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(FeesConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(FeesConstants.DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 

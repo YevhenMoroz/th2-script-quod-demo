@@ -30,7 +30,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
             'NoParty': '*',
-            'Origin': '*'
+            # 'Origin': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -501,7 +501,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Iceberg_params(self):
+    def set_SORPING_Iceberg_params(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -516,12 +516,32 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'Currency': 'EUR',
             'TargetStrategy': '1011',
-            # "DisplayInstruction": {
-            #     'DisplayQty': '500'
-            # },
-            'ClientAlgoPolicyID': 'SORPING_MSI_YYY',
+            "DisplayInstruction": {
+                'DisplayQty': '500'
+            },
+            'ClientAlgoPolicyID': 'QA_SORPING',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SORPING_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'QA_SORPING'
         }
         super().change_parameters(base_parameters)
         return self
