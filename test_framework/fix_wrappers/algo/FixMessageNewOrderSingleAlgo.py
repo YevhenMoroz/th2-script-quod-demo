@@ -515,12 +515,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'Currency': 'EUR',
             'TargetStrategy': '1011',
-            "DisplayInstruction": {
-                'DisplayQty': '500'
-            },
             'ClientAlgoPolicyID': 'QA_SORPING',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
+            "DisplayInstruction": {
+                'DisplayQty': '500'
+            }
         }
         super().change_parameters(base_parameters)
         return self
