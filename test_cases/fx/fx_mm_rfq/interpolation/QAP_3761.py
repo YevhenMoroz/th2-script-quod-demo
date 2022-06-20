@@ -26,8 +26,6 @@ class QAP_3761(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        gateway_side_sell = DataSet.GatewaySide.Sell
-        status = DataSet.Status.Fill
         account = self.data_set.get_client_by_name("client_mm_2")
         currency = self.data_set.get_currency_by_name("currency_gbp")
         symbol = self.data_set.get_symbol_by_name("symbol_2")
@@ -50,8 +48,6 @@ class QAP_3761(TestCase):
         self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_prev_quoted(quote_request, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
-        execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    gateway_side_sell,
-                                                                                                    status)
+        execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single)
 
         self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
