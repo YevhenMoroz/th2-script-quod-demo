@@ -282,3 +282,27 @@ class RestApiMessages:
 
     def find_all_client_tier_instr(self):
         self.message_type = 'FindAllClientTierInstrSymbol'
+
+    def find_all_algo_policies(self):
+        self.message_type = "FindAllAlgoPolicy"
+
+    def modify_algo_policy(self):
+        self.message_type = "ModifyAlgoPolicy"
+        modify_params = \
+                    {
+                'algoPolicyID' :'2600042',
+                'userID': 'qa_adm',
+                'pegged' :'false',
+                'algoPolicyName' :'TestStrategyForAPI',
+                'scenarioID' : '11',
+                'algoPolicyParameter':[
+                    {
+                          'scenarioParameterType': 'B',
+                          'scenarioParameterRequired': 'false',
+                          'isEditable': 'false',
+                          'scenarioParameterName': 'AvailableVenues',
+                          'isVisible': 'false',
+                          'algoParameterValue': 'N'
+                    }
+                ]}
+        self.parameters = modify_params
