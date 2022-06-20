@@ -47,51 +47,40 @@ class QAP_4433(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # check 2lvl fields
-        first_all_details = self.order_book.extract_2lvl_fields(SecondLevelTabs.pre_trade_alloc_tab.value,
-                                                                [PreTradeAllocations.id.value,
-                                                                 PreTradeAllocations.qty.value], [1],
-                                                                {OrderBookColumns.order_id.value: order_id})
-        self.order_book.compare_values({"Id": self.client_all_2, "Quantity": "50"},
-                                       {"Id": first_all_details[0]["Id"], "Quantity":first_all_details[0]["Quantity"]},
-                                       "Check Trade Allocation")
-        second_all_details = self.order_book.extract_2lvl_fields(SecondLevelTabs.pre_trade_alloc_tab.value,
-                                                                 [PreTradeAllocations.id.value,
-                                                                  PreTradeAllocations.qty.value], [2],
-                                                                 {OrderBookColumns.order_id.value: order_id})
-        self.order_book.compare_values({"Id": self.client_all_1, "Quantity": "50"},
-                                       {"Id":second_all_details[0]["Id"], "Quantity": second_all_details[0]["Quantity"]},
-                                       "Check Trade Allocation")
+        self.__check_alloc_details(PreTradeAllocations.id.value, self.client_all_1, 1, [OrderBookColumns.order_id.value, order_id])
+        self.__check_alloc_details(PreTradeAllocations.qty.value, "50", 1, [OrderBookColumns.order_id.value, order_id])
+        self.__check_alloc_details(PreTradeAllocations.id.value, self.client_all_2, 2, [OrderBookColumns.order_id.value, order_id])
+        self.__check_alloc_details(PreTradeAllocations.qty.value, "50", 2, [OrderBookColumns.order_id.value, order_id])
         # endregion
         # region split order
-        self.order_ticket.split_order([OrderBookColumns.order_id.value, order_id])
-        child_id = self.order_book.extract_2lvl_fields(
-            SecondLevelTabs.child_tab.value, [ChildOrderBookColumns.order_id.value], [1], {OrderBookColumns.order_id.value: order_id})
+        self.order_ticket.set_order_details(qty=self.qty)
+        self.order_ticket.split_order()
+        child_id = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).extract_2lvl_fields(
+            SecondLevelTabs.child_tab.value, [ChildOrderBookColumns.order_id.value], [1])
         # endregion
         # region get details from child order
-        first_child_all_id = self.child_book.get_child_order_sub_lvl_value(1,
-                                                                               ChildOrderBookColumns.id_allocation.value,
+        self.__check_alloc_details_of_child(ChildOrderBookColumns.id_allocation.value, self.client_all_1, {ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
+        self.__check_alloc_details_of_child(ChildOrderBookColumns.qty_alloc.value, "50",
+                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
+        self.__check_alloc_details_of_child(ChildOrderBookColumns.id_allocation.value, self.client_all_2,
+                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']}, 2)
+        self.__check_alloc_details_of_child(ChildOrderBookColumns.qty_alloc.value, "50",
+                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']}, 2)
+        # endregion
+
+    def __check_alloc_details(self, field:str, expected_res:str, numb_row:int = 1, filter:list=None):
+        all_details = self.order_book.set_filter(filter).extract_2lvl_fields(SecondLevelTabs.pre_trade_alloc_tab.value,
+                                                               [field], [numb_row])
+        self.order_book.compare_values({field: expected_res},
+                                       {field: all_details[0][field]},
+                                       "Check Trade Allocation")
+
+
+
+    def __check_alloc_details_of_child(self, field:str, expected_res:str, filter:dict=None, row:int = 1):
+        all_details =  self.child_book.get_child_order_sub_lvl_value(row,field,
                                                                                ChildOrderBookColumns.pre_all_tab.value,
-                                                                               {ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        sec_child_all_id = self.child_book.get_child_order_sub_lvl_value(2,
-                                                                            ChildOrderBookColumns.id_allocation.value,
-                                                                            ChildOrderBookColumns.pre_all_tab.value,
-                                                                            {
-                                                                                ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        first_child_all_qty = self.child_book.get_child_order_sub_lvl_value(1,
-                                                                            ChildOrderBookColumns.qty_alloc.value,
-                                                                            ChildOrderBookColumns.pre_all_tab.value,
-                                                                            {
-                                                                                ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        sec_child_all_qty = self.child_book.get_child_order_sub_lvl_value(2,
-                                                                            ChildOrderBookColumns.qty_alloc.value,
-                                                                            ChildOrderBookColumns.pre_all_tab.value,
-                                                                            {
-                                                                                ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        # endregion
-        # region check alloc in child order
-        self.child_book.compare_values({"ID": self.client_all_2, "Qty": "50"}, {"ID": first_child_all_id, "Qty": first_child_all_qty},
-                                       "Check first allocation details")
-        self.child_book.compare_values({"ID": self.client_all_1, "Qty": "50"},
-                                       {"ID": sec_child_all_id, "Qty": sec_child_all_qty},
-                                       "Check second allocation details")
-        # endregion
+                                                                               filter)
+        self.order_book.compare_values({field: expected_res},
+                                       {field: all_details},
+                                       "Check Trade Allocation")
