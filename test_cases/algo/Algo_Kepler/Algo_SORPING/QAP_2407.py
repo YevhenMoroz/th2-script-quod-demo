@@ -197,7 +197,7 @@ class QAP_2407(TestCase):
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*')).change_parameters(dict(AvgPx=self.price, CxlQty=self.leaves_qty, CumQty=self.trade_qty))
+        # er_cancel_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(SettlDate='*')).add_tag(dict(SettlType='*')).add_tag(dict(NoParty='*')).change_parameters(dict(AvgPx=self.price, CxlQty=self.leaves_qty, CumQty=self.trade_qty))
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
