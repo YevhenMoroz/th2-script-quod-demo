@@ -161,7 +161,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             CumQty='0',
             ExecID='*',
             OrderID='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            LeavesQty='*',
             TransactTime='*',
             AvgPx='*',
             ExDestination='XPAR'
@@ -186,7 +186,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             CumQty='0',
             ExecID='*',
             OrderID='*',
-            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            LeavesQty='*',
             TransactTime='*',
             AvgPx='*',
             ExDestination='XPAR'
@@ -254,6 +254,19 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
+        if new_order_single.get_parameter('TargetStrategy') != '1008':
+            temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
+        if new_order_single.is_parameter_exist('MinQty'):
+            temp.update(MinQty='*')
+        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') == 'QA_SORPING':
+            temp.update(
+                IClOrdIdAO='*',
+                SecondaryAlgoPolicyID='*',
+                LastExecutionPolicy='*',
+                ShortCode='*',
+            )
+        if new_order_single.is_parameter_exist('TargetStrategy'):
+            temp.update(TargetStrategy='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -262,7 +275,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
-            LastMkt=new_order_single.get_parameter('ExDestination'),
             LastPx='*',
             LastQty=new_order_single.get_parameter('OrderQty'),
             OrderID='*',
