@@ -78,6 +78,7 @@ class QAP_4542(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        self.key_params_ER_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
         # endregion
 
         self.rule_list = []
@@ -155,8 +156,8 @@ class QAP_4542(TestCase):
 
         # region check fill first dma child order
         er_fill_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_fill)
-        er_fill_dma_qdl1_order.change_parameters(dict(CumQty=self.trade_1_qty, LeavesQty=0, LastQty=self.trade_1_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
+        er_fill_dma_qdl1_order.change_parameters(dict(CumQty=self.trade_1_qty, LeavesQty=0, LastQty=self.trade_1_qty, LastPx=self.price, Text='Filled')).remove_parameter('ExDestination')
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
         # endregion
         
         time.sleep(2)
@@ -182,13 +183,13 @@ class QAP_4542(TestCase):
 
         # region check fill first dma child order
         er_fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
-        er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.trade_2_qty, LeavesQty=0, LastQty=self.trade_2_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
+        er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.trade_2_qty, LeavesQty=0, LastQty=self.trade_2_qty, LastPx=self.price, Text='Filled')).remove_parameter('ExDestination')
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
         # endregion
         
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_fill)
-        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=self.leaves_qty, LastQty=self.trade_2_qty))
+        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=self.leaves_qty, LastQty=self.trade_2_qty, Text='Filled')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID']).add_tag(dict(LastMkt='*', ChildOrderID='*', Instrument='*', ExDestination='*'))
         self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
@@ -196,4 +197,5 @@ class QAP_4542(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        RuleManager.remove_rules(self.rule_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(self.rule_list)
