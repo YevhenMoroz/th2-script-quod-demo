@@ -159,7 +159,7 @@ class QAP_3731(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.MP_Dark_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.MP_Dark_order)
-        self.MP_Dark_order_replace_params.change_parameters(dict(MinQty=self.inc_minQty))
+        self.MP_Dark_order_replace_params.change_parameters(dict(MinQty=self.inc_minQty)).add_tag(dict(IClOrdIdAO='OD_5fgfDXg-00', ShortCode='17536'))
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order_replace_params, case_id_2)
 
         time.sleep(1)
@@ -222,7 +222,8 @@ class QAP_3731(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        RuleManager.remove_rules(self.rule_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(self.rule_list)
 
 
 
