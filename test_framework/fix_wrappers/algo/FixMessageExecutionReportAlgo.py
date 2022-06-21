@@ -213,6 +213,17 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             )
         if new_order_single.is_parameter_exist('NoStrategyParameters'):
             temp.update(NoStrategyParameters='*')
+        if new_order_single.is_parameter_exist('MinQty'):
+            temp.update(MinQty='*')
+        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') == 'QA_SORPING':
+            temp.update(
+                IClOrdIdAO='*',
+                SecondaryAlgoPolicyID='*',
+                LastExecutionPolicy='*',
+                ShortCode='*',
+            )
+        if new_order_single.is_parameter_exist('TargetStrategy'):
+            temp.update(TargetStrategy='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
