@@ -1,3 +1,5 @@
+import time
+
 from test_framework.data_sets.base_data_set import BaseDataSet
 from abc import ABC, abstractmethod
 from test_framework.environments.full_environment import FullEnvironment
@@ -20,3 +22,6 @@ class TestCase(ABC):
     def execute(self):
         self.run_pre_conditions_and_steps()
         self.run_post_conditions()
+
+    def sleep(self, duration: int):
+        time.sleep(duration)

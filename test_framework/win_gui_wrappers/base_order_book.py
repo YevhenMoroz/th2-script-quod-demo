@@ -87,8 +87,10 @@ class BaseOrderBook(BaseWindow):
         self.group_modify_details = None
         self.mass_manual_execution_call = None
         self.mass_manual_execution_details = None
+        self.unmatch_and_transfer_details = None
+        self.unmatch_and_transfer_call = None
         self.direct_child_care_call = None
-
+        self.get_empty_rows_call = None
     # endregion
 
     # region Common func
@@ -114,16 +116,24 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, row_number: int = 1) -> str:
+    def extract_field(self, column_name: str, row_number: int = 1,
+                      expected_empty_rows: bool = False):
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
         info.set_number(row_number)
         self.order_details.add_single_order_info(info)
-        response = call(self.get_orders_details_call, self.order_details.request())
-        self.clear_details([self.order_details])
-        self.set_order_details()
-        return response[field.name]
+        if expected_empty_rows is False:
+            response = call(self.get_orders_details_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response[field.name]
+        else:
+            response = call(self.get_empty_rows_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response
+
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
@@ -186,7 +196,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details.set_tabs_details([self.second_level_tab_details.build()])
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
-        return BaseWindow.split_2lvl_values(result)
+        return BaseWindow.split_fees(result)
 
     # endregion
 
@@ -439,7 +449,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
-        call(self.manual_cross_call, self.manual_cross_details.build())
+        result = call(self.manual_cross_call, self.manual_cross_details.build())
+        return result["Footer value"]
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
@@ -613,18 +624,6 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    # def set_order_ticket_details(self, qty, type, price):
-    #     order_ticket_details = self.order_ticket_details()
-    #     order_ticket_details.set_quantity(qty)
-    #     order_ticket_details.set_order_type(type)
-    #     order_ticket_details.set_limit(price)
-    #     self.modify_order_details.set_order_details(order_ticket_details)
-    #     return self.modify_order_details
-    #
-    # def split_limit_order(self):
-    #     call(self.split_limit_call, self.modify_order_details.build())
-    #     # self.clear_details([self.modify_order_details])
-
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
@@ -643,3 +642,9 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_price(price)
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
+
+    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict):
+        self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
+        self.unmatch_and_transfer_details.set_account_destination(account_destination)
+        call(self.unmatch_and_transfer_call, self.unmatch_and_transfer_details.build())
+        self.clear_details([self.unmatch_and_transfer_details])

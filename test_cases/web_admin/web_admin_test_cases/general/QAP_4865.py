@@ -23,7 +23,7 @@ class QAP_4865(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         time.sleep(2)
         common_page = CommonPage(self.web_driver_container)
-        common_page.refresh_page()
+        common_page.click_on_refresh_page_button()
         time.sleep(2)
         common_page.click_on_user_icon()
         time.sleep(2)

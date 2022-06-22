@@ -8,7 +8,7 @@ from test_framework.web_admin_core.pages.general.common.common_page import Commo
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
-from test_framework.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from test_framework.web_admin_core.pages.users.users.users_permissions_sub_wizard import UsersPermissionsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -38,7 +38,7 @@ class QAP_5315(CommonTestCase):
         users_page.click_on_more_actions()
         time.sleep(2)
         users_page.click_on_edit_at_more_actions()
-        role_sub_wizard = UsersRoleSubWizard(self.web_driver_container)
+        role_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
         time.sleep(1)
         role_sub_wizard.set_perm_role(self.perm_role)
         time.sleep(2)

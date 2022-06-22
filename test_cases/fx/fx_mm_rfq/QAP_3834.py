@@ -37,7 +37,7 @@ class QAP_3834(TestCase):
 
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-        self.account = self.data_set.get_client_by_name("client_mm_1")
+        self.account = self.data_set.get_client_by_name("client_mm_3")
         self.symbol_1 = self.data_set.get_symbol_by_name("symbol_1")
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
 
@@ -61,11 +61,10 @@ class QAP_3834(TestCase):
                                            settle_type=self.settle_type_1w,
                                            settle_date=self.settle_date_1w, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol_1,
-                                           settle_type=self.settle_type_2w,
-                                           settle_date=self.settle_date_2w, leg_sec_type=self.security_type_fwd)
+                                          settle_type=self.settle_type_2w,
+                                          settle_date=self.settle_date_2w, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="EUR", Instrument=self.instrument,
-                                                           OrderQty=self.qty)
+                                                           Currency="EUR", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
         # endregion
 

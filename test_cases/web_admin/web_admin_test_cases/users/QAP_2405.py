@@ -10,7 +10,7 @@ from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
-from test_framework.web_admin_core.pages.users.users.users_role_sub_wizard import UsersRoleSubWizard
+from test_framework.web_admin_core.pages.users.users.users_permissions_sub_wizard import UsersPermissionsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -62,7 +62,7 @@ class QAP_2405(CommonTestCase):
         time.sleep(1)
         assignments_tab.click_on_desks()
         time.sleep(1)
-        permission_tab = UsersRoleSubWizard(self.web_driver_container)
+        permission_tab = UsersPermissionsSubWizard(self.web_driver_container)
         permission_tab.set_perm_role(self.perm_role)
         time.sleep(1)
         users_wizard.click_on_save_changes()

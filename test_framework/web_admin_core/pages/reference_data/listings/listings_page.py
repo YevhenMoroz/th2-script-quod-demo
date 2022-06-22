@@ -98,9 +98,8 @@ class ListingsPage(CommonPage):
         self.find_by_xpath(ListingsConstants.MAIN_PAGE_LOAD_BUTTON_XPATH).click()
         time.sleep(2)
 
-    def load_client_from_global_filter(self, user_id):
-        self.set_listing_in_global_filter(user_id)
-        time.sleep(2)
+    def load_listing_from_global_filter(self, lookup_symbol):
+        self.set_listing_in_global_filter(lookup_symbol)
         self.click_on_load_button()
         time.sleep(2)
 
@@ -115,10 +114,12 @@ class ListingsPage(CommonPage):
             self.click_on_more_actions()
             time.sleep(1)
             self.click_on_edit()
+            time.sleep(2)
         except:
             self.click_on_more_actions()
             time.sleep(1)
             self.click_on_edit()
+            time.sleep(2)
 
     def is_searched_listing_found(self, value):
-        return self.is_element_present(ListingsConstants.DISPLAYED_CLIENT_XPATH.format(value))
+        return self.is_element_present(ListingsConstants.DISPLAYED_LISTING_XPATH.format(value))

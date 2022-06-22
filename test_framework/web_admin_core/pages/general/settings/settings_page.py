@@ -22,3 +22,6 @@ class SettingsPage(CommonPage):
 
     def is_setting_displayed(self):
         return self.is_element_present(SettingsConstants.SETTINGS_FIRS_ROW)
+
+    def is_title_page_displayed(self):
+        return self.find_by_xpath(SettingsConstants.SETTINGS_PAGE_TITLE_XPATH).is_displayed()

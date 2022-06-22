@@ -44,6 +44,9 @@ class Connectivity(Enum):
     Kuiper_320_web_admin_site = 'rest_wa320kuiper_site_admin'
     Kuiper_320_web_trading_http = 'rest_wt320kuiper'
     Kuiper_320_web_trading_web_socket = 'api_session_320kuiper'
+    Kepler_319_Sell_Side = 'fix-sell-side-319-kepler'
+    Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
+    Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
 
 
 class FrontEnd(Enum):
@@ -135,9 +138,15 @@ class TimeInForce(Enum):
     AtTheClose = 7
     ValidForAuction = 100
 
+class OrderType(Enum):
+    Market = 1
+    Limit = 2
+    Stop = 3
+    StopLimit = 4
+
 
 class WebAdminURL(Enum):
-    saturn_306 = "http://10.0.22.38:3480/quodadmin/saturn/#/auth/login"
+    saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
 
 
 class WebBrowser(Enum):

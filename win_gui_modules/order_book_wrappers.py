@@ -525,9 +525,9 @@ class OrderInfo:
 
 
 class MassExecSummaryAveragePriceDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base_request)
         else:
             self._request = order_book_pb2.MassExecSummaryAveragePriceDetails()
 
@@ -1147,6 +1147,7 @@ class MassManualExecutionDetails:
     def build(self):
         return self._request
 
+
 # class QuoteRequestDetails:
 #     def __init__(self):
 #         self.base = None
@@ -1244,3 +1245,18 @@ class MassManualExecutionDetails:
 # class ContextActionsQuoteBook(Enum):
 #     reject = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.REJECT
 #     unassign = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.UNASSIGN
+
+class UnmatchAndTransferDetails:
+    def __init__(self, base_request):
+        self.transfer_details = order_book_pb2.UnmatchAndTransferDetails()
+        self.transfer_details.base.CopyFrom(base_request)
+
+    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict):
+        self.transfer_details.filter.update(filter_dict)
+        self.transfer_details.subFilter.update(sub_filter_dict)
+
+    def set_account_destination(self, account_destination: str):
+        self.transfer_details.account = account_destination
+
+    def build(self):
+        return self.transfer_details

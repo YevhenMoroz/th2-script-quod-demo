@@ -1,0 +1,19 @@
+{
+  "currentApp":"qa315luna",
+  "qa320kuiper":{
+    "appPackage": "com.quod.trading.qa1",
+    "appActivity": "com.quod.moorgate.moorgatemobile.MainActivity"
+  },
+  "qa315luna": {
+    "appPackage": "com.quod.trading.qa2",
+    "appActivity": "com.quod.moorgate.moorgatemobile.MainActivity"
+  },
+  "dev": {
+    "appPackage": "com.quod.trading.devalrajhilon4/",
+    "appActivity": "com.quod.moorgate.moorgatemobile.MainActivity"
+  },
+  "uat": {
+    "appPackage": "com.quod.trading.uatalrajhitadawul",
+    "appActivity": "com.quod.moorgate.moorgatemobile.MainActivity"
+  }
+}

@@ -17,13 +17,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
-
-
 class QAP_1977(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
@@ -45,15 +38,13 @@ class QAP_1977(TestCase):
         self.agr_price = 20
         self.side = 2
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.price_ask_par = 1
-        self.price_bid_par = 21
-        self.price_ask_trqx = 1
-        self.price_bid_trqx_1 = 20
-        self.price_bid_trqx_2 = 22
-        self.qty_trqx_ask = 1
-        self.qty_trqx_bid = 400
-        self.qty_par_ask = 1
-        self.qty_par_bid = 400
+        self.start_price_bid_par = 21
+        self.start_qty_bid_par_and_trqx = 400
+        self.start_price_bid_trqx_1 = 20
+        self.start_price_bid_trqx_2 = 22
+        self.start_qty_trqx_bid_1_2 = 400
+        self.update_price_bid_par_trqx = 1
+        self.update_qty_bid_par_trqx = 1
         # endregion
 
         # region Gateway Side
@@ -100,24 +91,6 @@ class QAP_1977(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-        def send_market_data(symbol: str, case_id: str, market_data):
-            MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-                symbol=symbol,
-                connection_id=ConnectionID(session_alias=self.fix_env1.feed_handler)
-            )).MDRefID
-            md_params = {
-                'MDReqID': MDRefID,
-                'NoMDEntries': market_data
-            }
-
-            Stubs.fix_act.sendMessage(request=convert_to_request(
-                'Send MarketDataSnapshotFullRefresh',
-                self.fix_env1.feed_handler,
-                case_id,
-                message_to_grpc('MarketDataSnapshotFullRefresh', md_params, self.fix_env1.feed_handler)
-            ))
-
         # region Rule creation
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
@@ -129,49 +102,42 @@ class QAP_1977(TestCase):
         # endregion
 
         case_id_0 = bca.create_event("Send Market Data", self.test_id)
-        # region Send_MarketData
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '21',
-                'MDEntrySize': '400',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data('734', case_id_0, market_data1)
-        market_data2 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '20',
-                'MDEntrySize': '400',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '22',
-                'MDEntrySize': '400',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data('3416', case_id_0, market_data2)
+        # # region Send_MarketData
+        # market_data1 = [
+        #     {
+        #         'MDEntryType': '0',
+        #         'MDEntryPx': '21',
+        #         'MDEntrySize': '400',
+        #         'MDEntryPositionNo': '1'
+        #     }
+        # ]
+        # send_market_data('734', case_id_0, market_data1)
+        # market_data2 = [
+        #     {
+        #         'MDEntryType': '0',
+        #         'MDEntryPx': '20',
+        #         'MDEntrySize': '400',
+        #         'MDEntryPositionNo': '1'
+        #     },
+        #     {
+        #         'MDEntryType': '0',
+        #         'MDEntryPx': '22',
+        #         'MDEntrySize': '400',
+        #         'MDEntryPositionNo': '1'
+        #     }
+        # ]
+        # send_market_data('3416', case_id_0, market_data2)
 
-        # self.fix_manager_feed_handler.set_case_id(case_id_0)
-        # market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID('734', self.fix_env1.feed_handler)
-        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=21, MDEntrySize=400)
-        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        #
-        # self.fix_manager_feed_handler.set_case_id(case_id_0)
-        # market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID('3416', self.fix_env1.feed_handler)
-        # market_data_snap_shot_trqx.update_repeating_group_by_dict_list('NoMDEntries', [{'MDEntryType': '0', 'MDEntryPx': '22', 'MDEntrySize': '400'}, {'MDEntryType': '0', 'MDEntryPx': '20', 'MDEntrySize': '400'}])
-        # market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
-        #
-        # self.fix_manager_feed_handler.set_case_id(case_id_0)
-        # market_data_snap_shot_trqx_1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID('3416', self.fix_env1.feed_handler)
-        # market_data_snap_shot_trqx_1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=20, MDEntrySize=400)
-        # # market_data_snap_shot_trqx_1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_trqx, MDEntrySize=self.qty_trqx_ask)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx_1)
+        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.start_price_bid_par, MDEntrySize=self.start_qty_bid_par_and_trqx)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+
+        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.start_price_bid_trqx_1, MDEntrySize=self.start_qty_bid_par_and_trqx)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=self.start_price_bid_trqx_2, MDEntrySize=self.start_qty_bid_par_and_trqx)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
 
         time.sleep(3)
         # endregion
@@ -223,45 +189,45 @@ class QAP_1977(TestCase):
 
         time.sleep(10)
 
-        market_data3 = [
-            {
-                'MDEntryType': '',
-                'MDEntryPx': '1',
-                'MDEntrySize': '1',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data('734', case_id_2, market_data3)
-        market_data4 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '1',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '1',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data('3416', case_id_2, market_data4)
+        # market_data3 = [
+        #     {
+        #         'MDEntryType': '',
+        #         'MDEntryPx': '1',
+        #         'MDEntrySize': '1',
+        #         'MDEntryPositionNo': '1'
+        #     }
+        # ]
+        # send_market_data('734', case_id_2, market_data3)
+        # market_data4 = [
+        #     {
+        #         'MDEntryType': '0',
+        #         'MDEntryPx': '1',
+        #         'MDEntrySize': '1',
+        #         'MDEntryPositionNo': '1'
+        #     },
+        #     {
+        #         'MDEntryType': '0',
+        #         'MDEntryPx': '1',
+        #         'MDEntrySize': '1',
+        #         'MDEntryPositionNo': '1'
+        #     }
+        # ]
+        # send_market_data('3416', case_id_2, market_data4)
+        case_id_3 = bca.create_event("Send Market Data", self.test_id)
 
-        # self.fix_manager_feed_handler.set_case_id(case_id_0)
-        # market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=1)
-        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        #
-        # self.fix_manager_feed_handler.set_case_id(case_id_0)
-        # market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
-        # market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=1)
-        # market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=1, MDEntrySize=1)
-        # market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
-        #
-        # time.sleep(3)
+        self.fix_manager_feed_handler.set_case_id(case_id_3)
+        update_market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        update_market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
+        self.fix_manager_feed_handler.send_message(update_market_data_snap_shot_par)
+
+        self.fix_manager_feed_handler.set_case_id(case_id_3)
+        update_market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
+        update_market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
+        update_market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
+        self.fix_manager_feed_handler.send_message(update_market_data_snap_shot_trqx)
+
+        time.sleep(3)
+        # endregion
 
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 

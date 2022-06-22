@@ -75,3 +75,6 @@ class SettlementModelPage(CommonPage):
 
     def get_settl_location_bic(self):
         return self.find_by_xpath(SettlementModelConstants.MAIN_PAGE_SETTL_LOCATION_BIC_XPATH).text
+
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(SettlementModelConstants.DISPLAYED_ENTITY_XPATH.format(value))

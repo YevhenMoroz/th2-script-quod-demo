@@ -4,6 +4,7 @@ from test_framework.web_admin_core.pages.general.common.common_constants import 
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 import pyperclip
 
+
 class CommonPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
@@ -53,7 +54,7 @@ class CommonPage(CommonPage):
     def click_on_help_icon_at_login_page(self):
         self.find_by_xpath(CommonConstants.HELP_ICON_AT_LOGIN_PAGE_XPATH).click()
 
-    def refresh_page(self):
+    def click_on_refresh_page_button(self):
         self.find_by_xpath(CommonConstants.REFRESH_PAGE_XPATH).click()
 
     def is_user_name_icon_displayed(self):
@@ -122,6 +123,32 @@ class CommonPage(CommonPage):
         return link == inst
 
     def click_on_info_error_message_pop_up(self):
-        while self.is_element_present(CommonConstants.INFO_ERROR_MESSAGE_POP_UP) != False:
-             self.find_by_xpath(CommonConstants.INFO_ERROR_MESSAGE_POP_UP).click()
-             time.sleep(2)
+        while self.is_element_present(CommonConstants.INFO_ERROR_MESSAGE_POP_UP):
+            self.find_by_xpath(CommonConstants.INFO_ERROR_MESSAGE_POP_UP).click()
+            time.sleep(2)
+
+    def refresh_page(self, confirm: bool):
+        self.web_driver_container.get_driver().refresh()
+        if confirm:
+            self.web_driver_container.get_driver().switch_to.alert.accept()
+
+    def open_new_browser_tab_and_set_url(self, url: str):
+        self.web_driver_container.get_driver().switch_to.new_window('tab')
+        self.web_driver_container.get_driver().get(url)
+
+    def get_current_page_url(self):
+        return self.web_driver_container.get_driver().current_url
+
+    def switch_to_browser_tab(self, tab: int):
+        """
+        The current method for switching between open tabs.
+        Where 0 - first tab, 1 - second, 2 - third, etc...
+        """
+        browser_tab = self.web_driver_container.get_driver().window_handles[tab]
+        self.web_driver_container.get_driver().switch_to.window(browser_tab)
+
+    def is_error_message_displayed(self):
+        return self.is_element_present(CommonConstants.INFO_ERROR_MESSAGE_POP_UP)
+
+    def get_browser_cookies(self) -> dict:
+        return self.web_driver_container.get_driver().get_cookies()[0]

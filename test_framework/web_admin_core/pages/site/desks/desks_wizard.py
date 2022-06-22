@@ -22,8 +22,6 @@ class DesksWizard(CommonPage):
         self.find_by_xpath(DesksConstants.NO_BUTTON_XPATH).click()
 
     def is_incorrect_or_missing_value_message_displayed(self):
-        if self.find_by_xpath(
-                DesksConstants.INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH).text == "Incorrect or missing values":
-            return True
-        else:
-            return False
+        return True if self.find_by_xpath(
+                DesksConstants.INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH).text == "Incorrect or missing values" \
+            else False

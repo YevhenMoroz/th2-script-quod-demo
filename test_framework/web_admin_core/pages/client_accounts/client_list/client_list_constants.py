@@ -17,6 +17,7 @@ class ClientListConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_CLIENT_LIST_XPATH = '//*[text()={}]'
 
     # Main page
 

@@ -4,8 +4,8 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
 from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
@@ -17,10 +17,11 @@ free_notes_col = QuoteRequestBookColumns.free_notes.value
 
 
 class QAP_4234(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_rfq_connectivity
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.quote_request_book = None
 
@@ -45,7 +46,7 @@ class QAP_4234(TestCase):
         quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_wk1, leg_sec_type=security_type_fwd,
                                      settle_date=settle_date_w1, leg_qty=qty)
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
-                                                      Currency="GBP", Instrument=instrument, OrderQty=qty)
+                                                      Currency="GBP", Instrument=instrument)
         self.fix_manager_gtw.send_message(quote_request)
 
         self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)

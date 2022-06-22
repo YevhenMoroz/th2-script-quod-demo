@@ -54,10 +54,10 @@ class OrderManagementRulesConstants:
     VALUES_TAB_STRATEGY_NAME_XPATH = '//*[@id="externalStrategyName"]'
 
     # Conditions tab
-    CONDITIONS_TAB_PLUS_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-plus condition-add-btn"]'
-    CONDITIONS_TAB_CANCEL_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-close condition-cancel-btn"]'
-    CONDITIONS_TAB_CHECKMARK_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    CONDITIONS_TAB_EDIT_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@class="nb-edit condition-edit-btn"]'
+    CONDITIONS_TAB_PLUS_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    CONDITIONS_TAB_CANCEL_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@data-name="close"]'
+    CONDITIONS_TAB_CHECKMARK_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    CONDITIONS_TAB_EDIT_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CONDITIONS_TAB_ENABLE_DISABLE_BUTTON_XPATH = '//*[text()=" Conditions "]/parent::nb-accordion-item//div[contains(@class, "toggle")]'
 
     CONDITIONS_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
@@ -79,11 +79,11 @@ class OrderManagementRulesConstants:
 
 
     # Results sub wizard
-    RESULTS_SUB_WIZARD_PLUS_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-plus result-table ng2-main-add-btn"]'
-    RESULTS_SUB_WIZARD_CANCEL_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-close result-table ng2-main-cancel-btn"]'
-    RESULTS_SUB_WIZARD_CHECKMARK_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    RESULTS_SUB_WIZARD_EDIT_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-edit result-table ng2-main-edit-btn"]'
-    RESULTS_SUB_WIZARD_DELETE_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@class="nb-trash result-table"]'
+    RESULTS_SUB_WIZARD_PLUS_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@nbtooltip="Add"]'
+    RESULTS_SUB_WIZARD_CANCEL_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@data-name="close"]'
+    RESULTS_SUB_WIZARD_CHECKMARK_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    RESULTS_SUB_WIZARD_EDIT_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    RESULTS_SUB_WIZARD_DELETE_XPATH = '//*[text()=" Results "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     RESULTS_SUB_WIZARD_EXEC_POLICY_XPATH = '//*[@placeholder="Exec Policy *"]'
     RESULTS_SUB_WIZARD_EXEC_POLICY_FILTER_XPATH = '//*[@class="gatingRuleExecPolicyResult ng2-smart-th ng-star-inserted"]//input'
@@ -98,21 +98,27 @@ class OrderManagementRulesConstants:
     RESULTS_SUB_WIZARD_ROUTE_XPATH = '//*[@id="routeresult-table"]'
 
     # Default result
-    DEFAULT_RESULT_TAB_DEFAULT_RESULT_NAME = '//*[@formcontrolname = "gatingRuleCondName"]'
-    DEFAULT_RESULT_TAB_QTY_PRECISION = '//*[@formcontrolname = "qtyPrecision"]'
-    DEFAULT_RESULT_TAB_HOLD_ORDER_CHECKBOX = '//*[text()="Hold Order"]/preceding-sibling::span'
-    DEFAULT_RESULT_TAB_PLUS_XPATH = '//*[text()=" Default Result "]/parent::nb-accordion-item//*[@class="nb-plus  ng2-main-add-btn"]'
-    DEFAULT_RESULT_TAB_CANCEL_XPATH = '//*[text()=" Default Result "]/parent::nb-accordion-item//*[@class="nb-close  ng2-main-cancel-btn"]'
-    DEFAULT_RESULT_TAB_CHECKMARK_XPATH = '//*[text()=" Default Result "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    DEFAULT_RESULT_TAB_EDIT_XPATH = '//*[text()=" Default Result "]/parent::nb-accordion-item//*[@class="nb-edit  ng2-main-edit-btn"]'
-    DEFAULT_RESULT_TAB_DELETE_XPATH = '//*[text()=" Default Result "]/parent::nb-accordion-item//*[@class="nb-trash "]'
+    class DefaultResultAtConditions:
+        EDIT_XPATH = '//tr[@tabindex="0"][last()]//*[@nbtooltip="Edit"]'
+        CHECKMARK_XPATH = '//tr[@tabindex="0"][last()]//*[@data-name="checkmark"]'
+        CANCEL_XPATH = '//tr[@tabindex="0"][last()]//*[@data-name="close"]'
+        NAME = '//tr[@tabindex="0"][last()]//*[@placeholder="Name *"]'
+        HOLD_ORDER_CHECKBOX = '//*[text()="Hold Order"]/preceding-sibling::span'
+        QTY_PRECISION = '//*[@formcontrolname = "qtyPrecision"]'
 
-    DEFAULT_RESULT_TAB_EXEC_POLICY_XPATH = '//*[@placeholder="Exec Policy *"]'
-    DEFAULT_RESULT_TAB_PERCENTAGE_XPATH = '//*[@placeholder="Percentage *"]'
+        PLUS_BUTTON_AT_RESULTS_XPATH = '//*[text()=" Results "]//parent::nb-accordion-item//*[@nbtooltip="Add"]'
+        CHECKMARK_AT_RESULTS_XPATH = '//*[text()=" Results "]//parent::nb-accordion-item//*[@data-name="checkmark"]'
+        CANCEL_AT_RESULTS_XPATH = '//*[text()=" Results "]//parent::nb-accordion-item//*[@data-name="close"]'
+        EDIT_AT_RESULTS_XPATH = '//*[text()=" Results "]//parent::nb-accordion-item//*[@data-name="edit"]'
+        DELETE_AT_RESULTS_XPATH = '//*[text()=" Results "]//parent::nb-accordion-item//*[@data-name="trash-2"]'
+        EXEC_POLICY_AT_RESULTS_XPATH = '//*[@placeholder="Exec Policy *"]'
+        EXEC_POLICY_FILTER_XPATH = '(//*[text()=" Results "]//parent::nb-accordion-item//*[@placeholder="Filter"])[1]'
+        PERCENTAGE_AT_RESULTS_XPATH = '//*[@placeholder="Percentage *"]'
+        PERCENTAGE_FILTER_XPATH = '(//*[text()=" Results "]//parent::nb-accordion-item//*[@placeholder="Filter"])[2]'
 
-    DEFAULT_RESULT_TAB_PRICE_ORIGIN_XPATH = '//*[@id="priceOrigin"]'
-    DEFAULT_RESULT_TAB_EXECUTION_STRATEGY_XPATH = '//*[@id="algoPolicy"]'
-    DEFAULT_RESULT_TAB_STRATEGY_TYPE_XPATH = '//*[@id="scenario"]'
-    DEFAULT_RESULT_TAB_SOR_EXECUTION_STRATEGY_XPATH = '//*[@id="SORAlgoPolicy"]'
-    DEFAULT_RESULT_TAB_VENUE_XPATH = '//*[@id="resultVenue"]'
-    DEFAULT_RESULT_TAB_ROUTE_XPATH = '//*[@id="route"]'
+        PRICE_ORIGIN_AT_RESULTS_XPATH = '//*[@id="priceOrigin"]'
+        EXECUTION_STRATEGY_AT_RESULTS_XPATH = '//*[@id="algoPolicy"]'
+        STRATEGY_TYPE_AT_RESULTS_XPATH = '//*[@id="scenario"]'
+        SOR_EXECUTION_STRATEGY_AT_RESULTS_XPATH = '//*[@id="SORAlgoPolicy"]'
+        VENUE_AT_RESULTS_XPATH = '//*[@id="resultVenue"]'
+        ROUTE_AT_RESULTS_XPATH = '//*[@id="route"]'

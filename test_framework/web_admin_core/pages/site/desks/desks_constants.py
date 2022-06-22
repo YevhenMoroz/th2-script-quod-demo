@@ -12,6 +12,7 @@ class DesksConstants:
     NO_BUTTON_XPATH = '//*[text()="No"]'
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     ENABLE_DISABLE_BUTTON_XPATH = '//div[contains(@class, "toggle")]'
+    DISPLAYED_DESK_XPATH = '//*[text()={}]'
 
     #Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[1]"
