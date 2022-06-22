@@ -46,6 +46,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             LastSpotRate='*',
             AvgPx='*',
             ExecID='*',
+            LastMkt='*',
             LastPx='*',
             OrderID='*',
             SettlDate='*',
