@@ -176,7 +176,3 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
 
-
-class ClientAlgoPolicy(Enum):
-    qa_mpdark_2 = "QA_MPDark2"
-    qa_sorping = "QA_SORPING"
