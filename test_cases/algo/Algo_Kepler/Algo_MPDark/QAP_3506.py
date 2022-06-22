@@ -13,6 +13,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.data_sets import constants
 
 
 class QAP_3506(TestCase):
@@ -41,6 +42,7 @@ class QAP_3506(TestCase):
         self.qty_2_chix_child, self.qty_2_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, self.minQty, self.weight_chix, self.weight_bats)
         self.price = 20
         self.reason = 99
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_3.value
         # endregion
 
         # region Gateway Side
@@ -102,7 +104,7 @@ class QAP_3506(TestCase):
 
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty))
+        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, ClientAlgoPolicyID=self.algopolicy))
         self.MP_Dark_order.add_tag(dict(MinQty=self.minQty))
 
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
