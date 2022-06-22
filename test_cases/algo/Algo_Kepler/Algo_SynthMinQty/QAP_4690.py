@@ -41,6 +41,7 @@ class QAP_4690(TestCase):
         self.qty_bid = 200
         self.qty_ask = 1000000
         self.tif_fok = constants.TimeInForce.FillOrKill.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_2.value
         # endregion
 
         # region Gateway Side
@@ -112,7 +113,7 @@ class QAP_4690(TestCase):
 
         self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_params()
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))# .add_tag(dict(NoStrategyParameters=dict(StrategyParameterName='ForbiddenVenues', StrategyParameterType='14', StrategyParameterValue='QUODLIT1')))
+        self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty, ClientAlgoPolicyID=self.algopolicy))
 
         self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
 
