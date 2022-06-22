@@ -1,5 +1,5 @@
 from test_cases.fx.fx_mm_rfq import QAP_1545, QAP_1550, \
-    QAP_1551, QAP_1562, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
+    QAP_1551, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
     QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2104, QAP_2105, QAP_2143, \
     QAP_2177, QAP_2294, QAP_2295, QAP_2296, QAP_2297, QAP_2353, QAP_2866, QAP_2867, QAP_2868, QAP_2958, \
@@ -10,6 +10,7 @@ from test_cases.fx.fx_mm_rfq import QAP_1545, QAP_1550, \
 from test_cases.fx.fx_mm_rfq.QAP_1537 import QAP_1537
 from test_cases.fx.fx_mm_rfq.QAP_1539 import QAP_1539
 from test_cases.fx.fx_mm_rfq.QAP_1540 import QAP_1540
+from test_cases.fx.fx_mm_rfq.QAP_1562 import QAP_1562
 from test_cases.fx.fx_mm_rfq.QAP_2382 import QAP_2382
 from test_cases.fx.fx_mm_rfq.QAP_1542 import QAP_1542
 from test_cases.fx.fx_mm_rfq.QAP_1547 import QAP_1547
@@ -23,11 +24,13 @@ from test_cases.fx.fx_mm_rfq.QAP_4510 import QAP_4510
 from test_cases.fx.fx_mm_rfq.QAP_5345 import QAP_5345
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7862 import QAP_7862
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_3689, QAP_3747, QAP_3734, QAP_3805, QAP_3807, QAP_3739, QAP_3851, \
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3689, QAP_3747, QAP_3734, QAP_3805, QAP_3807, QAP_3851, \
     QAP_3806
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3739 import QAP_3739
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3766 import QAP_3766
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3772 import QAP_3772
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3811 import QAP_3811
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3849 import QAP_3849
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3850 import QAP_3850
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_5992 import QAP_5992
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_6364 import QAP_6364
@@ -40,7 +43,7 @@ from test_cases.fx.fx_mm_rfq.QAP_7130 import QAP_7130
 from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
-from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3721 import QAP_3721
 from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3741 import QAP_3741
 from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
 from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
@@ -88,7 +91,7 @@ def test_run(parent_id=None):
 
         # region Manual Intervention
         update_settings_and_restart_qs("Manual Intervention")
-        QAP_3721.execute(report_id)
+        QAP_3721(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_3741(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_6571(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # endregion
@@ -102,10 +105,11 @@ def test_run(parent_id=None):
         QAP_3766(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3772(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_3807.execute(report_id)
-        QAP_3739.execute(report_id)
+        QAP_3739(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3805.execute(report_id)
         QAP_3806.execute(report_id)
         QAP_3811(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_3849(session_id, configuration.data_set, configuration.environment).execute()
         QAP_3850(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3851.execute(report_id)
         QAP_4234(report_id, session_id, configuration.data_set, configuration.environment).execute()
@@ -153,7 +157,7 @@ def test_run(parent_id=None):
                  environment=configuration.environment).execute()
         QAP_1550.execute(report_id, case_params, session_id)
         QAP_1551.execute(report_id, case_params, session_id)
-        QAP_1562.execute(report_id, case_params, session_id)
+        QAP_1562(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         QAP_1970.execute(report_id, case_params, session_id)
         QAP_1972.execute(report_id, case_params, session_id)
