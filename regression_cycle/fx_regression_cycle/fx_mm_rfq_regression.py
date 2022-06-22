@@ -25,7 +25,8 @@ from test_cases.fx.fx_mm_rfq.QAP_5345 import QAP_5345
 from test_cases.fx.fx_mm_rfq.QAP_5353 import QAP_5353
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7862 import QAP_7862
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_3689, QAP_3747, QAP_3734, QAP_3739, QAP_3851
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_3747, QAP_3734, QAP_3739, QAP_3851
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3689 import QAP_3689
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3766 import QAP_3766
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3772 import QAP_3772
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3805 import QAP_3805
@@ -100,7 +101,7 @@ def test_run(parent_id=None):
 
         # region Interpolation
         update_settings_and_restart_qs("Interpolation")
-        QAP_3689.execute(report_id)
+        QAP_3689(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3734.execute(report_id, session_id)
         QAP_3747.execute(report_id)
         QAP_3761(report_id, session_id, configuration.data_set, configuration.environment).execute()
