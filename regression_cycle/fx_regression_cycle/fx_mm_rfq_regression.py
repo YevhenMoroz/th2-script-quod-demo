@@ -47,7 +47,8 @@ from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
 from test_cases.fx.fx_mm_rfq.manual_intervention import QAP_3721
 from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3741 import QAP_3741
 from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
-from test_cases.fx.fx_mm_rfq.rejection import QAP_3720, QAP_3735
+from test_cases.fx.fx_mm_rfq.rejection import QAP_3735
+from test_cases.fx.fx_mm_rfq.rejection.QAP_3720 import QAP_3720
 from test_cases.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
 
 from stubs import Stubs
@@ -86,7 +87,7 @@ def test_run(parent_id=None):
 
         # region Rejection
         update_settings_and_restart_qs("Rejection")
-        QAP_3720.execute(report_id)
+        QAP_3720(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_3735.execute(report_id, session_id)
         # endregion
 
