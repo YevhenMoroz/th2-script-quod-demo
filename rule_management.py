@@ -416,7 +416,7 @@ class RuleManager:
                                                               ))
 
     def add_NewOrdSingleRFQExecutionReport(self, session: str, account: str, ex_destination: str, order_qty: int, restated_qty: int, new_reply: bool, restated_reply: bool):
-        return self.sim.createNewOrdSingleExecutionReportEliminate(
+        return self.sim.createNewOrdSingleRFQExecutionReport(
             request=TemplateNewOrdSingleRQFRestated(connection_id=ConnectionID(session_alias=session),
                                                     account=account,
                                                     exdestination=ex_destination,
