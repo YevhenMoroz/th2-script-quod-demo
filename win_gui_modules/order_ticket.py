@@ -84,22 +84,6 @@ class AdwOrdTabDetails:
         return self.request
 
 
-class MiscsBookingFieldNumber(Enum):
-    BOOKING_FIELD_1 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_1
-    BOOKING_FIELD_2 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_2
-    BOOKING_FIELD_3 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_3
-    BOOKING_FIELD_4 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_4
-    BOOKING_FIELD_5 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_5
-
-
-class MiscsAllocationsFieldNumber(Enum):
-    ALLOCATIONS_FIELD_1 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_1
-    ALLOCATIONS_FIELD_2 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_2
-    ALLOCATIONS_FIELD_3 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_3
-    ALLOCATIONS_FIELD_4 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_4
-    ALLOCATIONS_FIELD_5 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_5
-
-
 class MiscsOrdDetails:
     def __init__(self):
         self.miscsOrderDetails = order_ticket_pb2.MiscsOrdDetails()
