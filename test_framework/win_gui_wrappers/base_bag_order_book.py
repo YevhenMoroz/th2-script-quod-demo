@@ -5,7 +5,7 @@ from enum import Enum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo, CreateOrderDetails
+from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo, ExtractWaveTicketValuesRequest
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import call
@@ -46,19 +46,24 @@ class BaseBagOrderBook(BaseWindow):
         self.order_bag_uncomplete_call = None
         self.order_bag_book_call = None
         self.create_order_call = None
-        self.create_order_details = CreateOrderDetails(self.base_request)
+        self.create_order_details = None
+        self.modify_sub_level_order_details = None
+        self.modify_sub_level_order_call = None
+        self.extract_wave_ticket_values_request = None
+        self.extract_wave_ticket_values_call = None
 
     # endregion
 
     # region Set details
-    def set_order_bag_wave_details(self, tif: str, expire_date: str = None, price=None, qty=None, display_qty=None,
+    def set_order_bag_wave_details(self, tif: str = None, expire_date: str = None, price=None, qty=None, display_qty=None,
                                    price_type=None,
                                    price_offset=None,
                                    offset_type=None,
                                    scope=None, sub_lvl_number: int = None, sub_lvl_filter: list = None,
                                    wave_filter: list = None):
         self.bag_wave_creation.set_default_params(self.base_request)
-        self.bag_book_details.set_tif(tif)
+        if tif:
+            self.bag_book_details.set_tif(tif)
         if expire_date:
             self.bag_book_details.set_expire_date(expire_date)
         if price is not None:
@@ -120,12 +125,16 @@ class BaseBagOrderBook(BaseWindow):
             self.bag_order_details.set_filter(filter)
         fields = []
         sub_fields = []
-        for field in extraction_fields:
-            fields.append(self.extraction_bag_fields_details(field, field))
+        if extraction_fields is not None:
+            for field in extraction_fields:
+                fields.append(self.extraction_bag_fields_details(field, field))
         for sub_field in sub_extraction_fields:
             sub_fields.append(self.extraction_bag_fields_details(sub_field, sub_field))
         lvl_2 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=sub_fields)
-        lvl_1 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=fields)
+        if fields:
+            lvl_1 = self.extraction_bag_order_action_static.create_extraction_action(extraction_details=fields)
+        else:
+            lvl_1 = self.extraction_bag_order_action_static.create_extraction_action()
         bag_order_info_second_level = self.bag_order_info()
         bag_order_info_second_level.add_single_extraction_action(lvl_2)
         order_bag_book_details = GetOrderBagBookDetails.create(info=bag_order_info_second_level)
@@ -212,3 +221,22 @@ class BaseBagOrderBook(BaseWindow):
         self.create_order_details.set_order_details(order_details)
         self.create_order_details.set_filter(filter_dict)
         call(self.create_order_call, self.create_order_details.build())
+        self.clear_details([self.create_order_details, order_details])
+
+    def set_modify_sub_level_order_details(self, filtel_dict: dict, order_details: OrderTicketDetails,
+                                           sub_filter: dict):
+        self.modify_sub_level_order_details.set_order_details(order_details)
+        self.modify_sub_level_order_details.set_filter(filtel_dict)
+        self.modify_sub_level_order_details.set_sub_filter(sub_filter)
+        call(self.modify_sub_level_order_call, self.modify_sub_level_order_details.build())
+        self.clear_details([self.modify_sub_level_order_details, order_details])
+
+    def extract_values_from_wave_ticket(self, tif: bool = True, filter_dict: dict = None):
+        if filter_dict:
+            self.extract_wave_ticket_values_request.set_filter(filter_dict)
+        if tif:
+            self.extract_wave_ticket_values_request.get_tif_state()
+        result = call(self.extract_wave_ticket_values_call,
+                      self.extract_wave_ticket_values_request.build())
+        self.clear_details([self.extract_wave_ticket_values_request])
+        return result
