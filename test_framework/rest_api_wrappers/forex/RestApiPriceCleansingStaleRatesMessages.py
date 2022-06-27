@@ -19,8 +19,8 @@ class RestApiPriceCleansingStaleRatesMessages(RestApiMessages):
         """
         This method sets up and default dictionary required to create new AutoHedger
         """
-        if 'prcClnRateDeviationID' in self.parameters.keys():
-            self.remove_parameter('prcClnRateDeviationID')
+        if 'prcClnStaleRatesID' in self.parameters.keys():
+            self.remove_parameter('prcClnStaleRatesID')
         self.message_type = 'CreatePriceCleansingRateDeviation'
         return self
 
@@ -30,3 +30,31 @@ class RestApiPriceCleansingStaleRatesMessages(RestApiMessages):
         """
         self.message_type = 'DeletePriceCleansingRateDeviation'
         return self
+
+    def set_default_params(self):
+        self.parameters = {
+            'alive': 'true',
+            'instrSymbol': "GBP/USD",
+            'instrType': "SPO",
+            'prcClnStaleRatesID': '1600007',
+            'priceCleansingRuleName': "test",
+            'removeDetectedUpdate': 'true',
+            'staleRatesDelay': '1',
+            'venueID': "CITI"
+        }
+        return self
+
+    def set_spot(self):
+        self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_spot")})
+
+    def set_fwd(self):
+        self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_fwd")})
+
+    def set_swap(self):
+        self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_swap")})
+
+    def set_ndf(self):
+        self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_ndf")})
+
+    def set_nds(self):
+        self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_nds")})
