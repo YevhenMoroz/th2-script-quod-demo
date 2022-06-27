@@ -19,6 +19,19 @@ class RestApiManager:
                                                                                    session_alias=self.session_alias),
                                                           parent_event_id=self.case_id))
 
+    def send_multiple_request(self, api_message: RestApiMessages):
+        message = convert_to_get_request(description="Send http requests: Post/Get",
+                                         connectivity=self.session_alias,
+                                         event_id=self.case_id,
+                                         message=bca.wrap_message(content=api_message.get_parameters(),
+                                                                  message_type=api_message.get_message_type(),
+                                                                  session_alias=self.session_alias),
+                                         request_type=api_message.get_message_type(),
+                                         response_type=api_message.get_message_type() + "Reply")
+        response = self.act.sendGetRequest(message)
+
+        return response.response_message
+
     def send_get_request(self, api_message: RestApiMessages):
         message = convert_to_get_request(description="Send Get request",
                                          connectivity=self.session_alias,
