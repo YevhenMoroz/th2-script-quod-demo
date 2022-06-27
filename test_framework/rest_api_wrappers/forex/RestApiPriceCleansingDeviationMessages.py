@@ -61,18 +61,24 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
             ],
             "alive": 'true'
         }
+        return self
 
     def set_spot(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_spot")})
+        return self
 
     def set_fwd(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_fwd")})
+        return self
 
     def set_swap(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_swap")})
+        return self
 
     def set_ndf(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_ndf")})
+        return self
 
     def set_nds(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_nds")})
+        return self
