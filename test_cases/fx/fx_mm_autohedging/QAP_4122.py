@@ -62,7 +62,7 @@ def check_order_book(base_request, act_ob, orig, client):
     extraction_id = bca.client_orderid(4)
     ob.set_default_params(base_request=base_request)
     ob.set_extraction_id(extraction_id)
-    ob.set_filter(["Orig", orig, "Client ID", client])
+    ob.set_filter(["Platform", orig, "Client ID", client])
     order_id = ExtractionDetail("orderBook.id", "Order ID")
 
     ob.add_single_order_info(
