@@ -24,6 +24,7 @@ class QAP_2182(CommonTestCase):
         self.route = self.data_set.get_route("route_2")
         self.client = "test"
         self.clear_client = "Not found"
+        self.test_client = ''
         self.clearing_type = [
             self.data_set.get_clearing_account_type("clearing_account_type_1"),
             self.data_set.get_clearing_account_type("clearing_account_type_2"),
@@ -33,12 +34,16 @@ class QAP_2182(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_accounts_page()
+        time.sleep(2)
         accounts_main_page = AccountsPage(self.web_driver_container)
+        self.test_client = accounts_main_page.get_id_grid_value()
+        accounts_main_page.set_id(self.test_client)
+        time.sleep(1)
         accounts_main_page.click_more_actions_button()
         time.sleep(1)
         accounts_main_page.click_edit_entity_button()
+        time.sleep(2)
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_client(self.clear_client)
         time.sleep(1)
@@ -58,7 +63,9 @@ class QAP_2182(CommonTestCase):
                 accounts_wizard.click_save_button()
                 self.verify("Account edit correctly", True, True)
                 time.sleep(2)
-                expected_saved_data = [self.client, self.clearing_type[-1]]
+                accounts_main_page.set_id(self.test_client)
+                time.sleep(1)
+                expected_saved_data = [self.client, self.clearing_type[1]]
                 actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
                 self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
             except Exception as e:

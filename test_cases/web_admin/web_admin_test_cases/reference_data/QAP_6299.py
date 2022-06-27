@@ -83,7 +83,7 @@ class QAP_6299(CommonTestCase):
             self.precondition()
 
             page = ListingsPage(self.web_driver_container)
-            page.load_client_from_global_filter(self.symbol)
+            page.load_listing_from_global_filter(self.symbol)
             page.click_on_more_actions()
 
             time.sleep(2)

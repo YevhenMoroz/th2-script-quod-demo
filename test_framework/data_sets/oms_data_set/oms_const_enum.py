@@ -57,6 +57,7 @@ class OmsVenues(Enum):
 class OmsLookupForVenues(Enum):
     """USED FOR CREATING ORDER VIA FE"""
     lookup_1 = 'VETO'
+    lookup_2 = 'DNX'
 
 
 class OmsClients(Enum):
@@ -301,3 +302,21 @@ class OMSStatus(Enum):
 
 class OMSMatchStatus(Enum):
     match_status_1 = 'Unmatched'
+
+
+class OMSExecutionPolicy(Enum):
+    dma = 'DMA'
+    care = 'Care'
+
+
+class OMSTimeInForce(Enum):
+    time_in_force_1 = "Day"
+    time_in_force_2 = "GoodTillDate"
+
+
+class OMSOrdType(Enum):
+    limit = 'Limit'
+
+
+class OMSCapacity(Enum):
+    agency = 'Agency'

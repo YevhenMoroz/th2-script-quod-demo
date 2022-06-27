@@ -6,6 +6,8 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_1738 import QAP_1738
 from test_cases.web_admin.web_admin_test_cases.others.QAP_1739 import QAP_1739
 from test_cases.web_admin.web_admin_test_cases.others.QAP_1741 import QAP_1741
 from test_cases.web_admin.web_admin_test_cases.others.QAP_1831 import QAP_1831
+from test_cases.web_admin.web_admin_test_cases.others.QAP_2775 import QAP_2775
+from test_cases.web_admin.web_admin_test_cases.others.QAP_2776 import QAP_2776
 from test_cases.web_admin.web_admin_test_cases.others.QAP_3228 import QAP_3228
 from test_cases.web_admin.web_admin_test_cases.others.QAP_3229 import QAP_3229
 from test_cases.web_admin.web_admin_test_cases.others.QAP_3243 import QAP_3243
@@ -69,6 +71,10 @@ class RunOthers:
             QAP_1741(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_1831(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2775(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_2776(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_3228(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

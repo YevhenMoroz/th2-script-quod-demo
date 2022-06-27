@@ -10,6 +10,8 @@ class BaseChildOrderBook(BaseWindow):
         self.extract_child_order_book_sub_lvl_data_details = None
         self.extract_child_order_book_data_call = None
         self.extract_child_order_book_sub_lvl_data_call = None
+        self.check_that_order_is_absent_call = None
+
     # endregion
 
     # region Get
@@ -34,6 +36,14 @@ class BaseChildOrderBook(BaseWindow):
         self.extract_child_order_book_sub_lvl_data_details.set_tab_name(tab_name)
         result = call(self.extract_child_order_book_sub_lvl_data_call,
                       self.extract_child_order_book_sub_lvl_data_details.build())
-        self.clear_details([self.extract_child_order_book_data_details, self.extract_child_order_book_sub_lvl_data_call])
+        self.clear_details(
+            [self.extract_child_order_book_data_details, self.extract_child_order_book_sub_lvl_data_call])
         return result[str(row_count)]
+
+    def checking_presence_of_order(self, child_book_filter):
+        self.extract_child_order_book_data_details.set_default_param(self.base_request)
+        self.extract_child_order_book_data_details.set_filter(child_book_filter)
+        result = call(self.check_that_order_is_absent_call, self.extract_child_order_book_data_details.build())
+        self.clear_details([self.extract_child_order_book_data_details])
+        return result
     # endregion

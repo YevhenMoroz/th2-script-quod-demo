@@ -12,7 +12,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -99,15 +99,12 @@ class RuleManager:
     # new_rule = RuleManager.add_NOS('fix-fh-fx-paris')
     # RuleManager.remove_rule(new_rule)
 
-    @staticmethod
-    def remove_rule(rule):
-        Stubs.core.removeRule(rule)
+    def remove_rule(self, rule):
+        self.core.removeRule(rule)
 
-    @staticmethod
-    def remove_rules(list_rules: list):
-        rule_manager = RuleManager()
+    def remove_rules(self, list_rules: list):
         for rule in list_rules:
-            rule_manager.remove_rule(rule)
+            self.remove_rule(rule)
 
     # ------------------------
 
@@ -409,6 +406,14 @@ class RuleManager:
                 incrementalRefresh=incrementalRefresh,
             )
         )
+
+    def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str, price: float):
+        return self.sim.createNewOrdSingleExecutionReportEliminate(
+            request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination,
+                                                              price=price
+                                                              ))
     # ------------------------
 
 

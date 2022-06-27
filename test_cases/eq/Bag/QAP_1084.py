@@ -18,6 +18,7 @@ timeouts = True
 
 
 class QAP_1084(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -57,8 +58,8 @@ class QAP_1084(TestCase):
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.order_bag_qty.value,
                                                                           OrderBagColumn.ord_bag_name.value])
 
-        self.bag_order_book.compare_values({'order_bag.' + OrderBagColumn.order_bag_qty.value: qty_of_bag_order,
-                                            'order_bag.' + OrderBagColumn.ord_bag_name.value: 'Bag_1'},
+        self.bag_order_book.compare_values({OrderBagColumn.order_bag_qty.value: qty_of_bag_order,
+                                            OrderBagColumn.ord_bag_name.value: 'Bag_1'},
                                            fields, 'Compare values from block')
 
         # endregion

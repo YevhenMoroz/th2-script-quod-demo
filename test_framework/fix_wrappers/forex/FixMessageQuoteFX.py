@@ -1,4 +1,4 @@
-from test_framework.data_sets.constants import MessageType
+from test_framework.fix_wrappers.DataSet import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 

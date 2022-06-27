@@ -1,92 +1,61 @@
-import logging
-from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
+    RestApiClientTierInstrSymbolMessages
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_3811(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
 
+        self.web_adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.rest_manager = RestApiManager(self.web_adm_env.session_alias_wa, self.test_id)
+        self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.client_tier_argentina = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
+        self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.rest_massage.find_all_client_tier_instrument()
+        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        params_eur_usd = self.rest_manager. \
+            parse_response_details(params_eur_usd,
+                                   {'clientTierID': self.client_tier_argentina, 'instrSymbol': self.eur_usd})
 
-def press_executable(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_executable()
-    call(service.modifyRatesTile, modify_request.build())
+        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
+            .set_params(params_eur_usd). \
+            update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'IND', {'tenor': 'SPO'})
+        self.rest_manager.send_post_request(self.rest_massage)
 
+        # region Step 2
+        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index('NoRelatedSymbols', 0,
+                                                                              Account=self.acc_argentina)
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
+        # endregion
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "GBP/USD-Spot"
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    qty = 1000000
-    symbol = "GBP/USD"
-    security_type_swap = "FXSWAP"
-    security_type = "FXFWD"
-    settle_date = wk1()
-    leg2_settle_date = wk2()
-    settle_type_leg1 = "W1"
-    settle_type_leg2 = "W2"
-    currency = "GBP"
-    settle_currency = "USD"
-
-    side = ""
-    leg1_side = "1"
-    leg2_side = "2"
-    today = date.today()
-    today = today.today().strftime('%m/%d/%Y')
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        press_executable(base_details, cp_service)
-        # Step 2
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap()
-        rfq.verify_quote_pending_swap()
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            press_executable(base_details, cp_service)
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_massage.modify_client_tier_instrument(). \
+            update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
+        self.rest_manager.send_post_request(self.rest_massage)

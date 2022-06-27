@@ -16,7 +16,9 @@ class UsersConstants:
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
     OK_BUTTON_XPATH = "//*[text()='Ok']"
     LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
+    REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DISPLAYED_USER_XPATH = "//*[text()='{}']"
+    ONLINE_STATUS_XPATH = '//*[@icon="circle-fill"]'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
