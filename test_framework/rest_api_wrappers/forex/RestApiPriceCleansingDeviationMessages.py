@@ -45,6 +45,23 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
         self.update_parameters({'priceDeviationFormat': 'PIP'})
         return self
 
+    def set_default_params(self):
+        self.parameters = {
+            "priceCleansingRuleName": "test",
+            "prcClnRateDeviationID": '2000009',
+            "instrSymbol": "GBP/USD",
+            "instrType": "SPO", "venueID": "HSBC", "removeDetectedUpdate": 'true',
+            "priceDeviation": '0.00001',
+            "priceDeviationFormat": "EXA",
+            "priceCleansingReferenceVenue": [
+                {"venueID": "CITI"},
+                {"venueID": "BARX"},
+                {"venueID": "BNP"},
+                {"venueID": "GS"}
+            ],
+            "alive": 'true'
+        }
+
     def set_spot(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_spot")})
 
