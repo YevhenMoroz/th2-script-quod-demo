@@ -146,10 +146,11 @@ class QAP_1969(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         fill_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_fill)
-        fill_multilisted_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty))
+        fill_multilisted_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument='*')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID'])
         self.fix_verifier_sell.check_fix_message(fill_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Fill')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        RuleManager.remove_rules(self.rule_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(self.rule_list)
