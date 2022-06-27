@@ -8,11 +8,11 @@ class RestApiPriceCleansingStaleRatesMessages(RestApiMessages):
         Default message to get all Price Cleansing Deviation rules
         """
         self.clear_message_params()
-        self.message_type = 'FindAllPriceCleansingRateDeviation'
+        self.message_type = 'FindAllPriceCleansingStaleRates'
         return self
 
     def modify_stale_cleansing_rule(self):
-        self.message_type = 'ModifyPriceCleansingRateDeviation'
+        self.message_type = 'ModifyPriceCleansingStaleRates'
         return self
 
     def create_stale_cleansing_rule(self):
@@ -21,14 +21,14 @@ class RestApiPriceCleansingStaleRatesMessages(RestApiMessages):
         """
         if 'prcClnStaleRatesID' in self.parameters.keys():
             self.remove_parameter('prcClnStaleRatesID')
-        self.message_type = 'CreatePriceCleansingRateDeviation'
+        self.message_type = 'CreatePriceCleansingStaleRates'
         return self
 
     def delete_stale_cleansing_rule(self):
         """
         Default message to delete Deviation Cleansing rule
         """
-        self.message_type = 'DeletePriceCleansingRateDeviation'
+        self.message_type = 'DeletePriceCleansingStaleRates'
         return self
 
     def set_default_params(self):

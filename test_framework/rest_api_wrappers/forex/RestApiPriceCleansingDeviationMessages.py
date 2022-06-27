@@ -24,7 +24,7 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
         self.message_type = 'CreatePriceCleansingRateDeviation'
         return self
 
-    def delete_deviation_cleansing_ruler(self):
+    def delete_deviation_cleansing_rule(self):
         """
         Default message to delete Deviation Cleansing rule
         """
