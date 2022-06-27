@@ -125,4 +125,5 @@ class QAP_3432(TestCase):
         er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-        RuleManager.remove_rules(self.rule_list)
+        rule_management = RuleManager()
+        rule_management.remove_rules(self.rule_list)

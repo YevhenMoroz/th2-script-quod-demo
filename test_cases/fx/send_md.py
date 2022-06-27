@@ -24,6 +24,7 @@ class QAP_MD(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
+        # self.fx_fh_connectivity = "fix-fh-309-kratos"
         self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
@@ -35,12 +36,12 @@ class QAP_MD(TestCase):
         self.security_type = self.data_set.get_security_type_by_name('fx_spot')
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
-                'Symbol': "GBP/USD",
+                'Symbol': "EUR/USD",
                 'SecurityType': self.security_type,
                 'Product': '4', },
             'SettlType': '0', }]
         self.bands_eur_usd = ["2000000", '6000000', '12000000']
-        self.md_req_id = "GBP/USD:SPO:REG:HSBC"
+        self.md_req_id = "GBP/USD:SPO:REG:MS"
         # self.md_req_id = "GBP/USD:FXF:WK1:HSBC"
 
     @try_except(test_id=Path(__file__).name[:-3])
