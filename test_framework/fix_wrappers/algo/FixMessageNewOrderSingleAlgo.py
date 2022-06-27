@@ -384,16 +384,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                     'StrategyParameterType': '13',
                     'StrategyParameterValue': 'true'
                 },
-                {
-                    'StrategyParameterName': 'PostMode',
-                    'StrategyParameterType': '14',
-                    'StrategyParameterValue': 'Spraying'
-                },
-                {
-                    'StrategyParameterName': 'VenueWeights',
-                    'StrategyParameterType': '14',
-                    'StrategyParameterValue': 'TRQX=7/PARIS=3'
-                }
             ]
         }
         super().change_parameters(base_parameters)
@@ -424,6 +414,16 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                     'StrategyParameterName': 'AllowMissingPrimary',
                     'StrategyParameterType': '13',
                     'StrategyParameterValue': 'true'
+                },
+                {
+                    'StrategyParameterName': 'PostMode',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'Spraying'
+                },
+                {
+                    'StrategyParameterName': 'VenueWeights',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'TRQX=7/PARIS=3'
                 }
             ]
         }
