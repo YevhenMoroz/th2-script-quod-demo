@@ -75,7 +75,7 @@ class AlgoFormulasManager:
             sum_of_qty = 0
             for k in qty_list:
                 sum_of_qty += k
-            different = parent_qty - sum_of_qty
+            different = parent_qty - sum_of_qty                             # if parent qty not completely divided by venue weights
             if different > 0:
                 qty_list[0] += different
         else:                                                               # for tests with minQty
@@ -104,39 +104,29 @@ class AlgoFormulasManager:
                     qty_list[0] += different
         return qty_list
 
-    # Two different formulas for dark venue weights
-    # @staticmethod
-    # def get_child_qty_on_venue_weights(parent_qty: int, *venue_weights: list) -> list:
-    #     sum_of_weight = 0
-    #     for i in venue_weights:
-    #         sum_of_weight += i
-    #
-    #     one_weight = parent_qty / sum_of_weight
-    #
-    #     qty_list = []
-    #     for k in venue_weights:
-    #         qty_list.append(int(one_weight * k))
-    #
-    #     return qty_list
-    #
-    # @staticmethod
-    # def get_child_qty_on_venue_weights_with_min_qty(parent_qty, min_qty, *venue_weights):
-    #     sum_of_weight = 0
-    #     count_of_venue = 0
-    #     for i in venue_weights:
-    #         sum_of_weight += i
-    #         count_of_venue += 1
-    #
-    #     qty_for_distribution = parent_qty - min_qty * count_of_venue
-    #
-    #     one_weight = qty_for_distribution / sum_of_weight
-    #
-    #     qty_list = []
-    #     for k in venue_weights:
-    #         qty_list.append(int(one_weight * k + min_qty))
-    #
-    #     return qty_list
+    @staticmethod
+    # Calculating childs qty for Multilisted algo (PostMode=Spraying)
+    def get_child_qty_for_spraying(parent_qty: int, *venue_weights: int) -> list:
+        sum_of_weight = 0
+        count_of_venue = 0
+        qty_list = []
 
+        for i in venue_weights:
+            sum_of_weight += i
+            count_of_venue += 1
+
+        one_weight = parent_qty / sum_of_weight
+        j = 0
+        while j < len(venue_weights):
+            qty_list.append(int(one_weight * venue_weights[j]))
+            j += 1
+        sum_of_qty = 0
+        for k in qty_list:
+            sum_of_qty += k
+        different = parent_qty - sum_of_qty                                            # if parent qty not completely divided by venue weights
+        if different > 0:
+            qty_list[0] += different
+        return qty_list
 
 
 
