@@ -43,7 +43,7 @@ class QAP_2203(CommonTestCase):
         dimensions_sub_wizard.set_venue_account(self.venue_account)
         dimensions_sub_wizard.set_venue(self.venue)
         dimensions_sub_wizard.set_account_id_source(self.account_id_source)
-        dimensions_sub_wizard.click_create_entity_button()
+        dimensions_sub_wizard.click_on_checkmark_button()
 
     def test_context(self):
 

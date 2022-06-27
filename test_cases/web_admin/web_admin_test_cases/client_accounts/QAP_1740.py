@@ -66,12 +66,12 @@ class QAP_1740(CommonTestCase):
         try:
             self.precondition()
             try:
-                routes_tab.open_routes_subwizard()
+                routes_tab.click_on_plus_button()
                 routes_tab.set_route_account_name(self.route_account_name)
                 time.sleep(1)
                 routes_tab.set_route(self.route)
                 time.sleep(1)
-                routes_tab.click_create_entity_button()
+                routes_tab.click_on_checkmark_button()
                 time.sleep(2)
                 accounts_wizard.click_save_button()
 
