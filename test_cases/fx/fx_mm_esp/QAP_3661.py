@@ -103,7 +103,7 @@ to_currency = 'GBP'
 tenor = 'Spot'
 instrument = 'EUR/GBP-Spot'
 client_tier = 'Palladium2'
-venue = 'HSB'
+venue = 'HSBC'
 rows_default = 3
 rows_with_new_md = 4
 ask_pts_exp = 700
@@ -222,7 +222,7 @@ def execute(report_id, session_id):
             # Close tile
             call(cp_service.closeRatesTile, base_details.build())
             call(ar_service.closeRatesTile, base_details.build())
-            # Set default parameters
+            # # Set default parameters
             set_core_strategy_for_tier(case_id, core_spot_strategy_vwap)
             FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
                 md_entry[:6])).send_market_data_spot()
