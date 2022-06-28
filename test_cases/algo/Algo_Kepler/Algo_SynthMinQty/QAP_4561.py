@@ -200,6 +200,8 @@ class QAP_4561(TestCase):
         self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial Fill')
         # endregion
 
+        # TODO need reset MD for only one passive child
+
         # region Check 1 child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Passive child DMA order", self.test_id))
 
