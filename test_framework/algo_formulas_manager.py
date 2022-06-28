@@ -128,7 +128,15 @@ class AlgoFormulasManager:
             qty_list[0] += different
         return qty_list
 
-
-
+    @staticmethod
+    def create_string_for_strategy_weight(venues: dict) -> str:
+        final_string = str()
+        list_len = 0
+        for venue in venues:
+            final_string += f"{venue}={venues[venue]}"
+            list_len += 1
+            if list_len < len(venues):
+                final_string += "/"
+        return final_string
 
 
