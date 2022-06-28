@@ -511,7 +511,27 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1008',
-            'ClientAlgoPolicyID': 'QA_SORPING',
+            'MinQty': '100'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SynthMinQty_params_with_strategy(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_SORPING_2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'MinQty': '100'
