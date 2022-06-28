@@ -86,6 +86,7 @@ class QAP_6797(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_replace_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_Eliminate_child")
+        self.key_params_ER_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
         self.rule_list = []
@@ -152,6 +153,7 @@ class QAP_6797(TestCase):
 
         # region check eliminate first dma child order
         er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
+        er_eliminate_dma_1_xpar_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Price', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_1_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate Aggressive Child DMA 1 order")
         # endregion
 
@@ -187,10 +189,10 @@ class QAP_6797(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        # TODO need status for cancel child after cancel replace (update set_params_from_order_cancel_replace, add if gtw=buy)
         # region check cancel second dma child order
-        er_cancel_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.replaced_dma_order_params, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
+        er_cancel_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_xpar_order, self.gateway_side_buy, self.status_cancel)
+        er_cancel_dma_2_xpar_order.change_parameters(dict(OrderQty=self.qty))
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_xpar_order, self.key_params_ER_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
         # endregion
 
         cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_cancel)
