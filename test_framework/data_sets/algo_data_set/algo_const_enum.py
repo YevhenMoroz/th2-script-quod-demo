@@ -174,5 +174,6 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_ER_2_Eliminate_child = ['OrdStatus', 'ExecType', 'TimeInForce']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
 
