@@ -43,7 +43,6 @@ class QAP_8223(TestCase):
             "Symbol": self.gbp_cad,
             "SecurityType": self.security_type
         }
-        self.text = "subscriptions on this tier/tenor is not currently allowed"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
