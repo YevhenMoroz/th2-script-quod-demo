@@ -1,8 +1,5 @@
-import time
-from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -12,14 +9,11 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
     RestApiClientTierInstrSymbolMessages
-from test_framework.rest_api_wrappers.forex.RestApiClientTierMessages import RestApiClientTierMessages
 
 
 class QAP_8010(TestCase):
@@ -31,7 +25,6 @@ class QAP_8010(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_reject = FixMessageMarketDataRequestRejectFX()
-        self.modify_client_tier = RestApiClientTierMessages()
         self.modify_instrument = RestApiClientTierInstrSymbolMessages()
         self.rest_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
@@ -42,7 +35,6 @@ class QAP_8010(TestCase):
         self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
-        self.msg_prams_client = None
         self.msg_prams_instr = None
         self.no_related_symbols = [{
             "Instrument": {
@@ -97,4 +89,3 @@ class QAP_8010(TestCase):
     def run_post_conditions(self):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request, "Unsubscribe")
-
