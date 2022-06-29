@@ -26,6 +26,8 @@ from test_cases.fx.fx_mm_rfq.QAP_5345 import QAP_5345
 from test_cases.fx.fx_mm_rfq.QAP_5353 import QAP_5353
 from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7862 import QAP_7862
+from test_cases.fx.fx_mm_rfq.QAP_8012 import QAP_8012
+from test_cases.fx.fx_mm_rfq.QAP_8223 import QAP_8223
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3747, QAP_3734, QAP_3851
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3689 import QAP_3689
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3739 import QAP_3739
@@ -219,6 +221,8 @@ def test_run(parent_id=None):
         QAP_7130(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_7168(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_7862(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        QAP_8012(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_8223(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:
