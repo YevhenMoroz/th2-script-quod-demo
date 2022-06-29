@@ -44,6 +44,18 @@ class RestApiPriceCleansingStaleRatesMessages(RestApiMessages):
         }
         return self
 
+    def set_venue(self, venue_name):
+        self.update_parameters({'venueID': venue_name})
+        return self
+
+    def set_symbol(self, symbol):
+        self.update_parameters({'instrSymbol': symbol})
+        return self
+
+    def set_delay(self, delay):
+        self.update_parameters({'staleRatesDelay': delay})
+        return self
+
     def set_spot(self):
         self.update_parameters({'instrType': self.data_set.get_fx_instr_type_wa("fx_spot")})
         return self
