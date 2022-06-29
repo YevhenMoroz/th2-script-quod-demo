@@ -34,7 +34,7 @@ class QAP_4538(TestCase):
         # region order parameters
         self.qty = 200
         self.min_qty = 100
-        self.price = 11
+        self.price = 12
         self.price_ask = 40
         self.price_bid = 11
         self.qty_bid = 200
@@ -83,8 +83,8 @@ class QAP_4538(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.price)
-        self.rule_list = [nos_fok_rule]
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.qty, self.price)
+        self.rule_list = [nos_ioc_rule]
         # endregion
 
         now = datetime.today() - timedelta(hours=3)
