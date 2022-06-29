@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import List
 
 from th2_grpc_act_gui_quod import bag_mgt_pb2
-from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails, OrderBagBookDetails, GetOrderBagBookDetailsRequest
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails
 
 
 class PegsOrdDetails:
@@ -149,7 +149,7 @@ class GetOrderBagBookDetails:
         length = len(filter_list)
         i = 0
         while i < length:
-            self.orderbag_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.order_bag_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
     def add_bag_order_info(self, bag_order_info_list: list):
@@ -266,3 +266,33 @@ class OrderBagCreationDetails:
 
     def build(self):
         return self.order_bag_creation
+
+
+class OrderBagCompleteDetails:
+    def __init__(self, base_request):
+        self.order_bag_complete_details = bag_mgt_pb2.OrderBagCompleteDetails()
+        self.order_bag_complete_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_complete_details.filter.update(filter_dict)
+
+    def set_is_complete(self, is_complete):
+        self.order_bag_complete_details.isComplete = is_complete
+
+    def build(self):
+        return self.order_bag_complete_details
+
+
+class CreateOrderDetails:
+    def __init__(self, base_request):
+        self.__create_order_via_bag_details = bag_mgt_pb2.CreateOrderDetails()
+        self.__create_order_via_bag_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__create_order_via_bag_details.filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__create_order_via_bag_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__create_order_via_bag_details
