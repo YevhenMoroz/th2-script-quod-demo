@@ -19,9 +19,6 @@ class QAP_2105(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
-        self.fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
-        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
@@ -34,7 +31,7 @@ class QAP_2105(TestCase):
         self.usd_php = self.data_set.get_symbol_by_name("symbol_ndf_1")
         self.php = self.data_set.get_currency_by_name("currency_php")
         self.security_type_nds = self.data_set.get_security_type_by_name("fx_nds")
-        self.qty_2m = "2000000"
+        self.qty_2m = "20000000"
         self.buy_side = '1'
         self.sell_side = '2'
         self.instrument = {
@@ -61,8 +58,9 @@ class QAP_2105(TestCase):
         # endregion
 
         # region Step 2
-        self.new_order_single.set_default_prev_quoted_swap_ndf(self.quote_request, response[0], side=self.sell_side)
-        self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
+        self.new_order_single.set_default_prev_quoted_swap_ndf_ccy2(self.quote_request, response[0],
+                                                                    side=self.sell_side)
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
 
         self.execution_report.set_params_from_new_order_swap_ndf(self.new_order_single)
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
