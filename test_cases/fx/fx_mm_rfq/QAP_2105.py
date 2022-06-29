@@ -31,7 +31,6 @@ class QAP_2105(TestCase):
         self.usd_php = self.data_set.get_symbol_by_name("symbol_ndf_1")
         self.php = self.data_set.get_currency_by_name("currency_php")
         self.security_type_nds = self.data_set.get_security_type_by_name("fx_nds")
-        self.qty_2m = "20000000"
         self.buy_side = '1'
         self.sell_side = '2'
         self.instrument = {
@@ -48,7 +47,7 @@ class QAP_2105(TestCase):
                                                            Instrument=self.instrument,
                                                            Currency=self.php)
         self.quote_request.update_near_leg(leg_side=self.buy_side)
-        self.quote_request.update_far_leg(leg_side=self.sell_side, leg_qty=self.qty_2m)
+        self.quote_request.update_far_leg(leg_side=self.sell_side)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
