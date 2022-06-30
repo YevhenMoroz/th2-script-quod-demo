@@ -70,7 +70,7 @@ class QAP_2857(TestCase):
 
         self.multilisting_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multilisting_params()
         self.multilisting_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument)).add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName':'AllowedPassiveVenues', 'StrategyParameterType':14, 'StrategyParameterValue':'TRQX_er'}]).add_tag(dict(SecurityExchange='TRERROR'))
+        self.multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument)).add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName':'AllowedPassiveVenues', 'StrategyParameterType':14, 'StrategyParameterValue':'TRQX_er'}])
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
