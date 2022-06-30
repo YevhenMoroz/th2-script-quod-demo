@@ -95,4 +95,5 @@ class OMSOrderBook(BaseOrderBook):
         self.sub_lvl_info_details = SubLvlInfo()
         self.get_sub_lvl_details = GetSubLvlDetails(self.base_request)
         self.extract_sub_lvl_details_call = Stubs.win_act_order_book.extractSubLvlDetails
+        self.exec_summary_call = Stubs.win_act_order_book.execSummary
         # endregion
