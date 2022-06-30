@@ -11,7 +11,7 @@ from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteF
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-class QAP_6519(TestCase):
+class QAP_6147(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -22,8 +22,8 @@ class QAP_6519(TestCase):
         self.quote = FixMessageQuoteFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
-        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
-        self.gbp = self.data_set.get_currency_by_name("currency_gbp")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_3")
+        self.gbp = self.data_set.get_currency_by_name("currency_eur")
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         self.settle_date_today = self.data_set.get_settle_date_by_name("today")
         self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
@@ -53,6 +53,10 @@ class QAP_6519(TestCase):
         far_offer_pts = response[0].get_parameter("NoLegs")[1]["LegOfferForwardPoints"]
         expected_bid_swap = str(round(Decimal.from_float(float(far_offer_pts) - float(near_offer_pts)), 6))
         expected_offer_swap = str(round(Decimal.from_float(float(far_bid_pts) - float(near_bid_pts)), 6))
+        if expected_offer_swap == "0.000000":
+            expected_offer_swap = "0"
+        if expected_bid_swap == "0.000000":
+            expected_bid_swap = "0"
         # endregion
         # endregion
 
