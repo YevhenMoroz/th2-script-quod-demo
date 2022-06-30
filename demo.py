@@ -12,6 +12,7 @@ from MyFiles.SendMD_Simple import SendMD_Simple
 from MyFiles.SendMD_empty import SendMD_empty
 from MyFiles.md_to_refresh_prices import send_md_to_update_prices
 from MyFiles.send_md_crossed import send_md_crossed
+from MyFiles.sendmd_different_venues import send_md_defferent_venues
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.fx.fx_mm_autohedging import QAP_2326, QAP_3147, QAP_3146, QAP_2470, QAP_3017, QAP_3039, QAP_3067, \
@@ -43,6 +44,7 @@ from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
 from test_cases.fx.fx_mm_synthetic import QAP_2646
 from test_cases.fx.fx_taker_esp import QAP_3141, QAP_3140, QAP_3418, QAP_3414, QAP_3415, QAP_5598, QAP_5635, QAP_5591, \
     QAP_5600, QAP_5564, QAP_5589, QAP_5537
+from test_cases.fx.fx_taker_esp.QAP_3452 import QAP_3452
 from test_cases.fx.fx_taker_rfq import QAP_612
 from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
 from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
@@ -100,9 +102,11 @@ def test_run():
         # QAP_6691(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_6697(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_7073(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_6931(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_6933(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_7279(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_5369.execute(report_id, session_id, data_set)
         # QAP_5589.execute(report_id, session_id)
         # QAP_5591.execute(report_id, session_id)
@@ -111,12 +115,13 @@ def test_run():
         # QAP_3140.execute(report_id)
         # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # send_rfq.execute(report_id)
-        # SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_empty(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # send_md_crossed(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_Settle_Date(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # Send_MD_FWD(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # send_md_to_update_prices(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # send_md_defferent_venues(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_7129(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_7081(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_7160(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
