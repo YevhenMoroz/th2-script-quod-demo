@@ -40,6 +40,7 @@ class QAP_3498(TestCase):
         self.weight_itg = 15
         self.weight_tqdarkeu = 10
         self.weight_tqdark = 0
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_8.value
         self.qty_chix_child, self.qty_bats_child, self.qty_cboe_child, self.qty_itg_child, self.qty_tqdarkeu_child, self.qty_tqdark_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats, self.weight_cboe, self.weight_itg, self.weight_tqdarkeu, self.weight_tqdark)
         self.price = 20
         # endregion
@@ -112,7 +113,7 @@ class QAP_3498(TestCase):
 
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty))
+        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, ClientAlgoPolicyID=self.algopolicy))
 
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
