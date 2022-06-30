@@ -650,6 +650,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist('ExDestination'):
+            temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         temp.update(
             AvgPx='*',
             ClOrdID='*',
@@ -659,13 +661,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecID='*',
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdStatus=4,
+            OrdStatus=8,
             Side=new_order_single.get_parameter('Side'),
-            Text='order canceled',
+            Text='*',
             TransactTime='*',
-            ExecType=4,
-            LeavesQty=0,
-            ExDestination=new_order_single.get_parameter('ExDestination')
+            ExecType=8,
+            LeavesQty=0
         )
         super().change_parameters(temp)
         return self
