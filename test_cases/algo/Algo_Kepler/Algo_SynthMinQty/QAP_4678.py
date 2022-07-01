@@ -149,7 +149,7 @@ class QAP_4678(TestCase):
         time.sleep(1)
 
         self.fix_verifier_sell.check_fix_message(self.synthMinQty_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
-        
+
         er_replaced_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
         er_replaced_synthMinQty_order_params.add_tag(dict(SettlDate='*', SettlType='*', NoParty='*', MinQty=self.dec_min_qty, SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_replaced_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
@@ -188,7 +188,7 @@ class QAP_4678(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive 2 child DMA order", self.test_id))
 
         self.dma_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
-        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.trade_qty, Price=self.price))
+        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.trade_qty, Price=self.price, TimeInForce=self.tif_fok))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 2 order')
 
         er_pending_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_pending)
