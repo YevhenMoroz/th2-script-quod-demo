@@ -46,23 +46,10 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
             OrderID='*',
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             OrigClOrdID='*',
-            OrdStatus="0",
+            OrdStatus='0',
             CxlRejResponseTo='1',
             Text='cancel reject',
             TransactTime='*',
         )
         super().change_parameters(temp)
         return self
-
-    # def update_fix_message(self, parameters: dict) -> None:
-    #     temp = dict(
-    #         Account='*',
-    #         OrderID=parameters["ClOrdID"],
-    #         ClOrdID=parameters["ClOrdID"],
-    #         OrigClOrdID=parameters["ClOrdID"],
-    #         OrdStatus='0',
-    #         CxlRejResponseTo='1',
-    #         Text='cancel reject',
-    #         TransactTime='*'
-    #     )
-    #     super().change_parameters(temp)
