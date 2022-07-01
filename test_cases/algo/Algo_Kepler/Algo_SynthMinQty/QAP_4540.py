@@ -134,7 +134,7 @@ class QAP_4540(TestCase):
         self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_new)
-        er_new_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
+        er_new_synthMinQty_order_params.add_tag(dict(NoParty='*', SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -165,7 +165,7 @@ class QAP_4540(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Partiall fill Algo Order", self.test_id))
         er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_partial_fill)
-        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.trade_qty, LeavesQty=self.leaves_qty, LastQty=self.trade_qty, Text='Filled')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID']).add_tag(dict(LastMkt='*', ChildOrderID='*', Instrument='*', ExDestination='*'))
+        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.trade_qty, LeavesQty=self.leaves_qty, LastQty=self.trade_qty, Text='Filled')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID']).add_tag(dict(NoStrategyParameters='*', SecondaryAlgoPolicyID='*', LastExecutionPolicy='*',  LastMkt='*', ChildOrderID='*', Instrument='*', ExDestination='*'))
         self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
@@ -203,7 +203,7 @@ class QAP_4540(TestCase):
         # endregion
 
         er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(SettlDate='*')).add_tag(dict(MinQty=self.min_qty)).add_tag(dict(NoParty='*')).change_parameters(dict(AvgPx=self.price, CxlQty=self.leaves_qty, CumQty=self.trade_qty))
+        er_cancel_synthMinQty_order_params.add_tag(dict(SettlDate='*', MinQty=self.min_qty, NoParty='*', SecondaryAlgoPolicyID='*')).change_parameters(dict(AvgPx=self.price, CxlQty=self.leaves_qty, CumQty=self.trade_qty))
         self.fix_verifier_sell.check_fix_message(er_cancel_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
