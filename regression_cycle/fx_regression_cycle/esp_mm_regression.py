@@ -8,6 +8,7 @@ from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
 from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
 from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
+from test_cases.fx.fx_mm_esp.QAP_6289 import QAP_6289
 from test_cases.fx.fx_mm_esp.QAP_7160 import QAP_7160
 from test_cases.fx.fx_mm_esp.QAP_7167 import QAP_7167
 from test_cases.fx.fx_mm_esp.QAP_8010 import QAP_8010
@@ -109,6 +110,7 @@ def test_run(parent_id=None):
         QAP_6153(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_6149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         QAP_3537(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        QAP_6289(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_7160(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_7167(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_8010(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
