@@ -591,8 +591,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'ExDestination': 'QDL1',
             'OrderCapacity': 'A',
-            'ShortCode': '17536',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
         }
         super().change_parameters(base_parameters)
