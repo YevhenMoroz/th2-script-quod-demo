@@ -76,6 +76,7 @@ class QAP_6067(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_ER_cancel_reject_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
+        self.key_params_ER_cancel_reject_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_parent")
         # endregion
 
         self.rule_list = []
@@ -165,7 +166,6 @@ class QAP_6067(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel first DMA 1 order")
         # endregion
 
-        # TODO Check is it work?
         # region check reject cancel second dma child order
         er_reject_cancel_dma_bats_order = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_reject)
         self.fix_verifier_buy.check_fix_message(er_reject_cancel_dma_bats_order, self.key_params_ER_cancel_reject_child, self.ToQuod, "Buy Side OrderCancelRejectReport child DMA 2 order")
@@ -173,7 +173,7 @@ class QAP_6067(TestCase):
 
         # TODO Check is it work?
         er_cancel_mp_dark_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell side ExecReport Cancel')
 
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
