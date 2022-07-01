@@ -126,7 +126,7 @@ class QAP_4538(TestCase):
         self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_new)
-        er_new_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
+        er_new_synthMinQty_order_params.add_tag(dict(NoParty='*', SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -157,7 +157,7 @@ class QAP_4538(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_fill)
-        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Text='Filled')).remove_parameters(['ReplyReceivedTime', 'TradeReportingIndicator', 'SecAltIDGrp', 'SecondaryClOrdID']).add_tag(dict(MinQty=self.min_qty, IClOrdIdAO='*', SecondaryAlgoPolicyID='*', ShortCode='*', ChildOrderID='*', Instrument='*'))
+        er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument='*', Text='*')).add_tag(dict(NoStrategyParameters='*', SecondaryAlgoPolicyID='*', LastExecutionPolicy='*', LastMkt='*', ChildOrderID='*', ExDestination='*')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID', 'ReplyReceivedTime', 'TradeReportingIndicator'])
         self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
