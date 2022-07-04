@@ -43,6 +43,10 @@ def wk1_ndf():
     return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
 
 
+def wk1_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=5)).date().strftime('%Y%m%d')
+
+
 def wk2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y%m%d')
 
@@ -51,8 +55,16 @@ def wk2_ndf():
     return (tm(datetime.utcnow().isoformat()) + bd(n=11)).date().strftime('%Y%m%d')
 
 
+def wk2_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=10)).date().strftime('%Y%m%d')
+
+
 def wk3():
     return (tm(datetime.utcnow().isoformat()) + bd(n=17)).date().strftime('%Y%m%d')
+
+
+def wk3_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=16)).date().strftime('%Y%m%d')
 
 
 def m1():

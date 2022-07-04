@@ -80,6 +80,7 @@ class BaseDataSet:
     instr_symbol = None
     symbol = None
     instr_type = None
+    fx_istr_type_wa = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -237,6 +238,11 @@ class BaseDataSet:
         if hasattr(self.instrument_id, name):
             return getattr(self.instrument_id, name).value
         raise ValueError(f"{self.instrument_id} not found!")
+
+    def get_fx_instr_type_wa(self, name: str):
+        if hasattr(self.fx_istr_type_wa, name):
+            return getattr(self.fx_istr_type_wa, name).value
+        return ValueError(f"{self.fx_istr_type_wa} not found!")
 
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
