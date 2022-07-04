@@ -665,3 +665,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_DMA_Child_of_SORPING_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
