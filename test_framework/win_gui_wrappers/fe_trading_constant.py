@@ -59,6 +59,7 @@ class OrderBookColumns(Enum):
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
     disclose_exec = "DiscloseExec"
+    disclosed_exec = "DisclosedExec"
     exec_fees = "Exec Fees"
     washbook = 'Wash Book'
     capacity = 'Capacity'
@@ -260,6 +261,8 @@ class Status(Enum):
     new = 'New'
     rejected = 'Rejected'
     frozen = 'Frozen'
+    canceled = "Canceled"
+    cancelled = "Cancelled"
 
 
 class QuoteStatus(Enum):
@@ -369,6 +372,7 @@ class SecondLevelTabs(Enum):
     orders_tab = 'Orders'
     alloc_instruction_qties = "Alloc Instruction Qties"
     slicing_orders = 'Slicing Orders'
+    order_bag_waves = 'Order Bag Waves'
 
 
 class PostTradeStatuses(Enum):

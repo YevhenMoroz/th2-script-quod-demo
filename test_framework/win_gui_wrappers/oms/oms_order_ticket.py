@@ -3,10 +3,11 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
-from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTableParams
+from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTableParams, SettlementTabDetails
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, OrderTicketExtractedValue, ExtractOrderTicketValuesRequest, \
-    ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails, AdwOrdTabDetails
+    ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails, AdwOrdTabDetails, \
+    MiscsOrdDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -38,7 +39,10 @@ class OMSOrderTicket(BaseOrderTicket):
         self.commissions_tab_table_details = CommissionsTabTableParams()
         self.commissions_details = CommissionsDetails()
         self.adw_ord_tab_details = AdwOrdTabDetails()
-    # endregion
+        self.miscs_ord_tab_details = MiscsOrdDetails()
+        self.settlement_details = SettlementTabDetails()
+        # endregion
+
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,

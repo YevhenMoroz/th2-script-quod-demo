@@ -31,6 +31,8 @@ class BaseOrderTicket(BaseWindow):
         self.commissions_tab_table_details = None
         self.commissions_details = None
         self.adw_ord_tab_details = None
+        self.miscs_ord_tab_details = None
+        self.settlement_details = None
 
     # endregion
 
@@ -152,6 +154,30 @@ class BaseOrderTicket(BaseWindow):
         self.adw_ord_tab_details.set_min_qty(min_qty)
         self.adw_ord_tab_details.set_qty_type(qty_type)
         return self.order_details.set_adw_ord_details(self.adw_ord_tab_details.build())
+
+    def set_miscs_tab_details(self, booking_fields: list = None, allocations_fields: list = None):
+        if booking_fields is not None:
+            self.miscs_ord_tab_details.set_booking_fields_value(booking_fields)
+        if allocations_fields is not None:
+            self.miscs_ord_tab_details.set_allocations_fields_value(allocations_fields)
+        return self.order_details.set_miscs_details(self.miscs_ord_tab_details.build())
+
+    def set_settlement_details(self, settl_currency=None, settl_type=None, settl_date=None, exchange_rate=None,
+                               exchange_rate_calc=None, cash_account=None):
+        if settl_currency is not None:
+            self.settlement_details.set_settl_currency(settl_currency)
+        if settl_type is not None:
+            self.settlement_details.set_settl_type(settl_type)
+        if settl_date is not None:
+            self.settlement_details.set_settl_date(settl_date)
+        if exchange_rate is not None:
+            self.settlement_details.set_exchange_rate(exchange_rate)
+        if exchange_rate_calc is not None:
+            self.settlement_details.set_exchange_rate_calc(exchange_rate_calc)
+        if cash_account is not None:
+            self.settlement_details.set_cash_account(cash_account)
+        return self.order_details.set_settlement_details(self.settlement_details.build())
+
     # endregion
 
     # region Get
