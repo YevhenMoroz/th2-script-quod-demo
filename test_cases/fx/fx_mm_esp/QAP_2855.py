@@ -11,16 +11,15 @@ class QAP_2855(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rates_tile = None
 
         self.ask_band = RatesColumnNames.ask_band
         self.bid_band = RatesColumnNames.bid_band
 
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
 
-        self.client = self.data_set.get_client_tier_by_name("client_tier_4")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
-        self.instrument = self.symbol + "-Spot"
+        self.palladium1 = self.data_set.get_client_tier_by_name("client_tier_4")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.gbp_usd_spot = self.gbp_usd + "-Spot"
         self.band_200k = "200K"
         self.band_6m200k = "6.2M"
         self.band_1b200m = "1.2B"
@@ -31,7 +30,7 @@ class QAP_2855(TestCase):
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.rates_tile.crete_tile()
-        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        self.rates_tile.modify_client_tile(instrument=self.gbp_usd_spot, client_tier=self.palladium1)
 
         row_values = self.rates_tile.extract_values_from_rates(self.bid_band, self.ask_band, row_number=1)
         actual_bid_band = row_values[str(self.bid_band)]
