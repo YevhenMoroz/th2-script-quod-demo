@@ -119,6 +119,14 @@ class FxSecurityTypes(Enum):
     fx_nds = "FXNDS"
 
 
+class FxInstrTypeWA(Enum):
+    fx_spot = "SPO"
+    fx_fwd = "FXF"
+    fx_swap = "FXS"
+    fx_ndf = "NDF"
+    fx_nds = "NDS"
+
+
 class FxSettleTypes(Enum):
     today = "1"
     tomorrow = "2"

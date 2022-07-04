@@ -21,13 +21,13 @@ class CumTradingLimitsDimensionsSubWizard(CommonPage):
         return self.get_text_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_SUB_VENUE_XPATH)
 
     def set_listing_group(self, value):
-        self.set_combobox_value(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH)
+        self.set_combobox_value(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH, value)
 
     def get_listing_group(self):
         return self.get_text_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH)
 
     def set_listing(self, value):
-        self.set_text_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_XPATH, value)
+        self.set_combobox_value(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_XPATH, value)
 
     def get_listing(self):
         return self.get_text_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_XPATH)

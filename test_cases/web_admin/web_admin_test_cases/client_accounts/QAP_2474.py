@@ -41,7 +41,7 @@ class QAP_2474(CommonTestCase):
         dimensions_sub_wizard.set_venue(self.venue)
         dimensions_sub_wizard.set_account_id_source(self.account_id_source)
         dimensions_sub_wizard.set_default_route(self.default_route)
-        dimensions_sub_wizard.click_create_entity_button()
+        dimensions_sub_wizard.click_on_checkmark_button()
         time.sleep(2)
 
     def test_context(self):

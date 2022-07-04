@@ -148,10 +148,6 @@ class WatchListPage(CommonPage):
 
     # endregion
 
-    # TODO: pay attention!
-    def horizontal_scroll(self):
-        self.scroll(WatchListConstants.HORIZONTAL_SCROLL_XPATH, WatchListConstants.SCROLL_END_XPATH)
-
     def offset_horizontal_slide(self):
         slider = self.find_by_xpath(WatchListConstants.HORIZONTAL_SCROLL_XPATH)
         action = ActionChains(self.web_driver_container.get_driver())

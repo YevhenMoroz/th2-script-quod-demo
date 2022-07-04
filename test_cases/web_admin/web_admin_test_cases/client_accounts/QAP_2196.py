@@ -54,7 +54,7 @@ class QAP_2196(CommonTestCase):
         dimensions_sub_wizard.set_venue(self.venue)
         dimensions_sub_wizard.set_account_id_source(self.account_id_source)
         time.sleep(2)
-        dimensions_sub_wizard.click_create_entity_button()
+        dimensions_sub_wizard.click_on_checkmark_button()
         time.sleep(2)
         wizard = AccountsWizard(self.web_driver_container)
         wizard.click_save_button()
