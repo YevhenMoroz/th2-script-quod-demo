@@ -1,97 +1,64 @@
-import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo_ndf, wk1_ndf
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.utils import call, get_base_request
-
-from win_gui_modules.wrappers import set_base
-
-
-def check_order_book(base_request, act_ob, case_id, qty, currency):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(["Qty", qty])
-    ob_side = ExtractionDetail("orderBook.side", "Side")
-    ob_ord_type = ExtractionDetail("orderBook.ordType", "OrdType")
-    ob_currency = ExtractionDetail("orderBook.currency", "Currency")
-    ob_instr_type = ExtractionDetail("orderBook.instrType", "InstrType")
-    ob_exec_status= ExtractionDetail("orderBook.sts", "ExecSts")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[ob_side, ob_ord_type, ob_currency, ob_instr_type, ob_exec_status])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check order book")
-    verifier.compare_values("Order side", "Sell", response[ob_side.name])
-    verifier.compare_values("Order type", "PreviouslyQuoted", response[ob_ord_type.name])
-    verifier.compare_values("Order currency", currency, response[ob_currency.name])
-    verifier.compare_values("Order InstrType", "FXNDS", response[ob_instr_type.name])
-    verifier.compare_values("Order status", "Filled", response[ob_exec_status.name])
-    verifier.verify()
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_2104(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-    set_base(session_id, case_id)
+        self.acc_iridium = self.data_set.get_client_by_name("client_mm_3")
+        self.usd_php = self.data_set.get_symbol_by_name("symbol_ndf_1")
+        self.security_type_nds = self.data_set.get_security_type_by_name("fx_nds")
+        self.buy_side = '1'
+        self.sell_side = '2'
+        self.instrument = {
+            "Symbol": self.usd_php,
+            "SecurityType": self.security_type_nds}
 
-    ob_service = Stubs.win_act_order_book
-    case_base_request = get_base_request(session_id, case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_swap_ndf()
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                           Side=self.sell_side,
+                                                           Account=self.acc_iridium,
+                                                           Instrument=self.instrument)
+        self.quote_request.update_near_leg(leg_side=self.buy_side)
+        self.quote_request.update_far_leg(leg_side=self.sell_side)
+        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    qty_1 = random_qty(1, 3, 7)
-    symbol = "USD/PHP"
-    security_type_swap = "FXNDS"
-    security_type_fwd = "FXNDF"
-    security_type_spo = "FXSPOT"
-    settle_date = spo_ndf()
-    leg2_settle_date = wk1_ndf()
-    settle_type_leg1 = "0"
-    settle_type_leg2 = "W1"
-    currency = "USD"
-    settle_currency = "PHP"
+        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
+                                            key_parameters=["MDReqID"])
+        self.quote.set_params_for_quote_swap_ndf(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion
 
-    side = "2"
-    leg1_side = "1"
-    leg2_side = "2"
-    try:
-        # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty_1, leg1_ordqty=qty_1, leg2_ordqty=qty_1,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type_spo,
-                                   leg2_securitytype=security_type_fwd,
-                                   securityid=symbol, account=account)
+        # region Step 2
+        self.new_order_single.set_default_prev_quoted_swap_ndf(self.quote_request, response[0],
+                                                                    side=self.sell_side)
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
 
-        rfq_swap = FixClientSellRfq(params)
-        rfq_swap.send_request_for_quote_swap()
-        rfq_swap.verify_quote_pending_swap()
-        price = rfq_swap.extract_filed("BidPx")
-        # Step 2
-        rfq_swap.send_new_order_multi_leg(price)
-        # Step 3
-        rfq_swap.verify_order_pending_swap(price)
-        rfq_swap.verify_order_filled_swap(price)
-
-        # Step 4
-        check_order_book(case_base_request, ob_service, case_id, qty_1, currency)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.execution_report.set_params_from_new_order_swap_ndf(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
