@@ -18,7 +18,7 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_4184(CommonTestCase):
+class QAP_4178(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
@@ -26,13 +26,14 @@ class QAP_4184(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.test_data = {"name": "QAP4184",
+        self.test_data = {"name": "QAP4178",
                           "venue":
                               {"id": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                                "type": "DarkPool",
-                               "client_venue_id": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
+                               "client_venue_id": ''.join(
+                                   random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
                           "subvenue":
-                              {"venue": "AMEX"}}
+                              {"venue": "QAP4178"}}
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -86,17 +87,24 @@ class QAP_4184(CommonTestCase):
             venues_page.click_on_edit()
             time.sleep(2)
             venues_values_wizard = VenuesValuesSubWizard(self.web_driver_container)
-            selected_values_at_position_flattening_period = \
-                [str(i).strip() for i in venues_values_wizard.get_position_flattening_period().split(",")]
-            if len(selected_values_at_position_flattening_period) > 1:
-                venues_values_wizard.set_position_flattening_period(selected_values_at_position_flattening_period)
+            venue_all_position_flattening_period = venues_values_wizard.get_all_position_flattening_period_drop_menu()
+            venues_values_wizard.set_position_flattening_period(
+                random.sample(venue_all_position_flattening_period, int(len(venue_all_position_flattening_period) / 2)))
+            venues_values_before_save = [str(i).strip() for i in venues_values_wizard.get_position_flattening_period()
+                .split(",")]
             venues_wizard = VenuesWizard(self.web_driver_container)
             venues_wizard.click_on_save_changes()
             time.sleep(2)
             venues_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
-            self.verify("Venue has been saved with the empty Position Flattering Period field", True,
-                        venues_page.is_searched_venue_found(self.test_data["name"]))
+            venues_page.click_on_more_actions()
+            time.sleep(1)
+            venues_page.click_on_edit()
+            time.sleep(2)
+            venues_values_after_save = [str(i).strip() for i in venues_values_wizard.get_position_flattening_period()
+                .split(",")]
+            self.verify("Venues Position Flattering Period field contains correct date",
+                        sorted(venues_values_before_save), sorted(venues_values_after_save))
             venues_wizard.click_on_close()
             time.sleep(1)
             venues_wizard.click_on_ok_button()
@@ -111,18 +119,23 @@ class QAP_4184(CommonTestCase):
             subvenue_page.click_on_edit()
             time.sleep(2)
             subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-            selected_values_at_position_flattening_period = \
-                [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
-            if "" not in selected_values_at_position_flattening_period:
-                subvenue_description_wizard.set_position_flattening_period(
-                    selected_values_at_position_flattening_period)
+            subvenue_venue_all_position_flattening_period = subvenue_description_wizard.get_all_position_flattening_period_drop_menu()
+            subvenue_description_wizard.set_position_flattening_period(
+                random.sample(subvenue_venue_all_position_flattening_period,
+                              int(len(subvenue_venue_all_position_flattening_period) / 2)))
+            subvenue_values_before_save = [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
             subvenue_wizard = SubVenuesWizard(self.web_driver_container)
             subvenue_wizard.click_on_save_changes()
             time.sleep(2)
             subvenue_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
-            self.verify("SubVenue has been saved with the empty Position Flattering Period field", True,
-                        subvenue_page.is_searched_subvenue_found(self.test_data["name"]))
+            subvenue_page.click_on_more_actions()
+            time.sleep(1)
+            subvenue_page.click_on_edit()
+            time.sleep(2)
+            subvenue_values_after_save = [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
+            self.verify("SubVenues Position Flattering Period field contains correct date",
+                        sorted(subvenue_values_before_save), sorted(subvenue_values_after_save))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
