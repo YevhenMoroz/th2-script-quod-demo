@@ -40,7 +40,6 @@ class QAP_3616(TestCase):
         # region Declaration
         # region create first CO order
         self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept first CO order
         self.client_inbox.accept_order()
@@ -60,9 +59,6 @@ class QAP_3616(TestCase):
         # endregion
         # region manual cross orders
         res = self.order_book.manual_cross_orders([1, 2], self.qty, '0', last_mkt=self.last_mkt)
-        # endregion
-        # region manual cross
-        print(res)
         self.order_book.compare_values({"Error": "Error - [QUOD-11603] 'ExecPrice' (0) negative or zero"},
                                        {"Error": res}, "Check Error in Manual Cross footer")
         # endregion
