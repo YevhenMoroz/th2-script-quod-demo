@@ -51,3 +51,9 @@ class SubVenuesDescriptionSubWizard(CommonPage):
 
     def is_feed_source_editable(self):
         return self.is_field_enabled(SubVenuesConstants.DESCRIPTION_TAB_FEED_SOURCE_XPATH)
+
+    def set_position_flattening_period(self, value):
+        self.set_checkbox_list(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH, value)
+
+    def get_position_flattening_period(self):
+        return self.get_text_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH)

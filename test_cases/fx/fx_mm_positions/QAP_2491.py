@@ -32,7 +32,7 @@ def modify_rates_tile(base_request, service, instrument, client):
 def place_order_buy(base_request, service, qty, slippage, client):
     place_request = PlaceRatesTileOrderRequest(details=base_request)
     place_request.set_quantity(qty)
-    place_request.set_slippage(slippage)
+    place_request.set_order_type('Market')
     place_request.set_client(client)
     place_request.buy()
     call(service.placeRatesTileOrder, place_request.build())
@@ -47,7 +47,7 @@ def place_order(base_request, service, qty, slippage, client):
     order_ticket = FXOrderDetails()
     order_ticket.set_qty(qty)
     order_ticket.set_client(client)
-    order_ticket.set_slippage(slippage)
+    order_ticket.set_order_type('Market')
     order_ticket.set_place()
     new_order_details = NewFxOrderDetails(base_request, order_ticket, isMM=True)
     call(service.placeFxOrder, new_order_details.build())

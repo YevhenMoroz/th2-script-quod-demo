@@ -46,3 +46,6 @@ class SystemCommandsPage(CommonPage):
 
     def is_error_displayed(self):
         return self.is_element_present(SystemCommandsConstants.ERROR_XPATH)
+
+    def is_command_field_displayed(self):
+        return self.is_element_present(SystemCommandsConstants.SYSTEM_COMMANDS_XPATH)

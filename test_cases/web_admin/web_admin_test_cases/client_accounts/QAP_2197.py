@@ -59,7 +59,7 @@ class QAP_2197(CommonTestCase):
         accounts_dimensions_subwizard.set_venue(self.venue)
         accounts_dimensions_subwizard.set_account_id_source(self.account_id_source)
         accounts_dimensions_subwizard.set_default_route(self.default_route)
-        accounts_dimensions_subwizard.click_create_entity_button()
+        accounts_dimensions_subwizard.click_on_checkmark_button()
 
         accounts_wizard.click_save_button()
         time.sleep(2)
@@ -89,7 +89,7 @@ class QAP_2197(CommonTestCase):
             accounts_dimensions_subwizard.set_venue(new_venue)
             accounts_dimensions_subwizard.set_account_id_source(new_account_id_source)
             accounts_dimensions_subwizard.set_default_route(new_default_route)
-            accounts_dimensions_subwizard.click_create_entity_button()
+            accounts_dimensions_subwizard.click_on_checkmark_button()
             accounts_wizard.click_save_button()
             time.sleep(2)
             self.verify("Popup context", "Account changes saved", accounts_page.get_popup_text())

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
 from th2_grpc_act_gui_quod import bag_mgt_pb2
@@ -296,3 +297,47 @@ class CreateOrderDetails:
 
     def build(self):
         return self.__create_order_via_bag_details
+
+
+class ModifySubLevelBagOrderDetails:
+    def __init__(self, base_request):
+        self.__modify_sub_level_details = bag_mgt_pb2.ModifySubLevelBagOrderDetails()
+        self.__modify_sub_level_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.filter.update(filter_dict)
+
+    def set_sub_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.sub_filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__modify_sub_level_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__modify_sub_level_details
+
+
+class WaveTicketExtractedValue(Enum):
+    TIF = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.TIF
+
+
+class ExtractWaveTicketValuesRequest:
+    def __init__(self, base_request, extractionId: str = 'extractWaveTicketValues'):
+        self.__request = bag_mgt_pb2.ExtractWaveTicketValuesRequest()
+        self.__request.base.CopyFrom(base_request)
+        self.__request.extractionId = extractionId
+
+    def get_tif_state(self):
+        self.get_extract_value(WaveTicketExtractedValue.TIF, "TIF")
+
+    def get_extract_value(self, field: WaveTicketExtractedValue, name: str):
+        extracted_value = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request.extractedValues.append(extracted_value)
+
+    def set_filter(self, filter_dict: dict):
+        self.__request.filter.update(filter_dict)
+
+    def build(self):
+        return self.__request

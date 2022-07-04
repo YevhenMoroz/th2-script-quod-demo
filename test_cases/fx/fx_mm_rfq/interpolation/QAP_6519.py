@@ -51,8 +51,8 @@ class QAP_6519(TestCase):
         near_offer_pts = response[0].get_parameter("NoLegs")[0]["LegOfferForwardPoints"]
         far_bid_pts = response[0].get_parameter("NoLegs")[1]["LegBidForwardPoints"]
         far_offer_pts = response[0].get_parameter("NoLegs")[1]["LegOfferForwardPoints"]
-        expected_bid_swap = str(round(Decimal.from_float(float(far_bid_pts) - float(near_bid_pts)), 6))
-        expected_offer_swap = str(round(Decimal.from_float(float(far_offer_pts) - float(near_offer_pts)), 6))
+        expected_bid_swap = str(round(Decimal.from_float(float(far_offer_pts) - float(near_offer_pts)), 6))
+        expected_offer_swap = str(round(Decimal.from_float(float(far_bid_pts) - float(near_bid_pts)), 6))
         # endregion
         # endregion
 
