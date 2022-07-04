@@ -173,7 +173,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
-    verifier_key_parameters_ER_2_child = ['ExDestination', 'OrdStatus', 'ExecType', 'TimeInForce']
+    verifier_key_parameters_ER_2_child = ['ExDestination', 'OrdStatus', 'ExecType']
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_ER_2_Eliminate_child = ['OrdStatus', 'ExecType', 'TimeInForce']
     verifier_key_parameters_ER_cancel_reject_child = ['Account', 'OrdStatus']
