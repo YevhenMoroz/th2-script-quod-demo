@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.reference_data.venues.venues_constants import VenuesConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -48,6 +50,11 @@ class VenuesFeaturesSubWizard(CommonPage):
 
     def get_time_zone(self):
         return self.get_text_by_xpath(VenuesConstants.FEATURES_TAB_TIME_ZONE_XPATH)
+
+    def get_all_time_zones_from_drop_menu(self):
+        self.set_time_zone("")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(VenuesConstants.FEATURES_TAB_TIME_ZONE_XPATH)
 
     def set_default_execution_strategy(self, value):
         self.set_combobox_value(VenuesConstants.FEATURES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH, value)

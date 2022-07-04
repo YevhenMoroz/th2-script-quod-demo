@@ -719,12 +719,15 @@ class ManualCrossDetails:
         for row in row_numbers:
             self._request.selectedRows.append(row)
 
+    def set_extract_footer(self):
+        self._request.manualCrossValues.CopyFrom(ExtractManualCrossValuesRequest("ErrorMessage").build())
+
     def build(self):
         return self._request
 
 
 class ExtractManualCrossValuesRequest:
-    def __init__(self, extraction_id: int = None, manual_cross_extracted_value: list = None):
+    def __init__(self, extraction_id: str = None, manual_cross_extracted_value: list = None):
         self._request = order_book_pb2.ExtractManualCrossValuesRequest()
         if extraction_id is not None:
             self._request.extractionId = extraction_id

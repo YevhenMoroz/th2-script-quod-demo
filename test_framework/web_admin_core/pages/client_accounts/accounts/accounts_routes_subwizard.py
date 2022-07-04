@@ -7,7 +7,7 @@ class AccountsRoutesSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def open_routes_subwizard(self):
+    def click_on_plus_button(self):
         self.find_by_xpath(AccountsConstants.ADD_ROUTES_ENTITY_BUTTON_XPATH).click()
 
     def filter_routes(self, route_account_name: str = "", route: str = ""):
@@ -20,7 +20,7 @@ class AccountsRoutesSubWizard(CommonPage):
     def click_delete_button(self):
         self.find_by_xpath(AccountsConstants.ROUTES_DELETE_BUTTON_XPATH).click()
 
-    def click_create_entity_button(self):
+    def click_on_checkmark_button(self):
         self.find_by_xpath(AccountsConstants.ROUTES_CREATE_ENTITY_BUTTON_XPATH).click()
 
     def click_discard_entity_button(self):
@@ -37,3 +37,15 @@ class AccountsRoutesSubWizard(CommonPage):
 
     def get_route(self):
         return self.get_text_by_xpath(AccountsConstants.ROUTES_ROUTE_COMBOBOX_XPATH)
+
+    def set_default_route(self, value):
+        self.set_combobox_value(AccountsConstants.ROUTES_DEFAULT_ROUTE_XPATH, value)
+
+    def get_default_route(self):
+        return self.get_text_by_xpath(AccountsConstants.ROUTES_DEFAULT_ROUTE_XPATH)
+
+    def select_agent_fee_exemption_checkbox(self):
+        self.find_by_xpath(AccountsConstants.ROUTES_AGENT_FEE_EXEMPTION_XPATH)
+        
+    def is_agent_fee_exemption_selected(self):
+        return self.is_checkbox_selected(AccountsConstants.ROUTES_AGENT_FEE_EXEMPTION_XPATH)
