@@ -1,69 +1,68 @@
 import logging
-
-from th2_grpc_act_gui_quod.order_book_pb2 import ExtractManualCrossValuesRequest
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import ManualCrossDetails
-from win_gui_modules.utils import get_base_request, call
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3616"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
-    price = "30"
-    client = "CLIENT_FIX_CARE"
-    lookup = "VETO"
-    last_mkt = 'DASI'
-    selected_rows = [1, 2]
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create order via fix
-    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    # endregion
-    # region accept 1 order
-    # eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    # region accept 2 order
-    # eq_wrappers.accept_order(lookup, qty, price)
-    # endregion
-    # region manual_cross
-    act2 = Stubs.win_act_order_book
-    error_message = ExtractManualCrossValuesRequest.ManualCrossExtractedValue()
-    error_message.name = "ErrorMessage"
-    error_message.type = ExtractManualCrossValuesRequest.ManualCrossExtractedType.ERROR_MESSAGE
-    request = ExtractManualCrossValuesRequest()
-    request.extractionId = "ManualCrossErrorMessageExtractionID"
-    request.extractedValues.append(error_message)
-    manual_cross_details = ManualCrossDetails()
-    manual_cross_details.set_default_params(base_request)
-    manual_cross_details.set_price('0')
-    manual_cross_details.set_last_mkt(last_mkt)
-    manual_cross_details.set_quantity(qty)
-    manual_cross_details.set_selected_rows({1,2})
-    manual_cross_details.manualCrossValues.CopyFrom(request)
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_3616(TestCase):
 
-    response = call(act2.manualCross, manual_cross_details.build())
-    print(response)
-    # verifier = Verifier(case_id)
-    # verifier.set_event_name("Check value")
-    # verifier.compare_values('Error', response, "gtr")
-    # verifier.verify()
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.qty = "200"
+        self.qty_exec = "100"
+        self.price = "10"
+        self.price_mc = "8"
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
+        self.fix_message.change_parameter("Price", self.price)
+        self.last_mkt = "XASE"
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create first CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept first CO order
+        self.client_inbox.accept_order()
+        # endregion
+        # region create second CO order
+        self.fix_message.change_parameter("Side", "2")
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept second CO order
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual exec order
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).manual_execution(qty=self.qty_exec)
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        # endregion
+        # region manual cross orders
+        res = self.order_book.manual_cross_orders([1, 2], self.qty, '0', last_mkt=self.last_mkt)
+        # endregion
+        # region manual cross
+        print(res)
+        self.order_book.compare_values({"Error": "Error - [QUOD-11603] 'ExecPrice' (0) negative or zero"},
+                                       {"Error": res}, "Check Error in Manual Cross footer")
+        # endregion
