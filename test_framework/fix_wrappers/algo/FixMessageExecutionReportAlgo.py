@@ -200,7 +200,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.get_parameter('TargetStrategy') != '1008':
+        if new_order_single.get_parameter('TargetStrategy') != '1008' and new_order_single.get_parameter('TargetStrategy') != '1011':
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
         if new_order_single.get_parameter('TargetStrategy') == '1008':
             temp.update(
@@ -215,7 +215,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty='*')
-        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') == 'QA_SORPING':
+        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') == 'QA_SORPING_1':
             temp.update(
                 IClOrdIdAO='*',
                 SecondaryAlgoPolicyID='*',
@@ -558,6 +558,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
+            ExDestination=new_order_single.get_parameter('ExDestination'),
             AvgPx='*',
             ClOrdID='*',
             CumQty='0',
