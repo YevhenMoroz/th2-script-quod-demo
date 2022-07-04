@@ -85,7 +85,7 @@ class QAP_2408(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
-        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
         self.rule_list = []
@@ -164,7 +164,7 @@ class QAP_2408(TestCase):
 
         er_eliminate_dma_qdpkp1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdpkp1_order, self.gateway_side_buy, self.status_eliminate)
         er_eliminate_dma_qdpkp1_order.add_tag(dict(ExDestination=self.ex_destination_quoddkp1, OrdType='*', Text='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Price', 'Currency', 'Instrument'])
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdpkp1_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdpkp1_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order")
         # endregion
 
         # region Check child DMA order on venue QUODPKP2
@@ -174,7 +174,7 @@ class QAP_2408(TestCase):
 
         er_eliminate_dma_qdpkp2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdpkp2_order, self.gateway_side_buy, self.status_eliminate)
         er_eliminate_dma_qdpkp2_order.add_tag(dict(ExDestination=self.ex_destination_quoddkp2, OrdType='*', Text='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Price', 'Currency', 'Instrument'])
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdpkp2_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdpkp2_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
         # endregion
         # endregion
 
@@ -206,7 +206,7 @@ class QAP_2408(TestCase):
 
         # region check cancel third dma child order
         er_cancel_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
