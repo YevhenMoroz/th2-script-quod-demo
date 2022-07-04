@@ -96,3 +96,9 @@ class VenuesValuesSubWizard(CommonPage):
 
     def is_not_found_present_in_drop_menu(self):
         return self.find_by_xpath(VenuesConstants.NOT_FOUND_OPTION_IN_DROP_DOWN_XPATH).text
+
+    def set_position_flattening_period(self, value):
+        self.set_checkbox_list(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH, value)
+
+    def get_position_flattening_period(self):
+        return self.get_text_by_xpath(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH)
