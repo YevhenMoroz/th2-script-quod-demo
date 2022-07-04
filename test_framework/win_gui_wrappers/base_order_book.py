@@ -459,7 +459,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.manual_executing_details])
         return result
 
-    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None):
+    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None,extract_footer=False):
         if qty is not None:
             self.manual_cross_details.set_quantity(qty)
         if price is not None:
@@ -467,6 +467,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
+        if extract_footer:
+            self.manual_cross_details.set_extract_footer()
         result = call(self.manual_cross_call, self.manual_cross_details.build())
         return result["Footer value"]
 
