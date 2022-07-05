@@ -206,3 +206,4 @@ class QAP_2410(TestCase):
     def run_post_conditions(self):
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
+
