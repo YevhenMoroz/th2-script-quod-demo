@@ -521,7 +521,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrdType': '2',
             'Price': '20',
             'Side': '1',
-            'Instrument': Instrument.BUI.value,
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
             'TimeInForce': '0',
             "TransactTime": '*',
             'ExDestination': 'BATD',
