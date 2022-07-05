@@ -53,6 +53,8 @@ class BaseDataSet:
     middle_office_status = None
     middle_office_match_status = None
     capacity = None
+    scenario = None
+    strategy = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -466,6 +468,15 @@ class BaseDataSet:
             return getattr(self.middle_office_match_status, name).value
         raise ValueError(f"{self.middle_office_match_status} not found!")
 
+    def get_strategy(self, name: str):
+        if hasattr(self.strategy, name):
+            return getattr(self.strategy, name).value
+        raise ValueError(f"{self.strategy} not found!")
+
+    def get_scenario(self, name: str):
+        if hasattr(self.scenario, name):
+            return getattr(self.scenario, name).value
+        raise ValueError(f"{self.scenario} not found!")
     # region WebAdmin getters
 
     def get_user(self, name: str):

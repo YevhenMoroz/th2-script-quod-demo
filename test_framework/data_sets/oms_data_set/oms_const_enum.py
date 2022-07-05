@@ -320,3 +320,11 @@ class OMSOrdType(Enum):
 
 class OMSCapacity(Enum):
     agency = 'Agency'
+
+
+class OMSBagStrategy(Enum):
+    internal_twap = "Quod Financial Internal TWAP"
+
+
+class OMSBagScenario(Enum):
+    twap_strategy = "TWAP strategy"
