@@ -85,7 +85,7 @@ class QAP_2409(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
-        self.key_params_ER_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
+        self.key_params_ER_eliminate_or_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
         # endregion
 
         self.rule_list = []
@@ -181,7 +181,7 @@ class QAP_2409(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         er_fill_dma_qdl1__order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1__order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1__order, self.key_params_ER_eliminate_or_fill_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order")
         # endregion
 
         # region Check Lit child DMA order on venue QUODLIT2
@@ -190,10 +190,10 @@ class QAP_2409(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 4 order')
 
         er_fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill child DMA 4 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_eliminate_or_fill_child, self.ToQuod, "Buy Side ExecReport Fill child DMA 4 order")
         # endregion
         
-        # region Check fill parent order
+        # region Check eliminate parent order
         er_fill_SORPING_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_fill)
         er_fill_SORPING_order.change_parameters(dict(LastQty=self.qty_for_lit_1_child, Instrument='*')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID']).add_tag(dict(LastMkt='*', ChildOrderID='*', ExDestination='*'))
         self.fix_verifier_sell.check_fix_message(er_fill_SORPING_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
