@@ -20,7 +20,7 @@ class VenuesPage(CommonPage):
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(VenuesConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(VenuesConstants.DOWNLOAD_PDF_AT_MORE_ACTION_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
@@ -83,3 +83,6 @@ class VenuesPage(CommonPage):
 
     def get_counterpart(self):
         return self.find_by_xpath(VenuesConstants.MAIN_PAGE_COUNTERPART_XPATH).text
+
+    def is_searched_venue_found(self, value):
+        return self.is_element_present(VenuesConstants.DISPLAYED_VENUE_XPATH.format(value))

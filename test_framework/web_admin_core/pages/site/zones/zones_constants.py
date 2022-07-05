@@ -1,5 +1,6 @@
 class ZonesConstants:
     ZONES_PAGE_TITLE_XPATH = "//span[@class= 'entity-title left']//*[text()='Zones']"
+    ZONES_WIZARD_PAGE_TITLE_XPATH = '//div[@class="breadcrumbs entity-title"]//*[text()="Zones"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
@@ -22,7 +23,6 @@ class ZonesConstants:
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
-
 
     MAIN_PAGE_DOWNLOAD_CSV_XPATH = "//*[@data-name='download']"
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
