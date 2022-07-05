@@ -260,12 +260,8 @@ class FixMessageQuoteFX(FixMessage):
                     quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"]:
                 self.add_tag({"BidPx": "*"})
                 self.add_tag({"BidSwapPoints": "*"})
-                # temp[0].pop('LegOfferPx')
-                temp[0].pop('LegOfferForwardPoints')
                 temp[0].pop('LegBidPx')
-                # temp[0].pop('LegOfferForwardPoints')
-                # temp[1].pop('LegBidPx')
-                # temp[1].pop('LegBidForwardPoints')
+                temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegOfferPx')
                 temp[1].pop('LegOfferForwardPoints')
                 self.remove_parameters(["OfferPx", "OfferSwapPoints"])
