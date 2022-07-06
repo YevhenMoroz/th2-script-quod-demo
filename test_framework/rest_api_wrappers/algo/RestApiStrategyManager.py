@@ -8,7 +8,7 @@ class RestApiAlgoManager(RestApiManager):
     def __init__(self, session_alias, case_id=None):
         super().__init__(session_alias, case_id)
 
-    def modify_strategy(self, strategy_name: str, parameter_name: str, new_parameter_value: str):
+    def modify_strategy_parameter(self, strategy_name: str, parameter_name: str, new_parameter_value: str):
         # region send get request
         rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
@@ -47,7 +47,7 @@ class RestApiAlgoManager(RestApiManager):
             raise ValueError(f"No scenarioParameterName with name {parameter_name}")
         # endregion
 
-    def modify_strategy2(self, strategy_name: str, parameters: dict):
+    def modify_strategy_parameters_list(self, strategy_name: str, parameters: dict):
         # region send get request
         rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
