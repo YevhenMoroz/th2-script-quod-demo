@@ -20,7 +20,7 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             )
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or new_order_single.get_parameter('TargetStrategy') != '1004':
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') != '1004':
             temp.update(NoStrategyParameters=new_order_single.get_parameter('NoStrategyParameters'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
