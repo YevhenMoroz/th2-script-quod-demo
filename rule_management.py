@@ -12,7 +12,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, TemplateNewOrdSingleRQFRestated
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -426,12 +426,17 @@ class RuleManager:
                                                     newReply=new_reply,
                                                     RestatedReply=restated_reply
                                                     ))
+
+    def add_NewOrdSingle_MarketAuction(self, session: str, account: str, venue: str):
+        return self.sim.createNewOrdSingleMarketAuction(
+            request=TemplateNewOrdSingleMarketAuction(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               venue=venue))
     # ------------------------
 
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
     # rule_manager.remove_rule_by_id(33)
     rule_manager.print_active_rules()
