@@ -354,14 +354,15 @@ class RuleManager:
                                                               price=price
                                                               ))
 
-    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject"):
+    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject", delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportRejectWithReason(
             request=TemplateNewOrdSingleExecutionReportRejectWithReason(connection_id=ConnectionID(session_alias=session),
                                                               account=account,
                                                               exdestination=ex_destination,
                                                               price=price,
                                                               reason=reason,
-                                                              text=text
+                                                              text=text,
+                                                              delay=delay
                                                               ))
 
     def add_fx_md_to(self, session: str):
