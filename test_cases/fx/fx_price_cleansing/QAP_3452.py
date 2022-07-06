@@ -38,8 +38,6 @@ class QAP_3452(TestCase):
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.symbol = self.data_set.get_symbol_by_name('symbol_2')
-        self.from_cur = self.symbol.split('/')[0]
-        self.to_cur = self.symbol.split('/')[1]
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
         self.security_type = self.data_set.get_security_type_by_name("fx_spot")
@@ -137,4 +135,4 @@ class QAP_3452(TestCase):
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_citi}")
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_marketdata_th2.send_message(self.md_request, self.test_id)
