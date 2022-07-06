@@ -14,6 +14,7 @@ from th2_grpc_act_gui_quod.dealer_intervention_operations_service import DealerI
 from th2_grpc_act_gui_quod.layout_panel_service import LayoutPanelServiceService
 from th2_grpc_act_gui_quod.fx_dealing_positions_service import FxDealingPositionsServiceService
 from th2_grpc_act_gui_quod.middle_office_service import MiddleOfficeOperationsService
+from th2_grpc_act_gui_quod.order_book_archive_service import OrderBookArchiveServiceService
 from th2_grpc_act_gui_quod.order_book_fx_service import OrderBookFXServiceService
 from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
@@ -75,6 +76,7 @@ class Stubs:
     win_act_booking_blotter_service = factory.grpc_router.get_service(BookingsBlotterServiceService)
     win_act_risk_management = factory.grpc_router.get_service(RiskManagementServiceService)
     win_act_child_order_book = factory.grpc_router.get_service(ChildOrderBookServiceService)
+    win_act_order_book_archive = factory.grpc_router.get_service(OrderBookArchiveServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 
