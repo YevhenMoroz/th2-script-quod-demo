@@ -41,6 +41,10 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
 
     def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
+        if new_order_single.get_parameter('TargetStrategy') == '1010' or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+            temp.update(
+                SecondaryAlgoPolicyID='*',
+            )
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             OrderID='*',
@@ -48,7 +52,7 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
             OrigClOrdID='*',
             OrdStatus='0',
             CxlRejResponseTo='1',
-            Text='cancel reject',
+            Text='*',
             TransactTime='*',
         )
         super().change_parameters(temp)
