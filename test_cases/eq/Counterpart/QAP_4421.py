@@ -1,21 +1,16 @@
 import logging
-import os
 import time
 
-from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
-
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
-from test_framework.fix_wrappers.DataSet import Instrument
+from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -25,88 +20,71 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_4421(TestCase):
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
-        self.dc_connectivity = SessionAliasOMS().dc_connectivity
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
+        self.client = self.data_set.get_client_by_name("client_counterpart_1")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.qty=self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter("Price")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
+        self.mic = self.data_set.get_mic_by_name("mic_2")
+        self.cur = self.data_set.get_currency_by_name("currency_3")
+        self.change_params = {'Account': self.client,
+                              "Currency": self.cur,
+                              'ExDestination': self.mic,
+                              'PreAllocGrp': {
+                                  'NoAllocs': [{
+                                      'AllocAccount': self.account,
+                                      'AllocQty': "100"}]}}
+        self.client_id = self.fix_message.get_parameter('ClOrdID')
+        self.fix_message.change_parameters(self.change_params)
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier_bs = FixVerifier(self.fix_env.drop_copy, self.test_id)
 
-    def qap_4421(self):
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.report_id)
-        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        ord_book = OMSOrderBook(self.case_id, self.session_id)
-        main_win = BaseMainWindow(self.case_id, self.session_id)
-        ord_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        clt_inbox = OMSClientInbox(self.case_id, self.session_id)
-        client = "CLIENT_COUNTERPART"
-        alloc_acc = "CLIENT_COUNTERPART_SA1"
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        # endregion
-        # region Open FE
-        main_win.open_fe(self.report_id, work_dir, username, password)
-        # endregion
         # region create Care order
-        change_params = {'Account': client,
-                         'ExDestination': 'XEUR',
-                         'PreAllocGrp': {
-                             'NoAllocs': [{
-                                 'AllocAccount': alloc_acc,
-                                 'AllocQty': "100"}]}, }
-        nos = FixMessageNewOrderSingleOMS().set_default_care_limit(Instrument.ISI1).change_parameters(change_params)
-        fix_manager.send_message_and_receive_response_fix_standard(nos)
-        cl_ord_id = nos.get_parameters()['ClOrdID']
-        qty = nos.get_parameters()['OrderQtyData']['OrderQty']
-        price = nos.get_parameters()['Price']
+        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         # endregion
         # region Accept order
-        clt_inbox.accept_order("EUREX", qty, price)
+        self.client_inbox.accept_order()
         # endregion
         # region Split
+        nos_rule=None
+        trade_rule=None
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             client + "_EUREX", "XEUR",
-                                                                                             20)
-            trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_EUREX", "XEUR", 20,
-                                                                                       100, 2)
-            ord_ticket.split_order(['ClOrdID', cl_ord_id])
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                             self.client_for_rule, self.mic,
+                                                                                             int(self.price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                       self.client_for_rule, self.mic, int(self.price),
+                                                                                       int(self.qty), 2)
+            self.ord_ticket.split_order([OrderBookColumns.cl_ord_id.value, self.client_id])
 
         finally:
             time.sleep(1)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rele)
-        # endregion
-        # region Un-match
-        exec_id = ord_book.extract_2lvl_fields("Executions", ["ExecID"], [1])
-        exec_id = exec_id[0]['ExecID']
-        order_un_match_detail = {
-            'SEND_SUBJECT': 'QUOD.ORS.FE',
-            'UnMatchRequestBlock': {
-                'UnMatchingList': {'UnMatchingBlock': [
-                    {'VirtualExecID': exec_id, 'UnMatchingQty': qty, 'SourceAccountID': "CareWB",
-                     'PositionType': "N"}
-                ]},
-                'DestinationAccountID': 'PROP'
-            }
-        }
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
 
-        Stubs.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc_fix_standard("Order_UnMatchRequest",
-                                                     order_un_match_detail, "317_java_api"),
-            parent_event_id=self.case_id))
-        # endregion
-        # region Set-up parameters for ExecutionReports
         parties = {
             'NoPartyIDs': [
-                {'PartyRole': "28",
-                 'PartyID': "CustodianUser",
-                 'PartyIDSource': "C"},
+                {'PartyRole': "36",
+                 'PartyRoleQualifier': '1011',
+                 'PartyID': "gtwquod4",
+                 'PartyIDSource': "D"},
                 {'PartyRole': "66",
                  'PartyID': "MarketMaker - TH2Route",
                  'PartyIDSource': "C"},
@@ -116,13 +94,77 @@ class QAP_4421(TestCase):
 
             ]
         }
-        exec_report = FixMessageExecutionReportOMS().set_default_filled(nos).change_parameters(
-            {"Parties": parties})
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
+            {"Parties": parties, "Currency": "GBp"})
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
+            self.fix_message).change_parameters(
+            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Currency": "GBp",
+             "Account": self.account})
+        exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        # endregion
+        # region unmatch and transfer
+        self.order_book.unmatch_and_transfer("Facilitation", {OrderBookColumns.cl_ord_id.value: self.client_id})
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.client_id]).check_order_fields_list(
+            {OrderBookColumns.unmatched_qty.value: self.qty, OrderBookColumns.exec_sts.value: ""})
+        self.__check_exec_tab(OrderBookColumns.qty.value, '0', 1, {OrderBookColumns.cl_ord_id.value: self.client_id})
+        self.__check_exec_tab(OrderBookColumns.unmatched_qty.value, '0', 1, {OrderBookColumns.cl_ord_id.value: self.client_id})
+        self.__check_exec_tab(OrderBookColumns.exec_price.value, '0', 1, {OrderBookColumns.cl_ord_id.value: self.client_id})
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        parties = {
+            'NoPartyIDs': [
+                {'PartyRole': "36",
+                 'PartyRoleQualifier': '1011',
+                 'PartyID': "gtwquod4",
+                 'PartyIDSource': "D"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "67",
+                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyIDSource': "C"}
+
+            ]
+        }
+        noparties = {
+            'NoParty': [
+                {'PartyRole': "36",
+                 'PartyID': "gtwquod4",
+                 'PartyIDSource': "D"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "67",
+                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyIDSource': "C"}
+
+            ]
+        }
+        all_param = {'NoAllocs': [{
+                                      'AllocAccount': self.account,
+                                      'AllocQty': "100",
+                                        "AllocAcctIDSource": '*'}]}
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message).change_parameters(
+            {"Parties": parties, 'ReplyReceivedTime':"*", "Account": self.account,"Currency": "GBp", "LastMkt": self.mic})
+        exec_report1.remove_parameter("SettlCurrency")
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
+            self.fix_message).change_parameters(
+            {"NoParty": noparties,  "Account": self.client, "Currency": "GBp", 'QuodTradeQualifier':'*',
+             "LastMkt": self.mic, "BookID": "*", "tag5120":"*", "ExecBroker": "*", "M_PreAllocGrp": all_param})
+        exec_report2.remove_parameters(['TradeReportingIndicator',  "SettlCurrency", "Parties"])
+        # endregion
+        # region Check ExecutionReports
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier_bs.check_fix_message_fix_standard(exec_report2)
         # endregion
 
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_4421()
+    def __check_exec_tab(self, field:str, expect:str, row:int, filtr:dict = None):
+        acc_res = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
+                                                        [field], [row],
+                                                        filtr)
+        self.order_book.compare_values({field: expect}, {field: acc_res[0][field]}, "Check Execution tab")
+

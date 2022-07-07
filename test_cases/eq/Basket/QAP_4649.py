@@ -1,121 +1,76 @@
+import os
 import logging
-import time
-
-from custom.basic_custom_actions import create_event
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.old_wrappers import eq_fix_wrappers
-from win_gui_modules.wrappers import set_base
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4649(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.message = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.new_price = "456"
 
-def execute(report_id, session_id):
-    case_name = "QAP-4649"
-    # region Declarations
-    client = "CLIENT_FIX_CARE"
-    account = "CLIENT_FIX_CARE_SA1"
-    qty = "900"
-    price = "10"
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    # endregion
-    # region Create order list
-    no_allocs =  [{'AllocAccount': account, 'AllocQty': qty}]
-    no_order = [eq_fix_wrappers.set_fix_order_detail(3, 1, client, 2, qty, 0, price, ListSeqNo=1,no_allocs=no_allocs),
-                eq_fix_wrappers.set_fix_order_detail(3, 2, client, 2, qty, 0, price, ListSeqNo=2,no_allocs=no_allocs)]
-    fix_message = eq_fix_wrappers.create_order_list_via_fix(case_id, no_order)
-    response = fix_message.pop('response')
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region Send NewOrderList
+        self.fix_manager.send_message_fix_standard(self.message)
+        order_id1 =self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=1)
+        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=2)
+        # endregion
+        # region Accept orders
+        self.cl_inbox.accept_order()
+        self.cl_inbox.accept_order()
+        # endregion
+        # region check order status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+        {OrderBookColumns.sts.value: ExecSts.open.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message)
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message, 1)
+        # endregion
+        # region Check ExecutionReports
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        # endregion
+        # region Send OrderCancelReplaceRequest
+        rep_req = FixMessageOrderCancelRequestOMS().set_default_ord_list(self.message)
+        self.fix_manager.send_message_fix_standard(rep_req)
+        self.cl_inbox.accept_and_cancel_children()
+        # endregion
+        # region Set-up parameters for ExecutionReports
+        exec_report3 = FixMessageExecutionReportOMS(self.data_set).set_default_canceled_list(self.message)
+        exec_report3.change_parameter("ExpireDate", "*")
+        exec_report3.change_parameter("SettlDate", "*")
+        exec_report3.change_parameter("CxlQty", "*")
+        # endregion
+        # region Check ExecutionReports
+        self.fix_verifier.check_fix_message_fix_standard(exec_report3)
+        # endregion
 
-    # endregion
-    # region Verify
-    params = {
-        'NoRpts': '*',
-        'ListID': response.response_messages_list[0].fields['ListID'].simple_value,
-        'RptSeq': '*',
-        'ListStatusType': '*',
-        'TotNoOrders': '*',
-        'ListOrderStatus': '3',
-        'OrdListStatGrp': {'NoOrders': [{
-            'AvgPx': '0',
-            'CumQty': '0',
-            'ClOrdID': no_order[0]['ClOrdID'],
-            'LeavesQty': qty,
-        }, {
-            'AvgPx': '0',
-            'CumQty': '0',
-            'ClOrdID': no_order[1]['ClOrdID'],
-            'LeavesQty': qty,
-        }
-        ]}
-    }
-
-    fix_verifier_ss = FixVerifier(eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckListStatus(params, response)
-    # endregion
-    # region Cancel order
-    eq_fix_wrappers.cancel_order_via_fix(case_id, no_order[0]['ClOrdID'], no_order[0]['ClOrdID'], client, 1)
-    # endregion
-    # region Check values after Cancel
-    params = {
-        'Account': client,
-        'OrderQtyData': {'OrderQty': qty},
-        'ExecType': '4',
-        'OrdStatus': '4',
-        'Side': '1',
-        'Price': price,
-        'TimeInForce': '0',
-        'ClOrdID': no_order[0]['ClOrdID'],
-        'OrigClOrdID': no_order[0]['ClOrdID'],
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'Parties': '*',
-        'AvgPx': '*',
-        'CxlQty': qty,
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'Instrument': '*',
-        'header': '*',
-        'ExpireDate': '*',
-    }
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ExecType'])
-    # endregion
-    # region Cancel order list
-    eq_fix_wrappers.cancel_order_list_via_fix(case_id,
-                                              response.response_messages_list[0].fields['ListID'].simple_value)
-    # endregion
-    # region Verify list status
-    params = {
-        'NoRpts': '*',
-        'ListID': response.response_messages_list[0].fields['ListID'].simple_value,
-        'RptSeq': '*',
-        'ListStatusType': '*',
-        'TotNoOrders': '*',
-        'ListOrderStatus': '4',
-        'OrdListStatGrp': {'NoOrders': [{
-            'AvgPx': '0',
-            'CumQty': '0',
-            'ClOrdID': no_order[0]['ClOrdID'],
-            'LeavesQty': '900',
-        }, {
-            'AvgPx': '0',
-            'CumQty': '0',
-            'ClOrdID': no_order[1]['ClOrdID'],
-            'LeavesQty': '900',
-        }
-        ]}
-    }
-    fix_verifier_ss.CheckListStatus(params, response)
-    # endregion
