@@ -132,7 +132,7 @@ class BaseChildOrderBook(BaseWindow):
         self.clear_details([self.extract_child_order_book_data_details])
         return result[column_name]
 
-    def get_child_order_sub_lvl_value(self, row_count: int, extract_value, tab_name, child_book_filter: dict = None):
+    def get_child_order_sub_lvl_value(self, row_count: int, extract_value, tab_name: str, child_book_filter: dict = None):
         self.extract_child_order_book_data_details.set_default_param(self.base_request)
         if child_book_filter is not None:
             self.extract_child_order_book_data_details.set_filter(child_book_filter)  # Set filter for parent order
