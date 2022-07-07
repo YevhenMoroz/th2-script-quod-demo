@@ -20,16 +20,15 @@ price = "20"
 
 
 class QAP_6492(TestCase):
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Initialization
-        ss_connectivity = SessionAliasOMS().ss_connectivity
-        bs_connectivity = SessionAliasOMS().bs_connectivity
-        fix_manager = FixManager(ss_connectivity, self.report_id)
+        fix_env = self.environment.get_list_fix_environment()[0]
+        fix_manager = FixManager(fix_env.sell_side, self.test_id)
         middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         # endregion
         # region Variables
@@ -40,15 +39,15 @@ class QAP_6492(TestCase):
         # region Create and execute order
         try:
             rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
+            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(fix_env.buy_side,
                                                                                              client_venue,
                                                                                              mic, float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(bs_connectivity,
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(fix_env.buy_side,
                                                                                        client_venue, mic,
                                                                                        float(price), int(qty), delay=0)
             nos = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit().change_parameters({"Account":
                                                                                                             client_pt})
-            fix_manager.send_message_and_receive_response_fix_standard(nos)
+            fix_manager.send_message_fix_standard(nos)
         finally:
             time.sleep(1)
             rule_manager.remove_rule(trade_rule)
