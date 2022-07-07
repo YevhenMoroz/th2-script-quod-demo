@@ -32,8 +32,8 @@ class QAP_3452(TestCase):
         self.rest_env = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_manager_gtw = FixManager(self.fix_env.feed_handler, self.test_id)
-        self.fix_manager_marketdata_th2 = FixManager('fix-sell-md-t-314-stand', self.test_id)
-        self.fix_verifier = FixVerifier('fix-sell-md-t-314-stand', self.test_id)
+        self.fix_manager_marketdata_th2 = FixManager(self.fix_env.buy_side_md, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.buy_side_md, self.test_id)
         self.rates_tile = RatesTile(self.test_id, self.session_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
