@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -104,8 +103,6 @@ class QAP_2411(TestCase):
         self.rule_list = [nos_1_rule, nos_2_rule, nos_ioc_rule, ocrr_rule, ocr_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
-
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
@@ -147,11 +144,9 @@ class QAP_2411(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_pending)
-        er_pending_new_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_new)
-        er_new_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -185,7 +180,7 @@ class QAP_2411(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_replaced_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        er_replaced_SORPING_order_params.add_tag(dict(SettlDate='*', SettlType='*', NoParty='*')).remove_parameter('NoStrategyParameters')
+        er_replaced_SORPING_order_params.add_tag(dict(SettlDate='*', SettlType='*', NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_replaced_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -207,7 +202,7 @@ class QAP_2411(TestCase):
         er_pending_new_dma_2_qdl1_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit1))
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        er_new_dma_2_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_qdl1_order, self.gateway_side_buy, self.status_pending)
+        er_new_dma_2_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_qdl1_order, self.gateway_side_buy, self.status_new)
         er_new_dma_2_qdl1_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit1))
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
@@ -251,7 +246,7 @@ class QAP_2411(TestCase):
         er_pending_new_dma_qdl2_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit2))
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_qdl2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 3 order')
 
-        er_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_pending)
+        er_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_new)
         er_new_dma_qdl2_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit2))
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3 order')
         # endregion
@@ -265,7 +260,7 @@ class QAP_2411(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Partial fill Algo Order", self.test_id))
         partially_fill_SORPING_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
-        partially_fill_SORPING_order.change_parameters(dict(Price=self.dec_price, LastPx=self.dec_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty, Text='*', Instrument='*')).add_tag(dict(SecondaryAlgoPolicyID='*', LastExecutionPolicy='*', LastMkt='*', ChildOrderID='*', SettlType='*', ExDestination='*')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID'])
+        partially_fill_SORPING_order.change_parameters(dict(Price=self.dec_price, LastPx=self.dec_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty))
         self.fix_verifier_sell.check_fix_message(partially_fill_SORPING_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partially Fill')
         # endregion
 
@@ -286,7 +281,7 @@ class QAP_2411(TestCase):
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        er_cancel_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*', SettlDate='*', SettlType='*')).change_parameters(dict(AvgPx=self.dec_price, CxlQty=self.leaves_after_amend, CumQty=self.traded_qty))
+        er_cancel_SORPING_order_params.change_parameters(dict(CxlQty=self.leaves_after_amend))
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
