@@ -101,6 +101,14 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="synth_min_qty" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
             </components>
         </product_line>
         <product_line name="fx" run="False">
@@ -397,7 +405,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="True">
+        <product_line name="retail" run="False">
             <components>
                 <component name="PositionValidity" run="True">
                     <data_set>RetDataSet</data_set>
@@ -492,7 +500,7 @@
                 </component>
              </components>
         </product_line>
-        <product_line name="web_admin" run="False">
+        <product_line name="web_admin" run="True">
             <components>
                 <component name="WA_General" run="True">
                     <data_set>WebAdminDataSet</data_set>
@@ -584,7 +592,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="web_trading" run="True">
+        <product_line name="web_trading" run="False">
             <components>
                 <component name="WebTrading_Login_And_Logout" run="True">
                     <data_set>WebTradingDataSet</data_set>
@@ -652,7 +660,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="mobile_android" run="True">
+        <product_line name="mobile_android" run="False">
             <components>
                 <component name="Mobile_Account" run="True">
                     <data_set>MobileDataSet</data_set>

@@ -31,7 +31,7 @@ class QAP_6725(CommonTestCase):
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.default_result_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.condition_logic_value = "Client"
+        self.condition_logic_value = ["Client"]
         self.client = self.data_set.get_client("client_2")
         self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
         self.percentage = "100"
@@ -114,23 +114,38 @@ class QAP_6725(CommonTestCase):
             order_management_page.click_on_more_actions()
             time.sleep(1)
             order_management_page.click_on_edit_at_more_actions()
+            time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
 
             order_management_conditions_tab = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-            order_management_conditions_tab.click_on_enabled_disable(True)
-            time.sleep(2)
-            self.verify("Condition btn has been disable", False,
-                        order_management_conditions_tab.is_condition_button_enable_disable())
-            time.sleep(1)
-            order_management_conditions_tab.click_on_enabled_disable(True)
-            time.sleep(2)
-            self.verify("Condition btn has been enable", True,
-                        order_management_conditions_tab.is_condition_button_enable_disable())
+            if order_management_conditions_tab.is_condition_button_enable_disable():
+                order_management_conditions_tab.click_on_enabled_disable(True)
+                time.sleep(2)
+                self.verify("Condition btn has been disable", False,
+                            order_management_conditions_tab.is_condition_button_enable_disable())
+                time.sleep(1)
+                order_management_conditions_tab.click_on_enabled_disable(True)
+                time.sleep(2)
+                self.verify("Condition btn has been enable", True,
+                            order_management_conditions_tab.is_condition_button_enable_disable())
+
+            else:
+                time.sleep(1)
+                order_management_conditions_tab.click_on_enabled_disable(True)
+                time.sleep(2)
+                self.verify("Condition btn has been enable", True,
+                            order_management_conditions_tab.is_condition_button_enable_disable())
+                time.sleep(1)
+                order_management_conditions_tab.click_on_enabled_disable(True)
+                time.sleep(2)
+                self.verify("Condition btn has been disable", False,
+                            order_management_conditions_tab.is_condition_button_enable_disable())
 
             order_management_wizard = OrderManagementRulesWizard(self.web_driver_container)
+            time.sleep(2)
             order_management_wizard.click_on_save_changes()
 
         except Exception:

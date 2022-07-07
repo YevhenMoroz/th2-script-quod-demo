@@ -11,7 +11,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
+    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -88,5 +89,10 @@ class OMSOrderBook(BaseOrderBook):
         self.mass_manual_execution_call = Stubs.win_act_order_book.massManualExecution
         self.mass_manual_execution_details = MassManualExecutionDetails(self.base_request)
         self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
-
+        self.unmatch_and_transfer_details = UnmatchAndTransferDetails(self.base_request)
+        self.unmatch_and_transfer_call = Stubs.win_act_order_book.unmatchAndTransfer
+        self.get_empty_rows_call = Stubs.win_act_order_book.checkIfOBGridHaveNoRows
+        self.sub_lvl_info_details = SubLvlInfo()
+        self.get_sub_lvl_details = GetSubLvlDetails(self.base_request)
+        self.extract_sub_lvl_details_call = Stubs.win_act_order_book.extractSubLvlDetails
         # endregion

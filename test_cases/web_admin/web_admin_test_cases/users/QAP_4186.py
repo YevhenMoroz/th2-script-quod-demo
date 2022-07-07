@@ -97,8 +97,8 @@ class QAP_4186(CommonTestCase):
 
             actual_result = [str(i).strip() for i in values_tab.get_non_visible_position_flattening_periods().split(",")]
 
-            self.verify("Incorrect or missing values error appears", self.non_visible_position_flattening_periods,
-                        actual_result)
+            self.verify("Field is editable, new value is saved by the system",
+                        self.non_visible_position_flattening_periods, actual_result)
 
             self.post_conditions()
 

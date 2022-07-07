@@ -37,13 +37,13 @@ class QAP_6934(CommonTestCase):
         time.sleep(2)
         listing_wizard = ListingsWizard(self.web_driver_container)
         listing_wizard.click_on_save_changes()
+        time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
             listing_page = ListingsPage(self.web_driver_container)
             listing_page.search_listing_and_click_edit_btn("a")
-            time.sleep(2)
             listing_market_identifier_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
             self.verify("\"Product Complex\" field set correctly", self.product_complex,
                         listing_market_identifier_tab.get_product_complex())

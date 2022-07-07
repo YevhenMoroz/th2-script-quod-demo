@@ -82,3 +82,6 @@ class SubVenuesPage(CommonPage):
 
     def get_news_symbol(self):
         return self.find_by_xpath(SubVenuesConstants.MAIN_PAGE_NEWS_SYMBOL_XPATH).text
+
+    def is_searched_subvenue_found(self, value):
+        return self.is_element_present(SubVenuesConstants.DISPLAYED_SUBVENUE_XPATH.format(value))

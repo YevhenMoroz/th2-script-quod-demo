@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from th2_grpc_act_gui_quod import trades_pb2
 
+
 class MatchDetails:
 
     def __init__(self):
@@ -44,8 +45,15 @@ class ModifyTradesDetails:
     def set_default_params(self, base_request):
         self.modify_trades_details.base.CopyFrom(base_request)
 
+    def set_selected_rows(self, row_numbers: list):
+        self.modify_trades_details.selectedRows.extend(row_numbers)
+
+    def set_order_to_match(self, order_to_match: str):
+        self.modify_trades_details.orderToMatch = order_to_match
+
     def build(self):
         return self.modify_trades_details
+
 
 class CancelManualExecutionDetails:
     def __init__(self):
@@ -61,5 +69,24 @@ class CancelManualExecutionDetails:
         return self.cancel_manual_execution_details
 
 
+class ExtractTradesBookSubLvlDataDetails:
+    def __init__(self):
+        self.details = trades_pb2.ExtractTradesBookSubLvlDataDetails()
 
+    def set_default_params(self, base_request):
+        self.details.base.CopyFrom(base_request)
 
+    def set_filter(self, filter: dict):
+        self.details.filter.update(filter)
+
+    def set_column_names(self, column_names: list):
+        self.details.columnNames.extend(column_names)
+
+    def set_row_number(self, row_number):
+        self.details.rowsNumber = row_number
+
+    def set_tab_name(self, tab_name):
+        self.details.tabName = tab_name
+
+    def build(self):
+        return self.details

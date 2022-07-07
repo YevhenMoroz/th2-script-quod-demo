@@ -1,60 +1,76 @@
-import logging
-from datetime import datetime
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo, broken_2, wk3,  broken_w1w2
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-
-client = 'Argentina1'
-account = 'Argentina1_1'
-client_tier = 'Argentina'
-symbol = "EUR/GBP"
-security_type_swap = "FXSWAP"
-security_type_fwd = "FXFWD"
-security_type_spo = "FXSPO"
-settle_date_spo = spo()
-settle_date_w1 = wk1()
-settle_date_w2 = wk2()
-settle_type_spo = "0"
-settle_type_w1 = "W1"
-settle_type_w2 = "W2"
-currency = "EUR"
-settle_currency = "GBP"
-qty = '1000000'
-side = "1"
-leg1_side = "2"
-leg2_side = "1"
+from custom.verifier import Verifier
+from test_cases.fx.fx_wrapper.common_tools import random_qty
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
+from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
 
+class QAP_3721(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.verifier = Verifier(self.test_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.account = self.data_set.get_client_by_name("client_mm_2")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
 
-def send_swap_and_filled(case_id):
-    params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                    orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
-                                    currency=currency, settlcurrency=settle_currency,
-                                    leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
-                                    settldate=settle_date_spo, leg1_settldate=settle_date_w1,
-                                    leg2_settldate=settle_date_w2,
-                                    symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                    securitytype=security_type_swap, leg1_securitytype=security_type_fwd,
-                                    leg2_securitytype=security_type_fwd,
-                                    securityid=symbol, account=account)
-    # Step 1
-    rfq = FixClientSellRfq(params_swap)\
-        .send_request_for_quote_swap()
-    #Step 2
+        self.qty = random_qty(1, 5, 7)
 
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_swap
+        }
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_swap_fwd_fwd()
+        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+                                                           Currency=self.currency, Instrument=self.instrument)
+        response = self.fix_manager_sel.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
+        # endregion
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
-        send_swap_and_filled(case_id)
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # region Step 2
+        client_column = QuoteRequestBookColumns.client.value
+        self.dealer_intervention.set_list_filter([client_column, self.account]).assign_quote(1)
+        self.dealer_intervention.estimate_quote()
+        time.sleep(10)
+        self.dealer_intervention.send_quote()
+        time.sleep(2)
+        self.dealer_intervention.close_window()
+        # endregion
+        # region Step 3
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        quote_response = next(response)
+        quote_from_di = self.fix_manager_sel.parse_response(quote_response)[0]
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, quote_from_di, side="1")
+        self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report)
+        # endregion

@@ -77,12 +77,14 @@ class CommonPage:
         time.sleep(1)
         self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)).click()
 
-    def select_value_from_dropdown_list(self, xpath: str):
+    def select_value_from_dropdown_list(self, xpath: str, value: str):
         """
         Method was created for select value from dropdown list
         if if there is no input field
         """
         self.find_by_xpath(xpath).click()
+        time.sleep(1)
+        self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
@@ -152,12 +154,25 @@ class CommonPage:
     def use_keyboard_esc_button(self):
         self.find_by_xpath("//body").send_keys(Keys.ESCAPE)
 
-    def scroll(self, source_xpath, target_xpath):
+    def horizontal_scroll(self, search_element):
         '''
         Method was created for scroll
         '''
-        action = ActionChains(self.web_driver_container)
-        action.drag_and_drop(source_xpath, target_xpath).perform()
+        scr_elem = self.find_by_xpath(CommonConstants.HORIZONTAL_SCROLL_ELEMENT_XPATH)
+        elem_size = scr_elem.size['width']
+
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.move_to_element_with_offset(scr_elem, 5, 5)
+        action.click()
+
+        c = 50
+        while elem_size/2 > c:
+            action.click_and_hold()
+            action.move_by_offset(c, 0)
+            c += 50
+            action.perform()
+            if self.is_element_present(search_element):
+                break
 
     def write_to_file(self, path_to_file, value):
         try:
@@ -186,11 +201,11 @@ class CommonPage:
 
     def _get_all_items_from_drop_down(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 
     def _get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 

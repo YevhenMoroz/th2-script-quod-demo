@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
     TradingLimitsConstants
@@ -26,6 +27,11 @@ class TradingLimitsValuesSubWizardPage(CommonPage):
 
     def get_currency(self):
         return self.get_text_by_xpath(TradingLimitsConstants.VALUES_TAB_CURRENCY_XPATH)
+
+    def get_all_currency_from_drop_menu(self):
+        self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_CURRENCY_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(TradingLimitsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_max_quantity(self, value):
         self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MAX_QUANTITY_XPATH, value)

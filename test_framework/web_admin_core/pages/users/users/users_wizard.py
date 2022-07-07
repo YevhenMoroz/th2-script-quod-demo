@@ -31,3 +31,18 @@ class UsersWizard(CommonPage):
             return True
         else:
             return False
+
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(UsersConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
+
+    def is_online_status_displayed(self):
+        return self.is_element_present(UsersConstants.ONLINE_STATUS_XPATH)
+
+    def is_confirmation_pop_displayed(self):
+        return self.is_element_present(UsersConstants.CONFIRM_POP_UP)
+
+    def accept_or_cancel_confirmation(self, confirm: bool):
+        self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click() if confirm \
+            else self.find_by_xpath(UsersConstants.CANCEL_BUTTON_XPATH).click()
+
+

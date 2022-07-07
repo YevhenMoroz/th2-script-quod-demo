@@ -1,4 +1,3 @@
-from custom.tenor_settlement_date import spo, wk1
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.DataSet import MessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
@@ -124,6 +123,45 @@ class FixMessageQuoteRequestFX(FixMessage):
                         "LegSide": "1",
                         "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk2"),
                         "LegSettlType": self.get_data_set().get_settle_type_by_name("wk2"),
+                        "LegOrderQty": "1000000"
+                    }
+                ]
+            }
+            ]
+        }
+        super().change_parameters(quote_request_swap_params)
+        return self
+
+    def set_swap_ndf(self):
+        quote_request_swap_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NoRelatedSymbols": [{
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
+                "Side": "1",
+                "Currency": self.get_data_set().get_currency_by_name("currency_usd"),
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_ndf_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_nds")
+                },
+                "NoLegs": [
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_ndf_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
+                        },
+                        "LegSide": "2",
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("spo_ndf"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("spot"),
+                        "LegOrderQty": "1000000"
+                    },
+                    {
+                        "InstrumentLeg": {
+                            "LegSymbol": self.get_data_set().get_symbol_by_name("symbol_ndf_1"),
+                            "LegSecurityType": self.get_data_set().get_security_type_by_name("fx_ndf")
+                        },
+                        "LegSide": "1",
+                        "LegSettlDate": self.get_data_set().get_settle_date_by_name("wk1_ndf"),
+                        "LegSettlType": self.get_data_set().get_settle_type_by_name("wk1"),
                         "LegOrderQty": "1000000"
                     }
                 ]

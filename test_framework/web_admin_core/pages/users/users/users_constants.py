@@ -14,9 +14,14 @@ class UsersConstants:
     DOWNLOAD_PDF_AT_WIZARD_XPATH = "//*[@data-name='download']"
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
-    OK_BUTTON_XPATH = "//*[text()='Ok']"
+    OK_BUTTON_XPATH = '//*[text()="OK"]'
+    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
+    REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DISPLAYED_USER_XPATH = "//*[text()='{}']"
+    ONLINE_STATUS_XPATH = '//*[@icon="circle-fill"]'
+    ALL_DISPLAYED_USERS_XPATH = '//*[@ref="eCenterContainer"]//div[@role="row"]'
+    NOT_FOUND_OPTION_XPATH = '//*[normalize-space(text())="Not found"]'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -35,7 +40,7 @@ class UsersConstants:
     EMAIL_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/div/input'
     ENABLED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[7]/div[1]/ng-component/select'
     LOCKED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/ng-component/select'
-    CONNECTED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[9]/div[1]/ng-component/select'
+    CONNECTED_FILTER_AT_MAIN_PAGE = '(//*[@style="width: 200px; left: 3400px;"])[2]//ng-component'
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
 
     # values for getters
@@ -61,8 +66,9 @@ class UsersConstants:
     SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON = "//*[text()='First Login']"
     ERROR_MESSAGE_IN_FOOTER = "//*[@outline='danger']"
+    CONFIRM_POP_UP = '(//nb-card)[2]'
 
-    # Login sub wizard
+    # Values sub wizard
 
     USER_ID_AT_LOGIN_SUB_WIZARD = '//*[text()="User ID *"]/preceding-sibling::input'
     EXT_ID_CLIENT_AT_LOGIN_SUB_WIZARD = '//*[text()="Ext ID Client *"]/preceding-sibling::input'
@@ -74,6 +80,10 @@ class UsersConstants:
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
     NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="excludedUserRolesPosValidity"]//button'
+    CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[text()="Change Password"]'
+    NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="newPassword"]'
+    CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="confirmNewPassword"]'
+    CHANGE_PASSWORD_BUTTON_AT_POP_UP_LOGIN_SUB_WIZARD = '//div[@class="change-password"]//button[@status="primary"]'
 
     GENERATE_PIN_CODE_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate PIN Code"]/preceding-sibling::span'
     GENERATE_PASSWORD_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate Password"]/preceding-sibling::span'
@@ -96,7 +106,9 @@ class UsersConstants:
     DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@class="cdk-overlay-container"]//*[text()="{}"]'
     LOCATION_AT_ASSIGNMENTS_SUB_WIZARD = '//*[text()="Location"]/preceding-sibling::input'
     ZONE_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Zone']/preceding-sibling::input"
+    SELECTED_ZONE_URL_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@form-control-name="zone"]//a'
     INSTITUTION = "//*[text()='Institution']/preceding-sibling::input"
+    TECHNICAL_USER_CHECKBOX_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@formcontrolname="technicalUser"]//span[1]'
 
     # Role
     PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'

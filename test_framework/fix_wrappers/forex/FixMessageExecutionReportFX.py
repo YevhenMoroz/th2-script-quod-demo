@@ -137,6 +137,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
+            LastMkt="*",
             OrdStatus="8",
             TransactTime="*",
             ExecRestatementReason="*",

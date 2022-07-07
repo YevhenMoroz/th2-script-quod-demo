@@ -42,7 +42,7 @@ class QAP_1959(TestCase):
         self.qty_bid = self.qty_ask = 1000000
 
         now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate=(now + timedelta(days=1)).strftime("%Y%m%d")
+        self.ExpireDate = (now + timedelta(days=1)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -135,15 +135,15 @@ class QAP_1959(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 1 order", self.test_id))
 
-        dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        dma_1_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(dma_1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
+        pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport gNew Child DMA 1 order')
+        new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport gNew Child DMA 1 order')
         # endregion
 
         # region Modify parent multilisting order
@@ -159,27 +159,16 @@ class QAP_1959(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
+        replaced_multilisting_order_params.change_parameters(dict(ExpireDate=self.ExpireDate)).add_tag(dict(SettlType='*', SettlDate='*'))
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
-        # region Check second child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 2 order", self.test_id))
-
-        self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd, ExpireDate=self.ExpireDate))
-        self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2 order')
-
-        pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
-        pending_dma_2_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
-        self.fix_verifier_buy.check_fix_message(pending_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
-
-        new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
-        new_dma_2_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
-        self.fix_verifier_buy.check_fix_message(new_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport gNew Child DMA 2 order')
+        replaced_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
+        replaced_dma_order_params.change_parameters(dict(TimeInForce=self.tif_gtd))
+        self.fix_verifier_buy.check_fix_message(replaced_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy Side ExecReport Replace Request')
         # endregion
 
-
+        time.sleep(3)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -192,12 +181,12 @@ class QAP_1959(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel second dma child order
-        cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_2_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
+        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
         # endregion
 
         cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        cancel_multilisting_order_params.change_parameters(dict(ExpireDate=self.ExpireDate, TimeInForce=self.tif_gtd))
+        cancel_multilisting_order_params.change_parameters(dict(ExpireDate=self.ExpireDate, TimeInForce=self.tif_gtd)).add_tag(dict(SettlType='*', SettlDate='*'))
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
         # endregion
 
