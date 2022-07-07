@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -36,7 +37,7 @@ class QAP_7964(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.rates_tile = RatesTile(self.test_id, self.session_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
-        self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.symbol = self.data_set.get_symbol_by_name('symbol_2')
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
@@ -109,6 +110,8 @@ class QAP_7964(TestCase):
         self.reference_venues = [
             {"venueID": self.venue_reference}
         ]
+        self.text = "no available depth on GBP/USD SPO"
+
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -143,9 +146,8 @@ class QAP_7964(TestCase):
         self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request, [])
-        self.fix_md_snapshot.add_tag({'PriceCleansingReason': '*'})
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
+        self.md_reject.set_md_reject_params(self.md_request, self.text)
+        self.fix_verifier.check_fix_message(fix_message=self.md_reject,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
 
