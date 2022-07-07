@@ -156,7 +156,7 @@ class QAP_4541(TestCase):
 
         # region check fill first dma child order
         er_fill_dma_1_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_qdl1_order, self.gateway_side_buy, self.status_fill)
-        er_fill_dma_1_qdl1_order.change_parameters(dict(CumQty=self.trade_qty, LeavesQty=0, LastQty=self.trade_qty, LastPx=self.price, Text='Filled')).remove_parameter('ExDestination')
+        er_fill_dma_1_qdl1_order.change_parameters(dict(CumQty=self.trade_qty, LeavesQty=0, LastQty=self.trade_qty, LastPx=self.price))
         self.fix_verifier_buy.check_fix_message(er_fill_dma_1_qdl1_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
         # endregion
 
