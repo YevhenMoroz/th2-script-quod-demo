@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 from custom import basic_custom_actions as bca
-from regression_cycle import algo_regression, fx_regression, eq_regression, retail_regression, web_admin_regression, web_trading_regression, mobile_android_regression
+from regression_cycle import algo_regression, fx_regression, oms_regression, retail_regression, web_admin_regression, web_trading_regression, mobile_android_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from datetime import datetime
@@ -21,7 +21,7 @@ def regression_run():
         if eval(root.find(".//product_line[@name='fx']").attrib["run"]):
             fx_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='oms']").attrib["run"]):
-            eq_regression.test_run(report_id)
+            oms_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='retail']").attrib["run"]):
             retail_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='web_admin']").attrib["run"]):

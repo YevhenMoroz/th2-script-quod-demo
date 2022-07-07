@@ -1,7 +1,7 @@
 from custom.basic_custom_actions import timestamps
 from test_cases.eq.PostTrade import QAP_2614, QAP_2615, QAP_2697, QAP_2700, QAP_3338, QAP_3342, QAP_3343, QAP_3349, \
     QAP_3770, QAP_3333, QAP_3344, QAP_3784, QAP_2780, QAP_2849, QAP_2850, QAP_2973, QAP_3000, QAP_3217, QAP_3220, \
-    QAP_3259, QAP_3303, QAP_3310, QAP_3315, QAP_3332, QAP_3334, QAP_3337, QAP_3352, QAP_3388, QAP_3413, QAP_3491, \
+    QAP_3259, QAP_3303, QAP_3315, QAP_3332, QAP_3334, QAP_3337, QAP_3352, QAP_3388, QAP_3413, QAP_3491, \
     QAP_3936, QAP_4349, QAP_4458, QAP_4471
 from stubs import Stubs
 import logging
@@ -35,7 +35,7 @@ def test_run(parent_id=None):
         QAP_3220.execute(report_id, session_id)
         QAP_3259.execute(report_id, session_id)
         QAP_3303.execute(report_id, session_id)
-        QAP_3310.execute(report_id, session_id)
+        # QAP_3310.execute(report_id, session_id)
         QAP_3315.execute(report_id, session_id)
         QAP_3332.execute(report_id, session_id)
         QAP_3333.execute(report_id, session_id)
