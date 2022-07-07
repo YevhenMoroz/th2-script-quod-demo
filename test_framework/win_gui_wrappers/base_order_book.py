@@ -91,6 +91,10 @@ class BaseOrderBook(BaseWindow):
         self.unmatch_and_transfer_call = None
         self.direct_child_care_call = None
         self.get_empty_rows_call = None
+        self.sub_lvl_info_details = None
+        self.get_sub_lvl_details = None
+        self.extract_sub_lvl_details_call = None
+
     # endregion
 
     # region Common func
@@ -133,7 +137,6 @@ class BaseOrderBook(BaseWindow):
             self.clear_details([self.order_details])
             self.set_order_details()
             return response
-
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
@@ -197,6 +200,21 @@ class BaseOrderBook(BaseWindow):
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
         return BaseWindow.split_fees(result)
+
+    def extract_sub_lvl_fields(self, column_names: list, tab_names: list, filter_dict: dict = None,
+                               sub_lvl_filter_dicts: [dict] = []):
+        """extract from any sub lvl"""
+        self.get_sub_lvl_details.set_column_names(column_names)
+        self.get_sub_lvl_details.set_filter(filter_dict)
+
+        for i in range(len(tab_names)):
+            self.sub_lvl_info_details.set_tab_name(tab_names[i])
+            if len(sub_lvl_filter_dicts) > i:
+                self.sub_lvl_info_details.set_filter(sub_lvl_filter_dicts[i])
+            self.get_sub_lvl_details.set_sub_lvl_info(self.sub_lvl_info_details.build())
+        result = call(self.extract_sub_lvl_details_call, self.get_sub_lvl_details.build())
+        self.clear_details([self.sub_lvl_info_details, self.get_sub_lvl_details])
+        return result
 
     # endregion
 

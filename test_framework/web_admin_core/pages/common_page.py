@@ -77,12 +77,14 @@ class CommonPage:
         time.sleep(1)
         self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)).click()
 
-    def select_value_from_dropdown_list(self, xpath: str):
+    def select_value_from_dropdown_list(self, xpath: str, value: str):
         """
         Method was created for select value from dropdown list
         if if there is no input field
         """
         self.find_by_xpath(xpath).click()
+        time.sleep(1)
+        self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
@@ -199,11 +201,11 @@ class CommonPage:
 
     def _get_all_items_from_drop_down(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 
     def _get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 
