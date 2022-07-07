@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -110,8 +109,6 @@ class QAP_2666(TestCase):
         self.rule_list = [nos_1_ioc_rule, nos_2_ioc_rule, nos_rule, nos_3_ioc_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
-
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
@@ -145,11 +142,9 @@ class QAP_2666(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_pending)
-        er_pending_new_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_new)
-        er_new_SORPING_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
