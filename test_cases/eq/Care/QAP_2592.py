@@ -6,15 +6,15 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import  OrderBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.fix_wrappers.FixManager import FixManager
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 class QAP_2592(TestCase):
 
@@ -33,8 +33,6 @@ class QAP_2592(TestCase):
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
 
-
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
@@ -46,11 +44,12 @@ class QAP_2592(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # region split order
-        self.order_ticket.set_order_details(qty=str(int(self.qty)+10))
+        self.order_ticket.set_order_details(qty=str(int(self.qty) + 10))
         self.order_ticket.split_order()
         # endregion
         # region check child qty
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list({OrderBookColumns.qty.value: self.qty})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list(
+            {OrderBookColumns.qty.value: self.qty})
         # endregion
         # region set up 0
         # region create CO order
@@ -69,6 +68,3 @@ class QAP_2592(TestCase):
         print(result)
         self.order_book.compare_values({"ErrorMessage": 'Quantity cannot be negative or null'}, result, "Check value")
         # endregion
-
-
-
