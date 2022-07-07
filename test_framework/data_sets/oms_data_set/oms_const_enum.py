@@ -93,6 +93,7 @@ class OmsClients(Enum):
 class OmsVenueClientNames(Enum):
     """Base"""
     client_1_venue_1 = "XPAR_CLIENT1"
+    client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
@@ -143,6 +144,11 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
+
+
+class AlgoParametersExternal(Enum):
+    parameter_name = "ParameterName"
+    parameter_value = "ParameterValue"
 
 
 class OmsWashbookAccounts(Enum):

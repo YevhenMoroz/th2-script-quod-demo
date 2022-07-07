@@ -20,6 +20,7 @@ class OrderBookColumns(Enum):
     sts = "Sts"
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
+    exec_pcy = "ExecPcy"
     cd_sts = "CDSts"
     near_leg_qty = "NearLegQty"
     far_leg_qty = "FarLegQty"
@@ -77,6 +78,11 @@ class OrderBookColumns(Enum):
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
     isin = "ISIN"
+    is_locked ="IsLocked"
+    basket_name = "Basket Name"
+    basket_id = "Basket ID"
+    strategy_type = "Strategy Type"
+    ex_str_name = "ExternalStrategyName"
     # endregion
 
 
@@ -215,10 +221,18 @@ class BasketBookColumns(Enum):
     status = "Status"
     basket_name = "Basket Name"
     cl_basket_id = "Client Basket ID"
+    time_in_force = "TimeInForce"
+    list_exec_inst_type = "ListExecInstType"
+    orders_tab = "Orders"
+    waves_tab = "Waves"
+    """Orders Tab"""
+    order_id = "Id"
     """Waves Tab"""
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    status_wave = "Status"
+    route_name = "Route Name"
     """Template ticket"""
     name = "Name"
     description = "Description"
@@ -238,6 +252,7 @@ class ExecSts(Enum):
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
     sent = 'Sent'
+    new = "New"
 
 
 class Status(Enum):
@@ -465,6 +480,7 @@ class MenuItemFromOrderBook(Enum):
     split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
+    add_to_basket = 'Add to Basket'
 
 
 class ClientInboxColumns(Enum):
