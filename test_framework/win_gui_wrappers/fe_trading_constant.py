@@ -52,7 +52,6 @@ class OrderBookColumns(Enum):
     net_amount = 'NetAmount'
     net_price = 'NetPrice'
     exec_inst = 'ExecInst'
-    exec_pcy = 'ExecPcy'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'

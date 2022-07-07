@@ -37,5 +37,7 @@ class BaseOrderBookArchive(BaseWindow):
         self.order_book_archive_details.set_filter(filter_dict)
         self.order_book_archive_details.set_column_names(column_names)
         self.order_book_archive_details.get_row_count(get_total_orders)
-        call(self.import_order_from_db_call, self.order_book_archive_details.build())
+        result = call(self.import_order_from_db_call, self.order_book_archive_details.build())
+        self.clear_details([self.order_book_archive_details])
+        return result
     # endregion

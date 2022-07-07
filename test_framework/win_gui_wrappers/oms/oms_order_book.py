@@ -12,7 +12,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
     TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
-    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails
+    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
