@@ -133,7 +133,7 @@ class QAP_1969(TestCase):
         pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
+        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
@@ -146,7 +146,7 @@ class QAP_1969(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         fill_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_fill)
-        fill_multilisted_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument='*')).remove_parameters(['SecAltIDGrp', 'SecondaryClOrdID'])
+        fill_multilisted_order.change_parameters(dict(LastPx=self.price, CumQty=self.qty, LeavesQty=0, LastQty=self.qty))
         self.fix_verifier_sell.check_fix_message(fill_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Fill')
         # endregion
 
