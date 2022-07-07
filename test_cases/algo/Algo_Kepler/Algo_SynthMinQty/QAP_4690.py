@@ -130,15 +130,15 @@ class QAP_4690(TestCase):
         # region Check 1 child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive 1 child DMA order", self.test_id))
 
-        self.dma_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
-        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.qty, Price=self.price_bid, TimeInForce=self.tif_fok)).add_tag(dict(ShortCode='*', IClOrdIdAO='*'))
+        self.dma_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params_with_strategy_tags()
+        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.qty, Price=self.price_bid, TimeInForce=self.tif_fok))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 1 order')
 
         er_pending_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_qdl2_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit2))
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_qdl2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Aggressive Child DMA 1 order')
 
-        er_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_pending)
+        er_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_new)
         er_new_dma_qdl2_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit2))
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Aggressive Child DMA 1 order')
         # endregion
@@ -148,7 +148,7 @@ class QAP_4690(TestCase):
 
         # region check fill first dma child order
         er_fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
-        er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, LastPx=self.price_bid)).remove_parameter('ExDestination')
+        er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, LastPx=self.price_bid))
         self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
         # endregion
 
