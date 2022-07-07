@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -80,9 +79,6 @@ class QAP_4560(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-        now = datetime.today() - timedelta(hours=3)
-
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
@@ -116,11 +112,9 @@ class QAP_4560(TestCase):
         self.fix_verifier_sell.check_fix_message(self.synthMinQty_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_pending)
-        er_pending_new_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_new)
-        er_new_synthMinQty_order_params.add_tag(dict(NoParty='*', SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -137,7 +131,6 @@ class QAP_4560(TestCase):
         self.fix_verifier_sell.check_fix_message(self.synthMinQty_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_replaced_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        er_replaced_synthMinQty_order_params.add_tag(dict(SettlDate='*', SettlType='*', NoParty='*', MinQty=self.dec_min_qty, SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_replaced_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -154,7 +147,6 @@ class QAP_4560(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_synthMinQty_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        er_cancel_synthMinQty_order_params.add_tag(dict(SettlDate='*', SettlType='*', NoParty='*', MinQty=self.dec_min_qty, SecondaryAlgoPolicyID='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
