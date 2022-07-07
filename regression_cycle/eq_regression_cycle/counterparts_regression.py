@@ -9,8 +9,8 @@ from test_cases.eq.Counterpart.QAP_3510 import QAP_3510
 from test_cases.eq.Counterpart.QAP_3743 import QAP_3743
 from test_cases.eq.Counterpart.QAP_4111 import QAP_4111
 from test_cases.eq.Counterpart.QAP_4421 import QAP_4421
-from test_cases.eq.Counterpart.QAP_4903 import QAP_4903
-from test_cases.eq.Counterpart.QAP_5860 import QAP_5860
+# from test_cases.eq.Counterpart.QAP_4903 import QAP_4903
+# from test_cases.eq.Counterpart.QAP_5860 import QAP_5860
 from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -44,8 +44,8 @@ def test_run(parent_id=None):
     QAP_3743(report_id, session_id).execute()
     QAP_4111(report_id, session_id).execute()
     QAP_4421(report_id, session_id).execute()
-    QAP_4903(report_id, session_id).execute()
-    QAP_5860(report_id, session_id).execute()
+    # QAP_4903(report_id, session_id).execute()
+    # QAP_5860(report_id, session_id).execute()
 
 
 if __name__ == '__main__':
