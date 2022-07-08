@@ -164,7 +164,6 @@ class QAP_6067(TestCase):
         self.fix_verifier_buy.check_fix_message(er_reject_cancel_dma_bats_order, self.key_params_ER_cancel_reject_child, self.ToQuod, "Buy Side OrderCancelRejectReport child DMA 2 order")
         # endregion
 
-        # TODO Check is it work?
         er_cancel_mp_dark_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell side ExecReport Cancel')
 

@@ -42,7 +42,6 @@ class QAP_8219(TestCase):
         self.price = 20
         self.reason = 99
         self.delay = 11_000 # ms
-        self.text = 'QATestReject'
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_3.value
         # endregion
 
@@ -93,7 +92,7 @@ class QAP_8219(TestCase):
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
-        nos_1_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price, self.reason, self.text, self.delay)
+        nos_1_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price, self.reason, delay=self.delay)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         self.rule_list = [nos_1_rule, nos_2_rule, nos_1_reject_rule, ocr_1_rule, ocr_2_rule]
