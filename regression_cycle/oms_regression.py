@@ -1,9 +1,8 @@
 from xml.etree import ElementTree
 
 from regression_cycle import oms_acceptance_list
-from regression_cycle.algo_regression_cycle import iceberg_regression, twap_regression, multilisted_regression, participation_regression
 from regression_cycle.eq_regression_cycle import counterparts_regression, dma_regression, post_trade_regression, \
-    commission_regression, care_regression
+    commission_regression, care_regression, basket_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -26,6 +25,8 @@ def test_run(parent_id=None):
             post_trade_regression.test_run(report_id)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
             commission_regression.test_run(report_id)
+        if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
+            basket_regression.test_run(report_id)
         if eval(root.find(".//component[@name='AcceptanceList']").attrib["run"]):
             oms_acceptance_list.test_run(report_id)
 
