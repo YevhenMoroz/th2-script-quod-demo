@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
 from th2_grpc_act_gui_quod import bag_mgt_pb2
-from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails, OrderBagBookDetails, GetOrderBagBookDetailsRequest
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails
+from win_gui_modules.order_ticket import OrderTicketDetails
 
 
 class PegsOrdDetails:
@@ -149,7 +150,7 @@ class GetOrderBagBookDetails:
         length = len(filter_list)
         i = 0
         while i < length:
-            self.orderbag_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.order_bag_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
     def add_bag_order_info(self, bag_order_info_list: list):
@@ -266,3 +267,77 @@ class OrderBagCreationDetails:
 
     def build(self):
         return self.order_bag_creation
+
+
+class OrderBagCompleteDetails:
+    def __init__(self, base_request):
+        self.order_bag_complete_details = bag_mgt_pb2.OrderBagCompleteDetails()
+        self.order_bag_complete_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_complete_details.filter.update(filter_dict)
+
+    def set_is_complete(self, is_complete):
+        self.order_bag_complete_details.isComplete = is_complete
+
+    def build(self):
+        return self.order_bag_complete_details
+
+
+class CreateOrderDetails:
+    def __init__(self, base_request):
+        self.__create_order_via_bag_details = bag_mgt_pb2.CreateOrderDetails()
+        self.__create_order_via_bag_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__create_order_via_bag_details.filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__create_order_via_bag_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__create_order_via_bag_details
+
+
+class ModifySubLevelBagOrderDetails:
+    def __init__(self, base_request):
+        self.__modify_sub_level_details = bag_mgt_pb2.ModifySubLevelBagOrderDetails()
+        self.__modify_sub_level_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.filter.update(filter_dict)
+
+    def set_sub_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.sub_filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__modify_sub_level_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__modify_sub_level_details
+
+
+class WaveTicketExtractedValue(Enum):
+    TIF = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.TIF
+
+
+class ExtractWaveTicketValuesRequest:
+    def __init__(self, base_request, extractionId: str = 'extractWaveTicketValues'):
+        self.__request = bag_mgt_pb2.ExtractWaveTicketValuesRequest()
+        self.__request.base.CopyFrom(base_request)
+        self.__request.extractionId = extractionId
+
+    def get_tif_state(self):
+        self.get_extract_value(WaveTicketExtractedValue.TIF, "TIF")
+
+    def get_extract_value(self, field: WaveTicketExtractedValue, name: str):
+        extracted_value = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request.extractedValues.append(extracted_value)
+
+    def set_filter(self, filter_dict: dict):
+        self.__request.filter.update(filter_dict)
+
+    def build(self):
+        return self.__request

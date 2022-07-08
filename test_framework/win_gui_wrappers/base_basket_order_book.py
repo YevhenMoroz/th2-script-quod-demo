@@ -224,7 +224,7 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.remove_template_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def create_basket_via_import(self, basket_name, basket_template_name, path, client, expire_date=None, tif=None,
+    def create_basket_via_import(self, basket_name, basket_template_name, path, client=None, expire_date=None, tif=None,
                                  is_csv=False, amend_rows_details: [basket_row_details] = None):
         file_type = 1 if is_csv else 0
         self.basket_ticket_details = BasketTicketDetails()
@@ -232,7 +232,8 @@ class BaseBasketOrderBook(BaseWindow):
         self.basket_ticket_details.set_default_params(self.base_request)
         self.basket_ticket_details.set_name_value(basket_name)
         self.basket_ticket_details.set_basket_template_name(basket_template_name)
-        self.basket_ticket_details.set_client_value(client)
+        if client:
+            self.basket_ticket_details.set_client_value(client)
         if expire_date is not None:
             self.basket_ticket_details.set_date_value(expire_date)
         if tif is not None:

@@ -58,6 +58,7 @@ class OrderBookColumns(Enum):
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
     disclose_exec = "DiscloseExec"
+    disclosed_exec = "DisclosedExec"
     exec_fees = "Exec Fees"
     washbook = 'Wash Book'
     capacity = 'Capacity'
@@ -75,6 +76,7 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    isin = "ISIN"
     # endregion
 
 
@@ -222,6 +224,8 @@ class BasketBookColumns(Enum):
     description = "Description"
     """Context menu"""
     remove_from_basket = "Remove from Basket"
+    """Orders Tab"""
+    limit_price = "LmtPrice"
 
 
 class ExecSts(Enum):
@@ -242,6 +246,8 @@ class Status(Enum):
     new = 'New'
     rejected = 'Rejected'
     frozen = 'Frozen'
+    canceled = "Canceled"
+    cancelled = "Cancelled"
 
 
 class QuoteStatus(Enum):
@@ -350,6 +356,8 @@ class SecondLevelTabs(Enum):
     executions = 'Executions'
     orders_tab = 'Orders'
     alloc_instruction_qties = "Alloc Instruction Qties"
+    slicing_orders = 'Slicing Orders'
+    order_bag_waves = 'Order Bag Waves'
 
 
 class PostTradeStatuses(Enum):
@@ -497,3 +505,7 @@ class BookingOrderResult(Enum):
 class AllocInstructionQties(Enum):
     booking_qty = 'Booking Qty'
     give_up_broker = 'Give-up Broker'
+
+
+class DoneForDays(Enum):
+    yes = 'Yes'

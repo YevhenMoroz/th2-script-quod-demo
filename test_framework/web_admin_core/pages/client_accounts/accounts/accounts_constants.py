@@ -63,6 +63,8 @@ class AccountsConstants:
     ROUTES_ROUTE_FILTER_XPATH = "//nb-accordion/nb-accordion-item[3]//th[contains(@class, ' route ')]//input"
     ROUTES_ROUTE_ACCOUNT_NAME_INPUT_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route Account Name *']"
     ROUTES_ROUTE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route *']"
+    ROUTES_DEFAULT_ROUTE_XPATH = '//*[@id="defaultRoute"]'
+    ROUTES_AGENT_FEE_EXEMPTION_XPATH = '//nb-accordion/nb-accordion-item[3]//*[@class="label"] //span'
 
     ROUTES_EDIT_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='edit']"
     ROUTES_DELETE_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='trash-2']"
