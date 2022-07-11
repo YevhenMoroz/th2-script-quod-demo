@@ -10,7 +10,6 @@ class BaseOrderTicket(BaseWindow):
         self.order_details = None
         self.new_order_details = None
         self.modify_order_details = None
-        self.modify_order_details = None
         self.extract_order_ticket_values_request = None
         self.extract_order_ticket_errors_request = None
         self.order_ticket_extracted_value = None
@@ -28,6 +27,7 @@ class BaseOrderTicket(BaseWindow):
         self.mass_modify_order_call = None
         self.allocations_grid_row_details = None
         self.more_tab_allocations_details = None
+        self.direct_child_care_order_call = None
         self.commissions_tab_table_details = None
         self.commissions_details = None
         self.adw_ord_tab_details = None
@@ -244,8 +244,9 @@ class BaseOrderTicket(BaseWindow):
         call(self.split_limit_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def child_care(self, filter_list: list = None):
+    def child_care(self, rows: int = 1, filter_list: list = None):
         self.modify_order_details.set_order_details(self.order_details)
+        self.modify_order_details.set_selected_row_count(rows)
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         call(self.child_care_order_call, self.modify_order_details.build())
