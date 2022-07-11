@@ -135,4 +135,4 @@ class QAP_3452(TestCase):
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_citi}")
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
-        self.fix_manager_marketdata_th2.send_message(self.md_request, self.test_id)
+        self.fix_manager_marketdata_th2.send_message(self.md_request)
