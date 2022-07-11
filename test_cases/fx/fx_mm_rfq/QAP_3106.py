@@ -32,9 +32,6 @@ class QAP_3106(TestCase):
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.client_tier_argentina = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
         self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
-        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
-        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
-        self.security_type_spot = self.data_set.get_security_type_by_name('fx_spot')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
