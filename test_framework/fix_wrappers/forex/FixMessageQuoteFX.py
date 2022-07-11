@@ -163,8 +163,8 @@ class FixMessageQuoteFX(FixMessage):
 
         self.prepare_params_for_swap(quote_request)
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
-            self.add_tag({"BidSwapPoints": "*"})
             self.add_tag({"BidPx": "*"})
+            self.add_tag({"BidSwapPoints": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
             self.add_tag({"Side": "1"})
             if quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"].split("/")[0] == \
@@ -173,6 +173,7 @@ class FixMessageQuoteFX(FixMessage):
                 temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegBidPx')
                 temp[1].pop('LegBidForwardPoints')
+                self.remove_parameters(["BidPx", "BidSwapPoints"])
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"Side": "2"})
             self.add_tag({"BidPx": "*"})
@@ -192,6 +193,104 @@ class FixMessageQuoteFX(FixMessage):
                 temp[1].pop('LegOfferForwardPoints')
             if "LegBidForwardPoints" in temp[1]:
                 temp[1].pop('LegBidForwardPoints')
+
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "0":
+            temp[0]["InstrumentLeg"]["LegSymbol"] += "-SPO-QUODFX"
+
+        self.update_repeating_group("NoLegs", temp)
+
+        return self
+
+    def set_params_for_quote_swap_ccy2(self, quote_request: FixMessageQuoteRequestFX, near_leg_bid_fwd_pts=None,
+                                      near_leg_off_fwd_pts=None, far_leg_bid_fwd_pts=None, far_leg_off_fwd_pts=None):
+        temp = [dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSide"],
+                     LegBidPx="*",
+                     LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
+                     LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlDate"],
+                     LegOfferPx="*",
+                     LegOfferForwardPoints=near_leg_off_fwd_pts if near_leg_off_fwd_pts is not None else "*",
+                     LegBidForwardPoints=near_leg_bid_fwd_pts if near_leg_bid_fwd_pts is not None else "*",
+                     LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0][
+                         "LegSettlType"],
+                     InstrumentLeg=dict(
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
+                                       "Symbol"],
+                         LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityExchange="*",
+                         LegSecurityIDSource="*",
+                     )
+                     ),
+                dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSide"],
+                     LegBidPx="*",
+                     LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"],
+                     LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlDate"],
+                     LegOfferPx="*",
+                     LegOfferForwardPoints=far_leg_off_fwd_pts if far_leg_off_fwd_pts is not None else "*",
+                     LegBidForwardPoints=far_leg_bid_fwd_pts if far_leg_bid_fwd_pts is not None else "*",
+                     LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1][
+                         "LegSettlType"],
+                     InstrumentLeg=dict(
+                         LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
+                                       "Symbol"],
+                         LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegSecurityExchange="*",
+                         LegSecurityIDSource="*",
+                     )
+                     )
+                ]
+
+        self.prepare_params_for_swap(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidSwapPoints": "*"})
+            self.add_tag({"BidPx": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"Side": "2"})
+            if quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"].split("/")[0] != \
+                    quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"]:
+                temp[0].pop('LegOfferPx')
+                temp[0].pop('LegOfferForwardPoints')
+                temp[1].pop('LegBidPx')
+                temp[1].pop('LegBidForwardPoints')
+            else:
+                temp[0].pop('LegBidPx')
+                temp[0].pop('LegBidForwardPoints')
+                temp[1].pop('LegOfferPx')
+                temp[1].pop('LegOfferForwardPoints')
+                self.add_tag({"BidSwapPoints": "*"})
+                self.add_tag({"BidPx": "*"})
+                self.remove_parameters(["OfferPx", "OfferSwapPoints"])
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"Side": "1"})
+            if quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"].split("/")[0] != \
+                    quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"]:
+                self.add_tag({"BidPx": "*"})
+                self.add_tag({"BidSwapPoints": "*"})
+                temp[0].pop('LegBidPx')
+                temp[0].pop('LegOfferForwardPoints')
+                temp[1].pop('LegOfferPx')
+                temp[1].pop('LegOfferForwardPoints')
+                self.remove_parameters(["OfferPx", "OfferSwapPoints"])
+            else:
+                self.add_tag({"OfferPx": "*"})
+                self.add_tag({"OfferSwapPoints": "*"})
+                temp[0].pop('LegOfferPx')
+                temp[0].pop('LegBidForwardPoints')
+                temp[1].pop('LegBidPx')
+                temp[1].pop('LegBidForwardPoints')
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "0":
+            if "LegOfferForwardPoints" in temp[0]:
+                temp[0].pop('LegOfferForwardPoints')
+            if "LegBidForwardPoints" in temp[0]:
+                temp[0].pop('LegBidForwardPoints')
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "0":
+            if "LegOfferForwardPoints" in temp[1]:
+                temp[1].pop('LegOfferForwardPoints')
+            if "LegBidForwardPoints" in temp[1]:
+                temp[1].pop('LegBidForwardPoints')
+
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "0":
+            temp[0]["InstrumentLeg"]["LegSymbol"] += "-SPO-QUODFX"
+
         self.update_repeating_group("NoLegs", temp)
 
         return self
