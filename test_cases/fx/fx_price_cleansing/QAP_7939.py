@@ -41,8 +41,8 @@ class QAP_7939(TestCase):
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
         self.security_type = self.data_set.get_security_type_by_name("fx_spot")
         self.instr_type_wa = self.data_set.get_fx_instr_type_wa('fx_spot')
-        self.venue_target = self.data_set.get_venue_by_name('venue_2')
-        self.venue_reference = self.data_set.get_venue_by_name('venue_1')
+        self.venue_target = self.data_set.get_venue_by_name('venue_3')
+        self.venue_reference = self.data_set.get_venue_by_name('venue_4')
         self.rest_message = RestApiPriceCleansingDeviationMessages(data_set=self.data_set)
         self.rest_manager = RestApiManager(session_alias=self.rest_env)
         self.rest_message_params = None
@@ -87,7 +87,7 @@ class QAP_7939(TestCase):
         self.md_entries_target = [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": round(1.18148, 5),
+                "MDEntryPx": round(1.18158, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -97,7 +97,7 @@ class QAP_7939(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": round(1.18168, 5),
+                "MDEntryPx": round(1.18178, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -114,11 +114,26 @@ class QAP_7939(TestCase):
     def run_pre_conditions_and_steps(self):
         # Region Rule creation
         self.rest_message.set_default_params().create_deviation_cleansing_rule().set_target_venue(self.venue_target).\
-            set_ref_venues(self.reference_venues).set_symbol(self.symbol)
+            set_ref_venues(self.reference_venues).set_symbol(self.symbol).set_mid()
         self.rest_message_params = self.rest_manager.parse_create_response(
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
         # endregion
+
+        self.fix_md.set_market_data()
+        self.fix_md.change_parameter("MDReqID", self.md_id_target)
+        self.fix_md.change_parameter("Instrument", self.instrument)
+        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
+                                   self.fx_fh_connectivity,
+                                   'FX')
+        self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_target}")
+
+        self.fix_md.change_parameter("MDReqID", self.md_id_reference)
+        self.fix_md.change_parameter("Instrument", self.instrument)
+        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
+                                   self.fx_fh_connectivity,
+                                   'FX')
+        self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_reference}")
 
         self.fix_md.change_parameter("MDReqID", self.md_id_reference)
         self.fix_md.change_parameter("NoMDEntries", self.md_entries_reference)
@@ -159,8 +174,8 @@ class QAP_7939(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # Deleting rule
-        self.rest_message.clear_message_params().set_params(self.rest_message_params).delete_deviation_cleansing_rule()
-        self.rest_manager.send_post_request(self.rest_message)
+        # self.rest_message.clear_message_params().set_params(self.rest_message_params).delete_deviation_cleansing_rule()
+        # self.rest_manager.send_post_request(self.rest_message)
 
         self.fix_md.set_market_data()
         self.fix_md.change_parameter("MDReqID", self.md_id_target)
