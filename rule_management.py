@@ -437,6 +437,7 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
     # rule_manager.remove_rule_by_id(33)
     rule_manager.print_active_rules()

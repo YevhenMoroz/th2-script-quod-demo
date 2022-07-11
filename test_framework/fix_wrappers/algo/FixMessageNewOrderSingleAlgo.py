@@ -489,6 +489,26 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_child_of_Iceberg_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_MPDark_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
@@ -596,6 +616,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_ChildMinQty_params_with_strategy_tags(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_RFQ_params(self):
         base_parameters = {
             # 'Account': self.get_data_set().get_account_by_name('account_9'),
@@ -634,9 +676,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'Currency': 'EUR',
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_SORPING',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
+            # 'ClientAlgoPolicyID': 'QA_SORPING',
+            # 'IClOrdIdAO': 'OD_5fgfDXg-00',
+            # 'ShortCode': '17536',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
