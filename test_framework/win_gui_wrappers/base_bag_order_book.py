@@ -163,10 +163,12 @@ class BaseBagOrderBook(BaseWindow):
     # region Action
     def wave_bag(self):
         result = call(self.wave_bag_creation_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
         return result
 
     def modify_wave_bag(self):
         call(self.modify_wave_bag_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
 
     # endregion
     def create_bag_details(self, rows_list: list, name_of_bag: str, price: str = None):

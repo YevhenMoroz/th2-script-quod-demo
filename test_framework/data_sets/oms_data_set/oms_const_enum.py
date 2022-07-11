@@ -307,6 +307,7 @@ class OMSMatchStatus(Enum):
 class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
+    synthetic = 'Synth'
 
 
 class OMSTimeInForce(Enum):

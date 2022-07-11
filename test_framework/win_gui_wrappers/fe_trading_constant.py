@@ -77,6 +77,7 @@ class OrderBookColumns(Enum):
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
     isin = "ISIN"
+    nin = "NIN"
     # endregion
 
 
@@ -248,6 +249,7 @@ class Status(Enum):
     frozen = 'Frozen'
     canceled = "Canceled"
     cancelled = "Cancelled"
+    pmo = "PMO"
 
 
 class QuoteStatus(Enum):
@@ -363,6 +365,7 @@ class SecondLevelTabs(Enum):
 class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
+    ready_to_book_from_second_level_tab_of_bag = "RDY"
 
 
 class RFQPanelValues(Enum):
@@ -471,12 +474,12 @@ class ClientInboxColumns(Enum):
     order_id = "Order ID"
     cl_ord_id = 'ClOrdId'
     qty = 'Qty'
+    client_name = 'ClientName'
 
 
 class BagStatuses(Enum):
     new = 'New'
     terminated = 'Terminated'
-    cl_ord_id = "ClOrdId"
 
 
 class SymbolSource(Enum):
@@ -487,6 +490,9 @@ class SymbolSource(Enum):
 
 class WaveColumns(Enum):
     status = 'Status'
+    peg_offset_type = "PegOffsetType"
+    peg_offset_value = "PegOffsetValue"
+    price = 'Price'
 
 
 class BookingBlotterColumns(Enum):
@@ -509,3 +515,16 @@ class AllocInstructionQties(Enum):
 
 class DoneForDays(Enum):
     yes = 'Yes'
+
+
+class OrdersTabColumnFromBag(Enum):
+    unmatched_qty = 'UnmatchQty'
+
+
+class BlockStatuses(Enum):
+    accepted = "Accepted"
+    matched = 'Matched'
+
+
+class OffsetTypes(Enum):
+    price = "Price"

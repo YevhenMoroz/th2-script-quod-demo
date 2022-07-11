@@ -389,7 +389,7 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        raise ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.venue_client_accounts} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):

@@ -96,9 +96,8 @@ class BagOrderTicketDetails:
     def add_scenario_details(self, scenario_details: ScenarioDetails):
         self.order.scenarioDetails.CopyFrom(scenario_details)
 
-    def modify_wave_bag_details(self, wave_bag_details: List[SubLevelDetails]):
-        for details in wave_bag_details:
-            self.order.subLevelDetails.append(details)
+    def modify_wave_bag_details(self, wave_bag_details: SubLevelDetails):
+        self.order.subLevelDetails.append(wave_bag_details)
 
     def clear(self, on_deleting=False):
         self.order.clear = on_deleting
