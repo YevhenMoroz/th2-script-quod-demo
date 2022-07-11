@@ -5,11 +5,13 @@ from getpass import getuser as get_pc_name
 from MyFiles.SendMD_Simple import SendMD_Simple
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.fx.fx_mm_autohedging import QAP_3147, QAP_3146
 from test_cases.fx.fx_price_cleansing.QAP_3452 import QAP_3452
 from test_cases.fx.fx_price_cleansing.QAP_7939 import QAP_7939
+from test_cases.fx.fx_price_cleansing.QAP_7964 import QAP_7964
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,7 +21,7 @@ logging.getLogger().setLevel(logging.WARN)
 def test_run():
     # Generation id and time for test run
     pc_name = get_pc_name()  # getting PC name
-    report_id = bca.create_event(f'[{pc_name}] ') #+ datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(f'[{pc_name}] ')  # + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
 
@@ -37,10 +39,10 @@ def test_run():
     # rule_manager.print_active_rules()
 
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id, window_name)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id, window_name)
 
         # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
@@ -64,15 +66,16 @@ def test_run():
         # QAP_6931(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_6933(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_7279(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_7939(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7964(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # test(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_5369.execute(report_id, session_id, data_set)
         # QAP_5589.execute(report_id, session_id)
         # QAP_5591.execute(report_id, session_id)
         # QAP_5537.execute(report_id, session_id, data_set)
-        # QAP_3141.execute(report_id)
-        # QAP_3140.execute(report_id)
+        QAP_3147.execute(report_id, session_id)
+        QAP_3146.execute(report_id, session_id)
         # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # send_rfq.execute(report_id)
         # SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
@@ -115,7 +118,6 @@ def test_run():
 
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set).execute()
-
 
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
