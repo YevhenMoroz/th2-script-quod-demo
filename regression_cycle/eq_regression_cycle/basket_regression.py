@@ -1,16 +1,11 @@
+import logging
+import os
+from datetime import datetime
 from pathlib import Path
 
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
-import logging
-from custom import basic_custom_actions as bca
-from datetime import datetime
-
-from test_cases.eq.Bag.QAP_1082 import QAP_1082
-from test_cases.eq.Bag.QAP_1083 import QAP_1083
-from test_cases.eq.Bag.QAP_1084 import QAP_1084
-from test_cases.eq.Bag.QAP_1085 import QAP_1085
-from test_cases.eq.Bag.QAP_1086 import QAP_1086
 from test_cases.eq.Basket.QAP_3677 import QAP_3677
 from test_cases.eq.Basket.QAP_3698 import QAP_3698
 from test_cases.eq.Basket.QAP_3699 import QAP_3699
@@ -19,6 +14,7 @@ from test_cases.eq.Basket.QAP_3701 import QAP_3701
 from test_cases.eq.Basket.QAP_3773 import QAP_3773
 from test_cases.eq.Basket.QAP_3779 import QAP_3779
 # from test_cases.eq.Basket.QAP_3874 import QAP_3874
+from test_cases.eq.Basket.QAP_3874 import QAP_3874
 from test_cases.eq.Basket.QAP_3877 import QAP_3877
 from test_cases.eq.Basket.QAP_3882 import QAP_3882
 from test_cases.eq.Basket.QAP_4007 import QAP_4007
@@ -46,6 +42,9 @@ from test_cases.eq.Basket.QAP_6386 import QAP_6386
 # from test_cases.eq.Basket.QAP_7033 import QAP_7033
 # from test_cases.eq.Basket.QAP_7661 import QAP_7661
 # from test_cases.eq.Basket.QAP_7662 import QAP_7662
+from test_cases.eq.Basket.QAP_7033 import QAP_7033
+from test_cases.eq.Basket.QAP_7661 import QAP_7661
+from test_cases.eq.Basket.QAP_7662 import QAP_7662
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
@@ -66,8 +65,11 @@ def test_run(parent_id=None):
     session_id = set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
+    layout_path = os.path.abspath("eq_regression_cycle/layouts")
+    layout_name = "basket_templates_v172_layout.xml"
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        base_main_window.import_layout(layout_path, layout_name)
         QAP_3677(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_3698(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -82,8 +84,8 @@ def test_run(parent_id=None):
             .execute()
         QAP_3779(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_3874(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_3874(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_3877(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_3882(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -134,17 +136,19 @@ def test_run(parent_id=None):
             .execute()
         QAP_6386(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_7033(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
-        # QAP_7661(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
-        # QAP_7662(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_7033(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_7661(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_7662(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        logger.info(f"Bag regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        logger.info(f"Basket regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        Stubs.win_act.unregister(session_id)
+        # base_main_window.close_fe()
 
 
 if __name__ == '__main__':

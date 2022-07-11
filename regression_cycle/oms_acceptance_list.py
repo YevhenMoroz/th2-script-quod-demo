@@ -92,9 +92,9 @@ def test_run(parent_id=None):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        logger.info(f"Bag regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
-        # base_main_window.close_fe()
+        logger.info(f"Acceptance list was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        # Stubs.win_act.unregister(session_id)
+        base_main_window.close_fe()
 
 
 if __name__ == '__main__':
