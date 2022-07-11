@@ -18,7 +18,7 @@ from test_cases.eq.Basket.QAP_3700 import QAP_3700
 from test_cases.eq.Basket.QAP_3701 import QAP_3701
 from test_cases.eq.Basket.QAP_3773 import QAP_3773
 from test_cases.eq.Basket.QAP_3779 import QAP_3779
-from test_cases.eq.Basket.QAP_3874 import QAP_3874
+# from test_cases.eq.Basket.QAP_3874 import QAP_3874
 from test_cases.eq.Basket.QAP_3877 import QAP_3877
 from test_cases.eq.Basket.QAP_3882 import QAP_3882
 from test_cases.eq.Basket.QAP_4007 import QAP_4007
@@ -82,8 +82,8 @@ def test_run(parent_id=None):
             .execute()
         QAP_3779(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_3874(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_3874(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_3877(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_3882(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
