@@ -14,8 +14,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
-    FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from custom import basic_custom_actions as bca
 from test_framework.rest_api_wrappers.forex.RestApiPriceCleansingDeviationMessages import \
