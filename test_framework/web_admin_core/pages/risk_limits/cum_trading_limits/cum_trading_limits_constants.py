@@ -17,6 +17,8 @@ class CumTradingLimitsConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_CUM_TRADING_LIMIT_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -47,6 +49,7 @@ class CumTradingLimitsConstants:
     VALUES_TAB_SOFT_MAX_SELL_QTY_XPATH = '//*[@formcontrolname="softMaxCumSellOrdQty"]'
     VALUES_TAB_MAX_SELL_AMT_XPATH = '//*[@formcontrolname="maxCumSellOrdAmt"]'
     VALUES_TAB_SOFT_MAX_SELL_AMT_XPATH = '//*[@formcontrolname="softMaxCumSellOrdAmt"]'
+    VALUES_TAB_MAX_OPEN_ORDER_AMOUNT_XPATH = '//*[@formcontrolname="maxCumLeavesOrdAmt"]'
 
     # Dimensions tab
     DIMENSIONS_TAB_VENUE_XPATH = '//*[@id="venue"]'
@@ -62,3 +65,6 @@ class CumTradingLimitsConstants:
     DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
     DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[@id="account"]'
     DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
+
+    # Assignments tab
+    INSTITUTION = '//*[@id="institution"]'

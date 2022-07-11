@@ -16,6 +16,7 @@ class RoutesConstants:
     DEFAULT_STRATEGY_TYPE_VALUE_XPATH = '//*[@class="ag-center-cols-container"]//*[@row-index="0"]//*[@col-id="defaultScenario.scenarioName"]//*[@ref="eValue"]'
     COUNTERPART_VALUE_XPATH = '//*[@class="ag-center-cols-container"]//*[@row-index="0"]//*[@col-id="counterpart.counterpartName"]//*[@ref="eValue"]'
     SUPPORT_CONTRA_FIRM_COMMISSION_VALUE_XPATH = '//*[@class="ag-center-cols-container"]//*[@row-index="0"]//*[@col-id="supportContraFirmCommission"]//input'
+    DISPLAYED_ROUTE_XPATH = '//*[text()="{}"]'
 
     # -at more actions-
     NEW_BUTTON_XPATH = '//button[text()="New"]'
@@ -121,11 +122,11 @@ class RoutesConstants:
     SUPPORT_DISPLAY_QUANTITY_VALUE_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-row ng-star-inserted"]//td[4]//div[@class="ng-star-inserted"]'
 
     # --Instr Symbols--
-    PLUS_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@class ="ng-tns-c93-67 ng-star-inserted"]//*[@class="nb-plus"]'
-    CHECK_MARK_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@class ="ng-tns-c93-67 ng-star-inserted"]//*[@class="nb-checkmark"]'
-    CLOSE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@class ="ng-tns-c93-67 ng-star-inserted"]//*[@class="nb-close"]'
-    EDIT_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@class ="ng-tns-c93-67 ng-star-inserted"]//*[@class="nb-edit"]'
-    DELETE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@class ="ng-tns-c93-67 ng-star-inserted"]//*[@class="nb-trash"]'
+    PLUS_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
+    CHECK_MARK_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="checkmark"]'
+    CLOSE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="close"]'
+    EDIT_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="edit"]'
+    DELETE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="trash-2"]'
     INSTR_SYMBOL_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@placeholder="Instr Symbol *"]'
     PRICE_MULTIPLIER_AT_INSTR_SYMBOLS_TAB_XPATH ='//*[@placeholder="Price Multiplier"]'
     INSTR_SYMBOL_FILTER_AT_INSTR_SYMBOLS_TAB_XPATH='//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'

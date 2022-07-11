@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
@@ -44,8 +45,9 @@ class QAP_1028(TestCase):
             {OrderBookColumns.sts.value: ExecSts.sent.value})
         # region Reassign order
         self.order_book.reassign_order(self.desk, partial_desk=False)
-        # self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-        #     {OrderBookColumns.sts.value: ExecSts.sent.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.sent.value})
+        time.sleep(30)
         # endregion
         # region reject order
         self.client_inbox.reject_order()

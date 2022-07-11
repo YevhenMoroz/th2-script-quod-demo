@@ -1,7 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData, SettlementTabDetails
 from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
@@ -219,6 +219,9 @@ class OrderTicketDetails:
 
     def set_miscs_details(self, miscs_details: MiscsOrdDetails):
         self.order.miscsOrderDetails.CopyFrom(miscs_details)
+
+    def set_settlement_details(self, settlement_details: SettlementTabDetails):
+        self.order.settlementDetails.CopyFrom(settlement_details)
 
 
 class FXOrderDetails:
