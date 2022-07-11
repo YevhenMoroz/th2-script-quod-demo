@@ -70,6 +70,14 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
         self.update_parameters({'venueID': venue_name})
         return self
 
+    def set_mid(self):
+        self.update_parameters({'priceDeviationRefPrice': "MID"})
+        return self
+
+    def set_bid_and_ask(self):
+        self.update_parameters({'priceDeviationRefPrice': "BAA"})
+        return self
+
     def set_ref_venues(self, venues: list):
         self.update_parameters({'priceCleansingReferenceVenue': venues})
         return self
