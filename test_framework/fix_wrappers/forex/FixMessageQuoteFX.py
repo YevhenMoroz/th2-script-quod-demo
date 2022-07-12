@@ -173,7 +173,6 @@ class FixMessageQuoteFX(FixMessage):
                 temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegBidPx')
                 temp[1].pop('LegBidForwardPoints')
-                self.remove_parameters(["BidPx", "BidSwapPoints"])
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"Side": "2"})
             self.add_tag({"BidPx": "*"})
