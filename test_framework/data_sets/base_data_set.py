@@ -53,6 +53,8 @@ class BaseDataSet:
     middle_office_status = None
     middle_office_match_status = None
     capacity = None
+    scenario = None
+    strategy = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -393,7 +395,7 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        raise ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.venue_client_accounts} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
@@ -472,6 +474,15 @@ class BaseDataSet:
             return getattr(self.middle_office_match_status, name).value
         raise ValueError(f"{self.middle_office_match_status} not found!")
 
+    def get_strategy(self, name: str):
+        if hasattr(self.strategy, name):
+            return getattr(self.strategy, name).value
+        raise ValueError(f"{self.strategy} not found!")
+
+    def get_scenario(self, name: str):
+        if hasattr(self.scenario, name):
+            return getattr(self.scenario, name).value
+        raise ValueError(f"{self.scenario} not found!")
     # region WebAdmin getters
 
     def get_user(self, name: str):

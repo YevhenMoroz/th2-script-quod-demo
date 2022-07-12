@@ -415,3 +415,6 @@ class SideMenu(CommonPage):
                 time.sleep(0.5)
             else:
                 break
+
+    def is_site_page_tab_displayed(self):
+        return self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).is_displayed()

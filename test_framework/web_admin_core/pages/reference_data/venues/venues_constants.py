@@ -55,6 +55,8 @@ class VenuesConstants:
     VALUES_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//div[5]//div[2]//button'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="venuePosValidity"]//button'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option//span[1]'
 
     # Dark Algo Commissions
     DARK_ALGO_COM_COST_PER_TRADE_XPATH = '//*[@id="darkAlgoCostPerTrade"]'
