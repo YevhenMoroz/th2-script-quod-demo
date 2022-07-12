@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
@@ -7,6 +6,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -14,7 +14,7 @@ from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages
     RestApiClientTierInstrSymbolMessages
 
 
-class QAP_3106(TestCase):
+class QAP_7162(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -29,38 +29,39 @@ class QAP_3106(TestCase):
         self.rest_manager = RestApiManager(self.web_adm_env.session_alias_wa, self.test_id)
         self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
 
-        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.client_tier_argentina = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
-        self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
+        # TODO: prepare sample data with Rates Following Trades Price Cleansing for Luna 314
+
+        self.client_tier_iridium = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
+        self.gbp_usd = self.data_set.get_symbol_by_name('symbol_2')
+        self.gbp = self.data_set.get_currency_by_name("currency_gbp")
+        self.security_type = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.no_related_symbols = [{
+            "Account": self.client_iridium,
+            "Side": "1",
+            "Instrument": {
+                "Symbol": self.gbp_usd,
+                "SecurityType": self.security_type
+            },
+            "SettlDate": self.settle_date_spot,
+            "SettlType": self.settle_type_spot,
+            "Currency": self.gbp,
+            "QuoteType": "1",
+            "OrderQty": "1000000",
+            "OrdType": "D"}]
+        self.md_req_id = "GBP/USD:SPO:REG:CITI"
+        self.instrument = {
+            "Symbol": self.gbp_usd,
+            "SecurityType": self.security_type
+        }
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                                              Account=self.client_argentina)
+        self.quote_request.set_rfq_params().update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        # endregion
+        quote_cancel = FixMessageQuoteCancelFX().set_params_for_cancel(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=quote_cancel, key_parameters=["QuoteReqID"])
 
-        # region Step 2
-        self.rest_massage.find_all_client_tier_instrument()
-        time.sleep(1)
-        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
-        params_eur_usd = self.rest_manager. \
-            parse_response_details(params_eur_usd,
-                                   {'clientTierID': self.client_tier_argentina, 'instrSymbol': self.eur_usd})
-
-        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
-            .set_params(params_eur_usd). \
-            update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'false', {'tenor': 'SPO'})
-        self.rest_manager.send_post_request(self.rest_massage)
-
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        quote = FixMessageQuoteFX().set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=quote)
-        # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_massage.modify_client_tier_instrument(). \
-            update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'true', {'tenor': 'SPO'})
-        self.rest_manager.send_post_request(self.rest_massage)

@@ -12,6 +12,7 @@ from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX imp
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -25,11 +26,13 @@ class QAP_2345(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
         self.quote = FixMessageQuoteFX()
+        self.quote_cancel = FixMessageQuoteCancelFX()
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.settle_date_1w = self.data_set.get_settle_date_by_name("wk1")
         self.acc_palladium1 = self.data_set.get_client_by_name("client_mm_4")
         self.jpy = self.data_set.get_currency_by_name("currency_jpy")
 
@@ -45,7 +48,7 @@ class QAP_2345(TestCase):
         self.instrument = {"Symbol": "USD/JPY",
                            "SecurityType": "FXSPOT"}
         self.md_req_id = 'USD/JPY:SPO:REG:CITI'
-        self.no_md_entries = [
+        self.correct_no_md_entries = [
             {
                 "MDEntryType": "0",
                 "MDEntryPx": 104.632,
@@ -81,41 +84,63 @@ class QAP_2345(TestCase):
 
         ]
 
+        self.incorrect_no_md_entries = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 104.632,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_1w,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 104.633,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_1w,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 104.630,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_1w,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 104.635,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_1w,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+
+        ]
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.fix_md.set_market_data()
-        self.fix_md.update_fields_in_component("Instrument", self.instrument)
-        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
-        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_q_connectivity, "FX")
-        self.fix_manager_fh_314.send_message(self.fix_md)
-
-        # region Step 1
-        self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
-                                                           Instrument=self.instrument,
-                                                           Account=self.acc_palladium1,
-                                                           Currency=self.jpy)
-        self.quote_request.update_near_leg(leg_qty=self.qty_3m)
-        self.quote_request.update_far_leg(leg_qty=self.qty_3m)
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request,
-                                                                            self.test_id)
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
-        self.quote.set_params_for_quote_swap_ccy2(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
-        # endregion
-
         # region Step 1
         self.quote_request.set_swap_rfq_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
                                                            Instrument=self.instrument,
                                                            Account=self.acc_palladium1)
-        self.quote_request.update_near_leg(leg_qty=self.qty_3m)
-        self.quote_request.update_far_leg(leg_qty=self.qty_3m)
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request,
-                                                                            self.test_id)
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
-        self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
-        # endregion
+        self.fix_manager.send_message_and_receive_response(self.quote_request,
+                                                           self.test_id)
+
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.instrument)
+        self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_q_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.instrument)
+        self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_q_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+
+        self.quote_cancel.set_params_for_receive(quote_request=self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote_cancel, key_parameters=["QuoteReqID"])
