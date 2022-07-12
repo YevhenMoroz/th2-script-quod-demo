@@ -84,6 +84,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             raise Exception('Incorrect Status')
         return self
 
+    def set_params_from_new_order_swap_ccy2(self, new_order_single: FixMessageNewOrderMultiLegFX):
+        self.prepare_swap_ccy2_exec_report(new_order_single)
+        return self
+
     def set_params_from_new_order_swap_ndf(self, new_order_single: FixMessageNewOrderMultiLegFX):
         self.prepare_swap_ndf_exec_report(new_order_single)
         return self
@@ -147,6 +151,89 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             Side=new_order_single.get_parameter('Side'),
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             SpotSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
+            Price="*",
+            LastMkt="*",
+            LastSwapPoints="*",
+            OrderCapacity="A",
+            OrdStatus='2',
+            TradeReportingIndicator='*',
+            TransactTime='*',
+            LastSpotRate='*',
+            AvgPx='*',
+            ExecID='*',
+            LastPx='*',
+            OrderID='*',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='F',
+            LeavesQty=0,
+            GrossTradeAmt='*',
+            ExDestination='*',
+            QtyType=0,
+            NoParty="*",
+            NoLegs=no_legs,
+            Instrument=new_order_single.get_parameter('Instrument')
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
+    def prepare_swap_ccy2_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
+        no_legs = [
+            dict(LegSide="2" if new_order_single.get_parameter("Side") == "1" else "1",
+                 LegOrderQty=new_order_single.get_parameter("NoLegs")[0]["LegOrderQty"],
+                 LegSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
+                 LegSettlType=new_order_single.get_parameter("NoLegs")[0]["LegSettlType"],
+                 LegLastQty=new_order_single.get_parameter("NoLegs")[0]["LegOrderQty"],
+                 LegLastForwardPoints="*",
+                 LegPrice="*",
+                 LegLastPx="*",
+                 InstrumentLeg=dict(
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
+                     LegSecurityExchange="XQFX",
+                     LegSecurityIDSource="8",
+                 )
+                 ),
+            dict(LegSide="1" if new_order_single.get_parameter("Side") == "1" else "2",
+                 LegOrderQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
+                 LegSettlDate=new_order_single.get_parameter("NoLegs")[1]["LegSettlDate"],
+                 LegSettlType=new_order_single.get_parameter("NoLegs")[1]["LegSettlType"],
+                 LegLastQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
+                 LegLastForwardPoints="*",
+                 LegPrice="*",
+                 LegLastPx="*",
+                 InstrumentLeg=dict(
+                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
+                     LegSecurityExchange="XQFX",
+                     LegSecurityIDSource="8",
+                 )
+                 )
+        ]
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            Currency=new_order_single.get_parameter('Currency'),
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastQty=new_order_single.get_parameter('OrderQty'),
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][:-4],
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            SpotSettlDate=spo(),
+            SettlType='0',
             Price="*",
             LastMkt="*",
             LastSwapPoints="*",
