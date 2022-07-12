@@ -66,7 +66,7 @@ class QAP_7773(TestCase):
             self.order_book.set_filter([OrderBookColumns.qty.value, qty])
         # endregion
 
-        # region create Bag and extract values from it
+        # region create Bag
         self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag, price=price)
         self.bag_order_book.create_bag()
         # endregion
@@ -81,12 +81,11 @@ class QAP_7773(TestCase):
             self.bag_order_book.set_order_bag_wave_details(tif=self.data_set.get_time_in_force('time_in_force_2'),
                                                            price=price,
                                                            qty=qty)
-            result = self.bag_order_book.wave_bag()
-            self.order_book.compare_values({'Footer Value': 'Please set expire date value.'}, result, "Comparing value")
+            result = self.bag_order_book.extract_values_from_wave_ticket(tif=False, error_message=True)
+            self.order_book.compare_values({'ERROR_MESSAGE': 'Please set expire date value.'}, result, "Comparing value")
         except Exception as e:
-            logger.info(f'Your Exception is {e}')
+            logger.error(f'Your Exception is {e}')
 
         finally:
             time.sleep(3)
             self.rule_manager.remove_rule(new_order_single_rule)
-

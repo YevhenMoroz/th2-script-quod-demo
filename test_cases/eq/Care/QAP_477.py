@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -25,7 +25,7 @@ class QAP_477(TestCase):
         self.ord_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.base_window = BaseMainWindow(self.test_id, self.session_id)
         self.order_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.rule_manager = RuleManager()
+        self.rule_manager = RuleManager(Simulators.equity)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()

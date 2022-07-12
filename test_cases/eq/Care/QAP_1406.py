@@ -3,7 +3,6 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
@@ -26,7 +25,8 @@ class QAP_1406(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
-        self.fix_message.change_parameter("Account", "client2341")
+        self.dummy_client = self.data_set.get_client_by_name("client_dummy")
+        self.fix_message.change_parameter("Account", self.dummy_client)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
@@ -46,7 +46,10 @@ class QAP_1406(TestCase):
             {OrderBookColumns.sts.value: ExecSts.held.value})
         # endregion
         # region group modify
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).group_modify(client=self.client, security_account= "CLIENT_FIX_CARE_SA1", routes=self.route)
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).group_modify(client=self.client,
+                                                                                             security_account="CLIENT_FIX_CARE_SA1",
+                                                                                             routes=self.route,
+                                                                                             free_notes="djsfhsfhskjh")
         # endregion
         # region accept order
         self.client_inbox.accept_order()
@@ -55,4 +58,3 @@ class QAP_1406(TestCase):
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.open.value})
         # endregion
-

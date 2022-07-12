@@ -18,6 +18,7 @@ class FxVenues(Enum):
     venue_5 = "DB"
     venue_6 = "BARX"
     venue_7 = "EBS"
+    venue_8 = "GS"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"

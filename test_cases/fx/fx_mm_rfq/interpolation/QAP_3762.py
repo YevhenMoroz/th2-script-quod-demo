@@ -1,48 +1,54 @@
-import logging
+
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk3
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-
-client_tier = "Iridium1"
-account = "Iridium1_1"
-
-symbol = "GBP/USD"
-security_type_fwd = "FXFWD"
-settle_date_w1 = wk3()
-settle_type_w1 = "W3"
-currency = "GBP"
-settle_currency = "USD"
-
-side = "1"
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers import DataSet
+from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def send_rfq_and_filled_order(case_id, qty_1):
-    params_spot = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1, symbol=symbol,
-                                    securitytype=security_type_fwd, settldate=settle_date_w1,
-                                    settltype=settle_type_w1, securityid=symbol,
-                                    currency=currency, side=side, settlcurrency=settle_currency,
-                                    account=account)
+class QAP_3762(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
 
-    rfq = FixClientSellRfq(params_spot)
-    rfq.send_request_for_quote()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        account = self.data_set.get_client_by_name("client_mm_3")
+        currency = self.data_set.get_currency_by_name("currency_gbp")
+        symbol = self.data_set.get_symbol_by_name("symbol_2")
+        security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        settle_type_wk3 = self.data_set.get_settle_type_by_name("wk3")
+        settle_date_wk3 = self.data_set.get_settle_date_by_name("wk3")
+        instrument = {
+            "Symbol": symbol,
+            "SecurityType": security_type_fwd
+        }
 
-    rfq.verify_quote_pending()
+        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_rfq_params_fwd()
+        quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
+                                                      Currency=currency, Instrument=instrument,
+                                                      SettlDate=settle_date_wk3, SettlType=settle_type_wk3)
 
-    price = rfq.extract_filed("OfferPx")
-    rfq.send_new_order_single(price)
-    rfq.verify_order_pending().verify_order_filled()
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(quote_request, self.test_id)
+        quote = FixMessageQuoteFX().set_params_for_quote_fwd(quote_request)
 
+        self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
+        new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_prev_quoted(quote_request, response[0])
+        self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
+        execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single)
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    try:
-        # Step 1
-        send_rfq_and_filled_order(case_id, "1000000")
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)

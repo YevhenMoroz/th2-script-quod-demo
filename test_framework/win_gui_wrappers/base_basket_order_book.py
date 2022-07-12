@@ -1,6 +1,7 @@
 from test_framework.win_gui_wrappers.base_window import BaseWindow
 from win_gui_modules.basket_ticket_wrappers import BasketTicketDetails
 from win_gui_modules.utils import call
+from custom.verifier import VerificationMethod
 
 
 class BaseBasketOrderBook(BaseWindow):
@@ -66,6 +67,7 @@ class BaseBasketOrderBook(BaseWindow):
         if basket_book_filter is not None:
             self.extract_basket_data_details.set_filter(basket_book_filter)
         result = call(self.extract_basket_data_details_call, self.extract_basket_data_details.build())
+        self.clear_details([self.extract_basket_data_details])
         return result[column_name]
 
     def get_basket_sub_lvl_value(self, row_count: int, extract_value, tab_name, basket_book_filter: dict = None):
@@ -130,6 +132,25 @@ class BaseBasketOrderBook(BaseWindow):
     # endregion
 
     # region Check
+    def check_basket_field(self, field: str, expected_result: str, event_name="Check Basket Book",
+                           verification_method: VerificationMethod = VerificationMethod.EQUALS):
+        actual_result = self.get_basket_value(field)
+        self.verifier.set_event_name(event_name)
+        self.verifier.compare_values(field, expected_result, actual_result,
+                                     verification_method)
+        self.verifier.verify()
+
+    def check_basket_sub_lvl_field(self, row_count: int, field: str, tab_name: str, expected_result: str,
+                                   event_name="Check 2nd lvl Basket Book",
+                                   verification_method: VerificationMethod = VerificationMethod.EQUALS):
+        actual_result = self.get_basket_sub_lvl_value(row_count, field, tab_name)
+        self.verifier.set_event_name(event_name)
+        self.verifier.compare_values(field, expected_result, actual_result[str(row_count)],
+                                     verification_method)
+        self.verifier.verify()
+
+
+
 
     # endregion
 
@@ -243,22 +264,22 @@ class BaseBasketOrderBook(BaseWindow):
         call(self.create_basket_via_import_call, self.basket_ticket_details.build())
         self.clear_details([self.basket_ticket_details])
 
-    def complete_basket(self, filter_dict=None):
+    def complete_basket(self, filter_dict: dict = None):
         self.simple_request.set_filter(filter_dict)
         call(self.complete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def un_complete(self, filter_dict=None):
+    def un_complete(self, filter_dict: dict = None):
         self.simple_request.set_filter(filter_dict)
         call(self.uncomplete_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def book_basket(self, filter_dict=None):
+    def book_basket(self, filter_dict: dict = None):
         self.simple_request.set_filter(filter_dict)
         call(self.book_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
 
-    def cancel_basket(self, filter_dict=None):
+    def cancel_basket(self, filter_dict: dict = None):
         self.simple_request.set_filter(filter_dict)
         call(self.cancel_basket_call, self.simple_request.build())
         self.clear_details([self.simple_request])
@@ -267,7 +288,7 @@ class BaseBasketOrderBook(BaseWindow):
         remove_from_basket_details = self.remove_from_basket_details(self.base_request, filter_dict, rows_numbers)
         call(self.remove_from_basket_call, remove_from_basket_details.build())
 
-    def wave_basket(self, qty_percentage=None, percentage_profile=None, route=None, removed_orders: list = None,
+    def wave_basket(self, qty_percentage=None, percentage_profile=None,  route=None, removed_orders: list = None,
                     sub_lvl_rows: list = None, basket_filter: dict = None):
         if qty_percentage is not None:
             self.wave_basket_details.set_qty_percentage(qty_percentage)

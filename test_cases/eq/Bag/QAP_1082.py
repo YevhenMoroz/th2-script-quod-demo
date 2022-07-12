@@ -44,24 +44,26 @@ class QAP_1082(TestCase):
         self.fix_message.change_parameter("HandlInst", '3')
         # endregion
 
-        # region create 3 CO order
-        for i in range(3):
-            if i >= 2:
+        # region create 2 CO order
+        for i in range(2):
+            if i == 1:
                 self.fix_message.change_parameter('Instrument',
                                                   self.data_set.get_fix_instrument_by_name('instrument_2'))
+                self.fix_manager.send_message_fix_standard(self.fix_message)
+                self.client_inbox.accept_order(lookup, qty, price)
             else:
                 self.fix_manager.send_message_fix_standard(self.fix_message)
                 self.client_inbox.accept_order(lookup, qty, price)
         # endregion
 
         # region create verify, that bag order book can`t created with order
-        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.split_bag_by_qty_priority.value, [1, 2, 3],
+        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.split_bag_by_qty_priority.value, [1, 2],
                                                  {OrderBookColumns.qty.value: qty})
-        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.split_bag_by_avg_px_priority.value, [1, 2, 3],
+        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.split_bag_by_avg_px_priority.value, [1, 2],
                                                  {OrderBookColumns.qty.value: qty})
-        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.group_into_a_bag_for_grouping.value, [1, 2, 3],
+        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.group_into_a_bag_for_grouping.value, [1, 2],
                                                  {OrderBookColumns.qty.value: qty})
-        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.bag_by_avg_px_priority.value, [1, 2, 3],
+        self.__verifying_presenting_item_at_menu(MenuItemFromOrderBook.bag_by_avg_px_priority.value, [1, 2],
                                                  {OrderBookColumns.qty.value: qty})
         # endregion
 

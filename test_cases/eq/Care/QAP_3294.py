@@ -1,59 +1,71 @@
 import logging
-from datetime import datetime
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, TimeInForce, \
+    PostTradeStatuses
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3294"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    qty = "900"
-    price = "20"
-    client = "CLIENT_FIX_CARE"
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
 
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create CO
-    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    # endregion
-    # region Check value
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
-    # region Execute
-    eq_wrappers.manual_execution(base_request, qty, price)
-    # endregion
-    # region Check value
-    eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled")
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open")
-    # endregion
-    # region Complete
-    eq_wrappers.complete_order(base_request)
-    # endregion
-    # region Check value
-    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "ReadyToBook")
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Yes")
-    # endregion
-    # region Un-Complete
-    eq_wrappers.un_complete_order(base_request)
-    # end region
-    # region Check value
-    eq_wrappers.verify_order_value(base_request, case_id, "DoneForDay", "")
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "")
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+class QAP_3294(TestCase):
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.rule_manager = RuleManager()
+
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept order
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual exec order
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution()
+        # endregion
+        # region check order filled status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region complete order
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).complete_order()
+        # endregion
+        # region check order ready_to_book and done_for_day status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value, OrderBookColumns.done_for_day.value: "Yes"})
+        # endregion
+        # region complete order
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).un_complete_order()
+        # endregion
+        # region check order ready_to_book and done_for_day status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: "",
+             OrderBookColumns.done_for_day.value: ""})
+        # endregion

@@ -21,6 +21,7 @@ class Connectivity(Enum):
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
     Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
+    Luna_314_bs_md = 'fix-sell-md-t-314-stand'
     Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
     Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
     Luna_314_Feed_Handler = 'fix-fh-314-luna'

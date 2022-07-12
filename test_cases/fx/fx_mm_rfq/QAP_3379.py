@@ -55,11 +55,10 @@ class QAP_3379(TestCase):
                                            settle_type=self.settle_type_1w,
                                            settle_date=self.settle_date_1w, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_far_leg(leg_qty=self.qty_1, leg_symbol=self.symbol_1,
-                                           settle_type=self.settle_type_2w,
-                                           settle_date=self.settle_date_2w, leg_sec_type=self.security_type_fwd)
+                                          settle_type=self.settle_type_2w,
+                                          settle_date=self.settle_date_2w, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="EUR", Instrument=self.instrument,
-                                                           OrderQty=self.qty_1)
+                                                           Currency="EUR", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
         # endregion
 
@@ -86,11 +85,10 @@ class QAP_3379(TestCase):
                                            settle_type=self.settle_type_spot,
                                            settle_date=self.settle_date_spot, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_far_leg(leg_qty=self.qty_2, leg_symbol=self.symbol_1,
-                                           settle_type=self.settle_type_1w,
-                                           settle_date=self.settle_date_1w, leg_sec_type=self.security_type_fwd)
+                                          settle_type=self.settle_type_1w,
+                                          settle_date=self.settle_date_1w, leg_sec_type=self.security_type_fwd)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Currency="EUR", Instrument=self.instrument,
-                                                           OrderQty=self.qty_2)
+                                                           Currency="EUR", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
 
         self.dealer_intervention.assign_quote(1)

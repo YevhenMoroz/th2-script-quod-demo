@@ -2,11 +2,9 @@ import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
-from stubs import Stubs
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, DiscloseExec, OrderType
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
@@ -36,7 +34,7 @@ class QAP_1722(TestCase):
         self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty, order_type=self.order_type,
                                             tif=TimeInForce.DAY.value, is_sell_side=False, instrument=self.lookup,
                                             recipient=self.desk, disclose_flag=2)
-        self.order_ticket.create_order(lookup=self.lookup)
+        self.order_ticket.create_order(self.lookup)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region check disclose execution

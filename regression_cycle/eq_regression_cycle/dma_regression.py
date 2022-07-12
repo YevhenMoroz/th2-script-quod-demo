@@ -3,8 +3,8 @@ import traceback
 from datetime import datetime
 
 from custom import basic_custom_actions as bca
-from test_cases.eq.DMA import QAP_2001, QAP_2002, QAP_2003, QAP_2005, QAP_2551, QAP_4393, QAP_4375, QAP_2006, QAP_2007, \
-    QAP_2008, QAP_2522, QAP_3723, QAP_2000, QAP_2546, QAP_2547
+from test_cases.eq.DMA import QAP_2001, QAP_2002, QAP_2003, QAP_2005, QAP_2551, QAP_4393, QAP_2006, QAP_2007, \
+    QAP_2008, QAP_3723, QAP_2000, QAP_2546, QAP_2547
 from stubs import Stubs
 from win_gui_modules.utils import set_session_id
 
@@ -41,8 +41,8 @@ def test_run(parent_id=None):
     QAP_2008.execute(report_id, session_id)
     QAP_2551.execute(report_id, session_id)
     QAP_4393.execute(report_id, session_id)
-    QAP_4375.execute(report_id, session_id)
-    QAP_2522.execute(report_id, session_id)
+    # QAP_4375.execute(report_id, session_id)
+    # QAP_2522.execute(report_id, session_id)
     QAP_2546.execute(report_id, session_id)
     QAP_2547.execute(report_id,session_id)
     QAP_3723.execute(report_id, session_id)
