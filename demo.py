@@ -1,56 +1,14 @@
 import logging
 import time
 from getpass import getuser as get_pc_name
-from datetime import datetime
 
-import rule_management
-from MyFiles.MD_FWD import Send_MD_FWD
-from MyFiles.MD_Settle_date import SendMD_Settle_Date
-from MyFiles.SendMD import SendMD
-from MyFiles.SendMD_QAP_6337 import SendMD_QAP_6337
 from MyFiles.SendMD_Simple import SendMD_Simple
-from MyFiles.SendMD_empty import SendMD_empty
-from MyFiles.md_to_refresh_prices import send_md_to_update_prices
-from MyFiles.send_md_crossed import send_md_crossed
-from MyFiles.sendmd_different_venues import send_md_defferent_venues
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.fx.fx_mm_autohedging import QAP_2326, QAP_3147, QAP_3146, QAP_2470, QAP_3017, QAP_3039, QAP_3067, \
-    QAP_3233, QAP_3354, QAP_3819, QAP_4122, QAP_2159, QAP_5551
-from test_cases.fx.fx_mm_esp import QAP_2966, QAP_6148, QAP_3661, QAP_6151
-from test_cases.fx.fx_mm_esp.QAP_3537 import QAP_3537
-from test_cases.fx.fx_mm_esp.QAP_6145 import QAP_6145
-from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
-from test_cases.fx.fx_mm_esp.QAP_6153 import QAP_6153
-from test_cases.fx.fx_mm_esp.QAP_6353 import QAP_6353
-from test_cases.fx.fx_mm_esp.QAP_6691 import QAP_6691
-from test_cases.fx.fx_mm_esp.QAP_6697 import QAP_6697
-from test_cases.fx.fx_mm_esp.QAP_6931 import QAP_6931
-from test_cases.fx.fx_mm_esp.QAP_6933 import QAP_6933
-from test_cases.fx.fx_mm_esp.QAP_7073 import QAP_7073
-from test_cases.fx.fx_mm_esp.QAP_7081 import QAP_7081
-from test_cases.fx.fx_mm_esp.QAP_7160 import QAP_7160
-from test_cases.fx.fx_mm_esp.QAP_7167 import QAP_7167
-from test_cases.fx.fx_mm_esp.QAP_7279 import QAP_7279
-from test_cases.fx.fx_mm_positions import QAP_2491
-from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
-from test_cases.fx.fx_mm_rfq import QAP_3003, QAP_3250, QAP_1552, QAP_1746, QAP_4509, QAP_4510, QAP_2296, QAP_2091, \
-    QAP_2382, QAP_5814
-from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
-from test_cases.fx.fx_mm_rfq.QAP_7129 import QAP_7129
-from test_cases.fx.fx_mm_rfq.QAP_7130 import QAP_7130
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_3766, QAP_3734, QAP_3805
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
-from test_cases.fx.fx_mm_synthetic import QAP_2646
-from test_cases.fx.fx_taker_esp import QAP_3141, QAP_3140, QAP_3418, QAP_3414, QAP_3415, QAP_5598, QAP_5635, QAP_5591, \
-    QAP_5600, QAP_5564, QAP_5589, QAP_5537
-from test_cases.fx.fx_taker_esp.QAP_3452 import QAP_3452
-from test_cases.fx.fx_taker_rfq import QAP_612
-from test_cases.fx.fx_taker_rfq.QAP_6 import QAP_6
-from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
-from test_cases.fx.fx_mm_rfq import QAP_4505, QAP_5848
-from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
-from test_cases.fx.fx_mm_rfq.QAP_7287 import QAP_7287
+from test_cases.fx.fx_mm_autohedging import QAP_3147, QAP_3146
+from test_cases.fx.fx_price_cleansing.QAP_3452 import QAP_3452
+from test_cases.fx.fx_price_cleansing.QAP_7939 import QAP_7939
+from test_cases.fx.fx_price_cleansing.QAP_7964 import QAP_7964
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
@@ -63,7 +21,7 @@ logging.getLogger().setLevel(logging.WARN)
 def test_run():
     # Generation id and time for test run
     pc_name = get_pc_name()  # getting PC name
-    report_id = bca.create_event(f'[{pc_name}] ') #+ datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(f'[{pc_name}] ')  # + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
 
@@ -77,12 +35,14 @@ def test_run():
     data_set = FxDataSet()
     # endregion
     Stubs.frontend_is_open = True
+    # rule_manager = rule_management.RuleManager()
+    # rule_manager.print_active_rules()
 
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id, window_name)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id, window_name)
 
         # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
@@ -107,15 +67,18 @@ def test_run():
         # QAP_6933(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_7279(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7939(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7964(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # test(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_5369.execute(report_id, session_id, data_set)
         # QAP_5589.execute(report_id, session_id)
         # QAP_5591.execute(report_id, session_id)
         # QAP_5537.execute(report_id, session_id, data_set)
-        # QAP_3141.execute(report_id)
-        # QAP_3140.execute(report_id)
+        QAP_3147.execute(report_id, session_id)
+        QAP_3146.execute(report_id, session_id)
         # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # send_rfq.execute(report_id)
-        SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_empty(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # send_md_crossed(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_Settle_Date(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
@@ -155,7 +118,6 @@ def test_run():
 
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set).execute()
-
 
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
