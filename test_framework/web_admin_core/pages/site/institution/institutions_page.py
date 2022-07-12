@@ -82,8 +82,11 @@ class InstitutionsPage(CommonPage):
     def is_enable_disable_toggle_enabled(self):
         return True if self.find_by_xpath(InstitutionsConstants.ENABLE_DISABLE_TOGGLE_INPUT_XPATH).get_attribute("disabled") else False
 
-    def is_searched_instrument_found(self, value):
-        return self.is_element_present(InstitutionsConstants.DISPLAYED_USER_XPATH.format(value))
+    def is_searched_institution_found(self, value):
+        return self.is_element_present(InstitutionsConstants.DISPLAYED_ENTITY_XPATH.format(value))
 
     def is_new_button_displayed(self):
         return self.is_element_present(InstitutionsConstants.NEW_BUTTON_XPATH)
+
+    def count_displayed_institutions(self):
+        return len(self.find_elements_by_xpath(InstitutionsConstants.DISPLAYED_INSTITUTIONS_XPATH))

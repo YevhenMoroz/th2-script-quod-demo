@@ -80,3 +80,6 @@ class CashPositionsPage(CommonPage):
 
     def get_client_cash_account_id(self):
         return self.find_by_xpath(CashPositionsConstants.MAIN_PAGE_CLIENT_CASH_ACCOUNT_ID_XPATH).text
+
+    def is_searched_cash_account_found(self, value):
+        return self.is_element_present(CashPositionsConstants.DISPLAYED_CASH_POSITIONS_XPATH.format(value))

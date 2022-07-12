@@ -80,3 +80,12 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def is_technical_user_selected(self):
         return self.is_checkbox_selected(UsersConstants.TECHNICAL_USER_CHECKBOX_AT_ASSIGNMENTS_SUB_WIZARD)
+
+    def select_head_of_desk_checkbox(self):
+        self.find_by_xpath(UsersConstants.HEAD_OF_DESK_AT_ASSIGNMENTS_SUB_WIZARD).click()
+
+    def is_head_of_desk_selected(self):
+        return self.is_checkbox_selected(UsersConstants.HEAD_OF_DESK_AT_ASSIGNMENTS_SUB_WIZARD)
+
+    def is_head_of_desk_enabled(self):
+        return self.find_by_xpath(UsersConstants.HEAD_OF_DESK_AT_ASSIGNMENTS_SUB_WIZARD_INPUT).is_enabled()
