@@ -163,8 +163,8 @@ class FixMessageQuoteFX(FixMessage):
 
         self.prepare_params_for_swap(quote_request)
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
-            self.add_tag({"BidPx": "*"})
             self.add_tag({"BidSwapPoints": "*"})
+            self.add_tag({"BidPx": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
             self.add_tag({"Side": "1"})
             if quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"].split("/")[0] == \
@@ -173,7 +173,6 @@ class FixMessageQuoteFX(FixMessage):
                 temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegBidPx')
                 temp[1].pop('LegBidForwardPoints')
-                self.remove_parameters(["BidPx", "BidSwapPoints"])
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"Side": "2"})
             self.add_tag({"BidPx": "*"})

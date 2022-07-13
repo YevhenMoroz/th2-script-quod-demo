@@ -102,7 +102,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     def prepare_swap_exec_report(self, new_order_single: FixMessageNewOrderSingle = None):
         no_legs = [
-            dict(LegSide="2" if new_order_single.get_parameter("Side") == "2" else "1",
+            dict(LegSide="2" if new_order_single.get_parameter("Side") == "1" else "1",
                  LegOrderQty=new_order_single.get_parameter("NoLegs")[0]["LegOrderQty"],
                  LegSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
                  LegSettlType=new_order_single.get_parameter("NoLegs")[0]["LegSettlType"],
@@ -118,7 +118,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSecurityIDSource="8",
                  )
                  ),
-            dict(LegSide="1" if new_order_single.get_parameter("Side") == "2" else "2",
+            dict(LegSide="1" if new_order_single.get_parameter("Side") == "1" else "2",
                  LegOrderQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
                  LegSettlDate=new_order_single.get_parameter("NoLegs")[1]["LegSettlDate"],
                  LegSettlType=new_order_single.get_parameter("NoLegs")[1]["LegSettlType"],
@@ -146,7 +146,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            SpotSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
+            SpotSettlDate=spo(),
             Price="*",
             LastMkt="*",
             LastSwapPoints="*",
@@ -165,6 +165,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             GrossTradeAmt='*',
             ExDestination='*',
             QtyType=0,
+            SettlType="*",
             NoParty="*",
             NoLegs=no_legs,
             Instrument=new_order_single.get_parameter('Instrument')
