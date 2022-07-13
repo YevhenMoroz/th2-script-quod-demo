@@ -1,44 +1,43 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk3
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-
-client_tier = "Iridium1"
-account = "Iridium1_1"
-
-symbol = "GBP/USD"
-security_type_fwd = "FXFWD"
-settle_date_w1 = wk3()
-settle_type_w1 = "W3"
-currency = "GBP"
-settle_currency = "USD"
-
-side = "1"
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
 
 
-def send_rfq_and_check_reject(case_id, qty_1):
-    params_spot = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1, symbol=symbol,
-                                    securitytype=security_type_fwd, settldate=settle_date_w1,
-                                    settltype=settle_type_w1, securityid=symbol,
-                                    currency=currency, side=side, settlcurrency=settle_currency,
-                                    account=account)
+class QAP_3764(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-    rfq = FixClientSellRfq(params_spot)
-    rfq.send_request_for_quote()
-    text = "failed to get forward points through RFQ"
-    rfq.verify_quote_reject(text=text)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.rfq_reject = FixMessageQuoteRequestRejectFX(data_set=self.data_set)
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.sec_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        self.wk3_date = self.data_set.get_settle_date_by_name('wk3')
+        self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
 
+        self.instrument = {
+            "Symbol": self.eur_usd,
+            "SecurityType": self.sec_type_fwd}
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    try:
-        # Step 1
-        send_rfq_and_check_reject(case_id, "1000000")
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                                            Account=self.client_iridium,
+                                                                            Instrument=self.instrument,
+                                                                            SettlDate=self.wk3_date)
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.rfq_reject.set_quote_reject_params(self.quote_request, text="no RFS venue available")
+        self.fix_verifier.check_fix_message(fix_message=self.rfq_reject)
+        # endregion
