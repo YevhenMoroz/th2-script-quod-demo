@@ -64,7 +64,7 @@ class QAP_4937(TestCase):
         self.settl_date = datetime.strftime(datetime.now() + timedelta(days=3), '%#m/%#d/%Y')
         self.order_ticket.set_order_details(recipient=self.username, partial_desk=True)
         self.order_ticket.set_settlement_details(settl_date=self.settl_date)
-        self.order_ticket.child_care([OrderBookColumns.order_id.value, order_id])
+        self.order_ticket.child_care(filter_list=[OrderBookColumns.order_id.value, order_id])
         # endregion
 
         # region Manual execution Child
