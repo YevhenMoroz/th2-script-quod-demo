@@ -7,6 +7,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.oms.oms_order_book_archive import OMSOrderBookArchive
@@ -18,7 +19,7 @@ seconds, nanos = timestamps()  # Test case start time
 
 
 class QAP_2791(TestCase):
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
