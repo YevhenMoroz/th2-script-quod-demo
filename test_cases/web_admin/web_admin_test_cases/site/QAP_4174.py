@@ -38,7 +38,7 @@ class QAP_4174(CommonTestCase):
         main_page = InstitutionsPage(self.web_driver_container)
         main_page.set_institution_name(self.institution_name)
         time.sleep(1)
-        if not main_page.is_searched_instrument_found(self.institution_name):
+        if not main_page.is_searched_institution_found(self.institution_name):
             main_page.click_on_new()
             time.sleep(2)
             value_tab = InstitutionsValuesSubWizard(self.web_driver_container)

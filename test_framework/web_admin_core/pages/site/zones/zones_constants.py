@@ -1,6 +1,10 @@
 class ZonesConstants:
     ZONES_PAGE_TITLE_XPATH = "//span[@class= 'entity-title left']//*[text()='Zones']"
     ZONES_WIZARD_PAGE_TITLE_XPATH = '//div[@class="breadcrumbs entity-title"]//*[text()="Zones"]'
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
+    INSTITUTIONS_COLUMN_XPATH = '//*[@col-id="institution.institutionName"][@tabindex="-1"]//span[@ref="eValue"]'
+    ZONES_COLUMN_XPATH = '//*[@col-id="zoneName"][@tabindex="-1"]//span[@ref="eValue"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"

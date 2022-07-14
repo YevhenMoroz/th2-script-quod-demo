@@ -30,3 +30,8 @@ class DesksAssignmentsSubWizard(CommonPage):
 
     def clear_location_field(self):
         self.find_by_xpath(DesksConstants.LOCATION_AT_ASSIGNMENTS_TAB_XPATH).send_keys(Keys.CONTROL + 'a', Keys.DELETE)
+
+    def get_all_locations_from_drop_menu(self):
+        self.set_text_by_xpath(DesksConstants.LOCATION_AT_ASSIGNMENTS_TAB_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(DesksConstants.DROP_DOWN_MENU_XPATH)

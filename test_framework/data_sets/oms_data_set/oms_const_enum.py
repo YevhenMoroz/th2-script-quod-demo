@@ -326,6 +326,7 @@ class OMSMatchStatus(Enum):
 class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
+    synthetic = 'Synth'
 
 
 class OMSTimeInForce(Enum):
@@ -339,3 +340,11 @@ class OMSOrdType(Enum):
 
 class OMSCapacity(Enum):
     agency = 'Agency'
+
+
+class OMSBagStrategy(Enum):
+    internal_twap = "Quod Financial Internal TWAP"
+
+
+class OMSBagScenario(Enum):
+    twap_strategy = "TWAP strategy"

@@ -9,6 +9,7 @@ class AccountsConstants:
     CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[text()='Ok']"
     DISPLAYED_ACCOUNT_XPATH = "//*[text()='{}']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     WIZARD_ID_INPUT_XPATH = "//input[@id='accountID']"
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"
@@ -31,6 +32,7 @@ class AccountsConstants:
     WIZARD_SAVE_BUTTON_XPATH = "//button[text()='Save Changes']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     WIZARD_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
+    WIZARD_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]//*[text()="Accounts"]'
 
     ADD_DIMENSIONS_ENTITY_BUTTON_XPATH = "//*[text()=' Dimensions ']/following-sibling::nb-accordion-item-body//*[@data-name='plus']"
     ADD_ROUTES_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='plus']"
