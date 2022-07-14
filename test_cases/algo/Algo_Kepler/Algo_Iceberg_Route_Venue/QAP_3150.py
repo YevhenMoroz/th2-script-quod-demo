@@ -7,6 +7,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
@@ -36,7 +37,9 @@ class QAP_3150(TestCase):
         self.display_qty = 500
         self.price_ask = 40
         self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1000000
+        self.px_for_incr = 0
+        self.qty_for_incr = 0
+        self.qty_bid = self.qty_ask = 1000
         # endregion
 
         # region Gateway Side
@@ -90,6 +93,11 @@ class QAP_3150(TestCase):
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+
         time.sleep(3)
         # endregion
 
@@ -100,7 +108,6 @@ class QAP_3150(TestCase):
         self.iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_params()
         self.iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, DisplayInstruction=dict(DisplayQty=self.display_qty)))
-        # self.iceberg_order.add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.iceberg_order, case_id_0)
 
@@ -111,13 +118,9 @@ class QAP_3150(TestCase):
         self.fix_verifier_sell.check_fix_message(self.iceberg_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_pending)
-        er_pending_new_iceberg_order_params.remove_parameter('NoStrategyParameters')
-        er_pending_new_iceberg_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        er_new_iceberg_order_params.remove_parameter('NoStrategyParameters')
-        er_new_iceberg_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -125,7 +128,7 @@ class QAP_3150(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_params()
         self.dma_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -154,8 +157,6 @@ class QAP_3150(TestCase):
         # endregion
 
         er_cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_iceberg_order_params.remove_parameter('NoStrategyParameters')
-        er_cancel_iceberg_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
