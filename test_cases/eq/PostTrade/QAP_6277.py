@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_5712(TestCase):
+class QAP_6277(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -30,12 +30,12 @@ class QAP_5712(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '100'
+        self.qty = '3000'
         self.price = '20'
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_3_venue_1')  # MOClient3_PARIS
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.client = self.data_set.get_client('client_pt_3')  # MOClient3
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
@@ -46,11 +46,20 @@ class QAP_5712(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Create DMA order via FIX
         try:
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                            self.venue_client_names,
-                                                                                            self.venue,
-                                                                                            float(self.price),
-                                                                                            int(self.qty), 0)
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.venue,
+                                                                                                  float(self.price))
+            # Creating 30 executions
+            rules_list = []
+            for rule in range(30):
+                trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                                self.venue_client_names,
+                                                                                                self.venue,
+                                                                                                float(self.price),
+                                                                                                int(100), 0)
+                rules_list.append(trade_rule)
+
             self.fix_message.set_default_dma_limit()
             self.fix_message.change_parameters(
                 {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
@@ -63,35 +72,28 @@ class QAP_5712(TestCase):
             logger.error('Error execution', exc_info=True)
         finally:
             time.sleep(2)
-            self.rule_manager.remove_rule(trade_rule)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rules(rules_list)
         # endregion
 
         # region Filter Order Book
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
         # endregion
 
-        # region Checking the values in OrderBook
+        # region Checking values in OrderBook
         self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
-                                                 OrderBookColumns.done_for_day.value: 'Yes'},
+                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
                                                 'Comparing values after trading')
         # endregion
 
-        # region Book order and checking PostTradeStatus in the Order book
-        self.middle_office.set_modify_ticket_details(toggle_manual=True, remove_comm=True, comm_basis='Absolute',
-                                                     comm_rate='40')
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Book')
-        # endregion
-
-        # region Commission checks
-        client_comm = self.middle_office.extract_block_field(MiddleOfficeColumns.client_comm.value,
-                                                             [MiddleOfficeColumns.order_id.value, order_id])
-        self.middle_office.compare_values({MiddleOfficeColumns.client_comm.value: '40'}, client_comm,
-                                          'Comparing Client Comm after Book')
+        # region Checking the values after the Book in the Middle Office
+        values_after_book = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.qty.value, MiddleOfficeColumns.price.value, MiddleOfficeColumns.sts.value,
+             MiddleOfficeColumns.match_status.value], [MiddleOfficeColumns.order_id.value, order_id])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.qty.value: '3,000', MiddleOfficeColumns.price.value: self.price,
+             MiddleOfficeColumns.sts.value: 'ApprovalPending', MiddleOfficeColumns.match_status.value: 'Unmatched'},
+            values_after_book, 'Comparing the values in the MiddleOffice after the Book')
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

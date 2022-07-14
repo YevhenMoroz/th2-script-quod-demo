@@ -2,11 +2,11 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from test_framework.core.test_case import TestCase
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import Connectivity
+from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -23,16 +23,18 @@ seconds, nanos = timestamps()  # Test case start time
 
 class QAP_2007(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
         self.qty = '500'
-        self.rule_manager = RuleManager(Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
-        self.venue = self.data_set.get_mic_by_name('mic_1')
+        self.price = '20'
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')  # XPAR_CLIENT1
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
@@ -47,11 +49,11 @@ class QAP_2007(TestCase):
         try:
             nos_rule = self.rule_manager.add_NewOrdSingle_FOK_FIXStandard(self.bs_connectivity,
                                                                           self.venue_client_names, self.venue,
-                                                                          False, 20)
+                                                                          False, float(self.price))
             self.fix_message.set_default_dma_limit()
-            self.fix_message.change_parameters({'Side': '2', 'TimeInForce': '4'})
-            self.fix_message.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty})
-            response = self.fix_manager.send_message_and_receive_response(self.fix_message)
+            self.fix_message.change_parameters(
+                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'TimeInForce': '4'})
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
             # get Client Order ID
             cl_ord_id = response[0].get_parameters()['ClOrdID']
 
@@ -64,7 +66,8 @@ class QAP_2007(TestCase):
 
         # region Set-up parameters for ExecutionReports
         self.exec_report.set_default_new(self.fix_message)
-        self.exec_report.change_parameters({'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*'})
+        self.exec_report.change_parameters(
+            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'LastMkt': '*'})
         # endregion
 
         # region Check ExecutionReports
@@ -79,7 +82,7 @@ class QAP_2007(TestCase):
         self.sts = self.order_book.extract_field(OrderBookColumns.sts.value)
         self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.eliminated.value},
                                        {OrderBookColumns.sts.value: self.sts},
-                                       'Checking order status in the order book')
+                                       'Checking order status in the Order book')
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
