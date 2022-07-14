@@ -10,7 +10,7 @@ class FixMessageNewOrderListOMS(FixMessageNewOrderList):
     def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
-        self.data_set=data_set
+        self.data_set = data_set
 
         self.base_parameters = {
             'BidType': "1",
@@ -57,8 +57,7 @@ class FixMessageNewOrderListOMS(FixMessageNewOrderList):
         return self
 
     def add_simple_order_to_list(self):
-        parameters = self.base_parameters['ListOrdGrp']['NoOrders'].append(self.base_parameters['ListOrdGrp']['NoOrders'][0])
+        parameters = self.base_parameters['ListOrdGrp']['NoOrders'].append(
+            self.base_parameters['ListOrdGrp']['NoOrders'][0])
         self.change_parameters(parameters)
         return self
-
-

@@ -3,7 +3,7 @@ from test_framework.win_gui_wrappers.base_bag_order_book import BaseBagOrderBook
 from win_gui_modules.bag_order_ticket import BagOrderTicketDetails, PegsOrdDetails, SubLevelDetails, BagOrderInfo, \
     OrderBagWaveCreationDetails, ExtractionBagFieldsDetails, ExtractionBagOrderAction, \
     GetOrderBagBookDetails, OrderBagCreationDetails, OrderBagCompleteDetails, CreateOrderDetails, \
-    ModifySubLevelBagOrderDetails, ExtractWaveTicketValuesRequest
+    ModifySubLevelBagOrderDetails, ExtractWaveTicketValuesRequest, ScenarioDetails
 
 
 class OMSBagOrderBook(BaseBagOrderBook):
@@ -37,4 +37,5 @@ class OMSBagOrderBook(BaseBagOrderBook):
         self.modify_sub_level_order_call = Stubs.win_act_bag_management_service.modifySubOrderFromBag
         self.extract_wave_ticket_values_request = ExtractWaveTicketValuesRequest(self.base_request)
         self.extract_wave_ticket_values_call = Stubs.win_act_bag_management_service.extractFieldsFromWaveTicket
-
+        self.cancel_wave_call = Stubs.win_act_bag_management_service.cancelWave
+        self.scanario_details = ScenarioDetails()

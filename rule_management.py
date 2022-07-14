@@ -12,7 +12,10 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, \
+    TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, \
+    TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
+    TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -354,15 +357,17 @@ class RuleManager:
                                                               price=price
                                                               ))
 
-    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject"):
+    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str,
+                                                            price: float, reason: int, text: str = "QATestReject"):
         return self.sim.createNewOrdSingleExecutionReportRejectWithReason(
-            request=TemplateNewOrdSingleExecutionReportRejectWithReason(connection_id=ConnectionID(session_alias=session),
-                                                              account=account,
-                                                              exdestination=ex_destination,
-                                                              price=price,
-                                                              reason=reason,
-                                                              text=text
-                                                              ))
+            request=TemplateNewOrdSingleExecutionReportRejectWithReason(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=ex_destination,
+                price=price,
+                reason=reason,
+                text=text
+            ))
 
     def add_fx_md_to(self, session: str):
         return self.sim.createQuodDefMDRFXRule(
@@ -407,14 +412,45 @@ class RuleManager:
             )
         )
 
-    def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str, price: float):
+    def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str,
+                                                     price: float):
         return self.sim.createNewOrdSingleExecutionReportEliminate(
             request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
-                                                              account=account,
-                                                              exdestination=ex_destination,
-                                                              price=price
-                                                              ))
-    # ------------------------
+                                                                 account=account,
+                                                                 exdestination=ex_destination,
+                                                                 price=price
+                                                                 ))
+
+    def add_OrderCancelReplaceRequestWithDelayFixStandard(self, session: str, account: str, ex_destination: str,
+                                                          modify: bool, delay: int):
+        return self.sim.createOrderCancelReplaceRequestWithDelayFIXStandard(
+            request=TemplateOrderCancelReplaceRequestWithDelayFIXStandard(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=ex_destination,
+                modify=modify,
+                delay=delay))
+
+    def add_ExecutionReportTradeByOrdQtyWithLastLiquidityInd_FIXStandard(self,session: str, account: str,
+                                                                         ex_destination: str, price: float,
+                                                                         traded_price: float,
+                                                                         qty: int, traded_qty: int, delay: int,
+                                                                         last_liquidity_ind):
+        return self.sim.createExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard(
+            request=TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=ex_destination,
+                price=price,
+                traded_price=traded_price,
+                qty=qty,
+                traded_qty=traded_qty,
+                delay=delay,
+                last_liquidity_ind=last_liquidity_ind
+
+            )
+        )
+        # ------------------------
 
 
 if __name__ == '__main__':

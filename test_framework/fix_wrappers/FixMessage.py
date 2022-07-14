@@ -121,3 +121,6 @@ class FixMessage:
 
     def get_data_set(self):
         return self.__data_set
+
+    def delete_group(self, field):
+        del self.__parameters[field]
