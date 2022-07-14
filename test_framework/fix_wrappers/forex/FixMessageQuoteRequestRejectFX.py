@@ -16,8 +16,6 @@ class FixMessageQuoteRequestRejectFX(FixMessageQuoteRequestReject):
             "Text": text if text is not None else "*",
 
         }
-        quote_reject_params["NoRelatedSymbols"][0].pop("Account")
-        quote_reject_params["NoRelatedSymbols"][0].pop("OrderQty")
         super().change_parameters(quote_reject_params)
         return self
 
