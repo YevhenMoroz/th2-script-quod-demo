@@ -12,7 +12,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportTradeByOrdQtyFIXStandard, TemplateNewOrdSingleExecutionReportTradeFIXStandard, \
     TemplateNewOrdSingleMarketFIXStandard, TemplateOrderCancelRequestFIXStandard, TemplateNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleIOCFIXStandard, TemplateMarketNewOrdSingleIOCFIXStandard, \
-    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction
+    TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, TemplateOrderCancelRFQRequest
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -432,6 +432,14 @@ class RuleManager:
             request=TemplateNewOrdSingleMarketAuction(connection_id=ConnectionID(session_alias=session),
                                                account=account,
                                                venue=venue))
+
+    def add_OrderCancelRequestRFQExecutionReport(self, session: str, account: str, ex_destination: str, acceptCancel: bool):
+        return self.sim.createOrderCancelRequestRFQExecutionReport(
+            request=TemplateOrderCancelRFQRequest(connection_id=ConnectionID(session_alias=session),
+                                                    account=account,
+                                                    exdestination=ex_destination,
+                                                    acceptCancel=acceptCancel
+                                                    ))
     # ------------------------
 
 
