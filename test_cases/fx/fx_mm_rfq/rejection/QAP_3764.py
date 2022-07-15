@@ -39,5 +39,6 @@ class QAP_3764(TestCase):
                                                                             SettlDate=self.wk3_date)
         self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.rfq_reject.set_quote_reject_params(self.quote_request, text="no RFS venue available")
+        self.rfq_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
         self.fix_verifier.check_fix_message(fix_message=self.rfq_reject)
         # endregion
