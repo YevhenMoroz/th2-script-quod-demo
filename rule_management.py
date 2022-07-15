@@ -416,7 +416,7 @@ class RuleManager:
                                                               price=price
                                                               ))
 
-    def add_NewOrdSingleRFQExecutionReport(self, session: str, account: str, ex_destination: str, order_qty: int, restated_qty: int, new_reply: bool, restated_reply: bool):
+    def add_NewOrdSingleRFQExecutionReport(self, session: str, account: str, ex_destination: str, order_qty: int, restated_qty: int, new_reply: bool, restated_reply: bool, reply_delay: int = 0):
         return self.sim.createNewOrdSingleRFQExecutionReport(
             request=TemplateNewOrdSingleRQFRestated(connection_id=ConnectionID(session_alias=session),
                                                     account=account,
@@ -424,7 +424,8 @@ class RuleManager:
                                                     orderQty=order_qty,
                                                     restatedQty=restated_qty,
                                                     newReply=new_reply,
-                                                    RestatedReply=restated_reply
+                                                    RestatedReply=restated_reply,
+                                                    reply_delay=reply_delay
                                                     ))
 
     def add_NewOrdSingle_MarketAuction(self, session: str, account: str, venue: str):
