@@ -7,7 +7,6 @@ from test_framework.data_sets.constants import DirectionEnum, Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -20,20 +19,20 @@ class QAP_2082(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX()
         self.new_order_single = FixMessageNewOrderSingleFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
-        self.account = self.data_set.get_client_by_name("client_mm_1")
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
         self.status_fill = Status.Fill
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
 
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
@@ -45,7 +44,7 @@ class QAP_2082(TestCase):
 
         # region step 2
         self.new_order_single.set_default().change_parameters(
-            {"Account": self.account, "TimeInForce": "3", "OrdType": "1"}).remove_parameter("Price")
+            {"Account": self.silver, "TimeInForce": "3", "OrdType": "1"}).remove_parameter("Price")
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
         self.execution_report.set_params_from_new_order_single(self.new_order_single,

@@ -1,35 +1,44 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo_ndf
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_2353(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-    client_tier = "Iridium1"
-    symbol = "EUR/RUB"
-    security_type_spo = "FXSPOT"
-    settle_date = spo_ndf()
-    settle_type = 0
-    currency = "EUR"
-    qty = "1000000"
-    text = f"no available Bid depth on {symbol} SPO"
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
+        self.rfq_reject = FixMessageQuoteRequestRejectFX(data_set=self.data_set)
+        self.eur_rub = self.data_set.get_symbol_by_name('symbol_ndf_6')
+        self.sec_type_spot = self.data_set.get_security_type_by_name('fx_spot')
+        self.spo_ndf_date = self.data_set.get_settle_date_by_name('spo_ndf')
+        self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
 
-    try:
-        # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol, side="1",
-                                   securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote()
-        # Step 2
-        rfq.verify_quote_reject(text=text)
+        self.instrument = {
+            "Symbol": self.eur_rub,
+            "SecurityType": self.sec_type_spot}
 
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                                            Account=self.client_iridium,
+                                                                            Instrument=self.instrument,
+                                                                            SettlDate=self.spo_ndf_date)
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.rfq_reject.set_quote_reject_params(self.quote_request, text="no available depth on EUR/RUB SPO")
+        self.rfq_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
+        self.fix_verifier.check_fix_message(fix_message=self.rfq_reject)
+        # endregion

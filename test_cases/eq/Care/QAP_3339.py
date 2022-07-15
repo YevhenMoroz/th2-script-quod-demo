@@ -1,86 +1,88 @@
 import logging
 from datetime import datetime, timedelta
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
 from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_3339(TestCase):
 
-def execute(report_id, session_id):
-    case_name = "QAP-3339"
-    # region Declarations
-    qty = "900"
-    price = "40"
-    lookup = "VETO"
-    client = "MOClient"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregionA
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.qty = "300"
+        self.price = "10"
+        self.exec_qty = "150"
+        self.contra_firm = "Manual Execution"
+        self.last_capacity = "Agency"
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
+        self.fix_message.change_parameter("Price", self.price)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.settl_date = int(str(datetime.now().date() + timedelta(days=1)).replace('-', ''))
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set, self.fix_message.get_parameters()).set_default_filled(self.fix_message)
+        self.exec_report.change_parameter('ExecType', 'F')
+        self.exec_report.change_parameter('OrdStatus', '2')
+        self.base_request = get_base_request(self.session_id, self.test_id)
 
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    eq_wrappers.accept_order(lookup, qty, price)
-    response = fix_message.pop('response')
-    # endregion
-    # Amend fix order
-    eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
-    eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
-    # endregion
-    str1 = str(datetime.now().date() + timedelta(days=1)).replace('-', '')
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'F',
-        'Account': '*',
-        'OrdStatus': 1,
-        'TradeDate': '*',
-        'Side': 1,
-        'Price': price,
-        'TimeInForce': 0,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlDate': str1,
-        'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'LastCapacity': '*',
-        'ExDestination': '*',
-        'GrossTradeAmt': '*'
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params1',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
-    params['OrdStatus'] = '2'
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params2',
-                                         key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept CO order
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual execution
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution(qty=self.exec_qty,
+                                                                                                 price=self.price,
+                                                                                                 settl_date=1)
+        # endregion
+        # region check partially fill exec status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
+        exec_report.change_parameters({'SettlDate': self.settl_date, "LastMkt": "XPAR", "VenueType": "O", "OrdStatus": "1",
+                                       "LastCapacity" :"1"})
+        exec_report.remove_parameters(["SecondaryOrderID", "LastExecutionPolicy", "SettlCurrency", "SecondaryExecID"])
+        self.fix_verifier.check_fix_message(exec_report)
+        # endregion
+        # region manual execution
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).manual_execution(qty=self.exec_qty, price=self.price,
+                                         execution_firm="TAVIRA",settl_date=1, contra_firm=self.contra_firm,
+                                         last_capacity=self.last_capacity)
+        # endregion
+        # region check filled exec status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
+        exec_report.change_parameters(
+            {'SettlDate': self.settl_date, "LastMkt": "XPAR", "VenueType": "O", "OrdStatus": "2",
+             "LastCapacity": "1"})
+        exec_report.remove_parameters(["SecondaryOrderID", "LastExecutionPolicy", "SettlCurrency", "SecondaryExecID"])
+        self.fix_verifier.check_fix_message(exec_report)
+        # endregion
+

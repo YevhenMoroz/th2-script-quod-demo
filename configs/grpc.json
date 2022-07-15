@@ -419,6 +419,21 @@
           "act_child_order_book"
         ]
       }
+    },
+     "Win_Act_Order_Book_Archive": {
+      "service-class": "OrderBookArchiveServiceService",
+      "endpoints": {
+        "act_order_book_archive": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_archive"
+        ]
+      }
     }
   }
 }

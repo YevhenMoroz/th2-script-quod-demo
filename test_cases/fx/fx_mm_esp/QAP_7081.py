@@ -19,8 +19,11 @@ class QAP_7081(TestCase):
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.dif_symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.instrument = self.symbol + "-Spot"
-        self.pips_event = "Pips validation"
+        self.dif_instrument = self.dif_symbol + "-Spot"
+        self.empty_pips_event = "Empty pips validation"
+        self.pips_event = "Present pips validation"
         self.empty_pips = ""
         self.not_equal = VerificationMethod.NOT_EQUALS
 
@@ -41,13 +44,15 @@ class QAP_7081(TestCase):
 
         # region step 2
         stop_fxfh()
+        self.rates_tile.modify_client_tile(instrument=self.dif_instrument)
+        self.rates_tile.modify_client_tile(instrument=self.instrument)
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
         actual_bid_pips = bid_n_ask_values[self.bid_pips.value]
         actual_ask_pips = bid_n_ask_values[self.ask_pips.value]
         self.rates_tile.compare_values(self.empty_pips, actual_bid_pips,
-                                       event_name=self.pips_event)
+                                       event_name=self.empty_pips_event)
         self.rates_tile.compare_values(self.empty_pips, actual_ask_pips,
-                                       event_name=self.pips_event)
+                                       event_name=self.empty_pips_event)
         # endregion
 
         # region step 3

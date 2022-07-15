@@ -1,7 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData, SettlementTabDetails
 from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
@@ -82,22 +82,6 @@ class AdwOrdTabDetails:
 
     def build(self):
         return self.request
-
-
-class MiscsBookingFieldNumber(Enum):
-    BOOKING_FIELD_1 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_1
-    BOOKING_FIELD_2 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_2
-    BOOKING_FIELD_3 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_3
-    BOOKING_FIELD_4 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_4
-    BOOKING_FIELD_5 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_5
-
-
-class MiscsAllocationsFieldNumber(Enum):
-    ALLOCATIONS_FIELD_1 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_1
-    ALLOCATIONS_FIELD_2 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_2
-    ALLOCATIONS_FIELD_3 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_3
-    ALLOCATIONS_FIELD_4 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_4
-    ALLOCATIONS_FIELD_5 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_5
 
 
 class MiscsOrdDetails:
@@ -235,6 +219,9 @@ class OrderTicketDetails:
 
     def set_miscs_details(self, miscs_details: MiscsOrdDetails):
         self.order.miscsOrderDetails.CopyFrom(miscs_details)
+
+    def set_settlement_details(self, settlement_details: SettlementTabDetails):
+        self.order.settlementDetails.CopyFrom(settlement_details)
 
 
 class FXOrderDetails:

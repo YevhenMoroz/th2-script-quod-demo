@@ -97,6 +97,9 @@ class QAP_4184(CommonTestCase):
             time.sleep(1)
             self.verify("Venue has been saved with the empty Position Flattering Period field", True,
                         venues_page.is_searched_venue_found(self.test_data["name"]))
+            venues_wizard.click_on_close()
+            time.sleep(1)
+            venues_wizard.click_on_ok_button()
 
             side_menu.open_subvenues_page()
             time.sleep(2)
@@ -110,7 +113,7 @@ class QAP_4184(CommonTestCase):
             subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
             selected_values_at_position_flattening_period = \
                 [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
-            if len(selected_values_at_position_flattening_period) > 1:
+            if "" not in selected_values_at_position_flattening_period:
                 subvenue_description_wizard.set_position_flattening_period(
                     selected_values_at_position_flattening_period)
             subvenue_wizard = SubVenuesWizard(self.web_driver_container)
