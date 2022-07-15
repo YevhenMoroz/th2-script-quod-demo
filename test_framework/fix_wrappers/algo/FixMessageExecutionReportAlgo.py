@@ -725,6 +725,83 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def set_RFQ_accept_params_new(self, nos_rfq: FixMessageNewOrderSingle):
+        temp = {
+            "Account": nos_rfq.get_parameter("Account"),
+            "AvgPx": 0,
+            "ClOrdID": "*",
+            "CumQty": 0,
+            "Currency": nos_rfq.get_parameter("Currency"),
+            "ExecID": "*",
+            "ExecInst": "uncrossing-only",
+            "LastPx": 0,
+            "LastQty": 0,
+            "OrderID": "*",
+            "OrderQty": nos_rfq.get_parameter("OrderQty"),
+            "OrdStatus": 0,
+            "OrdType": "P",
+            "Price": nos_rfq.get_parameter("Price"),
+            "Side": nos_rfq.get_parameter("Side"),
+            "TimeInForce": nos_rfq.get_parameter("TimeInForce"),
+            "TransactTime": "*",
+            "ExDestination": nos_rfq.get_parameter("ExDestination"),
+            "ExecType": 0,
+            "LeavesQty": nos_rfq.get_parameter("OrderQty"),
+            "SecondaryOrderID": "*",
+            "OrderCapacity": "A",
+            "AccountType": "1",
+            "ApplID": "1",
+            "AlgoCst01": "ioi",
+            "ShortCode": "14519",
+            "CustomKeplerTag": "14519",
+            "Instrument": "*",
+            "NoParty": "*",
+        }
+        super().change_parameters(temp)
+        return self
+
+    def set_RFQ_accept_params_restated(self, er_rfq_new: FixMessageExecutionReport):
+        temp = er_rfq_new.get_parameters()
+        temp.update({
+            "AlgoCst04": "invited",
+            "ExecType": "D",
+            "AlgoCst03": "O04r2TeUXbzb",
+            "ExecRestatementReason": "1",
+            "QuoteType": "1",
+            "LastMkt": er_rfq_new.get_parameter("ExDestination"),
+        })
+        super().change_parameters(temp)
+        return self
+
+    def set_RFQ_cancel_accepted(self, nos_rfq: FixMessageNewOrderSingle):
+        temp = {
+            "AvgPx": 0,
+            "ClOrdID": "*",
+            "CumQty": 0,
+            "ExecID": "*",
+            "LastMkt": "*",
+            "LastPx": 0,
+            "LastQty": 0,
+            "OrderID": "*",
+            "OrdStatus": 4,
+            "OrdType": "P",
+            "Side": nos_rfq.get_parameter("Side"),
+            "TransactTime": "*",
+            "ExDestination": nos_rfq.get_parameter("ExDestination"),
+            "ExecType": 4,
+            "LeavesQty": 1000000, # value hard-coded at th2-sim
+            "OrderCapacity": "A",
+            "ApplID": "1",
+            "AlgoCst01": "ioi",
+            "ShortCode": "18831",
+            "CustomKeplerTag": "18831",
+            "IClOrdIdTO": "*",
+            "ChildOrderID": "*",
+            "OrigClOrdID": "*",
+        }
+        super().change_parameters(temp)
+        return self
+
     def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
