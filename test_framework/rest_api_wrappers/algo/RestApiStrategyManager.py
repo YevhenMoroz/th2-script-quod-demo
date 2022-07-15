@@ -1,3 +1,5 @@
+import time
+
 from stubs import Stubs
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.algo.RestApiAlgoPolicyMessages import RestApiAlgoPolicyMessages
@@ -31,7 +33,7 @@ class RestApiAlgoManager(RestApiManager):
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
         rest_manager.send_post_request(modify_algo_policy)
         # endregion
-
+        time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
         grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
@@ -70,7 +72,7 @@ class RestApiAlgoManager(RestApiManager):
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
         rest_manager.send_post_request(modify_algo_policy)
         # endregion
-
+        time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
         grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
