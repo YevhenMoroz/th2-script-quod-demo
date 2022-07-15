@@ -29,6 +29,13 @@ class QAP_3851(TestCase):
 
         self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
         self.usd = self.data_set.get_currency_by_name("currency_usd")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.sec_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.instrument_swap = {
+                    "Symbol": self.gbp_usd,
+                    "SecurityType": self.sec_type_swap
+                }
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -36,7 +43,10 @@ class QAP_3851(TestCase):
         self.quote_request.set_swap_fwd_fwd()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
                                                            Account=self.acc_argentina,
-                                                           Currency=self.usd)
+                                                           Currency=self.usd,
+                                                           Instrument=self.instrument_swap)
+        self.quote_request.update_near_leg(leg_symbol=self.gbp_usd)
+        self.quote_request.update_far_leg(leg_symbol=self.gbp_usd)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                                             self.test_id)
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
