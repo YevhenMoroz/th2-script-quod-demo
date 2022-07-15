@@ -75,4 +75,6 @@ class BaseMainWindow(BaseWindow):
         panic_details.set_exec_status(exec_status)
         panic_details.set_side(side)
         panic_details.extract_footer(extract_footer)
-        call(Stubs.win_act.panicAction, panic_details.build())
+        result = call(Stubs.win_act.panicAction, panic_details.build())
+        self.clear_details([panic_details])
+        return result
