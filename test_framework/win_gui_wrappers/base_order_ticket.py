@@ -33,6 +33,7 @@ class BaseOrderTicket(BaseWindow):
         self.adw_ord_tab_details = None
         self.miscs_ord_tab_details = None
         self.settlement_details = None
+        self.parties_tab_details = None
 
     # endregion
 
@@ -178,6 +179,20 @@ class BaseOrderTicket(BaseWindow):
             self.settlement_details.set_cash_account(cash_account)
         return self.order_details.set_settlement_details(self.settlement_details.build())
 
+    def set_parties_tab_details(self, custodian=None, corespondent_broker=None, give_up_broker=None, trader_name=None,
+                                inv_firm=None, exec_trader=None, inv_dec_mk=None, client_id=None, execution_firm=None,
+                                sender_location=None):
+        self.parties_tab_details.set_custodian(custodian)
+        self.parties_tab_details.set_corespondent_broker(corespondent_broker)
+        self.parties_tab_details.set_give_up_broker(give_up_broker)
+        self.parties_tab_details.set_trader_name(trader_name)
+        self.parties_tab_details.set_inv_firm(inv_firm)
+        self.parties_tab_details.set_exec_trader(exec_trader)
+        self.parties_tab_details.set_inv_dec_mk(inv_dec_mk)
+        self.parties_tab_details.set_client_id(client_id)
+        self.parties_tab_details.set_execution_firm(execution_firm)
+        self.parties_tab_details.set_sender_location(sender_location)
+        return self.order_details.set_parties_details(self.parties_tab_details.build())
     # endregion
 
     # region Get

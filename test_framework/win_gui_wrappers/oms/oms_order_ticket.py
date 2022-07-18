@@ -7,7 +7,7 @@ from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTa
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, OrderTicketExtractedValue, ExtractOrderTicketValuesRequest, \
     ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails, AdwOrdTabDetails, \
-    MiscsOrdDetails
+    MiscsOrdDetails, PartiesTabDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -41,6 +41,7 @@ class OMSOrderTicket(BaseOrderTicket):
         self.adw_ord_tab_details = AdwOrdTabDetails()
         self.miscs_ord_tab_details = MiscsOrdDetails()
         self.settlement_details = SettlementTabDetails()
+        self.parties_tab_details = PartiesTabDetails()
         # endregion
 
     # region Set

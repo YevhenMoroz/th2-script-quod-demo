@@ -46,6 +46,9 @@ class SubVenuesConstants:
     DESCRIPTION_TAB_NEWS_SYMBOL_XPATH = '//*[@formcontrolname="newsMDSymbol"]'
     DESCRIPTION_TAB_FEED_SOURCE_XPATH = '//*[@id="feedSourceEnumTable"]'
     DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="subVenuePosValidity"]//button'
+    DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
+    DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option//span[1]'
+
     # Details tab
 
     DETAILS_TAB_TRADING_STATUS_XPATH = '//*[@id="tradingStatus"]'

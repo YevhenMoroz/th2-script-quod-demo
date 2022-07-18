@@ -1,99 +1,111 @@
 import logging
-import os
 import time
+from datetime import datetime
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
-from test_framework.fix_wrappers.DataSet import Instrument
+from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
+    MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
 
 
 class QAP_5684(TestCase):
-    def __init__(self, report_id, session_id, file_name):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
-
-    def qap_5684(self):
-        # region Declaration
-        base_window = BaseMainWindow(self.case_id, self.session_id)
-        oms_order_book = OMSOrderBook(self.case_id, self.session_id)
-        oms_middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        price = '1234'
-        client = 'MOClient'
-        fix_message = FixMessageNewOrderSingleOMS()
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        fix_message.set_default_dma_limit()
-        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
-        fix_message.change_parameter('Price', price)
-        fix_message.change_parameter('Account', client)
-        fix_message.change_parameter("Instrument", Instrument.ISI3.value)
-        fix_message.change_parameter("ExDestination", Instrument.ISI3.value.get('SecurityExchange'))
-        fix_message.change_parameter('Currency', 'GBp')
-        # endregion
-        # region open FE
-        base_window.open_fe(self.report_id, work_dir, username, password, True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.qty = '1000'
+        self.price = '1234'
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.currency = self.data_set.get_currency_by_name('currency_3')  # GBp
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_2')  # MOClient_EUREX
+        self.venue = self.data_set.get_mic_by_name('mic_2')  # XEUR
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message_first = FixMessageNewOrderSingleOMS(self.data_set)
+        self.fix_message_second = FixMessageNewOrderSingleOMS(self.data_set)
         # endregion
 
-        # region create 2  DMA order and execute them
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Create DMA order via FIX
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             client + "_EUREX",
-                                                                                             'XEUR', float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + '_EUREX', 'XEUR',
-                                                                                       float(price), int(qty), 0)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_id_first = oms_order_book.extract_field('Order ID')
-            oms_order_book.scroll_order_book(1)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_id_second = oms_order_book.extract_field('Order ID')
+            # first order
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client_names,
+                                                                                            self.venue,
+                                                                                            float(self.price),
+                                                                                            int(self.qty), 0)
+            self.fix_message_first.set_default_dma_limit(instr='instrument_3')
+            self.fix_message_first.change_parameters(
+                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
+                 'Currency': self.currency, 'ExDestination': 'XEUR'})
+            response_first = self.fix_manager.send_message_and_receive_response(self.fix_message_first)
+            # get Client Order ID and Order ID
+            cl_ord_id_first = response_first[0].get_parameters()['ClOrdID']
+            order_id_first = response_first[0].get_parameters()['OrderID']
+
+            # second order
+            self.fix_message_second.set_default_dma_limit(instr='instrument_3')
+            self.fix_message_second.change_parameters(
+                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
+                 'Currency': self.currency, 'ExDestination': 'XEUR'})
+            response_second = self.fix_manager.send_message_and_receive_response(self.fix_message_second)
+            # get Client Order ID and Order ID
+            cl_ord_id_second = response_second[0].get_parameters()['ClOrdID']
+            order_id_second = response_second[0].get_parameters()['OrderID']
+
         except Exception:
-            logger.info('Oh shit, I am sorry')
-
+            logger.error('Error execution', exc_info=True)
         finally:
-            time.sleep(3)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rule)
+            time.sleep(2)
+            self.rule_manager.remove_rule(trade_rule)
         # endregion
 
-        # region mass book orders
-        oms_order_book.mass_book([1, 2])
+        # region Mass Book orders and checking PostTradeStatus in the Order book
+        self.order_book.mass_book([1, 2])
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_first])
+        self.order_book.check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
+            'Comparing PostTradeStatus after Mass Book of the first order')
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_second])
+        self.order_book.check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
+            'Comparing PostTradeStatus after Mass Book of the second order')
         # endregion
 
-        # region verify value
-        extracting_price_first_order = oms_middle_office.extract_block_field('Net Price', ['Order ID', order_id_first])
-        extracting_qty_first_order = oms_middle_office.extract_block_field('Qty')
-        extracting_price_second_order = oms_middle_office.extract_block_field('Net Price',
-                                                                              ['Order ID', order_id_second])
-        extracting_qty_second_order = oms_middle_office.extract_block_field('Qty')
-        oms_middle_office.compare_values({'Net Price': '12.34'}, extracting_price_first_order,
-                                         'Check first block Net Price')
-        oms_middle_office.compare_values({'Qty': qty}, extracting_qty_first_order, 'Check first block qty')
-        oms_middle_office.compare_values({'Net Price': '12.34'}, extracting_price_first_order,
-                                         'Check second block Net Price')
-        oms_middle_office.compare_values({'Qty': qty}, extracting_qty_first_order, 'Check second block qty')
+        # region Checking the values after the Mass Book in the Middle Office
+        values_after_book = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.qty.value, MiddleOfficeColumns.price.value],
+            [MiddleOfficeColumns.order_id.value, order_id_first])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.qty.value: '1,000', MiddleOfficeColumns.price.value: '12.34'}, values_after_book,
+            'Comparing Qty and Price in the MiddleOffice after the Book of the first block')
 
+        values_after_book2 = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.qty.value, MiddleOfficeColumns.price.value],
+            [MiddleOfficeColumns.order_id.value, order_id_second])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.qty.value: '1,000', MiddleOfficeColumns.price.value: '12.34'}, values_after_book2,
+            'Comparing Qty and Price in the MiddleOffice after the Book of the second block')
         # endregion
 
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_5684()
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -67,6 +67,7 @@ class CommonPage:
             self.find_by_xpath(xpath).click()
         time.sleep(1)
         [self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(i)).click() for i in values]
+        self.find_by_xpath(xpath).click()
 
     def set_combobox_value(self, combobox_xpath: str, value: str):
         """

@@ -20,7 +20,6 @@ class OrderBookColumns(Enum):
     sts = "Sts"
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
-    exec_pcy = "ExecPcy"
     cd_sts = "CDSts"
     near_leg_qty = "NearLegQty"
     far_leg_qty = "FarLegQty"
@@ -373,7 +372,7 @@ class MiddleOfficeColumns(Enum):
     account_id = 'Account ID'
     trade_date = 'TradeDate'
     settl_currency = 'SettlCurrency'
-    exchange_rate = 'Exchange Rate'
+    exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
@@ -397,7 +396,7 @@ class AllocationsColumns(Enum):
     avg_px = 'Avg Px'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
-    trade_date = 'TradeDate'
+    trade_date = 'Trade Date'
     """AllocateSTS"""
     cancelled_sts = "Cancelled"
     affirmed_sts = 'Affirmed'
