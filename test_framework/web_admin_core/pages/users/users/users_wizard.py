@@ -32,6 +32,9 @@ class UsersWizard(CommonPage):
         else:
             return False
 
+    def is_warning_displayed(self):
+        return True if self.is_element_present(UsersConstants.WARNING_MESSAGE) else False
+
     def is_request_failed_message_displayed(self):
         return self.find_by_xpath(UsersConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
 

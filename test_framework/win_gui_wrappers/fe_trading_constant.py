@@ -20,7 +20,6 @@ class OrderBookColumns(Enum):
     sts = "Sts"
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
-    exec_pcy = "ExecPcy"
     cd_sts = "CDSts"
     near_leg_qty = "NearLegQty"
     far_leg_qty = "FarLegQty"
@@ -89,6 +88,7 @@ class OrderBookColumns(Enum):
     exec_firm = "Executing Firm"
     exec_firm_value = "ExecutingFirm"
     exec_type = "ExecType"
+    nin = "NIN"
     # endregion
 
 
@@ -288,6 +288,7 @@ class Status(Enum):
     frozen = 'Frozen'
     canceled = "Canceled"
     cancelled = "Cancelled"
+    pmo = "PMO"
 
 
 class QuoteStatus(Enum):
@@ -371,7 +372,7 @@ class MiddleOfficeColumns(Enum):
     account_id = 'Account ID'
     trade_date = 'TradeDate'
     settl_currency = 'SettlCurrency'
-    exchange_rate = 'Exchange Rate'
+    exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
@@ -395,7 +396,7 @@ class AllocationsColumns(Enum):
     avg_px = 'Avg Px'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
-    trade_date = 'TradeDate'
+    trade_date = 'Trade Date'
     """AllocateSTS"""
     cancelled_sts = "Cancelled"
     affirmed_sts = 'Affirmed'
@@ -424,6 +425,7 @@ class PreTradeAllocations(Enum):
 class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
+    ready_to_book_from_second_level_tab_of_bag = "RDY"
 
 
 class AlgoParametersExternal(Enum):
@@ -551,6 +553,7 @@ class ClientInboxColumns(Enum):
     order_id = "Order ID"
     cl_ord_id = 'ClOrdId'
     qty = 'Qty'
+    client_name = 'ClientName'
 
 
 class BagStatuses(Enum):
@@ -567,6 +570,9 @@ class SymbolSource(Enum):
 
 class WaveColumns(Enum):
     status = 'Status'
+    peg_offset_type = "PegOffsetType"
+    peg_offset_value = "PegOffsetValue"
+    price = 'Price'
 
 
 class BookingBlotterColumns(Enum):
@@ -593,3 +599,16 @@ class DoneForDays(Enum):
 
 class Suspended(Enum):
     yes = "Yes"
+
+
+class OrdersTabColumnFromBag(Enum):
+    unmatched_qty = 'UnmatchQty'
+
+
+class BlockStatuses(Enum):
+    accepted = "Accepted"
+    matched = 'Matched'
+
+
+class OffsetTypes(Enum):
+    price = "Price"

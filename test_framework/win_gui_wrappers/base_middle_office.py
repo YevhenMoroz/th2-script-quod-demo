@@ -342,4 +342,5 @@ class BaseMiddleOffice(BaseWindow):
     def check_error_in_book(self):
         self.modify_ticket_details.set_partial_error_message("error_in_book")
         error = call(self.book_order_call, self.modify_ticket_details.build())
+        self.clear_details(self.modify_ticket_details)
         return error

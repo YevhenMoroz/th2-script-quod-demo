@@ -60,5 +60,14 @@ class ClientListWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(ClientListConstants.WIZARD_CLIENT_XPATH)
 
+    def get_all_client_from_table(self):
+        return self._get_all_items_from_table_column(ClientListConstants.WIZARD_DISPLAYED_CLIENTS_AT_TABLE)
+
     def set_client_filter(self, value):
         self.set_text_by_xpath(ClientListConstants.WIZARD_CLIENT_FILTER_XPATH, value)
+
+    def is_should_contain_at_least_one_client_warning_appears(self):
+        return "Should contain at least one client" == self.find_by_xpath(ClientListConstants.WIZARD_WARNING_MESSAGE_TEXT_XPATH).text
+
+    def is_client_list_wizard_opened(self):
+        return self.is_element_present(ClientListConstants.WIZARD_TITLE_CLIENT_LIST_XPATH)
