@@ -40,7 +40,7 @@ class QAP_4664(CommonTestCase):
         main_page = InstitutionsPage(self.web_driver_container)
         main_page.set_institution_name(self.institution_name)
         time.sleep(1)
-        if not main_page.is_searched_instrument_found(self.institution_name):
+        if not main_page.is_searched_institution_found(self.institution_name):
             main_page.click_on_new()
             time.sleep(2)
             value_tab = InstitutionsValuesSubWizard(self.web_driver_container)
@@ -69,7 +69,7 @@ class QAP_4664(CommonTestCase):
             main_page.set_lei(self.new_lei)
             time.sleep(1)
             self.verify("New LEI value is displayed at main page after change", True,
-                        main_page.is_searched_instrument_found(self.new_lei))
+                        main_page.is_searched_institution_found(self.new_lei))
 
             main_page.click_on_more_actions()
             time.sleep(1)
@@ -82,7 +82,7 @@ class QAP_4664(CommonTestCase):
             main_page.set_institution_name(self.new_institution_name)
             time.sleep(1)
             self.verify("Cloned Instrument is created and displayed", True,
-                        main_page.is_searched_instrument_found(self.new_institution_name))
+                        main_page.is_searched_institution_found(self.new_institution_name))
 
             main_page.click_on_more_actions()
             time.sleep(1)

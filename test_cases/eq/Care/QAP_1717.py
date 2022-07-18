@@ -21,24 +21,23 @@ timeouts = True
 class QAP_1717(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
         self.route = self.data_set.get_route("route_1")
-        self.client = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.client = self.data_set.get_client_by_name("client_1")
         self.qty_type = self.data_set.get_qty_type('qty_type_1')
-        self.lookup = self.data_set.get_mic_by_name("mic_1")
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.rule_manager = RuleManager()
+        self.venue = self.data_set.get_mic_by_name('mic_1')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -48,17 +47,16 @@ class QAP_1717(TestCase):
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        self.client_inbox.accept_order()
         # endregion
         # region check order open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.open.value})
         # region Direct CO order
         try:
-            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             self.client,
-                                                                                             self.data_set.get_mic_by_name(
-                                                                                                 'mic_1'), float(self.price))
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                             'CLIENT1',
+                                                                                             "PARIS", float(self.price))
             self.order_book.direct_order(self.qty, self.route, self.qty_type)
         except Exception:
             logger.error("Error execution", exc_info=True)

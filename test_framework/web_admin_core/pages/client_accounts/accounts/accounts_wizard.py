@@ -30,6 +30,11 @@ class AccountsWizard(CommonPage):
     def set_description(self, value: str):
         self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
 
+    def get_all_clients_from_drop_menu(self):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
+
     def get_description(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH)
 
@@ -129,3 +134,6 @@ class AccountsWizard(CommonPage):
 
     def is_request_failed_message_displayed(self):
         return self.find_by_xpath(AccountsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
+
+    def is_wizard_page_open(self):
+        return self.is_element_present(AccountsConstants.WIZARD_TITLE_XPATH)

@@ -3,7 +3,6 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts

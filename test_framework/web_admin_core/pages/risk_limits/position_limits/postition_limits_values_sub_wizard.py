@@ -8,6 +8,9 @@ class PositionLimitsValuesSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
+    def set_description(self, value):
+        self.set_text_by_xpath(PositionsLimitsConstants.VALUES_TAB_SET_DESCRIPTION, value)
+
     def set_min_soft_qty(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.VALUES_TAB_MIN_SOFT_QTY_XPATH, value)
 

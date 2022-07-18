@@ -2,9 +2,7 @@ import logging
 import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.core.test_case import TestCase
@@ -30,7 +28,7 @@ class QAP_1718(TestCase):
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
         self.lookup = "DNX"
-        self.route = data_set.get_route("route_1")
+        self.route = self.data_set.get_route("route_1")
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
@@ -44,7 +42,7 @@ class QAP_1718(TestCase):
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
+        self.client_inbox.accept_order()
         # endregion
         # region check order open status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(

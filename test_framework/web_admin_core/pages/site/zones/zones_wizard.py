@@ -48,4 +48,5 @@ class ZonesWizard(CommonPage):
         else:
             return False
 
-
+    def is_wizard_open(self):
+        return self.is_element_present(ZonesConstants.ZONES_WIZARD_PAGE_TITLE_XPATH)

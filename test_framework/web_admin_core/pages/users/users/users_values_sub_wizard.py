@@ -95,3 +95,16 @@ class UsersValuesSubWizard(CommonPage):
     # click on
     def click_on_manage_button(self):
         self.find_by_xpath(UsersConstants.MANAGE_AT_LOGIN_SUB_WIZARD).click()
+
+    def click_on_change_password(self):
+        self.find_by_xpath(UsersConstants.CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD).click()
+
+    def set_new_password(self, value):
+        self.set_text_by_xpath(UsersConstants.NEW_PASSWORD_AT_LOGIN_SUB_WIZARD, value)
+
+    def set_confirm_new_password(self, value):
+        self.set_text_by_xpath(UsersConstants.CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD, value)
+
+    def accept_or_cancel_confirmation_new_password(self, confirm: bool):
+        self.find_by_xpath(UsersConstants.CHANGE_PASSWORD_BUTTON_AT_POP_UP_LOGIN_SUB_WIZARD).click() if confirm \
+            else self.find_by_xpath(UsersConstants.CANCEL_BUTTON_XPATH).click()

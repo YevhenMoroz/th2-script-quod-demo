@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_constants import SubVenuesConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -51,3 +53,22 @@ class SubVenuesDescriptionSubWizard(CommonPage):
 
     def is_feed_source_editable(self):
         return self.is_field_enabled(SubVenuesConstants.DESCRIPTION_TAB_FEED_SOURCE_XPATH)
+
+    def set_position_flattening_period(self, value):
+        self.set_checkbox_list(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH, value)
+
+    def get_position_flattening_period(self):
+        return self.get_text_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH)
+
+    def get_all_position_flattening_period_drop_menu(self):
+        self.find_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH).click()
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(SubVenuesConstants.
+                                                  DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH)
+
+    def is_all_position_flattening_period_entity_selected(self):
+        self.find_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH).click()
+        time.sleep(1)
+        all_checkboxes = self.find_elements_by_xpath(SubVenuesConstants.DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH)
+        selected_checkboxes = [True if 'checked' in i.get_attribute('class') else False for i in all_checkboxes]
+        return True if False not in selected_checkboxes else False

@@ -60,3 +60,9 @@ class TradingRestApiMessageType(Enum):
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
+
+
+class ResAPIMessageType(Enum):
+    CreateVenue = "CreateVenue"
+    ModifyVenue = "ModifyVenue"
+    FindAllVenue = "FindAllVenue"

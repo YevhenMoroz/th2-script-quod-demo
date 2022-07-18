@@ -1,144 +1,65 @@
-import logging
-import os
-from datetime import datetime
+import time
 from pathlib import Path
-
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import get_expire_time
-from custom.verifier import Verifier as Ver
-from test_cases.fx.default_params_fx import text_messages
+from custom import basic_custom_actions as bca
 from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
-                                                          ExtractionDetailsRequest)
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import prepare_fe_2, get_opened_fe, set_session_id, get_base_request, call
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
+from test_framework.win_gui_wrappers.forex.fx_quote_book import FXQuoteBook
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteBookColumns as qb, QuoteStatus as qs
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
 
-
-def execute(report_id, case_params, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    seconds, nanos = bca.timestamps()  # Store case start time
-    service = Stubs.win_act_dealer_intervention_service
-    ttl = 120
-    reusable_params = {
-        'Account': case_params['Account'],
-        'Side': 1,
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
-            },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0',
-        'OrderQty': '25000000'
+class QAP_1550(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote_book = FXQuoteBook(self.test_id, self.session_id)
+        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.qty = "55000000"
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_spot
         }
 
-    # region send rfq
-    rfq_params = {
-        'QuoteReqID': bca.client_orderid(9),
-        'NoRelatedSymbols': [{
-            **reusable_params,
-            'Currency': 'EUR',
-            'QuoteType': '1',
-            'OrderQty': reusable_params['OrderQty'],
-            'OrdType': 'D',
-            'ExpireTime': get_expire_time(ttl),
-            'TransactTime': (datetime.utcnow().isoformat())}]
-        }
-    logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
-
-    send_rfq = act.sendMessage(
-            bca.convert_to_request(
-                    text_messages['sendQR'],
-                    case_params['TraderConnectivity'],
-                    case_id,
-                    bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-                    ))
-    # endregion
-
-
-    # region Assign to me rfq
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Currency": "EUR"})
-    base_data.set_row_number(1)
-
-    call(service.assignToMe, base_data.build())
-    # endregion
-
-    # region  estimate and send quote
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Currency": "EUR"})
-    base_data.set_row_number(1)
-
-    call(service.estimate, base_data.build())
-
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.send()
-    # modification_request.reject()
-
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-    # #endregion
-
-    # region checking fe quote
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Currency": "EUR"})
-    base_data.set_row_number(1)
-
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_extraction_id("ExtractionId")
-    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
-                                               ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
-
-    response = call(service.getAssignedRFQDetails, extraction_request.build())
-    print(response)
-    ver = Ver(case_id)
-    ver.set_event_name("Check Assigned Grid")
-    ver.compare_values('Status', "New", response["dealerIntervention.Status"])
-    ver.compare_values('QuoteStatus', "Accepted", response["dealerIntervention.QuoteStatus"])
-    ver.verify()
-    # endregion
-
-    # region unassigned rfq
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_row_number(1)
-
-    call(service.unAssign, base_data.build())
-    # #endregion
-
-    # region check quote cancel
-    quote_cancel_params = {
-        'QuoteReqID': rfq_params['QuoteReqID'],
-        'QuoteCancelType': '5',
-        'NoQuoteEntries': [{
-            'Instrument': {
-                'Symbol': 'EUR/USD',
-                'SecurityType': 'FXSPOT'
-                },
-            },
-            ],
-        'QuoteID': '*'
-        }
-
-    verifier.submitCheckRule(
-            bca.create_check_rule(
-                    "Checking QuoteCancel",
-                    bca.filter_to_grpc("QuoteCancel", quote_cancel_params),
-                    send_rfq.checkpoint_id,
-                    case_params['TraderConnectivity'],
-                    case_id
-                    )
-            )
-
-    # endregion
-
-    logger.info("Case {} was executed in {} sec.".format(
-            case_name, str(round(datetime.now().timestamp() - seconds))))
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.quote_request.set_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           OrderQty=self.qty, Account=self.account,
+                                                           Instrument=self.instrument, Currency=self.currency)
+        self.fix_manager_sel.send_message(self.quote_request)
+        # endregion
+        # region Step 2
+        self.dealer_intervention.set_list_filter(["Qty", self.qty])
+        self.dealer_intervention.assign_quote(row_number=1)
+        # endregion
+        # region Step 3
+        time.sleep(5)
+        self.dealer_intervention.estimate_quote()
+        time.sleep(5)
+        self.dealer_intervention.send_quote()
+        # endregion
+        # region Step 4
+        self.dealer_intervention.un_assign_quote(row_number=1)
+        self.dealer_intervention.close_window()
+        # endregion
+        # region Step 5
+        self.quote_book.set_filter(
+            [qb.security_id.value, self.symbol, qb.ord_qty.value, self.qty]).check_quote_book_fields_list(
+            {qb.security_id.value: self.symbol,
+             qb.quote_status.value: qs.removed.value}, 'Checking quote status in quote book')
+        # endregion

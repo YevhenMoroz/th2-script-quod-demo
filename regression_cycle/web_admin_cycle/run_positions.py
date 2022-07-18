@@ -9,6 +9,11 @@ from test_cases.web_admin.web_admin_test_cases.positions.QAP_2165 import QAP_216
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2166 import QAP_2166
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2167 import QAP_2167
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_2168 import QAP_2168
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_5413 import QAP_5413
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_5418 import QAP_5418
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_6502 import QAP_6502
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_6680 import QAP_6680
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_6707 import QAP_6707
 
 
 class RunPositions:
@@ -32,6 +37,17 @@ class RunPositions:
                      environment=configuration.environment).run()
             QAP_2168(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_5413(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5418(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6502(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6680(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6707(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+
             end_time = time.monotonic()
             print("Run Positions ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 

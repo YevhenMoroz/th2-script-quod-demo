@@ -1,42 +1,58 @@
 import logging
-import random
-import string
-
-from custom.basic_custom_actions import create_event
+import os
+from pathlib import Path
+from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
+    MenuItemFromOrderBook, BasketBookColumns
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4359"
-    client = "CLIENT_FIX_CARE"
-    basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    basket_template_name = "Test Template"
-    username = Stubs.custom_config['qf_trading_fe_user']
-    path_to_basket = "C:\\Users\\"+ username +"\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket\\" \
-                                              "Basket_import_files\\BasketTemplate_withHeader_Mapping2.csv"
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    open_fe(case_id, report_id, session_id)
-    eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_to_basket, client,
-                                         is_csv=True)
-    expected_value = 'false'
-    printed_name = "Add to Basket button presence"
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check: " + printed_name)
-    actual_value = eq_wrappers.is_menu_item_present(base_request, "Add to Basket")
-    verifier.compare_values(printed_name, expected_value, actual_value['isMenuItemPresent'])
-    verifier.verify()
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4359(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.oms_basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.fix_message = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
 
-
-def open_fe(case_id, report_id, session_id):
-    work_dir = Stubs.custom_config['qf_trading_fe_folder_1']
-    username = Stubs.custom_config['qf_trading_fe_user_1']
-    open_fe(session_id, report_id, case_id, work_dir, username)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region Send NewOrderList
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        basket_id = self.oms_basket_book.get_basket_value(BasketBookColumns.id.value)
+        # endregion
+        # region check basket was created
+        self.oms_basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.exec_sts.value)
+        # endregion
+        # region accept orders
+        self.client_inbox.accept_order()
+        self.client_inbox.accept_order()
+        # endregion
+        # region check absent of "add to basket" item in orders menu
+        result = self.order_book.is_menu_item_present(MenuItemFromOrderBook.add_to_basket.value, [1],
+                                             filter_dict={OrderBookColumns.order_id.value: order_id})
+        verifier = Verifier(self.test_id)
+        verifier.compare_values("Add to Basket button presence", "false", result)
+        verifier.set_event_name("Check value")
+        verifier.verify()
+        # endregion

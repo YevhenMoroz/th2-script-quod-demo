@@ -34,7 +34,7 @@ class QAP_5695(CommonTestCase):
         time.sleep(2)
         main_page.set_name_filter(self.desk_name)
         time.sleep(1)
-        if not main_page.is_desk_found(self.desk_name):
+        if not main_page.is_searched_desk_found(self.desk_name):
             main_page.click_on_new()
             time.sleep(2)
             values_sub_wizard = DesksValuesSubWizard(self.web_driver_container)
