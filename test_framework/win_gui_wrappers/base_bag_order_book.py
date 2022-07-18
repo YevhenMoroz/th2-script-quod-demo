@@ -52,6 +52,8 @@ class BaseBagOrderBook(BaseWindow):
         self.extract_wave_ticket_values_call = None
         self.cancel_wave_call = None
         self.scanario_details = None
+        self.split_booking_call = None
+        self.split_booking_details = None
 
     # endregion
 
@@ -160,6 +162,40 @@ class BaseBagOrderBook(BaseWindow):
         self.clear_details([self.bag_order_details, self.extraction_bag_order_action])
         return response
 
+    def extraction_from_sub_levels_and_others_tab(self, extraction_id, extraction_fields, dict_of_filters: dict,
+                                                  list_of_tab_name, count_of_levels: int):
+        self.bag_order_details.set_default_params(self.base_request)
+        self.bag_order_details.set_extraction_id(extraction_id)
+        bag_order_info_list = []
+        order_bag_book_details_list = []
+        sub_fields = []
+        for sub_field in extraction_fields:
+            sub_fields.append(self.extraction_bag_fields_details(sub_field, sub_field))
+        extraction_details = self.extraction_bag_order_action_static.create_extraction_action(
+            extraction_details=sub_fields)
+        for index in range(count_of_levels):
+            bag_order_info_list.append(self.bag_order_info())
+        bag_order_info_list[len(bag_order_info_list) - 1].add_single_extraction_action(extraction_details)
+        for index in range(count_of_levels - 1):
+            bag_order_info_list[index].set_sub_level_tab(list_of_tab_name[index])
+            undefined_extraction_details = self.extraction_bag_order_action_static.create_extraction_action()
+            bag_order_info_list[index].add_single_extraction_action(undefined_extraction_details)
+        index_of_bag_book_details = 0
+        for index in range(count_of_levels - 1, 0, -1):
+            order_bag_book_details_list.append(GetOrderBagBookDetails.create(info=bag_order_info_list[index]))
+            if dict_of_filters.get(count_of_levels):
+                order_bag_book_details_list[index_of_bag_book_details].set_filter(dict_of_filters.get(count_of_levels))
+            bag_order_info_list[index - 1].set_sub_orders_details(
+                order_bag_book_details_list[index_of_bag_book_details])
+            index_of_bag_book_details = index_of_bag_book_details + 1
+            count_of_levels = count_of_levels - 1
+        self.bag_order_details.add_single_bag_order_info(bag_order_info_list[0])
+        if dict_of_filters.get(count_of_levels):
+            self.bag_order_details.set_filter(dict_of_filters.get(count_of_levels))
+        response = call(self.order_bag_extraction_call, self.bag_order_details.build())
+        self.clear_details([self.bag_order_details])
+        return response
+
     # region Action
     def wave_bag(self):
         result = call(self.wave_bag_creation_call, self.bag_wave_creation.build())
@@ -265,3 +301,9 @@ class BaseBagOrderBook(BaseWindow):
     def cancel_wave(self):
         call(self.cancel_wave_call, self.bag_wave_creation.build())
         self.clear_details(self.bag_wave_creation)
+
+    def split_book(self, split_booking_parameters: list, error_expected: bool = False, row_numbers: list = [1]):
+        self.split_booking_details.set_split_booking_parameter(split_booking_parameters)
+        self.split_booking_details.set_error_expected(error_expected)
+        self.split_booking_details.set_rows_numbers(row_numbers)
+        call(self.split_booking_call, self.split_booking_details.build())

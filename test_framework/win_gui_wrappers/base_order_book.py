@@ -360,7 +360,7 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list: dict=None):
+    def suspend_order(self, cancel_children: bool = None, filter_list: dict = None):
         if filter_list is not None:
             self.suspend_order_details.set_filter(filter_list)
         if cancel_children is not None:
@@ -459,7 +459,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.manual_executing_details])
         return result
 
-    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None,extract_footer=False):
+    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None, extract_footer=False):
         if qty is not None:
             self.manual_cross_details.set_quantity(qty)
         if price is not None:
@@ -503,9 +503,19 @@ class BaseOrderBook(BaseWindow):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
 
     def direct_child_care_order(self, qty_percentage: str = None, recipient: str = None, route: str = None,
-                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None):
-        call(self.direct_child_care_call,
-             direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
+                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None,
+                                extracted_error: bool = False):
+        result = None
+        if extracted_error:
+            self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+            result = call(self.direct_child_care_call,
+                          direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict,
+                                            self.extract_direct_values))
+        else:
+            call(self.direct_child_care_call,
+                 direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return result
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
@@ -670,7 +680,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.unmatch_and_transfer_details])
 
     def exec_summary(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                     last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
