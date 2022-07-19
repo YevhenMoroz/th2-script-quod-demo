@@ -50,7 +50,7 @@ class QAP_4539(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_12")
         # endregion
 
         # region Direction
@@ -94,7 +94,7 @@ class QAP_4539(TestCase):
 
         self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_params()
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
+        self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty, Instrument=self.instrument))
 
         self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
 
