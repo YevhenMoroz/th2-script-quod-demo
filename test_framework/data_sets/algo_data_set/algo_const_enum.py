@@ -90,6 +90,22 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_12 = dict(
+        Symbol='QUODTESTQA01',
+        SecurityID='TESTQA01',
+        SecurityIDSource='8',
+        SecurityExchange='QDL4',
+        SecurityType='CS'
+    )
+
+    instrument_13 = dict(
+        Symbol='QUODTESTQA02',
+        SecurityID='TESTQA02',
+        SecurityIDSource='8',
+        SecurityExchange='QDL6',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -150,6 +166,10 @@ class AlgoMic(Enum):
     mic_13 = "TRQL" # URQUOISE LIS
     mic_14 = "QDD1" # QUODDKP1
     mic_15 = "QDD2" # QUODDKP2
+    mic_16 = "QDL4"  # QUODLIT4
+    mic_17 = "QDL5"  # QUODLIT5
+    mic_18 = "QDL6"  # QUODLIT6
+    mic_19 = "QDL7"  # QUODLIT7
 
 
 
