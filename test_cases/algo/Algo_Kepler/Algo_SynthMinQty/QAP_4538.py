@@ -65,8 +65,8 @@ class QAP_4538(TestCase):
         self.ex_destination_quodlit1 = self.data_set.get_mic_by_name("mic_10")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
-        self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_5")
+        self.listing_id_qdl4 = self.data_set.get_listing_id_by_name("listing_9")
+        self.listing_id_qdl5 = self.data_set.get_listing_id_by_name("listing_10")
         # endregion
 
         # region Key parameters
@@ -88,13 +88,13 @@ class QAP_4538(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl4, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl5, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
