@@ -1,36 +1,29 @@
 import logging
-import time
-from getpass import getuser as get_pc_name
 from datetime import datetime
 
-from Test_UI import Test_UI
 from custom import basic_custom_actions as bca
-from regression_cycle.fx_regression_cycle import fx_mm_rfq_regression, rfq_taker_regression
-from rule_management import RuleManager
-from send_rqf import Send_RFQ
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_1559
-from test_cases.fx.fx_mm_esp.QAP_1518 import QAP_1518
-from test_cases.fx.fx_mm_esp.QAP_1597 import QAP_1597
-from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
-from test_cases.fx.fx_mm_rfq.QAP_3610 import QAP_3610
-from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3734 import QAP_3734
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3762 import QAP_3762
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_5992 import QAP_5992
-
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_6147 import QAP_6147
+# from test_cases.fx.fx_taker_esp.QAP_6289 import QAP_6289
+from test_cases.fx.fx_mm_rfq.QAP_2345 import QAP_2345
+from test_cases.fx.fx_mm_rfq.QAP_2353 import QAP_2353
+from test_cases.fx.fx_mm_rfq.QAP_3106 import QAP_3106
+from test_cases.fx.fx_mm_rfq.QAP_3107 import QAP_3107
+from test_cases.fx.fx_mm_rfq.QAP_3108 import QAP_3108
+from test_cases.fx.fx_mm_rfq.QAP_3109 import QAP_3109
+from test_cases.fx.fx_mm_rfq.QAP_3110 import QAP_3110
+from test_cases.fx.fx_mm_rfq.QAP_3111 import QAP_3111
+from test_cases.fx.fx_mm_rfq.QAP_3112 import QAP_3112
+from test_cases.fx.fx_mm_rfq.QAP_3113 import QAP_3113
+from test_cases.fx.fx_mm_rfq.QAP_7997 import QAP_7997
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_3851 import QAP_3851
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3763 import QAP_3763
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3937 import QAP_3937
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3938 import QAP_3938
+from test_cases.fx.fx_mm_rfq.rejection.QAP_3735 import QAP_3735
 from test_cases.fx.fx_mm_rfq.rejection.QAP_3764 import QAP_3764
-from test_cases.fx.fx_taker_esp import QAP_5600
-from test_cases.fx.fx_taker_esp.QAP_6593 import QAP_6593
-from test_cases.fx.fx_taker_esp.QAP_8090 import QAP_8090
-
-from test_cases.fx.qs_fx_routine import DepositAndLoan
-from test_cases.fx.qs_fx_routine.dep_and_loan import DepAndLoan
-from test_cases.fx.send_md import QAP_MD
 from test_framework.configurations.component_configuration import ComponentConfiguration
-from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
+# from test_framework.for_testing import Testing
+from win_gui_modules.utils import set_session_id, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -39,53 +32,44 @@ logging.getLogger().setLevel(logging.INFO)
 
 def test_run():
     # Generation id and time for test run
-    pc_name = get_pc_name()  # getting PC name
-    report_id = bca.create_event(f'[alexs] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event(f'amedents ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
-    # initializing FE session
-    session_id = set_session_id(target_server_win="ostronov")
 
-    window_name = "Quod Financial - Quod site 314"
-    # region creation FE environment and initialize fe_ values
+    # initializing FE session
+    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    session_id = set_session_id(target_server_win="amedents")
+    # region environment and fe values
     configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
-    start_time = time.time()
-    print(f"Test start")
+    start_time = datetime.now()
+    print(f"Start time: {start_time}")
     # endregion
     Stubs.frontend_is_open = True
-
+    main_window = "Quod Financial - Quod site 314"
     try:
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id, window_name)
+        # get_opened_fe(report_id, session_id, main_window)
+        QAP_3113(report_id, session_id,
+                 configuration.data_set,
+                 configuration.environment).execute()
+        # old versions:
+        # QAP_MD(report_id, data_set=configuration.data_set).execute()
+        # QAP_7160.execute(report_id)
+        # QAP_1554.execute(report_id, session_id)
+        # QAP_6933.execute(report_id, session_id, data_set=configuration.data_set)
+        # QAP_6932(report_id, session_id).execute()
+        # QAP_1536(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # rm = RuleManager()
-        # rm.remove_rule_by_id(8)
+        # rm.remove_rule_by_id(9)
+        # rm.add_fx_md_to("fix-fh-309-kratos")
         # rm.print_active_rules()
-        # QAP_568(report_id, session_id, configuration.data_set).execute()
-        # Test_UI(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        # DepositAndLoan.execute(report_id)
-
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # EarlyRedemption(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # Send_RFQ(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_5389().execute(report_id)
-        # QAP_1559.execute(report_id)
-
-        # QAP_5992(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3764(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        # rfq_taker_regression.test_run(parent_id=report_id)
-        # fx_mm_rfq_regression.test_run(parent_id=report_id)
-
-        end = time.time()
-        print(f"Test duration is {end - start_time} seconds")
+        # endregion
+        print(f"Duration is {datetime.now() - start_time}")
 
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         Stubs.win_act.unregister(session_id)
-        pass
 
 
 if __name__ == '__main__':
