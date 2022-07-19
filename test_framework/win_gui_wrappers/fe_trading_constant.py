@@ -77,7 +77,7 @@ class OrderBookColumns(Enum):
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
     isin = "ISIN"
-    is_locked ="IsLocked"
+    is_locked = "IsLocked"
     basket_name = "Basket Name"
     basket_id = "Basket ID"
     strategy_type = "Strategy Type"
@@ -134,6 +134,7 @@ class InstrType(Enum):
 class ExecType(Enum):
     trade = "Trade"
     calculated = "Calculated"
+
 
 class ExecPcy(Enum):
     dma = "DMA"
@@ -256,14 +257,13 @@ class BasketBookColumns(Enum):
     limit_price = "LmtPrice"
     """Basket sts"""
     exec_sts = "Executing"
-    all_done ='AllDone'
+    all_done = 'AllDone'
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""
     immediate = "Immediate"
     """Time in Force value"""
     DAY = "DAY"
-
 
 
 class ExecSts(Enum):
@@ -404,7 +404,6 @@ class AllocationsColumns(Enum):
     matced_sts = 'Matched'
 
 
-
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
@@ -526,6 +525,7 @@ class MatchWindowsColumns(Enum):
 class ChildOrderBookColumns(Enum):
     order_id = "Order ID"
     exec_id = "ExecID"
+    parent_ord_id = 'ParentOrdID'
     """Pre Trade Allocation"""
     pre_all_tab = "Pre Trade Allocations"
     id_allocation = "Id"
@@ -573,6 +573,7 @@ class WaveColumns(Enum):
     peg_offset_type = "PegOffsetType"
     peg_offset_value = "PegOffsetValue"
     price = 'Price'
+    time_in_force = 'TimeInForce'
 
 
 class BookingBlotterColumns(Enum):
