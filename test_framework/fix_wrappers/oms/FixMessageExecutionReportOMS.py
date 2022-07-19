@@ -255,3 +255,28 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
+
+
+    def set_default_calculated(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            "ExecType": "B",
+            "OrdStatus": "B",
+            "Account": new_order_single.get_parameter("Account"),
+            "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
+            "ClOrdID": new_order_single.get_parameter("ClOrdID"),
+            "HandlInst": new_order_single.get_parameter("HandlInst"),
+            "Side": new_order_single.get_parameter("Side"),
+            "OrdType": new_order_single.get_parameter("OrdType"),
+            "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
+            "AvgPx": "*",
+            "SettlDate": "*",
+            "TradeReportingIndicator": "*",
+            "ExDestination": "*",
+            "GrossTradeAmt": "*"
+        }
+        if new_order_single.get_parameter("OrdType") == "2":
+            change_parameters.update({"Price": new_order_single.get_parameter("Price")})
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self

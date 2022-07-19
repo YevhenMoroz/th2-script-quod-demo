@@ -1,59 +1,62 @@
-import logging
-import os
-import string
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
-from stubs import Stubs
 import random
-
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+import string
+import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, TimeInForce
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+import getpass
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3701"
-    # region Declarations
-    client = "CLIENT_FIX_CARE"
-    qty1 = "600"
-    qty2 = "500"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    basket_template_name = "Test Template"
-    path_xlsx = "C:\\Users\\" + username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                      '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.xlsx'
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_3701(TestCase):
 
-    path_csv = "C:\\Users\\" + username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                      '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.csv'
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    basket_name2 = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Basket via import
-    eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_xlsx, client)
-    eq_wrappers.create_basket_via_import(base_request, basket_name2, basket_template_name, path_csv, client,is_csv=True)
-    # endregion
-    # region Verify xlsx
-    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name, {'Basket Name': basket_name})
-    basket_id = eq_wrappers.get_basket_value(base_request, "Id", {'Basket Name': basket_name})
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   order_filter_list=["Basket ID", basket_id, "Qty", qty1])
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   order_filter_list=["Basket ID", basket_id, "Qty", qty2])
-    # endregion
-    # region Verify csv
-    eq_wrappers.verify_basket_value(base_request, case_id, "Basket Name", basket_name2, {'Basket Name': basket_name2})
-    basket_id = eq_wrappers.get_basket_value(base_request, "Id", {'Basket Name': basket_name2})
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name2,
-                                   order_filter_list=["Basket ID", basket_id, "Qty", qty1])
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name2,
-                                   order_filter_list=["Basket ID", basket_id, "Qty", qty2])
-    # endregion
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
+        self.username = getpass.getuser()
+        self.client = self.data_set.get_client_by_name('client_pos_1')
+        self.path_xlsx = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                                         '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.xlsx'
+
+        self.path_csv = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                                        '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.csv'
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create basket via template csv
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_csv, client=self.client, tif=TimeInForce.DAY.value,
+                                                  is_csv=True)
+        # endregion
+        # region check basket fields
+        self.basket_book.check_basket_field(BasketBookColumns.exec_policy.value, BasketBookColumns.care.value)
+        self.basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.exec_sts.value)
+        self.basket_book.check_basket_field(BasketBookColumns.list_exec_inst_type.value,
+                                            BasketBookColumns.immediate.value)
+        self.basket_book.check_basket_field(BasketBookColumns.basket_name.value, self.basket_name)
+        self.basket_book.check_basket_field(BasketBookColumns.time_in_force.value, BasketBookColumns.DAY.value)
+        # endregion
+        # region create basket via template xlsx
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_xlsx, client=self.client, tif=TimeInForce.DAY.value)
+        # endregion
+        # region check basket fields
+        self.basket_book.check_basket_field(BasketBookColumns.exec_policy.value, BasketBookColumns.care.value)
+        self.basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.exec_sts.value)
+        self.basket_book.check_basket_field(BasketBookColumns.list_exec_inst_type.value,
+                                            BasketBookColumns.immediate.value)
+        self.basket_book.check_basket_field(BasketBookColumns.basket_name.value, self.basket_name)
+        self.basket_book.check_basket_field(BasketBookColumns.time_in_force.value, BasketBookColumns.DAY.value)
+        # endregion

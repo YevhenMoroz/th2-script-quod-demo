@@ -67,6 +67,7 @@ class CommonPage:
             self.find_by_xpath(xpath).click()
         time.sleep(1)
         [self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(i)).click() for i in values]
+        self.find_by_xpath(xpath).click()
 
     def set_combobox_value(self, combobox_xpath: str, value: str):
         """
@@ -77,12 +78,14 @@ class CommonPage:
         time.sleep(1)
         self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)).click()
 
-    def select_value_from_dropdown_list(self, xpath: str):
+    def select_value_from_dropdown_list(self, xpath: str, value: str):
         """
         Method was created for select value from dropdown list
         if if there is no input field
         """
         self.find_by_xpath(xpath).click()
+        time.sleep(1)
+        self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
@@ -162,11 +165,11 @@ class CommonPage:
         action = ActionChains(self.web_driver_container.get_driver())
         action.move_to_element_with_offset(scr_elem, 5, 5)
         action.click()
+        time.sleep(2)
 
         c = 50
         while elem_size/2 > c:
-            action.click_and_hold()
-            action.move_by_offset(c, 0)
+            action.drag_and_drop_by_offset(scr_elem, c, 0)
             c += 50
             action.perform()
             if self.is_element_present(search_element):
@@ -199,11 +202,11 @@ class CommonPage:
 
     def _get_all_items_from_drop_down(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 
     def _get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
-        items_list = [_.text for _ in items]
+        items_list = [_.text.strip() for _ in items]
         return items_list
 

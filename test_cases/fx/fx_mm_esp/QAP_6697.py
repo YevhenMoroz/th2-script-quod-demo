@@ -23,18 +23,17 @@ class QAP_6697(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.symbol = self.data_set.get_symbol_by_name("symbol_3")
-        self.client = self.data_set.get_client_by_name("client_mm_1")
-        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
-        self.settle_type = self.data_set.get_settle_type_by_name("spot")
+        self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.no_related_symbol = [
             {
                 "Instrument": {
-                    "Symbol": self.symbol,
+                    "Symbol": self.eur_gbp,
                     "SecurityType": "self.security_type",
                     "Product": "4",
                 },
-                "SettlType": self.settle_type,
+                "SettlType": self.settle_type_spot,
             }
         ]
         self.bands = ["1000000", "3000000"]
@@ -42,7 +41,7 @@ class QAP_6697(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbol)
         self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion

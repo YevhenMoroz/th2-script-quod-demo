@@ -1,5 +1,5 @@
 from custom.basic_custom_actions import timestamps
-from test_cases.eq.Commissions import QAP_2998, QAP_3285, QAP_4373, QAP_4489, QAP_4231, QAP_3351
+from test_cases.eq.Commissions import QAP_2998, QAP_3285, QAP_4373, QAP_4489, QAP_4231
 
 from stubs import Stubs
 import logging
@@ -21,7 +21,7 @@ def test_run(parent_id= None):
     try:
         QAP_2998.execute(report_id, session_id)
         QAP_3285.execute(report_id, session_id)
-        QAP_3351.execute(report_id, session_id)
+        # QAP_3351.execute(report_id, session_id)
         QAP_4231.execute(report_id, session_id)
         QAP_4373.execute(report_id, session_id)
         QAP_4489.execute(report_id, session_id)

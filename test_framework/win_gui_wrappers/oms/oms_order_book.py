@@ -11,8 +11,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     MenuItemDetails, SuspendOrderDetails, BaseOrdersDetails, MassExecSummaryAveragePriceDetails, DiscloseFlagDetails, \
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
-    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails,\
-    UnmatchAndTransferDetails
+    TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
+    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -37,6 +37,7 @@ class OMSOrderBook(BaseOrderBook):
         self.add_to_basket_details = AddToBasketDetails(self.base_request)
         self.create_basket_details = CreateBasketDetails(self.base_request)
         self.reassign_order_details = ReassignOrderDetails()
+        self.mass_execution_summary_details = MassExecSummaryDetails()
         self.manual_executing_details = ManualExecutingDetails(self.base_request)
         self.second_level_tab_details = SecondLevelTabDetails()
         self.second_level_extraction_details = SecondLevelExtractionDetails()
@@ -45,8 +46,10 @@ class OMSOrderBook(BaseOrderBook):
         self.extract_direct_values = ExtractDirectsValuesRequest()
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
+        self.mass_execution_summary_call = Stubs.win_act_order_book.massExecSummary
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
+        self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
         self.order_book_grid_scrolling_call = Stubs.win_act_order_book.orderBookGridScrolling
         self.manual_execution_order_call = Stubs.win_act_order_book.manualExecution
         self.house_fill_call = Stubs.win_act_order_book.houseFill
@@ -92,4 +95,8 @@ class OMSOrderBook(BaseOrderBook):
         self.unmatch_and_transfer_details = UnmatchAndTransferDetails(self.base_request)
         self.unmatch_and_transfer_call = Stubs.win_act_order_book.unmatchAndTransfer
         self.get_empty_rows_call = Stubs.win_act_order_book.checkIfOBGridHaveNoRows
+        self.sub_lvl_info_details = SubLvlInfo()
+        self.get_sub_lvl_details = GetSubLvlDetails(self.base_request)
+        self.extract_sub_lvl_details_call = Stubs.win_act_order_book.extractSubLvlDetails
+        self.exec_summary_call = Stubs.win_act_order_book.execSummary
         # endregion

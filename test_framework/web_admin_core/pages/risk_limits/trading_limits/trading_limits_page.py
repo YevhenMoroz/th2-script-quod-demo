@@ -74,22 +74,25 @@ class TradingLimitsPage(CommonPage):
         self.set_text_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_QTY_FILTER_XPATH, value)
 
     def get_max_qty(self):
-        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_QTY_XPATH).text
+        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_QTY_VALUE_XPATH).text
 
     def set_max_amt(self, value):
         self.set_text_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_AMT_FILTER_XPATH, value)
 
     def get_max_amt(self):
-        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_AMT_XPATH).text
+        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_AMT_VALUE_XPATH).text
 
     def set_max_soft_qty(self, value):
         self.set_text_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_FILTER_XPATH, value)
 
     def get_max_soft_qty(self):
-        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_XPATH).text
+        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_VALUE_XPATH).text
 
     def set_max_soft_amt(self, value):
         self.set_text_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_FILTER_XPATH, value)
 
     def get_max_soft_amt(self):
-        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_XPATH).text
+        return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH).text
+
+    def is_searched_route_found(self, value):
+        return self.is_element_present(TradingLimitsConstants.DISPLAYED_ROUTE_XPATH.format(value))

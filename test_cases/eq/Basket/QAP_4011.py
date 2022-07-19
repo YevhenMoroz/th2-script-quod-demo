@@ -1,65 +1,76 @@
-import logging
 import random
 import string
-import time
+import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, \
+    ExecSts, MenuItemFromOrderBook
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+import getpass
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
-from custom.basic_custom_actions import create_event
-from custom.verifier import Verifier
-from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
-from rule_management import RuleManager
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4011"
-    qty = "115"
-    client = "CLIENT_FIX_CARE"
-    price = 10
-    side = 2
-    tif = 0
-    handle_inst = 3
-    lookup = "VETO"
-    basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    basket_template_name = "Test Template"
-    path_to_basket = "C:\\Users\\IPalamarchuk\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket\\Basket_import_files\\BasketTemplate_withHeader_Mapping2.csv"
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    open_fe(case_id, report_id, session_id)
-    eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_to_basket, client,
-                                         is_csv=True)
-    buy_connectivity = eq_fix_wrappers.get_buy_connectivity()
-
-    try:
-        rule_manager = RuleManager()
-        rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, client, "XPAR", True, int(qty),
-                                                    price)
-        eq_fix_wrappers.create_order_via_fix(case_id, handle_inst, side, client, 1, qty, tif)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(rule)
-
-    eq_wrappers.accept_order(lookup, qty, str(price))
-    eq_wrappers.verify_order_value(base_request, case_id, "Sts", "Open", order_filter_list=['Qty', '115'])
-    eq_wrappers.manual_execution(base_request, qty, str(price))
-    expected_value = 'false'
-    printed_name = "Add to Basket button presence"
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check: " + printed_name)
-    actual_value = eq_wrappers.is_menu_item_present(base_request, "Add to Basket")
-    verifier.compare_values(printed_name, expected_value, actual_value['isMenuItemPresent'])
-    verifier.verify()
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4011(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
+        self.username = getpass.getuser()
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.client = self.data_set.get_client_by_name('client_pos_1')
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.path_csv = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                          '\\Basket_import_files\\BasketTemplate_withHeader_Mapping2.csv'
+        self.item_of_menu = MenuItemFromOrderBook.add_to_basket.value
 
 
-def open_fe(case_id, report_id, session_id):
-    work_dir = Stubs.custom_config['qf_trading_fe_folder_1']
-    username = Stubs.custom_config['qf_trading_fe_user_1']
-    password = Stubs.custom_config['qf_trading_fe_password_1']
-    open_fe(session_id, report_id, case_id, work_dir, username)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create basket via template csv
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_csv, client=self.client, tif=TimeInForce.DAY.value, is_csv=True)
+        # endregion
+        # region create first CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept order
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual exec order
+        self.order_book.manual_execution()
+        # endregion
+        # region filled status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region check present of item
+        result = self.order_book.is_menu_item_present("Add to Basket", [1], filter_dict={OrderBookColumns.order_id.value: order_id})
+        # endregion
+        print(result)
+        # region check present of item
+        self.order_book.compare_values({'Is item present at menu': 'false'}, {'Is item present at menu': result},
+                                       f'Verifying, that {self.item_of_menu} '
+                                       f'doesn`t present at menu item')
+        # endregion
+
+
+#

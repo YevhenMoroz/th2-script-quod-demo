@@ -2,6 +2,7 @@ class VenuesConstants:
     VENUES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Venues ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
+    DOWNLOAD_PDF_AT_MORE_ACTION_BUTTON_XPATH = "//nb-overlay-container//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
@@ -18,6 +19,7 @@ class VenuesConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     NOT_FOUND_OPTION_IN_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option'
+    DISPLAYED_VENUE_XPATH = "//*[text()='{}']"
 
     # --Main page--
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -52,6 +54,9 @@ class VenuesConstants:
     VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
     VALUES_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//div[5]//div[2]//button'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="venuePosValidity"]//button'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option//span[1]'
 
     # Dark Algo Commissions
     DARK_ALGO_COM_COST_PER_TRADE_XPATH = '//*[@id="darkAlgoCostPerTrade"]'
@@ -254,7 +259,7 @@ class VenuesConstants:
     FEATURES_TAB_MIN_RESIDENT_TIME_XPATH = '//*[@formcontrolname="minResidentTime"]'
     FEATURES_TAB_OPEN_TIME_XPATH = '//*[@id="openTime_ext"]'
     FEATURES_TAB_HOLD_FIX_SELL_CHECKBOX_XPATH = '//*[@formcontrolname="holdFIXShortSell"]//input'
-    FEATURES_TAB_TIME_ZONE_XPATH = '//*[@formcontrolname="timeZone"]'
+    FEATURES_TAB_TIME_ZONE_XPATH = '//*[@id="timeZone"]'
     FEATURES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultAlgoPolicy"]'
     FEATURES_TAB_VENUE_STO_XPATH = '//*[@id="venueSTO"]'
     FEATURES_TAB_SUPPORT_REVERSE_CAL_SPREAD_CHECKBOX_XPATH = '//*[@formcontrolname="supportReverseCalSpread"]//input'

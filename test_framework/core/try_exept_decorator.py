@@ -17,7 +17,8 @@ def try_except(test_id):
                     f"Exception raised in {test_id}, func {decorated_function.__name__} raised exception: {str(e)}")
                 bca.create_event(f'Fail test event on the step - {decorated_function.__name__.upper()}',
                                  status='FAILED',
-                                 parent_id=args[0].__dict__['test_id'])
+                                 parent_id=args[0].__dict__['test_id'],
+                                 body=str(e))
             finally:
                 pass
         return improved_function

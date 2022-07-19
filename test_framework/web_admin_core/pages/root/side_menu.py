@@ -415,3 +415,37 @@ class SideMenu(CommonPage):
                 time.sleep(0.5)
             else:
                 break
+
+    def is_site_page_tab_displayed(self):
+        return self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).is_displayed()
+
+    def is_institutions_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.INSTITUTIONS_ITEM_XPATH).is_displayed()
+
+    def is_zones_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.ZONES_ITEM_XPATH).is_displayed()
+
+    def is_locations_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.LOCATIONS_ITEM_XPATH).is_displayed()
+
+    def is_desks_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.DESKS_ITEM_XPATH).is_displayed()
+
+    def is_washbook_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.WASHBOOK_ITEM_XPATH).is_displayed()
+
+    def is_washbook_rule_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.WASHBOOK_RULES_ITEM_XPATH).is_displayed()
+

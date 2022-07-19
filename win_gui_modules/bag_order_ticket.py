@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
-from th2_grpc_act_gui_quod import bag_mgt_pb2
+from th2_grpc_act_gui_quod import bag_mgt_pb2, order_ticket_pb2
 from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails
+from win_gui_modules.algo_strategies import TWAPStrategy
 from win_gui_modules.order_ticket import OrderTicketDetails
 
 
@@ -44,6 +46,24 @@ class SubLevelDetails:
         return self.order
 
 
+class ScenarioDetails:
+    def __init__(self):
+        self.scenarioDetails = bag_mgt_pb2.OrderBagTicketDetails.ScenarioDetails()
+
+    def set_scenario(self, scenario: str):
+        self.scenarioDetails.scenario = scenario
+
+    def set_strategy(self, strategy: str):
+        self.scenarioDetails.strategyType = strategy
+
+    def add_twap_strategy_param(self) -> TWAPStrategy:
+        self.scenarioDetails.twapStrategy.CopyFrom(order_ticket_pb2.TWAPStrategyParams())
+        return TWAPStrategy(self.scenarioDetails.twapStrategy)
+
+    def build(self):
+        return self.scenarioDetails
+
+
 class BagOrderTicketDetails:
 
     def __init__(self):
@@ -73,9 +93,11 @@ class BagOrderTicketDetails:
     def add_pegs_details(self, pegs_details: PegsOrdDetails):
         self.order.pegsOrdDetails.CopyFrom(pegs_details)
 
-    def modify_wave_bag_details(self, wave_bag_details: List[SubLevelDetails]):
-        for details in wave_bag_details:
-            self.order.subLevelDetails.append(details)
+    def add_scenario_details(self, scenario_details: ScenarioDetails):
+        self.order.scenarioDetails.CopyFrom(scenario_details)
+
+    def modify_wave_bag_details(self, wave_bag_details: SubLevelDetails):
+        self.order.subLevelDetails.append(wave_bag_details)
 
     def clear(self, on_deleting=False):
         self.order.clear = on_deleting
@@ -296,3 +318,58 @@ class CreateOrderDetails:
 
     def build(self):
         return self.__create_order_via_bag_details
+
+
+class ModifySubLevelBagOrderDetails:
+    def __init__(self, base_request):
+        self.__modify_sub_level_details = bag_mgt_pb2.ModifySubLevelBagOrderDetails()
+        self.__modify_sub_level_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.filter.update(filter_dict)
+
+    def set_sub_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.sub_filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__modify_sub_level_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__modify_sub_level_details
+
+
+class WaveTicketExtractedValue(Enum):
+    TIF = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.TIF
+    ERROR_MESSAGE = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.ERROR_MESSAGE
+    QTY_TO_RELEASE = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.QTY_TO_RELEASE
+
+
+class ExtractWaveTicketValuesRequest:
+    def __init__(self, base_request, extractionId: str = 'extractWaveTicketValues'):
+        self.__request = bag_mgt_pb2.ExtractWaveTicketValuesRequest()
+        self.__request.base.CopyFrom(base_request)
+        self.__request.extractionId = extractionId
+
+    def set_bag_order_details(self, bag_order_details: BagOrderTicketDetails):
+        self.__request.orderBagTicketDetails.CopyFrom(bag_order_details.build())
+
+    def get_tif_state(self):
+        self.get_extract_value(WaveTicketExtractedValue.TIF, "TIF")
+
+    def get_error_message(self):
+        self.get_extract_value(WaveTicketExtractedValue.ERROR_MESSAGE, 'ERROR_MESSAGE')
+
+    def get_qty_to_release(self):
+        self.get_extract_value(WaveTicketExtractedValue.QTY_TO_RELEASE, 'QTY_TO_RELEASE')
+
+    def get_extract_value(self, field: WaveTicketExtractedValue, name: str):
+        extracted_value = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request.extractedValues.append(extracted_value)
+
+    def set_filter(self, filter_dict: dict):
+        self.__request.filter.update(filter_dict)
+
+    def build(self):
+        return self.__request

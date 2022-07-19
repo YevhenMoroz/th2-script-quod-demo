@@ -13,21 +13,22 @@ class DesksConstants:
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     ENABLE_DISABLE_BUTTON_XPATH = '//div[contains(@class, "toggle")]'
     DISPLAYED_DESK_XPATH = '//*[text()={}]'
+    LOCATIONS_COLUMN_XPATH = '//*[@col-id="location.locationName"][@tabindex="-1"]//span[@ref="eValue"]'
+    DESKS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
-    #Filters at main page
+    # Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[1]"
     MODE_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[2]"
     LOCATION_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[3]"
 
-    #Values tab
+    # Values tab
     NAME_AT_VALUES_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
     DESK_MODE_AT_VALUES_TAB_XPATH = '//*[text()="Desk mode *"]/preceding-sibling::input'
-
 
     LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[@id="location"]'
     ASSIGNMENTS_TAB_LOCATION_LINK_XPATH = '//*[normalize-space(text())="{}"]'
     ASSIGNMENTS_TAB_USER_LINK_XPATH = '//*[normalize-space(text())="{}"]'
 
-
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    REVERT_CHANGES_BUTTON_XPATH  = "//*[text()='Revert Changes']"
+    REVERT_CHANGES_BUTTON_XPATH = "//*[text()='Revert Changes']"

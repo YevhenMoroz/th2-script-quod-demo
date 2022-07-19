@@ -64,7 +64,7 @@ class QAP_1095(TestCase):
         # endregion
 
         # region create Bag and extract values from it (precondition)
-        self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag=name_of_bag)
+        self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag)
         self.bag_order_book.create_bag()
         order_bag_id = self.__extracting_and_comparing_value_for_bag_order([OrderBagColumn.ord_bag_name.value,
                                                                             OrderBagColumn.id.value,
@@ -90,9 +90,9 @@ class QAP_1095(TestCase):
                                                                                    OrderBagColumn.id.value],
                                                                                sub_extraction_fields=['Status'])
         self.bag_order_book.compare_values(
-            {f'order_bag_second_level.{WaveColumns.status.value}': 'BagStatuses.new.value'},
-            {f'order_bag_second_level.{WaveColumns.status.value}':
-                 fields[f'order_bag_second_level.{WaveColumns.status.value}']}, 'Comparing Status of Wave')
+            {{WaveColumns.status.value}: 'BagStatuses.new.value'},
+            {{WaveColumns.status.value}:
+                 fields[{WaveColumns.status.value}]}, 'Comparing Status of Wave')
         for order_id in orders_id:
             self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
             sts_field = OrderBookColumns.sts.value
@@ -121,10 +121,10 @@ class QAP_1095(TestCase):
         expected_values_bag = dict()
         order_bag_id = None
         if return_order_bag_id:
-            order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.pop(OrderBagColumn.id.value)
             bag_column_extraction.remove(OrderBagColumn.id.value)
         for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({'order_bag.' + bag_column_extraction[count]: expected_values[count]})
+            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
         self.bag_order_book.compare_values(expected_values_bag,
                                            fields, f'Compare values from bag_book after{action}')
         if return_order_bag_id:

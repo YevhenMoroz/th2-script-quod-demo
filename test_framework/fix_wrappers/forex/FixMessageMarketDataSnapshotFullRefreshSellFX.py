@@ -105,5 +105,11 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                 dict()
             ]
         )
+        if "MarketID" in md_request.get_parameters()["NoRelatedSymbols"][0].keys():
+            temp.update({"MarketID": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
+            temp.update({"MDStreamID": "*"})
+            temp.update({"MDBookType": "*"})
+            temp['Instrument'].update({"CFICode": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
+            temp.pop('OrigClientVenueID')
         super().change_parameters(temp)
         return self

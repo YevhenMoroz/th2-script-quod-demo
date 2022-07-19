@@ -19,6 +19,8 @@ class TradingLimitsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DISPLAYED_ROUTE_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -31,10 +33,10 @@ class TradingLimitsConstants:
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="tradingLimitDesc"]//span//span[4]'
     MAIN_PAGE_EXTERNAL_ID_XPATH = '//*[@col-id="externalTradingLimitID"]//span//span[4]'
     MAIN_PAGE_CURRENCY_XPATH ='//*[@col-id="maxOrdAmtCurrency"]//span//span[4]'
-    MAIN_PAGE_MAX_QTY_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_AMT_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_QTY_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_AMT_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_QTY_VALUE_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_AMT_VALUE_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_QTY_VALUE_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
 
     # Values tab
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="tradingLimitDesc"]'

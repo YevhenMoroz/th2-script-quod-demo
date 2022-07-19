@@ -17,6 +17,7 @@ class SubVenuesConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_SUBVENUE_XPATH = "//*[text()='{}']"
 
     # Main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -44,6 +45,10 @@ class SubVenuesConstants:
     DESCRIPTION_TAB_NEWS_CHECKBOX_XPATH = '//*[@formcontrolname="supportNews"]//span'
     DESCRIPTION_TAB_NEWS_SYMBOL_XPATH = '//*[@formcontrolname="newsMDSymbol"]'
     DESCRIPTION_TAB_FEED_SOURCE_XPATH = '//*[@id="feedSourceEnumTable"]'
+    DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="subVenuePosValidity"]//button'
+    DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
+    DESCRIPTION_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option//span[1]'
+
     # Details tab
 
     DETAILS_TAB_TRADING_STATUS_XPATH = '//*[@id="tradingStatus"]'

@@ -164,7 +164,7 @@ class BaseMiddleOffice(BaseWindow):
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
                                   alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None,
-                                  pset=None):
+                                  clear_alloc_greed=False, pset=None):
         """
             1)extract_data can be book or alloc
             2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
@@ -183,6 +183,8 @@ class BaseMiddleOffice(BaseWindow):
         if arr_allocation_param is not None:
             for i in arr_allocation_param:
                 allocations_details.add_allocation_param(i)
+        if clear_alloc_greed:
+            allocations_details.clear_greed()
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -340,4 +342,5 @@ class BaseMiddleOffice(BaseWindow):
     def check_error_in_book(self):
         self.modify_ticket_details.set_partial_error_message("error_in_book")
         error = call(self.book_order_call, self.modify_ticket_details.build())
+        self.clear_details(self.modify_ticket_details)
         return error

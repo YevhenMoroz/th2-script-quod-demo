@@ -1,63 +1,77 @@
-import logging
-import os
-import string
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
 import random
+import string
+import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, TimeInForce, OrderBookColumns, \
+    ExecSts, PostTradeStatuses
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+import getpass
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-4007"
-    # region Declarations
-    client = "CLIENT_FIX_CARE"
-    qty1 = "600"
-    qty2 = "500"
-    price1 = "20"
-    price2 = "10"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    basket_template_name = "Test Template 2"
-    path_csv = "C:\\Users\\" + username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                          '\\Basket_import_files\\BasketTemplate_withoutHeader_Mapping1.csv'
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4007(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
+        self.username = getpass.getuser()
+        self.client = self.data_set.get_client_by_name('client_pos_1')
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.path_csv = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                                        '\\Basket_import_files\\BasketTemplate_withHeader_Mapping2.csv'
 
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Basket via import
-    eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_csv, client, is_csv=True)
-    # endregion
-    # region Manual Execute orders
-    orders_id = eq_wrappers.get_basket_orders_values(base_request, 2, "Id", {'Basket Name': basket_name})
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   order_filter_list=["Order ID", orders_id["1"]])
-    eq_wrappers.manual_execution(base_request, qty1, price1)
-    eq_wrappers.verify_order_value(base_request, case_id, "Basket Name", basket_name,
-                                   order_filter_list=["Order ID", orders_id["2"]])
-    eq_wrappers.manual_execution(base_request, qty2, price2)
-    # endregion
-    # region Complete Book
-    eq_wrappers.complete_basket(base_request)
-    # endregion
-    # region Book Basket
-    eq_wrappers.book_basket(base_request)
-    # endregion
-    # region Verify
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Booked",
-                                   order_filter_list=["Order ID", orders_id["1"]])
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Booked",
-                                   order_filter_list=["Order ID", orders_id["2"]])
-    # endregion
-
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create basket via template csv
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_csv, client=self.client, tif=TimeInForce.DAY.value,
+                                                  is_csv=True)
+        basket_id = self.basket_book.get_basket_value(BasketBookColumns.id.value)
+        order_id1 = self.order_book.set_filter([OrderBookColumns.basket_name.value, self.basket_name]).extract_field(
+            OrderBookColumns.order_id.value, row_number=1)
+        order_id2 = self.order_book.set_filter([OrderBookColumns.basket_name.value, self.basket_name]).extract_field(
+            OrderBookColumns.order_id.value, row_number=2)
+        # endregion
+        # region manual exec orders
+        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: order_id1})
+        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: order_id2})
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+        # endregion
+        # region complete orders
+        self.basket_book.complete_basket({BasketBookColumns.id.value: basket_id})
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.done_for_day.value: "Yes",
+             OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.done_for_day.value: "Yes",
+             OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value})
+        # endregion
+        # region book basket
+        self.basket_book.book_basket()
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
+        # endregion
