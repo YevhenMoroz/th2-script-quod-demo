@@ -102,6 +102,8 @@ class AlgoClients(Enum):
     client_2 = "CLIENT2"
     client_3 = "CLIENT3"
     client_4 = "KEPLER"
+    client_5 = "BATSDARK_KEPLER"
+    client_6 = "CHIXDELTA_KEPLER"
 
 
 class AlgoAccounts(Enum):
