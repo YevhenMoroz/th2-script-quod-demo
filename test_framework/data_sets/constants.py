@@ -48,6 +48,7 @@ class Connectivity(Enum):
     Kepler_319_Sell_Side = 'fix-sell-side-319-kepler'
     Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
+    Kuiper_319_web_admin_site = 'rest_wa319kuiper'
 
 
 class FrontEnd(Enum):
