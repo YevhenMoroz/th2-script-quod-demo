@@ -806,8 +806,27 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.get_parameter('Account') == 'KEPLER':
+            temp.update(
+                Account='*',
+                NoStrategyParameters='*',
+                SecondaryAlgoPolicyID='*',
+                SettlDate='*',
+                Currency='*',
+                HandlInst='*',
+                NoParty='*',
+                LastPx='*',
+                OrderCapacity='*',
+                QtyType='*',
+                ExecRestatementReason='*',
+                TargetStrategy='*',
+                Instrument='*',
+                LastQty='*'
+            )
         if new_order_single.is_parameter_exist('ExDestination'):
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
+        if new_order_single.is_parameter_exist('MinQty'):
+            temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         temp.update(
             AvgPx='*',
             ClOrdID='*',
