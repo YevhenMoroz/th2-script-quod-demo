@@ -182,6 +182,10 @@ class AlgoListingId(Enum):
     listing_6 = "1805006" # Euronext Paris for FR0010411884
     listing_7 = "1804844 " # Euronext Paris for FR0011550177
     listing_8 = "1803699" # Euronext Paris for FR0000133308
+    listing_9 = "525020503" # QUODLIT4 for QUODTESTQA01
+    listing_10 = "525020504" # QUODLIT5 for QUODTESTQA01
+    listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
+    listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
