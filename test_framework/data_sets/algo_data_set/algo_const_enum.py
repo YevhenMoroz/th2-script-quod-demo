@@ -180,7 +180,7 @@ class AlgoListingId(Enum):
     listing_4 = "107617192" # QUODLIT1 for QUODTESTQA00
     listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
     listing_6 = "1805006" # Euronext Paris for FR0010411884
-    listing_7 = "1804844 " # Euronext Paris for FR0011550177
+    listing_7 = "1804844" # Euronext Paris for FR0011550177
     listing_8 = "1803699" # Euronext Paris for FR0000133308
     listing_9 = "525020503" # QUODLIT4 for QUODTESTQA01
     listing_10 = "525020504" # QUODLIT5 for QUODTESTQA01
