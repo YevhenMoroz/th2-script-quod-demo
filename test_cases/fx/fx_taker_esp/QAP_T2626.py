@@ -29,7 +29,7 @@ class QAP_T2626(TestCase):
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
-        self.security_type = self.data_set.get_security_type_by_name("fx_fwd")
+        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_date = self.data_set.get_settle_date_by_name("spot")
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
         self.venue = self.data_set.get_venue_by_name("venue_3")
