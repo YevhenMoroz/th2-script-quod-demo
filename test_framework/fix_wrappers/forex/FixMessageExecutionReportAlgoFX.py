@@ -12,8 +12,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: GatewaySide,
-                                         status: Status):
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
+                                         side: GatewaySide = GatewaySide.Sell,
+                                         status: Status = Status.Fill):
         if side is GatewaySide.Buy:
             if status is Status.Pending:
                 self.__set_pending_new_buy(new_order_single)
