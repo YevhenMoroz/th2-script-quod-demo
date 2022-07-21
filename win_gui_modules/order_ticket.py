@@ -1,7 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData, SettlementTabDetails
 from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
@@ -82,6 +82,29 @@ class AdwOrdTabDetails:
 
     def build(self):
         return self.request
+
+
+class MiscsOrdDetails:
+    def __init__(self):
+        self.miscsOrderDetails = order_ticket_pb2.MiscsOrdDetails()
+
+    def set_booking_fields_value(self, booking_fields: list):
+        for i in range(len(booking_fields)):
+            booking_field_value = order_ticket_pb2.BookingFieldValue()
+            booking_field_value.fieldNumber = i
+            booking_field_value.value = booking_fields[i]
+            self.miscsOrderDetails.bookingFieldsValues.append(booking_field_value)
+
+    def set_allocations_fields_value(self, allocations_fields: list):
+        for i in range(len(allocations_fields)):
+            allocations_field_value = order_ticket_pb2.AllocationsFieldValue()
+            allocations_field_value.fieldNumber = i
+            allocations_field_value.value = allocations_fields[i]
+            self.miscsOrderDetails.allocationsFieldsValues.append(allocations_field_value)
+
+    def build(self):
+        return self.miscsOrderDetails
+
 
 class OrderTicketDetails:
 
@@ -191,8 +214,14 @@ class OrderTicketDetails:
     def set_commissions_details(self, commissions_details: CommissionsDetails):
         self.order.commissionsParams.CopyFrom(commissions_details)
 
-    def set_adw_ord_details(self,adw_ord_details: AdwOrdTabDetails):
+    def set_adw_ord_details(self, adw_ord_details: AdwOrdTabDetails):
         self.order.advOrdParams.CopyFrom(adw_ord_details)
+
+    def set_miscs_details(self, miscs_details: MiscsOrdDetails):
+        self.order.miscsOrderDetails.CopyFrom(miscs_details)
+
+    def set_settlement_details(self, settlement_details: SettlementTabDetails):
+        self.order.settlementDetails.CopyFrom(settlement_details)
 
 
 class FXOrderDetails:

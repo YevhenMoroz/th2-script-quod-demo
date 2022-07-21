@@ -1,52 +1,54 @@
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event, timestamps
+import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from test_framework.old_wrappers.fix_message import FixMessage
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_ticket import ExtractOrderTicketValuesRequest
-
-from win_gui_modules.utils import set_session_id, get_base_request, call
-from win_gui_modules.wrappers import set_base
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3328"
-    # region Declarations
-    qty = "100"
-    price = "10"
-    new_price = "1"
-    lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+timeouts = True
 
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    fix_message.pop('response')
-    fix_message1 = FixMessage(fix_message)
-    # endregion
-    # region Accept
-    eq_wrappers.accept_order(lookup, qty, price)
-    # region
-    eq_wrappers.manual_execution(base_request, str(int(qty) / 2), price)
-    eq_wrappers.amend_order(base_request)
-    req = ExtractOrderTicketValuesRequest(base_request)
-    req.get_client_state()
-    req.get_instrument_state()
-    result = call(Stubs.win_act_order_ticket.extractOrderTicketValues, req.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check value")
-    verifier.compare_values("Order ID from View", result['CLIENT'],
-                            "False"
-                            )
-    verifier.verify()
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_3328(TestCase):
+
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.qty = "20"
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message)
+        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept CO order
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual execution
+        self.order_book.manual_execution(qty=self.qty)
+        # endregion
+        # region check order open status
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        result = self.order_ticket.check_availability(["CLIENT"])
+        verifier = Verifier(self.test_id)
+        verifier.set_event_name("Check value")
+        verifier.compare_values("Order ID from View","False",  result['CLIENT'])
+        verifier.verify()
+        # endregion

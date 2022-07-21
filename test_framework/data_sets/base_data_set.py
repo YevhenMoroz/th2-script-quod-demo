@@ -53,6 +53,8 @@ class BaseDataSet:
     middle_office_status = None
     middle_office_match_status = None
     capacity = None
+    scenario = None
+    strategy = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -80,6 +82,7 @@ class BaseDataSet:
     instr_symbol = None
     symbol = None
     instr_type = None
+    fx_istr_type_wa = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -238,6 +241,11 @@ class BaseDataSet:
             return getattr(self.instrument_id, name).value
         raise ValueError(f"{self.instrument_id} not found!")
 
+    def get_fx_instr_type_wa(self, name: str):
+        if hasattr(self.fx_istr_type_wa, name):
+            return getattr(self.fx_istr_type_wa, name).value
+        return ValueError(f"{self.fx_istr_type_wa} not found!")
+
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
             return getattr(self.mic, name).value
@@ -387,7 +395,7 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        raise ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.venue_client_accounts} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
@@ -466,6 +474,15 @@ class BaseDataSet:
             return getattr(self.middle_office_match_status, name).value
         raise ValueError(f"{self.middle_office_match_status} not found!")
 
+    def get_strategy(self, name: str):
+        if hasattr(self.strategy, name):
+            return getattr(self.strategy, name).value
+        raise ValueError(f"{self.strategy} not found!")
+
+    def get_scenario(self, name: str):
+        if hasattr(self.scenario, name):
+            return getattr(self.scenario, name).value
+        raise ValueError(f"{self.scenario} not found!")
     # region WebAdmin getters
 
     def get_user(self, name: str):

@@ -97,3 +97,6 @@ class WashBookRulesPage(CommonPage):
 
     def get_desk(self):
         return self.find_by_xpath(WashBookRulesConstants.MAIN_PAGE_DESK_XPATH).text
+
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(WashBookRulesConstants.SEARCHED_ENTITY_XPATH.format(value))

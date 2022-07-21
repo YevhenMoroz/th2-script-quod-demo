@@ -32,6 +32,7 @@ class QAP_3445(TestCase):
 
         # region order parameters
         self.qty = 3000000
+        self.restated_qty = 700000
         self.price = 20
         # endregion
 
@@ -59,6 +60,7 @@ class QAP_3445(TestCase):
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
         self.ex_destination_trql = self.data_set.get_mic_by_name("mic_13")
         self.client = self.data_set.get_client_by_name("client_4")
+        self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         # endregion
 
         # region Key parameters
@@ -79,8 +81,8 @@ class QAP_3445(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
-        rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, "TRQX", True)
+        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.restated_qty, self.new_reply, self.restated_reply)
+        rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
 
@@ -93,7 +95,7 @@ class QAP_3445(TestCase):
 
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, ClientAlgoPolicyID="QA_MPDark", Price=self.price))
+        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
         time.sleep(3)
@@ -133,7 +135,7 @@ class QAP_3445(TestCase):
         er_rfq_new = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
         self.fix_verifier_buy.check_fix_message(er_rfq_new, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
 
-        er_rfq_restated = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new)
+        er_rfq_restated = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new).change_parameters({"OrderQty": self.restated_qty})
         self.fix_verifier_buy.check_fix_message(er_rfq_restated, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
 
         # endregion

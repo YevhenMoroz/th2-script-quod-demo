@@ -25,6 +25,32 @@ class BaseTileDetails:
         return self.base_details
 
 
+class SettlementTabDetails:
+    def __init__(self):
+        self.request = common_pb2.SettlementTabDetails()
+
+    def set_settl_currency(self, settl_currency):
+        self.request.settlementCurrency = settl_currency
+
+    def set_settl_type(self, settl_type):
+        self.request.settlementType = settl_type
+
+    def set_settl_date(self, settl_date):
+        self.request.settlementDate = settl_date
+
+    def set_exchange_rate(self, exchange_rate):
+        self.request.exchangeRate = exchange_rate
+
+    def set_exchange_rate_calc(self, exchange_rate_calc):
+        self.request.exchangeRateCalc = exchange_rate_calc
+
+    def set_cash_account(self, cash_account):
+        self.request.cashAccount = cash_account
+
+    def build(self):
+        return self.request
+
+
 class CommissionsTabTableParams:
     def __init__(self):
         self.request = common_pb2.CommissionsTabTableParams()

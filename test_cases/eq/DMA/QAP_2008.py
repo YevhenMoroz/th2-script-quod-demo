@@ -2,11 +2,11 @@ import logging
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from test_framework.core.test_case import TestCase
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import Connectivity
+from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -27,18 +27,19 @@ seconds, nanos = timestamps()  # Test case start time
 
 class QAP_2008(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
-        self.bs_connectivity = Connectivity.Ganymede_317_bs.value
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
         self.qty = '500'
         self.qty_amend = '700'
         self.price = '20'
-        self.rule_manager = RuleManager(Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
-        self.venue = self.data_set.get_mic_by_name('mic_1')
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')  # XPAR_CLIENT1
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
@@ -46,8 +47,10 @@ class QAP_2008(TestCase):
         self.fix_message_cancel = FixMessageOrderCancelRequestOMS()
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.exec_sts = None
+        self.sts = None
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.future_date = datetime.now() + timedelta(days=2)
+        self.expire_date = datetime.strftime(self.future_date, "%Y%m%d")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -59,10 +62,9 @@ class QAP_2008(TestCase):
                                                                                                   self.venue,
                                                                                                   float(self.price))
             self.fix_message.set_default_dma_limit()
-            self.fix_message.change_parameters({'Side': '2', 'TimeInForce': '6'})
-            self.fix_message.add_tag({'ExpireDate': datetime.strftime(datetime.now() + timedelta(days=2), "%Y%m%d")})
-            self.fix_message.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty})
-            response = self.fix_manager.send_message_and_receive_response(self.fix_message)
+            self.fix_message.change_parameters({'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'TimeInForce': '6',
+                                                'ExpireDate': self.expire_date})
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
             # get Order ID
             order_id = response[0].get_parameters()['OrderID']
 
@@ -75,8 +77,15 @@ class QAP_2008(TestCase):
 
         # region Set-up parameters for ExecutionReports
         self.exec_report.set_default_new(self.fix_message)
+
+        # Depends on Weekend Day settings on Venue
+        # if self.future_date.isoweekday() == 6:
+        #     self.expire_date = datetime.strftime(self.future_date - timedelta(days=1), "%Y%m%d")
+        # elif self.future_date.isoweekday() == 7:
+        #     self.expire_date = datetime.strftime(self.future_date - timedelta(days=2), "%Y%m%d")
         self.exec_report.change_parameters(
-            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'ExpireDate': '*'})
+            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'LastMkt': '*',
+             'ExpireDate': self.expire_date})
         # endregion
 
         # region Check ExecutionReports
@@ -88,9 +97,10 @@ class QAP_2008(TestCase):
         # endregion
 
         # region Check values in OrderBook
-        sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.sts = self.order_book.extract_field(OrderBookColumns.sts.value)
         self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.open.value},
-                                       {OrderBookColumns.sts.value: sts}, 'Checking order status in the order book')
+                                       {OrderBookColumns.sts.value: self.sts},
+                                       'Checking order status in the Order book')
         # endregion
 
         # region Amend order
@@ -102,7 +112,7 @@ class QAP_2008(TestCase):
             # self.fix_message_amend.set_default(self.fix_message)
             # self.fix_message_amend.update_fields_in_component('OrderQtyData', {'OrderQty': self.qty_amend})
             # response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_amend)
-            # self.fix_manager.send_message_fix_standard(self.fix_message_amend)
+
             # Front
             self.order_ticket.set_order_details(qty=self.qty_amend)
             self.order_ticket.amend_order([OrderBookColumns.order_id.value, order_id])
@@ -121,7 +131,7 @@ class QAP_2008(TestCase):
         qty_after_amend = self.order_book.extract_field(OrderBookColumns.qty.value)
         self.order_book.compare_values({OrderBookColumns.qty.value: self.qty_amend},
                                        {OrderBookColumns.qty.value: qty_after_amend},
-                                       'Checking the Qty after amending in the order book')
+                                       'Checking the Qty after amending in the Order book')
         # endregion
 
         # region Cancelling order
@@ -143,10 +153,10 @@ class QAP_2008(TestCase):
         # endregion
 
         # region Check values in OrderBook after Cancel
-        sts = self.order_book.extract_field(OrderBookColumns.sts.value)
+        self.sts = self.order_book.extract_field(OrderBookColumns.sts.value)
         self.order_book.compare_values({OrderBookColumns.sts.value: ExecSts.cancelled.value},
-                                       {OrderBookColumns.sts.value: sts},
-                                       'Checking order status after cancelling in the order book')
+                                       {OrderBookColumns.sts.value: self.sts},
+                                       'Checking order status after cancelling in the Order book')
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

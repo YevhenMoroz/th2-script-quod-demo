@@ -39,7 +39,7 @@ class QAP_4046(TestCase):
         cl_id = nos.get_parameter("ClOrdID")
         # endregion
         # region Accept
-        self.cl_inbox.accept_order(filter={"ClOrdId": cl_id})
+        self.cl_inbox.accept_order()
         # endregion
         # region ReOrder
         self.order_ticket.set_order_details(recipient=self.user1, partial_desk=True)
@@ -50,5 +50,6 @@ class QAP_4046(TestCase):
         # endregion
         # region Verify context menu
         act_result = self.order_book.is_menu_item_present("Create Basket", [1, 2])
-        self.order_book.compare_values({"isMenuItemPresent": "false"}, act_result, "Verify context menu")
+        print(act_result)
+        self.order_book.compare_values({"isMenuItemPresent": "false"}, {"isMenuItemPresent": act_result}, "Verify context menu")
         # endregion

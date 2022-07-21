@@ -18,6 +18,7 @@ class FxVenues(Enum):
     venue_5 = "DB"
     venue_6 = "BARX"
     venue_7 = "EBS"
+    venue_8 = "GS"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -119,6 +120,14 @@ class FxSecurityTypes(Enum):
     fx_nds = "FXNDS"
 
 
+class FxInstrTypeWA(Enum):
+    fx_spot = "SPO"
+    fx_fwd = "FXF"
+    fx_swap = "FXS"
+    fx_ndf = "NDF"
+    fx_nds = "NDS"
+
+
 class FxSettleTypes(Enum):
     today = "1"
     tomorrow = "2"
@@ -202,6 +211,7 @@ class FxCurrencies(Enum):
     currency_php = "PHP"
     currency_cad = "CAD"
     currency_aud = "AUD"
+    currency_sek = "SEK"
 
 
 class FxRecipients(Enum):

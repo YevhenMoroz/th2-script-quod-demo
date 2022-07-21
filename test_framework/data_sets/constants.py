@@ -21,6 +21,7 @@ class Connectivity(Enum):
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
     Luna_314_ss_rfq = 'fix-ss-rfq-314-luna-standard'
+    Luna_314_bs_md = 'fix-sell-md-t-314-stand'
     Luna_314_bs_rfq = 'fix-bs-rfq-314-luna-standard'
     Luna_314_ss_esp = 'fix-sell-esp-m-314luna-stand'
     Luna_314_Feed_Handler = 'fix-fh-314-luna'
@@ -47,6 +48,7 @@ class Connectivity(Enum):
     Kepler_319_Sell_Side = 'fix-sell-side-319-kepler'
     Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
+    Kuiper_319_web_admin_site = 'rest_wa319kuiper'
 
 
 class FrontEnd(Enum):
@@ -140,16 +142,17 @@ class TimeInForce(Enum):
 
 
 class ClientAlgoPolicy(Enum):
-    qa_mpdark_2 = "QA_MPDark2"
-    qa_mpdark_3 = "QA_MPDark3"
-    qa_mpdark_4 = "QA_MPDark4"
-    qa_mpdark_5 = "QA_MPDark5"
-    qa_mpdark_6 = "QA_MPDark6"
-    qa_mpdark_7 = "QA_MPDark7"
-    qa_mpdark_8 = "QA_MPDark8"
+    qa_mpdark = "QA_Auto_MPDark"
+    qa_mpdark_2 = "QA_Auto_MPDark2"
+    qa_mpdark_3 = "QA_Auto_MPDark3"
+    qa_mpdark_4 = "QA_Auto_MPDark4"
+    qa_mpdark_5 = "QA_Auto_MPDark5"
+    qa_mpdark_6 = "QA_Auto_MPDark6"
+    qa_mpdark_7 = "QA_Auto_MPDark7"
+    qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_sorping = "QA_SORPING"
-    qa_sorping_1 = "QA_SORPING_1"
-    qa_sorping_2 = "QA_SORPING_2"
+    qa_sorping_1 = "QA_Auto_SORPING_1"
+    qa_sorping_2 = "QA_Auto_SORPING_2"
 
 
 class OrderType(Enum):

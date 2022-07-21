@@ -43,11 +43,11 @@ class QAP_6278(CommonTestCase):
         wizard.set_client_id_source(self.client_id_source)
 
         routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
-        routes_tab.open_routes_subwizard()
+        routes_tab.click_on_plus_button()
         time.sleep(2)
         routes_tab.set_route_account_name(self.acc_route_name)
         routes_tab.set_route(self.route)
-        routes_tab.click_create_entity_button()
+        routes_tab.click_on_checkmark_button()
 
         wizard.click_save_button()
         time.sleep(2)
