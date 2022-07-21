@@ -32,7 +32,6 @@ class OMSOrderTicket(BaseOrderTicket):
         self.re_order_order_call = Stubs.win_act_order_book.reOrder
         self.extract_order_ticket_values_call = Stubs.win_act_order_ticket.extractOrderTicketValues
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
-        self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
         self.mass_modify_order_call = Stubs.win_act_order_book.massModify
         self.allocations_grid_row_details = AllocationsGridRowDetails()
         self.more_tab_allocations_details = MoreTabAllocationsDetails()
@@ -49,10 +48,11 @@ class OMSOrderTicket(BaseOrderTicket):
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
                           capacity=None, settl_date=None, recipient=None, partial_desk=False,
                           disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
-                          alloc_details: dict = None):
+                          alloc_details: dict = None, error_expected=None):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
                                                        order_type=order_type, tif=tif, account=account,
-                                                       display_qty=display_qty, is_sell_side=is_sell_side)
+                                                       display_qty=display_qty, is_sell_side=is_sell_side,
+                                                       error_expected=error_expected)
         if expire_date is not None:
             self.order_details.set_expire_date(expire_date)
         if instrument is not None:

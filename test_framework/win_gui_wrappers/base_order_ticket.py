@@ -39,7 +39,7 @@ class BaseOrderTicket(BaseWindow):
 
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, order_type=None,
-                          tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None):
+                          tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, error_expected = None):
 
         if client is not None:
             self.order_details.set_client(client)
@@ -59,6 +59,8 @@ class BaseOrderTicket(BaseWindow):
             self.order_details.set_account(account)
         if display_qty is not None:
             self.order_details.set_display_qty(display_qty)
+        if error_expected:
+            self.order_details.set_error_expected()
         return self.order_details
 
     def set_twap_details(self, strategy_type, start_date=None, start_date_offset="", end_date=None,
@@ -199,8 +201,11 @@ class BaseOrderTicket(BaseWindow):
     def extract_order_ticket_errors(self):
         extract_errors_request = self.extract_order_ticket_errors_request
         extract_errors_request.extract_error_message()
+        extract_errors_request.set_order_details(self.order_details)
         result = call(self.extract_order_ticket_errors_call, extract_errors_request.build())
+        self.clear_details([self.extract_order_ticket_errors_request, self.order_details])
         return result
+
 
     # endregion
     # region Check
@@ -256,8 +261,9 @@ class BaseOrderTicket(BaseWindow):
         self.modify_order_details.set_order_details(self.order_details)
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
-        call(self.split_limit_order_call, self.modify_order_details.build())
+        result = call(self.split_limit_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
+        return result
 
     def child_care(self, rows: int = 1, filter_list: list = None):
         self.modify_order_details.set_order_details(self.order_details)
