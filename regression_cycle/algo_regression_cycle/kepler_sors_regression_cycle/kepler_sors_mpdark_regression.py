@@ -33,46 +33,14 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_4055 import QAP_4055
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_6067 import QAP_6067
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_8219 import QAP_8219
 
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_3150 import QAP_3150
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_3151 import QAP_3151
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_3153 import QAP_3153
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_3154 import QAP_3154
-
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2407 import QAP_2407
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2408 import QAP_2408
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2409 import QAP_2409
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2410 import QAP_2410
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2411 import QAP_2411
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2503 import QAP_2503
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2665 import QAP_2665
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2666 import QAP_2666
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2667 import QAP_2667
-
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4538 import QAP_4538
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4539 import QAP_4539
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4540 import QAP_4540
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4541 import QAP_4541
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4542 import QAP_4542
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4556 import QAP_4556
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4558 import QAP_4558
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4559 import QAP_4559
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4560 import QAP_4560
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4561 import QAP_4561
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4562 import QAP_4562
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4564 import QAP_4564
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4566 import QAP_4566
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4690 import QAP_4690
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4678 import QAP_4678
-from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_4706 import QAP_4706
-
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 
 
-def test_run():
+def test_run(parent_id=None):
     # Generation id and time for test run
-    report_id = bca.create_event('skolesnyk tests')
+    report_id = bca.create_event('MPDark', parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region MP Dark (Dark Phase Only)
@@ -113,47 +81,6 @@ def test_run():
         QAP_3994(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_4055(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_6067(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
-
-        # region SynthMinQty
-        configuration = ComponentConfiguration("synth_min_qty")
-        QAP_4538(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4539(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4540(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4541(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4542(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4556(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4558(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4559(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4560(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4561(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4562(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4564(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4566(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4678(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4690(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4706(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
-
-        # region Iceberg: Route/Venue
-        configuration = ComponentConfiguration("sors_iceberg")
-        QAP_3150(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3151(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3153(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3154(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
-
-        # region SORPING
-        configuration = ComponentConfiguration("sorping")
-        QAP_2407(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2408(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2409(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2410(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2411(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2503(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2665(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2666(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2667(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
