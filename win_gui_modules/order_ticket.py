@@ -253,6 +253,9 @@ class OrderTicketDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)
 
+    def set_error_expected(self):
+        self.order.errorExpected = True
+
     def build(self):
         return self.order
 

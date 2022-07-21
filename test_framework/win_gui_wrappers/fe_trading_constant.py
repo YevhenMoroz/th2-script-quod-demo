@@ -560,6 +560,7 @@ class BagStatuses(Enum):
     new = 'New'
     terminated = 'Terminated'
     cl_ord_id = "ClOrdId"
+    canceled = 'Canceled'
 
 
 class SymbolSource(Enum):
@@ -604,6 +605,7 @@ class Suspended(Enum):
 
 class OrdersTabColumnFromBag(Enum):
     unmatched_qty = 'UnmatchQty'
+    limit_price = 'LimitPrice'
 
 
 class BlockStatuses(Enum):
