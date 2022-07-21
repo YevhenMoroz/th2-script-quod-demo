@@ -95,6 +95,10 @@ class BaseOrderBook(BaseWindow):
         self.get_sub_lvl_details = None
         self.extract_sub_lvl_details_call = None
         self.exec_summary_call = None
+        self.quick_button_details = None
+        self.create_quick_button_call = None
+        self.edit_quick_button_call = None
+        self.click_quick_button_call = None
     # endregion
 
     # region Common func
@@ -701,3 +705,51 @@ class BaseOrderBook(BaseWindow):
         result = call(self.exec_summary_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
+
+    def create_quick_button(self, custom_name: str, qty: str, action_type: str = None, tif: str = None,
+                            qty_type: str = None, routes: str = None, strategy_type: str = None, strategy: str = None,
+                            child_strategy: str = None, order_type: str = None, recipient: str = None):
+        self.quick_button_details.set_custom_name(custom_name)
+        self.quick_button_details.set_qty(qty)
+        if action_type is not None:
+            self.quick_button_details.set_action_type(action_type)
+        if tif is not None:
+            self.quick_button_details.set_tif(tif)
+        if qty_type is not None:
+            self.quick_button_details.set_qty_type(qty_type)
+        if routes is not None:
+            self.quick_button_details.set_routes(routes)
+        if strategy_type is not None:
+            self.quick_button_details.set_strategy_type(strategy_type)
+        if strategy is not None:
+            self.quick_button_details.set_strategy(strategy)
+        if child_strategy is not None:
+            self.quick_button_details.set_child_strategy(child_strategy)
+        if order_type is not None:
+            self.quick_button_details.set_order_type(order_type)
+        if recipient is not None:
+            self.quick_button_details.set_recipient(recipient)
+        call(self.create_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def edit_quick_button(self, btn_name: str, custom_name: str = None, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        if custom_name is not None:
+            self.quick_button_details.set_custom_name(custom_name)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.edit_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def click_quick_button(self, btn_name: str,order_id: str, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        self.quick_button_details.set_order_id(order_id)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.click_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+
+
+
+
