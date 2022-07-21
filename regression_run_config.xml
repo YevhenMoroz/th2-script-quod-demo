@@ -120,7 +120,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="sors_iceberg" run="True">
+                <component name="lit_dark_iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
