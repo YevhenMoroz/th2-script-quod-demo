@@ -24,6 +24,7 @@ class OrderBookColumns(Enum):
     near_leg_qty = "NearLegQty"
     far_leg_qty = "FarLegQty"
     qty = "Qty"
+    exec_pcy = "ExecPcy"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
     limit_price = "Limit Price"
@@ -76,6 +77,7 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    day_avg_price = 'DayAvgPrice'
     isin = "ISIN"
     is_locked = "IsLocked"
     basket_name = "Basket Name"
@@ -138,6 +140,7 @@ class ExecType(Enum):
 
 class ExecPcy(Enum):
     dma = "DMA"
+    care = "Care"
 
 
 class QuoteBookColumns(Enum):
@@ -613,3 +616,6 @@ class BlockStatuses(Enum):
 
 class OffsetTypes(Enum):
     price = "Price"
+
+class ReferencePrice(Enum):
+    open = "Open"
