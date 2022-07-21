@@ -12,7 +12,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
     TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
-    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails
+    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails, QuickButtonCreationDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -36,8 +36,8 @@ class OMSOrderBook(BaseOrderBook):
         self.disclose_flag_details = DiscloseFlagDetails(self.base_request)
         self.add_to_basket_details = AddToBasketDetails(self.base_request)
         self.create_basket_details = CreateBasketDetails(self.base_request)
+        self.quick_button_details = QuickButtonCreationDetails(self.base_request)
         self.reassign_order_details = ReassignOrderDetails()
-        self.mass_execution_summary_details = MassExecSummaryDetails()
         self.manual_executing_details = ManualExecutingDetails(self.base_request)
         self.second_level_tab_details = SecondLevelTabDetails()
         self.second_level_extraction_details = SecondLevelExtractionDetails()
@@ -99,4 +99,7 @@ class OMSOrderBook(BaseOrderBook):
         self.get_sub_lvl_details = GetSubLvlDetails(self.base_request)
         self.extract_sub_lvl_details_call = Stubs.win_act_order_book.extractSubLvlDetails
         self.exec_summary_call = Stubs.win_act_order_book.execSummary
+        self.create_quick_button_call = Stubs.win_act_order_book.createSplitShortcutCreationButton
+        self.edit_quick_button_call = Stubs.win_act_order_book.editSplitShortcutCreationButton
+        self.click_quick_button_call = Stubs.win_act_order_book.clickSplitShortcutCreationButton
         # endregion
