@@ -254,8 +254,9 @@ class BaseOrderTicket(BaseWindow):
         self.modify_order_details.set_order_details(self.order_details)
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
-        call(self.split_order_call, self.modify_order_details.build())
+        result = call(self.split_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
+        return result
 
     def split_limit_order(self, filter_list: list = None):
         self.modify_order_details.set_order_details(self.order_details)
