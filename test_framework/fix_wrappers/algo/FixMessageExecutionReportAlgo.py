@@ -802,6 +802,49 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def set_params_full_fill_MPDark(self, MP_Dark_order: FixMessageNewOrderSingle):
+        temp = {
+            "Account": MP_Dark_order.get_parameter("Account"),
+            "AvgPx": MP_Dark_order.get_parameter("Price"),
+            "ClOrdID": "*",
+            "CumQty": MP_Dark_order.get_parameter("OrderQty"),
+            "Currency": MP_Dark_order.get_parameter("Currency"),
+            "ExecID": "*",
+            "LastPx": MP_Dark_order.get_parameter("Price"),
+            "LastQty": MP_Dark_order.get_parameter("OrderQty"),
+            "OrderID": "*",
+            "OrdStatus": 2,
+            "OrderQty": MP_Dark_order.get_parameter("OrderQty"),
+            "OrdType": MP_Dark_order.get_parameter("OrdType"),
+            "Side": MP_Dark_order.get_parameter("Side"),
+            "Price": MP_Dark_order.get_parameter("Price"),
+            "TransactTime": "*",
+            "Text": "*",
+            "ExDestination": "*",
+            "TimeInForce": MP_Dark_order.get_parameter("TimeInForce"),
+            "ExecType": "F",
+            "LeavesQty": 0,
+            "Instrument": "*",
+            "OrderCapacity": "A",
+            "ShortCode": "*",
+            "SecondaryOrderID": "*",
+            "LastMkt": "*",
+            "QtyType": 0,
+            "ChildOrderID": "*",
+            "TargetStrategy": MP_Dark_order.get_parameter("TargetStrategy"),
+            "SecondaryAlgoPolicyID": "*",
+            "SettlDate": "*",
+            "TradeDate": "*",
+            "NoParty": "*",
+            "HandlInst": 2,
+            "LastExecutionPolicy": "*",
+            "IClOrdIdAO": "*",
+            "GrossTradeAmt": "*",
+            "SecondaryExecID": "*",
+        }
+        super().change_parameters(temp)
+        return self
+
     def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
