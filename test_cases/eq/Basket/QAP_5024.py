@@ -1,45 +1,54 @@
-import logging
+import getpass
 import random
 import string
-
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+import logging
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.win_gui_wrappers.fe_trading_constant import  TimeInForce, OrderBookColumns, \
+    ExecSts
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-5024"
-    client = "CLIENT_FIX_CARE"
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_5024(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
+        self.username = getpass.getuser()
+        self.client_basket = self.data_set.get_client_by_name('client_pos_1')
+        self.client_order = self.data_set.get_client_by_name('client_pos_1')
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.path_xlsx = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                                        '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.csv'
+        self.path_csv = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
+                                                        '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.csv'
 
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    basket_template_name = "Test Template"
-    path_xlsx = "C:\\Users\\" + "IPalamarchuk" + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                                 '\\Basket_import_files\\BasketTemplate_withHeader_Mapping1.xlsx'
-    path_csv = "C:\\Users\\" + "IPalamarchuk" + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                                '\\Basket_import_files\\BasketTemplate_withHeader_Mapping2.csv'
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create basket via template csv
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_csv, client=self.client_basket,
+                                                  tif=TimeInForce.DAY.value,
+                                                  is_csv=True)
+        self.basket_book.create_basket_via_import(basket_name=self.basket_name,
+                                                  basket_template_name="Test Template",
+                                                  path=self.path_xlsx, client=self.client_basket,
+                                                  tif=TimeInForce.DAY.value)
+        self.order_book.set_filter([OrderBookColumns.basket_name.value, self.basket_name]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value}, row_number=1)
+        self.order_book.set_filter([OrderBookColumns.basket_name.value, self.basket_name]).check_order_fields_list(
+            {OrderBookColumns.sts.value: ExecSts.open.value}, row_number=2)
+        # endregion
 
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    basket_name = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-    basket_name_2 = "Basket_" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
-
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Basket via import
-    eq_wrappers.create_basket_via_import(base_request, basket_name, basket_template_name, path_xlsx, client)
-    eq_wrappers.create_basket_via_import(base_request, basket_name_2, basket_template_name, path_csv, client,
-                                         is_csv=True)
-
-    orders_qty = eq_wrappers.get_basket_orders_values(base_request, 2, "Qty", {'Basket Name': basket_name_2})
-    eq_wrappers.base_verifier(case_id, "Qty", "300", orders_qty.get("1"))
-    eq_wrappers.base_verifier(case_id, "Qty", "400", orders_qty.get("2"))
