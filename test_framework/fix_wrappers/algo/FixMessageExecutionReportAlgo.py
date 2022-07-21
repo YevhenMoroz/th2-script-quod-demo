@@ -888,3 +888,31 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
         return self
+
+    def set_MPDArk_LIST_child_par_fill(self, nos_lis_order):
+        temp = {
+            "Account": nos_lis_order.get_parameter("Account"),
+            "AvgPx": nos_lis_order.get_parameter("Price"),
+            "ClOrdID": "*",
+            "CumQty": "*",
+            "Currency": nos_lis_order.get_parameter("Currency"),
+            "ExecID": "*",
+            "LastPx": nos_lis_order.get_parameter("Price"),
+            "LastQty": "*",
+            "OrderID": "*",
+            "OrdStatus": 1,
+            "OrderQty": nos_lis_order.get_parameter("OrderQty"),
+            "OrdType": nos_lis_order.get_parameter("OrdType"),
+            "Side": nos_lis_order.get_parameter("Side"),
+            "Price": nos_lis_order.get_parameter("Price"),
+            "TransactTime": "*",
+            "Text": "*",
+            "ExDestination": "*",
+            "TimeInForce": nos_lis_order.get_parameter("TimeInForce"),
+            "ExecType": "F",
+            "LeavesQty": "*",
+            "Instrument": "*",
+            "OrderCapacity": "A",
+        }
+        super().change_parameters(temp)
+        return self
