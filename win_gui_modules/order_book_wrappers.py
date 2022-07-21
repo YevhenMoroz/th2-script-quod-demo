@@ -1205,3 +1205,53 @@ class GetSubLvlDetails:
 
     def build(self):
         return self._request
+
+class QuickButtonCreationDetails:
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.SplitShortcutCreationButtonDetails(base=base_request)
+        else:
+            self._request = order_book_pb2.SplitShortcutCreationButtonDetails()
+
+    def set_btn_name(self, btn_name: str):
+        self._request.btnName = btn_name
+
+    def set_custom_name(self, custom_name: str):
+        self._request.customName = custom_name
+
+    def set_qty(self, qty: str):
+        self._request.qty = qty
+
+    def set_qty_type(self, qty_type: str):
+        self._request.qtyType = qty_type
+
+    def set_action_type(self, action_type: str):
+        self._request.actionType = action_type
+
+    def set_tif(self, tif: str):
+        self._request.tif = tif
+
+    def set_routes(self, routes: str):
+        self._request.routes = routes
+
+    def set_strategy(self, strategy: str):
+        self._request.strategy = strategy
+
+    def set_strategy_type(self, strategy_type: str):
+        self._request.strategyType = strategy_type
+
+    def set_child_strategy(self, child_strategy: str):
+        self._request.childStrategy = child_strategy
+
+    def set_order_type(self, order_type: str):
+        self._request.orderType = order_type
+
+    def set_recipient (self, recipient : str):
+        self._request.recipient = recipient
+
+    def set_order_id(self, order_id: str):
+        self._request.ordBookFilter["Order ID"] = order_id
+
+    def build(self):
+        return self._request
+
