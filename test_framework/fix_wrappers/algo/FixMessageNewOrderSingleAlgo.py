@@ -489,7 +489,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_Iceberg_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_LitDark_Iceberg_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
             'ClOrdID': '*',
@@ -588,7 +588,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1008',
-            'ClientAlgoPolicyID': 'QA_SORPING_2',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'MinQty': '100'
@@ -661,7 +661,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_SORPING_Iceberg_params(self):
+    def set_LitDark_Iceberg_params(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -698,7 +698,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_SORPING_1',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536'
         }
