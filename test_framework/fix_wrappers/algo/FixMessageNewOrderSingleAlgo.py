@@ -360,7 +360,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_min_value_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'Account': self.get_data_set().get_account_by_name('account_2'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -376,14 +376,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TargetStrategy": "2",
             'NoStrategyParameters': [
                 {
-                    'StrategyParameterName': 'Aggressivity',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '1'
-                },
-                {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
-                    'StrategyParameterValue': '10'
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.1'
                 },
                 {
                     'StrategyParameterName': 'ChildMinValue',
