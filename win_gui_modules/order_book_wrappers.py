@@ -376,9 +376,9 @@ class ExtractEventRows:
 
 class SuspendOrderDetails:
 
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base_request)
         else:
             self._request = order_book_pb2.SuspendOrderDetails()
 
@@ -855,23 +855,6 @@ class FXOrderInfo:
     def build(self):
         return self.order_info
 
-
-class SuspendOrderDetails:
-
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.SuspendOrderDetails(base=base)
-        else:
-            self._request = order_book_pb2.SuspendOrderDetails()
-
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
-
-    def set_cancel_children(self, cancel_children: bool):
-        self._request.cancelChildren = cancel_children
-
-    def build(self):
-        return self._request
 
 
 class AddToBasketDetails:
