@@ -5,7 +5,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
 
-class FixMessageNewOrderSingleAlgoFX(FixMessageNewOrderSingle):
+class FixMessageNewOrderSingleTaker(FixMessageNewOrderSingle):
 
     def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
         super().__init__(data_set=data_set)
