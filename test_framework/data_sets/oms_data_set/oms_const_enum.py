@@ -348,3 +348,7 @@ class OMSBagStrategy(Enum):
 
 class OMSBagScenario(Enum):
     twap_strategy = "TWAP strategy"
+
+
+class OMSVenueID(Enum):
+    paris = "PARIS"
