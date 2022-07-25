@@ -10,7 +10,6 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
@@ -32,7 +31,7 @@ class QAP_6153(TestCase):
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
-        self.rest_massage = RestApiClientTierInstrSymbolMessages()
+        self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
         self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.settle_type = self.data_set.get_settle_type_by_name('spot')
@@ -46,9 +45,6 @@ class QAP_6153(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Test variables
-
-        # endregion
         # region Step 1
         self.rest_massage.find_all_client_tier_instrument()
         params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
@@ -77,7 +73,6 @@ class QAP_6153(TestCase):
         # endregion
 
         # region Postconditions
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_massage.modify_client_tier_instrument(). \

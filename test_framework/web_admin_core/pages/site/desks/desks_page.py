@@ -54,3 +54,6 @@ class DesksPage(CommonPage):
 
     def get_list_of_all_locations(self):
         return self._get_all_items_from_table_column(DesksConstants.LOCATIONS_COLUMN_XPATH)
+
+    def get_list_of_all_desks_name(self):
+        return self._get_all_items_from_table_column(DesksConstants.DESKS_NAME_COLUMN_XPATH)

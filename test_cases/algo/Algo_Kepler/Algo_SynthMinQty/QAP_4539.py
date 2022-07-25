@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -72,8 +71,6 @@ class QAP_4539(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        
-        now = datetime.today() - timedelta(hours=3)
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))

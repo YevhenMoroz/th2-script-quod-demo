@@ -69,7 +69,7 @@ from test_cases.fx.fx_taker_rfq.QAP_992 import QAP_992
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.import_layouts.layout_loader import LayoutLoader
 
-from win_gui_modules.utils import set_session_id
+from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -80,9 +80,14 @@ channels = dict()
 
 def test_run(parent_id=None):
     report_id = bca.create_event('RFQ Taker regression', parent_id)
-    session_id = set_session_id()
+    session_id = set_session_id(target_server_win="ostronov")
     configuration = ComponentConfiguration("RFQ_Taker")
     try:
+        window_name = "Quod Financial - Quod site 314"
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id, window_name)
 
         LayoutLoader(report_id, session_id).import_layout("rfq_taker_layout.xml", "fx")
 

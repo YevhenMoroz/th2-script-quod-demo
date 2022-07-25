@@ -30,7 +30,7 @@ class FixMatchingProfileConstants:
     MAIN_PAGE_CURRENCY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_SIDE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
 
-    MAIN_PAGE_MIN_QTY_XPATH = '//*[@col-id="minHardQty"]//span//span[4]'
+    MAIN_PAGE_MIN_QTY_VALUE_XPATH = '//*[@col-id="minHardQty"]//span//span[4]'
 
     #TODO: MUST BE add
 

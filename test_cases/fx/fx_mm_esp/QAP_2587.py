@@ -3,16 +3,16 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, \
     RatesColumnNames
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
 class QAP_2587(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rates_tile = None
 
         self.ask_spot = RatesColumnNames.ask_spot
         self.bid_spot = RatesColumnNames.bid_spot
@@ -27,10 +27,10 @@ class QAP_2587(TestCase):
         self.rates_tile_spot = ClientRatesTile(self.test_id, self.session_id, index=0)
         self.rates_tile_w1 = ClientRatesTile(self.test_id, self.session_id, index=1)
 
-        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
-        self.instr_spot = self.symbol + "-Spot"
-        self.instr_w1 = self.symbol + "-1W"
+        self.silver = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.eur_usd_spot = self.eur_usd + "-Spot"
+        self.eur_usd_1w = self.eur_usd + "-1W"
         self.spot_event = "spot value validation"
         self.pts_event = "pts value validation"
 
@@ -38,10 +38,10 @@ class QAP_2587(TestCase):
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.rates_tile_spot.crete_tile()
-        self.rates_tile_spot.modify_client_tile(instrument=self.instr_spot, client_tier=self.client)
+        self.rates_tile_spot.modify_client_tile(instrument=self.eur_usd_spot, client_tier=self.silver)
 
         self.rates_tile_w1.crete_tile()
-        self.rates_tile_w1.modify_client_tile(instrument=self.instr_w1, client_tier=self.client)
+        self.rates_tile_w1.modify_client_tile(instrument=self.eur_usd_1w, client_tier=self.silver)
         # endregion
 
         # region step 2
