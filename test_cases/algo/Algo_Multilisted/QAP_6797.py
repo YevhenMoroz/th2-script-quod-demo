@@ -14,7 +14,6 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
@@ -47,7 +46,7 @@ class QAP_6797(TestCase):
         self.qty_ask_trqx = 100
         self.qty_ask_paris = 100
         self.qty_bid = 100
-        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.tif_fok = constants.TimeInForce.FillOrKill.value
         # endregion
 
         # region Gateway Side
@@ -95,11 +94,11 @@ class QAP_6797(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, self.traded_qty, self.price_agr_child)
+        nos_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, self.price_agr_child)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, self.price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True)
-        self.rule_list = [nos_ioc_rule, nos_1_rule, ocrr_rule, ocr_1_rule]
+        self.rule_list = [nos_fok_rule, nos_1_rule, ocrr_rule, ocr_1_rule]
         # endregion
 
         now = datetime.today() - timedelta(hours=3)
@@ -147,13 +146,12 @@ class QAP_6797(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive Child DMA order", self.test_id))
 
         dma_1_xpar_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        dma_1_xpar_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty_agr_child, Price=self.price_agr_child, Instrument=self.instrument, TimeInForce=self.tif_ioc))
+        dma_1_xpar_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty_agr_child, Price=self.price_agr_child, Instrument=self.instrument, TimeInForce=self.tif_fok))
         self.fix_verifier_buy.check_fix_message(dma_1_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 1 order')
         # endregion
 
         # region check eliminate first dma child order
         er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
-        er_eliminate_dma_1_xpar_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Price', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_1_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate Aggressive Child DMA 1 order")
         # endregion
 

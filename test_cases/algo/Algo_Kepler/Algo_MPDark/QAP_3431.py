@@ -15,7 +15,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 
 
-class QAP_3445(TestCase):
+class QAP_3431(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -32,7 +32,6 @@ class QAP_3445(TestCase):
 
         # region order parameters
         self.qty = 3000000
-        self.restated_qty = 700000
         self.price = 20
         # endregion
 
@@ -45,6 +44,7 @@ class QAP_3445(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_fill = Status.Fill
         # endregion
 
         # region instrument
@@ -81,12 +81,13 @@ class QAP_3445(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.restated_qty, self.new_reply, self.restated_reply)
+        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
+        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price, self.price, self.qty, self.qty, 100)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
 
-        self.rule_list = [rfq_rule, rfq_cancel_rule, new_order_single, cancel_rule]
+        self.rule_list = [rfq_rule, rfq_cancel_rule, new_order_single, cancel_rule, trade_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -135,7 +136,7 @@ class QAP_3445(TestCase):
         er_rfq_new = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
         self.fix_verifier_buy.check_fix_message(er_rfq_new, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
 
-        er_rfq_restated = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new).change_parameters({"OrderQty": self.restated_qty})
+        er_rfq_restated = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new).change_parameters({"OrderQty": self.qty})
         self.fix_verifier_buy.check_fix_message(er_rfq_restated, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
 
         # endregion
@@ -154,8 +155,7 @@ class QAP_3445(TestCase):
 
 
         # region MO on Venue ChixLis
-        case_id_5 = bca.create_event("MO order on chixlis", self.test_id)
-        self.fix_verifier_buy.set_case_id(case_id_5)
+        self.fix_verifier_buy.set_case_id(bca.create_event("MO order on chixlis", self.test_id))
 
         #TODO not correct message handle, PCON-3465 raised
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
@@ -170,22 +170,23 @@ class QAP_3445(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order')
 
         # endregion
+
+        # region execution on ChixLis
+        case_id_5 = bca.create_event("Full execution on ChisLis", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_5)
+
+        er_fill_dma_1_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_fill)
+        er_fill_dma_1_chix_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, LastPx=self.price))
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_1_chix_order, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
+
+        self.fix_verifier_sell.set_case_id(case_id_5)
+        er_fill_MP_Dark = FixMessageExecutionReportAlgo().set_params_full_fill_MPDark(self.MP_Dark_order)
+        self.fix_verifier_sell.check_fix_message(er_fill_MP_Dark, key_parameters=self.key_params_ER_child, direction=self.FromQuod, message_name='Sell side ExecReport Fill')
+
+        # endregion
         time.sleep(3)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_3)
-        cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
-        # er_cancel_mp_dark_order_params.remove_parameter('NoStrategyParameters')
-        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*'))
-        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
