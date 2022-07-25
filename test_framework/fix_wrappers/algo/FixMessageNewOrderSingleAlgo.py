@@ -759,7 +759,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_13'),
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_Auto_SORPING_Multiple_Y',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_ME_Y',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536'
         }
