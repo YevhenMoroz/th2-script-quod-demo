@@ -36,7 +36,7 @@ class QAP_1977(TestCase):
         self.qty = 1300
         self.price = 23
         self.agr_price = 20
-        self.side = 2
+        self.side = constants.OrderSide.Sell.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.start_price_bid_par = 21
         self.start_qty_bid_par_and_trqx = 400
@@ -95,45 +95,19 @@ class QAP_1977(TestCase):
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.agr_price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        self.ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         nos1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account2, self.ex_destination_2, True, self.qty_trqx, self.agr_price)
         nos2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty_par, 21)
-        self.rule_list = [nos_1_rule, nos_2_rule, ocr_rule, nos1_ioc_rule, nos2_ioc_rule]
+        self.rule_list = [nos_1_rule, nos_2_rule, self.ocr_rule, nos1_ioc_rule, nos2_ioc_rule]
         # endregion
 
-        case_id_0 = bca.create_event("Send Market Data", self.test_id)
-        # # region Send_MarketData
-        # market_data1 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '21',
-        #         'MDEntrySize': '400',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data('734', case_id_0, market_data1)
-        # market_data2 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '20',
-        #         'MDEntrySize': '400',
-        #         'MDEntryPositionNo': '1'
-        #     },
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '22',
-        #         'MDEntrySize': '400',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data('3416', case_id_0, market_data2)
-
-        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        # region Send MarketData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.start_price_bid_par, MDEntrySize=self.start_qty_bid_par_and_trqx)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.start_price_bid_trqx_1, MDEntrySize=self.start_qty_bid_par_and_trqx)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=self.start_price_bid_trqx_2, MDEntrySize=self.start_qty_bid_par_and_trqx)
@@ -189,55 +163,31 @@ class QAP_1977(TestCase):
 
         time.sleep(10)
 
-        # market_data3 = [
-        #     {
-        #         'MDEntryType': '',
-        #         'MDEntryPx': '1',
-        #         'MDEntrySize': '1',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data('734', case_id_2, market_data3)
-        # market_data4 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '1',
-        #         'MDEntrySize': '1',
-        #         'MDEntryPositionNo': '1'
-        #     },
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '1',
-        #         'MDEntrySize': '1',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data('3416', case_id_2, market_data4)
-        case_id_3 = bca.create_event("Send Market Data", self.test_id)
-
-        self.fix_manager_feed_handler.set_case_id(case_id_3)
-        update_market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        update_market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
-        self.fix_manager_feed_handler.send_message(update_market_data_snap_shot_par)
-
-        self.fix_manager_feed_handler.set_case_id(case_id_3)
-        update_market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
-        update_market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
-        update_market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=self.update_price_bid_par_trqx, MDEntrySize=self.update_qty_bid_par_trqx)
-        self.fix_manager_feed_handler.send_message(update_market_data_snap_shot_trqx)
-
-        time.sleep(3)
-        # endregion
-
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        replaced_multilisting_order_params.add_tag(dict(SettlDate='*', SettlType='*'))
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
         # region check cancel first dma child order
         cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel DMA 1 order")
+        # endregion
+
+        # region Update MarketData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))
+        market_data_snap_shot_spar = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_spar.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=19.95, MDEntrySize=10)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_spar)
+
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))
+        market_data_snap_shot_strqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
+        market_data_snap_shot_strqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=19.95, MDEntrySize=10)
+        market_data_snap_shot_strqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=21.95, MDEntrySize=10)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_strqx)
+
+        time.sleep(3)
         # endregion
 
         # region Agressive Orders
@@ -324,7 +274,8 @@ class QAP_1977(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        RuleManager.remove_rules(self.rule_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(self.rule_list)
 
 
 

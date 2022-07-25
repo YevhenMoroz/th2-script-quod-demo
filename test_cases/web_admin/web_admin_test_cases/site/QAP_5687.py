@@ -85,7 +85,7 @@ class QAP_5687(CommonTestCase):
             time.sleep(1)
             self.verify("New Locations has been create", True,
                         location_page.is_searched_location_found(self.location_name))
-            location_page.set_name(self.location_name)
+            location_page.set_name("")
             time.sleep(1)
             main_page_displayed_locations = location_page.get_list_of_all_locations_name()
 
@@ -114,7 +114,7 @@ class QAP_5687(CommonTestCase):
             desk_wizard.click_on_save_changes()
             time.sleep(2)
             desks_page.set_name_filter(self.desk_name)
-            time.sleep(1)
+            time.sleep(2)
             self.verify("New Desk has been create", True, desks_page.is_searched_desk_found(self.desk_name))
 
         except Exception:

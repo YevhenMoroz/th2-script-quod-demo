@@ -241,8 +241,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     if keys is None:
         keys = []
     if ignored_fields is None:
-        ignored_fields = []
-    ignored_fields += ['header', 'trailer']
+        ignored_fields = ['header', 'trailer']
     settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:
@@ -504,7 +503,7 @@ def create_event_id() -> EventID:
     return EventID(id=str(uuid1()))
 
 
-def create_event(event_name: str, parent_id: EventID = None, status='SUCCESS', body='{"text": ""}') -> EventID:
+def create_event(event_name: str, parent_id: EventID = None, status='SUCCESS', body='') -> EventID:
     """ Creates a new event.
         Parameters:
             event_name (str): Text that will be displayed in the report.

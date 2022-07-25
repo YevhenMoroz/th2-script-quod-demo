@@ -49,6 +49,7 @@ class QAP_4038(TestCase):
         self.rule_manager = RuleManager(Simulators.equity)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.cl_ord_id = self.fix_message_1.get_parameter("ClOrdID")
 
 
 
@@ -58,15 +59,11 @@ class QAP_4038(TestCase):
         # region create CO order
         self.fix_manager.send_message_fix_standard(self.fix_message_1)
         order_id_1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-        # region accept CO order
-        self.client_inbox.accept_order()
-        # endregion
-        # region create CO order
         self.fix_manager.send_message_fix_standard(self.fix_message_2)
         order_id_2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
+        self.client_inbox.accept_order()
         self.client_inbox.accept_order()
         # endregion
         # region set up disclose flag
@@ -100,15 +97,12 @@ class QAP_4038(TestCase):
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        # endregion
-        # base_request = get_base_request(self.session_id, self.test_id)
-        # eq_wrappers.mass_execution_summary_at_average_price(base_request, 2)
 
-        self.order_book.mass_execution_summary_at_average_price(2)
+        # region mass execution
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]]).mass_execution_summary_at_average_price(2)
         # endregion
         # verify tags by minifix gtw
         self.exec_report.set_default_calculated(self.fix_message_1)
-        self.exec_report.remove_parameter("VenueType")
         self.exec_report.change_parameters({"AvgPx": self.price1})
         self.fix_verifier.check_fix_message(self.exec_report)
         self.exec_report.set_default_calculated(self.fix_message_2)

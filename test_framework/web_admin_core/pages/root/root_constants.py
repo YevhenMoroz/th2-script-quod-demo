@@ -67,6 +67,7 @@ class RootConstants:
     LISTING_CUMTRDLMT_COUNTER_ITEM_XPATH = "//span[text()='Listing CumTrdLmt Counter']"
     CUMTRDLMT_COUNTER_ITEM_XPATH = "//span[text()='CumTrdLmt Counter']"
     POSITION_LIMITS_ITEM_XPATH = "//span[text()='PositionLimits']"
+    RISK_LIMIT_DIMENSIONS_XPATH = "//span[text()='Risk Limit Dimensions']"
     FX_POSITION_LIMITS_ITEM_XPATH = "//span[text()='FX Position Limits']"
     PRICE_TOLERANCE_CONTROL_ITEM_XPATH = "//span[text()='Price Tolerance Control']"
     EXTERNAL_CHECK_ITEM_XPATH = "//span[text()='External Check']"

@@ -15,7 +15,9 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestFIXStandard, TemplateMarketNewOrdSingleFOKFIXStandard, \
     TemplateNewOrdSingleExecutionReportRejectWithReason, TemplateNewOrdSingleExecutionReportEliminate, \
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
-    TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard
+    TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
+    TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
+    TemplateOrderCancelRFQRequest
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -357,8 +359,7 @@ class RuleManager:
                                                               price=price
                                                               ))
 
-    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str,
-                                                            price: float, reason: int, text: str = "QATestReject"):
+    def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str, price: float, reason: int, text: str = "QATestReject", delay: int = 0 ):
         return self.sim.createNewOrdSingleExecutionReportRejectWithReason(
             request=TemplateNewOrdSingleExecutionReportRejectWithReason(
                 connection_id=ConnectionID(session_alias=session),
@@ -366,7 +367,8 @@ class RuleManager:
                 exdestination=ex_destination,
                 price=price,
                 reason=reason,
-                text=text
+                text=text,
+                delay=delay
             ))
 
     def add_fx_md_to(self, session: str):
@@ -412,8 +414,7 @@ class RuleManager:
             )
         )
 
-    def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str,
-                                                     price: float):
+    def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str, price: float):
         return self.sim.createNewOrdSingleExecutionReportEliminate(
             request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
                                                                  account=account,
@@ -450,8 +451,33 @@ class RuleManager:
 
             )
         )
-        # ------------------------
+    def add_NewOrdSingleRFQExecutionReport(self, session: str, account: str, ex_destination: str, order_qty: int, restated_qty: int, new_reply: bool, restated_reply: bool, reply_delay: int = 0):
+        return self.sim.createNewOrdSingleRFQExecutionReport(
+            request=TemplateNewOrdSingleRQFRestated(connection_id=ConnectionID(session_alias=session),
+                                                    account=account,
+                                                    exdestination=ex_destination,
+                                                    orderQty=order_qty,
+                                                    restatedQty=restated_qty,
+                                                    newReply=new_reply,
+                                                    RestatedReply=restated_reply,
+                                                    reply_delay=reply_delay
+                                                    ))
 
+    def add_NewOrdSingle_MarketAuction(self, session: str, account: str, venue: str):
+        return self.sim.createNewOrdSingleMarketAuction(
+            request=TemplateNewOrdSingleMarketAuction(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               venue=venue))
+
+    def add_OrderCancelRequestRFQExecutionReport(self, session: str, account: str, ex_destination: str, acceptCancel: bool):
+        return self.sim.createOrderCancelRequestRFQExecutionReport(
+            request=TemplateOrderCancelRFQRequest(connection_id=ConnectionID(session_alias=session),
+                                                    account=account,
+                                                    exdestination=ex_destination,
+                                                    acceptCancel=acceptCancel
+                                                    ))
+
+        # ------------------------
 
 if __name__ == '__main__':
     rule_manager = RuleManager()

@@ -3,14 +3,11 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import Status, DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
-    FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
 
 
 class QAP_2353(TestCase):
@@ -23,31 +20,25 @@ class QAP_2353(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
-        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
-        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
-        self.reject_sts = Status.Reject
-        self.eur_jpy = self.data_set.get_symbol_by_name('symbol_4')
+        self.rfq_reject = FixMessageQuoteRequestRejectFX(data_set=self.data_set)
+        self.eur_rub = self.data_set.get_symbol_by_name('symbol_ndf_6')
         self.sec_type_spot = self.data_set.get_security_type_by_name('fx_spot')
-        self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
-        self.reject_sts = Status.Reject
+        self.spo_ndf_date = self.data_set.get_settle_date_by_name('spo_ndf')
+        self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
 
         self.instrument = {
-            "Symbol": self.eur_jpy,
+            "Symbol": self.eur_rub,
             "SecurityType": self.sec_type_spot}
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                                            Account=self.client_argentina,
-                                                                            Instrument=self.instrument)
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        # endregion
-
-        # region Step 2
-        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
-        self.fix_manager.send_message_and_receive_response(self.new_order_single)
-
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.reject_sts)
-        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+                                                                            Account=self.client_iridium,
+                                                                            Instrument=self.instrument,
+                                                                            SettlDate=self.spo_ndf_date)
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.rfq_reject.set_quote_reject_params(self.quote_request, text="no available depth on EUR/RUB SPO")
+        self.rfq_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
+        self.fix_verifier.check_fix_message(fix_message=self.rfq_reject)
         # endregion

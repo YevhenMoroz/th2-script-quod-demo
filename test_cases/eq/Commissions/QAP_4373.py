@@ -1,82 +1,68 @@
-import time
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.verifier import Verifier
-from test_framework.old_wrappers import eq_wrappers
-from rule_management import RuleManager
-from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, OrdersDetails
-from win_gui_modules.utils import get_base_request, call
 import logging
+import os
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns, OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4373(TestCase):
 
-def execute(report_id, session_id):
-    case_name = "QAP-4373"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "900"
-    price = "10"
-    lookup = "VETO"
-    client = "CLIENT_FEES_1"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    instrument ={
-                'Symbol': 'IS0000000001_EUR',
-                'SecurityID': 'IS0000000001',
-                'SecurityIDSource': '4',
-                'SecurityExchange': 'XEUR'
-            }
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region Create Order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_EUREX', "XEUR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_EUREX', 'XEUR',
-            float(price), int(qty), 1)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, insrument=instrument)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
-    # endregion
-    eq_wrappers.accept_order(lookup, qty, price)
-    eq_wrappers.manual_execution(base_request, qty, price)
-    # region Verify
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id("getOrderInfo")
-    main_order_id = ExtractionDetail("order_id", "Order ID")
-    main_order_extraction_action = ExtractionAction.create_extraction_action(
-        extraction_details=[main_order_id])
-    child1_id = ExtractionDetail("fees", "FeesAgent")
-    sub_lvl1_1_ext_action1 = ExtractionAction.create_extraction_action(
-        extraction_details=[child1_id])
-    sub_lv1_1_info = OrderInfo.create(actions=[sub_lvl1_1_ext_action1])
-    sub_order_details = OrdersDetails.create(order_info_list=[sub_lv1_1_info])
-    main_order_details.add_single_order_info(
-        OrderInfo.create(action=main_order_extraction_action, sub_order_details=sub_order_details))
-    request = call(Stubs.win_act_order_book.getOrdersDetails, main_order_details.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Checking Fees")
-    verifier.compare_values("FeeAgent", "10", request["fees"] )
-    verifier.verify()
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.qty = "4373"
+        self.price = "4373"
+        self.client = self.data_set.get_client_by_name("client_com_1")
+        self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
+        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.trades = OMSTradesBook(self.case_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set).set_modify_fees_message().send_post_request()
+        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.set_modify_fees_message(fee=self.data_set.get_fee_by_name).send_post_request()
+        self.__send_fix_orders()
+        order_id = self.response[0].get_parameter("OrderID")
+        self.client_inbox.accept_order()
+        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: order_id})
+        self.__verify_commissions()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __send_fix_orders(self):
+        no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
+        new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit(
+                "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+                {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
+                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
+        self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __verify_commissions(self):
+        order_id = self.response[0].get_parameter("OrderID")
+        self.trades.set_filter([TradeBookColumns.order_id.value, order_id])
+        fees = {TradeBookColumns.exec_fees.value: self.trades.extract_field(TradeBookColumns.exec_fees.value)}
+        self.trades.compare_values({TradeBookColumns.exec_fees.value: "10.05"}, fees, event_name='Check values')
+
 
 

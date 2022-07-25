@@ -3,7 +3,7 @@
 <!--  set_name must be like that 5.1.149.162|Regression|-->
     <name>set_name</name>
     <product_lines>
-        <product_line name="algo" run="False">
+        <product_line name="algo" run="True">
             <components>
                 <component name="twap" run="True">
                     <data_set>AlgoDataSet</data_set>
@@ -38,6 +38,14 @@
                     </environments>
                 </component>
                 <component name="multilisted" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="pov" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -99,9 +107,36 @@
                         <fix_environments>
                             <fix_environment>quod319_kuiper_kepler</fix_environment>
                         </fix_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod319_kuiper_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="synth_min_qty" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="lit_dark_iceberg" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="sorping" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="multiple_emulation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>

@@ -33,9 +33,9 @@ class QAP_3721(TestCase):
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_2")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_3")
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
 
         self.qty = random_qty(1, 5, 7)
 
@@ -48,8 +48,8 @@ class QAP_3721(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_swap_fwd_fwd()
-        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
-        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_near_leg( leg_symbol=self.symbol)
+        self.quote_request.update_far_leg( leg_symbol=self.symbol)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
         response = self.fix_manager_sel.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)

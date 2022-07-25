@@ -41,7 +41,6 @@ class QAP_3339(TestCase):
         self.settl_date = int(str(datetime.now().date() + timedelta(days=1)).replace('-', ''))
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set, self.fix_message.get_parameters()).set_default_filled(self.fix_message)
-        self.exec_report.change_parameter('ExecType', 'F')
         self.exec_report.change_parameter('OrdStatus', '2')
         self.base_request = get_base_request(self.session_id, self.test_id)
 

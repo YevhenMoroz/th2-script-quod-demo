@@ -434,6 +434,21 @@
           "act_order_book_archive"
         ]
       }
+    },
+    "Win_Act_Trade_Book_Archive": {
+      "service-class": "TradeBookArchiveServiceService",
+      "endpoints": {
+        "act_trade_book_archive": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_trade_book_archive"
+        ]
+      }
     }
   }
 }

@@ -41,7 +41,8 @@ class QAP_5460(CommonTestCase):
             },
             "desk_user": "adm_desk",
             "inst_user": "adm_inst",
-            "location_user": "adm_loca"
+            "location_user": "adm_loca",
+            "zone_user": "adm_zone"
         }
 
     def precondition(self):
@@ -67,6 +68,9 @@ class QAP_5460(CommonTestCase):
             user_wizard = UsersWizard(self.web_driver_container)
             user_wizard.click_on_save_changes()
             time.sleep(2)
+            common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_info_error_message_pop_up()
+            time.sleep(1)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_user_icon()

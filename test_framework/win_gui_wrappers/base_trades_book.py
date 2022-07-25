@@ -77,17 +77,20 @@ class BaseTradesBook(BaseWindow):
 
     # endregion
     # region Action
-    def manual_match(self, qty_to_match=None, order_filter_list=None, trades_filter_list=None):
+    def manual_match(self, qty_to_match=None, order_filter_list=None, trades_filter_list=None, error_expected=False):
         if order_filter_list is not None:
             self.match_details.set_filter(order_filter_list)
         if qty_to_match is not None:
             self.match_details.set_qty_to_match(qty_to_match)
+        if error_expected:
+            self.match_details.set_expected_error()
         self.match_details.click_match()
         modify_trades_details = ModifyTradesDetails(self.match_details)
         modify_trades_details.set_default_params(self.base_request)
         if trades_filter_list is not None:
             modify_trades_details.set_filter(trades_filter_list)
-        call(self.manual_match_call, modify_trades_details.build())
+        result = call(self.manual_match_call, modify_trades_details.build())
+        return result
 
     def manual_match_n_to_1(self, order_to_match=None, exec_rows_list=None, trades_filter_list=None):
         self.match_details.click_match()
