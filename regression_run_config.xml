@@ -136,7 +136,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="multiply_emulation" run="True">
+                <component name="multiple_emulation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
