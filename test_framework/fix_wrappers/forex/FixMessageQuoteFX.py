@@ -124,9 +124,10 @@ class FixMessageQuoteFX(FixMessage):
         return self
 
     def set_params_for_quote_swap(self, quote_request: FixMessageQuoteRequestFX, near_leg_bid_fwd_pts=None,
-                                  near_leg_off_fwd_pts=None, far_leg_bid_fwd_pts=None, far_leg_off_fwd_pts=None):
+                                  near_leg_off_fwd_pts=None, far_leg_bid_fwd_pts=None, far_leg_off_fwd_pts=None,
+                                  near_leg_bid_px=None, far_leg_off_px=None):
         temp = [dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSide"],
-                     LegBidPx="*",
+                     LegBidPx=near_leg_bid_px if near_leg_bid_px is not None else "*",
                      LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
                      LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlDate"],
                      LegOfferPx="*",
@@ -136,7 +137,7 @@ class FixMessageQuoteFX(FixMessage):
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -146,14 +147,14 @@ class FixMessageQuoteFX(FixMessage):
                      LegBidPx="*",
                      LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"],
                      LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlDate"],
-                     LegOfferPx="*",
+                     LegOfferPx=far_leg_off_px if far_leg_off_px is not None else "*",
                      LegOfferForwardPoints=far_leg_off_fwd_pts if far_leg_off_fwd_pts is not None else "*",
                      LegBidForwardPoints=far_leg_bid_fwd_pts if far_leg_bid_fwd_pts is not None else "*",
                      LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1][
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -163,8 +164,8 @@ class FixMessageQuoteFX(FixMessage):
 
         self.prepare_params_for_swap(quote_request)
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
-            self.add_tag({"BidPx": "*"})
             self.add_tag({"BidSwapPoints": "*"})
+            self.add_tag({"BidPx": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
             self.add_tag({"Side": "1"})
             if quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"].split("/")[0] == \
@@ -173,7 +174,6 @@ class FixMessageQuoteFX(FixMessage):
                 temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegBidPx')
                 temp[1].pop('LegBidForwardPoints')
-                self.remove_parameters(["BidPx", "BidSwapPoints"])
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"Side": "2"})
             self.add_tag({"BidPx": "*"})
@@ -202,26 +202,27 @@ class FixMessageQuoteFX(FixMessage):
         return self
 
     def set_params_for_quote_swap_ccy2(self, quote_request: FixMessageQuoteRequestFX, near_leg_bid_fwd_pts=None,
-                                      near_leg_off_fwd_pts=None, far_leg_bid_fwd_pts=None, far_leg_off_fwd_pts=None):
+                                       near_leg_off_fwd_pts=None, far_leg_bid_fwd_pts=None, far_leg_off_fwd_pts=None,
+                                       near_leg_off_px=None, far_leg_bid_px=None):
         temp = [dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSide"],
                      LegBidPx="*",
                      LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
                      LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlDate"],
-                     LegOfferPx="*",
+                     LegOfferPx=near_leg_off_px if near_leg_off_px is not None else "*",
                      LegOfferForwardPoints=near_leg_off_fwd_pts if near_leg_off_fwd_pts is not None else "*",
                      LegBidForwardPoints=near_leg_bid_fwd_pts if near_leg_bid_fwd_pts is not None else "*",
                      LegSettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0][
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
                      )
                      ),
                 dict(LegSide=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSide"],
-                     LegBidPx="*",
+                     LegBidPx=far_leg_bid_px if far_leg_bid_px is not None else "*",
                      LegOrderQty=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"],
                      LegSettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlDate"],
                      LegOfferPx="*",
@@ -231,7 +232,7 @@ class FixMessageQuoteFX(FixMessage):
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -240,6 +241,7 @@ class FixMessageQuoteFX(FixMessage):
                 ]
 
         self.prepare_params_for_swap(quote_request)
+        self.add_tag({"Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"]})
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
             self.add_tag({"BidSwapPoints": "*"})
             self.add_tag({"BidPx": "*"})
@@ -266,7 +268,7 @@ class FixMessageQuoteFX(FixMessage):
                 self.add_tag({"BidPx": "*"})
                 self.add_tag({"BidSwapPoints": "*"})
                 temp[0].pop('LegBidPx')
-                temp[0].pop('LegOfferForwardPoints')
+                temp[0].pop('LegBidForwardPoints')
                 temp[1].pop('LegOfferPx')
                 temp[1].pop('LegOfferForwardPoints')
                 self.remove_parameters(["OfferPx", "OfferSwapPoints"])
@@ -308,7 +310,7 @@ class FixMessageQuoteFX(FixMessage):
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -325,7 +327,7 @@ class FixMessageQuoteFX(FixMessage):
                          "LegSettlType"],
                      InstrumentLeg=dict(
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
-                                       "Symbol"],
+                             "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
@@ -392,7 +394,7 @@ class FixMessageQuoteFX(FixMessage):
             temp[0]["InstrumentLeg"]["LegMaturityDate"] = wk3_ndf_maturity()
 
         if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "0":
-            temp[1]["InstrumentLeg"]["LegMaturityDate"]  += "-SPO-QUODFX"
+            temp[1]["InstrumentLeg"]["LegMaturityDate"] += "-SPO-QUODFX"
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "W1":
             temp[1]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "W2":

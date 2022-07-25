@@ -20,6 +20,7 @@ class QAP_3106(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
 
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
@@ -35,13 +36,7 @@ class QAP_3106(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Step 1
-        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                                              Account=self.client_argentina)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        # endregion
-
-        # region Step 2
+        # region Step 1-2
         self.rest_massage.find_all_client_tier_instrument()
         time.sleep(1)
         params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
@@ -53,10 +48,11 @@ class QAP_3106(TestCase):
             .set_params(params_eur_usd). \
             update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'false', {'tenor': 'SPO'})
         self.rest_manager.send_post_request(self.rest_massage)
-
+        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                                              Account=self.client_argentina)
         self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        quote = FixMessageQuoteFX().set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=quote)
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

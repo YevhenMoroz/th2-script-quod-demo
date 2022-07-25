@@ -55,6 +55,7 @@ class BaseDataSet:
     capacity = None
     scenario = None
     strategy = None
+    market_ids = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -380,6 +381,15 @@ class BaseDataSet:
             return getattr(self.algo_policies_id, name).value
         raise ValueError(f"{self.algo_policies_id} not found!")
 
+    def get_market_id_by_name(self, name: str):
+        """
+        get Market ID by name from FxMarketIDs
+        example ---> get_market_id_by_name("market_1"):
+        """
+        if hasattr(self.market_ids, name):
+            return getattr(self.market_ids, name).value
+        raise ValueError(f"{self.market_ids} not found!")
+
     # endregion
 
     def get_lookup_by_name(self, name: str):
@@ -483,6 +493,7 @@ class BaseDataSet:
         if hasattr(self.scenario, name):
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):

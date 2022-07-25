@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 
 class QAP_8169(TestCase):
@@ -26,7 +26,7 @@ class QAP_8169(TestCase):
         self.fix_manager = FixManager(self.esp_t_connectivity, self.test_id)
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.esp_t_connectivity, self.test_id)
-        self.new_order_singe = FixMessageNewOrderSingleAlgoFX(data_set=self.data_set)
+        self.new_order_singe = FixMessageNewOrderSingleTaker(data_set=self.data_set)
         self.execution_report = FixMessageExecutionReportAlgoFX()
         self.execution_report = FixMessageExecutionReportAlgoFX()
         self.md_req_id = "EUR/USD:SPO:REG:BNP"
