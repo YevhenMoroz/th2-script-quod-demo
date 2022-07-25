@@ -33,18 +33,19 @@ class QAP_6659(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 1000
+        self.qty = 300
         self.child_qty = 13
         self.price = 1
-        self.childMinValue = 10
-        self.volume = 0.1
+        self.childMinValue = 150
+        self.volume = 0.5
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.md_entry_px_incr_r = 1
-        self.md_entry_size_incr_r = 10 # child is not created
-        self.md_entry_size_incr_r_new = 200 # child is created
+        self.md_entry_size_incr_r = 360 # for partially fill
+        self.md_entry_size_incr_r_new = 300 # child is created
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
+        self.md_entry_px_incr_r_reset = self.md_entry_size_incr_r_reset = 0
         # endregion
 
         # region Gateway Side
@@ -85,7 +86,7 @@ class QAP_6659(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, 180, self.price)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_ioc_rule, nos_rule, ocr_rule]
@@ -97,13 +98,6 @@ class QAP_6659(TestCase):
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-
-        # region Set TradingPhase and LTQ for POV
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 1015
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px_incr_r, MDEntrySize=self.md_entry_size_incr_r)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        time.sleep(3)
         # endregion
 
         # region Send NewOrderSingle (35=D) for POV order
@@ -112,10 +106,18 @@ class QAP_6659(TestCase):
 
         self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_min_value_params()
         self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)) # NoStrategyParameters=[dict(dict(PercentageVolume=self.volume))]))
 
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
 
+        time.sleep(3)
+        # endregion
+
+        # region Set TradingPhase and LTQ for POV
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 1015
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px_incr_r, MDEntrySize=self.md_entry_size_incr_r)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         time.sleep(3)
         # endregion
 
@@ -135,6 +137,14 @@ class QAP_6659(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 1015
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px_incr_r, MDEntrySize=self.md_entry_size_incr_r_new)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        time.sleep(3)
+        # endregion
+
+        # region Reset LTQ
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)  # 1015
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.md_entry_px_incr_r_reset, MDEntrySize=self.md_entry_size_incr_r_reset)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         time.sleep(3)
         # endregion
