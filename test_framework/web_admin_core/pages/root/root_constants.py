@@ -9,6 +9,7 @@ class RootConstants:
     SYSTEM_COMMANDS_ITEM_XPATH = "//span[text()='System Commands']"
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
+    SITE_COLLAPSE_XPATH = '//*[@title="Site"]//..//ul'
     INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"
     ZONES_ITEM_XPATH = "//span[text()='Zones']"
     LOCATIONS_ITEM_XPATH = "//span[text()='Locations']"

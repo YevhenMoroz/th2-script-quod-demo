@@ -33,10 +33,10 @@ class TradingLimitsConstants:
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="tradingLimitDesc"]//span//span[4]'
     MAIN_PAGE_EXTERNAL_ID_XPATH = '//*[@col-id="externalTradingLimitID"]//span//span[4]'
     MAIN_PAGE_CURRENCY_XPATH ='//*[@col-id="maxOrdAmtCurrency"]//span//span[4]'
-    MAIN_PAGE_MAX_QTY_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_AMT_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_QTY_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_AMT_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_QTY_VALUE_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_AMT_VALUE_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_QTY_VALUE_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
 
     # Values tab
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="tradingLimitDesc"]'

@@ -50,9 +50,12 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
             "priceCleansingRuleName": "test",
             "prcClnRateDeviationID": '2000009',
             "instrSymbol": "GBP/USD",
-            "instrType": "SPO", "venueID": "HSBC", "removeDetectedUpdate": 'true',
+            "instrType": "SPO",
+            "venueID": "HSBC",
+            "removeDetectedUpdate": 'true',
             "priceDeviation": '0.00001',
             "priceDeviationFormat": "EXA",
+            'priceDeviationRefPrice': "BAA",
             "priceCleansingReferenceVenue": [
                 {"venueID": "CITI"},
                 {"venueID": "BARX"},
@@ -61,6 +64,42 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
             ],
             "alive": 'true'
         }
+        return self
+
+    def set_target_venue(self, venue_name):
+        self.update_parameters({'venueID': venue_name})
+        return self
+
+    def set_mid(self):
+        self.update_parameters({'priceDeviationRefPrice': "MID"})
+        return self
+
+    def set_bid_and_ask(self):
+        self.update_parameters({'priceDeviationRefPrice': "BAA"})
+        return self
+
+    def set_ref_venues(self, venues: list):
+        self.update_parameters({'priceCleansingReferenceVenue': venues})
+        return self
+
+    def clear_ref_venues(self):
+        self.update_parameters({'priceCleansingReferenceVenue': []})
+        return self
+
+    def add_ref_venue(self, venue_name):
+        self.parameters["priceCleansingReferenceVenue"].append({"venueID": venue_name})
+        return self
+
+    def remove_ref_venue_by_id(self, id):
+        self.parameters["priceCleansingReferenceVenue"].pop(id)
+        return self
+
+    def set_symbol(self, symbol):
+        self.update_parameters({'instrSymbol': symbol})
+        return self
+
+    def set_deviation(self, deviation):
+        self.update_parameters({'priceDeviation': deviation})
         return self
 
     def set_spot(self):

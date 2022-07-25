@@ -67,6 +67,7 @@ class QAP_4353(TestCase):
         # endregion
         # region manual cross orders
         result = self.order_book.manual_cross_orders([1,2], self.qty, self.price, "XASE", extract_footer=True)
-        self.order_book.compare_values({"Trade Ticket Error": "Error - [QUOD-11603] 'ExecPrice' (0) negative or zero"},
-                                        result, "Check Error in Manual Cross footer")
+        print(result)
+        self.order_book.compare_values({"Error": "Error - [QUOD-11503] Invalid status [SuspendedCare=Y]"},
+                                       {'Error': result}, "Check Error in Manual Cross footer")
         # endregion

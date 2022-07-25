@@ -14,6 +14,7 @@ class DesksConstants:
     ENABLE_DISABLE_BUTTON_XPATH = '//div[contains(@class, "toggle")]'
     DISPLAYED_DESK_XPATH = '//*[text()={}]'
     LOCATIONS_COLUMN_XPATH = '//*[@col-id="location.locationName"][@tabindex="-1"]//span[@ref="eValue"]'
+    DESKS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # Filters at main page

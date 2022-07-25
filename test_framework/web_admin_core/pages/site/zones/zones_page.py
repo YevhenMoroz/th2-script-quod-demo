@@ -69,4 +69,4 @@ class ZonesPage(CommonPage):
         return self._get_all_items_from_table_column(ZonesConstants.INSTITUTIONS_COLUMN_XPATH)
 
     def get_list_of_all_zones(self):
-        return self._get_all_items_from_table_column(ZonesConstants.ZONES_COLUMN_XPATH)
+        return self._get_all_items_from_table_column(ZonesConstants.ZONES_NAME_COLUMN_XPATH)

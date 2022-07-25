@@ -12,6 +12,8 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5019 import QAP_5
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5599 import QAP_5599
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5606 import QAP_5606
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5607 import QAP_5607
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_6382 import QAP_6382
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_6384 import QAP_6384
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_780 import QAP_780
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_783 import QAP_783
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -54,6 +56,10 @@ class RunRiskLimits:
             QAP_5606(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5607(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6382(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_6384(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
 
             end_time = time.monotonic()

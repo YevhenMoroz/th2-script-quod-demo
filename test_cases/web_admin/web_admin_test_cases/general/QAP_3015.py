@@ -16,7 +16,7 @@ class QAP_3015(CommonTestCase):
                          environment=environment)
         self.login = 'adm03'
         self.password = 'adm03'
-        self.link320 = 'http://10.0.22.38:6380/quodadmin/qakharkiv320/#/auth/login'
+        self.link320 = 'http://10.0.22.38:6380/adm/qakharkiv320/#/auth/login'
 
     def test_context(self):
 

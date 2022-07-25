@@ -55,46 +55,64 @@ class PositionLimitsPage(CommonPage):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_QTY_FILTER_XPATH, value)
 
     def get_min_soft_qty(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_QTY_FILTER_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_QTY_VALUE_XPATH).text
 
     def set_min_soft_amt(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_AMT_FILTER_XPATH, value)
 
     def get_min_soft_amt(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_AMT_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_SOFT_AMT_VALUE_XPATH).text
 
     def set_max_soft_qty(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_FILTER_XPATH, value)
 
     def get_max_soft_qty(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_QTY_VALUE_XPATH).text
 
     def set_max_soft_amt(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_FILTER_XPATH, value)
 
     def get_max_soft_amt(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH).text
 
     def set_min_qty(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_FILTER_XPATH, value)
 
     def get_min_qty(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_VALUE_XPATH).text
 
     def set_min_amt(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_FILTER_XPATH, value)
 
     def get_min_amt(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_XPATH).text
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_VALUE_XPATH).text
 
     def set_max_qty(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_FILTER_XPATH, value)
 
     def get_max_qty(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_XPATH).text
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_VALUE_XPATH)
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_VALUE_XPATH).text
 
     def set_max_amt(self, value):
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_FILTER_XPATH, value)
 
     def get_max_amt(self):
-        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_XPATH).text
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_VALUE_XPATH)
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_VALUE_XPATH).text
+
+    def set_currency(self, value):
+        self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_CURRENCY_FILTER_XPATH, value)
+
+    def get_currency(self):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_CURRENCY_VALUE_XPATH)
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_CURRENCY_VALUE_XPATH).text
+
+    def set_description(self, value):
+        self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_DESCRIPTION_FILTER_XPATH, value)
+
+    def get_description(self):
+        return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_DESCRIPTION_VALUE_XPATH).text
+
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(PositionsLimitsConstants.SEARCHED_VALUE_XPATH.format(value))
