@@ -69,7 +69,6 @@ class QAP_4187(CommonTestCase):
             value_tab = UsersValuesSubWizard(self.web_driver_container)
             values_at_non_visible_position_flattening_period = \
                 [str(i).strip() for i in value_tab.get_non_visible_position_flattening_periods().split(",")]
-            print(values_at_non_visible_position_flattening_period)
             if "" not in values_at_non_visible_position_flattening_period:
                 value_tab.set_non_visible_position_flattening_periods(values_at_non_visible_position_flattening_period)
             wizard = UsersWizard(self.web_driver_container)

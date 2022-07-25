@@ -27,7 +27,7 @@ class QAP_4851(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.client = self.data_set.get_client("client_1")
-        self.instr_type = self.data_set.instr_type("instr_type_1")
+        self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.client_group = self.data_set.get_client_group("client_group_2")
 
     def precondition(self):

@@ -54,6 +54,7 @@ class QAP_5452(CommonTestCase):
         user_page = UsersPage(self.web_driver_container)
         user_page.set_user_id(self.test_data['user']['user_id'])
         time.sleep(2)
+        common_act = CommonPage(self.web_driver_container)
         if not user_page.is_searched_user_found(self.test_data['user']['user_id']):
             user_page.click_on_new_button()
             time.sleep(2)
@@ -67,8 +68,8 @@ class QAP_5452(CommonTestCase):
             user_wizard = UsersWizard(self.web_driver_container)
             user_wizard.click_on_save_changes()
             time.sleep(2)
+            common_act.click_on_info_error_message_pop_up()
 
-        common_act = CommonPage(self.web_driver_container)
         common_act.click_on_user_icon()
         time.sleep(1)
         common_act.click_on_logout()

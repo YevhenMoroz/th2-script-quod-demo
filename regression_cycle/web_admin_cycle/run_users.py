@@ -36,10 +36,6 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_5452 import QAP_5452
 from test_cases.web_admin.web_admin_test_cases.users.QAP_5460 import QAP_5460
 from test_cases.web_admin.web_admin_test_cases.users.QAP_5466 import QAP_5466
 from test_cases.web_admin.web_admin_test_cases.users.QAP_5534 import QAP_5534
-from test_cases.web_admin.web_admin_test_cases.users.QAP_5687 import QAP_5687
-from test_cases.web_admin.web_admin_test_cases.users.QAP_5692 import QAP_5692
-from test_cases.web_admin.web_admin_test_cases.users.QAP_5694 import QAP_5694
-from test_cases.web_admin.web_admin_test_cases.users.QAP_5699 import QAP_5699
 from test_cases.web_admin.web_admin_test_cases.users.QAP_5842 import QAP_5842
 from test_cases.web_admin.web_admin_test_cases.users.QAP_6025 import QAP_6025
 from test_cases.web_admin.web_admin_test_cases.users.QAP_918 import QAP_918
@@ -121,14 +117,6 @@ class RunUsers:
             QAP_5466(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5534(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
-            QAP_5687(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
-            QAP_5692(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
-            QAP_5694(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
-            QAP_5699(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_5842(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

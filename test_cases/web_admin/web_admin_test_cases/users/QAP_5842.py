@@ -95,8 +95,6 @@ class QAP_5842(CommonTestCase):
             common_page.set_confirm_new_password(self.new_password)
             common_page.click_on_change_password()
             time.sleep(2)
-            common_page.click_on_back()
-            time.sleep(1)
             login_page.login_to_web_admin(self.user_id, self.new_password)
             time.sleep(2)
             self.verify("User password edited correctly", True, True)
