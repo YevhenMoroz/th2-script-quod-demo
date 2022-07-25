@@ -39,7 +39,6 @@ class QAP_3159(TestCase):
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
         self.order_type_stop_lmt = constants.OrderType.StopLimit.value
-        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         # endregion
 
         # region Gateway Side
