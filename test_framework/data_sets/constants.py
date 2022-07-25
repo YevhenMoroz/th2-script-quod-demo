@@ -139,12 +139,30 @@ class TimeInForce(Enum):
     AtTheClose = 7
     ValidForAuction = 100
 
+
+class ClientAlgoPolicy(Enum):
+    qa_mpdark_2 = "QA_MPDark2"
+    qa_mpdark_3 = "QA_MPDark3"
+    qa_mpdark_4 = "QA_MPDark4"
+    qa_mpdark_5 = "QA_MPDark5"
+    qa_mpdark_6 = "QA_MPDark6"
+    qa_mpdark_7 = "QA_MPDark7"
+    qa_mpdark_8 = "QA_MPDark8"
+    qa_sorping = "QA_SORPING"
+    qa_sorping_1 = "QA_SORPING_1"
+    qa_sorping_2 = "QA_SORPING_2"
+
+
 class OrderType(Enum):
     Market = 1
     Limit = 2
     Stop = 3
     StopLimit = 4
 
+
+class OrderSide(Enum):
+    Buy = 1
+    Sell = 2
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"

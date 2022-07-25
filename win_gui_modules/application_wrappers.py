@@ -164,3 +164,62 @@ class ModifyPanicWindow:
 
     def build(self):
         return self.modify_request
+
+
+class PanicDetails:
+    def __init__(self, base: EmptyRequest = None):
+        if base is not None:
+            self.request = act_ui_win_pb2.PanicDetails(base=base)
+
+    def set_base_request(self, base):
+        self.request = act_ui_win_pb2.PanicDetails(base=base)
+
+    def set_start_time(self, value=None):
+        if value is not None:
+            self.request.startTime = value
+
+    def set_end_time(self, value=None):
+        if value is not None:
+            self.request.endTime = value
+
+    def set_listing(self, value=None):
+        if value is not None:
+            self.request.listing = value
+
+    def set_sub_venue(self, value=None):
+        if value is not None:
+            self.request.subVenue = value
+
+    def set_venue(self, value=None):
+        if value is not None:
+            self.request.venue = value
+
+    def set_client(self, value=None):
+        if value is not None:
+            self.request.client = value
+
+    def set_instrument(self, value=None):
+        if value is not None:
+            self.request.instrument = value
+
+    def set_status(self, value=None):
+        if value is not None:
+            self.request.status = value
+
+    def set_tif(self, value=None):
+        if value is not None:
+            self.request.tif = value
+
+    def set_exec_status(self, value=None):
+        if value is not None:
+            self.request.execStatus = value
+
+    def set_side(self, value=None):
+        if value is not None:
+            self.request.side = value
+
+    def extract_footer(self, value: bool = False):
+        self.request.extractFooter = value
+
+    def build(self):
+        return self.request

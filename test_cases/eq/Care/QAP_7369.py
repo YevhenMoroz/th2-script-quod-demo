@@ -56,6 +56,9 @@ class QAP_7369(TestCase):
         # endregion
         # region recieve message
         self.execution_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
+        self.execution_report1.add_tag(self.params)
+        self.execution_report1.change_parameters({"StrategyName": self.params["TargetStrategy"]})
+        self.execution_report1.remove_parameter("TargetStrategy")
         self.fix_verifier.check_fix_message(self.execution_report1)
         # endregion
         # region check message

@@ -20,11 +20,11 @@ class OrderBookColumns(Enum):
     sts = "Sts"
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
-    exec_pcy = "ExecPcy"
     cd_sts = "CDSts"
     near_leg_qty = "NearLegQty"
     far_leg_qty = "FarLegQty"
     qty = "Qty"
+    exec_pcy = "ExecPcy"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
     limit_price = "Limit Price"
@@ -77,8 +77,9 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    day_avg_price = 'DayAvgPrice'
     isin = "ISIN"
-    is_locked ="IsLocked"
+    is_locked = "IsLocked"
     basket_name = "Basket Name"
     basket_id = "Basket ID"
     strategy_type = "Strategy Type"
@@ -136,8 +137,10 @@ class ExecType(Enum):
     trade = "Trade"
     calculated = "Calculated"
 
+
 class ExecPcy(Enum):
     dma = "DMA"
+    care = "Care"
 
 
 class QuoteBookColumns(Enum):
@@ -257,14 +260,13 @@ class BasketBookColumns(Enum):
     limit_price = "LmtPrice"
     """Basket sts"""
     exec_sts = "Executing"
-    all_done ='AllDone'
+    all_done = 'AllDone'
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""
     immediate = "Immediate"
     """Time in Force value"""
     DAY = "DAY"
-
 
 
 class ExecSts(Enum):
@@ -373,7 +375,7 @@ class MiddleOfficeColumns(Enum):
     account_id = 'Account ID'
     trade_date = 'TradeDate'
     settl_currency = 'SettlCurrency'
-    exchange_rate = 'Exchange Rate'
+    exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
@@ -397,13 +399,12 @@ class AllocationsColumns(Enum):
     avg_px = 'Avg Px'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
-    trade_date = 'TradeDate'
+    trade_date = 'Trade Date'
     """AllocateSTS"""
     cancelled_sts = "Cancelled"
     affirmed_sts = 'Affirmed'
     unmatched_sts = 'Unmatched'
     matced_sts = 'Matched'
-
 
 
 class SecondLevelTabs(Enum):
@@ -527,6 +528,7 @@ class MatchWindowsColumns(Enum):
 class ChildOrderBookColumns(Enum):
     order_id = "Order ID"
     exec_id = "ExecID"
+    parent_ord_id = 'ParentOrdID'
     """Pre Trade Allocation"""
     pre_all_tab = "Pre Trade Allocations"
     id_allocation = "Id"
@@ -561,6 +563,7 @@ class BagStatuses(Enum):
     new = 'New'
     terminated = 'Terminated'
     cl_ord_id = "ClOrdId"
+    canceled = 'Canceled'
 
 
 class SymbolSource(Enum):
@@ -574,6 +577,7 @@ class WaveColumns(Enum):
     peg_offset_type = "PegOffsetType"
     peg_offset_value = "PegOffsetValue"
     price = 'Price'
+    time_in_force = 'TimeInForce'
 
 
 class BookingBlotterColumns(Enum):
@@ -604,6 +608,7 @@ class Suspended(Enum):
 
 class OrdersTabColumnFromBag(Enum):
     unmatched_qty = 'UnmatchQty'
+    limit_price = 'LimitPrice'
 
 
 class BlockStatuses(Enum):
@@ -613,3 +618,6 @@ class BlockStatuses(Enum):
 
 class OffsetTypes(Enum):
     price = "Price"
+
+class ReferencePrice(Enum):
+    open = "Open"

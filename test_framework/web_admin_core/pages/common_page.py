@@ -165,11 +165,11 @@ class CommonPage:
         action = ActionChains(self.web_driver_container.get_driver())
         action.move_to_element_with_offset(scr_elem, 5, 5)
         action.click()
+        time.sleep(2)
 
         c = 50
         while elem_size/2 > c:
-            action.click_and_hold()
-            action.move_by_offset(c, 0)
+            action.drag_and_drop_by_offset(scr_elem, c, 0)
             c += 50
             action.perform()
             if self.is_element_present(search_element):

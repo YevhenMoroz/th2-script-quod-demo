@@ -5,10 +5,9 @@ from pathlib import Path
 from custom import basic_custom_actions as bca, basic_custom_actions
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsRoutes
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, BasketBookColumns, ExecSts, \
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, BasketBookColumns,  \
     SecondLevelTabs, AlgoParametersExternal
 from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_child_order_book import OMSChildOrderBook
@@ -88,7 +87,7 @@ class QAP_7662(TestCase):
             ]}
         }
         self.fix_message.change_parameter('ListOrdGrp', {'NoOrders': [self.params1, self.params2]})
-        self.route = OmsRoutes.route_1.value
+        self.route = self.data_set.get_route("route_1")
         self.strategy = "MS TWAP(ASIA)"
         self.percentage_profile = "RemainingQty"
         self.str_tag = "TWAP"

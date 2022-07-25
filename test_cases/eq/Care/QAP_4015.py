@@ -1,58 +1,78 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import OrdersDetails
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from win_gui_modules.utils import set_session_id, get_base_request, call
+import os
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import  OrderBookColumns, ExecSts
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-def execute(report_id, session_id):
-    case_name = "QAP-4015"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
-    price = "40"
-    client = "CLIENT_FIX_CARE_WB"
-    lookup = "VETO"
-    last_mkt = 'DASI'
-    case_id = create_event(case_name, report_id)
-    session_id = set_session_id()
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create order via fix
-    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client, 2, qty, 0, price)
-    order_id2 = eq_wrappers.get_order_id(base_request)
-    # endregion
 
-    test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4015(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        self.qty = '800'
+        self.price = '40'
+        self.last_mkt = "XASE"
+        self.fix_message1 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message1.change_parameters({'OrderQtyData': {'OrderQty': self.qty}, 'Price': self.price})
+        self.cl_id1 = self.fix_message1.get_parameter('ClOrdID')
+        self.fix_message2 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message2.change_parameters({'OrderQtyData': {'OrderQty': self.qty}, 'Price': self.price, "Side": "2"})
+        self.cl_id2 = self.fix_message1.get_parameter('ClOrdID')
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.case_id)
 
-    # region manual_cross
-    eq_wrappers.manual_cross_orders(base_request, '900', price, (1, 2), last_mkt)
-    # endregion
-    # region check order1
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')
-    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '800')
-    # endregion
-    order_info_extraction_cancel = "getOrderInfo_cancelled"
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(order_info_extraction_cancel)
-    main_order_details.set_filter(["Order ID", order_id2])
-    call(act.getOrdersDetails, main_order_details.request())
-    # region check order2
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')
-    eq_wrappers.verify_order_value(base_request, case_id, 'Qty', '800')
-    # endregion
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declarations
+        # region create first CO
+        response1 = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message1)
+        self.client_inbox.accept_order()
+        order_id1 = response1[0].get_parameter("OrderID")
+        # endregion
+        # region create second CO
+        response2 = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message2)
+        self.client_inbox.accept_order()
+        order_id2 = response2[0].get_parameter("OrderID")
+        # endregion
+        # region manual cross
+        self.order_book.manual_cross_orders([2,1], "10000", "100", self.last_mkt)
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value, OrderBookColumns.qty.value: self.qty})
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.filled.value, OrderBookColumns.qty.value: self.qty})
+        # endregion
+        # region Check ExecutionReports
+        exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message1)
+        # exec_report.change_parameters({'ClOrdID':self.cl_id1})
+        self.fix_verifier.check_fix_message(exec_report, ['ClOrdID', self.cl_id1, "OrdStatus","2"])
+        # endregion
+        # region Check ExecutionReports
+        exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message2)
+        # exec_report.change_parameters({'ClOrdID': self.cl_id2})
+        self.fix_verifier.check_fix_message(exec_report, ['ClOrdID', self.cl_id2, "OrdStatus","2"])
+        # endregion
+

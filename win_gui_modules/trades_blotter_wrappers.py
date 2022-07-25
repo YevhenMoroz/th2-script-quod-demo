@@ -26,6 +26,9 @@ class MatchDetails:
     def click_cancel(self):
         self.match_details.matchConfirmAction = trades_pb2.MatchDetails.MatchConfirmAction.CANCEL
 
+    def set_expected_error(self):
+        self.match_details.errorExpected = True
+
     def build(self):
         return self.match_details
 

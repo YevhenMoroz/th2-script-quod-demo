@@ -59,12 +59,11 @@ class QAP_2592(TestCase):
         # region accept order
         self.client_inbox.accept_order()
         # endregion
-        # region split order
-        self.order_ticket.set_order_details(qty="0")
-        self.order_ticket.split_order()
+        # region split order and extract error
+        self.order_ticket.set_order_details(qty="0", error_expected=True)
+        result = self.order_ticket.split_order()
         # endregion
-        # region extract error
-        result = self.order_ticket.extract_order_ticket_errors()
+        # region compare values
         print(result)
         self.order_book.compare_values({"ErrorMessage": 'Quantity cannot be negative or null'}, result, "Check value")
         # endregion

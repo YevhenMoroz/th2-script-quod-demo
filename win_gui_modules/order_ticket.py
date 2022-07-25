@@ -84,6 +84,54 @@ class AdwOrdTabDetails:
         return self.request
 
 
+class PartiesTabDetails:
+    def __init__(self):
+        self.request = order_ticket_pb2.PartiesTabDetails()
+
+    def set_custodian(self, value: str):
+        if value is not None:
+            self.request.custodian = value
+
+    def set_corespondent_broker(self, value: str):
+        if value is not None:
+            self.request.corespondentBroker = value
+
+    def set_give_up_broker(self, value: str):
+        if value is not None:
+            self.request.giveUpBroker = value
+
+    def set_trader_name(self, value: str):
+        if value is not None:
+            self.request.traderName = value
+
+    def set_inv_firm(self, value: str):
+        if value is not None:
+            self.request.invFirm = value
+
+    def set_exec_trader(self, value: str):
+        if value is not None:
+            self.request.execTrader = value
+
+    def set_inv_dec_mk(self, value: str):
+        if value is not None:
+            self.request.invDecMk = value
+
+    def set_client_id(self, value: str):
+        if value is not None:
+            self.request.clientId = value
+
+    def set_execution_firm(self, value: str):
+        if value is not None:
+            self.request.executionFirm = value
+
+    def set_sender_location(self, value: str):
+        if value is not None:
+            self.request.senderLocation = value
+
+    def build(self):
+        return self.request
+
+
 class MiscsOrdDetails:
     def __init__(self):
         self.miscsOrderDetails = order_ticket_pb2.MiscsOrdDetails()
@@ -205,6 +253,9 @@ class OrderTicketDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)
 
+    def set_error_expected(self):
+        self.order.errorExpected = True
+
     def build(self):
         return self.order
 
@@ -222,6 +273,9 @@ class OrderTicketDetails:
 
     def set_settlement_details(self, settlement_details: SettlementTabDetails):
         self.order.settlementDetails.CopyFrom(settlement_details)
+
+    def set_parties_details(self, parties_details: PartiesTabDetails):
+        self.order.partiesTabDetails.CopyFrom(parties_details)
 
 
 class FXOrderDetails:
