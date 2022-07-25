@@ -8,6 +8,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
@@ -26,10 +27,13 @@ class QAP_7997(TestCase):
         self.quote = FixMessageQuoteFX()
         self.quote_cancel = FixMessageQuoteCancelFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
 
         self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.ss_connectivity = self.fix_env.sell_side_esp
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
 
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.settle_date_1w = self.data_set.get_settle_date_by_name("spo_ndf")
@@ -46,13 +50,13 @@ class QAP_7997(TestCase):
 
         self.correct_no_md_entries = [
             {"MDEntryType": "0",
-             "MDEntryPx": 104.632,
+             "MDEntryPx": 1.1815,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": 104.633,
+             "MDEntryPx": 1.18151,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
@@ -71,6 +75,13 @@ class QAP_7997(TestCase):
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_1w,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
+
+        self.no_related_symbols_eur_usd = [{
+            'Instrument': {
+                'Symbol': self.eur_usd,
+                'SecurityType': self.sec_type_spot,
+                'Product': '4', },
+            'SettlType': '0', }]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -104,7 +115,12 @@ class QAP_7997(TestCase):
         self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        time.sleep(5)
+        time.sleep(10)
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.acc_argentina}). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
+        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+
         self.quote_cancel.set_params_for_receive(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote_cancel, key_parameters=["QuoteReqID"])
 
@@ -112,6 +128,5 @@ class QAP_7997(TestCase):
     def run_post_conditions(self):
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
-        self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)

@@ -8,14 +8,16 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
 from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
 
-class QAP_3735(TestCase):
+class QAP_3937(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -27,15 +29,19 @@ class QAP_3735(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
 
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+
         self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
         self.client_column = QuoteRequestBookColumns.client.value
 
         self.qty_40m = random_qty(4, 5, 8)
         self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
-        self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.gbp = self.data_set.get_currency_by_name("currency_gbp")
         self.sec_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        self.eur_gbp_swap = {
-            "Symbol": self.eur_gbp,
+        self.gbp_usd_swap = {
+            "Symbol": self.gbp_usd,
             "SecurityType": self.sec_type_swap}
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -43,9 +49,10 @@ class QAP_3735(TestCase):
         # region Step 1
         self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                                               Account=self.client_argentina,
-                                                                              Instrument=self.eur_gbp_swap)
-        self.quote_request.update_near_leg(leg_symbol=self.eur_gbp, leg_qty=self.qty_40m)
-        self.quote_request.update_far_leg(leg_symbol=self.eur_gbp, leg_qty=self.qty_40m)
+                                                                              Instrument=self.gbp_usd_swap,
+                                                                              Currency=self.gbp)
+        self.quote_request.update_near_leg(leg_symbol=self.gbp_usd, leg_qty=self.qty_40m)
+        self.quote_request.update_far_leg(leg_symbol=self.gbp_usd, leg_qty=self.qty_40m)
         self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
         response = self.fix_manager.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
         # endregion
@@ -59,6 +66,13 @@ class QAP_3735(TestCase):
         self.dealer_intervention.close_window()
 
         self.quote.set_params_for_quote_swap(self.quote_request)
-        next(response)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        quote_response = next(response)
+        quote_from_di = self.fix_manager.parse_response(quote_response)[0]
+        self.new_order_single.set_default_for_dealer_swap(self.quote_request, quote_from_di)
+        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        # endregion
+
+        # region Step 4
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

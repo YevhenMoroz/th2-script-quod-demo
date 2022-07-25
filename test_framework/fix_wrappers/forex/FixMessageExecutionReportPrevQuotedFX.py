@@ -21,6 +21,14 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             raise Exception('Incorrect Status')
         return self
 
+    def set_params_from_new_order_single_ccy2(self, new_order_single: FixMessageNewOrderSingle,
+                                         status: Status = Status.Fill):
+        if status is Status.Fill:
+            self.__set_fill_sell_ccy2(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
+        return self
+
     # SELL SIDE
 
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
@@ -32,6 +40,56 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             LastQty=new_order_single.get_parameter('OrderQty'),
             OrderQty=new_order_single.get_parameter('OrderQty'),
             SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            SettlType=new_order_single.get_parameter('SettlType'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            SpotSettlDate=spo(),
+            Price="*",
+            Account="*",
+            OrderCapacity="A",
+            OrdStatus='2',
+            TradeReportingIndicator='*',
+            TransactTime='*',
+            LastSpotRate='*',
+            AvgPx='*',
+            ExecID='*',
+            LastMkt='*',
+            LastPx='*',
+            OrderID='*',
+            SettlDate='*',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='F',
+            LeavesQty=0,
+            GrossTradeAmt='*',
+            ExDestination='*',
+            QtyType=0,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        if new_order_single.get_parameter('SettlType') != "0":
+            super().add_tag({"LastForwardPoints": "*"})
+        return self
+
+    def __set_fill_sell_ccy2(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            Currency=new_order_single.get_parameter('Currency'),
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastQty=new_order_single.get_parameter('OrderQty'),
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][:-4],
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
             SettlType=new_order_single.get_parameter('SettlType'),
