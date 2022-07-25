@@ -744,7 +744,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Multiply_Emulation_params(self) -> FixMessageNewOrderSingle:
+    def set_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -766,7 +766,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_Child_of_Multiply_Emulation_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Child_of_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": 'KEPLER',
             'ClOrdID': '*',
