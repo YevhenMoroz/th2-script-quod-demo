@@ -29,6 +29,14 @@ class FxVenues(Enum):
     venue_rfq_7 = "EBS"
 
 
+class FxMarketIDs(Enum):
+    market_1 = "CITI-SW"
+    market_2 = "HSBC-SW"
+    market_3 = "MS-SW"
+    market_4 = "JPM-SW"
+    market_5 = "DB-SW"
+
+
 class FxClients(Enum):
     """Clients for Taker"""
     client_1 = "ASPECT_CITI"
