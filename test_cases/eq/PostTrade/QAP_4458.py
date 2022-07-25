@@ -1,75 +1,137 @@
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import set_session_id, get_base_request
 import logging
 import time
-from rule_management import RuleManager
+from datetime import datetime
+from pathlib import Path
+
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses, \
+    MiddleOfficeColumns
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+seconds, nanos = timestamps()  # Test case start time
 
-def execute(report_id):
-    case_name = "QAP-4458"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "800"
-    price = "3"
-    client = "MOClient"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    session_id = set_session_id()
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # # endregion
-    # # region Create CO
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR', float(price),
-            int(qty), 1)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
 
-    # endregion
-    # # region check order at order book
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
-    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
-    # endregion
+class QAP_4458(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.qty = '900'
+        self.price = '20'
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        # endregion
 
-    # region book
-    eq_wrappers.book_order(base_request, client, price)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Create DMA order via FIX
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.venue,
+                                                                                                  float(self.price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client_names,
+                                                                                            self.venue,
+                                                                                            float(self.price),
+                                                                                            int(self.qty), 1)
+            self.fix_message.set_default_dma_limit()
+            self.fix_message.change_parameters(
+                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            # get Client Order ID and Order ID
+            cl_ord_id = response[0].get_parameters()['ClOrdID']
+            order_id = response[0].get_parameters()['OrderID']
 
-    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'Booked', False)
-    eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'ApprovalPending')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Unmatched')
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(2)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
+        # endregion
 
-    # region approve block
-    eq_wrappers.approve_block(base_request)
-    # endregion
+        # region Set-up parameters for ExecutionReports
+        self.exec_report.set_default_new(self.fix_message)
+        self.exec_report.change_parameters(
+            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'LastMkt': '*'})
+        # endregion
 
-    eq_wrappers.verify_block_value(base_request, case_id, 'Status', 'Accepted')
-    eq_wrappers.verify_block_value(base_request, case_id, 'Match Status', 'Matched')
+        # region Check ExecutionReports
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        # endregion
 
-    # region amend the block without any changes
-    eq_wrappers.amend_block(base_request)
-    # endregion
+        # region Filter Order Book
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        # endregion
 
-    eq_wrappers.verify_block_value(base_request, case_id, 'Qty', '800')
-    eq_wrappers.verify_block_value(base_request, case_id, 'AvgPx', '3')
+        # region Check values in OrderBook
+        self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
+                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
+                                                 OrderBookColumns.done_for_day.value: 'Yes'},
+                                                'Comparing values after trading')
+        # endregion
+
+        # region Book order and checking values after it in the Order book
+        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.order_book.check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
+            'Comparing PostTradeStatus after Book')
+        # endregion
+
+        # region Checking the values after the Book in the Middle Office
+        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value,
+                                                          [MiddleOfficeColumns.order_id.value, order_id])
+        values_after_book = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value],
+            [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]])
+        self.middle_office.compare_values({MiddleOfficeColumns.sts.value: 'ApprovalPending',
+                                           MiddleOfficeColumns.match_status.value: 'Unmatched'}, values_after_book,
+                                          'Comparing values after book for block of MiddleOffice')
+        # endregion
+
+        # region Approve block and checking values after it in the Middle Office
+        self.middle_office.approve_block()
+        values_after_approve = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.sts.value: 'Accepted', MiddleOfficeColumns.match_status.value: 'Matched'},
+            values_after_approve, 'Comparing values after approve for block of MiddleOffice')
+        # endregion
+
+        # region Amend block without any changes and checking values in the Middle Office
+        self.middle_office.amend_block(
+            [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]])
+        values_after_amend = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.qty.value, MiddleOfficeColumns.price.value])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.qty.value: self.qty, MiddleOfficeColumns.price.value: self.price}, values_after_amend,
+            'Comparing qty and price after Amend for block of MiddleOffice')
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

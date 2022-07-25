@@ -20,6 +20,7 @@ from th2_grpc_act_gui_quod.order_book_service import OrderBookServiceService
 from th2_grpc_act_gui_quod.order_ticket_fx_service import OrderTicketFxServiceService
 from th2_grpc_act_gui_quod.order_ticket_service import OrderTicketServiceService
 from th2_grpc_act_gui_quod.risk_management_service import RiskManagementServiceService
+from th2_grpc_act_gui_quod.trade_book_archive_service import TradeBookArchiveServiceService
 from th2_grpc_act_gui_quod.trades_service import TradesServiceService
 from th2_grpc_act_fix_quod.act_fix_service import ActFixService
 from th2_grpc_check1.check1_service import Check1Service
@@ -33,9 +34,8 @@ from th2_grpc_act_java_api_quod.act_service import ActService
 from th2_grpc_sim_fix_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_fix_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 from th2_grpc_sim_fix_quod.template_simulator_service_equity_service import TemplateSimulatorServiceEquityService
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
 
 
 class Stubs:
@@ -77,6 +77,7 @@ class Stubs:
     win_act_risk_management = factory.grpc_router.get_service(RiskManagementServiceService)
     win_act_child_order_book = factory.grpc_router.get_service(ChildOrderBookServiceService)
     win_act_order_book_archive = factory.grpc_router.get_service(OrderBookArchiveServiceService)
+    win_act_trade_book_archive = factory.grpc_router.get_service(TradeBookArchiveServiceService)
     # TODO: rename java api act service name
     act_java_api = factory.grpc_router.get_service(ActService)
 

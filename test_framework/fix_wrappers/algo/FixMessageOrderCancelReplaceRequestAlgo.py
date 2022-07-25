@@ -10,6 +10,29 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
         super().change_parameters(parameters)
         self.__update_fix_message(new_order_single)
 
+    # set_DMA_params
+    def set_DMA_params(self) -> FixMessageOrderCancelReplaceRequest:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': '*',
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'SettlDate': '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'NoParty': '*',
+            # 'Origin': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def __update_fix_message(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
@@ -22,6 +45,8 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') != '1004':
             temp.update(NoStrategyParameters=new_order_single.get_parameter('NoStrategyParameters'))
+        if new_order_single.is_parameter_exist('TargetStrategy'):
+            temp.update(TargetStrategy=new_order_single.get_parameter('TargetStrategy'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
@@ -36,7 +61,6 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             Currency=new_order_single.get_parameter('Currency'),
             Instrument=new_order_single.get_parameter('Instrument'),
             OrigClOrdID=new_order_single.get_parameter("ClOrdID"),
-            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
         )
         super().change_parameters(temp)
         return self

@@ -14,7 +14,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 
 class QAP_6593(TestCase):
@@ -33,7 +33,7 @@ class QAP_6593(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=self.data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set).set_default_SOR().change_parameters(
             {'TimeInForce': "3", "OrderQty": self.qty, "Account": self.account})
         self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion

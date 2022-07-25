@@ -7,7 +7,6 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.oms_data_set.oms_const_enum import OmsMic, OmsVenueClientNames
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, ExecSts, OrderBookColumns, ExecPcy
@@ -45,8 +44,8 @@ class QAP_3874(TestCase):
         self.rule_manager = RuleManager(Simulators.equity)
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
-        self.mic = OmsMic.mic_1.value
-        self.rule_client = OmsVenueClientNames.client_co_1_venue_1.value
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.rule_client = self.data_set.get_venue_client_names_by_name("client_co_1_venue_1")
         self.route_desk = "Route via FIXBUYTH2 - component used by TH2 simulator and autotests"
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -70,10 +69,10 @@ class QAP_3874(TestCase):
         # endregion
         # region Wave Basket
         try:
-            # nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-            #                                                                                       self.rule_client,
-            #                                                                                       self.mic,
-            #                                                                                       int(self.price))
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.rule_client,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
             trade_rele = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
                                                                                             self.rule_client,
                                                                                             self.mic,
@@ -83,7 +82,7 @@ class QAP_3874(TestCase):
             self.basket_book.wave_basket(qty_percentage=self.qty_per, route=self.route)
         finally:
             time.sleep(1)
-            # self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rele)
         # endregion
         # check basket waves fields

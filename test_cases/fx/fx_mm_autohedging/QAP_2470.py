@@ -8,7 +8,7 @@ from custom.verifier import Verifier, VerificationMethod
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 from win_gui_modules.aggregated_rates_wrappers import PlaceESPOrder, ESPTileOrderSide
 from win_gui_modules.common_wrappers import BaseTileDetails
 from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
@@ -204,7 +204,7 @@ def execute(report_id, session_id):
         # send_order(case_base_request, order_ticket_service)
 
         fix_manager_gtw = FixManager(alias_gtw, case_id)
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker().set_default_SOR().change_parameters(
             {'TimeInForce': '1', 'Account': firm_account, 'OrdType': '1', 'OrderQty': qty})
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
 

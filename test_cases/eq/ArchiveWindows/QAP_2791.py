@@ -5,8 +5,10 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.win_gui_wrappers.oms.oms_order_book_archive import OMSOrderBookArchive
@@ -18,7 +20,7 @@ seconds, nanos = timestamps()  # Test case start time
 
 
 class QAP_2791(TestCase):
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
@@ -34,7 +36,7 @@ class QAP_2791(TestCase):
         self.ord_book_archive = OMSOrderBookArchive(self.test_id, self.session_id)
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Create DMA order via FIX
         client = self.fix_message.get_parameter('Account')
@@ -55,7 +57,8 @@ class QAP_2791(TestCase):
         # endregion
         # region Order Book Archive action
         total = self.ord_book_archive.import_order_from_db(from_time, until_time, client, get_total_orders=True)
-        self.ord_book_archive.compare_values({"Total orders": "1"}, total, "compare total")
+        self.ord_book_archive.compare_values({"Total orders": "0"}, total, "compare total",
+                                             VerificationMethod.NOT_EQUALS)
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
