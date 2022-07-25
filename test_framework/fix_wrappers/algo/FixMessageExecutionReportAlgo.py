@@ -151,8 +151,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_pending_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if str(new_order_single.get_parameter('OrdType')) in ['2', '4']:
+            temp.update(Price=new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
@@ -176,8 +176,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if str(new_order_single.get_parameter('OrdType')) in ['2', '4']:
+            temp.update(Price=new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
