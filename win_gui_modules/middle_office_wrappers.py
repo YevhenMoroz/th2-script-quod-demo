@@ -45,6 +45,8 @@ class ExtractionField(Enum):
     SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.SETTLEMENT_TYPE
     BLOCK_SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.BLOCK_SETTLEMENT_TYPE
     IS_MANUAL_TOGGLED = middle_office_pb2.ExtractionDetails.ExtractionField.IS_MANUAL_TOGGLED
+    FEES_TAB = middle_office_pb2.ExtractionDetails.ExtractionField.FEES_TAB
+    COMMISSIONS_TAB = middle_office_pb2.ExtractionDetails.ExtractionField.COMMISSIONS_TAB
 
 
 class ExtractionDetails:
@@ -86,6 +88,12 @@ class ExtractionDetails:
 
     def extract_block_settlement_type(self, name: str):
         self.extract_value(ExtractionField.BLOCK_SETTLEMENT_TYPE, name)
+
+    def extract_fees_row(self, name):
+        self.extract_value(ExtractionField.FEES_TAB, name)
+
+    def extract_commission_row(self, name):
+        self.extract_value(ExtractionField.COMMISSIONS_TAB, name)
 
     def extract_value(self, field: ExtractionField, name: str):
         extracted_value = middle_office_pb2.ExtractionDetails.ExtractionParam()
@@ -339,6 +347,9 @@ class ModifyTicketDetails:
     def add_check_context_action(self) -> CheckContextAction:
         self._request.checkContextAction.CopyFrom(common_pb2.CheckContextActionDetails())
         return CheckContextAction(self._request.checkContextAction)
+
+    def clear_filter(self):
+        self._request.clearMiddleOfficeFilter = True
 
     def build(self):
         return self._request

@@ -164,7 +164,7 @@ class BaseMiddleOffice(BaseWindow):
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
                                   alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None,
-                                  clear_alloc_greed=False, pset=None):
+                                  clear_alloc_greed=False, pset=None, clear_filter=False):
         """
             1)extract_data can be book or alloc
             2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
@@ -172,6 +172,8 @@ class BaseMiddleOffice(BaseWindow):
         """
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
+        if clear_filter:
+            self.modify_ticket_details.clear_filter()
         if is_alloc_amend:
             amend_allocations_details = self.modify_ticket_details.add_amend_allocations_details()
             if alloc_account_filter is not None:
