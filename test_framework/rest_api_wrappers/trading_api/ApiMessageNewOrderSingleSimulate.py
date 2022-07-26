@@ -16,21 +16,27 @@ class ApiMessageNewOrderSingleSimulate(TradingRestApiMessage):
                          data_set=data_set)
         super().change_parameters(parameters)
         self.tested_instrument_noss = self.data_set.get_trading_api_instrument_by_name("instrument_2")
+        self.default_currency_noss = self.data_set.get_currency_by_name('currency_1')
+        self.default_settl_currency_noss = self.data_set.get_settl_currency_by_name('settl_currency_1')
+        self.default_client_noss = self.data_set.get_client_by_name('client_4')
+        self.default_account_noss = self.data_set.get_account_by_name('account_4')
+        self.default_cash_account_noss = self.data_set.get_cash_account_by_name('cash_account_1')
 
     def set_default_request(self):
         base_parameters = {'ClOrdID': bca.client_orderid(9),
                            'Side': 'Buy',
                            'OrdType': 'Limit',
                            'Price': 1,
-                           'Currency': "INR",
-                           'SettlCurrency': "INR",
+                           'Currency': self.default_currency_noss,
+                           'SettlCurrency': self.default_settl_currency_noss,
                            'TimeInForce': 'Day',
                            'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
                                '%Y-%m-%dT%H:%M:%S'),
-                           'ClientAccountGroupID': self.data_set.get_client_by_name('client_4'),
+                           'ClientAccountGroupID': self.default_client_noss,
+                           'ClientCashAccountID': self.default_cash_account_noss,
                            'PreTradeAllocations': [
                                {
-                                   'AllocClientAccountID': self.data_set.get_account_by_name('account_4'),
+                                   'AllocClientAccountID': self.default_account_noss,
                                    'AllocQty': 1
                                }
                            ],
