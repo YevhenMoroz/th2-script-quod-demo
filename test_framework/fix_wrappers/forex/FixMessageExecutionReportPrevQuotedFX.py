@@ -17,6 +17,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                                          status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
+        elif status is Status.Reject:
+            self.__set_reject_sell(new_order_single)
         else:
             raise Exception('Incorrect Status')
         return self
@@ -87,6 +89,49 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().update_fields_in_component("Instrument", instrument)
         if new_order_single.get_parameter('SettlType') != "0":
             super().add_tag({"LastForwardPoints": "*"})
+        return self
+
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            CumQty="0",
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst="1",
+            LastQty="0",
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            SettlType=new_order_single.get_parameter("SettlType"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            Price="*",
+            LastMkt="*",
+            OrdStatus="8",
+            TransactTime="*",
+            ExecRestatementReason="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            OrderCapacity="A",
+            SettlDate="*",
+            ExecType="8",
+            LeavesQty="0",
+            Text="*",
+            QtyType="0",
+            Instrument=new_order_single.get_parameter("Instrument"),
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
         return self
 
     def __set_fill_sell_ndf(self, new_order_single: FixMessageNewOrderSingle = None):
