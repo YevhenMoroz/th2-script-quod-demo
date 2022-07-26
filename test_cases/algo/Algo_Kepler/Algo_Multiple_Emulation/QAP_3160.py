@@ -36,7 +36,7 @@ class QAP_3160(TestCase):
         self.price = 10
         self.display_qty = 500
         self.price_ask = 40
-        self.price_bid = 30
+        self.price_bid = 1
         self.qty_bid = self.qty_ask = 1000000
         # endregion
 
