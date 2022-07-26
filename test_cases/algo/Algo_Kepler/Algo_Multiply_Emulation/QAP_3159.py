@@ -151,11 +151,11 @@ class QAP_3159(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_STL_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel first dma child order
-        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        er_cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
 
-        cancel_SORPING_STL_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_STL_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_SORPING_STL_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        er_cancel_SORPING_STL_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_STL_order, self.gateway_side_sell, self.status_cancel)
+        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_STL_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
         
         rule_manager = RuleManager()
