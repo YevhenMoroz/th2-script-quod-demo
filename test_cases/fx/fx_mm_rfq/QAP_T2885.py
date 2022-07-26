@@ -34,7 +34,6 @@ class QAP_T2885(TestCase):
             "Symbol": self.symbol,
             "SecurityType": self.security_type_spo
         }
-        self.text = "not a live quote entry"
         self.quote_id = bca.client_orderid(20)
 
     @try_except(test_id=Path(__file__).name[:-3])
