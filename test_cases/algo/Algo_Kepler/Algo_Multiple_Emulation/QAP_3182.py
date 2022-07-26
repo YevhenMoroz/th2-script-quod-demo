@@ -36,7 +36,7 @@ class QAP_3182(TestCase):
         self.price = 10
         self.display_qty = 500
         self.price_ask = 40
-        self.price_bid = 30
+        self.price_bid = 1
         self.qty_bid = self.qty_ask = 1000000
         self.algopolicy = constants.ClientAlgoPolicy.qa_multiple_n.value
         # endregion
