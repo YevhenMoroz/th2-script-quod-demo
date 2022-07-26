@@ -4,11 +4,9 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -75,17 +73,8 @@ class QAP_3182(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.rule_list = []
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Rule creation
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, True)
-        self.rule_list = [nos_rule, ocr_rule]
-        # endregion
-
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)
@@ -129,9 +118,4 @@ class QAP_3182(TestCase):
         er_eliminate_SORPING_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_Iceberg_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(er_eliminate_SORPING_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        rule_manager = RuleManager()
-        rule_manager.remove_rules(self.rule_list)
         
