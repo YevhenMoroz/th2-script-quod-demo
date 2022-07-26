@@ -36,7 +36,7 @@ class QAP_3181(TestCase):
         self.price = 3.059
         self.stop_price = 3.06
         self.price_ask = 40
-        self.price_bid = 30
+        self.price_bid = 1
         self.qty_bid = self.qty_ask = 1000000
         self.order_type_stop_lmt = constants.OrderType.StopLimit.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_multiple_n.value
