@@ -26,6 +26,9 @@ class TicketDetails:
     def set_agreed_price(self, agreed_price: str):
         self.request.agreedPrice = agreed_price
 
+    def set_net_price(self, net_price):
+        self.request.net_price = net_price
+
     def build(self):
         return self.request
 
@@ -180,6 +183,9 @@ class OrderDetails:
     def add_extraction_details(self, details: list):
         for detail in details:
             self.add_extraction_detail(detail)
+
+    def clear_filter_from_book(self):
+        self.request.clearBlockFilter = True
 
 
 class ViewOrderExtractionDetails:
@@ -444,7 +450,7 @@ class AllocationsTableCheckDetails:
 
 
 class ExtractionPanelDetails:
-    def __init__(self, base: EmptyRequest = None, filter: dict = None, panels: list = None):
+    def __init__(self, base: EmptyRequest = None, filter: dict = None, panels: list = None, count_of_rows: int = None):
         if base is not None:
             self._request = middle_office_pb2.ExtractionPanelDetails(base=base)
         else:
@@ -457,6 +463,9 @@ class ExtractionPanelDetails:
             for panel in panels:
                 self._request.panels.append(panel)
 
+        if count_of_rows:
+            self._request.count_of_rows = count_of_rows
+
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
@@ -466,6 +475,9 @@ class ExtractionPanelDetails:
     def set_panels(self, panels: list):
         for panel in panels:
             self._request.panels.append(panel)
+
+    def set_count_of_rows(self, count: int):
+        self._request.count_of_rows = count
 
     def build(self):
         return self._request
