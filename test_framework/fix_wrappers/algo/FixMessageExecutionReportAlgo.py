@@ -77,6 +77,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        if new_order_single.is_parameter_exist('ExpireTime'):
+            temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -124,6 +126,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             )
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        if new_order_single.is_parameter_exist('ExpireTime'):
+            temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -565,6 +569,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        if new_order_single.is_parameter_exist('ExpireTime'):
+            temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx=0,
