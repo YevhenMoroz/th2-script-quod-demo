@@ -16,7 +16,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_3159(TestCase):
+class QAP_3181(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -36,9 +36,10 @@ class QAP_3159(TestCase):
         self.price = 3.059
         self.stop_price = 3.06
         self.price_ask = 40
-        self.price_bid = 30
+        self.price_bid = 1
         self.qty_bid = self.qty_ask = 1000000
         self.order_type_stop_lmt = constants.OrderType.StopLimit.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_multiple_n.value
         # endregion
 
         # region Gateway Side
@@ -108,7 +109,7 @@ class QAP_3159(TestCase):
 
         self.SORPING_STL_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
         self.SORPING_STL_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_STL_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, OrdType=self.order_type_stop_lmt)).add_tag(dict(StopPx=self.stop_price))
+        self.SORPING_STL_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, OrdType=self.order_type_stop_lmt)).add_tag(dict(StopPx=self.stop_price))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_STL_order, case_id_1)
 
@@ -151,12 +152,12 @@ class QAP_3159(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_STL_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel first dma child order
-        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        er_cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
 
-        cancel_SORPING_STL_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_STL_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_SORPING_STL_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        er_cancel_SORPING_STL_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_STL_order, self.gateway_side_sell, self.status_cancel)
+        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_STL_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-        
+
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
