@@ -170,6 +170,8 @@ class AlgoMic(Enum):
     mic_17 = "QDL5"  # QUODLIT5
     mic_18 = "QDL6"  # QUODLIT6
     mic_19 = "QDL7"  # QUODLIT7
+    mic_20 = "TQLIS"  # TQLIS
+    mic_21 = "CHIXLIS"  # CHIXLIS
 
 
 
@@ -208,4 +210,5 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
+    verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
 
