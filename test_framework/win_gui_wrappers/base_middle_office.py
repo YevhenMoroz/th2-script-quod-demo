@@ -93,7 +93,8 @@ class BaseMiddleOffice(BaseWindow):
         return response
 
     def extract_list_of_allocate_fields(self, list_of_column: list, filter_dict_allocate: dict = None,
-                                        allocate_number=1, filter_dict_block: dict = None) -> dict:
+                                        allocate_number=1, filter_dict_block: dict = None,
+                                        clear_filter_from_allocation: bool = False, clear_filter_from_block = False) -> dict:
         list_of_extraction = []
         for column in list_of_column:
             field = self.extraction_detail(column, column)
@@ -105,6 +106,10 @@ class BaseMiddleOffice(BaseWindow):
         order_details = self.extract_allocation_details.add_order_details()
         order_details.set_order_number(allocate_number)
         order_details.add_extraction_details(list_of_extraction)
+        if clear_filter_from_allocation:
+            order_details.clear_filter()
+        if clear_filter_from_block:
+            order_details.clear_filter_from_book()
         response = call(self.extract_allocations_table_data,
                         self.extract_allocation_details.build())
         self.clear_details([self.extract_allocation_details])
@@ -164,7 +169,7 @@ class BaseMiddleOffice(BaseWindow):
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
                                   alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None,
-                                  clear_alloc_greed=False, pset=None, clear_filter=False):
+                                  clear_alloc_greed=False, pset=None, clear_filter=False, net_price: str = None):
         """
             1)extract_data can be book or alloc
             2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
@@ -187,6 +192,8 @@ class BaseMiddleOffice(BaseWindow):
                 allocations_details.add_allocation_param(i)
         if clear_alloc_greed:
             allocations_details.clear_greed()
+        if net_price:
+            ticket_details.set_net_price(net_price)
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -258,6 +265,8 @@ class BaseMiddleOffice(BaseWindow):
             extraction_details.extract_pset_bic(extract_data + ".psetBic")
             extraction_details.extract_exchange_rate(extract_data + ".exchangeRate")
             extraction_details.extract_settlement_type(extract_data + ".settlementType")
+            extraction_details.extract_fees_row(extract_data + ".Fees")
+            extraction_details.extract_commission_row(extract_data + ".Commission")
         return self.modify_ticket_details
 
     # endregion
