@@ -1139,9 +1139,10 @@ class UnmatchAndTransferDetails:
         self.transfer_details = order_book_pb2.UnmatchAndTransferDetails()
         self.transfer_details.base.CopyFrom(base_request)
 
-    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict):
+    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict=None):
         self.transfer_details.filter.update(filter_dict)
-        self.transfer_details.subFilter.update(sub_filter_dict)
+        if sub_filter_dict:
+            self.transfer_details.subFilter.update(sub_filter_dict)
 
     def set_account_destination(self, account_destination: str):
         self.transfer_details.account = account_destination

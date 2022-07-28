@@ -535,6 +535,7 @@ class ChildOrderBookColumns(Enum):
     qty_alloc = "Quantity"
     """Executions"""
     exec_tab = "Executions"
+    percent = '%'
 
 
 
