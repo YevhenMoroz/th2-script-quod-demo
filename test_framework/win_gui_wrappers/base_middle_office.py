@@ -34,6 +34,7 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_approve_call = None
         self.mass_allocate_call = None
         self.mass_unallocate_call = None
+        self.extract_value_from_tab_of_allocation_ticket_call = None
 
     # endregion
     # region Common func
@@ -94,7 +95,8 @@ class BaseMiddleOffice(BaseWindow):
 
     def extract_list_of_allocate_fields(self, list_of_column: list, filter_dict_allocate: dict = None,
                                         allocate_number=1, filter_dict_block: dict = None,
-                                        clear_filter_from_allocation: bool = False, clear_filter_from_block = False) -> dict:
+                                        clear_filter_from_allocation: bool = False,
+                                        clear_filter_from_block=False) -> dict:
         list_of_extraction = []
         for column in list_of_column:
             field = self.extraction_detail(column, column)
@@ -143,6 +145,13 @@ class BaseMiddleOffice(BaseWindow):
                                                                list_extraction
                                                                )
         result = call(self.amend_ticket_book_extraction_details_call, self.extraction_panel_details.build())
+        return result
+
+    def extracting_values_from_allocation_ticket(self, panels_extraction: list, block_filter_dict: dict):
+        self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
+        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
+        self.allocation_ticket_extraction_details.set_panels(panels_extraction)
+        result = call(self.extract_value_from_tab_of_allocation_ticket_call, self.allocation_ticket_extraction_details.build())
         return result
 
     '''
