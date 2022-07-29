@@ -3,9 +3,16 @@ import time
 from getpass import getuser as get_pc_name
 
 from MyFiles.SendMD_Simple import SendMD_Simple
+from MyFiles.md_percentage_deviation import SendMD_percentage_dev
+from MyFiles.md_to_refresh_prices import send_md_to_update_prices
+from MyFiles.send_md_crossed import send_md_crossed
+from MyFiles.test_ref_venues_cleansing import SendMD_ref_venues
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.fx.fx_mm_autohedging import QAP_3147, QAP_3146
+from test_cases.fx.fx_mm_autohedging import QAP_3147, QAP_3146, QAP_3067, QAP_4122
+from test_cases.fx.fx_mm_autohedging.QAP_6598 import QAP_6598
+from test_cases.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2012
+from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
 from test_cases.fx.fx_price_cleansing.QAP_3452 import QAP_3452
 from test_cases.fx.fx_price_cleansing.QAP_7939 import QAP_7939
 from test_cases.fx.fx_price_cleansing.QAP_7964 import QAP_7964
@@ -39,16 +46,17 @@ def test_run():
     # rule_manager.print_active_rules()
 
     try:
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id, window_name)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id, window_name)
 
         # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_4149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_3142(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # QAP_3761(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_6149(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_3147.execute(report_id, session_id)
         # QAP_3146.execute(report_id, session_id)
         # QAP_2159.execute(report_id, session_id)
@@ -58,8 +66,14 @@ def test_run():
         # QAP_3661.execute(report_id, session_id)
         # QAP_3140.execute(report_id)
         # QAP_3805.execute(report_id)
+        # QAP_3067.execute(report_id, session_id)
+        # QAP_4122.execute(report_id, session_id)
+        # QAP_2012.execute(report_id)
+        # QAP_3661.execute(report_id, session_id)
+        # QAP_4016.execute(report_id, session_id)
         # QAP_2382.execute(report_id)
         # QAP_6691(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6598(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_6697(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_7073(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -74,11 +88,13 @@ def test_run():
         # QAP_5589.execute(report_id, session_id)
         # QAP_5591.execute(report_id, session_id)
         # QAP_5537.execute(report_id, session_id, data_set)
-        QAP_3147.execute(report_id, session_id)
-        QAP_3146.execute(report_id, session_id)
+        # QAP_3147.execute(report_id, session_id)
+        # QAP_3146.execute(report_id, session_id)
         # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
         # send_rfq.execute(report_id)
         # SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        SendMD_percentage_dev(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_ref_venues(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_empty(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # send_md_crossed(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # SendMD_Settle_Date(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
