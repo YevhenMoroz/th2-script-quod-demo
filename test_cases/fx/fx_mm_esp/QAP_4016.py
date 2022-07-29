@@ -76,7 +76,7 @@ to_currency = 'RUB'
 tenor = 'Spot'
 instrument = 'USD/RUB-Spot'
 client_tier = 'Palladium2'
-venue = 'HSB'
+venue = 'HSBC'
 rows_default = 3
 rows_with_new_md = 4
 rows_for_2m = 2
@@ -157,6 +157,8 @@ tenor_qty = [
                         "indiceUpperQty": 1,
                         'defaultBidMargin': 0,
                         'defaultOfferMargin': 0,
+                        'parentIndiceUpperQty': 1,
+                        'upperQty': 1000000
                     },
                     {
                         "MDQuoteType": "TRD",
@@ -164,6 +166,8 @@ tenor_qty = [
                         "indiceUpperQty": 2,
                         'defaultBidMargin': 0,
                         'defaultOfferMargin': 0,
+                        'parentIndiceUpperQty': 2,
+                        'upperQty': 2000000
                     },
                     {
                         "MDQuoteType": "TRD",
@@ -171,6 +175,8 @@ tenor_qty = [
                         "indiceUpperQty": 3,
                         'defaultBidMargin': 0,
                         'defaultOfferMargin': 0,
+                        'parentIndiceUpperQty': 3,
+                        'upperQty': 3000000
                     },
                     {
                         "MDQuoteType": "TRD",
@@ -178,6 +184,8 @@ tenor_qty = [
                         "indiceUpperQty": 4,
                         'defaultBidMargin': 0,
                         'defaultOfferMargin': 0,
+                        'parentIndiceUpperQty': 4,
+                        'upperQty': 4000000
                     },
                     {
                         "MDQuoteType": "TRD",
@@ -185,6 +193,8 @@ tenor_qty = [
                         "indiceUpperQty": 5,
                         'defaultBidMargin': 0,
                         'defaultOfferMargin': 0,
+                        'parentIndiceUpperQty': 5,
+                        'upperQty': 5000000
                     }
                 ]
 case_sweepable_qty = [
