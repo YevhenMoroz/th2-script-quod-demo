@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
@@ -30,8 +30,8 @@ class QAP_1047(TestCase):
         self.venue = self.data_set.get_mic_by_name("mic_1")
         self.qty_percentage = "100"
         self.qty_type = self.data_set.get_qty_type("qty_type_1")
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
-        self.rule_manager = RuleManager()
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_co_1_venue_1")
+        self.rule_manager = RuleManager(Simulators.equity)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
@@ -46,11 +46,10 @@ class QAP_1047(TestCase):
         # endregion
         # region accept CO order
         try:
-            nos_rule = self.rule_manager.add_NewOrdSingle_Market_FIXStandard(self.fix_env.buy_side,
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env.buy_side,
                                                                                             self.venue_client_names,
-                                                                                                self.venue, True,
-                                                                                                int(self.qty), float(self.price))
-            self.client_inbox.client_inbox_direct_moc(self.qty_type, self.qty_percentage, self.route)
+                                                                                                self.venue, float(self.price))
+            self.client_inbox.direct_order(self.venue, self.qty_type, self.qty_percentage, self.route)
 
         except Exception:
             logger.error("Error execution", exc_info=True)
@@ -59,6 +58,6 @@ class QAP_1047(TestCase):
         # endregion
         # region check filled child status
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list(
-                {OrderBookColumns.ord_type.value: OrderType.market.value, OrderBookColumns.exec_sts.value: ExecSts.filled.value})
+                {OrderBookColumns.ord_type.value: OrderType.market.value, OrderBookColumns.sts.value: ExecSts.sent.value})
         # endregion
 

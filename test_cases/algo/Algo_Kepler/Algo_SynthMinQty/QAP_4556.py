@@ -109,15 +109,13 @@ class QAP_4556(TestCase):
         self.fix_verifier_sell.check_fix_message(self.synthMinQty_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_pending)
-        er_pending_new_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_new)
-        er_new_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(5)
+        time.sleep(3)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -130,8 +128,8 @@ class QAP_4556(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_synthMinQty_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_synthMinQty_order_params.remove_parameter('NoStrategyParameters').add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+
 
 

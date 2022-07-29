@@ -13,7 +13,7 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 alias_fh = "fix-fh-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
@@ -124,7 +124,7 @@ def execute(report_id, session_id, data_set):
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD ")
 
         # STEP 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set = data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker(data_set = data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '3', 'OrderQty': '5000000'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
@@ -146,7 +146,7 @@ def execute(report_id, session_id, data_set):
              ob_col.limit_price.value: "1.1814",
              ob_col.qty.value: "5,000,000"})
         # STEP 2
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set = data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker(data_set = data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '3', 'OrderQty': '5000000', 'Side': '2', 'Price': '1.18079'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)

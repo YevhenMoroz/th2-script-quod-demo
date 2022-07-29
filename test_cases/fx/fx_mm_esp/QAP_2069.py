@@ -3,18 +3,19 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
 class QAP_2069(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
-        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
-        symbol = self.data_set.get_symbol_by_name("symbol_1")
-        self.instrument = symbol + "-1W"
+        self.silver = self.data_set.get_client_tier_by_name("client_tier_1")
+        eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.eur_usd_1w = eur_usd + "-1W"
         self.spread_event = "Spread validation"
         self.ask_event = "Ask validation"
         self.bid_event = "Bid validation"
@@ -39,7 +40,7 @@ class QAP_2069(TestCase):
     def run_pre_conditions_and_steps(self):
         # region step 1-2
         self.rates_tile.crete_tile()
-        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        self.rates_tile.modify_client_tile(instrument=self.eur_usd_1w, client_tier=self.silver)
         self.rates_tile.press_use_default()
         bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
         print(float(self.rates_tile.extract_prices_from_tile(self.spread)[self.spread.value]))

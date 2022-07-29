@@ -4,7 +4,8 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OmsVenueClientNames, OmsRoutes, OmsLookupForVenues, OmsVenueClientAccounts, OMSCommissionProfiles, OMSFeeType, \
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
-    OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity
+    OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
+    OMSBagScenario, OMSBagStrategy, OMSVenueID
 
 
 class OmsDataSet(BaseDataSet):
@@ -47,3 +48,7 @@ class OmsDataSet(BaseDataSet):
     time_in_force = OMSTimeInForce
     order_type = OMSOrdType
     capacity = OMSCapacity
+    scenario = OMSBagScenario
+    strategy = OMSBagStrategy
+    venue_id = OMSVenueID
+

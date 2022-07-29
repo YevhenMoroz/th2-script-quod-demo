@@ -28,3 +28,8 @@ class LocationsAssignmentsSubWizard(CommonPage):
         self.find_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_ZONE_LINK_XPATH.format(zone_name)).click()
         time.sleep(2)
         self.find_by_xpath(LocationsConstants.OK_BUTTON_XPATH).click()
+
+    def get_all_zones_from_drop_menu(self):
+        self.set_text_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_ZONE_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(LocationsConstants.DROP_DOWN_MENU_XPATH)

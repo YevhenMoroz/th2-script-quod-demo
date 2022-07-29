@@ -1,6 +1,7 @@
 class WashBookRulesConstants:
     WASH_BOOK_RULES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Wash Book Rules ']"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    SEARCHED_ENTITY_XPATH = '//*[text()="{}"]'
 
     # main page
     # --more actions

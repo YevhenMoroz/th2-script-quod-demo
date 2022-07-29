@@ -141,6 +141,9 @@ class AllocationsDetails:
         params.fields.update(param)
         self.request.allocationsParams.append(params)
 
+    def clear_greed(self):
+        self.request.clearGreed = True
+
     def add_allocation_param_list(self, params_list: list):
         params = self.request.AllocationsParams()
         length = len(params_list)

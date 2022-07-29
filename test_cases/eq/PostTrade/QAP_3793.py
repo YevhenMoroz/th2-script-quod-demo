@@ -1,82 +1,138 @@
 import logging
 import time
+from datetime import datetime
+from pathlib import Path
 
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
-from rule_management import RuleManager
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
+    MiddleOfficeColumns, AllocationsColumns
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
 
 
-def execute(report_id, session_id):
-    case_name = "QAP-3793"
-    qty = "115"
-    client = "MOClient"
-    price = 10
-    side = 1
-    tif = 1
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    buy_connectivity = eq_fix_wrappers.get_buy_connectivity()
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, client + "_PARIS", "XPAR", True, int(qty),
-                                                        price)
-        fix_message = eq_fix_wrappers.create_order_via_fix(case_id, 1, side, client, 1, qty, tif)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
+class QAP_3793(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.qty = '200'
+        self.price = '20'
+        self.test_string = 'Test string'
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')  # MOClient_SA1
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        # endregion
 
-    order_id = response.response_messages_list[0].fields['OrderID'].simple_value
-    test_string = "Test string"
-    base_request = get_base_request(session_id, case_id)
-    open_fe(case_id, report_id, session_id)
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "ReadyToBook",
-                                   order_filter_list=["Order ID", order_id])
-    eq_wrappers.verify_order_value(base_request, case_id, "ExecSts", "Filled",
-                                   order_filter_list=["Order ID", order_id])
-    eq_wrappers.book_order(base_request, client, str(price), bo_notes=test_string)
-    eq_wrappers.verify_order_value(base_request, case_id, "PostTradeStatus", "Booked",
-                                   order_filter_list=["Order ID", order_id])
-    verify_bo_fields_list(["BOC1", "BOC2", "BOC3", "BOC4", "BOC5"], base_request, case_id)
-    eq_wrappers.verify_block_value(base_request, case_id, "Back Office Notes", test_string,)
-    eq_wrappers.verify_block_value(base_request, case_id, "Status", "ApprovalPending")
-    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Unmatched")
-    eq_wrappers.amend_block(base_request, misc_arr=["1", "2", "3", "4", "5"])
-    verify_bo_fields_list(["1", "2", "3", "4", "5"], base_request, case_id)
-    eq_wrappers.approve_block(base_request)
-    eq_wrappers.verify_block_value(base_request, case_id, "Status", "Accepted")
-    eq_wrappers.verify_block_value(base_request, case_id, "Match Status", "Matched")
-    verify_bo_fields_list(["1", "2", "3", "4", "5"], base_request, case_id)
-    eq_wrappers.verify_block_value(base_request, case_id, "Back Office Notes", test_string)
-    eq_wrappers.amend_block(base_request, misc_arr=["11", "22", "33", "44", "55"])
-    verify_bo_fields_list(["11", "22", "33", "44", "55"], base_request, case_id)
-    eq_wrappers.allocate_order(base_request,
-                               arr_allocation_param=[{"Security Account": "MOClient_SA1", "Alloc Qty": qty}])
-    verify_allocation_fields_list(["AccBO1", "AccBO2", "AccBO3", "AccBO4", "AccBO5"], base_request, case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Create DMA order via FIX
+        try:
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client_names,
+                                                                                            self.venue,
+                                                                                            float(self.price),
+                                                                                            int(self.qty), 0)
+            self.fix_message.set_default_dma_limit()
+            self.fix_message.change_parameters(
+                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            # get Client Order ID and Order ID
+            cl_ord_id = response[0].get_parameters()['ClOrdID']
+            order_id = response[0].get_parameters()['OrderID']
 
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(2)
+            self.rule_manager.remove_rule(trade_rule)
+        # endregion
 
-def open_fe(case_id, report_id, session_id):
-    work_dir = Stubs.custom_config['qf_trading_fe_folder_1']
-    username = Stubs.custom_config['qf_trading_fe_user_1']
-    password = Stubs.custom_config['qf_trading_fe_password_1']
-    open_fe(session_id, report_id, case_id, work_dir, username)
+        # region Book order and checking PostTradeStatus in Order book
+        self.middle_office.set_modify_ticket_details(bo_notes=self.test_string)
+        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.order_book.check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value,
+             OrderBookColumns.done_for_day.value: 'Yes'}, 'Comparing PostTradeStatus after Book')
+        # endregion
 
+        # region Checking the values after the Book in the Middle Office
+        bo_fields = ['Bo Field 1', 'Bo Field 2', 'Bo Field 3', 'Bo Field 4', 'Bo Field 5', 'Back Office Notes']
+        values_after_book = self.middle_office.extract_list_of_block_fields(
+            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value] + bo_fields,
+            [OrderBookColumns.order_id.value, order_id])
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.sts.value: 'ApprovalPending', MiddleOfficeColumns.match_status.value: 'Unmatched',
+             'Bo Field 1': 'BOC1', 'Bo Field 2': 'BOC2', 'Bo Field 3': 'BOC3', 'Bo Field 4': 'BOC4',
+             'Bo Field 5': 'BOC5', 'Back Office Notes': self.test_string}, values_after_book,
+            'Comparing values after Book for block of MiddleOffice')
+        # endregion
 
-def verify_bo_fields_list(values, base_request, case_id):
-    for i in range(5):
-        eq_wrappers.verify_block_value(base_request, case_id, "Bo Field " + str(i + 1), values[i])
+        # region Amend all BO Fields
+        self.middle_office.set_modify_ticket_details(bo_fields=['1', '2', '3', '4', '5'])
+        self.middle_office.amend_block([OrderBookColumns.order_id.value, order_id])
+        # endregion
 
+        # region Checking BO Fields after Amend
+        bo_after_amend = self.middle_office.extract_list_of_block_fields(bo_fields,
+                                                                         [OrderBookColumns.order_id.value, order_id])
+        self.middle_office.compare_values(
+            {'Bo Field 1': '1', 'Bo Field 2': '2', 'Bo Field 3': '3', 'Bo Field 4': '4', 'Bo Field 5': '5',
+             'Back Office Notes': self.test_string},
+            bo_after_amend, 'Comparing BO Fields after Amend')
+        # endregion
 
-def verify_allocation_fields_list(values, base_request, case_id):
-    for i in range(5):
-        eq_wrappers.verify_allocate_value(base_request, case_id, "Alloc BO Field " + str(i + 1), values[i])
+        # region Amend all BO Field
+        self.middle_office.approve_block()
+        self.middle_office.set_modify_ticket_details(bo_fields=['11', '22', '33', '44', '55'])
+        self.middle_office.amend_block()
+        # endregion
+
+        # region Checking BO Fields after Amend
+        bo_after_amend = self.middle_office.extract_list_of_block_fields(bo_fields,
+                                                                         [OrderBookColumns.order_id.value, order_id])
+        self.middle_office.compare_values(
+            {'Bo Field 1': '11', 'Bo Field 2': '22', 'Bo Field 3': '33', 'Bo Field 4': '44', 'Bo Field 5': '55',
+             'Back Office Notes': self.test_string}, bo_after_amend, 'Comparing BO Fields after Amend')
+        # endregion
+
+        # region Allocate block
+        allocation_param = [
+            {AllocationsColumns.security_acc.value: self.alloc_account, AllocationsColumns.alloc_qty.value: self.qty,
+             'BO Notes': self.test_string}]
+        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
+        self.middle_office.allocate_block()
+        # endregion
+
+        # region Checking values in Allocations
+        extracted_fields = self.middle_office.extract_list_of_allocate_fields(
+            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value, 'Alloc BO Field 1',
+             'Alloc BO Field 2', 'Alloc BO Field 3', 'Alloc BO Field 4', 'Alloc BO Field 5'])
+        self.middle_office.compare_values(
+            {AllocationsColumns.sts.value: 'Affirmed', AllocationsColumns.match_status.value: 'Matched',
+             'Alloc BO Field 1': 'AccBO1', 'Alloc BO Field 2': 'AccBO2', 'Alloc BO Field 3': 'AccBO3',
+             'Alloc BO Field 4': 'AccBO4', 'Alloc BO Field 5': 'AccBO5'},
+            extracted_fields, 'Checking values in Allocations')
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

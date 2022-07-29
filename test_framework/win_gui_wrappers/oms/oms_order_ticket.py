@@ -3,11 +3,11 @@ from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_order_ticket import BaseOrderTicket
-from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTableParams
+from win_gui_modules.common_wrappers import CommissionsDetails, CommissionsTabTableParams, SettlementTabDetails
 from win_gui_modules.order_book_wrappers import ModifyOrderDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, OrderTicketExtractedValue, ExtractOrderTicketValuesRequest, \
     ExtractOrderTicketErrorsRequest, AllocationsGridRowDetails, MoreTabAllocationsDetails, AdwOrdTabDetails, \
-    MiscsOrdDetails
+    MiscsOrdDetails, PartiesTabDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -32,7 +32,6 @@ class OMSOrderTicket(BaseOrderTicket):
         self.re_order_order_call = Stubs.win_act_order_book.reOrder
         self.extract_order_ticket_values_call = Stubs.win_act_order_ticket.extractOrderTicketValues
         self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
-        self.extract_order_ticket_errors_call = Stubs.win_act_order_ticket.extractOrderTicketErrors
         self.mass_modify_order_call = Stubs.win_act_order_book.massModify
         self.allocations_grid_row_details = AllocationsGridRowDetails()
         self.more_tab_allocations_details = MoreTabAllocationsDetails()
@@ -40,17 +39,20 @@ class OMSOrderTicket(BaseOrderTicket):
         self.commissions_details = CommissionsDetails()
         self.adw_ord_tab_details = AdwOrdTabDetails()
         self.miscs_ord_tab_details = MiscsOrdDetails()
-    # endregion
+        self.settlement_details = SettlementTabDetails()
+        self.parties_tab_details = PartiesTabDetails()
+        # endregion
 
     # region Set
     def set_order_details(self, client=None, limit=None, stop_price=None, qty=None, expire_date=None, order_type=None,
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
                           capacity=None, settl_date=None, recipient=None, partial_desk=False,
                           disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
-                          alloc_details: dict = None):
+                          alloc_details: dict = None, error_expected=None):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
                                                        order_type=order_type, tif=tif, account=account,
-                                                       display_qty=display_qty, is_sell_side=is_sell_side)
+                                                       display_qty=display_qty, is_sell_side=is_sell_side,
+                                                       error_expected=error_expected)
         if expire_date is not None:
             self.order_details.set_expire_date(expire_date)
         if instrument is not None:

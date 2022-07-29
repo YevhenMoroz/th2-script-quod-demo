@@ -1,68 +1,62 @@
 import logging
-
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
+    FixMessageOrderCancelReplaceRequestOMS
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+timeouts = True
 
 
-def execute(report_id, session_id):
-    qty = "1300"
-    client = "MOClient"#"CLIENT_FIX_CARE"
-    handle_inst = 3
-    side = 1
-    ord_type = 4
-    case_name = "QAP-4661"
-    tif = 1
-    stop_price = "200"
-    price = "300"
-    case_id = create_event(case_name, report_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    precondition_fix_message = eq_fix_wrappers.create_order_via_fix(case_id, handle_inst, side, client, ord_type, qty,
-                                                                    tif,
-                                                                    stop_price=price, price=price)
-    response = precondition_fix_message.pop("response")
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    eq_wrappers.accept_order("VETO", qty, price)
-    eq_fix_wrappers.amend_order_via_fix(case_id, precondition_fix_message,
-                                        parametr_list={"TimeInForce": 0, "StopPx": stop_price})
-    eq_wrappers.accept_modify("VETO", qty, price)
-    params = {
-        'OrderQty': "*",
-        'OrdStatus': '0',
-        'TimeInForce': '0',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'SettlType': '0',
-        "StopPx": stop_price,
-        "ExecType": '5',
-        "NoParty": "*",
-        "Account": "*",
-        "ExecID": "*",
-        "LastQty": "*",
-        "OrderID": "*",
-        "TransactTime": "*",
-        "Side": "*",
-        "AvgPx": "*",
-        "SettlDate": "*",
-        "Currency": "*",
-        'OrderCapacity': "*",
-        "HandlInst": "*",
-        "LeavesQty": "*",
-        "CumQty": "*",
-        "LastPx": "*",
-        "OrdType": "*",
-        "QtyType": "*",
-        "Price": "*",
-        "Instrument": "*",
-        "OrigClOrdID": "*"
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4661(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.price = self.fix_message.get_parameter("Price")
+        self.fix_message.change_parameters({"TimeInForce": "1", "OrdType": "4"})
+        self.fix_message.add_tag({'StopPx': self.price})
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
 
-    }
-    fix_verifier_bs = FixVerifier(eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_bs.CheckExecutionReport(params, response, message_name='Check params',
-                                         key_parameters=['ClOrdID', 'OrdStatus', "ExecType"])
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # endregion
+        # region create CO order
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameter("OrderID")
+        self.client_inbox.accept_order()
+        # endregion
+        # region send Cancel Replace Request
+        self.fix_message_cancel_replace.set_default(self.fix_message)
+        self.fix_message_cancel_replace.change_parameters({'StopPx': "10", "TimeInForce": "0"})
+        self.fix_manager.send_message_fix_standard(self.fix_message_cancel_replace)
+        # endregion
+        # region accept modify
+        self.client_inbox.accept_modify_plus_child()
+        # endregion
+        # region check exec report
+        fix_execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_replaced(
+            self.fix_message)
+        fix_execution_report.change_parameters(
+            {'StopPx': "10", "TimeInForce": "0", "SettlDate": "*", "SettlType":"*"})
+        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report)
+        # endregion
+

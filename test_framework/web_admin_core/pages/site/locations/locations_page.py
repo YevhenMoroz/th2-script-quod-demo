@@ -57,3 +57,12 @@ class LocationsPage(CommonPage):
 
     def set_enabled(self, value):
         self.select_value_from_dropdown_list(LocationsConstants.MAIN_PAGE_ENABLED_FILTER_XPATH, value)
+
+    def is_searched_location_found(self, value):
+        return self.is_element_present(LocationsConstants.DISPLAYED_ENTITY_XPATH.format(value))
+
+    def get_list_of_all_zones(self):
+        return self._get_all_items_from_table_column(LocationsConstants.ZONES_NAME_COLUMN_XPATH)
+
+    def get_list_of_all_locations_name(self):
+        return self._get_all_items_from_table_column(LocationsConstants.LOCATIONS_NAME_COLUMN_XPATH)

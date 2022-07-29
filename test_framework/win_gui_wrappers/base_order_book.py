@@ -94,7 +94,11 @@ class BaseOrderBook(BaseWindow):
         self.sub_lvl_info_details = None
         self.get_sub_lvl_details = None
         self.extract_sub_lvl_details_call = None
-
+        self.exec_summary_call = None
+        self.quick_button_details = None
+        self.create_quick_button_call = None
+        self.edit_quick_button_call = None
+        self.click_quick_button_call = None
     # endregion
 
     # region Common func
@@ -303,7 +307,7 @@ class BaseOrderBook(BaseWindow):
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
-    def complete_order(self, row_count=None, filter_list=None):
+    def complete_order(self, row_count: int = None, filter_list: list = None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
@@ -360,7 +364,7 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list=None):
+    def suspend_order(self, cancel_children: bool = None, filter_list: dict = None):
         if filter_list is not None:
             self.suspend_order_details.set_filter(filter_list)
         if cancel_children is not None:
@@ -459,7 +463,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.manual_executing_details])
         return result
 
-    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None):
+    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None, extract_footer=False):
         if qty is not None:
             self.manual_cross_details.set_quantity(qty)
         if price is not None:
@@ -467,6 +471,8 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
+        if extract_footer:
+            self.manual_cross_details.set_extract_footer()
         result = call(self.manual_cross_call, self.manual_cross_details.build())
         return result["Footer value"]
 
@@ -501,9 +507,19 @@ class BaseOrderBook(BaseWindow):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
 
     def direct_child_care_order(self, qty_percentage: str = None, recipient: str = None, route: str = None,
-                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None):
-        call(self.direct_child_care_call,
-             direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
+                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None,
+                                extracted_error: bool = False):
+        result = None
+        if extracted_error:
+            self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+            result = call(self.direct_child_care_call,
+                          direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict,
+                                            self.extract_direct_values))
+        else:
+            call(self.direct_child_care_call,
+                 direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return result
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
@@ -661,8 +677,79 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
 
-    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict):
+    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict = None):
         self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
         self.unmatch_and_transfer_details.set_account_destination(account_destination)
         call(self.unmatch_and_transfer_call, self.unmatch_and_transfer_details.build())
         self.clear_details([self.unmatch_and_transfer_details])
+
+    def exec_summary(self, qty=None, price=None, execution_firm=None, contra_firm=None,
+                     last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+        execution_details = self.manual_executing_details.add_executions_details()
+        if qty is not None:
+            execution_details.set_quantity(qty)
+        if price is not None:
+            execution_details.set_price(price)
+        if execution_firm is not None:
+            execution_details.set_executing_firm(execution_firm)
+        if contra_firm is not None:
+            execution_details.set_contra_firm(contra_firm)
+        if settl_date is not None:
+            execution_details.set_settlement_date_offset(settl_date)
+        if last_capacity is not None:
+            execution_details.set_last_capacity(last_capacity)
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
+        result = call(self.exec_summary_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
+        return result
+
+    def create_quick_button(self, custom_name: str, qty: str, action_type: str = None, tif: str = None,
+                            qty_type: str = None, routes: str = None, strategy_type: str = None, strategy: str = None,
+                            child_strategy: str = None, order_type: str = None, recipient: str = None):
+        self.quick_button_details.set_custom_name(custom_name)
+        self.quick_button_details.set_qty(qty)
+        if action_type is not None:
+            self.quick_button_details.set_action_type(action_type)
+        if tif is not None:
+            self.quick_button_details.set_tif(tif)
+        if qty_type is not None:
+            self.quick_button_details.set_qty_type(qty_type)
+        if routes is not None:
+            self.quick_button_details.set_routes(routes)
+        if strategy_type is not None:
+            self.quick_button_details.set_strategy_type(strategy_type)
+        if strategy is not None:
+            self.quick_button_details.set_strategy(strategy)
+        if child_strategy is not None:
+            self.quick_button_details.set_child_strategy(child_strategy)
+        if order_type is not None:
+            self.quick_button_details.set_order_type(order_type)
+        if recipient is not None:
+            self.quick_button_details.set_recipient(recipient)
+        call(self.create_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def edit_quick_button(self, btn_name: str, custom_name: str = None, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        if custom_name is not None:
+            self.quick_button_details.set_custom_name(custom_name)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.edit_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def click_quick_button(self, btn_name: str,order_id: str, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        self.quick_button_details.set_order_id(order_id)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.click_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+
+
+
+

@@ -47,7 +47,8 @@ class BaseClientInbox(BaseWindow):
              self.direct_loc_request(qty_type, qty_percentage, route, filter))
 
     def client_inbox_direct_poc(self, qty_type, reference_price, percentage, qty_percentage, route,
-                                filter: dict = None):
+                                filter: dict = None, instruction=''):
         call(self.client_inbox_direct_poc_call, self.direct_poc_request(qty_type, reference_price,
-                                                                        percentage, qty_percentage, route, filter))
+                                                                        percentage, qty_percentage, route, filter,
+                                                                        instruction))
     # end region

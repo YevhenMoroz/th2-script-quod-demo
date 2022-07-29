@@ -1,7 +1,7 @@
 from enum import Enum
 
 from th2_grpc_act_gui_quod import order_ticket_pb2, common_pb2, order_ticket_fx_pb2
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
+from th2_grpc_act_gui_quod.common_pb2 import BaseTileData, SettlementTabDetails
 from th2_grpc_act_gui_quod.order_ticket_fx_pb2 import FXSyntheticOrdTypeStrategy
 from th2_grpc_act_gui_quod.order_ticket_pb2 import DiscloseFlagEnum
 
@@ -84,20 +84,52 @@ class AdwOrdTabDetails:
         return self.request
 
 
-class MiscsBookingFieldNumber(Enum):
-    BOOKING_FIELD_1 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_1
-    BOOKING_FIELD_2 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_2
-    BOOKING_FIELD_3 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_3
-    BOOKING_FIELD_4 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_4
-    BOOKING_FIELD_5 = order_ticket_pb2.MiscsBookingFieldNumber.BOOKING_FIELD_5
+class PartiesTabDetails:
+    def __init__(self):
+        self.request = order_ticket_pb2.PartiesTabDetails()
 
+    def set_custodian(self, value: str):
+        if value is not None:
+            self.request.custodian = value
 
-class MiscsAllocationsFieldNumber(Enum):
-    ALLOCATIONS_FIELD_1 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_1
-    ALLOCATIONS_FIELD_2 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_2
-    ALLOCATIONS_FIELD_3 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_3
-    ALLOCATIONS_FIELD_4 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_4
-    ALLOCATIONS_FIELD_5 = order_ticket_pb2.MiscsAllocationsFieldNumber.ALLOCATIONS_FIELD_5
+    def set_corespondent_broker(self, value: str):
+        if value is not None:
+            self.request.corespondentBroker = value
+
+    def set_give_up_broker(self, value: str):
+        if value is not None:
+            self.request.giveUpBroker = value
+
+    def set_trader_name(self, value: str):
+        if value is not None:
+            self.request.traderName = value
+
+    def set_inv_firm(self, value: str):
+        if value is not None:
+            self.request.invFirm = value
+
+    def set_exec_trader(self, value: str):
+        if value is not None:
+            self.request.execTrader = value
+
+    def set_inv_dec_mk(self, value: str):
+        if value is not None:
+            self.request.invDecMk = value
+
+    def set_client_id(self, value: str):
+        if value is not None:
+            self.request.clientId = value
+
+    def set_execution_firm(self, value: str):
+        if value is not None:
+            self.request.executionFirm = value
+
+    def set_sender_location(self, value: str):
+        if value is not None:
+            self.request.senderLocation = value
+
+    def build(self):
+        return self.request
 
 
 class MiscsOrdDetails:
@@ -221,6 +253,9 @@ class OrderTicketDetails:
         self.order.commissionsParams.CopyFrom(common_pb2.CommissionsDetails())
         return CommissionsDetails(self.order.commissionsParams)
 
+    def set_error_expected(self):
+        self.order.errorExpected = True
+
     def build(self):
         return self.order
 
@@ -235,6 +270,12 @@ class OrderTicketDetails:
 
     def set_miscs_details(self, miscs_details: MiscsOrdDetails):
         self.order.miscsOrderDetails.CopyFrom(miscs_details)
+
+    def set_settlement_details(self, settlement_details: SettlementTabDetails):
+        self.order.settlementDetails.CopyFrom(settlement_details)
+
+    def set_parties_details(self, parties_details: PartiesTabDetails):
+        self.order.partiesTabDetails.CopyFrom(parties_details)
 
 
 class FXOrderDetails:

@@ -172,11 +172,14 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
-    verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce', "OrdType"]
+    verifier_key_parameters_ER_2_child = ['ExDestination', 'OrdStatus', 'ExecType']
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_ER_2_Eliminate_child = ['OrdStatus', 'ExecType', 'TimeInForce']
+    verifier_key_parameters_ER_cancel_reject_child = ['Account', 'OrdStatus']
+    verifier_key_parameters_ER_cancel_reject_parent = ['ClOrdID', 'OrdStatus']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
+    verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
+    verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
+    verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
 
-
-class ClientAlgoPolicy(Enum):
-    qa_mpdark_2 = "QA_MPDark2"
-    qa_sorping = "QA_SORPING"

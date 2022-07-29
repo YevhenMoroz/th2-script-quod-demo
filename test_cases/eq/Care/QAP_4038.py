@@ -1,143 +1,112 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers, eq_fix_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from stubs import Stubs
 import time
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from rule_management import RuleManager, Simulators
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.order_book_wrappers import OrdersDetails
-
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_4038(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.qty = "100"
+        self.price1 = "50"
+        self.price2 = "40"
+        self.account1 = self.data_set.get_client_by_name('client_1')
+        self.account2 = self.data_set.get_client_by_name('client_2')
+        self.venue = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message_1 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message_1.change_parameters({'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price1,
+                                              "Account": self.account1, 'ExDestination': self.venue,
+                                              "Side": "2"})
+        self.fix_message_2 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message_2.change_parameters({'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price2,
+                                              "Account": self.account2, 'ExDestination': self.venue,
+                                              "Side": "1"})
+        self.client_for_rule1 = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.client_for_rule2 = self.data_set.get_venue_client_names_by_name('client_2_venue_1')
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.cl_ord_id = self.fix_message_1.get_parameter("ClOrdID")
 
-def execute(report_id, session_id):
-    case_name = "QAP-4038"
-    # region Declarations
 
-    qty = "1111"
-    price = "40"
-    lookup = "VETO"
-    client_for_first_order = "CLIENT_VSKULINEC"
-    client_for_second_order = "MOClient"
-    type_order = 'Limit'
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
 
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2, client_for_first_order, 2, qty, 0,
-                                                                          price)
-    response = fix_message.pop('response')
-    eq_wrappers.accept_order(lookup, qty, price)
-    # region set Disclose Flag
-    eq_wrappers.set_disclose_flag_via_order_book(base_request, [1], True)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        self.fix_manager.send_message_fix_standard(self.fix_message_1)
+        order_id_1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        self.fix_manager.send_message_fix_standard(self.fix_message_2)
+        order_id_2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # endregion
+        # region accept CO order
+        self.client_inbox.accept_order()
+        self.client_inbox.accept_order()
+        # endregion
+        # region set up disclose flag
+        self.order_book.set_disclose_flag_via_order_book('manual', [1,2])
+        # region split first order
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                 self.client_for_rule1,
+                                                                                 self.venue,
+                                                                                 float(self.price1))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                           self.client_for_rule1, self.venue,
+                                                                           float(self.price1), int(self.qty), delay=0)
+            self.order_ticket.split_order([OrderBookColumns.order_id.value, order_id_1])
+        finally:
+            time.sleep(2)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.client_for_rule2,
+                                                                                                  self.venue,
+                                                                                                  float(self.price2))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.client_for_rule2,
+                                                                                            self.venue,
+                                                                                            float(self.price2),
+                                                                                            int(self.qty), delay=0)
+            self.order_ticket.split_order([OrderBookColumns.order_id.value, order_id_2])
+        finally:
+            time.sleep(2)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
 
-    # region split order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_fix_wrappers.get_buy_connectivity(),
-                                                                             client_for_first_order + '_PARIS', 'XPAR',
-                                                                             float(price))
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_fix_wrappers.get_buy_connectivity(),
-                                                                       client_for_first_order + '_PARIS', 'XPAR',
-                                                                       float(price), int(qty), delay=0)
-        eq_wrappers.split_order(base_request, qty, type_order, price)
-
-    finally:
-        time.sleep(2)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(trade_rule)
-
-    # endregion
-    # endregion for first order
-
-    # region action with second order
-    fix_message_second_order = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 2,
-                                                                                       client_for_second_order, 2, qty, 0,
-                                                                                       price)
-    eq_wrappers.scroll_order_book(base_request, count=3)
-    response_second_order = fix_message_second_order.pop('response')
-    eq_wrappers.accept_order(lookup, qty, price)
-
-    # region set Disclose Flag
-    eq_wrappers.set_disclose_flag_via_order_book(base_request, [1], True)
-    # endregion
-
-    # region split order
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_fix_wrappers.get_buy_connectivity(),
-                                                                             client_for_second_order + '_PARIS', 'XPAR',
-                                                                             float(price))
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(eq_fix_wrappers.get_buy_connectivity(),
-                                                                       client_for_second_order + '_PARIS', 'XPAR',
-                                                                       float(price), int(qty), delay=0)
-        eq_wrappers.split_order(base_request, qty, type_order, price)
-
-    finally:
-        time.sleep(2)
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(trade_rule)
-    # endregion
-    # endregion second order
-
-    # region execution summary by average_price
-    eq_wrappers.mass_execution_summary_at_average_price(base_request, 2)
-    #
-    params = {
-        'OrderQty': qty,
-        'ExecType': 'B',
-        'Account': client_for_first_order,
-        'OrdStatus': 'B',
-        'Side': 2,
-        'Price': price,
-        'TimeInForce': 0,
-        'Expire Date': '*',
-        'VenueType' : 'O',
-        'ExecDestination': 'XPAR',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SettlDate': '*',
-        'SettlType': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'GrossTradeAmt': '*'
-    }
-
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'], direction='FIRST')
-
-    params['Account'] = client_for_second_order
-    params['ClOrdID'] = response_second_order.response_messages_list[0].fields['ClOrdID'].simple_value
-    fix_verifier_ss.CheckExecutionReport(params, response, key_parameters=['ClOrdID', 'ExecType'], direction='FIRST')
+        # region mass execution
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]]).mass_execution_summary_at_average_price(2)
+        # endregion
+        # verify tags by minifix gtw
+        self.exec_report.set_default_calculated(self.fix_message_1)
+        self.exec_report.change_parameters({"AvgPx": self.price1})
+        self.fix_verifier.check_fix_message(self.exec_report)
+        self.exec_report.set_default_calculated(self.fix_message_2)
+        self.exec_report.change_parameters({"AvgPx": self.price2})
+        self.exec_report.remove_parameter("VenueType")
+        self.fix_verifier.check_fix_message(self.exec_report)
+        # endregion

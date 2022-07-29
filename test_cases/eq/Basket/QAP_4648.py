@@ -1,85 +1,78 @@
-import logging
 import os
-
+import logging
+from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageListStatusOMS import FixMessageListStatusOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import FixMessageOrderCancelReplaceRequestOMS
-from stubs import Stubs
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_4648(TestCase):
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.message = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.new_price = "456"
 
-    def qap_4648(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        cl_inbox = OMSClientInbox(self.case_id, self.session_id)
-        main_window = BaseMainWindow(self.case_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        lokup = "VETO"
-        qty = "100"
-        price = "20"
-        new_price = "1"
-        # endregion
-        # region Open FE
-        main_window.open_fe(self.report_id, work_dir, username, password)
-        # endregion
         # region Send NewOrderList
-        nol = FixMessageNewOrderListOMS().set_default_order_list()
-        fix_manager.send_message_and_receive_response_fix_standard(nol)
+        self.fix_manager.send_message_fix_standard(self.message)
         # endregion
         # region Set-up parameters for ListStatus
-        list_status = FixMessageListStatusOMS().set_default_list_status(nol)
+        list_status = FixMessageListStatusOMS().set_default_list_status(self.message)
         # endregion
         # region Check ListStatus
-        fix_verifier.check_fix_message_fix_standard(list_status)
+        self.fix_verifier.check_fix_message_fix_standard(list_status)
         # endregion
         # region Accept orders
-        cl_inbox.accept_order(lokup, qty, price)
-        cl_inbox.accept_order(lokup, qty, price)
+        self.cl_inbox.accept_order()
+        self.cl_inbox.accept_order()
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new_list(nol)
-        exec_report2 = FixMessageExecutionReportOMS().set_default_new_list(nol, 1)
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message)
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message, 1)
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report1)
-        fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
         # endregion
         # region Send OrderCancelReplaceRequest
-
-        rep_req = FixMessageOrderCancelReplaceRequestOMS().set_default(nol).change_parameters({'Price': new_price})
-        fix_manager.send_message_and_receive_response_fix_standard(rep_req)
+        rep_req = FixMessageOrderCancelReplaceRequestOMS(self.data_set).set_default_ord_list(self.message)
+        rep_req.change_parameter('Price', self.new_price)
+        self.fix_manager.send_message_fix_standard(rep_req)
+        self.cl_inbox.accept_modify_plus_child()
         # endregion
         # region Set-up parameters for ExecutionReports
-        exec_report3 = FixMessageExecutionReportOMS().set_default_replaced_list(nol).change_parameters({'Price': new_price})
+        exec_report3 = FixMessageExecutionReportOMS(self.data_set).set_default_replaced_list(self.message)
+        exec_report3.change_parameter('Price', self.new_price)
+        exec_report3.change_parameter('SettlDate', "*")
+        exec_report3.change_parameter('SettlType', "*")
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        self.fix_verifier.check_fix_message_fix_standard(exec_report3, key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
         # endregion
 
-    #@try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_4648()
+
 
 

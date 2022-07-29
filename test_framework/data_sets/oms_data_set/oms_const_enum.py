@@ -88,11 +88,16 @@ class OmsClients(Enum):
     """Commissions"""
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
+    client_fees_1 = "CLIENT_FEES_1"
+    """Counterparts"""
+    client_counterpart_1 = "CLIENT_COUNTERPART"
+    client_counterpart_2 = "CLIENT_COUNTERPART2"
 
 
 class OmsVenueClientNames(Enum):
     """Base"""
     client_1_venue_1 = "XPAR_CLIENT1"
+    client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
@@ -110,6 +115,10 @@ class OmsVenueClientNames(Enum):
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
     """Commissions"""
     client_com_1_venue_2 = "CLIENT_COMM_1_EUREX"
+    """Counterparts"""
+    client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
+    client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
+    client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
 
 
 class OmsAccounts(Enum):
@@ -143,6 +152,15 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
+    client_fees_1_acc_1 =  "CLIENT_FEES_1_SA_1"
+    """Counterparts"""
+    client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
+    client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
+
+
+class AlgoParametersExternal(Enum):
+    parameter_name = "ParameterName"
+    parameter_value = "ParameterValue"
 
 
 class OmsWashbookAccounts(Enum):
@@ -248,6 +266,7 @@ class OMSFee(Enum):
     fee1 = 1
     fee2 = 2
     fee3 = 3
+    fee_vat = 11
 
 
 class OMSCommission(Enum):
@@ -307,6 +326,7 @@ class OMSMatchStatus(Enum):
 class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
+    synthetic = 'Synth'
 
 
 class OMSTimeInForce(Enum):
@@ -320,3 +340,15 @@ class OMSOrdType(Enum):
 
 class OMSCapacity(Enum):
     agency = 'Agency'
+
+
+class OMSBagStrategy(Enum):
+    internal_twap = "Quod Financial Internal TWAP"
+
+
+class OMSBagScenario(Enum):
+    twap_strategy = "TWAP strategy"
+
+
+class OMSVenueID(Enum):
+    paris = "PARIS"

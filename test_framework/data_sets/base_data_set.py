@@ -53,6 +53,9 @@ class BaseDataSet:
     middle_office_status = None
     middle_office_match_status = None
     capacity = None
+    scenario = None
+    strategy = None
+    market_ids = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -378,6 +381,15 @@ class BaseDataSet:
             return getattr(self.algo_policies_id, name).value
         raise ValueError(f"{self.algo_policies_id} not found!")
 
+    def get_market_id_by_name(self, name: str):
+        """
+        get Market ID by name from FxMarketIDs
+        example ---> get_market_id_by_name("market_1"):
+        """
+        if hasattr(self.market_ids, name):
+            return getattr(self.market_ids, name).value
+        raise ValueError(f"{self.market_ids} not found!")
+
     # endregion
 
     def get_lookup_by_name(self, name: str):
@@ -393,7 +405,7 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        raise ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.venue_client_accounts} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
@@ -471,6 +483,16 @@ class BaseDataSet:
         if hasattr(self.middle_office_match_status, name):
             return getattr(self.middle_office_match_status, name).value
         raise ValueError(f"{self.middle_office_match_status} not found!")
+
+    def get_strategy(self, name: str):
+        if hasattr(self.strategy, name):
+            return getattr(self.strategy, name).value
+        raise ValueError(f"{self.strategy} not found!")
+
+    def get_scenario(self, name: str):
+        if hasattr(self.scenario, name):
+            return getattr(self.scenario, name).value
+        raise ValueError(f"{self.scenario} not found!")
 
     # region WebAdmin getters
 

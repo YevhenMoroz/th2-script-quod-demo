@@ -21,6 +21,10 @@ class LocationsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
+    ZONES_NAME_COLUMN_XPATH = '//*[@col-id="zone.zoneName"][@tabindex="-1"]//span[@ref="eValue"]'
+    LOCATIONS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_ZONE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'

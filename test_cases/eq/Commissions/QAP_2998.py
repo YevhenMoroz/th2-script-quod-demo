@@ -16,7 +16,7 @@ from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_2998(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -43,6 +43,7 @@ class QAP_2998(TestCase):
         self.__send_fix_order()
         self.__verify_commissions()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __send_fix_order(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
         try:
@@ -52,7 +53,7 @@ class QAP_2998(TestCase):
                 int(self.qty), 1)
 
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
-                "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+                "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
                  'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
 
@@ -61,6 +62,7 @@ class QAP_2998(TestCase):
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __verify_commissions(self):
         order_id = self.response[0].get_parameter("OrderID")
         self.trades.set_filter([TradeBookColumns.order_id.value, order_id])

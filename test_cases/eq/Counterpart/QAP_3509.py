@@ -1,95 +1,111 @@
 import logging
-import os
 import time
-
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from test_framework.fix_wrappers.DataSet import Instrument
+from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_window import try_except
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_3509(TestCase):
-    def __init__(self, report_id, session_id):
-        super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
-        self.dc_connectivity = SessionAliasOMS().dc_connectivity
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
+        self.client = self.data_set.get_client_by_name("client_counterpart_1")
+        self.mic = self.data_set.get_mic_by_name("mic_2")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.cur = self.data_set.get_currency_by_name("currency_3")
+        self.cur_for_check = self.data_set.get_currency_by_name("currency_2")
+        self.change_params = {'Account': self.client,
+                              "Currency": self.cur,
+                              'ExDestination': self.mic,
+                              'PreAllocGrp': {
+                                  'NoAllocs': [{
+                                      'AllocAccount': self.account,
+                                      'AllocQty': "100"}]}, }
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter("Price")
+        self.fix_message.change_parameters(self.change_params)
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
 
-    def qap_3509(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
         # region Declaration
-        fix_manager = FixManager(self.ss_connectivity, self.report_id)
-        fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
-        client = "CLIENT_COUNTERPART"
-        account = "CLIENT_COUNTERPART_SA1"
-        # endregion
         # region DMA order
-        change_params = {'Account': client,
-                         'ExDestination': 'XEUR',
-                         'PreAllocGrp': {
-                             'NoAllocs': [{
-                                 'AllocAccount': account,
-                                 'AllocQty': "100"}]}, }
-        nos = FixMessageNewOrderSingleOMS().set_default_dma_limit(Instrument.ISI1).change_parameters(change_params)
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             client + "_EUREX", "XEUR",
-                                                                                             20)
-            trade_rele = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       client + "_EUREX", "XEUR", 20,
-                                                                                       100, 2)
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.client_for_rule,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            trade_rele = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.client_for_rule,
+                                                                                            self.mic, int(self.price),
+                                                                                            int(self.qty), 2)
 
-            fix_manager.send_message_and_receive_response_fix_standard(nos)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
             time.sleep(1)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rele)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rele)
         # endregion
         # region Set-up parameters for ExecutionReports
         parties = {
             'NoPartyIDs': [
-                {'PartyRole': "*",
+                {'PartyRole': "67",
                  'PartyID': "InvestmentFirm - ClCounterpart_SA1",
                  'PartyIDSource': "C"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"}
+                {'PartyRole': "36",
+                 "PartyRoleQualifier": "1011",
+                 'PartyID': "gtwquod4",
+                 'PartyIDSource': "D"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
+                 'PartyIDSource': "C"}
             ]
         }
-        exec_report1 = FixMessageExecutionReportOMS().set_default_new(nos).change_parameters({"Parties": parties})
-        exec_report2 = FixMessageExecutionReportOMS().set_default_filled(nos).change_parameters({"Parties": parties})
+        exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
+            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Currency": self.cur})
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
+            self.fix_message).change_parameters(
+            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account":self.account, "Currency": self.cur})
+        exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
-        fix_verifier.check_fix_message_fix_standard(exec_report1)
-        fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
         # endregion
         # region Set-up parameters Confirmation report
         no_party = {
-            'NoParty': parties['NoPartyIDs']
+            'NoParty': [
+                {'PartyRole': "67",
+                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "66",
+                 'PartyID': "MarketMaker - TH2Route",
+                 'PartyIDSource': "C"}
+            ]
         }
-        conf_report = FixMessageConfirmationReportOMS().set_default_confirmation_new(nos).change_parameters(
-            {"NoParty": no_party})
+        conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
+            self.fix_message).change_parameters(
+            {"NoParty": no_party, "Account": self.client, "tag5120": "*", "AllocAccount": self.account, "Currency": self.cur_for_check, "AvgPx": "*"})
         # endregion
         # region Check Book & Allocation
-        fix_verifier_dc.check_fix_message_fix_standard(conf_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
-
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_3509()
