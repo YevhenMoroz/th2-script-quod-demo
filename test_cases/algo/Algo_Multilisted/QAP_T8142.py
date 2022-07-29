@@ -151,7 +151,6 @@ class QAP_T8142(TestCase):
 
         # region check eliminate first dma child order
         er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
-        er_eliminate_dma_1_xpar_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Price', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_1_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate Aggressive Child DMA 1 order")
         # endregion
 
