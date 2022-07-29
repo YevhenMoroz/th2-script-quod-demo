@@ -547,5 +547,8 @@ class MassApproveDetails:
         for number in rows_numbers:
             self._request.rowsNumbers.append(number)
 
+    def set_filter(self, filter_dict: dict):
+        self._request.filter.update(filter_dict)
+
     def build(self):
         return self._request

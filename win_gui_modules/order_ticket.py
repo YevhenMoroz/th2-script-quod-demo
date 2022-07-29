@@ -564,7 +564,7 @@ class AllocationsGridRowDetails:
             self.request.percentage = percentage
 
         if alt_account is not None:
-            self.request.alt_account = alt_account
+            self.request.altAccount = alt_account
 
     def set_account(self, account: str):
         if account is not None:
