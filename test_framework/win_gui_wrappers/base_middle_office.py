@@ -35,6 +35,7 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_allocate_call = None
         self.mass_unallocate_call = None
         self.extract_value_from_tab_of_allocation_ticket_call = None
+        self.override_confirmation_service_call = None
 
     # endregion
     # region Common func
@@ -364,3 +365,8 @@ class BaseMiddleOffice(BaseWindow):
         error = call(self.book_order_call, self.modify_ticket_details.build())
         self.clear_details(self.modify_ticket_details)
         return error
+
+    def override_confirmation_service(self, filter_dict: dict):
+        self.mass_approve_details.set_filter(filter_dict)
+        call(self.override_confirmation_service_call, self.mass_approve_details.build())
+        self.clear_details([self.mass_approve_details])

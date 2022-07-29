@@ -33,4 +33,5 @@ class OMSMiddleOffice(BaseMiddleOffice):
         self.mass_allocate_call = Stubs.win_act_middle_office_service.massAllocate
         self.mass_unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
         self.extract_value_from_tab_of_allocation_ticket_call = Stubs.win_act_middle_office_service.extractAllocationBlockValuesAllocationTicket
+        self.override_confirmation_service_call = Stubs.win_act_middle_office_service.overrideConfirmationService
         # endregion
