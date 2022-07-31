@@ -126,6 +126,6 @@ class QAP_T2903(TestCase):
         time.sleep(5)
         self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
         self.fix_manager_sel.send_message(self.quote_cancel)
-        self.dealer_intervention.check_assigned_fields({"Status": "Canceled"}) #шото не тот статус дает терминейтед
+        self.dealer_intervention.check_assigned_fields({"Status": "Canceled"})
         self.dealer_intervention.close_window()
         # endregion
