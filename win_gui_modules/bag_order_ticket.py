@@ -286,6 +286,12 @@ class OrderBagCreationDetails:
     def set_order_bag_ticket_details(self, order: BagOrderTicketDetails):
         self.order_bag_creation.orderBagTicketDetails.CopyFrom(order.build())
 
+    def set_is_order_book(self, is_order_book=True):
+        self.order_bag_creation.isOrderBook = is_order_book
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_creation.filter.update(filter_dict)
+
     def build(self):
         return self.order_bag_creation
 
