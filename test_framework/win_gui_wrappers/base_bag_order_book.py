@@ -207,12 +207,19 @@ class BaseBagOrderBook(BaseWindow):
         self.clear_details([self.bag_wave_creation])
 
     # endregion
-    def create_bag_details(self, rows_list: list, name_of_bag: str, price: str = None):
+    def create_bag_details(self, rows_list: list, name_of_bag: str, price: str = None, is_order_book=True,
+                           filter_dict: dict = None):
         self.order_bag_creation_details.set_rows(rows_list)
+        if is_order_book:
+            self.order_bag_creation_details.set_is_order_book(is_order_book)
+        else:
+            self.order_bag_creation_details.set_is_order_book(is_order_book)
         if price:
             self.bag_book_details.set_price(price)
         if name_of_bag:
             self.bag_book_details.set_name(name_of_bag)
+        if filter_dict:
+            self.order_bag_creation_details.set_filter(filter_dict)
         self.order_bag_creation_details.set_order_bag_ticket_details(deepcopy(self.bag_book_details))
         self.clear_details([self.bag_book_details])
 
