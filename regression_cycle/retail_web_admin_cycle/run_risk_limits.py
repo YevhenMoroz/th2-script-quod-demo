@@ -2,7 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.retail_web_admin_test_cases.risk_limits.QAP_4319 import QAP_4319
+from test_cases.web_admin.retail_web_admin_test_cases.risk_limits.QAP_T3729 import QAP_T3729
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -17,8 +17,8 @@ class RunRiskLimits:
     def execute(self):
         try:
             start_time = time.monotonic()
-            #QAP_4279(self.web_driver_container, self.second_lvl_id).run()
-            QAP_4319(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3768(self.web_driver_container, self.second_lvl_id).run()
+            QAP_T3729(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Risk Limits retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

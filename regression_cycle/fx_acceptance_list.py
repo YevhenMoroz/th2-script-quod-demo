@@ -1,13 +1,13 @@
-from test_cases.fx.fx_mm_autohedging import QAP_3082, QAP_2470, QAP_3146, QAP_3147, import_AH_layout
-from test_cases.fx.fx_mm_esp import QAP_1418, QAP_2069, QAP_1536, QAP_2796, QAP_1518, QAP_1559, QAP_1558, QAP_2825, \
-    QAP_2797, QAP_2078, QAP_2075, QAP_2082
-from test_cases.fx.fx_mm_positions import QAP_1898, import_position_layout, QAP_1897, QAP_1895, QAP_1896
-from test_cases.fx.fx_mm_rfq import QAP_T2940, QAP_T2906, QAP_T2969, QAP_3005, QAP_T2716
-from test_cases.fx.fx_mm_rfq.QAP_3250 import QAP_3250
-from test_cases.fx.fx_mm_rfq.interpolation import QAP_3734, QAP_3805, QAP_3766
-from test_cases.fx.fx_mm_synthetic import QAP_2646
-from test_cases.fx.fx_taker_esp import QAP_3140
-from test_cases.fx.fx_taker_rfq import QAP_568, QAP_569, QAP_574, QAP_2826, QAP_2835, QAP_2847, QAP_2836, QAP_3002, \
+from test_cases.fx.fx_mm_autohedging import QAP_T2697, QAP_T2821, QAP_T2682, QAP_T2681, import_AH_layout
+from test_cases.fx.fx_mm_esp import QAP_T2986, QAP_T2902, QAP_T2980, QAP_T2759, QAP_T2983, QAP_T2965, QAP_T2966, QAP_T2749, \
+    QAP_T2758, QAP_T2897, QAP_2075, QAP_T2893
+from test_cases.fx.fx_mm_positions import QAP_T2932, import_position_layout, QAP_T2933, QAP_T2935, QAP_T2934
+from test_cases.fx.fx_mm_rfq import QAP_T2940, QAP_T2906, QAP_T2969, QAP_T2714, QAP_T2716
+from test_cases.fx.fx_mm_rfq.QAP_T2677 import QAP_T2677
+from test_cases.fx.fx_mm_rfq.interpolation import QAP_T2596, QAP_T2575, QAP_T2580
+from test_cases.fx.fx_mm_synthetic import QAP_T2782
+from test_cases.fx.fx_taker_esp import QAP_T2685
+from test_cases.fx.fx_taker_rfq import QAP_T3071, QAP_T3070, QAP_T3065, QAP_T2748, QAP_T2747, QAP_T2744, QAP_T2746, QAP_T2717, \
     import_rfq_taker_layout
 from stubs import Stubs
 import logging
@@ -37,14 +37,14 @@ def test_run(parent_id=None):
 
             # region RFQ taker
             import_rfq_taker_layout.execute(report_id, session_id)
-            QAP_568.execute(report_id, session_id)
-            QAP_569.execute(report_id, session_id)
-            QAP_574.execute(report_id, session_id)
-            QAP_2826.execute(report_id, session_id)
-            QAP_2835.execute(report_id, session_id)
-            QAP_2847.execute(report_id, session_id)
-            QAP_2836.execute(report_id, session_id)
-            QAP_3002.execute(report_id, session_id)
+            QAP_T3071.execute(report_id, session_id)
+            QAP_T3070.execute(report_id, session_id)
+            QAP_T3065.execute(report_id, session_id)
+            QAP_T2748.execute(report_id, session_id)
+            QAP_T2747.execute(report_id, session_id)
+            QAP_T2744.execute(report_id, session_id)
+            QAP_T2746.execute(report_id, session_id)
+            QAP_T2717.execute(report_id, session_id)
             # endregion
 
             # region ESP taker
@@ -52,42 +52,42 @@ def test_run(parent_id=None):
             # endregion
 
             # region ESP maker
-            QAP_1418.execute(report_id, session_id)
-            QAP_1518.execute(report_id)
-            QAP_1536.execute(report_id, session_id)
-            QAP_1558.execute(report_id)
-            QAP_1559.execute(report_id)
-            QAP_2069.execute(report_id, session_id)
+            QAP_T2986.execute(report_id, session_id)
+            QAP_T2983.execute(report_id)
+            QAP_T2980.execute(report_id, session_id)
+            QAP_T2966.execute(report_id)
+            QAP_T2965.execute(report_id)
+            QAP_T2902.execute(report_id, session_id)
             QAP_2075.execute(report_id, report_id)
-            QAP_2078.execute(report_id)
-            QAP_2082.execute(report_id)
-            QAP_2646.execute(report_id, session_id)
-            QAP_2797.execute(report_id)
-            QAP_2796.execute(report_id, session_id)
-            QAP_2825.execute(report_id, session_id)
-            QAP_3140.execute(report_id, session_id)
+            QAP_T2897.execute(report_id)
+            QAP_T2893.execute(report_id)
+            QAP_T2782.execute(report_id, session_id)
+            QAP_T2758.execute(report_id)
+            QAP_T2759.execute(report_id, session_id)
+            QAP_T2749.execute(report_id, session_id)
+            QAP_T2685.execute(report_id, session_id)
             # endregion
 
             # region RFQ maker
-            QAP_1552.execute(report_id)
-            QAP_1746.execute(report_id)
-            QAP_2062.execute(report_id, report_id)
-            QAP_3003.execute(report_id)
-            QAP_3005.execute(report_id, report_id)
-            QAP_3250(report_id, session_id, configuration.data_set, configuration.environment).execute()
-            QAP_3734.execute(report_id, report_id)
-            QAP_3766.execute(report_id)
-            QAP_3805.execute(report_id)
+            QAP_T2969.execute(report_id)
+            QAP_T2940.execute(report_id)
+            QAP_T2906.execute(report_id, report_id)
+            QAP_T2716.execute(report_id)
+            QAP_T2714.execute(report_id, report_id)
+            QAP_T2677(report_id, session_id, configuration.data_set, configuration.environment).execute()
+            QAP_T2596.execute(report_id, report_id)
+            QAP_T2580.execute(report_id)
+            QAP_T2575.execute(report_id)
             # endregion
 
             # region AutoHedger
-            QAP_3082.execute(report_id, session_id)
-            QAP_2470.execute(report_id, session_id)
+            QAP_T2697.execute(report_id, session_id)
+            QAP_T2821.execute(report_id, session_id)
             # endregion
 
             # region Position
             import_position_layout.execute(report_id, session_id)
-            QAP_1898.execute(report_id, session_id)
+            QAP_T2932.execute(report_id, session_id)
             # endregion
     except Exception:
         logging.error("Error execution", exc_info=True)

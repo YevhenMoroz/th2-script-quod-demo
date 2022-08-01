@@ -17,7 +17,7 @@ def execute(report_id):
     verifier = Stubs.verifier
 
     seconds, nanos = bca.timestamps()  # Store case start time
-    case_name = "QAP-2462"
+    case_name = "QAP_T5066"
     case_id = bca.create_event(case_name, report_id)  # Create sub-report for case
 
     case_params = {
