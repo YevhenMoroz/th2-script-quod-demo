@@ -492,10 +492,11 @@ class BaseOrderBook(BaseWindow):
     Method extracting values from Booking Ticket
     '''
 
-    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
+    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict, count_of_rows: int = 1):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
-                                                               panel_of_extraction
+                                                               panel_of_extraction,
+                                                               count_of_rows
                                                                )
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
         return result
@@ -741,15 +742,10 @@ class BaseOrderBook(BaseWindow):
         call(self.edit_quick_button_call, self.quick_button_details.build())
         self.clear_details([self.quick_button_details])
 
-    def click_quick_button(self, btn_name: str,order_id: str, qty: str = None):
+    def click_quick_button(self, btn_name: str, order_id: str, qty: str = None):
         self.quick_button_details.set_btn_name(btn_name)
         self.quick_button_details.set_order_id(order_id)
         if qty is not None:
             self.quick_button_details.set_qty(qty)
         call(self.click_quick_button_call, self.quick_button_details.build())
         self.clear_details([self.quick_button_details])
-
-
-
-
-

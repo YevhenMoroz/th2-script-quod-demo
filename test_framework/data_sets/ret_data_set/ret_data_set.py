@@ -1,7 +1,8 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.ret_data_set.ret_const_enum import RetTradingApiInstruments, RetInstruments,\
     RetInstrumentID, RetCurrency, RetSettlCurrency, RetVenues, RetClients, RetAccounts, RetWashbookAccounts,\
-    RetRecipients,RetWashBookRules, RetCashAccounts, RetRiskLimitDimensions, RetCashAccountCounters
+    RetRecipients,RetWashBookRules, RetCashAccounts, RetRiskLimitDimensions, RetCashAccountCounters,\
+    RetWebAdminRestApiUsers, RetCashTransferTypes
 
 
 class RetDataSet(BaseDataSet):
@@ -21,4 +22,6 @@ class RetDataSet(BaseDataSet):
     washbook_accounts = RetWashbookAccounts
     washbook_rules = RetWashBookRules
     recipients = RetRecipients
+    web_admin_rest_api_users = RetWebAdminRestApiUsers
     risk_limit_dimensions = RetRiskLimitDimensions
+    cash_transfer_types = RetCashTransferTypes

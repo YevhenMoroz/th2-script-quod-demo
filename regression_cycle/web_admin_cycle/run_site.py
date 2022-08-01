@@ -29,7 +29,11 @@ from test_cases.web_admin.web_admin_test_cases.site.QAP_5586 import QAP_5586
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5640 import QAP_5640
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5681 import QAP_5681
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5682 import QAP_5682
+from test_cases.web_admin.web_admin_test_cases.site.QAP_5687 import QAP_5687
+from test_cases.web_admin.web_admin_test_cases.site.QAP_5692 import QAP_5692
+from test_cases.web_admin.web_admin_test_cases.site.QAP_5694 import QAP_5694
 from test_cases.web_admin.web_admin_test_cases.site.QAP_5695 import QAP_5695
+from test_cases.web_admin.web_admin_test_cases.site.QAP_5699 import QAP_5699
 from test_cases.web_admin.web_admin_test_cases.site.QAP_6346 import QAP_6346
 
 
@@ -70,7 +74,15 @@ class RunSite:
                      environment=configuration.environment).run()
             QAP_5682(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_5687(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5692(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5694(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
             QAP_5695(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_5699(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
 
             # WA ATs

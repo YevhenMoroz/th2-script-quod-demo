@@ -360,7 +360,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_min_value_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'Account': self.get_data_set().get_account_by_name('account_2'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -376,19 +376,14 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TargetStrategy": "2",
             'NoStrategyParameters': [
                 {
-                    'StrategyParameterName': 'Aggressivity',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '1'
-                },
-                {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
-                    'StrategyParameterValue': '10'
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.9'
                 },
                 {
                     'StrategyParameterName': 'ChildMinValue',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '10'
+                    'StrategyParameterValue': '150'
                 }
             ]
         }
@@ -489,26 +484,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_Iceberg_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": "XPAR_CLIENT2",
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': "XPAR",
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def set_MPDark_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
@@ -588,7 +563,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1008',
-            'ClientAlgoPolicyID': 'QA_SORPING_2',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'MinQty': '100'
@@ -661,7 +636,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_SORPING_Iceberg_params(self):
+    def set_LitDark_Iceberg_params(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -676,12 +651,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'Currency': 'EUR',
             'TargetStrategy': '1011',
-            # 'ClientAlgoPolicyID': 'QA_SORPING',
-            # 'IClOrdIdAO': 'OD_5fgfDXg-00',
-            # 'ShortCode': '17536',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_LitDark_Iceberg_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -701,7 +693,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_SORPING_1',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536'
         }
@@ -744,6 +736,50 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TimeInForce': '0',
             "TransactTime": '*',
             'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_13'),
+            'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_ME_Y',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Child_of_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_13'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL6',
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',

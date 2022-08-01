@@ -14,7 +14,9 @@ class BaseDataSet:
     washbook_accounts = None
     washbook_rules = None
     recipients = None
+    web_admin_rest_api_users = None
     risk_limit_dimensions = None
+    cash_transfer_types = None
     listing_id = None
     mic = None  # Market Identifier Code
     currency = None
@@ -173,9 +175,17 @@ class BaseDataSet:
         if self.recipients:
             return self.recipients.__members__
 
+    def get_web_admin_rest_api_users(self):
+        if self.web_admin_rest_api_users:
+            return self.web_admin_rest_api_users.__members__
+
     def get_risk_limit_dimensions(self):
         if self.accounts:
             return self.accounts.__members__
+
+    def get_cash_transfer_types(self):
+        if self.cash_transfer_types:
+            return self.cash_account_counters.__members__
 
     def get_trading_api_instrument_by_name(self, name: str):
         if hasattr(self.trading_api_instruments, name):
@@ -227,10 +237,20 @@ class BaseDataSet:
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
 
+    def get_web_admin_rest_api_users_by_name(self, name: str):
+        if hasattr(self.web_admin_rest_api_users, name):
+            return getattr(self.web_admin_rest_api_users, name).value
+        raise ValueError(f"{self.web_admin_rest_api_users} not found!")
+
     def get_risk_limit_dimension_by_name(self, name: str):
         if hasattr(self.risk_limit_dimensions, name):
             return getattr(self.risk_limit_dimensions, name).value
         raise ValueError(f"{self.risk_limit_dimensions} not found!")
+
+    def get_cash_transfer_types_by_name(self, name: str):
+        if hasattr(self.cash_transfer_types, name):
+            return getattr(self.cash_transfer_types, name).value
+        raise ValueError(f"{self.cash_transfer_types} not found!")
 
     def get_listing_id_by_name(self, name: str):
         if hasattr(self.listing_id, name):

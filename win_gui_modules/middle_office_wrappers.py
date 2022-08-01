@@ -26,6 +26,9 @@ class TicketDetails:
     def set_agreed_price(self, agreed_price: str):
         self.request.agreedPrice = agreed_price
 
+    def set_net_price(self, net_price):
+        self.request.net_price = net_price
+
     def build(self):
         return self.request
 
@@ -45,6 +48,8 @@ class ExtractionField(Enum):
     SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.SETTLEMENT_TYPE
     BLOCK_SETTLEMENT_TYPE = middle_office_pb2.ExtractionDetails.ExtractionField.BLOCK_SETTLEMENT_TYPE
     IS_MANUAL_TOGGLED = middle_office_pb2.ExtractionDetails.ExtractionField.IS_MANUAL_TOGGLED
+    FEES_TAB = middle_office_pb2.ExtractionDetails.ExtractionField.FEES_TAB
+    COMMISSIONS_TAB = middle_office_pb2.ExtractionDetails.ExtractionField.COMMISSIONS_TAB
 
 
 class ExtractionDetails:
@@ -86,6 +91,12 @@ class ExtractionDetails:
 
     def extract_block_settlement_type(self, name: str):
         self.extract_value(ExtractionField.BLOCK_SETTLEMENT_TYPE, name)
+
+    def extract_fees_row(self, name):
+        self.extract_value(ExtractionField.FEES_TAB, name)
+
+    def extract_commission_row(self, name):
+        self.extract_value(ExtractionField.COMMISSIONS_TAB, name)
 
     def extract_value(self, field: ExtractionField, name: str):
         extracted_value = middle_office_pb2.ExtractionDetails.ExtractionParam()
@@ -172,6 +183,9 @@ class OrderDetails:
     def add_extraction_details(self, details: list):
         for detail in details:
             self.add_extraction_detail(detail)
+
+    def clear_filter_from_book(self):
+        self.request.clearBlockFilter = True
 
 
 class ViewOrderExtractionDetails:
@@ -340,6 +354,9 @@ class ModifyTicketDetails:
         self._request.checkContextAction.CopyFrom(common_pb2.CheckContextActionDetails())
         return CheckContextAction(self._request.checkContextAction)
 
+    def clear_filter(self):
+        self._request.clearMiddleOfficeFilter = True
+
     def build(self):
         return self._request
 
@@ -433,7 +450,7 @@ class AllocationsTableCheckDetails:
 
 
 class ExtractionPanelDetails:
-    def __init__(self, base: EmptyRequest = None, filter: dict = None, panels: list = None):
+    def __init__(self, base: EmptyRequest = None, filter: dict = None, panels: list = None, count_of_rows: int = None):
         if base is not None:
             self._request = middle_office_pb2.ExtractionPanelDetails(base=base)
         else:
@@ -446,6 +463,9 @@ class ExtractionPanelDetails:
             for panel in panels:
                 self._request.panels.append(panel)
 
+        if count_of_rows:
+            self._request.count_of_rows = count_of_rows
+
     def set_default_params(self, base_request):
         self._request.base.CopyFrom(base_request)
 
@@ -455,6 +475,9 @@ class ExtractionPanelDetails:
     def set_panels(self, panels: list):
         for panel in panels:
             self._request.panels.append(panel)
+
+    def set_count_of_rows(self, count: int):
+        self._request.count_of_rows = count
 
     def build(self):
         return self._request
@@ -523,6 +546,9 @@ class MassApproveDetails:
     def set_rows_number(self, rows_numbers: list):
         for number in rows_numbers:
             self._request.rowsNumbers.append(number)
+
+    def set_filter(self, filter_dict: dict):
+        self._request.filter.update(filter_dict)
 
     def build(self):
         return self._request

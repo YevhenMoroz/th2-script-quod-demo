@@ -1,485 +1,190 @@
 import os
-import logging
 import time
 from datetime import datetime, timedelta
-from copy import deepcopy
+from pathlib import Path
+
+from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID, TemplateQuodOCRRule, TemplateQuodOCRRRule, TemplateQuodNOSRule
-from th2_grpc_common.common_pb2 import ConnectionID, Direction
-from test_framework.old_wrappers.fix_manager import FixManager
-from test_framework.old_wrappers.fix_message import FixMessage
-from test_framework.old_wrappers.fix_verifier import FixVerifier
 from rule_management import RuleManager
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
-    
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.core.test_case import TestCase
+from test_framework.data_sets import constants
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
+class QAP_2478(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, data_set=None, environment=None):
+        super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-qty = 1000
-text_pn='Pending New status'
-text_n='New status'
-text_ocrr='OCRRRule'
-text_c='order canceled'
-text_f='Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
-side = 1
-price = 1
-tif_day = 0
-tif_ioc = 3
-ex_destination_1 = "XPAR"
-client = "CLIENT2"
-order_type = 2
-account = 'XPAR_CLIENT2'
-currency = 'EUR'
-s_par = '1015'
+        self.fix_env1 = self.environment.get_list_fix_environment()[0]
 
+        # region th2 components
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        # endregion
 
-case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-bs-310-columbia"
-connectivity_sell_side = "fix-ss-310-columbia-standart"
-connectivity_fh = 'fix-fh-310-columbia'
+        # region order parameters
+        self.order_type = constants.OrderType.Limit.value
+        self.qty = 100
+        self.price = 1
+        self.price_ask = 40
+        self.price_bid = 30
+        self.qty_bid = self.qty_ask = 1_000_000
+        self.tif_day = constants.TimeInForce.Day.value
+        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.slice1_qty, self.slice2_qty = AlgoFormulasManager.get_all_twap_slices(self.qty, 2)
+        self.waves = 2
+        self.aggressivity = 1
+        # endregion
 
-instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        }
+        # region Gateway Side
+        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_sell = GatewaySide.Sell
+        # endregion
 
-def rule_creation():
-    rule_manager = RuleManager()
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
-    return [nos_rule, ocrr_rule, ocr_rule]
+        # region Status
+        self.status_pending = Status.Pending
+        self.status_new = Status.New
+        self.status_cancel_replace = Status.CancelReplace
+        self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
+        # endregion
 
+        # region instrument
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
+        # endregion
 
-def rule_destroyer(list_rules):
-    if list_rules != None:
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
+
+        # region venue param
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.s_par = self.data_set.get_listing_id_by_name("listing_1")
+        # endregion
+
+        # region Key parameters
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
+        # endregion
+
+        self.rule_list = []
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Rule creation
         rule_manager = RuleManager()
-        for rule in list_rules:
-            rule_manager.remove_rule(rule)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
+        self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
+        # endregion
 
-
-def send_market_data(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
-
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
-
-
-def execute(report_id):
-    try:
         now = datetime.today() - timedelta(hours=3)
+        start_time = now.strftime("%Y%m%d-%H:%M:%S")
+        end_time = (now + timedelta(minutes=2)).strftime("%Y%m%d-%H:%M:%S")
+
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+
+        time.sleep(3)
+        # endregion
+
+        # region Send NewOrderSingle (35=D) for TWAP order
+        case_id_1 = bca.create_event("Create TWAP Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
+
+        self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
+        self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=f'{start_time}'), dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=f'{end_time}'), dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves),
+                                                                                 dict(StrategyParameterName='Aggressivity', StrategyParameterType='1', StrategyParameterValue=self.aggressivity)])
+        self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.fix_manager_sell.send_message_and_receive_response(self.twap_order, case_id_1)
+
+        time.sleep(3)
+        # endregion
+
+        # region Check Sell side
+        nos_twap_parent = self.twap_order.change_parameter('TransactTime', '*')
+        self.fix_verifier_sell.check_fix_message(nos_twap_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        pending_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
+
+        new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
+        new_twap_order_params.change_parameter('NoParty', '*')
+        self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
+        # endregion
+
+        # region Check child DMA order Slice 1
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 1", self.test_id))
+
+        slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        self.fix_verifier_buy.check_fix_message(slice1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 1')
+
+        pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 1')
+
+        new_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 1')
+
+        time.sleep(130)
+        # endregion
+
+        # region check eliminate child DMA Slice 1
+        cancel_slice1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_slice1_order.change_parameters(dict(OrigClOrdID='*', Price=self.price, OrdType=self.order_type, TimeInForce=self.tif_ioc)).remove_parameter('ExDestination')
+        self.fix_verifier_buy.check_fix_message(cancel_slice1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate Child DMA Slice 1")
+        # endregion
         
-        rule_list = rule_creation();
-        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        # Send_MarkerData
-        fix_manager_310 = FixManager(connectivity_sell_side, case_id)
-        fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+        # region Check child DMA order Slice 2
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
+        self.slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
-        case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '30',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '40',
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1) 
+        self.fix_verifier_buy.check_fix_message(self.slice2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 2')
 
-        #region Send NewOrderSingle (35=D)
-        case_id_1 = bca.create_event("Create Algo Order", case_id)
-        new_order_single_params = {
-            'Account': client,
-            'HandlInst': 2,
-            'Side': side,
-            'OrderQty': qty,
-            'TimeInForce': tif_day,
-            'OrdType': order_type,
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': instrument,
-            'OrderCapacity': 'A',
-            'Price': price,
-            'Currency': currency,
-            'TargetStrategy': 1005,
-                    'NoStrategyParameters': [
-                {
-                    'StrategyParameterName': 'StartDate',
-                    'StrategyParameterType': '19',
-                    'StrategyParameterValue': now.strftime("%Y%m%d-%H:%M:%S")
-                },
-                {
-                    'StrategyParameterName': 'EndDate',
-                    'StrategyParameterType': '19',
-                    'StrategyParameterValue': (now + timedelta(minutes=2)).strftime("%Y%m%d-%H:%M:%S")
-                },
-                {
-                    'StrategyParameterName': 'Waves',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '2'
-                },
-                {
-                    'StrategyParameterName': 'Aggressivity',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '1'
-                }
-            ]
-        }
-        fix_message_new_order_single = FixMessage(new_order_single_params)
-        fix_message_new_order_single.add_random_ClOrdID()
-        responce_new_order_single = fix_manager_310.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
-        
-        #Check that FIXQUODSELL5 receive 35=D
-        nos_1 = dict(
-            fix_message_new_order_single.get_parameters(),
-            TransactTime='*',
-            ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
+        pending_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.slice2_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_slice2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 2')
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
+        new_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.slice2_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_slice2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 2')
+        # endregion
 
-        #Check that FIXQUODSELL5 sent 35=8 pending new
-        er_1 ={
-            'ExecID': '*',
-            'OrderQty': qty,
-            'NoStrategyParameters': '*',
-            'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
-            'LeavesQty': qty,
-            'NoParty': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'QtyType': '0',
-            'Price': price,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
-            'Instrument': instrument
-
-        }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-
-        # Check that FIXQUODSELL5 sent 35=8 new
-        er_2 = dict(
-            er_1,
-            ExecType="0",
-            OrdStatus='0',
-            SettlDate='*',
-            ExecRestatementReason='*',
-        )
-        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1, message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-
-        #region Slice 1
-        case_id_2 = bca.create_event("Check Slice 1", case_id)
-        # Check bs (FIXQUODSELL5 sent 35=D Slice 1)
-        new_slice_1 = {
-            'NoParty': '*',
-            'Account': account,        
-            'OrderQty': int(qty / 2),
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'TransactTime': '*',
-            'Side': side,
-            'Price': price,
-            'SettlDate': '*',
-            'Currency': currency,
-            'TimeInForce': new_order_single_params['TimeInForce'],
-            'Instrument': '*',
-            'HandlInst': '1',
-            'ExDestination': instrument['SecurityExchange']
-        }
-        fix_verifier_bs.CheckNewOrderSingle(new_slice_1, responce_new_order_single, case=case_id_2, message_name='BS FIXBUYTH2 sent 35=D New order Slice 1', key_parameters=['OrderQty', 'Price', 'Account', 'TimeInForce'])
-
-        # Check that FIXBUYQUOD5 sent 35=8 pending new
-        er_3 = {
-            'Account': account,
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': int(qty / 2),
-            'Text': text_pn,
-            'OrdType': '2',
-            'ClOrdID': '*',
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'Price': price,
-            'TimeInForce': new_order_single_params['TimeInForce'],
-            'ExecType': "A",
-            'ExDestination': ex_destination_1,
-            'LeavesQty': int(qty / 2)
-        }
-
-        fix_verifier_bs.CheckExecutionReport(er_3, responce_new_order_single, direction='SECOND', case=case_id_2, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
-
-        # Check that FIXBUYQUOD5 sent 35=8 new
-        er_4 = dict(
-            er_3,
-            OrdStatus='0',
-            ExecType="0",
-            OrderQty=int(qty / 2),
-            Text=text_n,
-        )
-        fix_verifier_bs.CheckExecutionReport(er_4, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='FIXQUODSELL5 sent 35=8 New Slice 1', key_parameters=['OrderQty', 'ExecType', 'OrdStatus'])
-        
-        time.sleep(70)
-
-        # Check BS (FIXBUYTH2 35=8 on 35=G)
-        replace_param_slice1 = {
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': int(qty / 2),
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_r,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '0',
-            'Price': price,
-            'TimeInForce': tif_ioc,
-            'ExecType': '5',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*',
-        }
-        fix_verifier_bs.CheckExecutionReport(replace_param_slice1, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace Slice 1',key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
-        
-        # Check BS (FIXBUYTH2 send 35=8 on Cancel)
-        cancel_r_param1 = {
-            'Account': account,        
-            'OrderQty': int(qty / 2),
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'Price': price,
-            'Currency': currency,
-            'TimeInForce': tif_ioc,
-            'Instrument': '*',
-            'HandlInst': '1',
-            'ExDestination': instrument['SecurityExchange'],
-            'OrigClOrdID': '*'
-        }
-        fix_verifier_bs.CheckOrderCancelReplaceRequest(cancel_r_param1, responce_new_order_single, case=case_id_2, message_name='FIXBUYTH2 sent 35=8 Cancel Slice 1', key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
+        # region check eliminate child DMA Slice 2
+        cancel_slice2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_slice2_order.change_parameters(dict(OrigClOrdID='*', Price=self.price, TimeInForce=self.tif_ioc, OrdType=self.order_type, OrderQty=self.slice2_qty)).remove_parameter('ExDestination')
+        self.fix_verifier_buy.check_fix_message(cancel_slice2_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate Child DMA Slice 2")
+        # endregion
 
 
-        # Check BS (FIXBUYTH2 35=8 on 35=G)
-        er_5 = {
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': int(qty / 2),
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_c,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'Price': price,
-            'TimeInForce': tif_ioc,
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*',
-        }
-        fix_verifier_bs.CheckExecutionReport(er_5, responce_new_order_single, direction='SECOND', case=case_id_2,  message_name='BS FIXBUYTH2 sent 35=8 Cancel Slice 1',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
-        #endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region Check eliminated Algo Order
+        case_id_3 = bca.create_event("Elimination of the Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_3)
+        # endregion
 
-        #region Slice 2
-        case_id_3 = bca.create_event("Create Slice 2", case_id)
-        # Check bs (FIXQUODSELL5 sent 35=D Slice 2)
-        new_slice_2 = {
-            'NoParty': '*',
-            'Account': account,        
-            'OrderQty': qty,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'TransactTime': '*',
-            'Side': side,
-            'Price': price,
-            'SettlDate': '*',
-            'Currency': currency,
-            'TimeInForce': new_order_single_params['TimeInForce'],
-            'Instrument': '*',
-            'HandlInst': '1',
-            'ExDestination': instrument['SecurityExchange'],
-        }
-        fix_verifier_bs.CheckNewOrderSingle(new_slice_2, responce_new_order_single, case=case_id_3, message_name='BS FIXBUYTH2 sent 35=D New order Slice 2', key_parameters=['OrderQty', 'Price', 'Account', 'TimeInForce'])
-        # Check that FIXBUYQUOD5 sent 35=8 pending new
-        er_6 = {
-            'Account': account,
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': qty,
-            'Text': text_pn,
-            'OrdType': '2',
-            'ClOrdID': '*',
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'Price': price,
-            'TimeInForce': new_order_single_params['TimeInForce'],
-            'ExecType': "A",
-            'ExDestination': ex_destination_1,
-            'LeavesQty': qty
-        }
+        # region check cancellation parent TWAP order
+        cancel_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_eliminate)
+        cancel_twap_order.change_parameters(dict(NoParty='*', Text='*'))
+        self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
+        # endregion
 
-        fix_verifier_bs.CheckExecutionReport(er_6, responce_new_order_single, direction='SECOND', case=case_id_3, message_name='FIXQUODSELL5 sent 35=8 Pending New Slice 2', key_parameters=['ExecType', 'OrdStatus', 'OrderQty', 'Price', 'Account', 'TimeInForce'])
-
-        # Check that FIXBUYQUOD5 sent 35=8 new
-        er_7 = dict(
-            er_6,
-            OrdStatus='0',
-            ExecType="0",
-            OrderQty=qty,
-            Text=text_n,
-        )
-        fix_verifier_bs.CheckExecutionReport(er_7, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='FIXQUODSELL5 sent 35=8 New', key_parameters=['ExecType', 'OrdStatus', 'OrderQty', 'Price', 'Account', 'TimeInForce'])
-        
-        time.sleep(80)
-        # Check BS (FIXBUYTH2 35=8 on 35=G)
-        replace_param_slice2 = {
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': qty,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_r,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '0',
-            'Price': price,
-            'TimeInForce': tif_ioc,
-            'ExecType': '5',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*',
-        }
-        fix_verifier_bs.CheckExecutionReport(replace_param_slice2, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='BS FIXSELLQUOD5 sent 35=8 Replace Slice 2',key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
-        
-        # Check BS (FIXBUYTH2 send 35=8 on Cancel)
-        cancel_r_param1 = {
-            'Account': account,        
-            'OrderQty': qty,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'Price': price,
-            'Currency': currency,
-            'TimeInForce': tif_ioc,
-            'Instrument': '*',
-            'HandlInst': '1',
-            'ExDestination': instrument['SecurityExchange'],
-            'OrigClOrdID': '*'
-        }
-        fix_verifier_bs.CheckOrderCancelReplaceRequest(cancel_r_param1, responce_new_order_single, case=case_id_3, message_name='FIXBUYTH2 sent 35=8 Cancel Slice 2', key_parameters=['Text', 'TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
-
-
-        # Check BS (FIXBUYTH2 35=8 on 35=G)
-        er_8 = {
-            'CumQty': '0',
-            'ExecID': '*',
-            'OrderQty': qty,
-            'OrdType': order_type,
-            'ClOrdID': '*',
-            'Text': text_c,
-            'OrderID': '*',
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '4',
-            'Price': price,
-            'TimeInForce': tif_ioc,
-            'ExecType': '4',
-            'LeavesQty': '0',
-            'OrigClOrdID': '*',
-        }
-        fix_verifier_bs.CheckExecutionReport(er_8, responce_new_order_single, direction='SECOND', case=case_id_3,  message_name='BS FIXBUYTH2 sent 35=8 Cancel',key_parameters=['TimeInForce', 'OrderQty', 'Price', 'OrdStatus', 'ExecType'])
-        #endregion
-
-        #region Cancel Algo Order
-        case_id_4 = bca.create_event("Cancel Algo Order", case_id)
-        # Check SS (on FIXQUODSELL5 sent 35=8 Slice 4)
-        cancel_param = {
-        'ExecID': '*',
-        'OrderQty': qty,
-        'NoStrategyParameters': '*',
-        'LastQty': '0',
-        'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-        'TransactTime': '*',
-        'Side': side,
-        'AvgPx': '0',
-        "OrdStatus": "4",
-        'SettlDate': '*',
-        'Currency': currency,
-        'TimeInForce': tif_day,
-        'ExecType': '4',
-        'HandlInst': new_order_single_params['HandlInst'],
-        'LeavesQty': '0',
-        'NoParty': '*',
-        'CumQty': '0',
-        'LastPx': '0',
-        'OrdType': order_type,
-        'ClOrdID': fix_message_new_order_single.get_ClOrdID(),
-        'LastMkt': ex_destination_1,
-        'Text': text_ret,
-        'OrderCapacity': new_order_single_params['OrderCapacity'],
-        'QtyType': '0',
-        'ExecRestatementReason': '*',
-        'Price': price,
-        'TargetStrategy': new_order_single_params['TargetStrategy'],
-        'Instrument': instrument,
-        }
-
-        fix_verifier_ss.CheckExecutionReport(cancel_param, responce_new_order_single, case=case_id_4, message_name='SS FIXSELLQUOD5 sent 35=8 Cancel', key_parameters=['OrderQty', 'ExecType', 'OrdStatus', 'ClOrdID', 'Text'])
-        #endregion    
-    except:
-        logging.error("Error execution",exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=report_id)
-    finally:
-        rule_destroyer(rule_list)
+        RuleManager().remove_rules(self.rule_list)
