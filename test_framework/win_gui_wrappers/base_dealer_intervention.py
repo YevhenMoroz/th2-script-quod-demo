@@ -173,7 +173,7 @@ class BaseDealerIntervention(BaseWindow):
         field = ExtractionDetail(column_name, column_name)
         self.extraction_request.add_extraction_detail(field)
         if row_number is not None:
-            self.base_data.set_number(row_number)
+            self.base_data.set_row_number(row_number)
         response = call(self.getUnAssignedDetails_call, self.extraction_request.build())
         self.clear_details([self.extraction_request])
         self.set_default_params()
@@ -183,7 +183,7 @@ class BaseDealerIntervention(BaseWindow):
         self.extraction_request.add_extraction_detail(
             ExtractionDetail(column_name, column_name))
         if row_number is not None:
-            self.base_data.set_number(row_number)
+            self.base_data.set_row_number(row_number)
         response = call(self.getAssignedDetails_call, self.extraction_request.build())
         self.clear_details([self.extraction_request])
         self.set_default_params()
@@ -355,8 +355,8 @@ class BaseDealerIntervention(BaseWindow):
             self.rfq_extraction_request.extract_opposite_far_ask_qty_value_label(
                 RFQPanelQty.opposite_far_ask_qty_value_label.value)
         response = call(self.getRFQDetail_call, self.rfq_extraction_request.build())
-        self.clear_details([self.rfq_extraction_request])
-        self.set_default_params()
+        # self.clear_details([self.rfq_extraction_request])
+        # self.set_default_params()
         return response
 
     def extract_px_and_pts_from_di_panel(self, *args: RFQPanelPtsAndPx):

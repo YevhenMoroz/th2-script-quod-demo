@@ -48,7 +48,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_thousand_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 2
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_thousand_1, "FarLegQty", self.qty_thousand_2])
@@ -75,7 +75,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_millions_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 4
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_millions_1, "FarLegQty", self.qty_millions_2])
@@ -102,7 +102,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_billions_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 6
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_billions_1, "FarLegQty", self.qty_billions_2])
