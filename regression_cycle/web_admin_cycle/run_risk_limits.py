@@ -14,8 +14,13 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5606 import QAP_5
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_5607 import QAP_5607
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_6382 import QAP_6382
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_6384 import QAP_6384
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_6662 import QAP_6662
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7053 import QAP_7053
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7108 import QAP_7108
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7371 import QAP_7371
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7373 import QAP_7373
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7394 import QAP_7394
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7508 import QAP_7508
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7528 import QAP_7528
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_7966 import QAP_7966
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_780 import QAP_780
@@ -65,9 +70,19 @@ class RunRiskLimits:
                      environment=configuration.environment).run()
             QAP_6384(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
+            QAP_6662(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7053(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
             QAP_7108(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_7371(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7373(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7394(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7508(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_7528(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()

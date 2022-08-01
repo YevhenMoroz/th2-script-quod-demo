@@ -45,19 +45,20 @@ class Constants:
         SAVE_CHANGES_BUTTON = '//*[text()="Save Changes"]'
         CLEAR_CHANGES_BUTTON = '//*[text()="Clear Changes"]'
         CLOSE_WIZARD_BUTTON = '//*[@data-name="close"]'
-        OK_BUTTON = '//*[text()="Ok"]'
+        OK_BUTTON = '//*[text()="Ok" or text()="OK"]'
         CANCEL_BUTTON = '//*[text()="Cancel"]'
         REVERT_CHANGES = '//*[text()="Revert Changes"]'
         CHECKBOX_DROP_DOWN_MENU = '//*[@class="option-list"]//nb-option'
         DROP_DOWN_MENU = '//nb-option//span'
+        DIMENSIONS_LIMIT_INFO_MESSAGE = '//*[text()="Maximum 4 different dimensions"]'
 
         class ValuesTab:
             NAME = '//*[@formcontrolname="riskLimitDimensionName"]'
             DESCRIPTION = '//*[@formcontrolname="riskLimitDimensionDesc"]'
-            TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimTradLimit_ext"]'
-            CUM_TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimCumTrdLmt_ext"]'
-            POSITION_LIMITS = '//*[@formcontrolname="riskLimitDimPositLmt_ext"]'
-            BUYING_POWERS = '//*[@formcontrolname="riskLimitDimBuyingPowerLimit_ext"]'
+            TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimTradLimit_ext"]//button'
+            CUM_TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimCumTrdLmt_ext"]//button'
+            POSITION_LIMITS = '//*[@formcontrolname="riskLimitDimPositLmt_ext"]//button'
+            BUYING_POWERS = '//*[@formcontrolname="riskLimitDimBuyingPowerLimit_ext"]//button'
 
         class DimensionsTab:
             ACCOUNT_DIMENSIONS = '//*[@id="typeCCA"]'
@@ -80,6 +81,7 @@ class Constants:
             POSITION_VALIDITY = '//*[@id="posValidity"]'
             SETTLEMENT_PERIOD = '//*[@id="settlType"]'
             SIDE = '//*[@id="side"]'
+            POSITION_LIMITS = '//*[normalize-space(text()) = "Dimensions"]//..//*[normalize-space(text())="Position Limits"]'
 
         class AssignmentsTab:
             INSTITUTION = '//*[@id="institution"]'
