@@ -112,14 +112,14 @@ class QAP_7975(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # Region Rule creation
+        #region Rule creation
         self.rest_message.set_default_params().create_deviation_cleansing_rule().set_target_venue(self.venue_target). \
             set_ref_venues(self.reference_venues).set_symbol(
             self.symbol).set_pip_precision_deviation_format().set_deviation('0.1')
         self.rest_message_params = self.rest_manager.parse_create_response(
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
-        # endregion
+        #endregion
 
         self.fix_md.change_parameter("MDReqID", self.md_id_reference)
         self.fix_md.change_parameter("NoMDEntries", self.md_entries_reference)
