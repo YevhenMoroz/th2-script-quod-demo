@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_3273(TestCase):
@@ -41,8 +42,11 @@ class QAP_3273(TestCase):
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
 
         now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate = (now + timedelta(days=3)).strftime("%Y%m%d")
-        self.NewExpireDate = (now + timedelta(days=1)).strftime("%Y%m%d")
+        day = datetime.weekday(now)
+        self.TimeDelta = AlgoFormulasManager.make_expire_date_next_sunday(day)
+        self.NewTimeDelta = self.TimeDelta - 2
+        self.ExpireDate = (now + timedelta(days=self.TimeDelta)).strftime("%Y%m%d")
+        self.NewExpireDate = (now + timedelta(days=self.NewTimeDelta)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -57,7 +61,7 @@ class QAP_3273(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_13")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_12")
         # endregion
 
         # region Direction
@@ -66,11 +70,11 @@ class QAP_3273(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_quodlit6 = self.data_set.get_mic_by_name("mic_18")
+        self.ex_destination_quodlit6 = self.data_set.get_mic_by_name("mic_16")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl6 = self.data_set.get_listing_id_by_name("listing_11")
-        self.listing_id_qdl7 = self.data_set.get_listing_id_by_name("listing_12")
+        self.listing_id_qdl6 = self.data_set.get_listing_id_by_name("listing_9")
+        self.listing_id_qdl7 = self.data_set.get_listing_id_by_name("listing_10")
         # endregion
 
         # region Key parameters
@@ -112,7 +116,7 @@ class QAP_3273(TestCase):
 
         self.SORPING_GTD_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
         self.SORPING_GTD_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_GTD_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.SORPING_GTD_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_GTD_order, case_id_1)
 
