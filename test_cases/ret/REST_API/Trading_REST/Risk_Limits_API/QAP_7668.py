@@ -10,7 +10,7 @@ from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle impor
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimulate import \
     ApiMessageNewOrderSingleSimulate
 from test_framework.rest_api_wrappers.trading_api.ApiMessageMarketQuoteRequest import ApiMessageMarketQuoteRequest
-from test_framework.rest_api_wrappers.BuyingPowerFormulasManager import BuyingPowerFormulasManager
+from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
 
 
 class QAP_7668(TestCase):
@@ -22,7 +22,7 @@ class QAP_7668(TestCase):
         self.trd_api_manager = TradingRestApiManager(session_alias_http=self.http,
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
-        self.buying_power_manager = BuyingPowerFormulasManager()
+        self.buying_power_manager = RetFormulasManager()
         self.nos_message = ApiMessageNewOrderSingle(data_set=data_set)
         self.noss_message = ApiMessageNewOrderSingleSimulate(data_set=data_set)
         self.market_quote_message = ApiMessageMarketQuoteRequest(data_set=data_set)

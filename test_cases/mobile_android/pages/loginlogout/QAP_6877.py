@@ -23,10 +23,12 @@ class QAP_6877(CommonTestCase):
         # region - preconditions
         # endregion
         # region - test details
+        # Step 1 and Step 2
         login_page = LoginPage(self.appium_driver)
         login_page.open_login_page(self.login)
         self.appium_driver.wait_time(2)
         self.verify("Login successful", True, True)
+        # Step 3
         self.verify("Verify: E-mail widget is unclickable", "false",
                     login_page.get_attribute_of_element_by_xpath(LoginConstants.EMAIL_LOGIN, "clickable"))
         # endregion

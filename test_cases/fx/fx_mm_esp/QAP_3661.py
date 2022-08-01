@@ -222,7 +222,7 @@ def execute(report_id, session_id):
             # Close tile
             call(cp_service.closeRatesTile, base_details.build())
             call(ar_service.closeRatesTile, base_details.build())
-            # # Set default parameters
+            # Set default parameters
             set_core_strategy_for_tier(case_id, core_spot_strategy_vwap)
             FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
                 md_entry[:6])).send_market_data_spot()

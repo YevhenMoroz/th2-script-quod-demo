@@ -1,5 +1,5 @@
 from datetime import datetime
-from custom.tenor_settlement_date import spo, wk1_ndf_maturity, wk2_ndf_maturity, wk3_ndf_maturity
+from custom.tenor_settlement_date import spo, wk1_ndf_maturity, wk2_ndf_maturity, wk3_ndf_maturity, tom
 from test_framework.data_sets.constants import Status
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
@@ -17,6 +17,16 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                                          status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
+        elif status is Status.Reject:
+            self.__set_reject_sell(new_order_single)
+        else:
+            raise Exception('Incorrect Status')
+        return self
+
+    def set_params_from_new_order_single_ndf(self, new_order_single: FixMessageNewOrderSingle,
+                                             status: Status = Status.Fill):
+        if status is Status.Fill:
+            self.__set_fill_sell_ndf(new_order_single)
         else:
             raise Exception('Incorrect Status')
         return self
@@ -65,6 +75,51 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             ExDestination='*',
             QtyType=0,
             Instrument=new_order_single.get_parameter('Instrument'),
+            NoParty="*",
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        if new_order_single.get_parameter('SettlType') != "0":
+            super().add_tag({"LastForwardPoints": "*"})
+        return self
+
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            CumQty="0",
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst="1",
+            LastQty="0",
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            SettlType=new_order_single.get_parameter("SettlType"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            Price="*",
+            LastMkt="*",
+            OrdStatus="8",
+            TransactTime="*",
+            ExecRestatementReason="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            OrderCapacity="A",
+            SettlDate="*",
+            ExecType="8",
+            LeavesQty="0",
+            Text="*",
+            QtyType="0",
+            Instrument=new_order_single.get_parameter("Instrument"),
             NoParty="*"
         )
         super().change_parameters(temp)
@@ -75,6 +130,54 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityIDSource="8",
             Product="4",
             SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
+    def __set_fill_sell_ndf(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty=new_order_single.get_parameter('OrderQty'),
+            Currency=new_order_single.get_parameter('Currency'),
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastQty=new_order_single.get_parameter('OrderQty'),
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            SettlType=new_order_single.get_parameter('SettlType'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            SpotSettlDate=tom(),
+            Price="*",
+            Account="*",
+            OrderCapacity="A",
+            OrdStatus='2',
+            TradeReportingIndicator='*',
+            TransactTime='*',
+            LastSpotRate='*',
+            AvgPx='*',
+            ExecID='*',
+            LastMkt='*',
+            LastPx='*',
+            OrderID='*',
+            SettlDate='*',
+            TradeDate=datetime.today().strftime('%Y%m%d'),
+            ExecType='F',
+            LeavesQty=0,
+            GrossTradeAmt='*',
+            ExDestination='*',
+            QtyType=0,
+            Instrument=new_order_single.get_parameter('Instrument'),
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            MaturityDate="*",
+            SecurityExchange="*"
         )
         super().update_fields_in_component("Instrument", instrument)
         if new_order_single.get_parameter('SettlType') != "0":
