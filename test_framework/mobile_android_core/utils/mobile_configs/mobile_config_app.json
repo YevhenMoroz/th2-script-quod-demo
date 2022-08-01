@@ -1,6 +1,6 @@
 {
-  "currentApp":"qa315luna",
-  "qa320kuiper":{
+  "currentApp":"qa320tatooine",
+  "qa320tatooine":{
     "appPackage": "com.quod.trading.qa1",
     "appActivity": "com.quod.moorgate.moorgatemobile.MainActivity"
   },

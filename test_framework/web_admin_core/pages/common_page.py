@@ -170,7 +170,7 @@ class CommonPage:
         c = 50
         while elem_size/2 > c:
             action.drag_and_drop_by_offset(scr_elem, c, 0)
-            c += 50
+            c += 100
             action.perform()
             if self.is_element_present(search_element):
                 break
