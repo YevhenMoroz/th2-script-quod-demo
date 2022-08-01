@@ -93,6 +93,46 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                 if check_price != 0:
                     row_prc += 1
 
+    def set_params_for_md_response_taker_spo(self, md_request: FixMessageMarketDataRequestFX,
+                                             no_md_entries_count: list):
+        self.prepare_params_for_md_response(md_request)
+        if len(no_md_entries_count) > 0:
+            self.get_parameter("NoMDEntries").clear()
+            for qty in no_md_entries_count:
+                md_entry_type = 0
+                while md_entry_type < 2:
+                    self.get_parameter("NoMDEntries").append({
+                        "MDEntryPx": "*",
+                        "MDEntrySize": qty,
+                        "OrdType": "2",
+                        "SettlDate": spo(),
+                        "MDQuoteType": "*",
+                        "MDEntryType": "*",
+
+                    })
+                    md_entry_type += 1
+
+    def set_params_for_md_response_taker_bda(self, md_request: FixMessageMarketDataRequestFX,
+                                             no_md_entries_count: list):
+        self.prepare_params_for_md_response(md_request)
+        if len(no_md_entries_count) > 0:
+            self.get_parameter("NoMDEntries").clear()
+            for qty in no_md_entries_count:
+                md_entry_type = 0
+                while md_entry_type < 2:
+                    self.get_parameter("NoMDEntries").append({
+                        "MDEntryPx": "*",
+                        "MDEntrySize": qty,
+                        "OrdType": "2",
+                        "SettlDate": md_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+                        "MDQuoteType": "*",
+                        "MDEntryForwardPoints": "*",
+                        "MDEntrySpotRate": "*",
+                        "MDEntryType": "*",
+
+                    })
+                    md_entry_type += 1
+
     def prepare_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX):
         temp = dict(
             MDReqID=md_request.get_parameter("MDReqID"),

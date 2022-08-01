@@ -35,6 +35,8 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
 
     def __update_fix_message(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
+        if new_order_single.get_parameter('OrdType') in [3, 4]:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(
                 ClientAlgoPolicyID=new_order_single.get_parameter('ClientAlgoPolicyID'),

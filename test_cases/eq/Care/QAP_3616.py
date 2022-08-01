@@ -53,12 +53,12 @@ class QAP_3616(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # region manual exec order
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).manual_execution(qty=self.qty_exec)
+        self.order_book.manual_execution(qty=self.qty_exec, filter_dict={OrderBookColumns.order_id.value: order_id2})
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
             {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
         # endregion
         # region manual cross orders
-        res = self.order_book.manual_cross_orders([1, 2], self.qty, '0', last_mkt=self.last_mkt)
+        res = self.order_book.manual_cross_orders([1, 2], self.qty, '0', last_mkt=self.last_mkt, extract_footer=True)
         self.order_book.compare_values({"Error": "Error - [QUOD-11603] 'ExecPrice' (0) negative or zero"},
                                        {"Error": res}, "Check Error in Manual Cross footer")
         # endregion

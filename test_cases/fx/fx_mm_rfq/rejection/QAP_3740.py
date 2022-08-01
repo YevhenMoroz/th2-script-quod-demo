@@ -46,5 +46,6 @@ class QAP_3740(TestCase):
         # region Step 2
         self.sleep(7)
         self.quote_reject.set_quote_reject_params(self.quote_request)
+        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
         self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion

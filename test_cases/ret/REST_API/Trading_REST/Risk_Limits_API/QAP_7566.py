@@ -9,7 +9,7 @@ from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager impor
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimulate import ApiMessageNewOrderSingleSimulate
 from test_framework.rest_api_wrappers.web_admin_api.Positions_API.RestApiCashAccountMessages import RestApiCashAccountMessages
-from test_framework.rest_api_wrappers.BuyingPowerFormulasManager import BuyingPowerFormulasManager
+from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
 
 
 class QAP_7566(TestCase):
@@ -23,7 +23,7 @@ class QAP_7566(TestCase):
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
         self.wa_api_manager = WebAdminRestApiManager(session_alias=self.web_admin, case_id=self.test_id)
-        self.buying_power_manager = BuyingPowerFormulasManager()
+        self.buying_power_manager = RetFormulasManager()
         self.noss_message = ApiMessageNewOrderSingleSimulate(data_set=data_set)
         self.cash_account_message = RestApiCashAccountMessages(data_set=data_set)
         self.tested_currency = self.data_set.get_currency_by_name('currency_1')
