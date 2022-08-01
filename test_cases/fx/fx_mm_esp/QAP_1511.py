@@ -3,7 +3,8 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames, ClientPrisingTileAction, PriceNaming
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.win_gui_wrappers.fe_trading_constant import RatesColumnNames
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
@@ -11,11 +12,10 @@ from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesT
 
 
 class QAP_1511(TestCase):
-    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None):
-        super().__init__(report_id, session_id, data_set)
-        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rates_tile = None
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
         self.client = self.data_set.get_client_tier_by_name("client_tier_1")
         self.symbol1 = self.data_set.get_symbol_by_name("symbol_1")
         self.symbol3 = self.data_set.get_symbol_by_name("symbol_3")

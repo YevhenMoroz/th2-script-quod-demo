@@ -8,7 +8,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimulate import \
     ApiMessageNewOrderSingleSimulate
-from test_framework.rest_api_wrappers.BuyingPowerFormulasManager import BuyingPowerFormulasManager
+from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
 
 
 class QAP_7670(TestCase):
@@ -21,7 +21,7 @@ class QAP_7670(TestCase):
         self.trd_api_manager = TradingRestApiManager(session_alias_http=self.http,
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
-        self.buying_power_manager = BuyingPowerFormulasManager()
+        self.buying_power_manager = RetFormulasManager()
         self.noss_message = ApiMessageNewOrderSingleSimulate(data_set=data_set)
 
     @try_except(test_id=os.path.basename(__file__)[:-3])

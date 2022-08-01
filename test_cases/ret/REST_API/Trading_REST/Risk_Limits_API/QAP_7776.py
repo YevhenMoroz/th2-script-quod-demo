@@ -5,7 +5,7 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
-from test_framework.rest_api_wrappers.BuyingPowerFormulasManager import BuyingPowerFormulasManager
+from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimulate import \
     ApiMessageNewOrderSingleSimulate
@@ -21,7 +21,7 @@ class QAP_7776(TestCase):
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
         self.noss_message = ApiMessageNewOrderSingleSimulate(data_set=data_set)
-        self.buying_power_manager = BuyingPowerFormulasManager()
+        self.buying_power_manager = RetFormulasManager()
         self.tested_free_notes = "11901 Not sufficient Buying Power"
         self.tested_qty = 1_000_000_000
 

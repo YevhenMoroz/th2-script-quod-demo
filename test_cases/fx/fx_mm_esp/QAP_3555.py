@@ -27,14 +27,14 @@ class QAP_3555(TestCase):
         self.verifier.set_event_name(self.mdentryid_event)
 
         self.nok_sek = self.data_set.get_symbol_by_name('symbol_synth_1')
-        self.settle_type = self.data_set.get_settle_type_by_name('spot')
-        self.client = self.data_set.get_client_by_name('client_mm_5')
+        self.settle_type_spot = self.data_set.get_settle_type_by_name('spot')
+        self.palladium2 = self.data_set.get_client_by_name('client_mm_5')
         self.no_related_symbols = [{
             'Instrument': {
                 'Symbol': self.nok_sek,
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
-            'SettlType': self.settle_type, }]
+            'SettlType': self.settle_type_spot, }]
         self.bands = ["1000000", '3000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -48,7 +48,7 @@ class QAP_3555(TestCase):
 
         # region Step 4
         self.fix_subscribe.set_md_req_parameters_maker(). \
-            change_parameters({"SenderSubID": self.client}). \
+            change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         # endregion
 

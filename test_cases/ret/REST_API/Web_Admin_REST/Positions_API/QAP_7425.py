@@ -10,7 +10,7 @@ from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import T
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
 from test_framework.rest_api_wrappers.web_admin_api.Positions_API.RestApiSecurityPositionMessages import \
     RestApiSecurityPositionMessages
-from test_framework.rest_api_wrappers.BuyingPowerFormulasManager import BuyingPowerFormulasManager
+from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
 
 
 class QAP_7425(TestCase):
@@ -24,7 +24,7 @@ class QAP_7425(TestCase):
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
         self.wa_api_manager = WebAdminRestApiManager(session_alias=self.web_admin, case_id=self.test_id)
-        self.buying_power_manager = BuyingPowerFormulasManager()
+        self.buying_power_manager = RetFormulasManager()
         self.nos_message = ApiMessageNewOrderSingle(data_set=data_set)
         self.security_account_position_message = RestApiSecurityPositionMessages(data_set=data_set)
         self.tested_security_account = self.data_set.get_account_by_name('account_4')
@@ -80,8 +80,7 @@ class QAP_7425(TestCase):
 
         # region Steps 1,2,3,4,5 Check Total Position Qty
         try:
-            total_posit_qty = self.buying_power_manager.calc_total_posit_qty(response=modified_position[0],
-                                                                             order_qty=10)
+            total_posit_qty = self.buying_power_manager.calc_total_posit_qty(modified_position[0], 10, test_id)
 
             if int(total_posit_qty) == 0:
                 bca.create_event(f'Total Position Qty == 0', status='SUCCESS', parent_id=self.test_id)

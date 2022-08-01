@@ -83,6 +83,8 @@ from test_framework.web_admin_core.pages.risk_limits.listing_cumtrdlmt_counter.l
     ListingCumTrdLmtCounterConstants
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_constants import \
     PositionsLimitsConstants
+from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.constants import Constants \
+    as RiskLimitDimensionsConstants
 from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_constants import \
     PriceToleranceControlConstants
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
@@ -350,6 +352,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(PositionsLimitsConstants.POSITIONS_LIMITS_PAGE_TITLE_XPATH)
 
+    def open_risk_limit_dimension_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.RISK_LIMIT_DIMENSIONS_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(RiskLimitDimensionsConstants.MainPage.TITLE)
+
     def open_price_tolerance_control_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.PRICE_TOLERANCE_CONTROL_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
@@ -418,3 +425,34 @@ class SideMenu(CommonPage):
 
     def is_site_page_tab_displayed(self):
         return self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).is_displayed()
+
+    def is_institutions_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.is_element_present(RootConstants.INSTITUTIONS_ITEM_XPATH)
+
+    def is_zones_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.is_element_present(RootConstants.ZONES_ITEM_XPATH)
+
+    def is_locations_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.is_element_present(RootConstants.LOCATIONS_ITEM_XPATH)
+
+    def is_desks_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.is_element_present(RootConstants.DESKS_ITEM_XPATH)
+
+    def is_washbook_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.WASHBOOK_ITEM_XPATH).is_displayed()
+
+    def is_washbook_rule_page_tab_displayed(self):
+        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
+            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
+        return self.find_by_xpath(RootConstants.WASHBOOK_RULES_ITEM_XPATH).is_displayed()
+

@@ -18,6 +18,7 @@ class FxVenues(Enum):
     venue_5 = "DB"
     venue_6 = "BARX"
     venue_7 = "EBS"
+    venue_8 = "GS"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -26,6 +27,14 @@ class FxVenues(Enum):
     venue_rfq_5 = "DBR"
     venue_rfq_6 = "BARR"
     venue_rfq_7 = "EBS"
+
+
+class FxMarketIDs(Enum):
+    market_1 = "CITI-SW"
+    market_2 = "HSBC-SW"
+    market_3 = "MS-SW"
+    market_4 = "JPM-SW"
+    market_5 = "DB-SW"
 
 
 class FxClients(Enum):
@@ -158,7 +167,6 @@ class FxSettleDates(Enum):
     today = today()
     tomorrow = tom()
     spot = spo()
-    spo = spo_ndf()
     wk1 = wk1()
     wk2 = wk2()
     wk3 = wk3()
@@ -193,6 +201,7 @@ class FxSymbols(Enum):
     symbol_ndf_3 = "AUD/BRL"
     symbol_ndf_4 = "USD/RUB"
     symbol_ndf_5 = "USD/KRW"
+    symbol_ndf_6 = "EUR/RUB"
 
     symbol_synth_1 = "NOK/SEK"  # cross through EURtoUSD
     symbol_synth_2 = "CHF/THB"  # cross through USDtoEUR
@@ -211,6 +220,7 @@ class FxCurrencies(Enum):
     currency_cad = "CAD"
     currency_aud = "AUD"
     currency_sek = "SEK"
+    currency_jpy = "JPY"
 
 
 class FxRecipients(Enum):

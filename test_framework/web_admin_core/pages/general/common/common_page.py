@@ -128,6 +128,9 @@ class CommonPage(CommonPage):
             time.sleep(2)
 
     def refresh_page(self, confirm: bool):
+        """
+        Like click at F5 button
+        """
         self.web_driver_container.get_driver().refresh()
         if confirm:
             self.web_driver_container.get_driver().switch_to.alert.accept()

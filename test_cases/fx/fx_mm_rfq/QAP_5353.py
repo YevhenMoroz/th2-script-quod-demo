@@ -35,8 +35,8 @@ class QAP_5353(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.quote_request.set_swap_rfq_params().update_repeating_group_by_index("NoRelatedSymbols", 0,
-                                                                                 Account=self.acc_argentina)
+        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                                              Account=self.acc_argentina)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
                                             key_parameters=["MDReqID"])
@@ -47,6 +47,7 @@ class QAP_5353(TestCase):
         # region Step 2
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
         self.new_order_single.remove_parameter("Price")
+        self.new_order_single.change_parameter("Currency", "USD")
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single, status=self.status)
         self.execution_report.remove_parameter("Price")

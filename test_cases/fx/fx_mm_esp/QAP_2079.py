@@ -7,7 +7,6 @@ from test_framework.data_sets.constants import Status, DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -27,16 +26,16 @@ class QAP_2079(TestCase):
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.execution_report = FixMessageExecutionReportFX()
-        self.account = self.data_set.get_client_by_name("client_mm_1")
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
         self.status_reject = Status.Reject
         self.price = "1.11999"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1-2
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
 
-        response:list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
@@ -47,7 +46,7 @@ class QAP_2079(TestCase):
 
         # region step 3
         self.new_order_single.set_default().change_parameters(
-            {"Account": self.account, "TimeInForce": "3", "Price": self.price})
+            {"Account": self.silver, "TimeInForce": "3", "Price": self.price})
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 

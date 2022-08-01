@@ -1,6 +1,6 @@
 from test_cases.fx.fx_mm_rfq import QAP_1545, QAP_1550, \
     QAP_1551, QAP_1563, QAP_1746, QAP_1755, QAP_1970, QAP_1972, QAP_1978, QAP_2055, QAP_2063, \
-    QAP_2089, QAP_2090, QAP_2103, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
+    QAP_2089, QAP_2090, QAP_2121, QAP_2483, QAP_2484, QAP_2486, QAP_2488, QAP_2489, QAP_2490, \
     QAP_2877, QAP_2878, QAP_2345, QAP_1552, QAP_2062, QAP_2091, QAP_2092, QAP_2101, QAP_2143, \
     QAP_2177, QAP_2294, QAP_2295, QAP_2296, QAP_2297, QAP_2353, QAP_2866, QAP_2867, QAP_2868, QAP_2958, \
     QAP_2992, QAP_3003, QAP_3005, QAP_3106, QAP_3108, \
@@ -11,6 +11,7 @@ from test_cases.fx.fx_mm_rfq.QAP_1537 import QAP_1537
 from test_cases.fx.fx_mm_rfq.QAP_1539 import QAP_1539
 from test_cases.fx.fx_mm_rfq.QAP_1540 import QAP_1540
 from test_cases.fx.fx_mm_rfq.QAP_1562 import QAP_1562
+from test_cases.fx.fx_mm_rfq.QAP_2103 import QAP_2103
 from test_cases.fx.fx_mm_rfq.QAP_2104 import QAP_2104
 from test_cases.fx.fx_mm_rfq.QAP_2105 import QAP_2105
 from test_cases.fx.fx_mm_rfq.QAP_2382 import QAP_2382
@@ -130,7 +131,7 @@ def test_run(parent_id=None):
         QAP_1563.execute(report_id)
         QAP_1755.execute(report_id)
         QAP_2091.execute(report_id)
-        QAP_2103.execute(report_id)
+        QAP_2103(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_2177.execute(report_id)
         QAP_2295.execute(report_id)
         QAP_2297.execute(report_id)

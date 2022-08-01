@@ -91,9 +91,9 @@ class QAP_7033(TestCase):
         # region Declaration
         # region create basket
         self.fix_manager.send_message_fix_standard(self.fix_message)
-        cl_bask_id = self.oms_basket_book.get_basket_value(BasketBookColumns.client_basket_id.value)
+        # cl_bask_id = self.oms_basket_book.get_basket_value(BasketBookColumns.client_basket_id.value)
         order_id1 = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=1)
-        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=2)
+        # order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=2)
         # endregion
         # region accept CO orders
         self.client_inbox.accept_order()

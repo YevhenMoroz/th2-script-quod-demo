@@ -37,7 +37,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_TWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': 'CLIENT2',
+            'Account': self.get_data_set().get_account_by_name('account_1'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -47,12 +47,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            'Currency': "EUR",
-            'ExDestination': "XPAR",
-            "Instrument": Instrument.BUI.value,
+            'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "1005",
-            'QuodFlatParameters': {
-            }
+            'NoStrategyParameters': [
+            ]
         }
         super().change_parameters(base_parameters)
         return self
@@ -358,6 +358,38 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_POV_min_value_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_2'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'Currency': self.get_data_set().get_currency_by_name('currency_1'),
+            'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_2"),
+            "TargetStrategy": "2",
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'PercentageVolume',
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.9'
+                },
+                {
+                    'StrategyParameterName': 'ChildMinValue',
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '150'
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_Multilisting_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),
@@ -383,8 +415,71 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                     'StrategyParameterName': 'AllowMissingPrimary',
                     'StrategyParameterType': '13',
                     'StrategyParameterValue': 'true'
+                },
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Multilisting_spraying_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            'TargetStrategy': '1008',
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'AvailableVenues',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+                {
+                    'StrategyParameterName': 'AllowMissingPrimary',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+                {
+                    'StrategyParameterName': 'PostMode',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'Spraying'
+                },
+                {
+                    'StrategyParameterName': 'VenueWeights',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'TRQX=7/PARIS=3'
                 }
             ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Iceberg_params(self):
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '30000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1004',
+            "DisplayInstruction": {
+                'DisplayQty': '15000'
+            }
         }
         super().change_parameters(base_parameters)
         return self
@@ -404,7 +499,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
             'TargetStrategy': '1010',
-            'ClientAlgoPolicyID': 'QA_MPDark2',
+            'ClientAlgoPolicyID': 'QA_Auto_MPDark',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
         }
@@ -421,7 +516,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrdType': '2',
             'Price': '20',
             'Side': '1',
-            'Instrument': Instrument.BUI.value,
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
             'TimeInForce': '0',
             "TransactTime": '*',
             'ExDestination': 'BATD',
@@ -448,7 +543,27 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1008',
-            'ClientAlgoPolicyID': 'QA_SORPING',
+            'MinQty': '100'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SynthMinQty_params_with_strategy(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_2',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'MinQty': '100'
@@ -471,9 +586,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'ExDestination': 'QDL1',
             'OrderCapacity': 'A',
-            'ShortCode': '17536',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_ChildMinQty_params_with_strategy_tags(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
         }
         super().change_parameters(base_parameters)
         return self
@@ -501,7 +636,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_SORPING_Iceberg_params(self):
+    def set_LitDark_Iceberg_params(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -518,10 +653,27 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1011',
             "DisplayInstruction": {
                 'DisplayQty': '500'
-            },
-            'ClientAlgoPolicyID': 'QA_SORPING',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_LitDark_Iceberg_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -541,7 +693,97 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_SORPING'
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_after_RFQ_params(self):
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': 1,
+            'OrderQty': 3000000,
+            'OrdType': 2,
+            'Price': 20,
+            'Side': 1,
+            'Instrument': "*",
+            'TimeInForce': 0,
+            "TransactTime": '*',
+            'ExDestination': 'LISX',
+            'OrderCapacity': 'A',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'AlgoCst01': 'firm-up'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Child_of_SORPING_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_13'),
+            'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_ME_Y',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Child_of_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_13'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL6',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536'
         }
         super().change_parameters(base_parameters)
         return self

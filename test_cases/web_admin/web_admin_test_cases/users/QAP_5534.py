@@ -37,7 +37,7 @@ class QAP_5534(CommonTestCase):
                 "user_id": 'QAP5534',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                 "email": '2@2',
-                "desk": 'DESK A'
+                "desk": 'Quod Desk'
             }
         }
 
@@ -51,6 +51,7 @@ class QAP_5534(CommonTestCase):
         user_page = UsersPage(self.web_driver_container)
         user_page.set_user_id(self.test_data['user']['user_id'])
         time.sleep(2)
+        common_act = CommonPage(self.web_driver_container)
         if not user_page.is_searched_user_found(self.test_data['user']['user_id']):
             user_page.click_on_new_button()
             time.sleep(2)
@@ -64,8 +65,9 @@ class QAP_5534(CommonTestCase):
             user_wizard = UsersWizard(self.web_driver_container)
             user_wizard.click_on_save_changes()
             time.sleep(2)
+            common_act.click_on_info_error_message_pop_up()
+            time.sleep(1)
 
-        common_act = CommonPage(self.web_driver_container)
         common_act.click_on_user_icon()
         time.sleep(1)
         common_act.click_on_logout()
@@ -90,10 +92,16 @@ class QAP_5534(CommonTestCase):
             user_page.click_on_edit_at_more_actions()
             time.sleep(2)
             user_assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
-            self.verify("Location field is disable", True, user_assignments_tab.is_location_field_enabled())
+            self.verify("Institution, Zone, and Location fields not displayed",
+                        [False, False, False],
+                        [user_assignments_tab.is_institution_field_displayed(),
+                         user_assignments_tab.is_zone_field_displayed(),
+                         user_assignments_tab.is_location_field_displayed()])
 
             user_assignments_tab.clear_assignments_tab()
             user_wizard = UsersWizard(self.web_driver_container)
+            user_wizard.click_on_save_changes()
+            time.sleep(1)
             self.verify("User did not save with empty Assignments tab", True, user_wizard.is_warning_displayed())
 
         except Exception:
