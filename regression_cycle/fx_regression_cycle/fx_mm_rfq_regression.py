@@ -42,6 +42,7 @@ from test_cases.fx.fx_mm_rfq.QAP_7168 import QAP_7168
 from test_cases.fx.fx_mm_rfq.QAP_7862 import QAP_7862
 from test_cases.fx.fx_mm_rfq.QAP_8012 import QAP_8012
 from test_cases.fx.fx_mm_rfq.QAP_8223 import QAP_8223
+from test_cases.fx.fx_mm_rfq.QAP_T2939 import QAP_T2939
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_3747
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3689 import QAP_3689
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_3734 import QAP_3734
