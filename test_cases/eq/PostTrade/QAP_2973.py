@@ -101,6 +101,6 @@ class QAP_2973(TestCase):
              "GrossTradeAmt": str(int(self.price) * 2 * int(self.qty)),
              "NetMoney": str(int(self.price) * 2 * int(self.qty)),
              "SettlCurrAmt": str(int(self.price) * 2 * int(self.qty) * 2), "SettlCurrency": self.currency,
-              "Account": self.client, "AllocInstructionMiscBlock2": '*', "ReportedPx": str(int(self.price) * 2)})
+              "Account": self.client, "AllocInstructionMiscBlock2": '*', "AllocNetPrice": str(int(self.price) * 2)})
         self.fix_verifier.check_fix_message_fix_standard(conf_report)
         #  endregion
