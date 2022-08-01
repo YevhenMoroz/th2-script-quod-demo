@@ -32,12 +32,12 @@ class QAP_3083(TestCase):
 
         # region order parameters
         self.qty = 1000
-        self.price = 3.9
+        self.price = 4
         self.price_ask = 3
-        self.price_bid = 1
+        self.price_bid = 2.9
         self.side = constants.OrderSide.Buy.value
         self.qty_bid = self.qty_ask = 1000000
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_3.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         # endregion
 

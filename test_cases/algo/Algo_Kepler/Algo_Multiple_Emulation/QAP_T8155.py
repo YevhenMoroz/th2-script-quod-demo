@@ -18,7 +18,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_3215(TestCase):
+class QAP_T8155(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -149,7 +149,7 @@ class QAP_3215(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.SORPING_STL_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.SORPING_STL_order)
-        self.SORPING_STL_order_replace_params.change_parameters(dict(OrdType='2'))
+        self.SORPING_STL_order_replace_params.remove_parameter('StopPx').change_parameters(dict(OrdType='2'))
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_STL_order_replace_params, case_id_2)
 
         time.sleep(1)
