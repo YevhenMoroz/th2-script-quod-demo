@@ -56,8 +56,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_thousand_1 = str(float(self.qty_thousand_1) / 1000)
-        expected_qty_thousand_2 = str(float(self.qty_thousand_2) / 1000)
+        expected_qty_thousand_1 = str(float(self.qty_thousand_1) / 1000) + " GBP"
+        expected_qty_thousand_2 = str(float(self.qty_thousand_2) / 1000) + " GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)
@@ -83,8 +83,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_millions_1 = str(round(float(self.qty_millions_1) / 1000000, 2)) + "M"
-        expected_qty_millions_2 = str(round(float(self.qty_millions_2) / 1000000, 2)) + "M"
+        expected_qty_millions_1 = str(float(self.qty_millions_1) / 1000000)[:6] + "M GBP"
+        expected_qty_millions_2 = str(float(self.qty_millions_2) / 1000000)[:6] + "M GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)
@@ -110,8 +110,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_billions_1 = str(round(float(self.qty_billions_1) / 1000000000, 2)) + "B"
-        expected_qty_billions_2 = str(round(float(self.qty_billions_2) / 1000000000, 2)) + "B"
+        expected_qty_billions_1 = str(float(self.qty_billions_1) / 1000000000)[:6] + "B GBP"
+        expected_qty_billions_2 = str(float(self.qty_billions_2) / 1000000000)[:6] + "B GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)
