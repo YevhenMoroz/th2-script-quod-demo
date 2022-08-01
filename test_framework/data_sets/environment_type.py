@@ -22,7 +22,7 @@ class EnvironmentType(Enum):
     # endregion
 
     # region java-api
-    quod317_java_api = "quod317_java_api"
+    quod317_java_api = "317_java_api"
     # endregion
 
     #region web admin
