@@ -26,6 +26,8 @@ def test_run():
             kepler_sors_sorping_regression.test_run(parent_id=report_id)
         if eval(root.find(".//component[@name='synth_min_qty']").attrib["run"]):
             kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
+        if eval(root.find(".//component[@name='multiple_emulation']").attrib["run"]):
+            kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
