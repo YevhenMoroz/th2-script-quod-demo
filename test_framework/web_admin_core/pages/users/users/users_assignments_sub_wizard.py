@@ -62,15 +62,19 @@ class UsersAssignmentsSubWizard(CommonPage):
         return self.is_element_present(UsersConstants.INSTITUTION)
 
     def clear_assignments_tab(self):
-        if self.is_desks_field_enabled():
-            selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
-            self.set_desks([_.strip() for _ in selected_desks.split(",")])
-        if self.is_location_field_enabled():
-            self.set_text_by_xpath(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, "")
-        if self.is_zone_field_enabled():
-            self.set_text_by_xpath(UsersConstants.ZONE_AT_ASSIGNMENTS_SUB_WIZARD, "")
-        if self.is_institution_field_enabled():
-            self.set_text_by_xpath(UsersConstants.INSTITUTION, "")
+        if self.is_desks_field_displayed():
+            if self.is_desks_field_enabled():
+                selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
+                self.set_desks([_.strip() for _ in selected_desks.split(",")])
+        if self.is_location_field_displayed():
+            if self.is_location_field_enabled():
+                self.set_text_by_xpath(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, "")
+        if self.is_zone_field_displayed():
+            if self.is_zone_field_enabled():
+                self.set_text_by_xpath(UsersConstants.ZONE_AT_ASSIGNMENTS_SUB_WIZARD, "")
+        if self.is_institution_field_displayed():
+            if self.is_institution_field_enabled():
+                self.set_text_by_xpath(UsersConstants.INSTITUTION, "")
 
     def is_not_found_option_displayed(self):
         return self.is_element_present(UsersConstants.NOT_FOUND_OPTION_XPATH)

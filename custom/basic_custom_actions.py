@@ -241,8 +241,7 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     if keys is None:
         keys = []
     if ignored_fields is None:
-        ignored_fields = []
-    ignored_fields += ['header', 'trailer']
+        ignored_fields = ['header', 'trailer']
     settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:

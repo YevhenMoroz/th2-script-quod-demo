@@ -25,7 +25,7 @@ class FixVerifier:
         self.__case_id = case_id
 
     def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
-                          direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None):
+                          direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, ignored_fields: list = None):
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -40,7 +40,8 @@ class FixVerifier:
                     message_name,
                     basic_custom_actions.filter_to_grpc(FIXMessageType.NewOrderSingle.value,
                                                         fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters,
+                                                        ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -59,7 +60,8 @@ class FixVerifier:
                     message_name,
                     basic_custom_actions.filter_to_grpc(FIXMessageType.ExecutionReport.value,
                                                         fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters,
+                                                        ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -78,7 +80,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("OrderCancelReplaceRequest", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -97,7 +99,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("OrderCancelRequest", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -116,7 +118,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("MarketDataSnapshotFullRefresh", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -130,7 +132,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check OrderCancelReject",
                     basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReject.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -149,7 +151,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("Quote", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -166,7 +168,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("MarketDataRequestReject", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -183,7 +185,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("QuoteRequestReject", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -200,7 +202,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     message_name,
                     basic_custom_actions.filter_to_grpc("QuoteCancel", fix_message.get_parameters(),
-                                                        key_parameters),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

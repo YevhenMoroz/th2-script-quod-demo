@@ -22,7 +22,7 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 from win_gui_modules.client_pricing_wrappers import PlaceRateTileTableOrderRequest, PlaceRatesTileOrderRequest, \
     RatesTileTableOrdSide
 from win_gui_modules.common_wrappers import BaseTileDetails

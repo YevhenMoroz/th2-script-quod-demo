@@ -7,7 +7,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_page import PositionLimitsPage
-from test_framework.web_admin_core.pages.risk_limits.position_limits.postition_limits_values_sub_wizard \
+from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_values_sub_wizard \
     import PositionLimitsValuesSubWizard
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_wizard import PositionLimitsWizard
 
