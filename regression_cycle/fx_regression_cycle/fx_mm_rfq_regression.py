@@ -142,7 +142,7 @@ def test_run(parent_id=None):
         # endregion
 
         QAP_1563.execute(report_id)
-        QAP_1755.execute(report_id)
+        QAP_T2939(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_2091.execute(report_id)
         QAP_2103(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_2177.execute(report_id)
