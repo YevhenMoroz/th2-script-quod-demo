@@ -22,6 +22,7 @@ class UsersConstants:
     ONLINE_STATUS_XPATH = '//*[@icon="circle-fill"]'
     ALL_DISPLAYED_USERS_XPATH = '//*[@ref="eCenterContainer"]//div[@role="row"]'
     NOT_FOUND_OPTION_XPATH = '//*[normalize-space(text())="Not found"]'
+    WARNING_MESSAGE = '//*[@outline="danger"]'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -109,6 +110,8 @@ class UsersConstants:
     SELECTED_ZONE_URL_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@form-control-name="zone"]//a'
     INSTITUTION = "//*[text()='Institution']/preceding-sibling::input"
     TECHNICAL_USER_CHECKBOX_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@formcontrolname="technicalUser"]//span[1]'
+    HEAD_OF_DESK_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@formcontrolname="headOfDesk"]//span[1]'
+    HEAD_OF_DESK_AT_ASSIGNMENTS_SUB_WIZARD_INPUT = '//*[@formcontrolname="headOfDesk"]//input'
 
     # Role
     PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'

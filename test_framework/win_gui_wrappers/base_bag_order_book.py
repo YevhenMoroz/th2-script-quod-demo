@@ -1,11 +1,10 @@
 import enum
 from copy import deepcopy
-
 from enum import Enum
 
 from stubs import Stubs
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo, ExtractWaveTicketValuesRequest
+from win_gui_modules.bag_order_ticket import GetOrderBagBookDetails, BagOrderInfo
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails
 from win_gui_modules.order_ticket import OrderTicketDetails
 from win_gui_modules.utils import call
@@ -51,11 +50,14 @@ class BaseBagOrderBook(BaseWindow):
         self.modify_sub_level_order_call = None
         self.extract_wave_ticket_values_request = None
         self.extract_wave_ticket_values_call = None
+        self.cancel_wave_call = None
+        self.scanario_details = None
 
     # endregion
 
     # region Set details
-    def set_order_bag_wave_details(self, tif: str = None, expire_date: str = None, price=None, qty=None, display_qty=None,
+    def set_order_bag_wave_details(self, tif: str = None, expire_date: str = None, price=None, qty=None,
+                                   display_qty=None,
                                    price_type=None,
                                    price_offset=None,
                                    offset_type=None,
@@ -94,6 +96,16 @@ class BaseBagOrderBook(BaseWindow):
         return self.bag_wave_creation
 
     # endregion
+    def set_twap_strategy(self, scenario: str,
+                          strategy: str, start_date=None, start_date_offset="", end_date=None,
+                          end_date_offset=""):
+        self.scanario_details.set_scenario(scenario)
+        self.scanario_details.set_strategy(strategy)
+        twap_values = self.scanario_details.add_twap_strategy_param()
+        if start_date and end_date is not None:
+            twap_values.set_start_date(start_date, start_date_offset)
+            twap_values.set_end_date(end_date, end_date_offset)
+        self.bag_book_details.add_scenario_details(self.scanario_details.build())
 
     # region Get details
     def extract_order_bag_book_details(self, extraction_id, extraction_fields: list, filter: list = None):
@@ -151,10 +163,12 @@ class BaseBagOrderBook(BaseWindow):
     # region Action
     def wave_bag(self):
         result = call(self.wave_bag_creation_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
         return result
 
     def modify_wave_bag(self):
         call(self.modify_wave_bag_call, self.bag_wave_creation.build())
+        self.clear_details([self.bag_wave_creation])
 
     # endregion
     def create_bag_details(self, rows_list: list, name_of_bag: str, price: str = None):
@@ -231,12 +245,23 @@ class BaseBagOrderBook(BaseWindow):
         call(self.modify_sub_level_order_call, self.modify_sub_level_order_details.build())
         self.clear_details([self.modify_sub_level_order_details, order_details])
 
-    def extract_values_from_wave_ticket(self, tif: bool = True, filter_dict: dict = None):
+    def extract_values_from_wave_ticket(self, tif: bool = True, filter_dict: dict = None, error_message: bool = False,
+                                        qty_to_release: bool = False):
+        if self.bag_book_details:
+            self.extract_wave_ticket_values_request.set_bag_order_details(self.bag_book_details)
         if filter_dict:
             self.extract_wave_ticket_values_request.set_filter(filter_dict)
         if tif:
             self.extract_wave_ticket_values_request.get_tif_state()
+        if error_message:
+            self.extract_wave_ticket_values_request.get_error_message()
+        if qty_to_release:
+            self.extract_wave_ticket_values_request.get_qty_to_release()
         result = call(self.extract_wave_ticket_values_call,
                       self.extract_wave_ticket_values_request.build())
-        self.clear_details([self.extract_wave_ticket_values_request])
+        self.clear_details([self.extract_wave_ticket_values_request, self.bag_book_details])
         return result
+
+    def cancel_wave(self):
+        call(self.cancel_wave_call, self.bag_wave_creation.build())
+        self.clear_details(self.bag_wave_creation)

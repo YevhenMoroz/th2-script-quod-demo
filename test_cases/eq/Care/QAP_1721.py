@@ -36,7 +36,7 @@ class QAP_1721(TestCase):
         self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty, order_type=self.order_type,
                                             tif=TimeInForce.DAY.value, is_sell_side=False, instrument=self.lookup,
                                             recipient=self.desk, disclose_flag=1)
-        self.order_ticket.create_order(lookup=self.lookup)
+        self.order_ticket.create_order(self.lookup)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region check disclose execution

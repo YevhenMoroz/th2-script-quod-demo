@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
@@ -27,7 +28,7 @@ class QAP_1023(TestCase):
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.username2 = environment.get_list_fe_environment()[0].user_2
-        self.desk = environment.get_list_fe_environment()[0].desk_2
+        self.desk = environment.get_list_fe_environment()[0].desk_3
         self.qty = "900"
         self.price = "40"
         self.order_type = "Limit"
@@ -46,6 +47,7 @@ class QAP_1023(TestCase):
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).reassign_order(self.desk, partial_desk=False)
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.sts.value: ExecSts.sent.value})
+        time.sleep(30)
         # endregion
         # region Accept order
         self.client_inbox.accept_order()

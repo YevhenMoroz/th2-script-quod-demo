@@ -22,8 +22,9 @@ class InstitutionsConstants:
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     ENABLE_DISABLE_TOGGLE_INPUT_XPATH = "//*[contains(@role, 'switch')]"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
-    DISPLAYED_USER_XPATH = "//*[text()='{}']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
     DOWNLOAD_CSV_BUTTON_XPATH = '//*[@nbtooltip="Download CSV"]'
+    DISPLAYED_INSTITUTIONS_XPATH = '//*[@ref="eCenterContainer"]//*[@role="row"]'
 
     # Main page
 
@@ -47,6 +48,7 @@ class InstitutionsConstants:
     VALUES_TAB_COUNTERPART_NAME = '//*[@id="counterpart"]'
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
     VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD = '//*[@id="posFlatteningTime"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'

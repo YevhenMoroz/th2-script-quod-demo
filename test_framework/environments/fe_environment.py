@@ -19,6 +19,7 @@ class FEEnvironment(BaseEnvironment):
         self.folder = folder
         self.desk_1 = desks[0]
         self.desk_2 = desks[1] if len(desks) > 1 else None
+        self.desk_3 = desks[2] if len(desks) > 2 else None
         self.target_server_win = target_server_win
         self.main_window = main_window
         self.login_window = login_window

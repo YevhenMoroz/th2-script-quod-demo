@@ -303,7 +303,7 @@ class BaseOrderBook(BaseWindow):
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
-    def complete_order(self, row_count=None, filter_list=None):
+    def complete_order(self, row_count: int = None, filter_list: list = None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
@@ -360,7 +360,7 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list=None):
+    def suspend_order(self, cancel_children: bool = None, filter_list: dict=None):
         if filter_list is not None:
             self.suspend_order_details.set_filter(filter_list)
         if cancel_children is not None:
@@ -663,7 +663,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
 
-    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict):
+    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict = None):
         self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
         self.unmatch_and_transfer_details.set_account_destination(account_destination)
         call(self.unmatch_and_transfer_call, self.unmatch_and_transfer_details.build())
