@@ -366,7 +366,8 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details(self.modify_ticket_details)
         return error
 
-    def override_confirmation_service(self, filter_dict: dict):
-        self.mass_approve_details.set_filter(filter_dict)
+    def override_confirmation_service(self, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.mass_approve_details.set_filter(filter_dict)
         call(self.override_confirmation_service_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
