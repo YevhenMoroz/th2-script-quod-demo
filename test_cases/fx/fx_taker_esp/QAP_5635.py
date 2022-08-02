@@ -9,7 +9,7 @@ from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.win_gui_wrappers.forex.fx_child_book import FXChildBook
 from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 alias_fh = "fix-fh-q-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
@@ -116,7 +116,7 @@ def execute(report_id, session_id, data_set):
             no_md_entries_spo_db)). \
             send_market_data_spot(even_name_custom='Send Market Data SPOT DB')
 
-        new_order_sor = FixMessageNewOrderSingleAlgoFX(data_set=data_set).set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker(data_set=data_set).set_default_SOR().change_parameters(
             {'OrderQty': '2000000'}).update_repeating_group('NoStrategyParameters', [
             {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
              'StrategyParameterValue': 'EBS-CITI/DB'}])

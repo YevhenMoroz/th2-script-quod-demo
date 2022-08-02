@@ -1,4 +1,4 @@
-from test_cases.algo.algo_acceptance_list import QAP_2995, QAP_2994, QAP_2839, QAP_2996, QAP_2842, QAP_2997
+from test_cases.algo.algo_acceptance_list import QAP_T4930, QAP_T4931, QAP_T4949, QAP_T4929, QAP_T4948, QAP_T4928
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -23,12 +23,12 @@ def test_run(parent_id= None):
         else:
             get_opened_fe(report_id, session_id, work_dir)
             
-        QAP_2839.execute(report_id, session_id)
-        QAP_2842.execute(report_id, session_id)
-        QAP_2994.execute(report_id, session_id)
-        QAP_2995.execute(report_id, session_id)
-        QAP_2996.execute(report_id, session_id)
-        QAP_2997.execute(report_id, session_id)
+        QAP_T4949.execute(report_id, session_id)
+        QAP_T4948.execute(report_id, session_id)
+        QAP_T4931.execute(report_id, session_id)
+        QAP_T4930.execute(report_id, session_id)
+        QAP_T4929.execute(report_id, session_id)
+        QAP_T4928.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

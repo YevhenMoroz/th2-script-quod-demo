@@ -124,3 +124,32 @@ class FixMessageNewOrderMultiLegFX(FixMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_for_dealer_swap(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
+                                     price: str = None, side: str = None):
+        quote_price = None
+        if "Side" in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            if quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+                quote_price = quote.get_parameter("OfferSwapPoints")
+            else:
+                quote_price = quote.get_parameter("BidSwapPoints")
+
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(9),
+            "Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"],
+            "HandlInst": "1",
+            "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
+            quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
+            "OrderQty": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegOrderQty"],
+            "TimeInForce": "3",
+            "OrdType": "D",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Price": quote_price if quote_price is not None else price,
+            "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"],
+            "NoLegs": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"],
+            "QuoteID": quote.get_parameter("QuoteID")
+        }
+
+        super().change_parameters(base_parameters)
+        return self

@@ -1,8 +1,8 @@
 from custom.basic_custom_actions import timestamps
-from test_cases.eq.PostTrade import QAP_2614, QAP_2615, QAP_2697, QAP_2700, QAP_3338, QAP_3342, QAP_3343, QAP_3349, \
-    QAP_3770, QAP_3333, QAP_3344, QAP_3784, QAP_2780, QAP_2849, QAP_2850, QAP_2973, QAP_3000, QAP_3217, QAP_3220, \
-    QAP_3259, QAP_3303, QAP_3315, QAP_3332, QAP_3334, QAP_3337, QAP_3352, QAP_3388, QAP_3413, QAP_3491, \
-    QAP_3936, QAP_4349, QAP_4458, QAP_4471
+from test_cases.eq.PostTrade import QAP_T7552, QAP_T7551, QAP_T7548, QAP_T7547, QAP_T7503, QAP_T7501, QAP_T7500, QAP_T7498, \
+    QAP_T7443, QAP_T7506, QAP_T7499, QAP_T7438, QAP_T7544, QAP_T7538, QAP_T7537, QAP_T7535, QAP_T7533, QAP_T7532, QAP_T7531, \
+    QAP_T7530, QAP_T7518, QAP_T7510, QAP_T7507, QAP_T7505, QAP_T7504, QAP_T7495, QAP_T7485, QAP_T7480, QAP_T7476, \
+    QAP_3936, QAP_T7383, QAP_T7363, QAP_T7360
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -22,41 +22,41 @@ def test_run(parent_id=None):
     session_id = set_session_id()
     seconds, nanos = timestamps()  # Store case start time
     try:
-        QAP_2614.execute(report_id, session_id)
-        QAP_2615.execute(report_id, session_id)
-        QAP_2697.execute(report_id, session_id)
-        QAP_2700.execute(report_id, session_id)
-        QAP_2780.execute(report_id, session_id)
-        QAP_2849.execute(report_id, session_id)
-        QAP_2850.execute(report_id, session_id)
-        QAP_2973.execute(report_id, session_id)
-        QAP_3000.execute(report_id, session_id)
-        QAP_3217.execute(report_id, session_id)
-        QAP_3220.execute(report_id, session_id)
-        QAP_3259.execute(report_id, session_id)
-        QAP_3303.execute(report_id, session_id)
-        # QAP_3310.execute(report_id, session_id)
-        QAP_3315.execute(report_id, session_id)
-        QAP_3332.execute(report_id, session_id)
-        QAP_3333.execute(report_id, session_id)
-        QAP_3334.execute(report_id, session_id)
-        QAP_3337.execute(report_id, session_id)
-        QAP_3338.execute(report_id, session_id)
-        QAP_3342.execute(report_id, session_id)
-        QAP_3343.execute(report_id, session_id)
-        QAP_3344.execute(report_id, session_id)
-        QAP_3349.execute(report_id, session_id)
-        QAP_3352.execute(report_id, session_id)
-        QAP_3388.execute(report_id, session_id)
-        QAP_3413.execute(report_id, session_id)
-        QAP_3491.execute(report_id, session_id)
-        QAP_3770.execute(report_id, session_id)
-        QAP_3770.execute(report_id, session_id)
-        QAP_3784.execute(report_id, session_id)
+        QAP_T7552.execute(report_id, session_id)
+        QAP_T7551.execute(report_id, session_id)
+        QAP_T7548.execute(report_id, session_id)
+        QAP_T7547.execute(report_id, session_id)
+        QAP_T7544.execute(report_id, session_id)
+        QAP_T7538.execute(report_id, session_id)
+        QAP_T7537.execute(report_id, session_id)
+        QAP_T7535.execute(report_id, session_id)
+        QAP_T7533.execute(report_id, session_id)
+        QAP_T7532.execute(report_id, session_id)
+        QAP_T7531.execute(report_id, session_id)
+        QAP_T7530.execute(report_id, session_id)
+        QAP_T7518.execute(report_id, session_id)
+        # QAP_T7512.execute(report_id, session_id)
+        QAP_T7510.execute(report_id, session_id)
+        QAP_T7507.execute(report_id, session_id)
+        QAP_T7506.execute(report_id, session_id)
+        QAP_T7505.execute(report_id, session_id)
+        QAP_T7504.execute(report_id, session_id)
+        QAP_T7503.execute(report_id, session_id)
+        QAP_T7501.execute(report_id, session_id)
+        QAP_T7500.execute(report_id, session_id)
+        QAP_T7499.execute(report_id, session_id)
+        QAP_T7498.execute(report_id, session_id)
+        QAP_T7495.execute(report_id, session_id)
+        QAP_T7485.execute(report_id, session_id)
+        QAP_T7480.execute(report_id, session_id)
+        QAP_T7476.execute(report_id, session_id)
+        QAP_T7443.execute(report_id, session_id)
+        QAP_T7443.execute(report_id, session_id)
+        QAP_T7438.execute(report_id, session_id)
         QAP_3936.execute(report_id, session_id)
-        QAP_4349.execute(report_id, session_id)
-        QAP_4458.execute(report_id, session_id)
-        QAP_4471.execute(report_id, session_id)
+        QAP_T7383.execute(report_id, session_id)
+        QAP_T7363.execute(report_id, session_id)
+        QAP_T7360.execute(report_id, session_id)
 
 
 

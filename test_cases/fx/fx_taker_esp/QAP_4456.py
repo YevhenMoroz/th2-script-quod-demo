@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 alias_gtw = "fix-sell-esp-t-314-stand"
 symbol = 'EUR/USD'
@@ -33,7 +33,7 @@ def execute(report_id, session_id):
     try:
 
         # STEP 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor = FixMessageNewOrderSingleTaker().set_default_SOR().change_parameters(
             {'TimeInForce': '1',"SettlType": "B", "OrdType": "2","HandlInst": "3", })
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \

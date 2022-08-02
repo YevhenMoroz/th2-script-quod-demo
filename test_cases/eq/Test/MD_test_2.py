@@ -13,7 +13,7 @@ def execute(report_id):
     verifier = Stubs.verifier
     simulator = Stubs.simulator
 
-    case_name = "QAP-2409"
+    case_name = "QAP_T5074"
 
     symbol = "3166"
     # Create sub-report for case
