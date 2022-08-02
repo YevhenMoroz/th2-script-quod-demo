@@ -3,6 +3,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -10,8 +12,8 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses, \
-    MiddleOfficeColumns, AllocationsColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
+    MiddleOfficeColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -21,7 +23,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_3386(TestCase):
+class QAP_7112(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -30,14 +32,13 @@ class QAP_3386(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '200'
-        self.price = '20'
+        self.qty = '100'
+        self.price = '10'
+        self.exchange_rate = '0.7785'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.alloc_account_1 = self.data_set.get_account_by_name('client_pt_1_acc_1')  # MOClient_SA1
-        self.alloc_account_2 = self.data_set.get_account_by_name('client_pt_1_acc_2')  # MOClient_SA2
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
@@ -53,17 +54,12 @@ class QAP_3386(TestCase):
                                                                                             self.venue,
                                                                                             float(self.price),
                                                                                             int(self.qty), 0)
-            no_allocs: dict = {'NoAllocs': [{'AllocAccount': self.alloc_account_1, 'AllocQty': str(int(self.qty) // 2)},
-                                            {'AllocAccount': self.alloc_account_2,
-                                             'AllocQty': str(int(self.qty) // 2)}]}
-
             self.fix_message.set_default_dma_limit()
             self.fix_message.change_parameters(
-                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'PreAllocGrp': no_allocs})
+                {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
             # get Client Order ID and Order ID
             cl_ord_id = response[0].get_parameters()['ClOrdID']
-            order_id = response[0].get_parameters()['OrderID']
 
         except Exception:
             logger.error('Error execution', exc_info=True)
@@ -75,50 +71,51 @@ class QAP_3386(TestCase):
         # region Checking statuses in OrderBook
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
         self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
+                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
+                                                 OrderBookColumns.done_for_day.value: 'Yes'},
                                                 'Comparing statuses after trading')
         # endregion
 
-        # region Execute CO
-        self.order_book.manual_execution(qty=self.qty)
-        # endregion
-
-        # region Complete order
-        self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
+        # region Extracting values from Booking ticket
+        extract_panels = self.order_book.extracting_values_from_booking_ticket(
+            [PanelForExtraction.MAIN_PANEL, PanelForExtraction.SETTLEMENT],
+            filter_dict={OrderBookColumns.cl_ord_id.value: cl_ord_id})
+        values_from_panels = {}
+        for d in self.middle_office.split_tab_misk(extract_panels):
+            values_from_panels.update(d)
         # endregion
 
         # region Book order
+        self.middle_office.set_modify_ticket_details(settl_currency='UAH', exchange_rate=self.exchange_rate,
+                                                     exchange_rate_calc='Multiply', toggle_recompute=True)
         self.middle_office.book_order([OrderBookColumns.cl_ord_id.value, cl_ord_id])
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id]).check_order_fields_list(
             {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
         # endregion
 
-        # region Checking the values after Book in the Middle Office
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], [MiddleOfficeColumns.order_id.value, order_id])
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: 'ApprovalPending', MiddleOfficeColumns.match_status.value: 'Unmatched',
-             MiddleOfficeColumns.summary_status.value: ''}, values_after_book,
-            'Comparing values after Book for block of MiddleOffice')
+        # region Extracting Settlement panel in Booking ticket after Book
+        settlement_panel_after_book = self.middle_office.extracting_values_from_amend_ticket(
+            [PanelForExtraction.SETTLEMENT])
+        expected_settlement_panel_after_book = {}
+        for d in self.middle_office.split_tab_misk(settlement_panel_after_book):
+            expected_settlement_panel_after_book.update(d)
         # endregion
 
-        # region Approve and Allocate block
-        self.middle_office.approve_block()
-        allocation_param = [
-            {AllocationsColumns.security_acc.value: self.alloc_account_1, AllocationsColumns.alloc_qty.value: self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param, clear_alloc_greed=True)
-        self.middle_office.allocate_block()
+        # region Checking SettlAmount after applying Exchange Calc
+        old_settl_amount = float(values_from_panels.get('SettlAmount').replace(',', ''))
+        new_settl_amount = expected_settlement_panel_after_book.get('SettlAmount')
+        self.middle_office.compare_values({'SettlAmount': str(old_settl_amount * float(self.exchange_rate))},
+                                          {'SettlAmount': new_settl_amount},
+                                          'Comparing SettlAmount after applying Exchange Calc')
         # endregion
 
-        # region Checking values in Allocations
-        extracted_fields = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value, AllocationsColumns.alloc_qty.value,
-             AllocationsColumns.account_id.value])
+        # region Checking Net Amt after applying Exchange Calc
+        old_net_amount = float(values_from_panels.get('NetAmount').replace(',', ''))
+        new_net_amount = self.middle_office.extract_block_field(MiddleOfficeColumns.net_amt.value)
         self.middle_office.compare_values(
-            {AllocationsColumns.sts.value: 'Affirmed', AllocationsColumns.match_status.value: 'Matched',
-             AllocationsColumns.alloc_qty.value: self.qty, AllocationsColumns.account_id.value: self.alloc_account_1},
-            extracted_fields, 'Checking values in Allocations')
+            {MiddleOfficeColumns.net_amt.value: str(old_net_amount * float(self.exchange_rate))},
+            {MiddleOfficeColumns.net_amt.value: new_net_amount[MiddleOfficeColumns.net_amt.value]},
+            'Comparing Net Amt after applying Exchange Calc')
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
