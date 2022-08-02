@@ -609,6 +609,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
+        if order_cancel_replace.get_parameter('TargetStrategy') == '1011' and order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID='*')
         if order_cancel_replace.get_parameter('TargetStrategy') == '1010':
             temp.update(
                 NoParty='*',
