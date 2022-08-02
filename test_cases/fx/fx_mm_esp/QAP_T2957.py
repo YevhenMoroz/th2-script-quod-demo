@@ -11,8 +11,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotIncrementalRefreshSellFX import \
-    FixMessageMarketDataSnapshotIncrementalRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataIncrementalRefreshSellFX import \
+    FixMessageMarketDataIncrementalRefreshSellFX
 from custom import basic_custom_actions as bca
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.forex.RestApiQuotingSessionMessages import RestApiQuotingSessionMessages
@@ -28,7 +28,7 @@ class QAP_T2957(TestCase):
         self.fix_manager_mm = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.md_snapshot_full = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.md_snapshot_inc = FixMessageMarketDataSnapshotIncrementalRefreshSellFX()
+        self.md_snapshot_inc = FixMessageMarketDataIncrementalRefreshSellFX()
         self.rest_manager = RestApiManager(self.adm_env.session_alias_wa, self.test_id)
         self.rest_massage = RestApiQuotingSessionMessages()
 
