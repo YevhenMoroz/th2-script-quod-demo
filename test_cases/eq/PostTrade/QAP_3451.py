@@ -6,7 +6,7 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
