@@ -200,6 +200,7 @@ class AlgoListingId(Enum):
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
     listing_13 = "125917202" # JANESTREET for FR0000031577
     listing_14 = "181116477" # CITADEL for FR0000031577
+    listing_15 = "897588209" # TRQX for FR0010411884
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
