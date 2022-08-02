@@ -1,70 +1,51 @@
 import logging
 import time
-from datetime import datetime
+from getpass import getuser as get_pc_name
 
+from MyFiles.SendMD_Simple import SendMD_Simple
+from MyFiles.md_percentage_deviation import SendMD_percentage_dev
+from MyFiles.md_to_refresh_prices import send_md_to_update_prices
+from MyFiles.send_md_crossed import send_md_crossed
+from MyFiles.test_ref_venues_cleansing import SendMD_ref_venues
 from custom import basic_custom_actions as bca
-from send_rqf import Send_RFQ
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_1559, QAP_6148
-from test_cases.fx.fx_mm_esp.QAP_1518 import QAP_1518
-from test_cases.fx.fx_mm_esp.QAP_1597 import QAP_1597
-from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
-from test_cases.fx.fx_mm_esp.QAP_8010 import QAP_8010
-from test_cases.fx.fx_mm_rfq import QAP_3494
-from test_cases.fx.fx_mm_rfq.QAP_2345 import QAP_2345
-from test_cases.fx.fx_mm_rfq.QAP_2353 import QAP_2353
-from test_cases.fx.fx_mm_rfq.QAP_3106 import QAP_3106
-from test_cases.fx.fx_mm_rfq.QAP_3610 import QAP_3610
-from test_cases.fx.fx_mm_rfq.QAP_5353 import QAP_5353
-from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
-from test_cases.fx.fx_mm_rfq.QAP_6531 import QAP_6531
-from test_cases.fx.fx_mm_rfq.QAP_7125 import QAP_7125
-from test_cases.fx.fx_mm_rfq.QAP_7162 import QAP_7162
-from test_cases.fx.fx_mm_rfq.QAP_7556 import QAP_7556
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3734 import QAP_3734
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3762 import QAP_3762
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3772 import QAP_3772
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3806 import QAP_3806
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3851 import QAP_3851
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_5992 import QAP_5992
-
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_6147 import QAP_6147
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_6364 import QAP_6364
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3721 import QAP_3721
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3741 import QAP_3741
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
-from test_cases.fx.fx_mm_rfq.rejection.QAP_3720 import QAP_3720
-from test_cases.fx.fx_taker_esp import QAP_5600
-from test_cases.fx.fx_taker_esp.QAP_6593 import QAP_6593
-from test_cases.fx.fx_taker_esp.QAP_8090 import QAP_8090
-
-from test_cases.fx.qs_fx_routine import DepositAndLoan
-from test_cases.fx.qs_fx_routine.dep_and_loan import DepAndLoan
-from test_cases.fx.send_md import QAP_MD
+from test_cases.fx.fx_mm_autohedging import QAP_3147, QAP_3146, QAP_3067, QAP_4122
+from test_cases.fx.fx_mm_autohedging.QAP_6598 import QAP_6598
+from test_cases.fx.fx_mm_esp import QAP_3661, QAP_4016, QAP_2012
+from test_cases.fx.fx_mm_esp.QAP_6149 import QAP_6149
+from test_cases.fx.fx_mm_esp.QAP_T2479 import QAP_T2479
+from test_cases.fx.fx_mm_esp.QAP_T2957 import QAP_T2957
+from test_cases.fx.fx_price_cleansing.QAP_3452 import QAP_3452
+from test_cases.fx.fx_price_cleansing.QAP_7939 import QAP_7939
+from test_cases.fx.fx_price_cleansing.QAP_7964 import QAP_7964
 from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(f'[alexs] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    pc_name = get_pc_name()  # getting PC name
+    report_id = bca.create_event(f'[{pc_name}] ')  # + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    logger.info(f"Root event was created (id = {report_id.id})")
     # initializing dataset
-    # initializing FE session
-    session_id = set_session_id(target_server_win="ostronov")
 
+    # initializing FE session
+    session_id = set_session_id(target_server_win="ashcherb")
     window_name = "Quod Financial - Quod site 314"
     # region creation FE environment and initialize fe_ values
     configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
     start_time = time.time()
     print(f"Test start")
+    data_set = FxDataSet()
     # endregion
     Stubs.frontend_is_open = True
+    # rule_manager = rule_management.RuleManager()
+    # rule_manager.print_active_rules()
 
     try:
         # if not Stubs.frontend_is_open:
@@ -72,24 +53,91 @@ def test_run():
         # else:
         #     get_opened_fe(report_id, session_id, window_name)
 
+        # QAP_2098(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_2343(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_4149(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_3142(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_3761(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # QAP_6149(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2479(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2957(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3147.execute(report_id, session_id)
+        # QAP_3146.execute(report_id, session_id)
+        # QAP_2159.execute(report_id, session_id)
+        # QAP_5551.execute(report_id, session_id)
+        # QAP_2491.execute(report_id, session_id)
+        # QAP_3734.execute(report_id, session_id)
+        # QAP_3661.execute(report_id, session_id)
+        # QAP_3140.execute(report_id)
+        # QAP_3805.execute(report_id)
+        # QAP_3067.execute(report_id, session_id)
+        # QAP_4122.execute(report_id, session_id)
+        # QAP_2012.execute(report_id)
+        # QAP_3661.execute(report_id, session_id)
+        # QAP_4016.execute(report_id, session_id)
+        # QAP_2382.execute(report_id)
+        # QAP_6691(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6598(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # QAP_6697(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7073(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6931(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # QAP_6933(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # QAP_7279(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_3452(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7939(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7964(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # test(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_5369.execute(report_id, session_id, data_set)
+        # QAP_5589.execute(report_id, session_id)
+        # QAP_5591.execute(report_id, session_id)
+        # QAP_5537.execute(report_id, session_id, data_set)
+        # QAP_3147.execute(report_id, session_id)
+        # QAP_3146.execute(report_id, session_id)
+        # MyTest(report_id=report_id, session_id=session_id, data_set=data_set).execute()
+        # send_rfq.execute(report_id)
+        # SendMD_Simple(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_percentage_dev(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_ref_venues(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_empty(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # send_md_crossed(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_Settle_Date(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # Send_MD_FWD(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # send_md_to_update_prices(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # send_md_defferent_venues(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # QAP_7129(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7081(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7160(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7167(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_7279(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6145(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6148.execute(report_id, session_id)
+        # QAP_6149(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6153(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6353(report_id=report_id, session_id=session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_6151.execute(report_id)
+        # SendMD_QAP_6337(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_QAP_6353(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # SendMD_QAP_6353(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        # rule_management.RuleManager.print_active_rules()
+        # QAP_4509.execute(report_id)
+        # QAP_4510.execute(report_id)
+        # QAP_2966.execute(report_id)
+        # QAP_2646.execute(report_id, session_id)
+        # QAP_2296.execute(report_id, session_id)
+        # stop_fxfh()
+        # QAP_3414.execute(report_id)
+        # QAP_3415.execute(report_id)
+        # QAP_3418.execute(report_id)
+        # start_fxfh()
+        # prepare_position()
         # rm = RuleManager()
-        # rm.add_TRADE_ESP_test("fix-bs-esp-314-luna-standard")
         # rm.print_active_rules()
-        # QAP_568(report_id, session_id, configuration.data_set).execute()
-        # Test_UI(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        # DepositAndLoan.execute(report_id)
+
+        # Testing(report_id, session_id, configuration.data_set).execute()
 
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # EarlyRedemption(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        Send_RFQ(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_7125(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_5389().execute(report_id)
-        # QAP_3494.execute(report_id)
-
-        # QAP_7556(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        # rfq_taker_regression.test_run(parent_id=report_id)
-        # fx_mm_rfq_regression.test_run(parent_id=report_id)
+        # Send_RFQ(report_id, data_set=configuration.data_set).execute()
 
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
@@ -98,7 +146,6 @@ def test_run():
         logging.error("Error execution", exc_info=True)
     finally:
         Stubs.win_act.unregister(session_id)
-        pass
 
 
 if __name__ == '__main__':
