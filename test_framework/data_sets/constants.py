@@ -153,8 +153,11 @@ class ClientAlgoPolicy(Enum):
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
-    qa_multiply_y = 'QA_Auto_SORPING_ME_Y'
-    qa_multiply_n = 'QA_Auto_SORPING_ME_N'
+    qa_sorping_3 = "QA_Auto_SORPING_3"
+    qa_sorping_4 = "QA_Auto_SORPING_4"
+    qa_sorping_5 = "QA_Auto_SORPING_5"
+    qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
+    qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 
 
 class OrderType(Enum):

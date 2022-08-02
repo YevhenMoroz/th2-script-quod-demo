@@ -3,15 +3,15 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2407 import QAP_2407
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2408 import QAP_2408
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2409 import QAP_2409
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2410 import QAP_2410
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2411 import QAP_2411
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2503 import QAP_2503
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2665 import QAP_2665
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2666 import QAP_2666
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_2667 import QAP_2667
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5076 import QAP_T5076
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5075 import QAP_T5075
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5074 import QAP_T5074
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5073 import QAP_T5073
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5072 import QAP_T5072
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5063 import QAP_T5063
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5004 import QAP_T5004
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5003 import QAP_T5003
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5002 import QAP_T5002
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -25,15 +25,15 @@ def test_run(parent_id=None):
     try:
         # region SORPING
         configuration = ComponentConfiguration("sorping")
-        QAP_2407(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2408(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2409(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2410(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2411(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2503(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2665(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2666(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_2667(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5074(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5073(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5072(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5063(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5004(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5003(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5002(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

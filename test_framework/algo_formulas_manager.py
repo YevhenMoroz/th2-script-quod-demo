@@ -139,4 +139,18 @@ class AlgoFormulasManager:
                 final_string += "/"
         return final_string
 
+    @staticmethod
+    def make_expire_date_next_sunday(day: int) -> int:
+        days = [0, 1, 2, 3, 4, 5, 6]
+        shift = 6
+        res_shift = 0
+        for i in days:
+            if day == i:
+                res_shift = shift
+            shift -= 1
+        return res_shift
+
+
+
+
 
