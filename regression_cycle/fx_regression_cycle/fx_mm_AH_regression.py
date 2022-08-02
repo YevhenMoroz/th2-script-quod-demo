@@ -1,11 +1,11 @@
-from test_cases.fx.fx_mm_autohedging import QAP_5551, QAP_2322, QAP_3147, \
-    QAP_3146, QAP_2265, QAP_3082, QAP_3819, QAP_4122, QAP_2293, QAP_3017, QAP_6007, QAP_6010, QAP_6008, QAP_6116, \
-    QAP_2325, QAP_3233
-from test_cases.fx.fx_mm_autohedging import QAP_2159, QAP_2255, \
-    QAP_3939, QAP_3039, QAP_2470, QAP_3354, QAP_3067, QAP_1762, QAP_2326, import_AH_layout, AH_Precondition
-from test_cases.fx.fx_mm_autohedging import QAP_2252, QAP_2113, QAP_2228, QAP_2250, QAP_2251, QAP_2290, QAP_2291, QAP_2292, \
-    QAP_3902
-from test_cases.fx.fx_mm_autohedging.QAP_6598 import QAP_6598
+from test_cases.fx.fx_mm_autohedging import QAP_T2495, QAP_2322, QAP_T2681, \
+    QAP_T2682, QAP_T2854, QAP_T2697, QAP_T2569, QAP_T2542, QAP_T2847, QAP_T2713, QAP_T2474, QAP_T2472, QAP_T2473, QAP_T2469, \
+    QAP_T2840, QAP_T2679
+from test_cases.fx.fx_mm_autohedging import QAP_T2862, QAP_T2855, \
+    QAP_T2548, QAP_T2712, QAP_T2821, QAP_T2657, QAP_T2703, QAP_T2936, QAP_T2839, import_AH_layout, AH_Precondition
+from test_cases.fx.fx_mm_autohedging import QAP_T2857, QAP_T2872, QAP_T2860, QAP_T2859, QAP_T2858, QAP_T2850, QAP_T2849, QAP_T2848, \
+    QAP_T2554
+from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
@@ -41,42 +41,42 @@ def test_run(parent_id=None):
 
         # import_AH_layout.execute(report_id, session_id)
         # AH_Precondition.execute(report_id)
-        # QAP_1762.execute(report_id, session_id)
-        # QAP_2113.execute(report_id, session_id)
-        QAP_2159.execute(report_id, session_id)
-        QAP_2228.execute(report_id, session_id)
-        QAP_2255.execute(report_id, session_id)
+        # QAP_T2936.execute(report_id, session_id)
+        # QAP_T2872.execute(report_id, session_id)
+        QAP_T2862.execute(report_id, session_id)
+        QAP_T2860.execute(report_id, session_id)
+        QAP_T2855.execute(report_id, session_id)
         QAP_2322.execute(report_id, session_id)
-        QAP_3939.execute(report_id, session_id)
-        QAP_3039.execute(report_id, session_id)
-        QAP_3354.execute(report_id, session_id)
-        QAP_3067.execute(report_id, session_id)
-        QAP_2326.execute(report_id, session_id)
-        QAP_5551.execute(report_id, session_id)
-        QAP_2470.execute(report_id, session_id)
-        QAP_3147.execute(report_id, session_id)
-        QAP_3146.execute(report_id, session_id)
-        QAP_3082.execute(report_id, session_id)
-        QAP_3819.execute(report_id, session_id)
-        QAP_4122.execute(report_id, session_id)
-        QAP_2325.execute(report_id, session_id)
-        QAP_3233.execute(report_id, session_id)
+        QAP_T2548.execute(report_id, session_id)
+        QAP_T2712.execute(report_id, session_id)
+        QAP_T2657.execute(report_id, session_id)
+        QAP_T2703.execute(report_id, session_id)
+        QAP_T2839.execute(report_id, session_id)
+        QAP_T2495.execute(report_id, session_id)
+        QAP_T2821.execute(report_id, session_id)
+        QAP_T2681.execute(report_id, session_id)
+        QAP_T2682.execute(report_id, session_id)
+        QAP_T2697.execute(report_id, session_id)
+        QAP_T2569.execute(report_id, session_id)
+        QAP_T2542.execute(report_id, session_id)
+        QAP_T2840.execute(report_id, session_id)
+        QAP_T2679.execute(report_id, session_id)
         # Rest API
-        QAP_3902.execute(report_id, session_id)
-        QAP_2292.execute(report_id, session_id)
-        QAP_2291.execute(report_id, session_id)
-        QAP_2290.execute(report_id, session_id)
-        QAP_2252.execute(report_id, session_id)
-        QAP_2251.execute(report_id, session_id)
-        QAP_2250.execute(report_id, session_id)
-        QAP_2265.execute(report_id, session_id)
-        QAP_2293.execute(report_id, session_id)
-        QAP_3017.execute(report_id, session_id)
-        QAP_6007.execute(report_id, session_id)
-        QAP_6008.execute(report_id, session_id)
-        QAP_6010.execute(report_id, session_id)
-        QAP_6116.execute(report_id, session_id)
-        QAP_6598(report_id, data_set=configuration.data_set)
+        QAP_T2554.execute(report_id, session_id)
+        QAP_T2848.execute(report_id, session_id)
+        QAP_T2849.execute(report_id, session_id)
+        QAP_T2850.execute(report_id, session_id)
+        QAP_T2857.execute(report_id, session_id)
+        QAP_T2858.execute(report_id, session_id)
+        QAP_T2859.execute(report_id, session_id)
+        QAP_T2854.execute(report_id, session_id)
+        QAP_T2847.execute(report_id, session_id)
+        QAP_T2713.execute(report_id, session_id)
+        QAP_T2474.execute(report_id, session_id)
+        QAP_T2473.execute(report_id, session_id)
+        QAP_T2472.execute(report_id, session_id)
+        QAP_T2469.execute(report_id, session_id)
+        QAP_T2440(report_id, data_set=configuration.data_set)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

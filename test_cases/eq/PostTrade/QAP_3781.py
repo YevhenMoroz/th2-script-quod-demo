@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 
 def execute(report_id, session_id):
-    case_name = "QAP-3770"
+    case_name = "QAP_T7443"
     case_id = create_event(case_name, report_id)
     # region Declarations
     qty = "49540"

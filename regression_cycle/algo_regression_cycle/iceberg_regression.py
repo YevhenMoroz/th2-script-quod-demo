@@ -26,10 +26,10 @@ def test_run(parent_id=None):
         configuration = ComponentConfiguration("iceberg")
         QAP_4612_example(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        # QAP_3056.execute(report_id=report_id)
-        # QAP_3055.execute(report_id=report_id)
-        # QAP_3054.execute(report_id=report_id)
-        # QAP_3029.execute(report_id=report_id)
+        # QAP_T4917.execute(report_id=report_id)
+        # QAP_T4918.execute(report_id=report_id)
+        # QAP_T4919.execute(report_id=report_id)
+        # QAP_T4925.execute(report_id=report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

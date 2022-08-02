@@ -20,7 +20,7 @@ def execute(report_id):
     rule_man = RuleManager()
 
     seconds, nanos = bca.timestamps()  # Store case start time
-    case_name = "QAP-2684"
+    case_name = "QAP_T4996"
 
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
