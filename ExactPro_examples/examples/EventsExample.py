@@ -8,7 +8,7 @@ class EventsExample(BaseTest):
 
     def __init__(self, services: Services, parent_event):
         super().__init__(services)
-        self.create_test_event(parent_event, "QAP-2838-step-4", "Get Order Analysis Audit Events")
+        self.create_test_event(parent_event, "QAP_T4950-step-4", "Get Order Analysis Audit Events")
 
     def execute(self):
         call = self.call

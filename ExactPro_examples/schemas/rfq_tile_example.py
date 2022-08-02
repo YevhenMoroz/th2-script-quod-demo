@@ -22,7 +22,7 @@ def execute(report_id):
 
     # Store case start time
     seconds, nanos = bca.timestamps()
-    case_name = "QAP-585"
+    case_name = "QAP_T3055"
     # Create sub-report for case
     case_id = bca.create_event(case_name, report_id)
     session_id = set_session_id()

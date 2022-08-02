@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.eq.Care.QAP_1016 import QAP_1016
+from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -36,7 +36,7 @@ def test_run():
 
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
-        QAP_1016(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
                  environment=configuration.environment) \
             .execute()
     except Exception:

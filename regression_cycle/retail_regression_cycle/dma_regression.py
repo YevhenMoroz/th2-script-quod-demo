@@ -1,4 +1,4 @@
-from test_cases.ret.DMA import RIN_1188, RIN_1189, QAP_4169, QAP_4172, QAP_4654, QAP_5106, QAP_5170, QAP_5425, QAP_5426
+from test_cases.ret.DMA import RIN_1188, RIN_1189, QAP_T3790, QAP_T3788, QAP_T3705, QAP_T3662, QAP_T3661, QAP_5425, QAP_5426
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -15,11 +15,11 @@ def test_run(session_id, parent_id=None):
     try:
         RIN_1188.execute(session_id, report_id)
         RIN_1189.execute(session_id, report_id)
-        QAP_4169.execute(session_id, report_id)
-        QAP_4172.execute(session_id, report_id)
-        QAP_4654.execute(session_id, report_id)
-        QAP_5106.execute(session_id, report_id)
-        QAP_5170.execute(session_id, report_id)
+        QAP_T3790.execute(session_id, report_id)
+        QAP_T3788.execute(session_id, report_id)
+        QAP_T3705.execute(session_id, report_id)
+        QAP_T3662.execute(session_id, report_id)
+        QAP_T3661.execute(session_id, report_id)
         QAP_5425.execute(report_id)
         QAP_5426.execute(report_id)
     except Exception:
