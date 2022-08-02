@@ -87,12 +87,12 @@ class QAP_3448(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        # rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
+        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.inc_qty, self.inc_qty, self.new_reply, self.restated_reply)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_lisx, self.price)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_lisx, True)
 
-        self.rule_list = [rfq_cancel_rule, new_order_single, cancel_rule]
+        self.rule_list = [rfq_cancel_rule, new_order_single, cancel_rule, rfq_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
