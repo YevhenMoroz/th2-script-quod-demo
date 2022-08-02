@@ -16,6 +16,7 @@ from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7534(TestCase):
 
@@ -65,6 +66,6 @@ class QAP_T7534(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __verify_commissions(self):
         order_id = self.response[0].get_parameter("OrderID")
-        self.trades.set_filter([TradeBookColumns.order_id.value, order_id])
+        self.trades.set_filter([TradeBookColumns.order_id.value, order_id, TradeBookColumns.exec_type.value, "Trade"])
         fees = {TradeBookColumns.exec_fees.value: self.trades.extract_field(TradeBookColumns.exec_fees.value)}
-        self.trades.compare_values({TradeBookColumns.exec_fees.value: "1.123"}, fees, event_name='Check values')
+        self.trades.compare_values({TradeBookColumns.exec_fees.value: "0.01"}, fees, event_name='Check values')

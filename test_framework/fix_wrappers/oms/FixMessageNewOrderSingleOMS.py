@@ -21,7 +21,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
             "Instrument": data_set.get_fix_instrument_by_name("instrument_1"),
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
-            "Currency": data_set.get_currency_by_name("currency_1"),
+            # "Currency": data_set.get_currency_by_name("currency_1"),
             "ExDestination": data_set.get_mic_by_name("mic_1")
         }
 
