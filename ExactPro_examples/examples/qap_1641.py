@@ -9,11 +9,11 @@ from grpc_modules.verifier_pb2_grpc import VerifierStub
 from grpc_modules.verifier_pb2 import CheckpointRequest
 
 
-class QAP_1641(BaseTest):
+class QAP_T5087(BaseTest):
 
     def __init__(self, services: Services, parent_event):
         super().__init__(services)
-        self.create_test_event(parent_event, "QAP-1641", "[TWAP] Check implement of MaxParticipation for TWAP")
+        self.create_test_event(parent_event, "QAP_T5087", "[TWAP] Check implement of MaxParticipation for TWAP")
 
     def create_checkpoint(self):
         verifier = VerifierStub(self._channels.verifier_channel)

@@ -1,7 +1,7 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_TWAP import QAP_2955, QAP_3123, QAP_3120, QAP_3119, QAP_3124, QAP_3532, QAP_2977, QAP_3117, QAP_3122, QAP_3032, QAP_2478, QAP_2706, QAP_3121
+from test_cases.algo.Algo_TWAP import QAP_T4936, QAP_T4883, QAP_T4886, QAP_T4887, QAP_T4882, QAP_T4760, QAP_T4935, QAP_T4889, QAP_T4884, QAP_T4924, QAP_T5065, QAP_T4988, QAP_T4885
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,22 +22,22 @@ def test_run(parent_id= None):
         # else:
         #     get_opened_fe(report_id, session_id, work_dir)
 
-        QAP_2706.execute(report_id)
-        QAP_2478.execute(report_id)
-        QAP_2955.execute(report_id)
-        QAP_2977.execute(report_id)
-        QAP_3032.execute(report_id)
-        QAP_3117.execute(report_id)
-        QAP_3119.execute(report_id)
-        QAP_3120.execute(report_id)
-        QAP_3121.execute(report_id)
-        QAP_3122.execute(report_id)
-        QAP_3123.execute(report_id)
-        QAP_3124.execute(report_id)
-        QAP_3532.execute(report_id)
+        QAP_T4988.execute(report_id)
+        QAP_T5065.execute(report_id)
+        QAP_T4936.execute(report_id)
+        QAP_T4935.execute(report_id)
+        QAP_T4924.execute(report_id)
+        QAP_T4889.execute(report_id)
+        QAP_T4887.execute(report_id)
+        QAP_T4886.execute(report_id)
+        QAP_T4885.execute(report_id)
+        QAP_T4884.execute(report_id)
+        QAP_T4883.execute(report_id)
+        QAP_T4882.execute(report_id)
+        QAP_T4760.execute(report_id)
         # #FIX/FE
-        # QAP_2864.execute(report_id, session_id)
-        # QAP_2865.execute(report_id, session_id)
+        # QAP_T4946.execute(report_id, session_id)
+        # QAP_T4945.execute(report_id, session_id)
         # #end FIX/FE
     except Exception:
         logging.error("Error execution", exc_info=True)

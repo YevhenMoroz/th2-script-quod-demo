@@ -3,35 +3,35 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3432 import QAP_3432
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3433 import QAP_3433
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3437 import QAP_3437
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3445 import QAP_3445
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3446 import QAP_3446
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3453 import QAP_3453
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3486 import QAP_3486
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3497 import QAP_3497
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3498 import QAP_3498
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3500 import QAP_3500
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3504 import QAP_3504
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3506 import QAP_3506
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3507 import QAP_3507
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3512 import QAP_3512
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3524 import QAP_3524
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3526 import QAP_3526
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3527 import QAP_3527
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3529 import QAP_3529
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3549 import QAP_3549
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3627 import QAP_3627
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3713 import QAP_3713
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3730 import QAP_3730
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3731 import QAP_3731
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3732 import QAP_3732
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3733 import QAP_3733
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_3994 import QAP_3994
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_4055 import QAP_4055
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_6067 import QAP_6067
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_8219 import QAP_8219
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4795 import QAP_T4795
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4794 import QAP_T4794
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4793 import QAP_T4793
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4788 import QAP_T4788
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4787 import QAP_T4787
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4783 import QAP_T4783
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4778 import QAP_T4778
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4777 import QAP_T4777
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4776 import QAP_T4776
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4775 import QAP_T4775
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4774 import QAP_T4774
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4773 import QAP_T4773
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4772 import QAP_T4772
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4770 import QAP_T4770
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4767 import QAP_T4767
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4765 import QAP_T4765
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4764 import QAP_T4764
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4762 import QAP_T4762
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4759 import QAP_T4759
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4746 import QAP_T4746
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4735 import QAP_T4735
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4733 import QAP_T4733
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4732 import QAP_T4732
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4731 import QAP_T4731
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4730 import QAP_T4730
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4724 import QAP_T4724
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4718 import QAP_T4718
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4358 import QAP_T4358
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4156 import QAP_T4156
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,42 +45,42 @@ def test_run(parent_id=None):
     try:
         # region MP Dark (Dark Phase Only)
         configuration = ComponentConfiguration("mp_dark")
-        QAP_3497(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3498(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3500(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3504(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3506(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3507(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3512(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3524(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3526(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3527(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3529(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3549(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3713(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3730(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3731(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3732(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3733(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_8219(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4777(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4776(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4775(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4774(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4773(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4772(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4770(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4767(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4765(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4764(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4762(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4759(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4735(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4733(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4732(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4731(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4730(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4156(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MP Dark (LIS + Dark phase)
-        QAP_3432(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3433(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3437(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3445(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3446(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3453(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3453(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3486(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_3627(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4795(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4794(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4793(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4788(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4787(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4783(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4783(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4778(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4746(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MP Dark (other)
-        QAP_3994(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_4055(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_6067(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4724(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4358(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

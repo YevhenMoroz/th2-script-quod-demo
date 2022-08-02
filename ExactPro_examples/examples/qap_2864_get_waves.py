@@ -3,11 +3,11 @@ from utils.base_test import BaseTest
 from utils.wrappers import *
 
 
-class QAP_2864(BaseTest):
+class QAP_T4946(BaseTest):
 
     def __init__(self, services: Services, parent_event):
         super().__init__(services)
-        self.create_test_event(parent_event, "QAP-2864",
+        self.create_test_event(parent_event, "QAP_T4946",
                                "[WIN] Verify that TWAP algo takes into account RoundLot at scheduling time (the "
                                "Number of Slices is defined)")
 
