@@ -152,7 +152,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 =  "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
