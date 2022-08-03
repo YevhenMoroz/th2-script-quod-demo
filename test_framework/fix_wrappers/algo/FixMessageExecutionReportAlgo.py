@@ -219,19 +219,18 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011']:
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
-        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') in ['QA_Auto_SORPING_ME_Y', 'QA_Auto_SORPING_ME_N', 'QA_Auto_SORPING_3']:
-            temp.update(ExDestination='*')
         if new_order_single.get_parameter('TargetStrategy') == '1011':
             temp.update(
                 LastMkt='*',
                 ChildOrderID='*'
             )
-            if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') in ['QA_Auto_SORPING_1', 'QA_Auto_SORPING_3', 'QA_Auto_SORPING_ME_Y', 'QA_Auto_SORPING_ME_N']:
+            if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
                 temp.update(
                     IClOrdIdAO='*',
                     SecondaryAlgoPolicyID='*',
                     LastExecutionPolicy='*',
                     ShortCode='*',
+                    ExDestination='*'
                 )
         if new_order_single.get_parameter('TargetStrategy') == '1008':
             if new_order_single.is_parameter_exist('MinQty'):
@@ -610,6 +609,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
+        if order_cancel_replace.get_parameter('TargetStrategy') == '1011' and order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID='*')
         if order_cancel_replace.get_parameter('TargetStrategy') == '1010':
             temp.update(
                 NoParty='*',
