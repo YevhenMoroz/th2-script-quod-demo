@@ -51,7 +51,7 @@ class QAP_T7310(TestCase):
         self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # endregion
         # region send commission
@@ -72,11 +72,11 @@ class QAP_T7310(TestCase):
         allocation_values = [{"Security Account": self.client_acc,
                               "Alloc Qty": self.qty}]
         self.mid_office.set_modify_ticket_details(arr_allocation_param=allocation_values)
-        self.mid_office.allocate_block()
+        self.mid_office.allocate_block([OrderBookColumns.order_id.value, order_id])
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters({"Account": self.client, "AvgPx": "*", "Currency": "*", "tag5120": "*",
-                                       "CommissionData": {"CommissionType": "3", "Commission": "1", "CommCurrency": "*"}})
+                                       "CommissionData": {"CommissionType": "3", "Commission": "0.01", "CommCurrency": "*"}})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 

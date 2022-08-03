@@ -83,7 +83,7 @@ class QAP_T7358(TestCase):
         no_mics = {
             "MiscFeeAmt": "1", "MiscFeeCurr": "*", "MiscFeeType": "22"}
         conf_report.change_parameters({"Account": self.client, "AvgPx": "*", "Currency": "*", "tag5120": "*",
-                                       "NoMiscFees": no_mics, "CommissionData": "*"})
+                                       "NoMiscFees": no_mics})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
