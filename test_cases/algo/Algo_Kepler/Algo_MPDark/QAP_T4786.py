@@ -1,5 +1,6 @@
 import os
 import time
+from copy import deepcopy
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -79,6 +80,9 @@ class QAP_T4786(TestCase):
 
         # endregion
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_1")
+        self.pre_filter['header']['DeliverToCompID'] = (self.ex_destination_tqlis, "EQUAL")
+
         self.new_reply = True
         self.restated_reply = True
         self.rule_list = []
@@ -87,12 +91,12 @@ class QAP_T4786(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        # rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
+        rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_lisx, self.inc_qty, self.inc_qty, self.new_reply, self.restated_reply)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_lisx, self.price)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_lisx, True)
 
-        self.rule_list = [rfq_cancel_rule, new_order_single, cancel_rule]
+        self.rule_list = [rfq_cancel_rule, new_order_single, cancel_rule, rfq_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -177,7 +181,9 @@ class QAP_T4786(TestCase):
         # endregion
 
         # region check that second RFQ send to TURQUOISE LIS
-        nos_trql_rfq2 = nos_trql_rfq.change_parameter("OrderQty", self.inc_qty)
+        # nos_trql_rfq2 = nos_trql_rfq.change_parameter("OrderQty", self.inc_qty)
+        nos_trql_rfq2 = deepcopy(nos_trql_rfq)
+        nos_trql_rfq2.change_parameter("OrderQty", self.inc_qty)
         self.fix_verifier_buy.check_fix_message(nos_trql_rfq2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
 
@@ -187,7 +193,8 @@ class QAP_T4786(TestCase):
 
         # TRQX accepted cancel rfq
         ocr_rfq_canceled_trqx2 = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq2).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_tqlis)
-        self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled_trqx2, key_parameters=self.key_params_rfq_cancel, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod, ignored_fields=['trailer'])
+        # can't check
+        # self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled_trqx2, key_parameters=self.key_params_rfq_cancel, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod, ignored_fields=['trailer'])
 
         er_rfq_trqx_cancel_accepted2 = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq2).change_parameter("ExDestination", self.ex_destination_trqx)
         self.fix_verifier_buy.check_fix_message(er_rfq_trqx_cancel_accepted2, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
@@ -201,6 +208,26 @@ class QAP_T4786(TestCase):
         # endregion
 
         time.sleep(3)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 rqf was canceled on trqx", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([ocr_rfq_canceled_trqx, ocr_rfq_canceled_trqx2], key_parameters_list=[self.key_params_rfq_cancel, self.key_params_rfq_cancel], direction=self.FromQuod,
+                                                         pre_filter=self.pre_filter)
+
+        # region MO on Venue ChixLis
+        self.fix_verifier_buy.set_case_id(bca.create_event("MO order on chixlis", self.test_id))
+
+        # TODO not correct message handle, PCON-3465 raised
+        nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params().change_parameter("OrderQty", self.inc_qty)
+        self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
+
+        er_pending_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_pending)
+        er_pending_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_lisx))
+        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
+
+        er_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_new)
+        er_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_lisx))
+        self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order')
+
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
