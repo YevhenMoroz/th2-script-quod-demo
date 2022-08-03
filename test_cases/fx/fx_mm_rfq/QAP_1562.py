@@ -27,7 +27,6 @@ class QAP_1562(TestCase):
         self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.quote_order_book = FXOrderBook(self.test_id, self.session_id)
         self.account = self.data_set.get_client_by_name("client_mm_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
@@ -38,9 +37,6 @@ class QAP_1562(TestCase):
         }
         self.qty1 = random_qty(1, 2, 7)
         self.qty2 = random_qty(1, 2, 7)
-        self.qty_column = OrderBookColumns.qty.value
-        self.sts_column = OrderBookColumns.sts.value
-        self.sts_rejected = Status.rejected.value
         self.status = constants.Status.Reject
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -62,10 +58,9 @@ class QAP_1562(TestCase):
         # endregion
 
         # region Step 4-5
+        text = f"11605 'OrdQty' ({self.qty2}) doesn't match the quote's 'OfferSize' ({self.qty1})"
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    self.status)
-        self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
-        self.quote_order_book.set_filter(
-            [self.qty_column, self.qty2]).check_order_fields_list({self.sts_column: self.sts_rejected})
+                                                                                                    self.status,
+                                                                                                    text=text)
+        self.fix_verifier.check_fix_message(execution_report)
         # endregion
-
