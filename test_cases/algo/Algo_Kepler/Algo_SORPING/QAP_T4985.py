@@ -147,7 +147,7 @@ class QAP_T4985(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_batsdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_eliminate_dma_batsdark_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_batsdark_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_batsdark_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
         # endregion
         # endregion
 
@@ -180,7 +180,7 @@ class QAP_T4985(TestCase):
 
         # region check cancel dma child order
         er_cancel_dma_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_xpar_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel  child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel  child DMA 1 order")
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
