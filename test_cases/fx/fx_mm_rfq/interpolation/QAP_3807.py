@@ -35,6 +35,8 @@ class QAP_3807(TestCase):
         self.usd = self.data_set.get_currency_by_name("currency_usd")
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         self.settle_type_broken = self.data_set.get_settle_type_by_name("broken")
+        self.settle_date_broken1 = self.data_set.get_settle_date_by_name("broken_1")
+        self.settle_date_broken2 = self.data_set.get_settle_date_by_name("broken_2")
         self.qty_2m = "2000000"
         self.sell_side = '2'
 
@@ -45,14 +47,14 @@ class QAP_3807(TestCase):
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
                                                            Account=self.acc_argentina,
                                                            Currency=self.usd)
-        self.quote_request.update_near_leg(settle_type=self.settle_type_broken)
-        self.quote_request.update_far_leg(settle_type=self.settle_type_broken,
+        self.quote_request.update_near_leg(settle_type=self.settle_type_broken, settle_date=self.settle_date_broken1)
+        self.quote_request.update_far_leg(settle_type=self.settle_type_broken, settle_date=self.settle_date_broken2,
                                           leg_qty=self.qty_2m)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
                                             key_parameters=["MDReqID"])
-        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.quote.set_params_for_quote_swap_ccy2(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
 
