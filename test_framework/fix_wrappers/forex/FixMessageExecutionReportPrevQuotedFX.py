@@ -14,11 +14,11 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # region SINGLE
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status = Status.Fill):
+                                         status: Status = Status.Fill, text: str = None):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
         elif status is Status.Reject:
-            self.__set_reject_sell(new_order_single)
+            self.__set_reject_sell(new_order_single, text)
         else:
             raise Exception('Incorrect Status')
         return self
@@ -91,7 +91,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             super().add_tag({"LastForwardPoints": "*"})
         return self
 
-    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None, text: str = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
@@ -117,7 +117,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SettlDate="*",
             ExecType="8",
             LeavesQty="0",
-            Text="*",
+            Text=text if text is not None else "*",
             QtyType="0",
             Instrument=new_order_single.get_parameter("Instrument"),
             NoParty="*"
