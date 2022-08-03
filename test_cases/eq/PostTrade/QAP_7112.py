@@ -12,7 +12,8 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
+    MiddleOfficeColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -22,7 +23,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T7518(TestCase):
+class QAP_7112(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -33,7 +34,7 @@ class QAP_T7518(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.qty = '100'
         self.price = '10'
-        self.exchange_rate = '2'
+        self.exchange_rate = '0.7785'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
@@ -67,58 +68,29 @@ class QAP_T7518(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
 
-        # region Filter Order Book and Check values
+        # region Checking statuses in OrderBook
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
         self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
                                                  OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
                                                  OrderBookColumns.done_for_day.value: 'Yes'},
-                                                'Comparing values after trading')
+                                                'Comparing statuses after trading')
         # endregion
 
         # region Extracting values from Booking ticket
         extract_panels = self.order_book.extracting_values_from_booking_ticket(
-            [PanelForExtraction.MAIN_PANEL], filter_dict={OrderBookColumns.cl_ord_id.value: cl_ord_id})
+            [PanelForExtraction.MAIN_PANEL, PanelForExtraction.SETTLEMENT],
+            filter_dict={OrderBookColumns.cl_ord_id.value: cl_ord_id})
         values_from_panels = {}
         for d in self.middle_office.split_tab_misk(extract_panels):
             values_from_panels.update(d)
         # endregion
 
-        # region Calculating SettlAmount before Re-compute
-        global settl_amount_before_recompute
-        if len(values_from_panels['TotalComm']) == 0 and len(values_from_panels['TotalFees']) == 0:
-            settl_amount_before_recompute = '{:,}'.format((int(self.qty) * int(self.price)) * float(self.exchange_rate))
-        elif len(values_from_panels['TotalComm']) == 0:
-            if values_from_panels['TotalFees'] == '0':
-                settl_amount_before_recompute = '{:,}'.format(
-                    (int(self.qty) * int(self.price) + int(values_from_panels.get('TotalFees'))) * int(
-                        self.exchange_rate))
-            else:
-                settl_amount_before_recompute = '{:,}'.format(
-                    (int(self.qty) * int(self.price) + float(values_from_panels.get('TotalFees'))) * int(
-                        self.exchange_rate))
-        elif len(values_from_panels['TotalFees']) == 0:
-            if values_from_panels['TotalComm'] == '0':
-                settl_amount_before_recompute = '{:,}'.format(
-                    (int(self.qty) * int(self.price) + int(values_from_panels.get('TotalComm'))) * int(
-                        self.exchange_rate))
-            else:
-                settl_amount_before_recompute = '{:,}'.format(
-                    (int(self.qty) * int(self.price) + float(values_from_panels.get('TotalComm'))) * int(
-                        self.exchange_rate))
-        else:
-            settl_amount_before_recompute = '{:,}'.format((int(self.qty) * int(self.price) + float(
-                values_from_panels.get('TotalComm')) + float(values_from_panels.get('TotalFees'))) * int(
-                self.exchange_rate))
-        # endregion
-
-        # region Book order and checking values in the Order book
-        self.middle_office.set_modify_ticket_details(settl_currency='USD', exchange_rate=self.exchange_rate,
-                                                     toggle_recompute=True)
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Book')
+        # region Book order
+        self.middle_office.set_modify_ticket_details(settl_currency='UAH', exchange_rate=self.exchange_rate,
+                                                     exchange_rate_calc='Multiply', toggle_recompute=True)
+        self.middle_office.book_order([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
         # endregion
 
         # region Extracting Settlement panel in Booking ticket after Book
@@ -129,11 +101,21 @@ class QAP_T7518(TestCase):
             expected_settlement_panel_after_book.update(d)
         # endregion
 
-        # region Checking SettlAmount after applying Re-compute
-        settl_amount_after_recompute = expected_settlement_panel_after_book.get('SettlAmount')
-        self.middle_office.compare_values({'SettlAmount': settl_amount_before_recompute},
-                                          {'SettlAmount': settl_amount_after_recompute},
-                                          'Comparing SettlAmount after Re-compute')
+        # region Checking SettlAmount after applying Exchange Calc
+        old_settl_amount = float(values_from_panels.get('SettlAmount').replace(',', ''))
+        new_settl_amount = expected_settlement_panel_after_book.get('SettlAmount')
+        self.middle_office.compare_values({'SettlAmount': str(old_settl_amount * float(self.exchange_rate))},
+                                          {'SettlAmount': new_settl_amount},
+                                          'Comparing SettlAmount after applying Exchange Calc')
+        # endregion
+
+        # region Checking Net Amt after applying Exchange Calc
+        old_net_amount = float(values_from_panels.get('NetAmount').replace(',', ''))
+        new_net_amount = self.middle_office.extract_block_field(MiddleOfficeColumns.net_amt.value)
+        self.middle_office.compare_values(
+            {MiddleOfficeColumns.net_amt.value: str(old_net_amount * float(self.exchange_rate))},
+            {MiddleOfficeColumns.net_amt.value: new_net_amount[MiddleOfficeColumns.net_amt.value]},
+            'Comparing Net Amt after applying Exchange Calc')
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
