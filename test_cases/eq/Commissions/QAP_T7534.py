@@ -56,7 +56,8 @@ class QAP_T7534(TestCase):
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
                 "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
-                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
+                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")
+                 ,"Currency": self.data_set.get_currency_by_name("currency_3")})
 
             self.response = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
         finally:
