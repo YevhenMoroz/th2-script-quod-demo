@@ -42,7 +42,7 @@ class QAP_2103(TestCase):
 
         self.fix_verifier.check_fix_message(fix_message=self.quote_request,
                                             key_parameters=["MDReqID"])
-        self.quote.set_params_for_quote_swap_ndf(self.quote_request)
+        self.quote.set_params_for_quote_swap_ccy2(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
 
@@ -50,6 +50,6 @@ class QAP_2103(TestCase):
         self.new_order_single.set_default_prev_quoted_swap_ccy2(self.quote_request, response[0])
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
 
-        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap_ccy2(self.new_order_single)
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

@@ -248,6 +248,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     def set_params_from_new_order_swap_ccy2(self, new_order_single: FixMessageNewOrderMultiLegFX):
         self.prepare_swap_ccy2_exec_report(new_order_single)
+        if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[0].pop("LegLastForwardPoints")
+        elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[1].pop("LegLastForwardPoints")
         return self
 
     def set_params_from_new_order_swap_ndf(self, new_order_single: FixMessageNewOrderMultiLegFX):
