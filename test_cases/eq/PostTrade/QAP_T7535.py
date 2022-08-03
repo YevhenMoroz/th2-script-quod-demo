@@ -12,8 +12,8 @@ from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS im
     FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExchangeRateCalc, \
-    MiddleOfficeColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
+    MiddleOfficeColumns, ExchangeRateCalc
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -23,7 +23,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_2973(TestCase):
+class QAP_T7535(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
