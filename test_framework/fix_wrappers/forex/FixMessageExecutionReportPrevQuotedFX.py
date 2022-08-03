@@ -32,7 +32,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         return self
 
     def set_params_from_new_order_single_ccy2(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status = Status.Fill):
+                                              status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell_ccy2(new_order_single)
         else:
@@ -385,7 +385,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  )
         ]
         temp = dict(
-            Account=new_order_single.get_parameter('Account'),
+            Account="*",
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
             CumQty=new_order_single.get_parameter('OrderQty'),
             Currency=new_order_single.get_parameter('Currency'),
