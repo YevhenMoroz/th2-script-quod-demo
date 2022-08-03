@@ -44,7 +44,7 @@ class QAP_T4976(TestCase):
         self.px_for_incr = 0
         self.qty_for_incr = 0
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_5.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_6.value
         self.sell = constants.OrderSide.Sell.value
         # endregion
 
