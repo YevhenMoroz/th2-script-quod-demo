@@ -1,7 +1,7 @@
 import typing
 
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
+from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails,  ModifyTicketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
@@ -36,6 +36,11 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_unallocate_call = None
         self.extract_value_from_tab_of_allocation_ticket_call = None
         self.override_confirmation_service_call = None
+        self.booking_ticket_closing_and_opening_details = None
+        self.only_open_booking_ticket_call = None
+        self.only_set_details_in_booking_ticket_call = None
+        self.only_extraction_from_booking_ticket_call = None
+        self.only_closing_booking_ticket_call = None
 
     # endregion
     # region Common func
@@ -152,7 +157,8 @@ class BaseMiddleOffice(BaseWindow):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
         self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
-        result = call(self.extract_value_from_tab_of_allocation_ticket_call, self.allocation_ticket_extraction_details.build())
+        result = call(self.extract_value_from_tab_of_allocation_ticket_call,
+                      self.allocation_ticket_extraction_details.build())
         return result
 
     '''
@@ -370,3 +376,23 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_approve_details.set_filter(filter_dict)
         call(self.override_confirmation_service_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
+
+    def only_opening_booking_ticket(self, selected_row: int = 1, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.booking_ticket_closing_and_opening_details.set_filter(filter_dict)
+        self.booking_ticket_closing_and_opening_details.set_selected_row(selected_row)
+        call(self.only_open_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+        self.clear_details([self.booking_ticket_closing_and_opening_details])
+
+    def only_set_details_to_booking_ticket(self, details: ModifyTicketDetails):
+        call(self.only_set_details_in_booking_ticket_call, details.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def only_extract_value_from_booking_ticket(self, list_extraction):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request, panels=list_extraction)
+        result = call(self.only_extraction_from_booking_ticket_call, self.extraction_panel_details.build())
+        self.clear_details([self.extraction_panel_details])
+        return result
+
+    def only_close_booking_ticket(self):
+        call(self.only_closing_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())

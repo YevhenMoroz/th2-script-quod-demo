@@ -384,6 +384,9 @@ class MiddleOfficeColumns(Enum):
     unmatched_sts = "Unmatched"
     matched_agreed_sts = "MatchedAgreed"
     cancelled_sts = 'Cancelled'
+    """Confirmation"""
+    external = "External"
+    manual = "Manual"
 
 
 class AllocationsColumns(Enum):
