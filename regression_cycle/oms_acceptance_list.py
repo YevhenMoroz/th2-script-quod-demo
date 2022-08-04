@@ -6,7 +6,9 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
+from test_cases.eq.ArchiveWindows.QAP_T8159 import QAP_T8159
 from test_cases.eq.ArchiveWindows.QAP_T7541 import QAP_T7541
+from test_cases.eq.Bag.QAP_T7634 import QAP_T7634
 from test_cases.eq.Basket.QAP_T7453 import QAP_T7453
 from test_cases.eq.Basket.QAP_T7447 import QAP_T7447
 from test_cases.eq.Basket.QAP_T7433 import QAP_T7433
@@ -47,8 +49,8 @@ def test_run(parent_id=None):
         base_main_window.import_layout(layout_path, layout_name)
         QAP_T7689(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_T7634(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_T7634(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_T7626(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7615(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -71,8 +73,8 @@ def test_run(parent_id=None):
         #     .execute()
         QAP_T7541(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_2801(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_T8159(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_T7497(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7534(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -93,7 +95,7 @@ def test_run(parent_id=None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Acceptance list was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        # Stubs.win_act.unregister(session_id)
+        Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
 
