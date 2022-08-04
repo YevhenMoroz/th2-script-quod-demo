@@ -192,7 +192,7 @@ class TradeBookColumns(Enum):
     exec_type = 'ExecType'
     unmatched_qty = 'UnmatchedQty'
     """Mics Fees tab"""
-    mics_tab = "Mics Fees"
+    misc_tab = "Misc Fees"
     rate = "Rate"
 
 
