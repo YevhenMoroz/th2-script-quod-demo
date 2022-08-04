@@ -194,6 +194,7 @@ class TradeBookColumns(Enum):
     """Mics Fees tab"""
     misc_tab = "Misc Fees"
     rate = "Rate"
+    amount = "Amount"
 
 
 class QuoteRequestBookColumns(Enum):
