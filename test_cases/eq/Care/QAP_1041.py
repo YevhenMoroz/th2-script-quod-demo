@@ -22,7 +22,7 @@ timeouts = True
 
 
 def execute(report_id):
-    case_name = "QAP-1012"
+    case_name = "QAP_T7689"
     seconds, nanos = timestamps()  # Store case start time
 
     # region Declarations

@@ -90,6 +90,30 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_12 = dict(
+        Symbol='QUODTESTQA01',
+        SecurityID='TESTQA01',
+        SecurityIDSource='8',
+        SecurityExchange='QDL4',
+        SecurityType='CS'
+    )
+
+    instrument_13 = dict(
+        Symbol='QUODTESTQA02',
+        SecurityID='TESTQA02',
+        SecurityIDSource='8',
+        SecurityExchange='QDL6',
+        SecurityType='CS'
+    )
+
+    instrument_14 = dict(
+        Symbol='FR0000031577',
+        SecurityID='FR0000031577',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -102,6 +126,8 @@ class AlgoClients(Enum):
     client_2 = "CLIENT2"
     client_3 = "CLIENT3"
     client_4 = "KEPLER"
+    client_5 = "BATSDARK_KEPLER"
+    client_6 = "CHIXDELTA_KEPLER"
 
 
 class AlgoAccounts(Enum):
@@ -148,6 +174,14 @@ class AlgoMic(Enum):
     mic_13 = "TRQL" # URQUOISE LIS
     mic_14 = "QDD1" # QUODDKP1
     mic_15 = "QDD2" # QUODDKP2
+    mic_16 = "QDL4"  # QUODLIT4
+    mic_17 = "QDL5"  # QUODLIT5
+    mic_18 = "QDL6"  # QUODLIT6
+    mic_19 = "QDL7"  # QUODLIT7
+    mic_20 = "TQLIS"  # TQLIS
+    mic_21 = "CHIXLIS"  # CHIXLIS
+    mic_22 = "JSSI"  # JANESTREET
+    mic_23 = "CCEU"  # CITADEL
 
 
 
@@ -158,8 +192,14 @@ class AlgoListingId(Enum):
     listing_4 = "107617192" # QUODLIT1 for QUODTESTQA00
     listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
     listing_6 = "1805006" # Euronext Paris for FR0010411884
-    listing_7 = "1804844 " # Euronext Paris for FR0011550177
+    listing_7 = "1804844" # Euronext Paris for FR0011550177
     listing_8 = "1803699" # Euronext Paris for FR0000133308
+    listing_9 = "525020503" # QUODLIT4 for QUODTESTQA01
+    listing_10 = "525020504" # QUODLIT5 for QUODTESTQA01
+    listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
+    listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
+    listing_13 = "125917202" # JANESTREET for FR0000031577
+    listing_14 = "181116477" # CITADEL for FR0000031577
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -182,4 +222,5 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
+    verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
 

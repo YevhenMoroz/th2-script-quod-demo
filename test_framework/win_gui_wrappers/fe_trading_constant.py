@@ -377,6 +377,7 @@ class MiddleOfficeColumns(Enum):
     settl_currency = 'SettlCurrency'
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
+    net_amt = 'Net Amt'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"

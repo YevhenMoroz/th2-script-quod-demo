@@ -1,5 +1,5 @@
 class UsersConstants:
-    USERS_PAGE_TITLE_XPATH = "//*[@href='#/pages/users/view']//*[text()='Users']"
+    USERS_PAGE_TITLE_XPATH = '//*[@class="entity-title left"][normalize-space(text())="Users"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     DISABLED_ENABLED_SUCCESSFUL_MESSAGE = "//*[@class='title subtitle']"
@@ -14,7 +14,7 @@ class UsersConstants:
     DOWNLOAD_PDF_AT_WIZARD_XPATH = "//*[@data-name='download']"
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
-    OK_BUTTON_XPATH = '//*[text()="OK"]'
+    OK_BUTTON_XPATH = '//*[text()="OK" or text()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
@@ -41,7 +41,7 @@ class UsersConstants:
     EMAIL_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/div/input'
     ENABLED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[7]/div[1]/ng-component/select'
     LOCKED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/ng-component/select'
-    CONNECTED_FILTER_AT_MAIN_PAGE = '(//*[@style="width: 200px; left: 3400px;"])[2]//ng-component'
+    CONNECTED_FILTER_AT_MAIN_PAGE = '(//*[@style="width: 200px; left: 3600px;"])[2]//ng-component'
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
 
     # values for getters

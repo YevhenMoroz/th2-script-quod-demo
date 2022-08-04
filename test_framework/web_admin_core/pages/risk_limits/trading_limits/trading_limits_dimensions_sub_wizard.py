@@ -15,11 +15,17 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_venue(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_VENUE_XPATH)
 
+    def is_venue_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_VENUE_XPATH)
+
     def set_sub_venue(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_SUB_VENUE_XPATH, value)
 
     def get_sub_venue(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_SUB_VENUE_XPATH)
+
+    def is_sub_venue_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_SUB_VENUE_XPATH)
 
     def set_listing_group(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH, value)
@@ -27,11 +33,17 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_listing_group(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH)
 
+    def is_listing_group_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_LISTING_GROUP_XPATH)
+
     def set_user(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_USER_XPATH, value)
 
     def get_user(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_USER_XPATH)
+
+    def is_user_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_USER_XPATH)
 
     def set_client(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_XPATH, value)
@@ -39,11 +51,17 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_XPATH)
 
+    def is_client_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_XPATH)
+
     def set_client_group(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_GROUP_XPATH, value)
 
     def get_client_group(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_GROUP_XPATH)
+
+    def is_client_group_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_CLIENT_GROUP_XPATH)
 
     def set_desk(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_DESK_XPATH, value)
@@ -51,11 +69,17 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_desk(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_DESK_XPATH)
 
+    def is_desk_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_DESK_XPATH)
+
     def set_route(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_ROUTE_XPATH, value)
 
     def get_route(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_ROUTE_XPATH)
+
+    def is_route_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_ROUTE_XPATH)
 
     def set_instrument_type(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH, value)
@@ -63,11 +87,17 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_instrument_type(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH)
 
+    def is_instrument_type_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH)
+
     def set_instr_symbol(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_INSTR_SYMBOL_XPATH, value)
 
     def get_instr_symbol(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_INSTR_SYMBOL_XPATH)
+
+    def is_instr_symbol_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_INSTR_SYMBOL_XPATH)
 
     def set_execution_policy(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH, value)
@@ -75,8 +105,14 @@ class TradingLimitsDimensionsSubWizardPage(CommonPage):
     def get_execution_policy(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH)
 
+    def is_execution_policy_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH)
+
     def set_phase(self, value):
         self.set_combobox_value(TradingLimitsConstants.DIMENSIONS_TAB_PHASE_XPATH, value)
 
     def get_phase(self):
         return self.get_text_by_xpath(TradingLimitsConstants.DIMENSIONS_TAB_PHASE_XPATH)
+
+    def is_phase_field_displayed(self):
+        return self.is_element_present(TradingLimitsConstants.DIMENSIONS_TAB_PHASE_XPATH)
