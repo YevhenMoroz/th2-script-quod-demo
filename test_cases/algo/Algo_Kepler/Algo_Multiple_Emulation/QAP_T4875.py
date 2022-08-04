@@ -150,8 +150,8 @@ class QAP_T4875(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        # region Modify parent SORPING STL GTC Iceberg MinQty order
-        case_id_2 = bca.create_event("Replace SORPING STL GTC Iceberg MinQty Order", self.test_id)
+        # region Modify parent SORPING STL GTD Iceberg MinQty order
+        case_id_2 = bca.create_event("Replace SORPING STL GTD Iceberg MinQty Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.SORPING_STL_GTD_Iceberg_MinQty_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.SORPING_STL_GTD_Iceberg_MinQty_order)
