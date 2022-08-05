@@ -201,6 +201,7 @@ class AlgoListingId(Enum):
     listing_13 = "125917202" # JANESTREET for FR0000031577
     listing_14 = "181116477" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
+    listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -213,6 +214,8 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
+    verifier_key_parameters_NOS_child_with_minqty = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'MinQty']
+    verifier_key_parameters_NOS_child_with_stoppx = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'StopPx']
     verifier_key_parameters_ER_child = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce', "OrdType"]
     verifier_key_parameters_ER_2_child = ['ExDestination', 'OrdStatus', 'ExecType']
     verifier_key_parameters_ER_Reject_Eliminate_child = ['Account', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
