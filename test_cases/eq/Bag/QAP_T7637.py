@@ -22,6 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7637(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -151,6 +152,7 @@ class QAP_T7637(TestCase):
                 f'Comparing values of {orders_id[index]} order')
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __extract_values_from_second_level_tab(self, filter_list, table_name, extraction_fields):
         values = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1',
                                                                                sub_extraction_fields=extraction_fields,

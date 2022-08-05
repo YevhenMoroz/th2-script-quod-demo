@@ -96,8 +96,7 @@ class QAP_T7507(TestCase):
         # region Set-up parameters and check 167=CS in AllocationReport
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
-            {'RootCommTypeClCommBasis': '*', 'NoRootMiscFeesList': '*', 'tag5120': '*', 'RootOrClientCommission': '*',
-             'RootOrClientCommissionCurrency': '*',
+            {'tag5120': '*',
              'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1'), 'RootSettlCurrAmt': '*'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
                                                             ['AllocType', 'Account', 'NoOrders'])
@@ -119,11 +118,8 @@ class QAP_T7507(TestCase):
         self.allocation_message.change_parameters(
             {'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1'), 'NoAllocs': [
                 {'IndividualAllocID': '*', 'AllocNetPrice': '*', 'AllocAccount': self.alloc_account,
-                 'AllocQty': self.qty, 'AllocInstructionMiscBlock2': '*', 'AllocPrice': self.price,
-                 'NoMiscFees': '*'}]})
-        self.allocation_message.remove_parameters(
-            ['RootCommTypeClCommBasis', 'NoRootMiscFeesList', 'RootOrClientCommission',
-             'RootOrClientCommissionCurrency'])
+                 'AllocQty': self.qty, 'AllocInstructionMiscBlock2': '*', 'AllocPrice': self.price}]})
+
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
                                                             ['AllocType', 'NoOrders', 'Account'])
         # endregion
@@ -132,8 +128,7 @@ class QAP_T7507(TestCase):
         self.confirmation_message.set_default_confirmation_new(self.fix_message)
         self.confirmation_message.change_parameters(
             {'Account': self.client, 'AllocAccount': self.alloc_account, 'AllocInstructionMiscBlock2': '*',
-             'tag5120': '*', 'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1'), 'NoMiscFees': '*',
-             'CommissionData': '*'})
+             'tag5120': '*', 'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1')})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
                                                             ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
         # endregion

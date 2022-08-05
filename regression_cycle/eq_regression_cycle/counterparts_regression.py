@@ -6,6 +6,10 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
+from test_cases.eq.Counterpart.QAP_T6996 import QAP_T6996
+from test_cases.eq.Counterpart.QAP_T7155 import QAP_T7155
+from test_cases.eq.Counterpart.QAP_T7302 import QAP_T7302
+from test_cases.eq.Counterpart.QAP_T7471 import QAP_T7471
 from test_cases.eq.Counterpart.QAP_T7474 import QAP_T7474
 from test_cases.eq.Counterpart.QAP_T7473 import QAP_T7473
 from test_cases.eq.Counterpart.QAP_T7472 import QAP_T7472
@@ -34,8 +38,8 @@ def test_run(parent_id=None):
     session_id = set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("eq_regression_cycle/layouts")
-    layout_name = "all_columns_v172_layout.xml"
+    layout_path = os.path.abspath("layouts")
+    layout_name = "all_columns_layout.xml"
 
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
@@ -46,15 +50,20 @@ def test_run(parent_id=None):
             .execute()
         QAP_T7472(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_T7471(report_id, session_id).execute() need to rewrite
+        QAP_T7471(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_T7444(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7394(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7369(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_T7302(report_id, session_id).execute()
-        # QAP_T7155(report_id, session_id).execute()
+        QAP_T7302(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7155(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T6996(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
