@@ -186,7 +186,6 @@ class QAP_T4892(TestCase):
 
         # region check cancel second dma child order
         er_cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        er_cancel_dma_order.change_parameters(dict(ExpireDate=self.NewExpireDate))
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
 
         er_cancel_SORPING_STL_GTD_Iceberg_MinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_STL_GTD_Iceberg_MinQty_order_replace_params, self.gateway_side_sell, self.status_cancel)
