@@ -80,7 +80,7 @@ class QAP_T4786(TestCase):
 
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_1")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_F")
         self.pre_filter['header']['DeliverToCompID'] = (self.ex_destination_tqlis, "EQUAL")
 
         self.new_reply = True
