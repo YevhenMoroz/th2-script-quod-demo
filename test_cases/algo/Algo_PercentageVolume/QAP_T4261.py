@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_T4261(TestCase):
@@ -34,8 +35,6 @@ class QAP_T4261(TestCase):
 
         # region order parameters
         self.qty = 300
-        self.child_qty = 154
-        self.last_order_qty = self.qty - self.child_qty
         self.price = 1
         self.childMinValue = 150
         self.volume = 0.3
@@ -43,10 +42,8 @@ class QAP_T4261(TestCase):
         self.md_entry_px_incr_r = 1
         self.md_entry_size_incr_r = 360 # for partially fill
         self.md_entry_size_incr_r_new = 317 # child with qty 136 is created
-        self.price_ask = 40
-        self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1000000
-        self.md_entry_px_incr_r_reset = self.md_entry_size_incr_r_reset = 0
+        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r)
+        self.last_order_qty = self.qty - self.child_qty
         # endregion
 
         # region Gateway Side
