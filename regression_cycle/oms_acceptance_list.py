@@ -41,8 +41,8 @@ def test_run(parent_id=None):
     session_id = set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("eq_regression_cycle/layouts")
-    layout_name = "all_columns_v172_layout.xml"
+    layout_path = os.path.abspath("layouts")
+    layout_name = "all_columns_layout.xml"
 
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)

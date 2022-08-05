@@ -57,7 +57,7 @@ class QAP_T7650(TestCase):
         self.fix_message.change_parameter("HandlInst", '3')
         for i in range(3):
             self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order(lookup, qty, price, )
+            self.client_inbox.accept_order()
             orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
         # endregion
 
