@@ -164,8 +164,12 @@ class QAP_T4819(TestCase):
 
         self.fix_verifier_sell.check_fix_message(self.SORPING_STL_GTC_Iceberg_MinQty_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
-        er_replaced_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_STL_GTC_Iceberg_MinQty_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        self.fix_verifier_sell.check_fix_message(er_replaced_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
+        er_replaced_SORPING_STL_GTC_Iceberg_MinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_STL_GTC_Iceberg_MinQty_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        self.fix_verifier_sell.check_fix_message(er_replaced_SORPING_STL_GTC_Iceberg_MinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
+
+        er_replaced_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
+        er_replaced_dma_order_params.change_parameters(dict(StopPx=self.inc_stop_price))
+        self.fix_verifier_buy.check_fix_message(er_replaced_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy Side ExecReport Replace Request')
         # endregion
 
         time.sleep(2)
