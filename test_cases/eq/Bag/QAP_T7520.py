@@ -22,6 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7520(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -113,6 +114,7 @@ class QAP_T7520(TestCase):
                                                                    'synthetic')})
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_wave_status(self, filter_list, status: str, tab_name: str):
         fields = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1',
                                                                                sub_extraction_fields=[
@@ -123,6 +125,7 @@ class QAP_T7520(TestCase):
             {WaveColumns.status.value:
                  fields[WaveColumns.status.value]}, 'Comparing Status of Wave')
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_child_order_after_waving(self, order_ids: list, expected_result):
         for order in order_ids:
             values = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,

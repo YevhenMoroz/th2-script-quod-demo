@@ -20,6 +20,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7641(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -126,6 +127,7 @@ class QAP_T7641(TestCase):
 
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_unmatched_qty_of_orders_and_bag(self, filter_list, orders_id, expected_unmatched_qty_of_bag,
                                                 expected_unmatched_qty_of_order):
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.unmatched_qty.value,
@@ -147,6 +149,7 @@ class QAP_T7641(TestCase):
                 {OrdersTabColumnFromBag.unmatched_qty.value: expected_unmatched_qty_of_order},
                 fields, f'Comparing of unmatched qty of {orders_id[index]} after wave')
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_wave_status(self, filter_list, status: str, tab_name: str):
         fields = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1',
                                                                                sub_extraction_fields=[
