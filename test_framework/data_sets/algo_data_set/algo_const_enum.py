@@ -226,7 +226,11 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
 
 class AlgoPreFilter(Enum):
-    pre_filer_1 = {
+    pre_filer_equal_F = {
                 'header': {
                     'MsgType': ('F', "EQUAL")
                 }}
+    pre_filer_equal_D = {
+        'header': {
+            'MsgType': ('D', "EQUAL")
+        }}
