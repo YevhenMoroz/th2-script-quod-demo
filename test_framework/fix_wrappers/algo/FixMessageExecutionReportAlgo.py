@@ -267,7 +267,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
             LastPx='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
+            LastQty='*',
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=2,
