@@ -190,7 +190,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
         return self
 
-    def set_published_true(self, bands_to_update: list = None):
+    def set_published_false(self, bands_to_update: list = None):
         sweepable = self.get_parameter('clientTierInstrSymbolQty')
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
         if bands_to_update is not None:
