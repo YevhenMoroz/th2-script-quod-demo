@@ -27,13 +27,11 @@ class QAP_7997(TestCase):
         self.quote = FixMessageQuoteFX()
         self.quote_cancel = FixMessageQuoteCancelFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
-        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
 
         self.fx_fh_connectivity = self.fix_env.feed_handler
         self.ss_connectivity = self.fix_env.sell_side_esp
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
-        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
 
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.settle_date_1w = self.data_set.get_settle_date_by_name("spo_ndf")
@@ -46,7 +44,7 @@ class QAP_7997(TestCase):
                                 "SecurityType": self.sec_type_swap}
         self.instrument_spot = {"Symbol": self.eur_usd,
                                 "SecurityType": self.sec_type_spot}
-        self.md_req_id = self.eur_usd + ':SPO:REG:' + self.ms
+        self.md_req_id = f"{self.eur_usd}:SPO:REG:{self.ms}"
 
         self.correct_no_md_entries = [
             {"MDEntryType": "0",
@@ -98,8 +96,6 @@ class QAP_7997(TestCase):
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
 
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
 
@@ -116,10 +112,6 @@ class QAP_7997(TestCase):
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
         time.sleep(10)
-        self.fix_subscribe.set_md_req_parameters_maker(). \
-            change_parameters({"SenderSubID": self.acc_argentina}). \
-            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
 
         self.quote_cancel.set_params_for_receive(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote_cancel, key_parameters=["QuoteReqID"])
