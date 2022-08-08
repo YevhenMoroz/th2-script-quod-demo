@@ -48,18 +48,18 @@ class TradingLimitsConstants:
     VALUES_TAB_MAX_SOFT_AMOUNT_XPATH = '//*[@formcontrolname="softMaxOrdAmt"]'
 
     # Dimensions tab
-    DIMENSIONS_TAB_VENUE_XPATH = '//*[@id="venue"]'
-    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[@id="subVenue"]'
-    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[@id="listingGroup"]'
-    DIMENSIONS_TAB_USER_XPATH = '//*[@id="userBlock"]'
-    DIMENSIONS_TAB_CLIENT_XPATH = '//*[@id="accountGroup"]'
-    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
-    DIMENSIONS_TAB_DESK_XPATH = '//*[@id="desk"]'
-    DIMENSIONS_TAB_ROUTE_XPATH = '//*[@id="route"]'
-    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[@id="instrType"]'
-    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
-    DIMENSIONS_TAB_EXECUTION_POLICY_XPATH = '//*[@id="executionPolicy"]'
-    DIMENSIONS_TAB_PHASE_XPATH = '//*[@id="standardTradingPhase"]'
+    DIMENSIONS_TAB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="venue"]'
+    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="subVenue"]'
+    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listingGroup"]'
+    DIMENSIONS_TAB_USER_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="userBlock"]'
+    DIMENSIONS_TAB_CLIENT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="accountGroup"]'
+    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="clientGroup"]'
+    DIMENSIONS_TAB_DESK_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="desk"]'
+    DIMENSIONS_TAB_ROUTE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="route"]'
+    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrType"]'
+    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrSymbol"]'
+    DIMENSIONS_TAB_EXECUTION_POLICY_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="executionPolicy"]'
+    DIMENSIONS_TAB_PHASE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="standardTradingPhase"]'
 
 
 

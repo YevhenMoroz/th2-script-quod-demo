@@ -19,6 +19,8 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_5840 import QAP_5840
 from test_cases.web_admin.web_admin_test_cases.general.QAP_5967 import QAP_5967
 from test_cases.web_admin.web_admin_test_cases.general.QAP_6152 import QAP_6152
 from test_cases.web_admin.web_admin_test_cases.general.QAP_6182 import QAP_6182
+from test_cases.web_admin.web_admin_test_cases.general.QAP_7013 import QAP_7013
+from test_cases.web_admin.web_admin_test_cases.general.QAP_7452 import QAP_7452
 from test_cases.web_admin.web_admin_test_cases.general.QAP_796 import QAP_796
 from test_cases.web_admin.web_admin_test_cases.general.QAP_797 import QAP_797
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -75,6 +77,10 @@ class RunGeneral:
             QAP_6152(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
             QAP_6182(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7013(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            QAP_7452(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                      environment=configuration.environment).run()
 
             end_time = time.monotonic()
