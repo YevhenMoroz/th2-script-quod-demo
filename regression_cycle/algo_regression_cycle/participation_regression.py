@@ -1,7 +1,7 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_PercentageVolume import QAP_3065, QAP_3070, QAP_3063, QAP_3062, QAP_2980, QAP_3127, QAP_1634, QAP_1633, QAP_3116, QAP_2479, QAP_3061, QAP_3530
+from test_cases.algo.Algo_PercentageVolume import QAP_T4912, QAP_T4911, QAP_T4913, QAP_T4914, QAP_T4933, QAP_T4879, QAP_T5088, QAP_T5089, QAP_T4890, QAP_T5064, QAP_T4915, QAP_T4761
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,27 +22,27 @@ def test_run(parent_id= None):
         # else:
         #     get_opened_fe(report_id, session_id, work_dir)
             
-        QAP_1633.execute(report_id)
-        QAP_1634.execute(report_id)
-        QAP_2479.execute(report_id)
-        QAP_2980.execute(report_id)
-        QAP_3061.execute(report_id)
-        QAP_3062.execute(report_id)
-        QAP_3063.execute(report_id)
-        QAP_3065.execute(report_id)
-        QAP_3070.execute(report_id)
-        QAP_3116.execute(report_id)
-        QAP_3127.execute(report_id)
-        QAP_3530.execute(report_id)
+        QAP_T5089.execute(report_id)
+        QAP_T5088.execute(report_id)
+        QAP_T5064.execute(report_id)
+        QAP_T4933.execute(report_id)
+        QAP_T4915.execute(report_id)
+        QAP_T4914.execute(report_id)
+        QAP_T4913.execute(report_id)
+        QAP_T4912.execute(report_id)
+        QAP_T4911.execute(report_id)
+        QAP_T4890.execute(report_id)
+        QAP_T4879.execute(report_id)
+        QAP_T4761.execute(report_id)
         # FIX/FE
-        # QAP_1324.execute(report_id, session_id)
-        # QAP_1510.execute(report_id, session_id)
-        # QAP_1515.execute(report_id, session_id)
-        # QAP_1516.execute(report_id, session_id)
-        # QAP_1750.execute(report_id, session_id)
-        # QAP_2552.execute(report_id, session_id)
-        # QAP_2553.execute(report_id, session_id)
-        # QAP_2838.execute(report_id, session_id)
+        # QAP_T5113.execute(report_id, session_id)
+        # QAP_T5097.execute(report_id, session_id)
+        # QAP_T5096.execute(report_id, session_id)
+        # QAP_T5095.execute(report_id, session_id)
+        # QAP_T5084.execute(report_id, session_id)
+        # QAP_T5050.execute(report_id, session_id)
+        # QAP_T5049.execute(report_id, session_id)
+        # QAP_T4950.execute(report_id, session_id)
         # end FIX/FE
     except Exception:
         logging.error("Error execution", exc_info=True)

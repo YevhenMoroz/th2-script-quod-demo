@@ -76,18 +76,11 @@ class FixMessage:
         return self
 
     def add_fields_into_repeating_group(self, r_group: str, fields: list):
-        if r_group in self.get_parameters() and r_group !='NoStrategyParameters':
+        if r_group in self.get_parameters():
             new_component = self.get_parameter(r_group)
             for i in fields:
                 new_component.append(i)
             self.change_parameters({r_group: new_component})
-        if r_group == 'NoStrategyParameters':
-            params = ['StrategyParameterName', 'StrategyParameterType', 'StrategyParameterValue']
-            new_component = self.get_parameter(r_group)
-            for i in fields:
-                new_component.append(dict(zip(params, i)))
-            self.change_parameters({r_group: new_component})
-
         else:
             self.add_tag({r_group: fields})
         return self

@@ -43,7 +43,7 @@ class TestCase:
 
 
         # Case parameters setup
-        self.case_id = bca.create_event('QAP_1597', report_id)
+        self.case_id = bca.create_event('QAP_T2956', report_id)
         self.session_id = set_session_id()
         set_base(self.session_id, self.case_id)
         self.base_request = get_base_request(self.session_id, self.case_id)
