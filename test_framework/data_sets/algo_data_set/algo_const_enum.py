@@ -118,7 +118,15 @@ class AlgoFixInstruments(Enum):
         Symbol='QUODTESTQA03',
         SecurityID='TESTQA03',
         SecurityIDSource='8',
-        SecurityExchange='QDL1',
+        SecurityExchange='QDL8',
+        SecurityType='CS'
+    )
+
+    instrument_16 = dict(
+        Symbol='QUODTESTQA04',
+        SecurityID='TESTQA04',
+        SecurityIDSource='8',
+        SecurityExchange='QDL8',
         SecurityType='CS'
     )
 
@@ -190,6 +198,9 @@ class AlgoMic(Enum):
     mic_21 = "CHIXLIS"  # CHIXLIS
     mic_22 = "JSSI"  # JANESTREET
     mic_23 = "CCEU"  # CITADEL
+    mic_24 = "QDL8"  # QUODLIT8
+    mic_25 = "QDL9"  # QUODLIT9
+    mic_26 = "QDL10"  # QUODLIT10
 
 
 
@@ -210,8 +221,12 @@ class AlgoListingId(Enum):
     listing_14 = "181116477" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
-    listing_17 = "625020505"  # QUODLIT1 for QUODTESTQA03
-    listing_18 = "625020506"  # QUODLIT2 for QUODTESTQA03
+    listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
+    listing_18 = "825020508"  # QUODLIT9 for QUODTESTQA03
+    listing_19 = "825020509"  # QUODLIT10 for QUODTESTQA03
+    listing_20 = "925020507"  # QUODLIT8 for QUODTESTQA04
+    listing_21 = "925020508"  # QUODLIT9 for QUODTESTQA04
+    listing_22 = "925020509"  # QUODLIT10 for QUODTESTQA04
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
