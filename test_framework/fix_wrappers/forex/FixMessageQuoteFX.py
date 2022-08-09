@@ -23,7 +23,9 @@ class FixMessageQuoteFX(FixMessage):
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
                             Product="4"),
-            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"]
+            if "SettlDate" in quote_request.get_parameter("NoRelatedSymbols")[0]
+            else "*",
             SettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
             Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             QuoteType=quote_request.get_parameter("NoRelatedSymbols")[0]["QuoteType"]
