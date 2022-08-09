@@ -114,6 +114,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_15 = dict(
+        Symbol='QUODTESTQA03',
+        SecurityID='TESTQA03',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -202,6 +210,8 @@ class AlgoListingId(Enum):
     listing_14 = "181116477" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
+    listing_17 = "625020505"  # QUODLIT1 for QUODTESTQA03
+    listing_18 = "625020506"  # QUODLIT2 for QUODTESTQA03
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
