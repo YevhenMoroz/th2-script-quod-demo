@@ -2,7 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_5681 import QAP_5681
+from test_cases.web_admin.retail_web_admin_test_cases.site.QAP_T3585 import QAP_T3585
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -17,21 +17,21 @@ class RunSite:
     def execute(self):
         try:
             start_time = time.monotonic()
-            #QAP_4662(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4663(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4666(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4668(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4715(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4719(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4724(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4712(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4702(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_4713(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5304(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5315(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5681(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5682(self.web_driver_container, self.second_lvl_id).run()
-            #QAP_5695(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3704(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3703(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3701(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3700(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3695(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3694(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3692(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3697(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3699(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3696(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3652(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3650(self.web_driver_container, self.second_lvl_id).run()
+            QAP_T3585(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3584(self.web_driver_container, self.second_lvl_id).run()
+            #QAP_T3577(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Site Retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

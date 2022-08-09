@@ -5,7 +5,7 @@ from datetime import timedelta
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 from custom import basic_custom_actions as bca
-from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_5601 import QAP_5601
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3593 import QAP_T3593
 
 
 class RunClientsAccounts:
@@ -19,12 +19,12 @@ class RunClientsAccounts:
         try:
 
             start_time = time.monotonic()
-            # QAP_4277(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4315(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4324(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4285(self.web_driver_container, self.second_lvl_id).run()
-            # QAP_4294(self.web_driver_container, self.second_lvl_id).run()
-            QAP_5601(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_T3770(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_T3733(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_T3724(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_T3762(self.web_driver_container, self.second_lvl_id).run()
+            # QAP_T3753(self.web_driver_container, self.second_lvl_id).run()
+            QAP_T3593(self.web_driver_container, self.second_lvl_id).run()
 
             end_time = time.monotonic()
             print("Run Client/Accounts Retail ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

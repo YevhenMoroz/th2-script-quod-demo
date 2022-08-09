@@ -66,6 +66,15 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                 WebAdminRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod320_kuiper_web_admin_site.value: site_environment})
             return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod320_kuiper_web_admin_site.value]
+        elif env.value == EnvironmentType.quod319_kuiper_web_admin_site.value:
+            if EnvironmentType.quod319_kuiper_web_admin_site.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+                site_environment = WebAdminRestApiEnvironment(
+                    environment_type=EnvironmentType.quod319_kuiper_web_admin_site.value,
+                    session_alias_wa=Connectivity.Kuiper_319_web_admin_site.value
+                )
+                WebAdminRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod319_kuiper_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod319_kuiper_web_admin_site.value]
         else:
             raise Exception('No such environment')
 

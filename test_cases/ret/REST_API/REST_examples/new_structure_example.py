@@ -59,7 +59,7 @@ def execute(report_id):
     # # print(client_response.fields["AccountGroupResponse"].list_value.values[0].message_value.fields)
     # parsed_response = api_manager.get_response_details(response=client_response,
     #                                                    response_name="AccountGroupResponse",
-    #                                                    expected_entity_name="TestClient(QAP_4316)",
+    #                                                    expected_entity_name="TestClient(QAP_T3732)",
     #                                                    entity_field_id="accountGroupID")
     # print(parsed_response)
     #

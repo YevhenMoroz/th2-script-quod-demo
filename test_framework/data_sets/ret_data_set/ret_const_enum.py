@@ -72,6 +72,7 @@ class RetClients(Enum):
     client_3 = "QAP-4318"
     client_4 = "api_client_rin_desk"
     client_5 = "api_client_test_desk"
+    client_6 = "api_client_PRET_230"
 
 
 class RetAccounts(Enum):
@@ -112,6 +113,13 @@ class RetRecipients(Enum):
     recipient_user_5 = "QA5"
 
 
+class RetWebAdminRestApiUsers(Enum):
+    # Site Admin
+    web_admin_rest_api_user_1 = "adm02"
+    # Any hierarchical level
+    web_admin_rest_api_user_2 = "adm_rest"
+
+
 class RetRiskLimitDimensions(Enum):
     risk_limit_dimension_1 = dict(
         clientListID=600010,
@@ -124,10 +132,24 @@ class RetRiskLimitDimensions(Enum):
         standardTradingPhase="OPN",
         routeID=1110,
         executionPolicy="D",
-        positionType="L",
-        posValidity="DEL",
-        settlType="BDA",
+        positionType=["L", "S", "N"],
+        posValidity=["TP1", "ITD", "DEL", "TP2", "TP3", "TP4", "TP5", "TP6"],
+        settlType=["WK1", "BDA", "DA5", "FUT", "CAS", "IM1", "PHY", "YR1"],
         side="B"
+    )
+
+
+class RetCashTransferTypes(Enum):
+    cash_transfer_types_1 = dict(
+        cash_loan="CLD",
+        cash_loan_withdrawal="CLW",
+        collateral_limit="COL",
+        deposit="DEP",
+        end_of_day="EOD",
+        reserved_limit="RES",
+        temporary_cash="TCD",
+        temporary_cash_withdrawal="TCW",
+        withdrawal="WDR"
     )
 
 
