@@ -39,11 +39,13 @@ class QAP_T4967(TestCase):
         self.price = 45
         self.dark_price = 30
         self.traded_qty = 0
-        self.qty_for_md = 1000
+        self.qty_for_md = 10000
         self.price_ask = 40
         self.price_bid = 30
         self.px_for_incr = 0
         self.qty_for_incr = 0
+        self.ord_type = constants.OrderType.StopLimit.value
+        self.stop_px = 35
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_6.value
         # endregion
@@ -94,9 +96,11 @@ class QAP_T4967(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
+        nos_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp1, False, self.traded_qty, self.dark_price)
+        nos_2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp2, False, self.traded_qty, self.dark_price)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, True)
-        self.rule_list = [nos_rule, ocr_rule]
+        self.rule_list = [nos_rule, ocr_rule, nos_1_ioc_rule, nos_2_ioc_rule]
         # endregion
 
         # region Send_MarkerData
@@ -129,7 +133,7 @@ class QAP_T4967(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument)).add_tag(dict(MinQty=self.min_qty, DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument, OrdType=self.ord_type)).add_tag(dict(StopPx=self.stop_px, MinQty=self.min_qty, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
