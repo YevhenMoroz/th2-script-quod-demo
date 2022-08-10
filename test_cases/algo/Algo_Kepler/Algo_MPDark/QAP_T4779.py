@@ -165,6 +165,8 @@ class QAP_T4779(TestCase):
         self.fix_verifier_buy.check_fix_message(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
         # endregion
 
+        time.sleep(15)
+
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there is no unexpected messages", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq],
                                                          [self.key_params_with_ex_destination, self.key_params_with_ex_destination], self.FromQuod, pre_filter=self.pre_filter)
