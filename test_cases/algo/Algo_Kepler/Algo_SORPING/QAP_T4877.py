@@ -38,7 +38,6 @@ class QAP_T4877(TestCase):
         self.qty_for_md = 1000
         self.price_ask = 40
         self.price_bid = 30
-        self.tif_iok = constants.TimeInForce.ImmediateOrCancel.value
         # endregion
 
         # region Gateway Side
@@ -49,7 +48,6 @@ class QAP_T4877(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_eliminate = Status.Eliminate
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -64,8 +62,6 @@ class QAP_T4877(TestCase):
 
         # region venue param
         self.ex_destination_quodlit1 = self.data_set.get_mic_by_name("mic_10")
-        self.ex_destination_quoddkp1 = self.data_set.get_mic_by_name("mic_14")
-        self.ex_destination_quoddkp2 = self.data_set.get_mic_by_name("mic_15")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
@@ -76,7 +72,6 @@ class QAP_T4877(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
-        self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
         self.rule_list = []
