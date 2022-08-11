@@ -221,6 +221,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
         if new_order_single.get_parameter('TargetStrategy') == '1011':
             temp.update(
+                ExDestination='*',
                 LastMkt='*',
                 ChildOrderID='*'
             )
@@ -252,6 +253,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 )
         if new_order_single.is_parameter_exist('NoStrategyParameters') or 'ClientAlgoPolicyID' not in new_order_single.get_parameters():
             temp.update(NoStrategyParameters='*')
+        if 'ClientAlgoPolicyID' not in new_order_single.get_parameters() and new_order_single.get_parameter('TargetStrategy') == '1011':
+            temp.update(
+                SecondaryAlgoPolicyID='*',
+                LastExecutionPolicy='*'
+            )
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty='*')
         if new_order_single.get_parameter('TimeInForce') == '6':
