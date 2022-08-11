@@ -565,15 +565,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.get_parameter('TargetStrategy') in '1010' or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 NoParty='*'
             )
-        if (new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('ClientAlgoPolicyID')) or (new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('DisplayInstruction')):
-            temp.update(SecondaryAlgoPolicyID='*')
-        if new_order_single.get_parameter('TargetStrategy') == '1011':
-            temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         if new_order_single.is_parameter_exist('ExpireTime'):
