@@ -8,12 +8,9 @@ from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
-    FixMessageAllocationInstructionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
-    MiddleOfficeColumns, ExchangeRateCalc
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -23,32 +20,39 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7535(TestCase):
+class QAP_T7034(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.client = self.data_set.get_client_by_name('client_com_1')
+        self.cur = self.data_set.get_currency_by_name('currency_3')
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_3')
+        self.fix_message.change_parameters(
+            {'Account': self.client, "ExDestination": self.data_set.get_mic_by_name("mic_2"), "Currency": self.cur})
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
-        self.client = self.data_set.get_client_by_name('client_pt_1')
-        self.all_acc = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        self.currency = self.data_set.get_currency_by_name('currency_5')
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('Account', self.client)
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')
+        self.exec_destination = self.data_set.get_mic_by_name('mic_2')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.allocation_message = FixMessageAllocationInstructionReportOMS()
-        self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create order
+        self.commission_sender.clear_fees()
+        self.commission_sender.set_modify_fees_message().change_message_params(
+            {'commExecScope': self.data_set.get_fee_exec_scope_by_name("on_calc"),
+             "venueID": self.data_set.get_venue_by_name("venue_2"), "execCommissionProfileID": "1",
+             "orderCommissionProfileID": "1"}).send_post_request()
         order_id = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
@@ -73,34 +77,36 @@ class QAP_T7535(TestCase):
             self.rule_manager.remove_rule(trade_rule)
             self.rule_manager.remove_rule(nos_rule)
         #  endregion
-        # region book order
-        self.mid_office.set_modify_ticket_details(toggle_recompute=True, settl_currency=self.currency,
-                                                  exchange_rate='2', exchange_rate_calc=ExchangeRateCalc.multiple.value)
-        self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
+        # region check execution
+        exec_report_1 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
+        exec_report_1.change_parameters(
+            {'ReplyReceivedTime': "*", "Currency": self.cur,
+             "LastMkt": self.exec_destination, "Text": "*", "OrderID": order_id})
+        exec_report_1.remove_parameter('SettlCurrency')
+        self.fix_verifier.check_fix_message_fix_standard(exec_report_1)
         #  endregion
-        # region check Alloc Report
-        self.allocation_message.set_default_ready_to_book(self.fix_message)
-        self.allocation_message.change_parameters(
-            {'AvgPx': str(int(self.price) * 2), 'Currency': self.currency, 'RootSettlCurrency': self.currency,
-             "RootSettlCurrAmt": str(int(self.price) * 2 * int(self.qty)),
-             'tag5120': "*", "GrossTradeAmt": str(int(self.price) * 2 * int(self.qty)),
-             'NetMoney': str(int(self.price) * 2 * int(self.qty))})
-        self.fix_verifier.check_fix_message_fix_standard(self.allocation_message)
-        #  endregion
-        # region approve and allocate
-        self.mid_office.approve_block()
-        param = [{"Security Account": self.all_acc, "Alloc Qty": self.qty}]
-        self.mid_office.set_modify_ticket_details(is_alloc_amend=True, arr_allocation_param=param)
-        self.mid_office.allocate_block([MiddleOfficeColumns.order_id.value, order_id])
-        #  endregion
-        # region check confirmation report
-        conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
-            self.fix_message)
-        conf_report.change_parameters(
-            {'AvgPx': str(int(self.price) * 2), 'Currency': self.currency, "tag5120": "*",
-             "GrossTradeAmt": str(int(self.price) * 2 * int(self.qty)),
-             "NetMoney": str(int(self.price) * 2 * int(self.qty)),
-             "SettlCurrAmt": str(int(self.price) * 2 * int(self.qty) * 2), "SettlCurrency": self.currency,
-              "Account": self.client, "AllocInstructionMiscBlock2": '*', "AllocNetPrice": str(int(self.price) * 2)})
-        self.fix_verifier.check_fix_message_fix_standard(conf_report)
+        # region check calculated
+        no_party = {
+            'NoParty': [
+                {'PartyRole': "66",
+                 'PartyID': "AccPR",
+                 'PartyIDSource': "C"},
+                {'PartyRole': "36",
+                 'PartyID': "gtwquod4",
+                 'PartyIDSource': "D"}
+            ]
+        }
+        no_misc = {
+            'NoMiscFees': {'MiscFeeAmt': '*',
+                           'MiscFeeCurr': self.cur,
+                           'MiscFeeType': "*"
+                           }
+        }
+        exec_report_2 = FixMessageExecutionReportOMS(self.data_set).set_default_calculated(self.fix_message)
+        exec_report_2.change_parameters(
+            {"NoMiscFees": no_misc, "NoParty": no_party, 'QuodTradeQualifier': "*", "BookID": "*", "Currency": self.cur,
+             "OrderID": order_id, "ExecBroker": "*",  "SecondaryOrderID": "*",
+             "tag5120": "*", "CommissionData": "*"})
+        exec_report_2.remove_parameters(['Parties', "TradeReportingIndicator"])
+        self.fix_verifier_dc.check_fix_message_fix_standard(exec_report_2)
         #  endregion
