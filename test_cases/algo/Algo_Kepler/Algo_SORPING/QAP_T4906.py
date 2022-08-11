@@ -56,6 +56,7 @@ class QAP_T4906(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminate = Status.Eliminate
+        self.status_partial_fill = Status.PartialFill
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -177,6 +178,11 @@ class QAP_T4906(TestCase):
         er_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_new)
         er_new_dma_qdl1_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit1))
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # endregion
+
+        # region Check Partial fill parent algo order
+        er_partial_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
+        self.fix_verifier_sell.check_fix_message(er_partial_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
 
