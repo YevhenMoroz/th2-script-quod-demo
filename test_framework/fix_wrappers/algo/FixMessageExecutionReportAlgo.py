@@ -117,7 +117,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')) or (new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('DisplayInstruction') and ('ClientAlgoPolicyID' not in new_order_single.get_parameters())):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') or 'ClientAlgoPolicyID' not in new_order_single.get_parameters():
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
@@ -250,7 +250,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     LastMkt='*',
                     ExDestination='*'
                 )
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') or 'ClientAlgoPolicyID' not in new_order_single.get_parameters():
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty='*')
@@ -561,7 +561,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')) or (new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('DisplayInstruction') and ('ClientAlgoPolicyID' not in new_order_single.get_parameters())):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') or 'ClientAlgoPolicyID' not in new_order_single.get_parameters():
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
@@ -721,7 +721,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         if new_order_single.is_parameter_exist('NoStrategyParameters'):
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') != '1008' and new_order_single.get_parameter('TargetStrategy') != '1011':
-            temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
+            temp.update(LastMkt='*')
         if new_order_single.get_parameter('TargetStrategy') == '1010' or (new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') in ['QA_Auto_SORPING_ME_Y', 'QA_Auto_SORPING_ME_N']):
             temp.update(
                 NoParty='*',
@@ -753,7 +753,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             QtyType='*',
             CxlQty=new_order_single.get_parameter('OrderQty'),
             Instrument='*',
-            Text='*'
         )
         super().change_parameters(temp)
         return self
