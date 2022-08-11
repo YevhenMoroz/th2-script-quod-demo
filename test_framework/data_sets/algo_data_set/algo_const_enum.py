@@ -262,3 +262,10 @@ class AlgoPreFilter(Enum):
         'header': {
             'MsgType': ('D', "EQUAL")
         }}
+
+    pre_filer_equal_ER_canceled = {
+                'header': {
+                    'MsgType': ('8', "EQUAL")
+                },
+                'ExecType': ('4', "EQUAL")
+    }
