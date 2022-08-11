@@ -319,7 +319,7 @@
       "service-class": "ActService",
       "endpoints": {
         "act_java_api": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.49",
           "port": 31221
         }
       },
