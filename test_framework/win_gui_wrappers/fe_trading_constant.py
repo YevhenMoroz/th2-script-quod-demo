@@ -194,6 +194,7 @@ class TradeBookColumns(Enum):
     """Mics Fees tab"""
     misc_tab = "Misc Fees"
     rate = "Rate"
+    basis = "Basis"
     amount = "Amount"
 
 
@@ -422,6 +423,7 @@ class SecondLevelTabs(Enum):
     algo_parameters_external = "Algo Parameters External"
     pre_trade_alloc_tab = "Pre Trade Allocations"
     counterpart_list = "Counterpart List"
+    commissions= "Client Commissions"
 
 
 class PreTradeAllocations(Enum):
@@ -627,3 +629,6 @@ class OffsetTypes(Enum):
 
 class ReferencePrice(Enum):
     open = "Open"
+
+class Basis:
+    per_unit = 'PerUnit'

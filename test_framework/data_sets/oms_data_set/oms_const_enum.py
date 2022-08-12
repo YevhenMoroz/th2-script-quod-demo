@@ -236,6 +236,7 @@ class OMSCommissionProfiles(Enum):
     bas_qty = 6
     abs_amt_usd = 7
     abs_amt_2 = 8
+    commission_with_minimal_value = 600018
 
 
 class OMSFeeType(Enum):
