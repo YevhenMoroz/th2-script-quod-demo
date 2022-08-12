@@ -12,5 +12,7 @@ class AlsMessages(Enum):
         "NetPrice": "*",
         "Currency": "*",
         "GrossTradeAmt": "*",
-        "ClientAccountID": "*"
+        "ClientAccountID": "*",
+        "NetSettlAmt": "*",
+        "NetMoney": "*"
     }
