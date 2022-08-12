@@ -41,6 +41,7 @@ class QAP_T4874(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.delay = 2000
         # endregion
 
         # region Gateway Side
@@ -85,7 +86,7 @@ class QAP_T4874(TestCase):
         # region Rule creation
         # TODO add delay in the IOC rule
         rule_manager = RuleManager()
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.qty, self.price_ask)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.qty, self.price_ask, self.delay)
         self.rule_list = [nos_ioc_rule]
         # endregion
 
@@ -150,6 +151,8 @@ class QAP_T4874(TestCase):
         self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_with_default_strategy_params()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_ask, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+
+        time.sleep(2)
 
         er_pending_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
