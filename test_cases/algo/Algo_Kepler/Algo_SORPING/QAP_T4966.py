@@ -35,8 +35,8 @@ class QAP_T4966(TestCase):
         # region order parameters
         self.qty = 1500
         self.min_qty = 700
-        self.qty_qdl6 = 700
-        self.qty_qdl7 = 800
+        self.qty_qdl6 = 1000
+        self.qty_qdl7 = 1000
         self.price = 45
         self.dark_price = 30
         self.traded_qty = 0
