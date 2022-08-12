@@ -174,6 +174,7 @@ class AlgoRecipients(Enum):
     recipient_user_2 = ""
     recipient_user_3 = ""
 
+
 class AlgoMic(Enum):
     mic_1 = "XPAR"
     mic_2 = "TRQX"
@@ -203,7 +204,6 @@ class AlgoMic(Enum):
     mic_26 = "QDL10"  # QUODLIT10
 
 
-
 class AlgoListingId(Enum):
     listing_1 = "1015"
     listing_2 = "734"
@@ -227,6 +227,9 @@ class AlgoListingId(Enum):
     listing_20 = "925020507"  # QUODLIT8 for QUODTESTQA04
     listing_21 = "925020508"  # QUODLIT9 for QUODTESTQA04
     listing_22 = "925020509"  # QUODLIT10 for QUODTESTQA04
+    listing_23 = "897587663"  # TRQX for FR0000133308
+    listing_24 = "1803699"    # Euronext Paris for FR0000133308
+
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -234,6 +237,7 @@ class AlgoCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+
 
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -253,6 +257,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
 
+
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
                 'header': {
@@ -268,4 +273,4 @@ class AlgoPreFilter(Enum):
                     'MsgType': ('8', "EQUAL")
                 },
                 'ExecType': ('4', "EQUAL")
-    }
+                }
