@@ -26,7 +26,8 @@ class QAP_T2614(TestCase):
         # region Step 1
         self.quote_request.set_rfq_params_fwd().remove_fields_in_repeating_group("NoRelatedSymbols", ["SettlDate"])
         self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request, key_parameters=["QuoteReqID"])
+        # endregion
+        # region Step 2
         self.quote.set_params_for_quote_fwd(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
