@@ -138,8 +138,8 @@ class QAP_T6993(TestCase):
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
         execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*',
-                                            'tag5120': '*', 'SecondaryOrderID':"*",'ExecBroker': '*',
+                                            'Currency': self.currency, 'NoParty': '*', 'CommissionData': '*',
+                                            'tag5120': '*', 'SecondaryOrderID': "*", 'ExecBroker': '*',
                                             'NoMiscFees': [{
                                                 'MiscFeeAmt': amount,
                                                 'MiscFeeCurr': self.currency_post_trade,
@@ -223,7 +223,7 @@ class QAP_T6993(TestCase):
                 [AllocationsColumns.sts.value, AllocationsColumns.match_status.value,
                  AllocationsColumns.total_fees.value],
                 filter_dict_block=filter_dict,
-                clear_filter_from_block=True, allocate_number=index+1)
+                clear_filter_from_block=True, allocate_number=index + 1)
             self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
                                                AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value,
                                                AllocationsColumns.total_fees.value: ''},

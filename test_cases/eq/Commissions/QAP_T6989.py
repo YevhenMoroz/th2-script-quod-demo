@@ -145,7 +145,7 @@ class QAP_T6989(TestCase):
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
         execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*',
+                                            'Currency': self.currency, 'NoParty': '*','CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
                                             'NoMiscFees': [{
                                                 'MiscFeeAmt': amount,
