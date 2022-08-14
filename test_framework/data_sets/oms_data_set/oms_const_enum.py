@@ -261,6 +261,7 @@ class OMSExecScope(Enum):
     all_exec = "ALL"
     day_first_exec = "DAF"
     first_exec = "FST"
+    on_calculated = "CAL"
 
 
 class OMSFeeOrderScope(Enum):
@@ -358,8 +359,13 @@ class OMSBagScenario(Enum):
 
 class OMSVenueID(Enum):
     paris = "PARIS"
+    eurex = "EUREX"
 
 
 class OMSCounterpartID(Enum):
     contra_firm = "200003"
     contra_firm2 = "1000009"
+
+
+class OMSInstrType(Enum):
+    equity = "EQU"
