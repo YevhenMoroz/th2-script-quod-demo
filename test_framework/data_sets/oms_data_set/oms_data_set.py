@@ -5,7 +5,7 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
     OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
-    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType
+    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm
 
 
 class OmsDataSet(BaseDataSet):
@@ -53,4 +53,5 @@ class OmsDataSet(BaseDataSet):
     venue_id = OMSVenueID
     counterpart_id = OMSCounterpartID
     instr_type = OMSInstrType
+    contra_firm = OMSContraFirm
 

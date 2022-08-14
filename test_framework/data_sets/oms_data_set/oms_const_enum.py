@@ -369,3 +369,7 @@ class OMSCounterpartID(Enum):
 
 class OMSInstrType(Enum):
     equity = "EQU"
+
+
+class OMSContraFirm(Enum):
+    contra_firm_1 = "Contra Firm"
