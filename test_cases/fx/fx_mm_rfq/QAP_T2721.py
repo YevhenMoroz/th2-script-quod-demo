@@ -10,7 +10,7 @@ from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
-from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, RFQPanelQty, RFQPanelPtsAndPx
+from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming, RFQPanelPtsAndPx
 
 
 class QAP_T2721(TestCase):
@@ -27,12 +27,11 @@ class QAP_T2721(TestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
-        self.near_leg_quantity = RFQPanelQty.opposite_near_bid_qty_value_label
         self.qty = str(random.randint(54000000, 55000000))
         self.ex_ask_small = PriceNaming.ask_pips
         self.ex_ask_large = PriceNaming.ask_large
         self.ask_pts = RFQPanelPtsAndPx.ask_near_points_value_label
-        self.ask_px = RFQPanelPtsAndPx.ask_near_price_value_label
+        self.ask_px = RFQPanelPtsAndPx.ask_value_label
         self.instrument = {
             "Symbol": self.symbol,
             "SecurityType": self.security_type_fwd
@@ -53,18 +52,19 @@ class QAP_T2721(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
+        # endregion
+        # region step 3
         extracted_qty = self.dealer_intervention.extract_price_and_ttl_from_di_panel(self.ex_ask_large,
                                                                                      self.ex_ask_small)
         ask_large = extracted_qty[self.ex_ask_large.value]
         ask_small = extracted_qty[self.ex_ask_small.value]
         expected_ask_qty = ask_large+ask_small
-        print(expected_ask_qty)
 
         extracted_pts_px = self.dealer_intervention.extract_px_and_pts_from_di_panel(self.ask_pts, self.ask_px)
         ask_pts = extracted_pts_px[self.ask_pts.value]
         ask_px = extracted_pts_px[self.ask_px.value]
+        offer_px = str(float(expected_ask_qty)+(float(ask_pts)/10000))
 
-        offer_px = str(float(expected_ask_qty)-(float(ask_pts)/10000))
         self.dealer_intervention.compare_values(expected_value=ask_px, actual_value=offer_px,
                                                 event_name="Compare pts and px ask values")
         self.dealer_intervention.close_window()
