@@ -20,6 +20,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T6932(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -36,7 +37,7 @@ class QAP_T6932(TestCase):
         self.rule_manager = RuleManager(Simulators.equity)
         self.act_java_api = Stubs.act_java_api
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '7771'

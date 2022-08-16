@@ -62,7 +62,7 @@ class QAP_T7390(TestCase):
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
         new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit(
-            "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+            "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
             {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
              'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
         self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)

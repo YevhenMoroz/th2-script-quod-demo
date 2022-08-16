@@ -382,7 +382,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 {
                     'StrategyParameterName': 'PercentageVolume',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '0.9'
+                    'StrategyParameterValue': '0.3'
                 },
                 {
                     'StrategyParameterName': 'ChildMinValue',

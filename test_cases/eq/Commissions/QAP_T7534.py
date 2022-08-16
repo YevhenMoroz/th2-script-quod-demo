@@ -16,6 +16,7 @@ from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7534(TestCase):
 
@@ -55,7 +56,8 @@ class QAP_T7534(TestCase):
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
                 "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
-                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
+                 'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")
+                 ,"Currency": self.data_set.get_currency_by_name("currency_3")})
 
             self.response = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
         finally:
@@ -65,6 +67,6 @@ class QAP_T7534(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __verify_commissions(self):
         order_id = self.response[0].get_parameter("OrderID")
-        self.trades.set_filter([TradeBookColumns.order_id.value, order_id])
+        self.trades.set_filter([TradeBookColumns.order_id.value, order_id, TradeBookColumns.exec_type.value, "Trade"])
         fees = {TradeBookColumns.exec_fees.value: self.trades.extract_field(TradeBookColumns.exec_fees.value)}
-        self.trades.compare_values({TradeBookColumns.exec_fees.value: "1.123"}, fees, event_name='Check values')
+        self.trades.compare_values({TradeBookColumns.exec_fees.value: "0.01"}, fees, event_name='Check values')

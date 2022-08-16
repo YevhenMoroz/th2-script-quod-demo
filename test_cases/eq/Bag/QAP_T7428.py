@@ -22,6 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7428(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -139,6 +140,7 @@ class QAP_T7428(TestCase):
         self.__checking_post_trade_status(orders_id)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __extracting_and_comparing_value_for_bag_order(self, bag_column_extraction: list, expected_values: list,
                                                        return_order_bag_id: bool, action: str):
         fields = self.bag_order_book.extract_order_bag_book_details('1', bag_column_extraction)
@@ -154,6 +156,7 @@ class QAP_T7428(TestCase):
         if return_order_bag_id:
             return order_bag_id
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __checking_post_trade_status(self, orders_id: list):
         for index in range(len(orders_id)):
             self.order_book.set_filter([OrderBookColumns.order_id.value, orders_id[index]])
