@@ -157,6 +157,7 @@ class AlgoAccounts(Enum):
     account_8 = "CHIXDELTA_KEPLER"
     account_9 = "KEPLER"
     account_10 = "TQDARK_KEPLER"
+    account_11 = "TRQX_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
