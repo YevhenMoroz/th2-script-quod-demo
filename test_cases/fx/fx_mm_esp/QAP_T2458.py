@@ -24,10 +24,10 @@ no_related_symbol = [
     {
         'Instrument': {
             'Symbol': 'USD/PHP',
-            'SecurityType': 'FXNDF',
+            'SecurityType': 'FXSPOT',
             'Product': '4',
         },
-        'SettlType': 'W2',
+        'SettlType': '0',
     }
 ]
 client = "Iridium1"
@@ -56,6 +56,6 @@ def execute(report_id):
     except Exception:
         logging.error('Error execution', exc_info=True)
         bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        market_data_request.change_parameters({"SubscriptionRequestType": "2"})
-        fix_manager_gtw.send_message(market_data_request)
+    # finally:
+    #     market_data_request.change_parameters({"SubscriptionRequestType": "2"})
+    #     fix_manager_gtw.send_message(market_data_request)
