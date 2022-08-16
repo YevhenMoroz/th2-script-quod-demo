@@ -76,18 +76,11 @@ class FixMessage:
         return self
 
     def add_fields_into_repeating_group(self, r_group: str, fields: list):
-        if r_group in self.get_parameters() and r_group !='NoStrategyParameters':
+        if r_group in self.get_parameters():
             new_component = self.get_parameter(r_group)
             for i in fields:
                 new_component.append(i)
             self.change_parameters({r_group: new_component})
-        if r_group == 'NoStrategyParameters':
-            params = ['StrategyParameterName', 'StrategyParameterType', 'StrategyParameterValue']
-            new_component = self.get_parameter(r_group)
-            for i in fields:
-                new_component.append(dict(zip(params, i)))
-            self.change_parameters({r_group: new_component})
-
         else:
             self.add_tag({r_group: fields})
         return self
@@ -124,6 +117,22 @@ class FixMessage:
     def update_repeating_group_by_index(self, component: str, index: int = 0, **kwargs):
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
+        return self
+
+    def remove_values_in_repeating_group_by_index(self, component: str, index: int = 0, *args):
+        """
+        Removing list of values from repeating group by index, for example
+        we can delete MDEntryPx and MDEntryTime from this msg:
+        {'MDReqID': '0289630222', ..., 'Instrument': {'Symbol': 'EUR/USD'},
+        'NoMDEntries': [
+        {'SettlType': '0', 'MDEntryPx': '*', 'MDEntryTime': '*', ..., 'SettlDate': '20220815'},
+        {'SettlType': '0', 'MDEntryPx': '*', 'MDEntryTime': '*', ..., 'SettlDate': '20220815'}
+        ]}
+        fix_message.remove_values_in_repeating_group_by_index("NoMDEntries", 1, ("MDEntryPx", "MDEntryTime"))
+        """
+        new_repeating_gr = self.get_parameter(component)
+        for i in args[0]:
+            new_repeating_gr[index].pop(i)
         return self
 
     def get_data_set(self):

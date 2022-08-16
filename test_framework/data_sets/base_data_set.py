@@ -42,7 +42,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
-    counterparts = None
+    counterpart = None
     qty_types = None
     venue_client_accounts = None
     verifier_key_parameters = None
@@ -118,6 +118,8 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
+    counterpart_id = None
+    pre_filter = None
     # endregion
 
     # region fields added by Web Trading team
@@ -796,6 +798,10 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    def get_pre_filter(self, name: str):
+        if hasattr(self.pre_filter, name):
+            return getattr(self.pre_filter, name).value
+        return ValueError(f"{self.pre_filter,} not found!")
     # endregion
 
     # region WebTrading getters
@@ -818,4 +824,15 @@ class BaseDataSet:
         if hasattr(self.capacity, name):
             return getattr(self.capacity, name).value
         return ValueError(f"{self.capacity} not found!")
+
+    def get_counterpart_id(self, name: str):
+        if hasattr(self.counterpart_id, name):
+            return getattr(self.counterpart_id, name).value
+        return ValueError(f"{self.counterpart_id} not found!")
+
+    def get_counterpart(self, name: str):
+        if hasattr(self.counterpart, name):
+            return getattr(self.counterpart, name).value
+        return ValueError(f"{self.counterpart} not found!")
+
     # endregion

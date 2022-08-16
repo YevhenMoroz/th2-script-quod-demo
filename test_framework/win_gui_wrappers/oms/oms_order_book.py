@@ -12,7 +12,8 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     AddToBasketDetails, CreateBasketDetails, ManualExecutingDetails, SecondLevelTabDetails, \
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
     TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
-    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails, QuickButtonCreationDetails
+    UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails, QuickButtonCreationDetails, \
+    ActionsHotKeysDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -44,6 +45,7 @@ class OMSOrderBook(BaseOrderBook):
         self.mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(self.base_request)
         self.extraction_error_message_details = ExtractDirectsValuesRequest.DirectsExtractedValue()
         self.extract_direct_values = ExtractDirectsValuesRequest()
+        self.hot_keys_details = ActionsHotKeysDetails(self.base_request)
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
         self.mass_execution_summary_call = Stubs.win_act_order_book.massExecSummary
@@ -102,4 +104,5 @@ class OMSOrderBook(BaseOrderBook):
         self.create_quick_button_call = Stubs.win_act_order_book.createSplitShortcutCreationButton
         self.edit_quick_button_call = Stubs.win_act_order_book.editSplitShortcutCreationButton
         self.click_quick_button_call = Stubs.win_act_order_book.clickSplitShortcutCreationButton
+        self.hot_keys_action_call = Stubs.win_act_order_book.selectedRowInOrderBook
         # endregion

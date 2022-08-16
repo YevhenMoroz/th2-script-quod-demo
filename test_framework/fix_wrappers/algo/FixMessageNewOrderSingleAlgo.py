@@ -81,7 +81,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': "CLIENT2",
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -91,13 +91,17 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            'Currency': "EUR",
-            'ExDestination': "XPAR",
-            "Instrument": Instrument.BUI.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "2",
-            'QuodFlatParameters': {
-                'MaxPercentageVolume': '10'
-            }
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'PercentageVolume',
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.1'
+                }
+            ]
         }
         super().change_parameters(base_parameters)
         return self
@@ -378,7 +382,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 {
                     'StrategyParameterName': 'PercentageVolume',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '0.9'
+                    'StrategyParameterValue': '0.3'
                 },
                 {
                     'StrategyParameterName': 'ChildMinValue',
@@ -740,6 +744,45 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SORPING_params_with_default_strategy(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1011'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Child_of_SORPING_with_default_strategy_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*'
         }
         super().change_parameters(base_parameters)
         return self

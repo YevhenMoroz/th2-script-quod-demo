@@ -1,154 +1,96 @@
-import logging
+from datetime import datetime
 from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
 
+class QAP_T2917(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.ss_connectivity = self.fix_env.sell_side_esp
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.platinum = self.data_set.get_client_by_name("client_mm_11")
+        self.eur_jpy = self.data_set.get_symbol_by_name('symbol_4')
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.instrument_spot = {
+            'Symbol': self.eur_jpy,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.instrument_spot,
+            'SettlType': self.settle_type_spot}]
+        self.md_eur_jpy_spo = "EUR/JPY:SPO:REG:HSBC"
+        self.md_entry_px_0 = 1.1815
+        self.md_entry_px_1 = 1.18151
+        self.mm_md_entry_px_0 = self.md_entry_px_0 - 0.00001
+        self.mm_md_entry_px_1 = self.md_entry_px_1 + 0.00002
+        self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
+        self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
+        self.no_md_entries = [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.1815,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18151,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                }]
 
-def create_or_get_esp_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step Precondition
+        self.fix_md.set_market_data().update_MDReqID(self.md_eur_jpy_spo, self.fx_fh_connectivity, "FX")
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        # endregion
+        # region Step 2-3
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.platinum)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
 
-
-def modify_esp_tile(base_request, service, from_c, to_c, tenor, venue):
-    from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(from_c, to_c, tenor)
-    from win_gui_modules.aggregated_rates_wrappers import ContextActionRatesTile
-    venue_filter = ContextActionRatesTile.create_venue_filter(venue)
-    modify_request.add_context_actions([venue_filter])
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def create_or_get_pricing_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
-
-
-def use_default(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_use_defaults()
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def modify_pricing_tile(base_request, service, instrument, client):
-    from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def extract_price_from_esp(base_request, service):
-    from win_gui_modules.aggregated_rates_wrappers import ExtractRatesTileDataRequest
-    extraction_value = ExtractRatesTileDataRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extraction_value.set_extraction_id(extraction_id)
-    extraction_value.extract_best_bid("ratesTile.Bid")
-    extraction_value.extract_best_ask("ratesTile.Ask")
-    response = call(service.extractRatesTileValues, extraction_value.build())
-    bid = float(response["ratesTile.Bid"])
-    ask = float(response["ratesTile.Ask"])
-    return [bid, ask]
-
-
-def extract_price_from_pricing_tile(base_request, service):
-    from win_gui_modules.client_pricing_wrappers import ExtractRatesTileValues
-    extract_value_request = ExtractRatesTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value_request.set_extraction_id(extraction_id)
-    extract_value_request.extract_ask_large_value("rates_tile.ask_large")
-    extract_value_request.extract_bid_large_value("rates_tile.bid_large")
-    extract_value_request.extract_ask_pips("rates_tile.ask_pips")
-    extract_value_request.extract_bid_pips("rates_tile.bid_pips")
-    response = call(service.extractRateTileValues, extract_value_request.build())
-    bid = float(response["rates_tile.bid_large"] + response["rates_tile.bid_pips"])
-    ask = float(response["rates_tile.ask_large"] + response["rates_tile.ask_pips"])
-    return [bid, ask]
-
-
-def extract_column_base(base_request, service):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(1)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-
-    bid_base = float(response["rateTile.bidBase"])
-    ask_base = float(response["rateTile.askBase"])
-    return [bid_base, ask_base]
-
-
-def check_bid_price(case_id, esp_bid, pricing_price, base):
-    expected_price = esp_bid - base/10000
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check bid price on Pricing tile")
-    verifier.compare_values("Bid price", str(round(expected_price, 5)), str(pricing_price))
-    verifier.verify()
-
-
-def check_ask_price(case_id, esp_bid, pricing_price, base):
-    expected_price = esp_bid + base/10000
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check ask price on Pricing tile")
-    verifier.compare_values("ask price", str(round(expected_price, 5)), str(pricing_price))
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-
-    from_curr = "GBP"
-    to_curr = "AUD"
-    tenor = "Spot"
-    venue = "HSBC"
-    instrument = "GBP/AUD-Spot"
-    client_tier = "Silver"
-
-    def_md_symbol_gbp_aud = "GBP/AUD:SPO:REG:HSBC"
-    symbol_gbp_aud = "GBP/AUD"
-
-    try:
-        # Step 1
-        create_or_get_esp_tile(base_details, ar_service)
-        modify_esp_tile(base_details, ar_service, from_curr, to_curr, tenor, venue)
-        # Step 2
-        create_or_get_pricing_tile(base_details, cp_service)
-        modify_pricing_tile(base_details, cp_service, instrument, client_tier)
-        # Step 3
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_gbp_aud, symbol_gbp_aud)).send_market_data_spot()
-        esp_price = extract_price_from_esp(base_details, ar_service)
-        pricing_tile_price = extract_price_from_pricing_tile(base_details, cp_service)
-        base = extract_column_base(base_details, cp_service)
-        check_bid_price(case_id, esp_price[0], pricing_tile_price[0], base[0])
-        check_ask_price(case_id, esp_price[1], pricing_tile_price[1], base[1])
-
-        use_default(base_details, cp_service)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tiles
-            call(ar_service.closeRatesTile, base_details.build())
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_md.set_market_data().update_MDReqID(self.md_eur_jpy_spo, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)

@@ -21,6 +21,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7521(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -100,6 +101,7 @@ class QAP_T7521(TestCase):
                                  status=Status.new.value)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_wave_status(self, filter_list, status: str, tab_name: str):
         fields = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1',
                                                                                sub_extraction_fields=[

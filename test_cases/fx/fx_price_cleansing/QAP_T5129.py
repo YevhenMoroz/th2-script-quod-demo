@@ -174,8 +174,8 @@ class QAP_T5129(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # Deleting rule
-        # self.rest_message.clear_message_params().set_params(self.rest_message_params).delete_deviation_cleansing_rule()
-        # self.rest_manager.send_post_request(self.rest_message)
+        self.rest_message.clear_message_params().set_params(self.rest_message_params).delete_deviation_cleansing_rule()
+        self.rest_manager.send_post_request(self.rest_message)
 
         self.fix_md.set_market_data()
         self.fix_md.change_parameter("MDReqID", self.md_id_target)

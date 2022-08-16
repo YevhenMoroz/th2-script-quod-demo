@@ -552,3 +552,20 @@ class MassApproveDetails:
 
     def build(self):
         return self._request
+
+
+class OpeningBookingTicket:
+    def __init__(self, base_request: EmptyRequest):
+        if base_request is not None:
+            self.__opening_window = middle_office_pb2.OpenBookingTicket(base=base_request)
+        else:
+            self.__opening_window = middle_office_pb2.OpenBookingTicket()
+
+    def set_filter(self, filter: dict):
+        self.__opening_window.filter.update(filter)
+
+    def set_selected_row(self, selected_rows: int):
+        self.__opening_window.selected_rows = selected_rows
+
+    def build(self):
+        return self.__opening_window

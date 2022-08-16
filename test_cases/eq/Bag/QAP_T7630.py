@@ -22,6 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7630(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -37,7 +38,7 @@ class QAP_T7630(TestCase):
         self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '1399'

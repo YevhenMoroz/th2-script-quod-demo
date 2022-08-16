@@ -22,6 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7413(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):

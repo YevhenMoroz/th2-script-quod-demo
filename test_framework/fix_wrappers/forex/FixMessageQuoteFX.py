@@ -23,7 +23,9 @@ class FixMessageQuoteFX(FixMessage):
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
                             Product="4"),
-            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"]
+            if "SettlDate" in quote_request.get_parameter("NoRelatedSymbols")[0]
+            else "*",
             SettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
             Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             QuoteType=quote_request.get_parameter("NoRelatedSymbols")[0]["QuoteType"]
@@ -284,7 +286,7 @@ class FixMessageQuoteFX(FixMessage):
                 ]
 
         self.prepare_params_for_swap(quote_request)
-        self.add_tag({"Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"]})
+        # self.add_tag({"Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"]})
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
             self.add_tag({"BidSwapPoints": "*"})
             self.add_tag({"BidPx": "*"})

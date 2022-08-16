@@ -53,7 +53,7 @@ class QAP_T7525(TestCase):
                 int(self.qty), 1)
 
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
-                "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+                "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
                  'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
 

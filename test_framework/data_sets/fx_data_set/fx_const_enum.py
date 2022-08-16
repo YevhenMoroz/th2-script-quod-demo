@@ -68,6 +68,7 @@ class FxClients(Enum):
     client_mm_8 = "Aurum1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
+    client_mm_11 = "Platinum1"  # For Margin Format testing
 
 
 class FxAccounts(Enum):
@@ -195,6 +196,7 @@ class FxSymbols(Enum):
     symbol_13 = "EUR/CAD"
     symbol_14 = "NOK/SEK"
     symbol_15 = "USD/NOK"
+    symbol_16 = "AUD/USD"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

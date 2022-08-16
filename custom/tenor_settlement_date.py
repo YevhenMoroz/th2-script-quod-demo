@@ -223,6 +223,10 @@ def fixing_ndf_m1_front_end():
     return (tm(datetime.utcnow().isoformat()) + bd(n=20)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
+def custom(days: int = 2):
+    return (tm(datetime.utcnow().isoformat()) + bd(n=days)).date().strftime('%Y%m%d')
+
+
 def fixing_ndf_m2_front_end():
     return (tm(datetime.utcnow().isoformat()) + bd(n=43)).date().strftime('%Y-%m-%d %H:%M:%S')
 

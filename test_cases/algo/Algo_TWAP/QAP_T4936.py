@@ -32,6 +32,10 @@ class QAP_T4936(TestCase):
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         # endregion
 
+        now = datetime.today() - timedelta(hours=3)
+        start_time = now.strftime("%Y%m%d-%H:%M:%S")
+        end_time = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+
         # region order parameters
         self.order_type = constants.OrderType.Limit.value
         self.qty = 2000
@@ -43,6 +47,12 @@ class QAP_T4936(TestCase):
         self.slice1_qty, self.slice2_qty = AlgoFormulasManager.get_all_twap_slices(self.qty, 2)
         self.waves = 14
         self.aggressivity = 1
+        self.strategy_parameters_values = [['StartDate', 19, start_time], ['EndDate', 19, end_time], ['Aggressivity', '1', self.aggressivity],
+                                           ['Waves', '1', self.waves], ['Passive', 14, 'LTP'], ['Neutral', 14, 'LTP'], ['LowLiquidity', 13, 1],
+                                           ['ParticipateInOpeningAuctions', 13, 1], ['ParticipateInClosingAuctions', 13, 1], ['AcceptPartialSlice', 13, 1],
+                                           ['PartialFront', 13, 1], ['SizeRandomness', 6, 0.0], ['SliceDuration', 1, 30], ['ReservedQty', 1, 0],
+                                           ['MaxParticipation', 6, 0.0], ['ChildMinQty', 1, 0], ['ChildMinValue', 6, 0.000], ['TimeRandomness', 1, 0],
+                                           ['PassiveOffset', 1, -1], ['NeutralOffset', 1, 0]]
         # endregion
 
         # region Gateway Side
@@ -91,10 +101,6 @@ class QAP_T4936(TestCase):
         self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
-        start_time = now.strftime("%Y%m%d-%H:%M:%S")
-        end_time = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
-
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
@@ -108,13 +114,12 @@ class QAP_T4936(TestCase):
         # region Send NewOrderSingle (35=D) for TWAP order
         case_id_1 = bca.create_event("Create TWAP Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
-
+        strategy_parameters = ['StrategyParameterName', 'StrategyParameterType', 'StrategyParameterValue']
+        resulting_params = []
+        for i in self.strategy_parameters_values:
+            resulting_params.append(dict(zip(strategy_parameters, i)))
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
-        self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [['StartDate', 19, start_time], ['EndDate', 19, end_time], ['Aggressivity', '1', self.aggressivity], ['Waves', '1', self.waves],
-                                                           ['Passive', 14, 'LTP'], ['Neutral', 14, 'LTP'], ['LowLiquidity', 13, 1], ['ParticipateInOpeningAuctions', 13, 1], ['ParticipateInClosingAuctions', 13, 1],
-                                                                                 ['AcceptPartialSlice', 13, 1], ['PartialFront', 13, 1], ['SizeRandomness', 6, 0.0], ['SliceDuration', 1, 30], ['ReservedQty', 1, 0],
-                                                                                 ['MaxParticipation', 6, 0.0], ['ChildMinQty', 1, 0], ['ChildMinValue', 6, 0.000], ['TimeRandomness', 1, 0], ['PassiveOffset', 1, -1],
-                                                                                 ['NeutralOffset', 1, 0]])
+        self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', resulting_params)
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, case_id_1)
