@@ -91,7 +91,7 @@ class QAP_T4742(TestCase):
         trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price, self.price, self.qty, self.traded_qty, 0)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
 
-        self.rule_list = [rfq_rule, rfq_cancel_rule, new_order_single, cancel_rule, trade_rule]
+        self.rule_list = [rfq_rule, rfq_rule2, rfq_cancel_rule, new_order_single, cancel_rule, trade_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
