@@ -24,7 +24,7 @@ class QAP_T3923(CommonTestCase):
         self.name = "TestSuperStrategy"
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
-        self.parameter = "Spray Modify"
+        self.parameter = "SprayModify"
         self.first_value = "Single"
         self.second_value = "Spray"
 

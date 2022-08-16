@@ -22,7 +22,7 @@ class QAP_T3877(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
-        self.parameter_at_passive_lit_block = "Post Mode"
+        self.parameter_at_passive_lit_block = "PostMode"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -39,8 +39,10 @@ class QAP_T3877(CommonTestCase):
         time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_lit_passive()
+        time.sleep(2)
         passive_at_lit_block = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         passive_at_lit_block.click_on_plus_button()
+        time.sleep(1)
         passive_at_lit_block.set_parameter(self.parameter_at_passive_lit_block)
 
     def test_context(self):

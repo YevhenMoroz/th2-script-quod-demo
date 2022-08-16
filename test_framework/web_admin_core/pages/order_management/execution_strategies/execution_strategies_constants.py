@@ -80,8 +80,8 @@ class ExecutionStrategiesConstants:
     REQUIRED_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng-star-inserted"]//td[5]//*[@class="custom-checkbox"]'
     REQUIRED_FILTER_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng2-smart-th scenarioParameterRequired ng-star-inserted"]//input'
 
-    VALUE_FIELD_AT_PARAMETERS_SUB_WIZARD ='//*[@placeholder="Value"]'
-    VALUE_AT_PARAMETERS_SUB_WIZARD ="//*[@class='parameters-settings']//tr[1]//td[6]//div//div[@class='ng-star-inserted']"
+    VALUE_FIELD_AT_PARAMETERS_SUB_WIZARD ='//*[@formcontrolname="algoParameterValue" or @id="algoParameterValue"]'
+    VALUE_AT_PARAMETERS_SUB_WIZARD ='//*[@class="parameters-settings"]//following::td[last()]'
     VALUE_FILTER_AT_PARAMETERS_SUB_WIZARD ='//*[@class="algoParameterFEValue ng2-smart-th ng-star-inserted"]//input'
     CHECKBOX_FOR_ALL_PARAMETERS_AT_SUB_WIZARD = "//*[@formcontrolname='algoParameterValue']//*[@class='custom-checkbox']"
 
@@ -92,15 +92,15 @@ class ExecutionStrategiesConstants:
 
 
     # JUST FOR ACTIONS SUB WIZARD
-    PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-plus piloted-table-action']"
-    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-checkmark']"
-    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-wrapper']//*[@class='nb-close']"
-    DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-trash piloted-table-action']"
+    PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@nbtooltip="Add"]'
+    CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="checkmark"]'
+    CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="close"]'
+    DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@ddata-name="trash-2"]'
     VALUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@placeholder='Value *']"
     VALUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='ng2-smart-th secondValue ng-star-inserted']//input"
-    VENUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@class='nb-form-control-container']//*[@placeholder='Venue']"
+    VENUE_FIELD_AT_ACTIONS_SUB_WIZARD = '//*[@id="algoParameterValue"]'
     VENUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='form-table-details-old_wrappers']//*[@class='form-control ng-untouched ng-pristine ng-valid'] "
-    STRATEGY_AT_SUB_WIZARD = "//*[@class='nb-form-control-container']//*[@placeholder='Strategy']"
+    STRATEGY_AT_SUB_WIZARD = '//*[@class="nb-form-control-container"]//*[@id="algoParameterValue"]'
 
     #Venue priority sub wizard
     PLUS_BUTTON_AT_VENUE_PRIORITY_SUB_WIZARD ="//*[@class='row ng-star-inserted']//*[@class='nb-plus']"

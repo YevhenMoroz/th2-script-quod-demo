@@ -65,8 +65,8 @@ class ClientsConstants:
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
     ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][text()="User Manager"]'
-    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="accountMgrDesk"]'
-    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="accountMgrDesk"][text()="Desk"]'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
+    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
     ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//*[normalize-space(text())="{}"]'
     ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'

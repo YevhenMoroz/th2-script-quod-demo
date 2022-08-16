@@ -48,7 +48,6 @@ class QAP_T3888(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        login_page.click_login_button()
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_counterparts_page()
@@ -91,9 +90,11 @@ class QAP_T3888(CommonTestCase):
         wizard = CounterpartsWizard(self.web_driver_container)
         wizard.set_name_value_at_values_tab(self.name_at_values_tab)
         sub_counterparts_tab = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
+        wizard.click_on_edit_at_sub_counterparts_tab()
         sub_counterparts_tab.set_party_sub_id_at_sub_counterparts_tab(self.party_sub_id_type[0])
         wizard.click_on_check_mark()
         party_roles_tab = CounterpartsPartyRolesSubWizard(self.web_driver_container)
+        wizard.click_on_edit_at_party_roles_tab()
         party_roles_tab.set_party_id_source_at_party_roles_tab(self.party_id_source[0])
         party_roles_tab.set_party_role_qualifier_at_party_roles_tab(self.party_role_qualifier[0])
         wizard.click_on_check_mark()
@@ -134,12 +135,12 @@ class QAP_T3888(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
 
+            counterparts_page.set_name_filter_value(self.new_name_at_value_tab)
+            time.sleep(1)
             counterparts_page.click_on_more_actions()
             time.sleep(1)
             counterparts_page.click_on_edit()
             time.sleep(2)
-            wizard.click_on_edit_at_sub_counterparts_tab()
-            wizard.click_on_edit_at_party_roles_tab()
 
             actual_result = [wizard.get_name_at_values_tab(),
                              sub_counterparts_tab.get_name_value_at_sub_counterparts_tab(),

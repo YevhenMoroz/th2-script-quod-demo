@@ -424,7 +424,7 @@ class SideMenu(CommonPage):
                 break
 
     def is_site_page_tab_displayed(self):
-        return self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).is_displayed()
+        return self.is_element_present(RootConstants.SITE_TAB_XPATH)
 
     def is_institutions_page_tab_displayed(self):
         if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
@@ -447,12 +447,12 @@ class SideMenu(CommonPage):
         return self.is_element_present(RootConstants.DESKS_ITEM_XPATH)
 
     def is_washbook_page_tab_displayed(self):
-        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
-            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
-        return self.find_by_xpath(RootConstants.WASHBOOK_ITEM_XPATH).is_displayed()
+        self.find_by_css_selector(RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR).click()
+        time.sleep(1)
+        return self.is_element_present(RootConstants.WASHBOOK_ITEM_XPATH)
 
     def is_washbook_rule_page_tab_displayed(self):
-        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
-            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
-        return self.find_by_xpath(RootConstants.WASHBOOK_RULES_ITEM_XPATH).is_displayed()
+        self.find_by_css_selector(RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR).click()
+        time.sleep(1)
+        return self.is_element_present(RootConstants.WASHBOOK_RULES_ITEM_XPATH)
 

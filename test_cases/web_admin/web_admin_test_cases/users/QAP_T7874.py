@@ -3,45 +3,53 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
-from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
-from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard \
-    import ClientTiersValuesSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
+from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
+from test_framework.web_admin_core.pages.users.users.users_venue_trader_sub_wizard import UsersVenueTraderSubWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T3965(CommonTestCase):
+class QAP_T7874(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.tod_end_time = "01:00:00"
+        self.venue = 'AMEX'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_users_page()
         time.sleep(2)
-        side_menu.open_client_tier_page()
-        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-        client_tiers_main_page.click_on_new()
-        client_tiers_values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-        client_tiers_values_tab.set_tod_end_time(self.tod_end_time)
-        time.sleep(2)
-        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-        client_tiers_wizard.click_on_save_changes()
 
     def test_context(self):
         try:
             self.precondition()
-            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-            self.verify("Message appears: The name is required.", True,
-                        client_tiers_wizard.is_incorrect_or_missing_value_massage_displayed())
+            users_page = UsersPage(self.web_driver_container)
+            users_page.click_on_new_button()
+            time.sleep(2)
+            venue_trade_tab = UsersVenueTraderSubWizard(self.web_driver_container)
+            venue_trade_tab.click_on_plus_button()
+            time.sleep(1)
+            venue_trade_tab.set_venue(self.venue)
+            venue_trade_tab.set_venue_trader_name("1")
+            venue_trade_tab.click_on_checkmark_button()
+            venue_trade_tab.click_on_plus_button()
+            time.sleep(1)
+            venue_trade_tab.set_venue(self.venue)
+            venue_trade_tab.set_venue_trader_name("2")
+            venue_trade_tab.click_on_checkmark_button()
+
+            wizard = UsersWizard(self.web_driver_container)
+            self.verify("Such record is already exist appears", True, wizard.is_warning_displayed())
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
