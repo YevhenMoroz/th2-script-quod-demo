@@ -5,7 +5,7 @@ import paramiko
 
 class SshClient:
     """A wrapper of paramiko.SSHClient"""
-    TIMEOUT = 4
+    TIMEOUT = 1
 
     def __init__(self, host, port, username, password, su_user=None, su_pass=None):
         self.username = username
@@ -18,17 +18,21 @@ class SshClient:
         self.channel_data = str()
         if su_user and su_pass:
             self.channel.send(f"su {su_user}\n")
+            time.sleep(self.TIMEOUT)
             self.channel.send(f"{su_pass}\n")
+            time.sleep(self.TIMEOUT)
 
     def get_file(self, remote_path, local_path):
         self.sftp_client.get(remote_path, local_path)
+        time.sleep(self.TIMEOUT)
 
     def put_file(self, remote_path, local_path):
         self.sftp_client.put(local_path, remote_path)
+        time.sleep(self.TIMEOUT)
 
     def send_command(self, command):
         """use for: qstart, qstop etc."""
-        self.channel.send(command + "\n")
+        self.channel.send(f"{command}\n")
         time.sleep(self.TIMEOUT)
 
     def execute(self, command, sudo=False):
@@ -41,6 +45,7 @@ class SshClient:
         if feed_password:
             stdin.write(self.password + "\n")
             stdin.flush()
+        time.sleep(self.TIMEOUT)
         return {'out': stdout.readlines(),
                 'err': stderr.readlines(),
                 'retval': stdout.channel.recv_exit_status()}
