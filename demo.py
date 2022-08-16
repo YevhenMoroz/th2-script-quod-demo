@@ -6,54 +6,11 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from send_rqf import Send_RFQ
 from stubs import Stubs
-from test_cases.fx.fx_mm_esp import QAP_1559, QAP_6148
-from test_cases.fx.fx_mm_esp.QAP_1518 import QAP_1518
-from test_cases.fx.fx_mm_esp.QAP_1597 import QAP_1597
-from test_cases.fx.fx_mm_esp.QAP_5389 import QAP_5389
-from test_cases.fx.fx_mm_esp.QAP_8010 import QAP_8010
-from test_cases.fx.fx_mm_rfq import QAP_3494, QAP_5848
-from test_cases.fx.fx_mm_rfq.QAP_1562 import QAP_1562
-from test_cases.fx.fx_mm_rfq.QAP_2103 import QAP_2103
-from test_cases.fx.fx_mm_rfq.QAP_2106 import QAP_2106
-from test_cases.fx.fx_mm_rfq.QAP_2345 import QAP_2345
-from test_cases.fx.fx_mm_rfq.QAP_2353 import QAP_2353
-from test_cases.fx.fx_mm_rfq.QAP_2382 import QAP_2382
-from test_cases.fx.fx_mm_rfq.QAP_2670 import QAP_2670
-from test_cases.fx.fx_mm_rfq.QAP_3106 import QAP_3106
-from test_cases.fx.fx_mm_rfq.QAP_3113 import QAP_3113
-from test_cases.fx.fx_mm_rfq.QAP_3610 import QAP_3610
-from test_cases.fx.fx_mm_rfq.QAP_3646 import QAP_3646
-from test_cases.fx.fx_mm_rfq.QAP_5345 import QAP_5345
-from test_cases.fx.fx_mm_rfq.QAP_5353 import QAP_5353
-from test_cases.fx.fx_mm_rfq.QAP_6192 import QAP_6192
-from test_cases.fx.fx_mm_rfq.QAP_6531 import QAP_6531
-from test_cases.fx.fx_mm_rfq.QAP_7125 import QAP_7125
-from test_cases.fx.fx_mm_rfq.QAP_7129 import QAP_7129
-from test_cases.fx.fx_mm_rfq.QAP_7162 import QAP_7162
-from test_cases.fx.fx_mm_rfq.QAP_7556 import QAP_7556
-from test_cases.fx.fx_mm_rfq.QAP_7997 import QAP_7997
-from test_cases.fx.fx_mm_rfq.QAP_8012 import QAP_8012
-from test_cases.fx.fx_mm_rfq.QAP_8223 import QAP_8223
-from test_cases.fx.fx_mm_rfq.QAP_T2716 import QAP_T2716
-from test_cases.fx.fx_mm_rfq.QAP_T2861 import QAP_T2861
-from test_cases.fx.fx_mm_rfq.QAP_T2962 import QAP_T2962
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3734 import QAP_3734
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3761 import QAP_3761
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3762 import QAP_3762
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3772 import QAP_3772
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3806 import QAP_3806
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3850 import QAP_3850
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_3851 import QAP_3851
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_4234 import QAP_4234
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_5992 import QAP_5992
+from test_cases.fx.fx_mm_esp import QAP_T2458
+from test_cases.fx.fx_mm_esp.QAP_2075 import QAP_2075
+from test_cases.fx.fx_mm_esp.QAP_T2497 import QAP_T2497
 
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_6147 import QAP_6147
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_6364 import QAP_6364
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3721 import QAP_3721
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3741 import QAP_3741
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_3763 import QAP_3763
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_6571 import QAP_6571
-from test_cases.fx.fx_mm_rfq.rejection.QAP_3720 import QAP_3720
+
 from test_cases.fx.fx_taker_esp import QAP_5600
 from test_cases.fx.fx_taker_esp.QAP_6593 import QAP_6593
 from test_cases.fx.fx_taker_esp.QAP_8090 import QAP_8090
@@ -98,16 +55,13 @@ def test_run():
         # Test_UI(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # DepositAndLoan.execute(report_id)
 
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        # EarlyRedemption(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_MD(report_id, data_set=configuration.data_set).execute()
+        # QAP_T2978(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # Send_RFQ(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_7125(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_5389().execute(report_id)
-        # QAP_3646.execute(report_id)
 
-        # QAP_8012(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2458.execute(report_id)
+        # QAP_T2497().execute(report_id)
 
-        QAP_7997(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         end = time.time()
         print(f"Test duration is {end - start_time} seconds")
 
