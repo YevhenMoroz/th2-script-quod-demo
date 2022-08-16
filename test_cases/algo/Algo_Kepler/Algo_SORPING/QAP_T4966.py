@@ -35,13 +35,13 @@ class QAP_T4966(TestCase):
         # region order parameters
         self.qty = 1500
         self.min_qty = 700
-        self.qty_qdl6 = 1000
-        self.qty_qdl7 = 1000
+        self.qty_qdl6 = 700
+        self.qty_qdl7 = 800
         self.price = 45
         self.dark_price = 30
         self.traded_qty = 0
-        self.qty_for_md_qdl6 = 700
-        self.qty_for_md_qdl7 = 800
+        self.qty_for_md_qdl6 = 1000
+        self.qty_for_md_qdl7 = 1000
         self.price_ask = 44
         self.price_bid = 30
         self.px_for_incr = 0
@@ -136,7 +136,12 @@ class QAP_T4966(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
-        time.sleep(3)
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=300)
+        market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=300)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl6)
         # endregion
 
         # region Check Sell side
