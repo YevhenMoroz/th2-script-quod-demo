@@ -152,7 +152,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
-        return int((ltq * volume) / (1 - volume))
+        return math.ceil((ltq * volume) / (1 - volume))
 
 
 
