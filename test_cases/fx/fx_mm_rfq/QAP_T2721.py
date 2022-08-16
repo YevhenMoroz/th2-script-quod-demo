@@ -57,15 +57,12 @@ class QAP_T2721(TestCase):
                                                                                      self.ex_ask_small)
         ask_large = extracted_qty[self.ex_ask_large.value]
         ask_small = extracted_qty[self.ex_ask_small.value]
-        print(ask_large, ask_small)
         expected_ask_qty = ask_large+ask_small
         print(expected_ask_qty)
 
         extracted_pts_px = self.dealer_intervention.extract_px_and_pts_from_di_panel(self.ask_pts, self.ask_px)
         ask_pts = extracted_pts_px[self.ask_pts.value]
         ask_px = extracted_pts_px[self.ask_px.value]
-        print(ask_px)
-        print(ask_pts)
 
         offer_px = str(float(expected_ask_qty)-(float(ask_pts)/10000))
         self.dealer_intervention.compare_values(expected_value=ask_px, actual_value=offer_px,
