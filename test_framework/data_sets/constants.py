@@ -63,7 +63,7 @@ class FrontEnd(Enum):
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
     TARGET_SERVER_WIN = find_target_server()
-    
+
     # region quod314
     USERS_314 = ["QA1"]
     PASSWORDS_314 = ["QA1"]
@@ -172,6 +172,7 @@ class OrderSide(Enum):
     Buy = 1
     Sell = 2
 
+
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
 
@@ -180,6 +181,16 @@ class WebBrowser(Enum):
     chrome = "chrome"
     firefox = "firefox"
 
+
 class WebTradingURL(Enum):
     luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
     kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"
+
+
+class SshClientEnv(Enum):
+    HOST_317 = "10.0.22.35"
+    PORT_317 = 22
+    USER_317 = ""
+    PASSWORD_317 = ""
+    SU_USER_317 = "quod317"
+    SU_PASSWORD_317 = "quod317"
