@@ -49,7 +49,11 @@ from test_cases.fx.fx_mm_esp.QAP_T2386 import QAP_T2386
 from test_cases.fx.fx_mm_esp.QAP_T2375 import QAP_T2375
 from test_cases.fx.fx_mm_synthetic import QAP_T2782
 from test_cases.fx.fx_mm_esp.QAP_T2479 import QAP_T2479
+from test_cases.fx.fx_mm_esp.QAP_T2518 import QAP_T2518
 from test_cases.fx.fx_mm_esp.QAP_T2602 import QAP_T2602
+from test_cases.fx.fx_mm_esp.QAP_T2883 import QAP_T2883
+from test_cases.fx.fx_mm_esp.QAP_T2921 import QAP_T2921
+from test_cases.fx.fx_mm_esp.QAP_T2926 import QAP_T2926
 from test_cases.fx.fx_mm_esp.QAP_T2957 import QAP_T2957
 from stubs import Stubs
 import logging
@@ -160,6 +164,18 @@ def test_run(parent_id=None):
                   environment=configuration.environment).execute()
         QAP_T2957(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
                   environment=configuration.environment).execute()
+        QAP_T2518(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+        QAP_T2921(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+        QAP_T2883(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+        QAP_T2430(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+
+
+
+
 
 
     except Exception:
