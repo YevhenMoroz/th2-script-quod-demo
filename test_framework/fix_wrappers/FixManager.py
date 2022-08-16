@@ -7,6 +7,7 @@ from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageListStatus import FixMessageListStatus
+from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import FixMessageMarketDataIncrementalRefresh
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from stubs import Stubs
@@ -178,6 +179,8 @@ class FixManager:
                 response_fix_message = FixMessageExecutionReport()
             elif message_type == FIXMessageType.MarketDataSnapshotFullRefresh.value:
                 response_fix_message = FixMessageMarketDataSnapshotFullRefresh()
+            elif message_type == FIXMessageType.MarketDataIncrementalRefresh.value:
+                response_fix_message = FixMessageMarketDataIncrementalRefresh()
             elif message_type == FIXMessageType.Quote.value:
                 response_fix_message = FixMessageQuoteFX()
             elif message_type == FIXMessageType.NewOrderMultiLeg.value:

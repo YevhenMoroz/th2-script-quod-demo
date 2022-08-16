@@ -156,6 +156,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_3 = "QA_Auto_SORPING_3"
     qa_sorping_4 = "QA_Auto_SORPING_4"
     qa_sorping_5 = "QA_Auto_SORPING_5"
+    qa_sorping_6 = "QA_Auto_SORPING_6"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 

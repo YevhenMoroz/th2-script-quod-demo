@@ -48,7 +48,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_thousand_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 2
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_thousand_1, "FarLegQty", self.qty_thousand_2])
@@ -56,8 +56,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_thousand_1 = str(float(self.qty_thousand_1) / 1000)
-        expected_qty_thousand_2 = str(float(self.qty_thousand_2) / 1000)
+        expected_qty_thousand_1 = str(float(self.qty_thousand_1) / 1000) + " GBP"
+        expected_qty_thousand_2 = str(float(self.qty_thousand_2) / 1000) + " GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)
@@ -75,7 +75,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_millions_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 4
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_millions_1, "FarLegQty", self.qty_millions_2])
@@ -83,8 +83,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_millions_1 = str(round(float(self.qty_millions_1) / 1000000, 2)) + "M"
-        expected_qty_millions_2 = str(round(float(self.qty_millions_2) / 1000000, 2)) + "M"
+        expected_qty_millions_1 = str(float(self.qty_millions_1) / 1000000)[:6] + "M GBP"
+        expected_qty_millions_2 = str(float(self.qty_millions_2) / 1000000)[:6] + "M GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)
@@ -102,7 +102,7 @@ class QAP_T2739(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.qty_billions_2)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 6
         self.dealer_intervention.set_list_filter(["NearLegQty", self.qty_billions_1, "FarLegQty", self.qty_billions_2])
@@ -110,8 +110,8 @@ class QAP_T2739(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_billions_1 = str(round(float(self.qty_billions_1) / 1000000000, 2)) + "B"
-        expected_qty_billions_2 = str(round(float(self.qty_billions_2) / 1000000000, 2)) + "B"
+        expected_qty_billions_1 = str(float(self.qty_billions_1) / 1000000000)[:6] + "B GBP"
+        expected_qty_billions_2 = str(float(self.qty_billions_2) / 1000000000)[:6] + "B GBP"
 
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity,
                                                                                      self.far_leg_quantity)

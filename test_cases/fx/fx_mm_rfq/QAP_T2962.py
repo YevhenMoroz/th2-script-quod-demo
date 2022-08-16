@@ -56,6 +56,7 @@ class QAP_T2962(TestCase):
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         # endregion
         # region Step 3-4
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Reject)
+        text = f"order price ({price_bellow}) lower than offer ({price})"
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Reject, text=text)
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
