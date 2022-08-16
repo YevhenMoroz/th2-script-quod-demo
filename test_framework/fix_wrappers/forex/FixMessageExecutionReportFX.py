@@ -45,6 +45,8 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             TransactTime="*",
             LastSpotRate="*",
             AvgPx="*",
+            Account="*",
+            LastMkt="*",
             ExecID="*",
             LastPx="*",
             OrderID="*",
