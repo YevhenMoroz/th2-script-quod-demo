@@ -357,12 +357,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
-            CumQty=new_order_single.get_parameter('OrderQty'),
+            CumQty='*',
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
             LastPx='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
+            LastQty='*',
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=1,
@@ -374,7 +374,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SettlDate='*',
             TradeDate='*',
             ExecType='F',
-            LeavesQty=0,
+            LeavesQty='*',
             SecondaryOrderID='*',
             GrossTradeAmt='*',
             NoParty='*',
@@ -428,13 +428,13 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                         LastPx=new_order_single.get_parameter('Price'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
-            CumQty=new_order_single.get_parameter('OrderQty'),
+            CumQty='*',
             LastPx='*',
             ExecID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdType=new_order_single.get_parameter('OrdType'),
             ClOrdID='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
+            LastQty='*',
             Text='Partial fill',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
             OrderID='*',
@@ -447,7 +447,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
             ExDestination=new_order_single.get_parameter('ExDestination'),
-            LeavesQty=0
+            LeavesQty='*'
         )
         super().change_parameters(temp)
         return self
@@ -582,9 +582,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
-            AvgPx=0,
+            AvgPx='*',
             ClOrdID='*',
-            CumQty=0,
+            CumQty='*',
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
@@ -605,7 +605,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
             TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
             QtyType='*',
-            CxlQty=new_order_single.get_parameter('OrderQty'),
+            CxlQty='*',
             Instrument='*'
         )
         super().change_parameters(temp)
