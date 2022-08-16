@@ -67,6 +67,7 @@ class QAP_T4807(TestCase):
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
+        self.account_trqx = self.data_set.get_account_by_name("account_11")
         self.listing_id_trqx = self.data_set.get_listing_id_by_name("listing_23")
         self.listing_id_par = self.data_set.get_listing_id_by_name("listing_24")
         # endregion
@@ -83,7 +84,7 @@ class QAP_T4807(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, self.price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
@@ -139,7 +140,7 @@ class QAP_T4807(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
         self.dma_trqx_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_trqx_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_trqx, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.dma_trqx_order.change_parameters(dict(Account=self.account_trqx, ExDestination=self.ex_destination_trqx, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_trqx_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_trqx_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_trqx_order, self.gateway_side_buy, self.status_pending)
