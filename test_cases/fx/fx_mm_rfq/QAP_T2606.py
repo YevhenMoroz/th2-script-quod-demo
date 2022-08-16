@@ -119,10 +119,11 @@ class QAP_T2606(TestCase):
         # endregion
         # region Step 4
         self.dealer_intervention.send_quote()
-        self.dealer_intervention.close_window()
 
-        self.quote.set_params_for_quote_ndf(quote_request=self.quote_request)
+        self.quote.set_params_for_quote(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote)
+
+        self.dealer_intervention.close_window()
         # endregion
 
 
