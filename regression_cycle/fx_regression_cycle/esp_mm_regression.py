@@ -1,9 +1,13 @@
-from test_cases.fx.fx_mm_esp import QAP_T2964, QAP_T2955, QAP_T2920, QAP_T2919, QAP_T2917, \
+from test_cases.fx.fx_mm_esp import QAP_T2964, QAP_T2917, \
     QAP_T2916, QAP_T2915, QAP_T2870, QAP_T2801, QAP_T2793, \
     QAP_T2615, QAP_T2965, \
     QAP_T2562, QAP_T2652, QAP_T2768, QAP_T2751, QAP_T2734, QAP_T2733, \
     QAP_T2729, QAP_T2730, QAP_T2735, QAP_T2719, QAP_T2561, QAP_T2926, QAP_T2543, \
-    QAP_T2547, QAP_T2605, QAP_T2947, QAP_T2718, QAP_T2745, QAP_T2912, QAP_T2911, QAP_T2460, QAP_T2458, QAP_T2966
+    QAP_T2547, QAP_T2605, QAP_T2947, QAP_T2718, QAP_T2745, QAP_T2912, QAP_T2911, QAP_T2458, QAP_T2966
+from test_cases.fx.fx_mm_esp.QAP_T2460 import QAP_T2460
+from test_cases.fx.fx_mm_esp.QAP_T2919 import QAP_T2919
+from test_cases.fx.fx_mm_esp.QAP_T2920 import QAP_T2920
+from test_cases.fx.fx_mm_esp.QAP_T2955 import QAP_T2955
 from test_cases.fx.fx_mm_esp.QAP_T2986 import QAP_T2986
 from test_cases.fx.fx_mm_esp.QAP_T2985 import QAP_T2985
 from test_cases.fx.fx_mm_esp.QAP_T2983 import QAP_T2983
@@ -50,7 +54,7 @@ from test_cases.fx.fx_mm_esp.QAP_T2957 import QAP_T2957
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_taker_esp import QAP_T2685, QAP_T2684
+from test_cases.fx.fx_taker_esp import QAP_T2685
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 
@@ -65,8 +69,8 @@ channels = dict()
 
 def test_run(parent_id=None):
     report_id = bca.create_event('ESP MM regression', parent_id)
-    session_id = set_session_id()
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    session_id = set_session_id("ostronov")
+    main_window_name ="Quod Financial - Quod site 314"
     data_set = FxDataSet()
     configuration = ComponentConfiguration("ESP_MM")
 
@@ -74,14 +78,14 @@ def test_run(parent_id=None):
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
-            get_opened_fe(report_id, session_id)
+            get_opened_fe(report_id, session_id, main_window_name)
         QAP_T2986(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2980(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2964.execute(report_id, session_id)
-        QAP_T2955.execute(report_id, session_id)
+        QAP_T2955(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2954(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2920.execute(report_id, session_id)
-        QAP_T2919.execute(report_id, session_id)
+        QAP_T2920(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2919(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2917.execute(report_id, session_id)
         QAP_T2916.execute(report_id, session_id)
         QAP_T2915.execute(report_id, session_id)
@@ -107,7 +111,7 @@ def test_run(parent_id=None):
         QAP_T2547.execute(report_id, session_id)
         QAP_T2605.execute(report_id, session_id)
         QAP_T2685.execute(report_id, session_id)
-        QAP_T2460.execute(report_id, session_id)
+        QAP_T2460(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2983(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2968(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2966.execute(report_id)
@@ -132,7 +136,6 @@ def test_run(parent_id=None):
         QAP_T2722(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2719.execute(report_id)
         ##### QAP_T2718.execute(report_id)  // NOT READY
-        QAP_T2684.execute(report_id)
         QAP_T2652.execute(report_id)
         QAP_T2562.execute(report_id)
         QAP_T2561.execute(report_id)
