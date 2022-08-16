@@ -91,8 +91,8 @@ class QAP_T2606(TestCase):
         self.quote = FixMessageQuoteFX()
         self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
         self.account = self.data_set.get_client_by_name("client_mm_3")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
-        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.qty = random_qty(2, 3, 8)
         self.instrument = {
@@ -106,8 +106,9 @@ class QAP_T2606(TestCase):
         self.quote_request.set_rfq_params()
 
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Instrument=self.instrument, Currency=self.currency)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+                                                           Instrument=self.instrument, Currency=self.currency,
+                                                           OrderQty=self.qty)
+        self.fix_manager_sel.send_message(self.quote_request)
 
         self.dealer_intervention.set_list_filter(["Qty", self.qty])
         self.dealer_intervention.assign_quote(row_number=1)
