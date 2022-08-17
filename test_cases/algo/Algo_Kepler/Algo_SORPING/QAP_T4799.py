@@ -189,7 +189,7 @@ class QAP_T4799(TestCase):
 
         # region Check Fill parent algo order
         er_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_fill)
-        er_fill_SORPING_order_params.change_parameters(dict(Price=self.new_price))
+        er_fill_SORPING_order_params.change_parameters(dict(Price=self.new_price)).add_tag(dict(SettlType='*'))
         self.fix_verifier_sell.check_fix_message(er_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
@@ -200,7 +200,7 @@ class QAP_T4799(TestCase):
         er_reject_replaced_SORPING_order_params.change_parameters(dict(CxlRejResponseTo='2'))
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that is no modification rejection", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_reject_replaced_SORPING_order_params], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_sell.check_fix_message_sequence([er_reject_replaced_SORPING_order_params], key_parameters_list=[None], direction=self.FromQuod, pre_filter=None)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
