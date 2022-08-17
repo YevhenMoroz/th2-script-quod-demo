@@ -195,12 +195,8 @@ class QAP_T4799(TestCase):
 
         time.sleep(2)
 
-        # Check that is no modification rejection
-        er_reject_replaced_SORPING_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_new)
-        er_reject_replaced_SORPING_order_params.change_parameters(dict(CxlRejResponseTo='2'))
-
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that is no modification rejection", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_reject_replaced_SORPING_order_params], key_parameters_list=[None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_replaced_SORPING_order_params, er_fill_SORPING_order_params], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
