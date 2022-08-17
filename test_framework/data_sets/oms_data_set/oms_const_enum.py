@@ -82,7 +82,8 @@ class OmsClients(Enum):
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     client_pt_8 = "MOClient7"
-    client_pt_9 = "MOClient_9"
+    client_pt_9 = "MOClient8"
+    client_pt_10 = "MOClient_9"
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -119,6 +120,7 @@ class OmsVenueClientNames(Enum):
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
     """Commissions"""
     client_com_1_venue_2 = "CLIENT_COMM_1_EUREX"
+    client_fees_1_venue_2 = "CLIENT_FEES_1_EUREX"
     """Counterparts"""
     client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
@@ -157,7 +159,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 =  "CLIENT_FEES_1_SA_1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
@@ -218,7 +220,7 @@ class OmsRoutes(Enum):
 
 
 class OmsRouteID(Enum):
-    route_1 = 24
+    route_1 = '24'
 
 
 class OmsVenueClientAccounts(Enum):
@@ -260,6 +262,7 @@ class OMSExecScope(Enum):
     all_exec = "ALL"
     day_first_exec = "DAF"
     first_exec = "FST"
+    on_calc = "CAL"
 
 
 class OMSFeeOrderScope(Enum):
@@ -271,13 +274,17 @@ class OMSFee(Enum):
     fee1 = 1
     fee2 = 2
     fee3 = 3
-    fee_vat = 11
 
 
 class OMSCommission(Enum):
     commission1 = 1
     commission2 = 2
     commission3 = 3
+
+class OMSClientListID(Enum):
+    cl_list_comm_1 = '400,006'
+    cl_list_peq_4925 ='400010'
+
 
 
 class OmsQtyTypes(Enum):
@@ -362,3 +369,7 @@ class OMSVenueID(Enum):
 class OMSCounterpartID(Enum):
     contra_firm = "200003"
     contra_firm2 = "1000009"
+
+
+class OMSInstumentType(Enum):
+    equity = 'EQU'
