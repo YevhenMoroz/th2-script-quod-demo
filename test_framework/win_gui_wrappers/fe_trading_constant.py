@@ -193,9 +193,18 @@ class TradeBookColumns(Enum):
     unmatched_qty = 'UnmatchedQty'
     """Mics Fees tab"""
     misc_tab = "Misc Fees"
-    rate = "Rate"
-    amount = "Amount"
+    fee_rate = "Rate"
+    fee_amount = "Amount"
+    fee_type = "FeeType"
+    fee_basis = "Basis"
+    fee_currency = "Currency"
 
+    """Client Commissions tab"""
+    cl_comm_tab = "Client Commissions"
+    comm_cur = "Currency"
+    comm_amount = "Amount"
+    comm_basis = "Basis"
+    comm_rate = "Rate"
 
 class QuoteRequestBookColumns(Enum):
     quote_request_id = 'ID'
@@ -386,9 +395,6 @@ class MiddleOfficeColumns(Enum):
     unmatched_sts = "Unmatched"
     matched_agreed_sts = "MatchedAgreed"
     cancelled_sts = 'Cancelled'
-    """Confirmation"""
-    external = "External"
-    manual = "Manual"
 
 
 class AllocationsColumns(Enum):
@@ -543,8 +549,6 @@ class ChildOrderBookColumns(Enum):
     percent = '%'
 
 
-
-
 class OrderBookColumnName(Enum):
     id = 'Id'
     order_bag_id = 'OrderBagID'
@@ -625,5 +629,15 @@ class BlockStatuses(Enum):
 class OffsetTypes(Enum):
     price = "Price"
 
+
 class ReferencePrice(Enum):
     open = "Open"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
+
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
