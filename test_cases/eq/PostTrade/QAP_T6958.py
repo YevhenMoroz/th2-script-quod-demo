@@ -1,8 +1,6 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-
-import psycopg2
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -13,6 +11,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, Status
 from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
@@ -47,6 +46,10 @@ class QAP_T6958(TestCase):
         self.execution_report = FixMessageExecutionReportOMS(self.data_set)
         self.booking_blotter = OMSBookingWindow(self.test_id, self.session_id)
         self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -56,7 +59,7 @@ class QAP_T6958(TestCase):
         self.fix_message.change_parameters(
             {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
         self.fix_message.change_parameters(
-            {'TimeInForce': '6', 'ExpireDate': (datetime.now() + timedelta(days=1)).strftime("%Y%m%d")})
+            {'TimeInForce': '6', 'ExpireDate': (datetime.now()).strftime("%Y%m%d")})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
         self.order_book.extract_field("OrderID")
@@ -68,7 +71,7 @@ class QAP_T6958(TestCase):
 
         # region partially filled CO order
         comulative_qty = str(int(int(self.qty) / 2))
-        self.order_book.manual_execution(comulative_qty, self.price)
+        self.order_book.manual_execution(comulative_qty, self.price,filter_dict=filter_dict)
         # endregion
 
         # region check daycumqty
@@ -79,27 +82,9 @@ class QAP_T6958(TestCase):
                                        "Comparing day cum Qty")
         # endregion
 
-        # region send procedure
-        connection = None
-        cursor = None
-        try:
-            connection = psycopg2.connect(user="quod317prd",
-                                          password="quod317prd",
-                                          host="10.0.22.69",
-                                          port="5432",
-                                          database="quoddb")
-            cursor = connection.cursor()
-            cursor.execute("select eod_expireOrders(null,'N');")
-            connection.commit()
-        except Exception as error:
-            print("Error while connecting to PostgreSQL", error)
-        finally:
-            if connection:
-                cursor.close()
-                connection.close()
-                print("PostgreSQL connection is closed")
+        # region call end of day procedures
+        self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
         # endregion
-
         # region check order after perform of procedure
         self.order_book.set_filter(filter_list)
         actual_day_cum_qty = self.order_book.extract_fields_list(
