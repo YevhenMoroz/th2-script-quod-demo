@@ -4,11 +4,12 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.read_log_wrappers.oms_messages.AlsMessages import AlsMessages
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 
 logger = logging.getLogger(__name__)
@@ -60,22 +61,15 @@ class QAP_T7481(TestCase):
             rule_manager.remove_rule(trade_rele)
         # endregion
         # region Check ALS logs Status New
-        als_logs_params = {
-            "ConfirmationID": "*",
-            "ConfirmStatus": "New",
-            "ClientAccountID": account1
-        }
-        self.read_log_verifier.check_read_log_message(als_logs_params,["ConfirmStatus"], timeout=50000)
+        als_message = AlsMessages.execution_report.value
+        als_message.update({"ConfirmStatus": "New", "ClientAccountID": account1})
+        self.read_log_verifier.check_read_log_message(als_message,["ConfirmStatus"], timeout=50000)
         # endregion
         # region Un-allocate
         self.mid_office.unallocate_order()
         # endregion
         # region Check ALS logs Status Canceled
-        als_logs_params = {
-            "ConfirmationID": "*",
-            "ConfirmStatus": "Cancel",
-            "ClientAccountID": account1
-        }
-        self.read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=60000)
+        als_message.update({"ConfirmStatus": "Cancel"})
+        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=60000)
         # endregion
 

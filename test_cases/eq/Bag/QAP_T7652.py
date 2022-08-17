@@ -17,7 +17,9 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7652(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
@@ -66,6 +68,7 @@ class QAP_T7652(TestCase):
                                                  {OrderBookColumns.qty.value: qty})
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __verifying_presenting_item_at_menu(self, item_of_menu, list_of_orders: list, filter: dict):
         result_1 = self.order_book.is_menu_item_present(item_of_menu,
                                                         list_of_orders, filter)

@@ -37,6 +37,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
         self.extraction_error_message_details = None
+        self.hot_keys_details = None
         self.extract_direct_values = None
         self.order_ticket_details = None
         self.extract_error_from_order_ticket = None
@@ -99,6 +100,7 @@ class BaseOrderBook(BaseWindow):
         self.create_quick_button_call = None
         self.edit_quick_button_call = None
         self.click_quick_button_call = None
+        self.hot_keys_action_call = None
     # endregion
 
     # region Common func
@@ -749,3 +751,14 @@ class BaseOrderBook(BaseWindow):
             self.quick_button_details.set_qty(qty)
         call(self.click_quick_button_call, self.quick_button_details.build())
         self.clear_details([self.quick_button_details])
+
+    def cancel_by_hotkey(self, row_count: list , filter: dict = None):
+        self.hot_keys_details.set_default_params(self.base_request)
+        self.hot_keys_details.set_row_number(row_count)
+        if filter is not None:
+            self.hot_keys_details.set_filter(filter)
+        self.hot_keys_details.set_cancel_hotkey()
+        self.hot_keys_details.set_enter_hotkey()
+        call(self.hot_keys_action_call, self.hot_keys_details.build())
+        self.clear_details([self.hot_keys_details])
+
