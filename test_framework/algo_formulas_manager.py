@@ -150,6 +150,10 @@ class AlgoFormulasManager:
             shift -= 1
         return res_shift
 
+    @staticmethod
+    def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
+        return int((ltq * volume) / (1 - volume))
+
 
 
 

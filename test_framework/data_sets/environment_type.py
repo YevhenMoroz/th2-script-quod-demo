@@ -25,7 +25,7 @@ class EnvironmentType(Enum):
     quod317_java_api = "317_java_api"
     # endregion
 
-    #region web admin
+    # region web admin
     quod306_web_admin_saturn_chrome = "quod306_web_admin_saturn_chrome"
     quod306_web_admin_saturn_firefox = "quod306_web_admin_saturn_firefox"
     quod315_luna_web_admin = "quod315_luna_web_admin"
@@ -35,15 +35,19 @@ class EnvironmentType(Enum):
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
     quod317_ganymede_web_admin = "quod317_ganymede_web_admin"
     quod314_luna_web_admin = "quod314_luna_web_admin"
-    #endregion
+    # endregion
 
-    #region web trading
+    # region web trading
     quod315_web_trading_luna_chrome = "quod315_web_trading_luna_chrome"
     quod320_web_trading_kuiper_chrome = "quod320_web_trading_kuiper_chrome"
     quod320_kuiper_web_trading = "quod320_kuiper_web_trading"
     quod315_luna_web_trading = "quod315_luna_web_trading"
-    #endregion
+    # endregion
 
     # region redlog
     quod317_read_log = 'quod317_read_log'
-    #endregion
+    # endregion
+
+    # region ssh client
+    quod317_ssh_client = "quod317_ssh_client"
+    # endregion

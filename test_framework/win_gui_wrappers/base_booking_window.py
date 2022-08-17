@@ -9,6 +9,8 @@ class BaseBookingWindow(BaseWindow):
         self.extract_booking_details = None
         self.extract_second_level_details = None
         self.second_level_tab_extraction_call = None
+        self.simple_request = None
+        self.cancel_booking_call = None
 
     def set_extraction_details(self,
                                columns_of_extraction: list = None,
@@ -28,3 +30,8 @@ class BaseBookingWindow(BaseWindow):
         result = call(self.second_level_tab_extraction_call, self.extract_second_level_details.build())
         self.clear_details([self.extract_second_level_details, self.extract_booking_details])
         return result
+
+    def cancel_booking(self, filter_dict):
+        self.simple_request.set_filter(filter_dict)
+        call(self.cancel_booking_call, self.simple_request.build())
+        self.clear_details([self.simple_request])
