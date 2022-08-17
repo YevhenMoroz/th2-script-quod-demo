@@ -13,10 +13,8 @@ from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS im
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -42,11 +40,9 @@ class QAP_T7132(TestCase):
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.price = "10"
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
         self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
         self.order_book = OMSOrderBook(self.case_id, self.session_id)
         self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
