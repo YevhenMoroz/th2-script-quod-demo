@@ -119,6 +119,8 @@ class BaseDataSet:
     core_spot_price_strategy = None
     party_role = None
     counterpart_id = None
+    cl_list_id = None
+    instr_type = None
     # endregion
 
     # region fields added by Web Trading team
@@ -830,4 +832,14 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
+
+    def get_cl_list_id(self, name:str):
+        if hasattr(self.cl_list_id, name):
+            return getattr(self.cl_list_id, name).value
+        return ValueError(f"{self.cl_list_id} not found!")
+
+    def get_instr_type_name(self, name:str):
+        if hasattr(self.instr_type, name):
+            return getattr(self.instr_type, name).value
+        return ValueError(f"{self.instr_type} not found!")
     # endregion
