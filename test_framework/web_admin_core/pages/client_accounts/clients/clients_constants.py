@@ -61,6 +61,9 @@ class ClientsConstants:
     VALUES_TAB_SHORT_SELL_ACCOUNT_CHECKBOX_XPATH = '//*[text()="Short Sell Account"]/preceding-sibling::span'
     VALUES_TAB_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
     VALUES_TAB_PRICE_PRECISION_XPATH = '//*[@formcontrolname="pxPrecision"]'
+    VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="confirmationService"]'
+    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="extConfirmationService"]'
+    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
@@ -204,3 +207,15 @@ class ClientsConstants:
     TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
     TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[@placeholder="Recipient Types"]'
     TRADE_CONFIRM_RECIPIENT_TYPES_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
+
+    class ExternalAllocationMatchingService:
+        PLUS_BUTTON = '//*[@nbtooltip="Add"]'
+        SAVE_CHECKMARK = '//*[@data-name="checkmark"]'
+        CANCEL_CHECKMARK = '//*[@nbtooltip="Cancel"]'
+        EDIT_BUTTON = '//*[@data-name="edit"]'
+        DELETE_BUTTON = '//*[@data-name="trash-2"]'
+        NAME_FILTER = '(//input[@placeholder="Filter"])[1]'
+        GATEWAY_INSTANCE_FILTER = '(//input[@placeholder="Filter"])[2]'
+        NAME = '//input[@placeholder="Name *"]'
+        GATEWAY_INSTANCE = '//input[@placeholder="Gateway Instance *"]'
+        UNSOLICITED_CHECKBOX = '//nb-checkbox//span[@class="custom-checkbox"]'

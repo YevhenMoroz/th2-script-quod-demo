@@ -2,6 +2,8 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8215 import QAP_T8215
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8205 import QAP_T8205
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3971 import QAP_T3971
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3945 import QAP_T3945
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3944 import QAP_T3944
@@ -148,6 +150,10 @@ class RunClientsAccounts:
             QAP_T3407(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3357(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8205(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8215(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
