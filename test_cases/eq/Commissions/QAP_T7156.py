@@ -64,8 +64,12 @@ class QAP_T7156(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_commissions()
-        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm1, account=self.client_acc_1, comm_profile=self.comm_profile1).send_post_request()
-        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm2, account=self.client_acc_2, comm_profile=self.comm_profile2).send_post_request()
+        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm1,
+                                                                         account=self.client_acc_1,
+                                                                         comm_profile=self.comm_profile1).send_post_request()
+        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm2,
+                                                                         account=self.client_acc_2,
+                                                                         comm_profile=self.comm_profile2).send_post_request()
         # endregion
         # region send order
         self.__send_fix_orders()
@@ -73,18 +77,20 @@ class QAP_T7156(TestCase):
         # region Check ExecutionReports
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters(
-            {'Currency': self.cur, 'SecondaryOrderID': '*', 'Text': '*', 'LastMkt': '*', "ReplyReceivedTime":"*"})
+            {'Currency': self.cur, 'SecondaryOrderID': '*', "MiscFeesGrp": "*", 'Text': '*', 'LastMkt': '*',
+             "ReplyReceivedTime": "*", "CommissionData": "*"})
         self.exec_report.remove_parameter('SettlCurrency')
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
         # endregion
         # region book order
         self.mid_office.book_order([OrderBookColumns.order_id.value, self.order_id])
-        self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list({OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
+        self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list(
+            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
         # endregion
         # region approve and alllocate block
         self.mid_office.approve_block()
         param = [{AllocationsColumns.security_acc.value: self.client_acc_1,
-                             AllocationsColumns.alloc_qty.value: self.qty_to_alloc},
+                  AllocationsColumns.alloc_qty.value: self.qty_to_alloc},
                  {AllocationsColumns.security_acc.value: self.client_acc_2,
                   AllocationsColumns.alloc_qty.value: self.qty_to_alloc}]
         self.mid_office.set_modify_ticket_details(is_alloc_amend=True, arr_allocation_param=param)
@@ -94,21 +100,21 @@ class QAP_T7156(TestCase):
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         comm_data_1 = {"CommissionType": '3', "Commission": "0.1",
-                                                          "CommCurrency": self.com_cur}
-        conf_report.change_parameters({"AllocQty": self.qty_to_alloc, "Account": self.client, "AllocAccount": self.client_acc_1, "AvgPx": "*", "Currency": "*", "tag5120": "*",
-                                       "CommissionData": comm_data_1})
+                       "CommCurrency": self.com_cur}
+        conf_report.change_parameters(
+            {"AllocQty": self.qty_to_alloc, "Account": self.client, "AllocAccount": self.client_acc_1, "AvgPx": "*",
+             "Currency": "*", "tag5120": "*", "NoMiscFees": "*",
+             "CommissionData": comm_data_1})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ["AllocAccount"])
         # endregion
         # region check allocation commission 2
         comm_data_2 = {"CommissionType": '3', "Commission": "1",
                        "CommCurrency": self.com_cur}
         conf_report.change_parameters(
-            {"AllocQty": self.qty_to_alloc ,"Account": self.client, "AllocAccount": self.client_acc_2, "AvgPx": "*", "Currency": "*", "tag5120": "*",
+            {"AllocAccount": self.client_acc_2,
              "CommissionData": comm_data_2})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ["AllocAccount"])
         # endregion
-
-
 
     def __send_fix_orders(self):
         try:
