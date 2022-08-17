@@ -86,7 +86,7 @@ class QAP_T7123(TestCase):
         # endregion
         # region check execution fields
         self.__check_misc_tab_execution(
-            {TradeBookColumns.fee_type.value: CommissionType.persentage.value,
+            {TradeBookColumns.fee_type.value: CommissionType.agent.value,
              TradeBookColumns.fee_basis.value: CommissionBasis.persentage.value,
              TradeBookColumns.fee_rate.value: "5", TradeBookColumns.fee_currency.value: self.com_cur}, exec_id)
         # endregion
