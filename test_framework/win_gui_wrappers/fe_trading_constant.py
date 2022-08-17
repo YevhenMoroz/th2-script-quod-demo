@@ -194,7 +194,9 @@ class TradeBookColumns(Enum):
     """Mics Fees tab"""
     misc_tab = "Misc Fees"
     rate = "Rate"
+    basis = "Basis"
     amount = "Amount"
+    fee_type = "FeeType"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -422,6 +424,8 @@ class SecondLevelTabs(Enum):
     algo_parameters_external = "Algo Parameters External"
     pre_trade_alloc_tab = "Pre Trade Allocations"
     counterpart_list = "Counterpart List"
+    commissions = "Client Commissions"
+    fees = "Misc Fees"
 
 
 class PreTradeAllocations(Enum):
@@ -543,8 +547,6 @@ class ChildOrderBookColumns(Enum):
     percent = '%'
 
 
-
-
 class OrderBookColumnName(Enum):
     id = 'Id'
     order_bag_id = 'OrderBagID'
@@ -625,5 +627,15 @@ class BlockStatuses(Enum):
 class OffsetTypes(Enum):
     price = "Price"
 
+
 class ReferencePrice(Enum):
     open = "Open"
+
+
+class Basis(Enum):
+    per_unit = 'PerUnit'
+    absolute = "Absolute"
+
+
+class FeeTypeForMiscFeeTab(Enum):
+    agent = "Agent"
