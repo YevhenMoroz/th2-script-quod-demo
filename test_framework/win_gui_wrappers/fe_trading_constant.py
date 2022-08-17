@@ -638,6 +638,15 @@ class ExchangeRateCalc(Enum):
     multiple = 'Multiple'
     divide = "Divide"
 
+
 class ConfirmationServices(Enum):
     manual = "Manual"
+
+
+class CommissionType(Enum):
+    agent = "Agent"
+
+
+class CommissionBasis(Enum):
+    persentage = "Percentage"
 
