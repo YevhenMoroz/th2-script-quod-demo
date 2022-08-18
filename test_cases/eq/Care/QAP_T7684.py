@@ -10,7 +10,7 @@ from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, Ord
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from win_gui_modules.utils import close_fe
+from win_gui_modules.utils import close_fe, set_session_id
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,8 +28,7 @@ class QAP_T7684(TestCase):
         self.price = "20"
         self.order_type = "Limit"
         self.fe_env = environment.get_list_fe_environment()[0]
-        self.session_id2 = Stubs.win_act.register(
-            rhbatch_pb2.RhTargetServer(target=self.fe_env.target_server_win)).sessionID
+        self.session_id2 = set_session_id(self.fe_env.target_server_win)
         self.base_window = BaseMainWindow(self.test_id, self.session_id)
         self.base_window2 = BaseMainWindow(self.test_id, self.session_id2)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
