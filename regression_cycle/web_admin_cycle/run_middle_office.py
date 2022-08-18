@@ -26,6 +26,7 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3587 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3586 import QAP_T3586
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3448 import QAP_T3448
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3446 import QAP_T3446
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3408 import QAP_T3408
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3390 import QAP_T3390
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -91,6 +92,8 @@ class RunMiddleOffice:
             QAP_T3448(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3446(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3408(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3390(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
