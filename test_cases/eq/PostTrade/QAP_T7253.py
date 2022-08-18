@@ -51,7 +51,7 @@ class QAP_T7253(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
-        self.remote_path = "~/quod/cfg/client_ors.xml"
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
