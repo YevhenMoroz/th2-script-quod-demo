@@ -91,6 +91,8 @@ class QAP_T7319(TestCase):
                                          filter_dict={ChildOrderBookColumns.order_id.value: child_order_id1})
         self.child_book.manual_execution(contra_firm=self.contra_firm,
                                          filter_dict={ChildOrderBookColumns.order_id.value: child_order_id2})
+        self.__check_feeAgent_sub_lvl_details(child_order_id1, "5")
+        self.__check_feeAgent_sub_lvl_details(child_order_id2, "4")
         # endregion
         # region check ExecReports on BO
         no_misc1 = {"MiscFeeAmt": '5', "MiscFeeCurr": self.com_cur,
@@ -110,3 +112,13 @@ class QAP_T7319(TestCase):
             {'SecondaryOrderID': child_order_id2, "NoMiscFees": {"NoMiscFees": [no_misc2]}, 'OrdStatus': '2'})
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report, ['SecondaryOrderID'])
         # endregion
+
+    def __check_feeAgent_sub_lvl_details(self, order_id, expect_fee: str):
+        res = self.child_book.get_child_order_sub_lvl_value(1, ChildOrderBookColumns.exec_fee_agent.value,
+                                                            SecondLevelTabs.executions.value,
+                                                            child_book_filter={
+                                                                OrderBookColumns.order_id.value:
+                                                                    order_id})
+        self.child_book.compare_values({"1": expect_fee},
+                                       {"1": res},
+                                       "Check Fee Agent in Executions tab")
