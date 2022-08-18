@@ -1,9 +1,11 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -12,11 +14,13 @@ from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMess
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, Status
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, Status, \
+    ExecSts
 from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,7 +28,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-class QAP_T6958(TestCase):
+class QAP_T6885(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -33,11 +37,14 @@ class QAP_T6958(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
-        self.qty = '7129'
+        self.qty = '100'
         self.price = '10'
         self.client = self.data_set.get_client('client_pt_1')
+        self.venue_client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
@@ -45,6 +52,7 @@ class QAP_T6958(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.execution_report = FixMessageExecutionReportOMS(self.data_set)
         self.booking_blotter = OMSBookingWindow(self.test_id, self.session_id)
+        self.rule_manager = RuleManager(sim=Simulators.equity)
         self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
@@ -65,34 +73,36 @@ class QAP_T6958(TestCase):
         filter_dict = {OrderBookColumns.order_id.value: order_id}
         filter_list = [OrderBookColumns.order_id.value, order_id]
         self.client_inbox.accept_order(filter=filter_dict)
-
         # endregion
 
-        # region partially filled CO order
+        # region split and partially filled CO order
         cum_qty = str(int(int(self.qty) / 2))
-        self.order_book.manual_execution(cum_qty, self.price,filter_dict=filter_dict)
+        try:
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.venue_client,
+                                                                                            self.mic,
+                                                                                            float(self.price),
+                                                                                            int(cum_qty),
+                                                                                            delay=1)
+            self.order_ticket.set_order_details(qty=cum_qty)
+            self.order_ticket.split_order(filter_list)
+        except Exception:
+            logger.error("Error execution", exc_info=True)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(trade_rule)
+
         # endregion
 
-        # region check daycumqty
-        self.order_book.set_filter(filter_list)
-        actual_day_cum_qty = self.order_book.extract_fields_list(
-            {OrderBookColumns.day_cum_qty.value: OrderBookColumns.day_cum_qty.value})
-        self.order_book.compare_values({OrderBookColumns.day_cum_qty.value: cum_qty}, actual_day_cum_qty,
-                                       "Comparing day cum Qty")
+        # region check executions
+        self.order_book.set_filter(filter_list).check_order_fields_list(
+            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
         # endregion
 
         # region call end of day procedures
         self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
         # endregion
-        # region check order after perform of procedure
-        self.order_book.set_filter(filter_list)
-        actual_day_cum_qty = self.order_book.extract_fields_list(
-            {OrderBookColumns.day_cum_qty.value: OrderBookColumns.day_cum_qty.value})
-        self.order_book.compare_values({OrderBookColumns.day_cum_qty.value: cum_qty}, actual_day_cum_qty,
-                                       "Comparing actual result")
-        # endregion
-
-        # region check expected result from step 3
+        # region check ExpireOrders
         self.order_book.refresh_order(filter_list)
         self.order_book.set_filter(filter_list)
         values = self.order_book.extract_fields_list({OrderBookColumns.sts.value: OrderBookColumns.sts.value,
@@ -102,5 +112,13 @@ class QAP_T6958(TestCase):
             OrderBookColumns.sts.value: Status.expired.value,
             OrderBookColumns.free_notes.value: "Order terminated by Quod eod_ExpireOrders procedure",
             OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value
-        }, values, 'Comparing values from step 3')
+        }, values, 'Check Expired sts')
         # endregion
+        # region Force Cancel
+        self.order_book.force_cancel_order(filter_list=filter_list)
+        self.order_book.set_filter(filter_list)
+        sts = self.order_book.extract_fields_list({OrderBookColumns.sts.value: OrderBookColumns.sts.value})
+        self.order_book.compare_values({
+            OrderBookColumns.sts.value: Status.cancelled.value}, sts, 'Check force cancel')
+        # endregion
+

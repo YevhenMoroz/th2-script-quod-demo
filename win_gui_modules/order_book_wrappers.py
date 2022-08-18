@@ -127,6 +127,39 @@ class CancelOrderDetails:
         return self.cancel_order_details
 
 
+class ForceCancelOrderDetails:
+    def __init__(self, base_request):
+        self.cancel_order_details = order_book_pb2.ForceCancelOrderDetails()
+        if base_request is not None:
+            self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.cancel_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_default_params(self, base_request):
+        self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_comment(self, comment: str):
+        self.cancel_order_details.comment = comment
+
+    def set_cancel_children(self, cancel_children: bool):
+        self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def cancel_by_icon(self):
+        self.cancel_order_details.cancelByIcon = True
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.cancel_order_details
+
+
 class CancelFXOrderDetails:
     def __init__(self, base_request):
         self.cancel_order_details = order_book_fx_pb2.CancelFXOrderDetails()
@@ -856,7 +889,6 @@ class FXOrderInfo:
         return self.order_info
 
 
-
 class AddToBasketDetails:
     def __init__(self, base: EmptyRequest = None, row_numbers: list = None, basket_name: str = None):
         if base is not None:
@@ -1139,7 +1171,7 @@ class UnmatchAndTransferDetails:
         self.transfer_details = order_book_pb2.UnmatchAndTransferDetails()
         self.transfer_details.base.CopyFrom(base_request)
 
-    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict=None):
+    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict = None):
         self.transfer_details.filter.update(filter_dict)
         if sub_filter_dict:
             self.transfer_details.subFilter.update(sub_filter_dict)
@@ -1190,6 +1222,7 @@ class GetSubLvlDetails:
     def build(self):
         return self._request
 
+
 class QuickButtonCreationDetails:
     def __init__(self, base_request: EmptyRequest = None):
         if base_request is not None:
@@ -1230,7 +1263,7 @@ class QuickButtonCreationDetails:
     def set_order_type(self, order_type: str):
         self._request.orderType = order_type
 
-    def set_recipient (self, recipient : str):
+    def set_recipient(self, recipient: str):
         self._request.recipient = recipient
 
     def set_order_id(self, order_id: str):
@@ -1250,7 +1283,6 @@ class ActionsHotKeysDetails:
     def set_default_params(self, base_request):
         self.request.base.CopyFrom(base_request)
 
-
     def set_row_number(self, rows_numbers: list):
         for row in rows_numbers:
             self.request.rowNumbers.append(row)
@@ -1266,6 +1298,3 @@ class ActionsHotKeysDetails:
 
     def build(self):
         return self.request
-
-
-

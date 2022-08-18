@@ -51,7 +51,7 @@ class QAP_T7266(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
-        self.remote_path = "/home/quod317/quod/cfg/client_ors.xml"
+        self.remote_path = "~/quod/cfg/client_ors.xml"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -129,7 +129,7 @@ class QAP_T7266(TestCase):
             {MiddleOfficeColumns.match_status.value: 'Unmatched'}, match_status,
             'Comparing match_status after Book for 1st block of MiddleOffice')
         book_qty = self.middle_office.extract_block_field(MiddleOfficeColumns.qty.value,
-                                                              [MiddleOfficeColumns.order_id.value, order_id])
+                                                          [MiddleOfficeColumns.order_id.value, order_id])
         self.middle_office.compare_values(
             {MiddleOfficeColumns.qty.value: exec_qty2}, book_qty,
             'Comparing qty after Book for 2nd block of MiddleOffice')
@@ -140,7 +140,7 @@ class QAP_T7266(TestCase):
         self.booking_win.cancel_booking(
             {MiddleOfficeColumns.order_id.value: order_id, MiddleOfficeColumns.qty.value: exec_qty2})
         status = self.middle_office.extract_block_field(MiddleOfficeColumns.sts.value,
-                                                              [MiddleOfficeColumns.order_id.value, order_id])
+                                                        [MiddleOfficeColumns.order_id.value, order_id])
         self.middle_office.compare_values(
             {MiddleOfficeColumns.sts.value: 'Canceled'}, status,
             'Comparing status after Book for block of MiddleOffice')
