@@ -444,8 +444,8 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
             Currency=new_order_single.get_parameter("Currency"),
-            HandlInst="1",
-            LastQty="0",
+            HandlInst="*",
+            LastQty="*",
             OrderQty=new_order_single.get_parameter("OrderQty"),
             SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
             OrdType=new_order_single.get_parameter("OrdType"),
@@ -468,7 +468,8 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             Text="*",
             QtyType="0",
             Instrument=new_order_single.get_parameter("Instrument"),
-            NoParty="*"
+            NoParty="*",
+            TargetStrategy="*"
         )
         super().change_parameters(temp)
         instrument = dict(
