@@ -45,7 +45,7 @@ class QAP_T7155(TestCase):
         self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Setup ORS
         tree = ET.parse(self.local_path)

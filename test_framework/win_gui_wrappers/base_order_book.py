@@ -381,9 +381,9 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list: dict = None):
-        if filter_list is not None:
-            self.suspend_order_details.set_filter(filter_list)
+    def suspend_order(self, cancel_children: bool = None, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.suspend_order_details.set_filter(filter_dict)
         if cancel_children is not None:
             self.suspend_order_details.set_cancel_children(cancel_children)
         call(self.suspend_order_call, self.suspend_order_details.build())
