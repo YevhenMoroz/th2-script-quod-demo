@@ -282,9 +282,8 @@ class OMSCommission(Enum):
     commission3 = 3
 
 class OMSClientListID(Enum):
-    cl_list_comm_1 = '400,006'
-    cl_list_peq_4925 ='400010'
-
+    cl_list_comm_1 = 400006
+    cl_list_peq_4925 = 400010
 
 
 class OmsQtyTypes(Enum):
