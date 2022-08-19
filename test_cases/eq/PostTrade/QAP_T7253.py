@@ -1,7 +1,7 @@
 import logging
-import logging
 import os
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -91,19 +91,16 @@ class QAP_T7253(TestCase):
             'Comparing values after Book for block of MiddleOffice')
         # endregion
         # region Setup ORS config
-        try:
-            lines = list(open(self.local_path, 'r'))
-            now = datetime.now(timezone.utc) + timedelta(minutes=1)
-            schedule_time = now.strftime("%H:%M")
-            lines.insert(lines.index("<ors>\n") + 1,
-                         f"<uncomplete><nonforex><scheduled>true</scheduled><zone>UTC</zone><at>{schedule_time}</at></nonforex></uncomplete>\n")
-            with open('temp.xml', 'w', newline='\n') as f:
-                f.writelines(lines)
-            self.ssh_client.put_file(self.remote_path, "temp.xml")
-            self.ssh_client.send_command("qrestart ORS")
-        finally:
-            f.close()
-            os.remove("temp.xml")
+        tree = ET.parse(self.local_path)
+        now = datetime.now(timezone.utc) + timedelta(minutes=1)
+        schedule_time = now.strftime("%H:%M")
+        element = ET.fromstring(f"<uncomplete><nonforex><scheduled>true</scheduled><zone>UTC</zone><at>{schedule_time}</at></nonforex></uncomplete>")
+        ors = tree.getroot().find("ors")
+        ors.append(element)
+        tree.write("temp.xml")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart ORS")
+
         # endregion
         # region Check Order
         time.sleep(60)
@@ -151,3 +148,4 @@ class QAP_T7253(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        os.remove("temp.xml")

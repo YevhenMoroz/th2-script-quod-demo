@@ -28,7 +28,7 @@ Copyright Quod Financial
                         </subscribe>
                 </subjects>
         </middleware>
-<ors>
+	<ors>
      <FIXNotif>
             <gtw>gtwbo</gtw> <!-- default drop-copy gateway -->
 			<makingInternal>true</makingInternal> <!-- internal messages for/from SBP venue -->
