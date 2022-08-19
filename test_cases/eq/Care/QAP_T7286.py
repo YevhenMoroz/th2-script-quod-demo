@@ -54,7 +54,6 @@ class QAP_T7286(TestCase):
         # endregion
         # region Step 1
         self.order_book.suspend_order(filter_dict=filter_dict)
-        self.order_book.refresh_order(filter_list=filter_list)
         # endregion
         # region Step 2,3
         self.order_ticket.set_order_details(qty=self.new_qty, limit=self.new_price)
@@ -77,7 +76,6 @@ class QAP_T7286(TestCase):
         # endregion
         # region Step 6
         self.order_book.suspend_order(filter_dict=filter_dict)
-        self.order_book.refresh_order(filter_list=filter_list)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list({OrderBookColumns.suspend.value: Suspended.yes.value})
         # endregion
