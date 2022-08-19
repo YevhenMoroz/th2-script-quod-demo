@@ -1,12 +1,11 @@
 import logging
 from custom import basic_custom_actions as bca
-from custom.basic_custom_actions import create_event
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts, DoneForDays, \
-    PostTradeStatuses
+    PostTradeStatuses, OrderType
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -29,7 +28,7 @@ class QAP_T7672(TestCase):
         self.desk = self.fe_env.desk_3
         self.qty = "900"
         self.price = "20"
-        self.order_type = "Limit"
+        self.order_type = OrderType.limit.value
         self.client = self.data_set.get_client_by_name('client_co_1')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.session_id2 = set_session_id(self.fe_env.target_server_win)
