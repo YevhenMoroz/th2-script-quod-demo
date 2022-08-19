@@ -50,7 +50,7 @@ class QAP_T4939(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_18")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
         # endregion
 
         # region Direction
@@ -59,10 +59,10 @@ class QAP_T4939(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
+        self.ex_destination_qdl1 = self.data_set.get_mic_by_name("mic_10")
         self.client = self.data_set.get_client_by_name("client_4")
-        self.account_xpar = self.data_set.get_account_by_name("account_9")
-        self.listing_id_xpar = self.data_set.get_listing_id_by_name("listing_29")
+        self.account_qdl1 = self.data_set.get_account_by_name("account_9")
+        self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
         # endregion
 
         # region Key parameters
@@ -72,21 +72,21 @@ class QAP_T4939(TestCase):
         # endregion
 
         self.rule_list = []
-        
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, self.price, self.price, self.qty, self.qty, self.delay)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_qdl1, self.ex_destination_qdl1, self.price, self.price, self.qty, self.qty, self.delay)
         self.rule_list = [nos_trade_rule]
         # endregion
 
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_xpar = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
-        market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_xpar)
+        market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
         time.sleep(3)
         # endregion
 
