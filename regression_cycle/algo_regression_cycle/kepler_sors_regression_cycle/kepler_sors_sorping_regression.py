@@ -12,6 +12,11 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5063 import QAP_T5063
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5004 import QAP_T5004
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5003 import QAP_T5003
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5002 import QAP_T5002
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4797 import QAP_T4797
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4798 import QAP_T4798
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4799 import QAP_T4799
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4800 import QAP_T4800
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4806 import QAP_T4806
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4807 import QAP_T4807
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4874 import QAP_T4874
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4876 import QAP_T4876
@@ -51,6 +56,11 @@ def test_run(parent_id=None):
     try:
         # region SORPING
         configuration = ComponentConfiguration("sorping")
+        QAP_T4797(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4798(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4799(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4800(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4806(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4807(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4874(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4876(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

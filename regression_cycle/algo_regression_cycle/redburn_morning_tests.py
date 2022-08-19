@@ -5,7 +5,7 @@ from test_cases.algo.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_
     TWAP_NAV_02, TWAP_NAV_01, \
     QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, MULT_TWAP_BA_01, TWAP_BA_LSE, TWAP_BA_COPENHAGEN, TWAP_BA_DUBLIN, TWAP_BA_XETRA, TWAP_BA_SIX, TWAP_BA_LISBON, TWAP_BA_HELSINKI
 from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
-    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_BA_LSE, VWAP_BA_SIX, VWAP_BA_COPENHAGEN, VWAP_BA_HELSINKI, VWAP_BA_DUBLIN, VWAP_BA_XETRA, VWAP_BA_LISBON, VWAP_BA_XETRA
+    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_BA_LSE, VWAP_BA_SIX, VWAP_BA_COPENHAGEN, VWAP_BA_HELSINKI, VWAP_BA_DUBLIN, VWAP_BA_XETRA, VWAP_BA_LISBON, VWAP_BA_XETRA, VWAP_STO
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, \
     POV_SCAP_01, MULT_POV_BA_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_VO_01, OPN_WW_01, \
@@ -241,6 +241,7 @@ def test_run():
         VWAP_BA_SIX.execute(report_id)
         TWAP_BA_XETRA.execute(report_id)
         VWAP_BA_XETRA.execute(report_id)
+        VWAP_STO.execute(report_id)
         # endregion
 
         # region Market price checks PDAT-1875QA
@@ -265,7 +266,7 @@ def test_run():
         POV_AUC_MKT_LSE.execute(report_id)
         POV_AUC_MKT_SIX.execute(report_id)
         POV_AUC_MKT_XETRA.execute(report_id)
-        #endregion
+        # endregion
 
 
         # # region TWAP NAV WW
