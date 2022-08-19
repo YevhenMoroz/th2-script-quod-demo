@@ -53,6 +53,8 @@ class OrderBookColumns(Enum):
     net_amount = 'NetAmount'
     net_price = 'NetPrice'
     exec_inst = 'ExecInst'
+    manual_day_cum_amt = 'ManualDayCumAmt'
+    manual_day_cum_qty = 'ManualDayCumQty'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
@@ -547,6 +549,8 @@ class ChildOrderBookColumns(Enum):
     """Executions"""
     exec_tab = "Executions"
     percent = '%'
+    exec_fee_agent = 'FeeAgent'
+    exec_fees = "Exec Fees"
 
 
 class OrderBookColumnName(Enum):
