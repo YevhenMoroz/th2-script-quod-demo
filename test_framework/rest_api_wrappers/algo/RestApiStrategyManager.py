@@ -87,3 +87,36 @@ class RestApiAlgoManager(RestApiManager):
         if triggered != len(parameters):
             raise ValueError(f"Not all scenarioParameterName found at updated strategy")
         # endregion
+
+    def remove_parameters(self, strategy_name: str, *parameters_name: str):
+        # region send get request
+        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
+        find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
+        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        # endregion
+
+        # region modification
+        strategy.pop("alive")
+        if "algoPolicyParameter" in strategy.keys():
+            temp = list()
+            for parameter in strategy["algoPolicyParameter"]:
+                if parameter['scenarioParameterName'] not in parameters_name:
+                    temp.append(parameter)
+
+            strategy["algoPolicyParameter"] = temp
+
+        modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
+        rest_manager.send_post_request(modify_algo_policy)
+        # endregion
+
+        time.sleep(1)
+        # region check is modify confirmed
+        find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
+        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        for param in strategy_updated["algoPolicyParameter"]:
+            if param['scenarioParameterName'] in parameters_name:
+                raise ValueError(f"Not all scenarioParameterName removed")
+
+        # endregion
