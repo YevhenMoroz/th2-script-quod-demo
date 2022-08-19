@@ -37,49 +37,64 @@ class QAP_T7286(TestCase):
         self.new_price = '50'
         self.new_qty = '200'
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Precondition
         tree = ET.parse(self.fun_config)
         root = tree.getroot()
         root.find("tradingOptions/orderSuspendOrRelease").set("enable", "true")
         tree.write(self.fun_config)
         self.base_main_window.open_fe(self.report_id, self.fe_env, 2, False)
+
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
         filter_dict = {OrderBookColumns.order_id.value: order_id}
         filter_list = [OrderBookColumns.order_id.value, order_id]
         self.client_inbox.accept_order(filter=filter_dict)
+        # endregion
+        # region Step 1
         self.order_book.suspend_order(filter_dict=filter_dict)
         self.order_book.refresh_order(filter_list=filter_list)
+        # endregion
+        # region Step 2,3
         self.order_ticket.set_order_details(qty=self.new_qty, limit=self.new_price)
         self.order_ticket.amend_order(filter_list)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list(
             {OrderBookColumns.qty.value: self.new_qty, OrderBookColumns.limit_price.value: self.new_price,
              OrderBookColumns.suspend.value: Suspended.yes.value})
+        # endregion
+        # region Step 4
         self.order_book.release_order(filter_list=filter_list)
         self.order_book.refresh_order(filter_list=filter_list)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list({OrderBookColumns.suspend.value: Suspended.no.value})
-        self.order_book.manual_execution(qty=str(int(int(self.new_qty) / 2)),filter_dict=filter_dict)
+        # endregion
+        # region Step 5
+        self.order_book.manual_execution(qty=str(int(int(self.new_qty) / 2)), filter_dict=filter_dict)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        # endregion
+        # region Step 6
         self.order_book.suspend_order(filter_dict=filter_dict)
         self.order_book.refresh_order(filter_list=filter_list)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list({OrderBookColumns.suspend.value: Suspended.yes.value})
+        # endregion
+        # region Step 7
         self.order_ticket.set_order_details(error_expected=True)
-        filter_list = ["Order ID", "CO1220819115257089001"]
-        order_id = "CO1220819115257089001"
         footer = self.order_ticket.split_order(filter_list=filter_list)
         self.order_book.compare_values({
             "ErrorMessage": f'Error - [QUOD-11801] Validation by CS failed, Request not allowed:  The order is suspended, OrdID={order_id}'},
             footer,
             "Check error in Slit Ticket")
+        # endregion
+        # region Step 8
         self.order_book.cancel_order(filter_list=filter_list)
         self.order_book.set_filter(filter_list)
         self.order_book.check_order_fields_list(
             {OrderBookColumns.suspend.value: Suspended.yes.value, OrderBookColumns.sts.value: ExecSts.cancelled.value})
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
