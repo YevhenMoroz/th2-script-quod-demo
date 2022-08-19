@@ -612,6 +612,7 @@ class DoneForDays(Enum):
 
 class Suspended(Enum):
     yes = "Yes"
+    no = "No"
 
 
 class OrdersTabColumnFromBag(Enum):
