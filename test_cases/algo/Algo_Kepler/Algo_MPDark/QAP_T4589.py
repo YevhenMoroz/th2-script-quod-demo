@@ -18,7 +18,7 @@ from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import Fi
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4614(TestCase):
+class QAP_T4589(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -38,6 +38,7 @@ class QAP_T4614(TestCase):
 
         # region order parameters
         self.qty = 3000000
+        self.trade_qty = 200000
         self.price = 20
         self.weight_bats = 4
         self.weight_chix = 6
@@ -109,7 +110,7 @@ class QAP_T4614(TestCase):
         new_order_single_CHID = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client_chix_delta, self.ex_destination_chix_dark, self.price)
         cancel_rule_BATD = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client_bats_dark, self.ex_destination_bats_dark, True)
         cancel_rule_CHID = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client_chix_delta, self.ex_destination_chix_dark, True)
-        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client_bats_dark, self.ex_destination_bats_dark, self.price, self.price, self.qty_bats_child, self.qty_bats_child, 0)
+        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client_bats_dark, self.ex_destination_bats_dark, self.price, self.price, self.qty_bats_child, self.trade_qty, 0)
 
         self.rule_list = [rfq_rule, rfq_cancel_rule, new_order_single, cancel_rule, new_order_single_BATD, new_order_single_CHID, cancel_rule_BATD, cancel_rule_CHID, trade_rule]
         # endregion
