@@ -138,6 +138,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_18 = dict(
+        Symbol='FR0000121329',
+        SecurityID='FR0000121329',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -215,6 +223,7 @@ class AlgoMic(Enum):
     mic_27 = "BATE"  # BATS UK
     mic_28 = "QDL11"  # QUODLIT11
     mic_29 = "QDL12"  # QUODLIT12
+    mic_30 = "CHIX"   # CHIX
 
 
 class AlgoListingId(Enum):
@@ -246,6 +255,7 @@ class AlgoListingId(Enum):
     listing_26 = "768319009"    # CHIX UK for FR0000133308
     listing_27 = "1225020507"    # QUODLIT11 for QUODTESTQA05
     listing_28 = "1225020508"    # QUODLIT12 for QUODTESTQA05
+    listing_29 = "1803729"       # Euronext Paris for FR0000121329
 
 
 class AlgoCurrency(Enum):
@@ -273,6 +283,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
 
 
 class AlgoPreFilter(Enum):
@@ -296,3 +307,10 @@ class AlgoPreFilter(Enum):
                     'MsgType': ('9', "EQUAL")
                 }
                 }
+
+    pre_filer_equal_ER_fill = {
+        'header': {
+            'MsgType': ('8', "EQUAL")
+        },
+        'ExecType': ('F', "EQUAL")
+    }
