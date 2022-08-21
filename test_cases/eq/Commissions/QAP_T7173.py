@@ -25,10 +25,10 @@ class QAP_T7173(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.change_params = {'Account': self.client,
@@ -39,11 +39,11 @@ class QAP_T7173(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit().change_parameters(
             self.change_params)
         self.qty = self.fix_message.get_parameter("OrderQtyData")['OrderQty']
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
