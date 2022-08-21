@@ -33,7 +33,7 @@ class QAP_T6913(TestCase):
         self.fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '7984'
