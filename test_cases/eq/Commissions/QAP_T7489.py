@@ -33,11 +33,11 @@ class QAP_T7489(TestCase):
         self.price = "10"
         self.client = CommissionClients.CLIENT_COMM_1.value
         self.account = CommissionAccounts.CLIENT_COMM_1_SA1
-        self.case_id = create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.test_id = create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])

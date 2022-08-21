@@ -24,10 +24,10 @@ timeouts = True
 class QAP_T7099(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.fix_manager = FixManager(environment.get_list_fix_environment()[0].sell_side)
         self.bs_connectivity = environment.get_list_fix_environment()[0].buy_side
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()

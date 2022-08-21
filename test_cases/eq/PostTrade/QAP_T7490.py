@@ -28,9 +28,9 @@ class QAP_T7490(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity)
         self.qty = '300'
         self.price = '10'
@@ -180,4 +180,4 @@ class QAP_T7490(TestCase):
             values_after_unbook_second, "Comparing statuses of second order after Unbook")
         # endregion
 
-        logger.info(f"Case {self.case_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
