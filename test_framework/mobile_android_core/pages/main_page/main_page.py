@@ -1,4 +1,4 @@
-from test_framework.mobile_android_core.pages.main_page.main_page_constatnts import MainPageConstants
+from test_framework.mobile_android_core.pages.main_page.main_page_constants import MainPageConstants
 from test_framework.mobile_android_core.utils.common_page import CommonPage
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 

@@ -8,8 +8,14 @@ class MenuPage(CommonPage):
         super().__init__(driver)
 
     # region account
-    def click_on_trade_preferences(self):
-        self.find_by_xpath(MenuConstants.TRADE_PREFERENCES_BUTTON).click()
+    def click_on_personal_details(self):
+        self.find_by_xpath(MenuConstants.PERSONAL_DETAILS_BUTTON).click()
+
+    def click_on_preferences(self):
+        self.find_by_xpath(MenuConstants.PREFERENCES_BUTTON).click()
+
+    def click_on_security(self):
+        self.find_by_xpath(MenuConstants.SECURITY_BUTTON).click()
 
     def click_on_logout(self):
         self.find_by_xpath(MenuConstants.LOGOUT_BUTTON).click()

@@ -11,6 +11,6 @@ class Waits:
     def WaitUntilClickableByXPath(self, xpath):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
 
-    # def WaitUntilPresentByXPath(self,xpath):
-    #     return self.wait.until(...)
+    def WaitUntilVisibleByXPath(self, element):
+        self.wait.until(EC.visibility_of(element))
 
