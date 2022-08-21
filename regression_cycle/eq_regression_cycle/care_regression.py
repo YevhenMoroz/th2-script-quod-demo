@@ -1,15 +1,81 @@
-from custom.basic_custom_actions import timestamps
-from test_cases.eq.Care import QAP_T7698, QAP_T7697, QAP_T7689, QAP_T7688, QAP_T7685, QAP_T7686, QAP_T7684, QAP_T7682, \
-    QAP_T7683, QAP_T7681, QAP_T7680, QAP_T7677, QAP_T7676, QAP_T7674, QAP_T7673, QAP_T7672, QAP_T7671, QAP_T7670, QAP_T7669, \
-    QAP_T7668, QAP_T7667, QAP_T7666, QAP_T7665, QAP_T7664, QAP_T7663, QAP_T7423, QAP_T7662, QAP_T7661, QAP_T7660, QAP_T7659, \
-    QAP_T7658, QAP_T7657, QAP_T7656, QAP_T7655, QAP_T7654, QAP_T7633, QAP_T7632, QAP_T7629, QAP_T7628, QAP_T7626, QAP_T7623, \
-    QAP_T7622, QAP_T7621, QAP_T7553, QAP_T7524, QAP_T7523, QAP_T7519, QAP_T7515, QAP_T7509, QAP_T7502, QAP_T7479, QAP_T7432, \
-    QAP_T7419, QAP_T7418, QAP_T7403
-from stubs import Stubs
 import logging
-from custom import basic_custom_actions as bca
+import os
 from datetime import datetime
+from pathlib import Path
 
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from stubs import Stubs
+from test_cases.eq.Care.QAP_T7403 import QAP_T7403
+from test_cases.eq.Care.QAP_T7411 import QAP_T7411
+from test_cases.eq.Care.QAP_T7418 import QAP_T7418
+from test_cases.eq.Care.QAP_T7419 import QAP_T7419
+from test_cases.eq.Care.QAP_T7420 import QAP_T7420
+from test_cases.eq.Care.QAP_T7421 import QAP_T7421
+from test_cases.eq.Care.QAP_T7422 import QAP_T7422
+from test_cases.eq.Care.QAP_T7423 import QAP_T7423
+from test_cases.eq.Care.QAP_T7432 import QAP_T7432
+from test_cases.eq.Care.QAP_T7461 import QAP_T7461
+from test_cases.eq.Care.QAP_T7479 import QAP_T7479
+from test_cases.eq.Care.QAP_T7502 import QAP_T7502
+from test_cases.eq.Care.QAP_T7509 import QAP_T7509
+from test_cases.eq.Care.QAP_T7515 import QAP_T7515
+from test_cases.eq.Care.QAP_T7519 import QAP_T7519
+from test_cases.eq.Care.QAP_T7523 import QAP_T7523
+from test_cases.eq.Care.QAP_T7524 import QAP_T7524
+from test_cases.eq.Care.QAP_T7553 import QAP_T7553
+from test_cases.eq.Care.QAP_T7554 import QAP_T7554
+from test_cases.eq.Care.QAP_T7555 import QAP_T7555
+from test_cases.eq.Care.QAP_T7619 import QAP_T7619
+from test_cases.eq.Care.QAP_T7620 import QAP_T7620
+from test_cases.eq.Care.QAP_T7621 import QAP_T7621
+from test_cases.eq.Care.QAP_T7622 import QAP_T7622
+from test_cases.eq.Care.QAP_T7623 import QAP_T7623
+from test_cases.eq.Care.QAP_T7624 import QAP_T7624
+from test_cases.eq.Care.QAP_T7626 import QAP_T7626
+from test_cases.eq.Care.QAP_T7628 import QAP_T7628
+from test_cases.eq.Care.QAP_T7629 import QAP_T7629
+from test_cases.eq.Care.QAP_T7632 import QAP_T7632
+from test_cases.eq.Care.QAP_T7633 import QAP_T7633
+from test_cases.eq.Care.QAP_T7654 import QAP_T7654
+from test_cases.eq.Care.QAP_T7655 import QAP_T7655
+from test_cases.eq.Care.QAP_T7656 import QAP_T7656
+from test_cases.eq.Care.QAP_T7657 import QAP_T7657
+from test_cases.eq.Care.QAP_T7658 import QAP_T7658
+from test_cases.eq.Care.QAP_T7659 import QAP_T7659
+from test_cases.eq.Care.QAP_T7660 import QAP_T7660
+from test_cases.eq.Care.QAP_T7661 import QAP_T7661
+from test_cases.eq.Care.QAP_T7662 import QAP_T7662
+from test_cases.eq.Care.QAP_T7663 import QAP_T7663
+from test_cases.eq.Care.QAP_T7664 import QAP_T7664
+from test_cases.eq.Care.QAP_T7665 import QAP_T7665
+from test_cases.eq.Care.QAP_T7666 import QAP_T7666
+from test_cases.eq.Care.QAP_T7667 import QAP_T7667
+from test_cases.eq.Care.QAP_T7668 import QAP_T7668
+from test_cases.eq.Care.QAP_T7669 import QAP_T7669
+from test_cases.eq.Care.QAP_T7670 import QAP_T7670
+from test_cases.eq.Care.QAP_T7671 import QAP_T7671
+from test_cases.eq.Care.QAP_T7674 import QAP_T7674
+from test_cases.eq.Care.QAP_T7676 import QAP_T7676
+from test_cases.eq.Care.QAP_T7677 import QAP_T7677
+from test_cases.eq.Care.QAP_T7679 import QAP_T7679
+from test_cases.eq.Care.QAP_T7680 import QAP_T7680
+from test_cases.eq.Care.QAP_T7681 import QAP_T7681
+from test_cases.eq.Care.QAP_T7682 import QAP_T7682
+from test_cases.eq.Care.QAP_T7683 import QAP_T7683
+from test_cases.eq.Care.QAP_T7684 import QAP_T7684
+from test_cases.eq.Care.QAP_T7685 import QAP_T7685
+from test_cases.eq.Care.QAP_T7686 import QAP_T7686
+from test_cases.eq.Care.QAP_T7687 import QAP_T7687
+from test_cases.eq.Care.QAP_T7688 import QAP_T7688
+from test_cases.eq.Care.QAP_T7689 import QAP_T7689
+from test_cases.eq.Care.QAP_T7692 import QAP_T7692
+from test_cases.eq.Care.QAP_T7695 import QAP_T7695
+from test_cases.eq.Care.QAP_T7696 import QAP_T7696
+from test_cases.eq.Care.QAP_T7697 import QAP_T7697
+from test_cases.eq.Care.QAP_T7698 import QAP_T7698
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -20,69 +86,174 @@ channels = dict()
 
 def test_run(parent_id= None):
     report_id = bca.create_event('Care ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
-    session_id = set_session_id()
     seconds, nanos = timestamps()  # Store case start time
+    configuration = ComponentConfiguration("Care")
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    session_id = set_session_id(fe_env.target_server_win)
+    data_set = configuration.data_set
+    test_id = bca.create_event(Path(__file__).name[:-3], report_id)
+    base_main_window = BaseMainWindow(test_id, session_id)
+    layout_path = os.path.abspath("layouts")
+    layout_name = "all_columns_layout.xml"
     try:
-        QAP_T7698.execute(report_id, session_id)
-        QAP_T7697.execute(report_id, session_id)
-        QAP_T7689.execute(report_id, session_id)
-        QAP_T7688.execute(report_id, session_id)
-        # QAP_T7687.execute(report_id, session_id)
-        QAP_T7686.execute(report_id, session_id)
-        QAP_T7685.execute(report_id, session_id)
-        QAP_T7684.execute(report_id, session_id)
-        QAP_T7683.execute(report_id, session_id)
-        QAP_T7682.execute(report_id, session_id)
-        QAP_T7681.execute(report_id, session_id)
-        QAP_T7680.execute(report_id, session_id)
-        QAP_T7677.execute(report_id, session_id)
-        QAP_T7676.execute(report_id, session_id)
-        QAP_T7674.execute(report_id, session_id)
-        QAP_T7673.execute(report_id, session_id)
-        QAP_T7672.execute(report_id, session_id)
-        QAP_T7671.execute(report_id, session_id)
-        QAP_T7670.execute(report_id, session_id)
-        QAP_T7669.execute(report_id, session_id)
-        QAP_T7668.execute(report_id, session_id)
-        QAP_T7667.execute(report_id, session_id)
-        QAP_T7666.execute(report_id, session_id)
-        QAP_T7665.execute(report_id, session_id)
-        QAP_T7664.execute(report_id, session_id)
-        QAP_T7663.execute(report_id, session_id)
-        QAP_T7662.execute(report_id, session_id)
-        QAP_T7661.execute(report_id, session_id)
-        QAP_T7660.execute(report_id, session_id)
-        QAP_T7659.execute(report_id, session_id)
-        QAP_T7658.execute(report_id, session_id)
-        QAP_T7657.execute(report_id, session_id)
-        QAP_T7656.execute(report_id, session_id)
-        QAP_T7655.execute(report_id, session_id)
-        QAP_T7654.execute(report_id, session_id)
-        QAP_T7633.execute(report_id, session_id)
-        QAP_T7632.execute(report_id, session_id)
-        QAP_T7629.execute(report_id, session_id)
-        QAP_T7628.execute(report_id, session_id)
-        QAP_T7626.execute(report_id, session_id)
-        QAP_T7623.execute(report_id, session_id)
-        QAP_T7622.execute(report_id, session_id)
-        QAP_T7621.execute(report_id, session_id)
-        QAP_T7553.execute(report_id, session_id)
-        QAP_T7524.execute(report_id, session_id)
-        QAP_T7523.execute(report_id, session_id)
-        QAP_T7519.execute(report_id, session_id)
-        QAP_T7515.execute(report_id, session_id)
-        QAP_T7509.execute(report_id, session_id)
-        QAP_T7502.execute(report_id, session_id)
-        QAP_T7479.execute(report_id, session_id)
-        QAP_T7432.execute(report_id, session_id)
-        QAP_T7423.execute(report_id, session_id)
-        QAP_T7419.execute(report_id, session_id)
-        QAP_T7418.execute(report_id, session_id)
-        QAP_T7403.execute(report_id, session_id)
+        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
+        base_main_window.import_layout(layout_path, layout_name)
+        QAP_T7698(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7697(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7689(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7688(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7687(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7686(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7685(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7684(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7683(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7682(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7681(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7680(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7677(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7676(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7674(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7673(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7672(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        QAP_T7671(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7670(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7669(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7668(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7667(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7666(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7665(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7664(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7663(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7662(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7661(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7660(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7659(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7658(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7657(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7656(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7655(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7654(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7633(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7632(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7629(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7628(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7626(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7623(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7622(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7621(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7553(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7524(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7523(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7519(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7515(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7509(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7502(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7479(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7432(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7423(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7419(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7418(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7403(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7411(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7418(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7419(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7420(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7421(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7422(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7423(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7432(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7454(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        QAP_T7461(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7554(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7555(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7619(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7620(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7624(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7679(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7692(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7695(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7696(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Care regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        Stubs.win_act.unregister(session_id)
+        base_main_window.close_fe()
 
 
 

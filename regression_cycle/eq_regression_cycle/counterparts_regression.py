@@ -9,13 +9,13 @@ from stubs import Stubs
 from test_cases.eq.Counterpart.QAP_T6996 import QAP_T6996
 from test_cases.eq.Counterpart.QAP_T7155 import QAP_T7155
 from test_cases.eq.Counterpart.QAP_T7302 import QAP_T7302
-from test_cases.eq.Counterpart.QAP_T7471 import QAP_T7471
-from test_cases.eq.Counterpart.QAP_T7474 import QAP_T7474
-from test_cases.eq.Counterpart.QAP_T7473 import QAP_T7473
-from test_cases.eq.Counterpart.QAP_T7472 import QAP_T7472
-from test_cases.eq.Counterpart.QAP_T7444 import QAP_T7444
-from test_cases.eq.Counterpart.QAP_T7394 import QAP_T7394
 from test_cases.eq.Counterpart.QAP_T7369 import QAP_T7369
+from test_cases.eq.Counterpart.QAP_T7394 import QAP_T7394
+from test_cases.eq.Counterpart.QAP_T7444 import QAP_T7444
+from test_cases.eq.Counterpart.QAP_T7471 import QAP_T7471
+from test_cases.eq.Counterpart.QAP_T7472 import QAP_T7472
+from test_cases.eq.Counterpart.QAP_T7473 import QAP_T7473
+from test_cases.eq.Counterpart.QAP_T7474 import QAP_T7474
 # from test_cases.eq.Counterpart.QAP_T7302 import QAP_T7302
 # from test_cases.eq.Counterpart.QAP_T7155 import QAP_T7155
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -42,7 +42,7 @@ def test_run(parent_id=None):
     layout_name = "all_columns_layout.xml"
 
     try:
-        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
         base_main_window.import_layout(layout_path, layout_name)
         QAP_T7474(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
@@ -69,7 +69,7 @@ def test_run(parent_id=None):
     finally:
         logger.info(f"Counterparts regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
         Stubs.win_act.unregister(session_id)
-        # base_main_window.close_fe()
+        base_main_window.close_fe()
 
 
 if __name__ == '__main__':

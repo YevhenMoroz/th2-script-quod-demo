@@ -1,11 +1,11 @@
+import logging
+import os
+from datetime import datetime
 from pathlib import Path
 
+from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
-import logging
-from custom import basic_custom_actions as bca
-from datetime import datetime
-
 from test_cases.eq.Bag.QAP_T6930 import QAP_T6930
 from test_cases.eq.Bag.QAP_T6931 import QAP_T6931
 from test_cases.eq.Bag.QAP_T6932 import QAP_T6932
@@ -33,14 +33,13 @@ from test_cases.eq.Bag.QAP_T7645 import QAP_T7645
 from test_cases.eq.Bag.QAP_T7646 import QAP_T7646
 from test_cases.eq.Bag.QAP_T7647 import QAP_T7647
 from test_cases.eq.Bag.QAP_T7648 import QAP_T7648
-from test_cases.eq.Bag.QAP_T7653 import QAP_T7653
-from test_cases.eq.Bag.QAP_T7652 import QAP_T7652
-from test_cases.eq.Bag.QAP_T7651 import QAP_T7651
-from test_cases.eq.Bag.QAP_T7650 import QAP_T7650
 from test_cases.eq.Bag.QAP_T7649 import QAP_T7649
+from test_cases.eq.Bag.QAP_T7650 import QAP_T7650
+from test_cases.eq.Bag.QAP_T7651 import QAP_T7651
+from test_cases.eq.Bag.QAP_T7652 import QAP_T7652
+from test_cases.eq.Bag.QAP_T7653 import QAP_T7653
 from test_cases.eq.Bag.QAP_T7853 import QAP_T7853
 from test_framework.configurations.component_configuration import ComponentConfiguration
-from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
 
@@ -60,8 +59,11 @@ def test_run(parent_id=None):
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
+    layout_path = os.path.abspath("layouts")
+    layout_name = "all_columns_layout.xml"
     try:
-        base_main_window.open_fe(test_id, fe_env=fe_env)
+        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
+        base_main_window.import_layout(layout_path, layout_name)
         QAP_T7653(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7652(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -133,6 +135,8 @@ def test_run(parent_id=None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Bag regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        Stubs.win_act.unregister(session_id)
+        base_main_window.close_fe()
 
 
 if __name__ == '__main__':

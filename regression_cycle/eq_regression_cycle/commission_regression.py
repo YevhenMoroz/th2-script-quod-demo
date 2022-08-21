@@ -11,6 +11,7 @@ from datetime import datetime
 
 from test_cases.eq.Commissions.QAP_T7132 import QAP_T7132
 from test_cases.eq.Commissions.QAP_T7149 import QAP_T7149
+from test_cases.eq.Commissions.QAP_T7229 import QAP_T7229
 from test_cases.eq.Commissions.QAP_T7281 import QAP_T7281
 from test_cases.eq.Commissions.QAP_T7299 import QAP_T7299
 from test_cases.eq.Commissions.QAP_T7308 import QAP_T7308
@@ -53,7 +54,7 @@ def test_run(parent_id= None):
     layout_path = os.path.abspath("layouts")
     layout_name = "all_columns_layout.xml"
     try:
-        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
         base_main_window.import_layout(layout_path, layout_name)
         QAP_T7534(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
@@ -95,12 +96,12 @@ def test_run(parent_id= None):
             .execute()
         QAP_T7281(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_T7269(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \1
+        # QAP_T7269(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
-        # QAP_T7247(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \1
+        # QAP_T7247(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
-        # QAP_T7229(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \1
-        #     .execute()
+        QAP_T7229(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_T7172(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         # QAP_T7156(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \1
@@ -114,7 +115,7 @@ def test_run(parent_id= None):
     finally:
         logger.info(f"Commission regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
         Stubs.win_act.unregister(session_id)
-        # base_main_window.close_fe()
+        base_main_window.close_fe()
 
 
 
