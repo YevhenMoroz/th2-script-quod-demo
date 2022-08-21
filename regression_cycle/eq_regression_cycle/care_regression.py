@@ -66,7 +66,7 @@ from test_cases.eq.Care.QAP_T7683 import QAP_T7683
 from test_cases.eq.Care.QAP_T7684 import QAP_T7684
 from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_cases.eq.Care.QAP_T7686 import QAP_T7686
-from test_cases.eq.Care.QAP_T7687 import QAP_T7687
+# from test_cases.eq.Care.QAP_T7687 import QAP_T7687
 from test_cases.eq.Care.QAP_T7688 import QAP_T7688
 from test_cases.eq.Care.QAP_T7689 import QAP_T7689
 from test_cases.eq.Care.QAP_T7692 import QAP_T7692
@@ -93,7 +93,7 @@ def test_run(parent_id= None):
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("layouts")
+    layout_path = os.path.abspath("regression_cycle\eq_regression_cycle/layouts")
     layout_name = "all_columns_layout.xml"
     try:
         base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
@@ -106,8 +106,8 @@ def test_run(parent_id= None):
             .execute()
         QAP_T7688(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7687(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7687(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T7686(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7685(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -252,7 +252,6 @@ def test_run(parent_id= None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Care regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
 

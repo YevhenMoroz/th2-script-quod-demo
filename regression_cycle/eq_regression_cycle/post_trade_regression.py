@@ -25,7 +25,7 @@ from test_cases.eq.PostTrade.QAP_T7110 import QAP_T7110
 from test_cases.eq.PostTrade.QAP_T7129 import QAP_T7129
 from test_cases.eq.PostTrade.QAP_T7131 import QAP_T7131
 from test_cases.eq.PostTrade.QAP_T7141 import QAP_T7141
-from test_cases.eq.PostTrade.QAP_T7160 import QAP_T7160
+# from test_cases.eq.PostTrade.QAP_T7160 import QAP_T7160
 from test_cases.eq.PostTrade.QAP_T7174 import QAP_T7174
 from test_cases.eq.PostTrade.QAP_T7176 import QAP_T7176
 from test_cases.eq.PostTrade.QAP_T7182 import QAP_T7182
@@ -46,7 +46,7 @@ from test_cases.eq.PostTrade.QAP_T7384 import QAP_T7384
 from test_cases.eq.PostTrade.QAP_T7385 import QAP_T7385
 from test_cases.eq.PostTrade.QAP_T7388 import QAP_T7388
 from test_cases.eq.PostTrade.QAP_T7389 import QAP_T7389
-from test_cases.eq.PostTrade.QAP_T7435 import QAP_T7435
+# from test_cases.eq.PostTrade.QAP_T7435 import QAP_T7435
 from test_cases.eq.PostTrade.QAP_T7437 import QAP_T7437
 from test_cases.eq.PostTrade.QAP_T7475 import QAP_T7475
 from test_cases.eq.PostTrade.QAP_T7477 import QAP_T7477
@@ -82,7 +82,7 @@ def test_run(parent_id=None):
     session_id = set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("layouts")
+    layout_path = os.path.abspath("regression_cycle\eq_regression_cycle/layouts")
     layout_name = "all_columns_layout.xml"
 
     try:
@@ -127,8 +127,8 @@ def test_run(parent_id=None):
             .execute()
         QAP_T7141(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7160(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7160(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T7174(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7176(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -179,8 +179,8 @@ def test_run(parent_id=None):
             .execute()
         QAP_T7389(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7435(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7435(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T7437(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         # QAP_T7438(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -281,7 +281,6 @@ def test_run(parent_id=None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"PostTrade regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
 
