@@ -66,7 +66,7 @@ from test_cases.eq.Care.QAP_T7683 import QAP_T7683
 from test_cases.eq.Care.QAP_T7684 import QAP_T7684
 from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_cases.eq.Care.QAP_T7686 import QAP_T7686
-from test_cases.eq.Care.QAP_T7687 import QAP_T7687
+# from test_cases.eq.Care.QAP_T7687 import QAP_T7687
 from test_cases.eq.Care.QAP_T7688 import QAP_T7688
 from test_cases.eq.Care.QAP_T7689 import QAP_T7689
 from test_cases.eq.Care.QAP_T7692 import QAP_T7692
@@ -106,8 +106,8 @@ def test_run(parent_id= None):
             .execute()
         QAP_T7688(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7687(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7687(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T7686(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7685(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \

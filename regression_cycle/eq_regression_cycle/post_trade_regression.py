@@ -25,7 +25,7 @@ from test_cases.eq.PostTrade.QAP_T7110 import QAP_T7110
 from test_cases.eq.PostTrade.QAP_T7129 import QAP_T7129
 from test_cases.eq.PostTrade.QAP_T7131 import QAP_T7131
 from test_cases.eq.PostTrade.QAP_T7141 import QAP_T7141
-from test_cases.eq.PostTrade.QAP_T7160 import QAP_T7160
+# from test_cases.eq.PostTrade.QAP_T7160 import QAP_T7160
 from test_cases.eq.PostTrade.QAP_T7174 import QAP_T7174
 from test_cases.eq.PostTrade.QAP_T7176 import QAP_T7176
 from test_cases.eq.PostTrade.QAP_T7182 import QAP_T7182
@@ -127,8 +127,8 @@ def test_run(parent_id=None):
             .execute()
         QAP_T7141(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7160(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7160(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T7174(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7176(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
