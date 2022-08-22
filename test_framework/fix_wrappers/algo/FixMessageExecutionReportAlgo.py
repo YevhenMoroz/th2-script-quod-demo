@@ -921,7 +921,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
             ClOrdID='*',
-            CumQty=0,
+            CumQty='*',
             Currency=order_cancel_replace.get_parameter('Currency'),
             ExecID='*',
             HandlInst=order_cancel_replace.get_parameter('HandlInst'),
@@ -941,7 +941,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
             TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
             QtyType='*',
-            CxlQty=order_cancel_replace.get_parameter('OrderQty'),
+            CxlQty='*',
             Instrument='*',
             SettlDate='*',
             SettlType='*'
