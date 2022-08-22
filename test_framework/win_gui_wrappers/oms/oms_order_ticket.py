@@ -75,12 +75,13 @@ class OMSOrderTicket(BaseOrderTicket):
             allocation_details = more_tab_allocation_details.build()
             self.order_details.set_allocations_details(allocation_details)
         else:
-            allocation_row_details = list()
-            for account_name, qty in alloc_details.items():
-                allocation_row_details.append(AllocationsGridRowDetails(account=account_name, qty=qty).build())
-            more_tab_allocation_details = MoreTabAllocationsDetails(allocation_row_details)
-            allocation_details = more_tab_allocation_details.build()
-            self.order_details.set_allocations_details(allocation_details)
+            if alloc_details:
+                allocation_row_details = list()
+                for account_name, alloc_qty in alloc_details.items():
+                    allocation_row_details.append(AllocationsGridRowDetails(account=account_name, qty=alloc_qty).build())
+                more_tab_allocation_details = MoreTabAllocationsDetails(allocation_row_details)
+                allocation_details = more_tab_allocation_details.build()
+                self.order_details.set_allocations_details(allocation_details)
         return self
 
     # endregion

@@ -284,7 +284,7 @@ class FixMessageQuoteFX(FixMessage):
                 ]
 
         self.prepare_params_for_swap(quote_request)
-        self.add_tag({"Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"]})
+        # self.add_tag({"Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"]})
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
             self.add_tag({"BidSwapPoints": "*"})
             self.add_tag({"BidPx": "*"})

@@ -51,11 +51,12 @@ class QAP_T2741(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        expected_qty_million = str(round(float(self.qty_million) / 1000000, 2)) + "M"
+        expected_qty_million = str(float(self.qty_million) / 1000000)[:6] + "M GBP"
         extracted_legs_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity)
         near_qty = extracted_legs_quantity[self.near_leg_quantity.value]
         self.dealer_intervention.compare_values(expected_value=expected_qty_million, actual_value=near_qty,
                                                 event_name="Compare near qty in millions value")
+        # TO DO Check if far leg exist
         self.dealer_intervention.close_window()
         # endregion
 

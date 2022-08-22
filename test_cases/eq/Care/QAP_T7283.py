@@ -27,11 +27,11 @@ bs_connectivity = SessionAliasOMS().bs_connectivity
 class QAP_T7283(TestCase):
     def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(ss_connectivity, self.case_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.fix_message.set_default_care_limit()

@@ -6,17 +6,13 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets import constants
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, Status
-from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
 
 
 class QAP_T2963(TestCase):
@@ -27,7 +23,6 @@ class QAP_T2963(TestCase):
         self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.quote_order_book = FXOrderBook(self.test_id, self.session_id)
         self.account = self.data_set.get_client_by_name("client_mm_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
@@ -38,9 +33,6 @@ class QAP_T2963(TestCase):
         }
         self.qty1 = random_qty(1, 2, 7)
         self.qty2 = random_qty(1, 2, 7)
-        self.qty_column = OrderBookColumns.qty.value
-        self.sts_column = OrderBookColumns.sts.value
-        self.sts_rejected = Status.rejected.value
         self.status = constants.Status.Reject
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -62,10 +54,9 @@ class QAP_T2963(TestCase):
         # endregion
 
         # region Step 4-5
+        text = f"11605 'OrdQty' ({self.qty2}) doesn't match the quote's 'OfferSize' ({self.qty1})"
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
-                                                                                                    self.status)
-        self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
-        self.quote_order_book.set_filter(
-            [self.qty_column, self.qty2]).check_order_fields_list({self.sts_column: self.sts_rejected})
+                                                                                                    self.status,
+                                                                                                    text=text)
+        self.fix_verifier.check_fix_message(execution_report)
         # endregion
-

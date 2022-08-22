@@ -219,19 +219,18 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011']:
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
-        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') in ['QA_Auto_SORPING_ME_Y', 'QA_Auto_SORPING_ME_N', 'QA_Auto_SORPING_3']:
-            temp.update(ExDestination='*')
         if new_order_single.get_parameter('TargetStrategy') == '1011':
             temp.update(
                 LastMkt='*',
                 ChildOrderID='*'
             )
-            if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') in ['QA_Auto_SORPING_1', 'QA_Auto_SORPING_3', 'QA_Auto_SORPING_ME_Y', 'QA_Auto_SORPING_ME_N']:
+            if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
                 temp.update(
                     IClOrdIdAO='*',
                     SecondaryAlgoPolicyID='*',
                     LastExecutionPolicy='*',
                     ShortCode='*',
+                    ExDestination='*'
                 )
         if new_order_single.get_parameter('TargetStrategy') == '1008':
             if new_order_single.is_parameter_exist('MinQty'):
@@ -268,7 +267,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
             LastPx='*',
-            LastQty=new_order_single.get_parameter('OrderQty'),
+            LastQty='*',
             OrderID='*',
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=2,
@@ -478,8 +477,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist('Price'):
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist('StopPx'):
+            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
+        if new_order_single.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate='*')
         temp.update(
             AvgPx='*',
             ClOrdID='*',
@@ -489,7 +492,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdType=new_order_single.get_parameter('OrdType'),
             OrdStatus=0,
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             OrigClOrdID='*',
             Side=new_order_single.get_parameter('Side'),
             Text='OCRRRule',
@@ -514,6 +517,10 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
         if order_cancel_replace.get_parameter('TargetStrategy') in ['1010', '1011']:
             temp.update(NoParty='*')
+        if order_cancel_replace.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
+        if order_cancel_replace.is_parameter_exist('StopPx'):
+            temp.update(StopPx=order_cancel_replace.get_parameter('StopPx'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
@@ -527,7 +534,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderID='*',
             OrderQty=order_cancel_replace.get_parameter('OrderQty'),
             OrdStatus=0,
-            OrdType=2,
+            OrdType=order_cancel_replace.get_parameter('OrdType'),
             OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
             Price=order_cancel_replace.get_parameter('Price'),
             Side=order_cancel_replace.get_parameter('Side'),
@@ -604,12 +611,16 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_rep_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
         temp = dict()
-        if order_cancel_replace.get_parameter('OrdType') == '2':
-            temp.update(Price=order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.is_parameter_exist('Price'):
+            temp.update(Price=order_cancel_replace.get_parameter('Price'))
+        if order_cancel_replace.is_parameter_exist('StopPx'):
+            temp.update(StopPx=order_cancel_replace.get_parameter('StopPx'))
         if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
+        if order_cancel_replace.get_parameter('TargetStrategy') == '1011' and order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID='*')
         if order_cancel_replace.get_parameter('TargetStrategy') == '1010':
             temp.update(
                 NoParty='*',
@@ -619,6 +630,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoParty='*')
         if order_cancel_replace.is_parameter_exist('NoStrategyParameters'):
             temp.update(NoStrategyParameters='*')
+        if order_cancel_replace.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate='*')
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
@@ -635,7 +648,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
             Side=order_cancel_replace.get_parameter('Side'),
-            TimeInForce=0,
+            TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             ExecType=4,
             LeavesQty='*',

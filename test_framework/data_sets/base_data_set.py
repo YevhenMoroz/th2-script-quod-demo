@@ -58,6 +58,7 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    contra_firm = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -119,6 +120,7 @@ class BaseDataSet:
     core_spot_price_strategy = None
     party_role = None
     counterpart_id = None
+    pre_filter = None
     # endregion
 
     # region fields added by Web Trading team
@@ -515,6 +517,11 @@ class BaseDataSet:
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
 
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        raise ValueError(f"{self.contra_firm} not found!")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):
@@ -797,6 +804,10 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    def get_pre_filter(self, name: str):
+        if hasattr(self.pre_filter, name):
+            return getattr(self.pre_filter, name).value
+        return ValueError(f"{self.pre_filter,} not found!")
     # endregion
 
     # region WebTrading getters

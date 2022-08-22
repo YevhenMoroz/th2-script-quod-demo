@@ -22,12 +22,12 @@ class QAP_T7401(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.basket_book = OMSBasketOrderBook(self.case_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

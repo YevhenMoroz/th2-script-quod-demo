@@ -101,6 +101,8 @@ class BaseOrderBook(BaseWindow):
         self.edit_quick_button_call = None
         self.click_quick_button_call = None
         self.hot_keys_action_call = None
+        self.force_cancel_order_call = None
+        self.force_cancel_order_details = None
     # endregion
 
     # region Common func
@@ -287,6 +289,19 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
+    def force_cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
+                     filter_list: list = None):
+        if cancel_children is not None:
+            self.force_cancel_order_details.set_cancel_children(cancel_children)
+        if row_count is not None:
+            self.force_cancel_order_details.set_selected_row_count(row_count)
+        if comment is not None:
+            self.force_cancel_order_details.set_comment(comment)
+        if filter_list is not None:
+            self.force_cancel_order_details.set_filter(filter_list)
+        call(self.force_cancel_order_call, self.force_cancel_order_details.build())
+        self.clear_details([self.force_cancel_order_details])
+
     def refresh_order(self, filter_list: list = None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
@@ -366,9 +381,9 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list: dict = None):
-        if filter_list is not None:
-            self.suspend_order_details.set_filter(filter_list)
+    def suspend_order(self, cancel_children: bool = None, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.suspend_order_details.set_filter(filter_dict)
         if cancel_children is not None:
             self.suspend_order_details.set_cancel_children(cancel_children)
         call(self.suspend_order_call, self.suspend_order_details.build())

@@ -13,7 +13,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
     TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
     UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails, QuickButtonCreationDetails, \
-    ActionsHotKeysDetails
+    ActionsHotKeysDetails, ForceCancelOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -105,4 +105,6 @@ class OMSOrderBook(BaseOrderBook):
         self.edit_quick_button_call = Stubs.win_act_order_book.editSplitShortcutCreationButton
         self.click_quick_button_call = Stubs.win_act_order_book.clickSplitShortcutCreationButton
         self.hot_keys_action_call = Stubs.win_act_order_book.selectedRowInOrderBook
+        self.force_cancel_order_call = Stubs.win_act_order_book.forceCancelOrder
+        self.force_cancel_order_details = ForceCancelOrderDetails(self.base_request)
         # endregion
