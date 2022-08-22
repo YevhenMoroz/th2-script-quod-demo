@@ -257,5 +257,30 @@ class RestApiAlgoManager(RestApiManager):
                 raise ValueError(f"Aggressive criteria haven't been removed")
         # endregion
 
-    def update_criteria(self):
-        pass
+    def update_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
+        # region send get request
+        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
+        find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
+        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        # endregion
+
+        # region modification
+        strategy.pop("alive")
+        if "algoPolicyPassCriteria" in strategy.keys():
+            temp = list()
+            for parameter in passive_criterias:
+                temp.append(dict(bestExecCriteria=parameter))
+            strategy["algoPolicyPassCriteria"] = temp
+
+        if "algoPolicyAggrCriteria" in strategy.keys():
+            temp = list()
+            for parameter in aggresive_criterias:
+                temp.append(dict(bestExecCriteria=parameter))
+            strategy["algoPolicyAggrCriteria"] = temp
+
+        modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
+        rest_manager.send_post_request(modify_algo_policy)
+        # endregion
+
+        time.sleep(1)
