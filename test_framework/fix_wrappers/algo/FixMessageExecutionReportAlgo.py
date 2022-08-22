@@ -810,7 +810,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 NoParty='*'
