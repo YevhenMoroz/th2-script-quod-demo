@@ -72,7 +72,7 @@ class RetClients(Enum):
     client_3 = "QAP-4318"
     client_4 = "api_client_rin_desk"
     client_5 = "api_client_test_desk"
-    client_6 = "api_client_PRET_230"
+    client_6 = "api_client_gross"
 
 
 class RetAccounts(Enum):
@@ -81,10 +81,13 @@ class RetAccounts(Enum):
     account_3 = "FirmTestClient"
     account_4 = "api_account_rin_desk"
     account_5 = "api_account_test_desk"
+    account_6 = "api_account_gross"
 
 
 class RetCashAccounts(Enum):
     cash_account_1 = "api_cash_account_INR"
+    cash_account_2 = "api_cash_account_SAR"
+    cash_account_3 = "api_cash_account_gross_INR"
 
 
 class RetCashAccountCounters(Enum):
@@ -122,7 +125,7 @@ class RetWebAdminRestApiUsers(Enum):
 
 class RetRiskLimitDimensions(Enum):
     risk_limit_dimension_1 = dict(
-        clientListID=600010,
+        clientListID=400008,
         deskID=2,
         venueID="BSE",
         subVenueID=17,
