@@ -385,7 +385,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
-            CumQty=new_order_single.get_parameter('OrderQty'),
+            CumQty='*',
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
