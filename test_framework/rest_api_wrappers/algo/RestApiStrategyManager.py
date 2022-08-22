@@ -83,7 +83,6 @@ class RestApiAlgoManager(RestApiManager):
                 triggered += 1
                 if param["algoParameterValue"] != parameters[param["scenarioParameterName"]]:
                     raise ValueError(f"Strategy didn't modify parameter {param['algoParameterValue']} with value {parameters[param['scenarioParameterName']]}")
-            pass
         if triggered != len(parameters):
             raise ValueError(f"Not all scenarioParameterName found at updated strategy")
         # endregion
@@ -119,4 +118,38 @@ class RestApiAlgoManager(RestApiManager):
             if param['scenarioParameterName'] in parameters_name:
                 raise ValueError(f"Not all scenarioParameterName removed")
 
+        # endregion
+
+    def add_parameter(self, strategy_name: str, new_parameter: dict):
+        # region send get request
+        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
+        find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
+        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        # endregion
+        print()
+
+
+        for parameter in strategy["algoPolicyParameter"]:
+            if parameter["scenarioParameterName"] == new_parameter["scenarioParameterName"]:
+                raise ValueError(f"Parameter already exist")
+
+        strategy.pop("alive")
+        strategy["algoPolicyParameter"].append(new_parameter)
+
+        modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
+        rest_manager.send_post_request(modify_algo_policy)
+
+
+        time.sleep(1)
+        # region check is modify confirmed
+        find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
+        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        triggered = False
+        for param in strategy_updated["algoPolicyParameter"]:
+            if param["scenarioParameterName"] == new_parameter["scenarioParameterName"]:
+                triggered = True
+        if not triggered:
+            raise ValueError(f"Parameter haven't been added")
         # endregion
