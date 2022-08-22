@@ -763,10 +763,13 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         base_parameters = {
             'ClOrdID': '*',
             'HandlInst': "2",
-            'NoParty': '1',
-            'PartyID': 'TestINITIATOR-UTI',
-            'PartyIDSource': 'D',
-            'PartyRole': '55',
+            'NoParty': [
+                {
+                    'PartyID': 'TestINITIATOR-UTI',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '55'
+                }
+            ],
             'Account': "KEPLER",
             'ExDestination': 'QDL1',
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
@@ -804,10 +807,14 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "QDL1",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'IClOrdIdTO': '19864'
+            'AlgoCst01': 'TestINITIATOR-UTI',
+            'NoParty': [
+                {
+                    'PartyID': 'TestINITIATOR-UTI',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '55'
+                }
+            ]
         }
         super().change_parameters(base_parameters)
         return self
@@ -829,7 +836,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1011',
             'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536'
+            'ShortCode': '17536',
         }
         super().change_parameters(base_parameters)
         return self
