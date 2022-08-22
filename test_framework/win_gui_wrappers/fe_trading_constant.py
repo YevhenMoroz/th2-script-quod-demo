@@ -379,6 +379,8 @@ class MiddleOfficeColumns(Enum):
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -627,3 +629,12 @@ class OffsetTypes(Enum):
 
 class ReferencePrice(Enum):
     open = "Open"
+
+
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
