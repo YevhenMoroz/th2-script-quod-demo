@@ -44,9 +44,9 @@ class QAP_T4675(TestCase):
         self.remaining_qty = self.inc_qty - self.qty_1_itg_child
         self.qty_2_chix_child, self.qty_2_bats_child, self.qty_2_cboe_child, self.qty_2_itg_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.remaining_qty, None, self.weight_chix, self.weight_bats, self.weight_cboe, self.weight_itg)
         self.price = 1
-        self.delay = 5
         self.delay_for_fill = 0
-        self.delay_for_cancel = 5
+        self.delay_for_cancel = 5000
+        self.status = 1
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_4.value
         # endregion
 
@@ -100,11 +100,13 @@ class QAP_T4675(TestCase):
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, self.price)
-        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg,  self.price, self.price, self.qty_1_itg_child, self.qty_1_itg_child)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_trade_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg,  self.price, self.price, self.qty_1_itg_child, self.qty_1_itg_child, self.delay_for_fill)
+        nos_4_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
+        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.delay_for_cancel)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
+        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True, self.delay_for_cancel)
+        ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True, self.delay_for_cancel)
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_trade_rule, nos_4_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -190,6 +192,7 @@ class QAP_T4675(TestCase):
         self.fix_verifier_sell.check_fix_message(self.MP_Dark_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_replaced_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        er_replaced_MP_Dark_order_params.change_parameters(dict(OrdStatus=self.status))
         self.fix_verifier_sell.check_fix_message(er_replaced_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -290,7 +293,9 @@ class QAP_T4675(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_itg_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel 2nd child DMA order on ITG")
         # endregion
 
-        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
+        time.sleep(7)
+
+        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
