@@ -5,7 +5,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.eq.Care.QAP_T7685 import QAP_T7685
-from test_cases.ret.REST_API.Trading_REST.DMA_API.QAP_T3520 import QAP_T3520
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -28,7 +27,7 @@ def test_run():
     session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("Trading_REST_API_Dma")  # <--- provide your component from XML (DMA, iceberg, etc)
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
     fe_user = fe_env.user_1
@@ -37,9 +36,9 @@ def test_run():
 
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
-        QAP_T3520(report_id, configuration.data_set,
-                  configuration.environment).execute()
-
+        QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

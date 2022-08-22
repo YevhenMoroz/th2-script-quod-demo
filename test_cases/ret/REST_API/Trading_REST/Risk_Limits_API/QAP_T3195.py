@@ -1,5 +1,6 @@
 import os
 
+from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
@@ -10,7 +11,6 @@ from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimula
     ApiMessageNewOrderSingleSimulate
 from test_framework.rest_api_wrappers.trading_api.ApiMessageMarketQuoteRequest import ApiMessageMarketQuoteRequest
 from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
-from test_framework.rest_api_wrappers.utils.verifier import data_validation
 
 
 class QAP_T3195(TestCase):
@@ -66,15 +66,16 @@ class QAP_T3195(TestCase):
         self.noss_message.remove_parameter(parameter_name='Price')
         noss_response_sell = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-
-        gross_order_value = self.buying_power_manager.calc_gross_order_value(self.test_id,
-                                                                             noss_response_sell,
-                                                                             reference_price=self.bid_tcs_iq)
-        data_validation(test_id=self.test_id,
-                        event_name="Check that Gross Order Value is calculated correctly with OrderType=Market, "
-                                   "side=Sell and Bid value",
-                        expected_result=gross_order_value,
-                        actual_result=float(noss_response_sell['GrossOrdAmt']))
+        try:
+            gross_order_value = self.buying_power_manager.calc_gross_order_value(noss_response_sell,
+                                                                                 reference_price=self.bid_tcs_iq)
+            verifier(case_id=self.test_id,
+                     event_name="Check that Gross Order Value is calculated correctly with OrderType=Market, "
+                                "side=Sell and Bid value",
+                     expected_value=gross_order_value,
+                     actual_value=float(noss_response_sell['GrossOrdAmt']))
+        except (KeyError, TypeError):
+            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
         # endregion
 
         # region, Check that Gross Order Value is calculated correctly with OrderType=Market, side=Buy and ASK value
@@ -96,31 +97,33 @@ class QAP_T3195(TestCase):
         except (KeyError, TypeError):
             bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
 
-        self.noss_message.default_instrument_noss = self.tested_instrument_spicejet_iq
+        self.noss_message.tested_instrument_noss = self.tested_instrument_spicejet_iq
         self.noss_message.set_default_request()
         self.noss_message.change_parameter(parameter_name='OrdType', new_parameter_value='Market')
         self.noss_message.remove_parameter(parameter_name='Price')
         noss_response_buy = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-
-        gross_order_value_buy = self.buying_power_manager.calc_gross_order_value(self.test_id,
-                                                                                 noss_response_buy,
-                                                                                 reference_price=self.ask_spicejet_iq)
-        data_validation(test_id=self.test_id,
-                        event_name="Check that Gross Order Value is calculated correctly with OrderType=Market, side=Buy "
-                                   "and Ask value",
-                        expected_result=gross_order_value_buy,
-                        actual_result=float(noss_response_buy['GrossOrdAmt']))
+        try:
+            gross_order_value_buy = self.buying_power_manager.calc_gross_order_value(noss_response_buy,
+                                                                                     reference_price=self.ask_spicejet_iq)
+            verifier(case_id=self.test_id,
+                     event_name="Check that Gross Order Value is calculated correctly with OrderType=Market, side=Buy "
+                                "and Ask value",
+                     expected_value=gross_order_value_buy,
+                     actual_value=float(noss_response_buy['GrossOrdAmt']))
+        except (KeyError, TypeError):
+            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
         # endregion
 
         # region, Check that Gross Order Value is calculated correctly with OrderType=Limit and side=Buy
         self.noss_message.set_default_request()
         noss_response_limit = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-
-        data_validation(test_id=self.test_id,
-                        event_name="Check that Gross Order Value is calculated correctly with OrderType=Limit",
-                        expected_result=float(self.noss_message.parameters['Price']),
-                        actual_result=float(noss_response_limit['GrossOrdAmt']))
+        try:
+            verifier(case_id=self.test_id,
+                     event_name="Check that Gross Order Value is calculated correctly with OrderType=Limit",
+                     expected_value=float(self.noss_message.parameters['Price']),
+                     actual_value=float(noss_response_limit['GrossOrdAmt']))
+        except (KeyError, TypeError):
+            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
         # endregion
-
