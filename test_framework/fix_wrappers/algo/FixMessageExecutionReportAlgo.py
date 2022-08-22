@@ -810,7 +810,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 NoParty='*'
@@ -921,7 +921,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
             ClOrdID='*',
-            CumQty=0,
+            CumQty='*',
             Currency=order_cancel_replace.get_parameter('Currency'),
             ExecID='*',
             HandlInst=order_cancel_replace.get_parameter('HandlInst'),
@@ -941,7 +941,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
             TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
             QtyType='*',
-            CxlQty=order_cancel_replace.get_parameter('OrderQty'),
+            CxlQty='*',
             Instrument='*',
             SettlDate='*',
             SettlType='*'

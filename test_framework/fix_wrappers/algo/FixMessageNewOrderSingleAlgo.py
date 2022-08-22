@@ -759,6 +759,66 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_SORPING_Iceberg_params_with_PartyInfo(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'NoParty': [
+                {
+                    'PartyID': 'TestINITIATOR-UTI',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '55'
+                }
+            ],
+            'Account': "KEPLER",
+            'ExDestination': 'QDL1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "0",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1004',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
+            "DisplayInstruction": {
+                'DisplayQty': '500'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL1",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'AlgoCst01': 'TestINITIATOR-UTI',
+            'NoParty': [
+                {
+                    'PartyID': 'TestINITIATOR-UTI',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '55'
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_SORPING_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
@@ -776,7 +836,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1011',
             'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536'
+            'ShortCode': '17536',
         }
         super().change_parameters(base_parameters)
         return self
