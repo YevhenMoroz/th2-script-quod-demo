@@ -453,7 +453,7 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="DMA_Trading_Api" run="True">
+                <component name="Trading_REST_API_Dma" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
@@ -461,7 +461,7 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="MarketData_Trading_Api" run="True">
+                <component name="Trading_REST_API_MarketData" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
@@ -469,7 +469,7 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Positions_Trading_Api" run="True">
+                <component name="Trading_REST_API_Positions" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
@@ -477,7 +477,29 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Others_Trading_Api" run="True">
+                <component name="Trading_REST_API_RiskLimits" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
+                </component>
+                <component name="Trading_REST_API_BuyingPower" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                        </trading_rest_api_environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                    </environments>
+                </component>
+                <component name="Trading_REST_API_Others" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
@@ -485,7 +507,7 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Site_API" run="True">
+                <component name="WA_REST_API_Site" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -493,7 +515,7 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Users_API" run="True">
+                <component name="WA_REST_API_Users" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -501,7 +523,7 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Client/Accounts_API" run="True">
+                <component name="WA_REST_API_Client_Accounts" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -509,7 +531,7 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Risk_Limits_API" run="True">
+                <component name="WA_REST_API_Risk_Limits" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -517,7 +539,7 @@
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
-                <component name="Positions_API" run="True">
+                <component name="WA_REST_API_Positions" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
