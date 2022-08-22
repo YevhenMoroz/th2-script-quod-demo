@@ -213,8 +213,49 @@ class RestApiAlgoManager(RestApiManager):
                 raise ValueError(f"Not all aggresive criteria have been found at updated strategy")
         # endregion
 
-    def remove_criteria(self):
-        pass
+    def remove_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
+        # region send get request
+        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
+        find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
+        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        # endregion
+
+        # region modification
+        strategy.pop("alive")
+        if "algoPolicyPassCriteria" in strategy.keys():
+            temp = list()
+            for parameter in strategy["algoPolicyPassCriteria"]:
+                if parameter['bestExecCriteria'] not in passive_criterias:
+                    temp.append(parameter)
+            strategy["algoPolicyPassCriteria"] = temp
+
+        if "algoPolicyAggrCriteria" in strategy.keys():
+            temp = list()
+            for parameter in strategy["algoPolicyAggrCriteria"]:
+                if parameter['bestExecCriteria'] not in aggresive_criterias:
+                    temp.append(parameter)
+            strategy["algoPolicyAggrCriteria"] = temp
+
+        modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
+        rest_manager.send_post_request(modify_algo_policy)
+        # endregion
+
+        time.sleep(1)
+
+        # region check is modify confirmed
+        find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
+        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+
+        for param in strategy_updated["algoPolicyPassCriteria"]:
+            if param["bestExecCriteria"] in passive_criterias:
+                raise ValueError(f"Passive criteria haven't been removed")
+
+        for param in strategy_updated["algoPolicyAggrCriteria"]:
+            if param["bestExecCriteria"] in passive_criterias:
+                raise ValueError(f"Aggressive criteria haven't been removed")
+        # endregion
 
     def update_criteria(self):
         pass
