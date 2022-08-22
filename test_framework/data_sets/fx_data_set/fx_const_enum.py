@@ -223,6 +223,7 @@ class FxCurrencies(Enum):
     currency_aud = "AUD"
     currency_sek = "SEK"
     currency_jpy = "JPY"
+    currency_nok = "NOK"
 
 
 class FxRecipients(Enum):
