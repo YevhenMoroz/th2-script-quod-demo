@@ -450,7 +450,7 @@
                         </fe_environments>
                     </environments>
                 </component>
-                <component name="PositionValidity" run="True">
+                <component name="PRET_Position_Validity" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <fe_environments>
@@ -509,7 +509,7 @@
                         </mobile_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_Login_And_Logout" run="True">
+                <component name="WebTrading_Login_Logout" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -517,7 +517,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_OrderTicket_And_Book" run="True">
+                <component name="WebTrading_OrderTicket_Book" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -565,7 +565,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_Account_Summary" run="True">
+                <component name="WebTrading_AccountSummary" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
