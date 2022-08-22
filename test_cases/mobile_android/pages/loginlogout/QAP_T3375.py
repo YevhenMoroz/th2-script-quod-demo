@@ -38,6 +38,8 @@ class QAP_T3375(CommonTestCase):
 
         login_page.set_email(self.login)
         self.verify("Email Value is set correctly", "automation_mobile1, Email", login_page.get_attribute_of_element_by_xpath(LoginConstants.EMAIL, 'text'))
+        # endregion
+
         # Step 2
         login_page.set_password(self.password)
         self.verify("Password value is set and hidden", "••••••••••••, Password", login_page.get_attribute_of_element_by_xpath(LoginConstants.PASSWORD, 'text'))
