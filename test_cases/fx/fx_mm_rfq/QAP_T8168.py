@@ -42,7 +42,7 @@ class QAP_T8168(TestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_15")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date = self.data_set.get_settle_date_by_name("spot")
-        self.currency = self.data_set.get_settle_type_by_name("currency_usd")
+        self.currency = self.data_set.get_currency_by_name("currency_usd")
         self.instrument = {
             "Symbol": self.symbol,
             "SecurityType": self.security_type_fwd
