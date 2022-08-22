@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
-from test_framework.rest_api_wrappers.trading_api.ApiMessageOrderModificationRequest import ApiMessageOrderModifiction
+from test_framework.rest_api_wrappers.trading_api.ApiMessageOrderModificationRequest import ApiMessageOrderModification
 
 
 class QAP_T3606(TestCase):
@@ -55,7 +55,7 @@ class QAP_T3606(TestCase):
             'SettlCurrency': parsed_response['SettlCurrency'],
             'PosValidity': 'TP2'
         }
-        modification_message = ApiMessageOrderModifiction(parameters=modification_parameters)
+        modification_message = ApiMessageOrderModification(parameters=modification_parameters)
         modification_response = self.trd_api_manager.send_http_request_and_receive_websocket_response(modification_message)
         parsed_modification_response = self.trd_api_manager.parse_response_details(modification_response)
 

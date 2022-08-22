@@ -1,6 +1,6 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
@@ -32,17 +32,11 @@ class QAP_T3181(TestCase):
         self.noss_message.change_parameter(parameter_name='OrdQty', new_parameter_value=self.tested_qty)
         self.noss_message.change_parameter_in_component(component_name='PreTradeAllocations',
                                                         fields={'AllocQty': self.tested_qty})
-        parsed_response = self.trd_api_manager.parse_response_details(
+        noss_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-        try:
-            if float(parsed_response['CashBalance']) < 0:
-                bca.create_event(f'CashBalance < 0', status='SUCCESS', parent_id=self.test_id)
-            elif float(parsed_response['CashBalance'] > 0):
-                bca.create_event(f'CashBalance > 0', status='FAILED', parent_id=self.test_id)
-            verifier(case_id=self.test_id,
-                     event_name="Check FreeNotes field with an error message",
-                     expected_value=self.tested_free_notes,
-                     actual_value=parsed_response['FreeNotes'])
-        except (KeyError, TypeError):
-            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
+
+        data_validation(test_id=self.test_id,
+                        event_name="Check FreeNotes field with an error message",
+                        expected_result=self.tested_free_notes,
+                        actual_result=noss_response['ErrorMessage'])
         # endregion

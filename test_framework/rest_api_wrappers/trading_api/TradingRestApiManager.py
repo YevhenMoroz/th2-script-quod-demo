@@ -31,7 +31,7 @@ class TradingRestApiManager:
             ]
         )
         message = Stubs.api_service.submitMessageWithMultipleResponse(request)
-        # print(type(message))
+
         return message
 
     def send_http_request_and_receive_websocket_response(self, trd_api_message: TradingRestApiMessage):
@@ -73,7 +73,10 @@ class TradingRestApiManager:
                         for key, value in data['fields'].items():
                             fields_name.append(key)
                             if 'simpleValue' in value.keys():
-                                fields_data.update({key: value['simpleValue']})
+                                if value['simpleValue'] == 'PendingOpen':
+                                    pass
+                                else:
+                                    fields_data.update({key: value['simpleValue']})
                             if 'messageValue' in value.keys():
                                 for message_key, message_value in value['messageValue']['fields'].items():
                                     fields_data.update({message_key: message_value['simpleValue']})
