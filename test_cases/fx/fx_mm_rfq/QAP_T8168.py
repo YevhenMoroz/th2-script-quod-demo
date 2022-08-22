@@ -42,6 +42,7 @@ class QAP_T8168(TestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_15")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date = self.data_set.get_settle_date_by_name("spot")
+        self.currency = self.data_set.get_settle_type_by_name("currency_usd")
         self.instrument = {
             "Symbol": self.symbol,
             "SecurityType": self.security_type_fwd
@@ -85,8 +86,8 @@ class QAP_T8168(TestCase):
         self.quote_request.set_rfq_params_fwd()
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                            Instrument=self.instrument,
-                                                           Account=self.client, Currency="USD", OrderQty=self.qty,
-                                                           Side=self.side_sell)
+                                                           Account=self.client, Currency=self.currency,
+                                                           OrderQty=self.qty, Side=self.side_sell)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_fwd(self.quote_request)
         self.fix_verifier.check_fix_message(self.quote)
@@ -102,8 +103,8 @@ class QAP_T8168(TestCase):
         self.quote_request_2.set_rfq_params_fwd()
         self.quote_request_2.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                              Instrument=self.instrument_2,
-                                                             Account=self.client, Currency="USD", OrderQty=self.qty2,
-                                                             Side=self.side_buy)
+                                                             Account=self.client, Currency=self.currency,
+                                                             OrderQty=self.qty2, Side=self.side_buy)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request_2, self.test_id)
         self.quote_2.set_params_for_quote_fwd(self.quote_request_2)
         self.fix_verifier.check_fix_message(self.quote_2)
