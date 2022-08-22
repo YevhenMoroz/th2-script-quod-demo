@@ -440,8 +440,16 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
+                <component name="PRET_FETrading_Display" run="True">
+                    <data_set>RetDataSet</data_set>
+                    <environments>
+                        <fe_environments>
+                            <fe_environment>quod315_fe</fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
                 <component name="PositionValidity" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
@@ -453,11 +461,123 @@
                         </trading_rest_api_environments>
                     </environments>
                 </component>
+                <component name="Mobile_Account" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_LoginLogout" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Market" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_OrderTicket_OrderBook" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Others" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="Mobile_Portfolio" run="True">
+                    <data_set>MobileDataSet</data_set>
+                    <environments>
+                        <mobile_environments>
+                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
+                        </mobile_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_Login_And_Logout" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_OrderTicket_And_Book" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_Other" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_Positions" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_Trades" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_UserProfile" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_WatchList" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
+                <component name="WebTrading_Account_Summary" run="True">
+                    <data_set>WebTradingDataSet</data_set>
+                    <environments>
+                        <web_trading_environments>
+                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
+                        </web_trading_environments>
+                    </environments>
+                </component>
                 <component name="Trading_REST_API_Dma" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
@@ -645,126 +765,6 @@
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
                         </web_admin_environments>
-                    </environments>
-                </component>
-            </components>
-        </product_line>
-        <product_line name="web_trading" run="False">
-            <components>
-                <component name="WebTrading_Login_And_Logout" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_OrderTicket_And_Book" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_Other" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_Positions" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_Trades" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_UserProfile" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_WatchList" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-                <component name="WebTrading_Account_Summary" run="True">
-                    <data_set>WebTradingDataSet</data_set>
-                    <environments>
-                        <web_trading_environments>
-                            <web_trading_environment>quod320_web_trading_kuiper_chrome</web_trading_environment>
-                        </web_trading_environments>
-                    </environments>
-                </component>
-            </components>
-        </product_line>
-        <product_line name="mobile_android" run="False">
-            <components>
-                <component name="Mobile_Account" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
-                    </environments>
-                </component>
-                <component name="Mobile_LoginLogout" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
-                    </environments>
-                </component>
-                <component name="Mobile_Market" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
-                    </environments>
-                </component>
-                <component name="Mobile_OrderTicket_OrderBook" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
-                    </environments>
-                </component>
-                <component name="Mobile_Others" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
-                    </environments>
-                </component>
-                <component name="Mobile_Portfolio" run="True">
-                    <data_set>MobileDataSet</data_set>
-                    <environments>
-                        <mobile_environments>
-                            <mobile_environment>quod320_web_trading_kuiper_chrome</mobile_environment>
-                        </mobile_environments>
                     </environments>
                 </component>
             </components>

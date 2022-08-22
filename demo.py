@@ -28,18 +28,18 @@ def test_run():
     # configuration_risk_limits_admin_api = ComponentConfiguration("WA_REST_API_Risk_Limits")
     # configuration_positions_admin_api = ComponentConfiguration("WA_REST_API_Positions")
     # ___Trading REST API configuration block
-    # configuration_trading_api_dma = ComponentConfiguration("Trading_REST_API_Dma")
+    configuration_trading_api_dma = ComponentConfiguration("Trading_REST_API_Dma")
     # configuration_trading_api_md = ComponentConfiguration("Trading_REST_API_MarketData")
     # configuration_trading_api_risk_limit = ComponentConfiguration("Trading_REST_API_RiskLimits")
-    configuration_trading_api_buying_power = ComponentConfiguration("Trading_REST_API_BuyingPower")
+    #configuration_trading_api_buying_power = ComponentConfiguration("Trading_REST_API_BuyingPower")
     # configuration_trading_api_positions = ComponentConfiguration("Trading_REST_API_Positions")
     # configuration_trading_api_others = ComponentConfiguration("Trading_REST_API_Others")
 
     try:
         start = datetime.now()
         print(f'start time = {start}')
-        QAP_T3520(report_id, configuration_trading_api_buying_power.data_set,
-                            configuration_trading_api_buying_power.environment).execute()
+        QAP_T3520(report_id, configuration_trading_api_dma.data_set,
+                            configuration_trading_api_dma.environment).execute()
         # __BuyingPower_SmokeTests__ block
         # QAP_T8249(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
