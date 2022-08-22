@@ -28,21 +28,19 @@ class QAP_T3277(CommonTestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         # region - preconditions
-            # Creating User1 with details: FNAME / LNAME / Mar 02, 2001 / Highway / Ukraine / Preff: Email / Email: mail@quodfinancial.com / Mobile: 123456789
         login_page = LoginPage(self.appium_driver)
         main_page = MainPage(self.appium_driver)
         menu_page = MenuPage(self.appium_driver)
 
         login_page.login_to_mobile_trading(self.login, self.password)
-        self.appium_driver.wait_time(2)
-        # self.verify("Login successful", None, self.Waiter.WaitUntilClickableByXPath(MainPageConstants.PORTFOLIO_BUTTON))
+        # self.appium_driver.wait_time(2)
         self.verify("Login successful", None, main_page.check_if_element_presented(MainPageConstants.PORTFOLIO_TITLE))
         # endregion
         # region - test details
         # Step 1
         main_page.click_on_menu()
         menu_page.click_on_personal_details()
-        self.verify("Personal Details is opened", None, menu_page.check_if_element_presented(MenuConstants.GO_BACK_FROM_PERSONAL_DETAILS_BUTTON))
+        self.verify("Personal Details is opened", None, menu_page.check_if_element_presented(MenuConstants.PERSONAL_DETAILS_TITLE))
         # Step 2
         # endregion
         # region - postconditions

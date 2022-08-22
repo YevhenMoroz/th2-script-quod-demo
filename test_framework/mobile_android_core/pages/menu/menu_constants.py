@@ -5,7 +5,7 @@ class MenuConstants:
 
     PREFERENCES_BUTTON = '//android.widget.ImageView[@content-desc="Preferences"]'
     SECURITY_BUTTON = '//android.widget.ImageView[@content-desc="Security"]'
-    LOGOUT_BUTTON = '//android.view.View[@content-desc="Logout"]'
+    LOGOUT_BUTTON = '//android.widget.ImageView[@content-desc="Logout"]'
     #TODO: must be override
     DEFAULT_CLIENT_DROP_DOWN_LIST = '//android.widget.Button'
     GO_BACK_FROM_USER_PROFILE_BUTTON = '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View[1]'

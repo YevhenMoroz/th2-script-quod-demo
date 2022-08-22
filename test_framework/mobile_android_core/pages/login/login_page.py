@@ -12,6 +12,7 @@ class LoginPage(CommonPage):
         email_input.click()
         self.appium_driver.wait_time(1)
         email_input.send_keys(email)
+        self.appium_driver.wait_time(1)
 
     def set_password(self, password):
         self.Waiter.WaitUntilClickableByXPath(LoginConstants.PASSWORD)
@@ -19,6 +20,7 @@ class LoginPage(CommonPage):
         password_input.click()
         self.appium_driver.wait_time(1)
         password_input.send_keys(password)
+        self.appium_driver.wait_time(1)
 
     def click_on_login_button(self):
         self.find_by_xpath(LoginConstants.LOGIN_BUTTON).click()
@@ -26,10 +28,8 @@ class LoginPage(CommonPage):
     def login_to_mobile_trading(self, email, password):
         try:
             self.set_email(email)
-            self.appium_driver.wait_time(1)
 
             self.set_password(password)
-            self.appium_driver.wait_time(1)
 
             self.click_on_login_button()
         except Exception as e:
