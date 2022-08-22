@@ -127,8 +127,6 @@ class RestApiAlgoManager(RestApiManager):
         grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
         strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
-        print()
-
 
         for parameter in strategy["algoPolicyParameter"]:
             if parameter["scenarioParameterName"] == new_parameter["scenarioParameterName"]:
@@ -153,3 +151,70 @@ class RestApiAlgoManager(RestApiManager):
         if not triggered:
             raise ValueError(f"Parameter haven't been added")
         # endregion
+
+    def add_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
+        # region send get request
+        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
+        find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
+        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        # endregion
+
+        if "algoPolicyPassCriteria" in strategy:
+            for parameter in strategy["algoPolicyPassCriteria"]:
+                if parameter["bestExecCriteria"] in passive_criterias:
+                    raise ValueError(f"Passive criteria already exist")
+            for criteria in passive_criterias:
+                strategy["algoPolicyPassCriteria"].append(dict(bestExecCriteria=criteria))
+        else:
+            temp_list = list()
+            for criteria in passive_criterias:
+                temp_list.append(dict(bestExecCriteria=criteria))
+            strategy["algoPolicyPassCriteria"] = temp_list
+
+
+        if "algoPolicyAggrCriteria" in strategy:
+            for parameter in strategy["algoPolicyAggrCriteria"]:
+                if parameter["bestExecCriteria"] in passive_criterias:
+                    raise ValueError(f"Aggressive criteria already exist")
+            for criteria in passive_criterias:
+                strategy["algoPolicyAggrCriteria"].append(dict(bestExecCriteria=criteria))
+        else:
+            temp_list = list()
+            for criteria in passive_criterias:
+                temp_list.append(dict(bestExecCriteria=criteria))
+            strategy["algoPolicyAggrCriteria"] = temp_list
+
+        strategy.pop("alive")
+
+        modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
+        rest_manager.send_post_request(modify_algo_policy)
+
+        time.sleep(1)
+        # region check is modify confirmed
+        find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
+        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
+        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+
+        triggered = 0
+        if "algoPolicyPassCriteria" in strategy:
+            for param in strategy_updated["algoPolicyPassCriteria"]:
+                if param["bestExecCriteria"] in aggresive_criterias:
+                    triggered += 1
+            if triggered != len(aggresive_criterias):
+                raise ValueError(f"Not all passive criteria have been found at updated strategy")
+
+        triggered = 0
+        if "algoPolicyAggrCriteria" in strategy:
+            for param in strategy_updated["algoPolicyAggrCriteria"]:
+                if param["bestExecCriteria"] in aggresive_criterias:
+                    triggered += 1
+            if triggered != len(aggresive_criterias):
+                raise ValueError(f"Not all aggresive criteria have been found at updated strategy")
+        # endregion
+
+    def remove_criteria(self):
+        pass
+
+    def update_criteria(self):
+        pass
