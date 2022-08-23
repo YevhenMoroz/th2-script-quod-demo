@@ -71,33 +71,33 @@ class QAP_T8409(TestCase):
         ]
         self.qty = "5906500"
         self.side_sell = "2"
-        self.qty2 = "7075000"
+        self.qty2 = "7089000"
         self.side_buy = "1"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # # region Prepare MD
-        # self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot)
-        # self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
-        # self.fix_manager_fh.send_message(self.fix_md)
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh.send_message(self.fix_md)
         # # endregion
 
         # region Step 3
-        # self.quote_request.set_rfq_params_fwd()
-        # self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-        #                                                    Instrument=self.instrument,
-        #                                                    Account=self.client, Currency=self.currency,
-        #                                                    OrderQty=self.qty,
-        #                                                    Side=self.side_buy)
-        # response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
-        # self.quote.set_params_for_quote_fwd_ccy2(self.quote_request)
-        # self.fix_verifier.check_fix_message(self.quote)
-        # # endregion
-        # # region Step 4
-        # self.new_order_single.set_default_prev_quoted_ccy2(self.quote_request, response[0])
-        # self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
-        # self.execution_report.set_params_from_new_order_single(self.new_order_single)
-        # self.fix_verifier.check_fix_message(self.execution_report)
+        self.quote_request.set_rfq_params_fwd()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           Instrument=self.instrument,
+                                                           Account=self.client, Currency=self.currency,
+                                                           OrderQty=self.qty,
+                                                           Side=self.side_buy)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_quote_fwd_ccy2(self.quote_request)
+        self.fix_verifier.check_fix_message(self.quote)
+        # endregion
+        # region Step 4
+        self.new_order_single.set_default_prev_quoted_ccy2(self.quote_request, response[0])
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single_ccy2(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
     #
         # region Step 5
@@ -114,12 +114,12 @@ class QAP_T8409(TestCase):
         # region Step 6
         self.new_order_single_2.set_default_prev_quoted_ccy2(self.quote_request_2, response[0])
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single_2)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single_2)
+        self.execution_report.set_params_from_new_order_single_ccy2(self.new_order_single_2)
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
-    #
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.fix_md.set_market_data()
-    #     self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
-    #     self.fix_manager_fh.send_message(self.fix_md)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh.send_message(self.fix_md)
