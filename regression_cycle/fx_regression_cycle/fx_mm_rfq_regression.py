@@ -59,6 +59,9 @@ from test_cases.fx.fx_mm_rfq.QAP_T2389 import QAP_T2389
 from test_cases.fx.fx_mm_rfq.QAP_T2385 import QAP_T2385
 from test_cases.fx.fx_mm_rfq.QAP_T2376 import QAP_T2376
 from test_cases.fx.fx_mm_rfq.QAP_T2939 import QAP_T2939
+from test_cases.fx.fx_mm_rfq.QAP_T8020 import QAP_T8020
+from test_cases.fx.fx_mm_rfq.QAP_T8030 import QAP_T8030
+from test_cases.fx.fx_mm_rfq.QAP_T8031 import QAP_T8031
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_T2589
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2444 import QAP_T2444
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2461 import QAP_T2461
@@ -269,6 +272,11 @@ def test_run(parent_id=None):
         QAP_T2385(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2376(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
+        # region Deposit and Loan
+        QAP_T8020(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8030(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8031(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
     except Exception:
         logging.error("Error execution", exc_info=True)
