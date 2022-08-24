@@ -435,7 +435,17 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                         trade_type: str = None, net_gross_ind: str = None, sec_last_mkt: str = None,
+                         set_other_tab: bool = False, settlement_type: str = None,
+                         settl_currency: str = None, exchange_rate: str = None,
+                         exchange_rate_calc: str = None, agent_fees: str = None,
+                         market_fees: str = None, route_fees: str = None
+
+                         ):
+        other_tab_details = None
+        if set_other_tab:
+            other_tab_details = self.manual_executing_details.add_other_details()
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -451,6 +461,26 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if trade_type and other_tab_details:
+            other_tab_details.set_trade_type(trade_type)
+        if net_gross_ind and other_tab_details:
+            other_tab_details.set_net_gross_ind(net_gross_ind)
+        if sec_last_mkt and other_tab_details:
+            other_tab_details.set_sec_last_mkt(sec_last_mkt)
+        if settlement_type and other_tab_details:
+            other_tab_details.set_settlement_type(settlement_type)
+        if settl_currency and other_tab_details:
+            other_tab_details.set_settl_currency(settl_currency)
+        if exchange_rate and other_tab_details:
+            other_tab_details.set_exchange_rate(exchange_rate)
+        if agent_fees and other_tab_details:
+            other_tab_details.set_agent_fees(agent_fees)
+        if market_fees and other_tab_details:
+            other_tab_details.set_market_fees(market_fees)
+        if route_fees and other_tab_details:
+            other_tab_details.set_route_fees(route_fees)
+        if exchange_rate_calc and other_tab_details:
+            other_tab_details.set_exchange_rate_cacl(exchange_rate_calc)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
@@ -767,7 +797,7 @@ class BaseOrderBook(BaseWindow):
         call(self.click_quick_button_call, self.quick_button_details.build())
         self.clear_details([self.quick_button_details])
 
-    def cancel_by_hotkey(self, row_count: list , filter: dict = None):
+    def cancel_by_hotkey(self, row_count: list, filter: dict = None):
         self.hot_keys_details.set_default_params(self.base_request)
         self.hot_keys_details.set_row_number(row_count)
         if filter is not None:
@@ -776,4 +806,3 @@ class BaseOrderBook(BaseWindow):
         self.hot_keys_details.set_enter_hotkey()
         call(self.hot_keys_action_call, self.hot_keys_details.build())
         self.clear_details([self.hot_keys_details])
-
