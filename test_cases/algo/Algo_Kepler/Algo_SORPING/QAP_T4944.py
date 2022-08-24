@@ -40,6 +40,7 @@ class QAP_T4944(TestCase):
         self.qty_bid = self.qty_ask = 1000000
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_yyy.value
 
         now = datetime.today() - timedelta(hours=3)
         self.ExpireDate=(now + timedelta(days=2)).strftime("%Y%m%d")
@@ -112,7 +113,7 @@ class QAP_T4944(TestCase):
 
         self.SORPING_GTC_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
         self.SORPING_GTC_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_GTC_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ComplianceID='FX5', AlgoOrderStrategy='2146849719'))
+        self.SORPING_GTC_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algopolicy, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ComplianceID='FX5', AlgoOrderStrategy='2146849719'))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_GTC_order, case_id_1)
 
