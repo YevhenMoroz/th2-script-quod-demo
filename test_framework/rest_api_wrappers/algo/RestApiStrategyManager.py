@@ -248,12 +248,12 @@ class RestApiAlgoManager(RestApiManager):
         grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
         strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
 
-        if "algoPolicyPassCriteria" in strategy.keys():
+        if "algoPolicyPassCriteria" in strategy_updated.keys():
             for param in strategy_updated["algoPolicyPassCriteria"]:
                 if param["bestExecCriteria"] in passive_criterias:
                     raise ValueError(f"Passive criteria haven't been removed")
 
-        if "algoPolicyAggrCriteria" in strategy.keys():
+        if "algoPolicyAggrCriteria" in strategy_updated.keys():
             for param in strategy_updated["algoPolicyAggrCriteria"]:
                 if param["bestExecCriteria"] in aggresive_criterias:
                     raise ValueError(f"Aggressive criteria haven't been removed")
