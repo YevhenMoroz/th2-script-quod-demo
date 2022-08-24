@@ -42,6 +42,7 @@ class QAP_T4874(TestCase):
         self.price_bid = 30
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.delay = 2000
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
         # endregion
 
         # region Gateway Side
@@ -84,7 +85,6 @@ class QAP_T4874(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        # TODO add delay in the IOC rule
         rule_manager = RuleManager()
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.qty, self.price_ask, self.delay)
         self.rule_list = [nos_ioc_rule]
@@ -110,9 +110,9 @@ class QAP_T4874(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params_with_default_strategy()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
         # endregion
@@ -148,7 +148,7 @@ class QAP_T4874(TestCase):
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_with_default_strategy_params()
+        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_ask, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
