@@ -71,7 +71,7 @@ class QAP_T8419(TestCase):
             }
         ]
         self.qty = "5000000"
-        self.qty2 = "5800000"
+        self.qty2 = "5906500"
         self.side_sell = "1"
 
     @try_except(test_id=Path(__file__).name[:-3])
