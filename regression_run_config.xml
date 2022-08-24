@@ -5,7 +5,7 @@
     <product_lines>
         <product_line name="algo" run="True">
             <components>
-                <component name="twap" run="True">
+                <component name="Twap" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -13,7 +13,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="wwap" run="True">
+                <component name="Vwap" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -21,7 +21,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="participation" run="True">
+                <component name="Participation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -29,7 +29,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="iceberg" run="True">
+                <component name="Iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -37,7 +37,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="multilisted" run="True">
+                <component name="Multilisted" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -45,15 +45,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="pov" run="True">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod310_columbia_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="peg" run="True">
+                <component name="Peg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -61,7 +53,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="stop" run="True">
+                <component name="Stop" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -69,7 +61,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="lit_dark" run="True">
+                <component name="Lit_dark" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -77,7 +69,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="block" run="True">
+                <component name="Block" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -85,7 +77,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="gating_rules" run="True">
+                <component name="Gating_rules" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -93,7 +85,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="web_admin" run="True">
+                <component name="Web_admin" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -101,7 +93,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="mp_dark" run="True">
+                <component name="Mp_dark" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -112,7 +104,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="synth_min_qty" run="True">
+                <component name="Synth_min_qty" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -120,7 +112,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="lit_dark_iceberg" run="True">
+                <component name="Lit_dark_iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -128,7 +120,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="sorping" run="True">
+                <component name="Sorping" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -136,7 +128,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="multiple_emulation" run="True">
+                <component name="Multiple_emulation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
