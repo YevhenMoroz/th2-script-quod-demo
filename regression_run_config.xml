@@ -136,6 +136,54 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="PreOpen_Auction" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Expity_Auction" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="PreClose_Auction" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Scaling" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="POV_Scaling" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Pair_trading" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
             </components>
         </product_line>
         <product_line name="fx" run="False">
