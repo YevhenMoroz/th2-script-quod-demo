@@ -1,7 +1,7 @@
 import logging
-import logging
 import os
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -51,7 +51,7 @@ class QAP_T7253(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
-        self.remote_path = "/home/quod317/quod/cfg/client_ors.xml"
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -91,19 +91,16 @@ class QAP_T7253(TestCase):
             'Comparing values after Book for block of MiddleOffice')
         # endregion
         # region Setup ORS config
-        try:
-            lines = list(open(self.local_path, 'r'))
-            now = datetime.now(timezone.utc) + timedelta(minutes=1)
-            schedule_time = now.strftime("%H:%M")
-            lines.insert(lines.index("<ors>\n") + 1,
-                         f"<uncomplete><nonforex><scheduled>true</scheduled><zone>UTC</zone><at>{schedule_time}</at></nonforex></uncomplete>\n")
-            with open('temp.xml', 'w', newline='\n') as f:
-                f.writelines(lines)
-            self.ssh_client.put_file(self.remote_path, "temp.xml")
-            self.ssh_client.send_command("qrestart ORS")
-        finally:
-            f.close()
-            os.remove("temp.xml")
+        tree = ET.parse(self.local_path)
+        now = datetime.now(timezone.utc) + timedelta(minutes=1)
+        schedule_time = now.strftime("%H:%M")
+        element = ET.fromstring(f"<uncomplete><nonforex><scheduled>true</scheduled><zone>UTC</zone><at>{schedule_time}</at></nonforex></uncomplete>")
+        ors = tree.getroot().find("ors")
+        ors.append(element)
+        tree.write("temp.xml")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart ORS")
+
         # endregion
         # region Check Order
         time.sleep(60)
@@ -151,3 +148,4 @@ class QAP_T7253(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        os.remove("temp.xml")

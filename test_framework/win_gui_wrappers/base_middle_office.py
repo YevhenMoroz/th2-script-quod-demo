@@ -341,8 +341,10 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def approve_block(self):
-        call(self.approve_block_call, self.view_order_extraction_details.build())
+    def approve_block(self, filter_list: typing.List[str] = None):
+        if filter_list:
+            self.modify_ticket_details.set_filter(filter_list)
+        call(self.approve_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
 
         '''
