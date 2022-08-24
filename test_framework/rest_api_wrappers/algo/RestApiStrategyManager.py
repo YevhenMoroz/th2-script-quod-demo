@@ -175,13 +175,13 @@ class RestApiAlgoManager(RestApiManager):
 
         if "algoPolicyAggrCriteria" in strategy:
             for parameter in strategy["algoPolicyAggrCriteria"]:
-                if parameter["bestExecCriteria"] in passive_criterias:
+                if parameter["bestExecCriteria"] in aggresive_criterias:
                     raise ValueError(f"Aggressive criteria already exist")
-            for criteria in passive_criterias:
+            for criteria in aggresive_criterias:
                 strategy["algoPolicyAggrCriteria"].append(dict(bestExecCriteria=criteria))
         else:
             temp_list = list()
-            for criteria in passive_criterias:
+            for criteria in aggresive_criterias:
                 temp_list.append(dict(bestExecCriteria=criteria))
             strategy["algoPolicyAggrCriteria"] = temp_list
 
@@ -199,9 +199,9 @@ class RestApiAlgoManager(RestApiManager):
         triggered = 0
         if "algoPolicyPassCriteria" in strategy:
             for param in strategy_updated["algoPolicyPassCriteria"]:
-                if param["bestExecCriteria"] in aggresive_criterias:
+                if param["bestExecCriteria"] in passive_criterias:
                     triggered += 1
-            if triggered != len(aggresive_criterias):
+            if triggered != len(passive_criterias):
                 raise ValueError(f"Not all passive criteria have been found at updated strategy")
 
         triggered = 0
