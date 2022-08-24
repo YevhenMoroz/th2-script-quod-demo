@@ -169,6 +169,21 @@ class OrderType(Enum):
     StopLimit = 4
 
 
+class TargetStrategy(Enum):
+    VWAP = '1'
+    Participate = '2'
+    SynthStop = '1001'
+    SynthTIF = '1003'
+    Iceberg = '1004'
+    TWAP = '1005'
+    Multilisted = '1008'
+    SynthPeg = '1009'
+    DarkPool = '1010'
+    LitDark = '1011'
+    SynthBlock = '1019'
+
+
+
 class OrderSide(Enum):
     Buy = 1
     Sell = 2
