@@ -23,7 +23,7 @@ def test_run(parent_id=None):
 
     try:
         report_id = bca.create_event('Algo', parent_id)
-        configuration = ComponentConfiguration("iceberg")
+        configuration = ComponentConfiguration("Iceberg")
         QAP_4612_example(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # QAP_T4917.execute(report_id=report_id)

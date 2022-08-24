@@ -50,7 +50,7 @@ channels = dict()
 def test_run(parent_id= None):
     report_id = bca.create_event('Algo', parent_id)
     try:
-        configuration = ComponentConfiguration("multilisted")
+        configuration = ComponentConfiguration("Multilisted")
         QAP_T4139(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4138(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4137(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

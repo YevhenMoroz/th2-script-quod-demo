@@ -31,7 +31,7 @@ def test_run(parent_id=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region SynthMinQty
-        configuration = ComponentConfiguration("synth_min_qty")
+        configuration = ComponentConfiguration("Synth_min_qty")
         QAP_T4077(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

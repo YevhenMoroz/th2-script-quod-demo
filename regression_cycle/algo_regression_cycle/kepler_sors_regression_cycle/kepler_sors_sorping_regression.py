@@ -60,7 +60,7 @@ def test_run(parent_id=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region SORPING
-        configuration = ComponentConfiguration("sorping")
+        configuration = ComponentConfiguration("Sorping")
         QAP_T4797(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4798(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4799(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

@@ -57,7 +57,7 @@ def test_run(parent_id=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Multiple emulation
-        configuration = ComponentConfiguration("multiple_emulation")
+        configuration = ComponentConfiguration("Multiple_emulation")
         QAP_T4737(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4804(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4805(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
