@@ -1,6 +1,24 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4586 import QAP_T4586
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4589 import QAP_T4589
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4614 import QAP_T4614
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4741 import QAP_T4741
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4742 import QAP_T4742
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4743 import QAP_T4743
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4744 import QAP_T4744
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4745 import QAP_T4745
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4779 import QAP_T4779
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4780 import QAP_T4780
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4784 import QAP_T4784
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4785 import QAP_T4785
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4786 import QAP_T4786
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4789 import QAP_T4789
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4790 import QAP_T4790
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4791 import QAP_T4791
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4792 import QAP_T4792
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4796 import QAP_T4796
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4795 import QAP_T4795
@@ -65,16 +83,58 @@ def test_run(parent_id=None):
         QAP_T4156(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
-        # region MP Dark (LIS + Dark phase)
+        # LIS + DARK
+        # region RFQ
         QAP_T4795(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4746(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Child generation - check tags
         QAP_T4794(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4793(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Full Qty: Restated (qty 700k),   child (qty 1 000k)
         QAP_T4788(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4787(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4783(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Algo cancels orders
         QAP_T4783(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4778(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4746(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Execution (LIS order)
+        QAP_T4796(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Part Execution (Dark order)
+        QAP_T4614(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4589(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Part Execution (LIS order)
+        QAP_T4792(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4790(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4789(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Modification
+        QAP_T4786(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4784(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4785(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4780(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Cancelation
+        QAP_T4779(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4745(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4744(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4743(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4742(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MP Dark (other)
