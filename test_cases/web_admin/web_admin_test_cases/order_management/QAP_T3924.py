@@ -26,9 +26,9 @@ class QAP_T3924(CommonTestCase):
         self.name = "TestSuperStrategy"
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = "Quod LitDark"
-        self.first_parameter = "Allowed Aggressive Venues"
-        self.second_parameter = "Allowed Passive Venues"
-        self.third_parameter = "Initial Dark Allowed Venues"
+        self.first_parameter = "AllowedAggressiveVenues"
+        self.second_parameter = "AllowedPassiveVenues"
+        self.third_parameter = "InitialDarkAllowedVenues"
         self.first_venue = self.data_set.get_venue_by_name("venue_8")
         self.second_venue = self.data_set.get_venue_by_name("venue_9")
         self.third_venue = self.data_set.get_venue_by_name("venue_5")
@@ -129,7 +129,7 @@ class QAP_T3924(CommonTestCase):
                         expected_parameter_and_value_at_lit_passive_block_third,
                         actual_parameter_and_value_at_lit_passive_block_third)
             strategies_wizard.click_on_save_changes()
-            main_menu.set_enabled_at_filter_field("true")
+            time.sleep(2)
             main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             main_menu.click_on_enable_disable_button()

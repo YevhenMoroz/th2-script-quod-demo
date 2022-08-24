@@ -80,7 +80,7 @@ class QAP_T3259(TestCase):
 
         # region Steps 1,2,3,4,5 Check Total Position Qty
         try:
-            total_posit_qty = self.buying_power_manager.calc_total_posit_qty(modified_position[0], 10, test_id)
+            total_posit_qty = self.buying_power_manager.calc_total_posit_qty(self.test_id, modified_position[0], 10)
 
             if int(total_posit_qty) == 0:
                 bca.create_event(f'Total Position Qty == 0', status='SUCCESS', parent_id=self.test_id)

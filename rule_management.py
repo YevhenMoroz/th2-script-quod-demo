@@ -182,12 +182,13 @@ class RuleManager:
                 venue=venue,
                 price=price))
 
-    def add_OrderCancelRequest(self, session: str, account: str, venue: str, cancel: bool):
+    def add_OrderCancelRequest(self, session: str, account: str, venue: str, cancel: bool, delay: int = 0):
         return self.sim.createOrderCancelRequest(
             request=TemplateOrderCancelRequest(connection_id=ConnectionID(session_alias=session),
                                                account=account,
                                                venue=venue,
-                                               cancel=cancel))
+                                               cancel=cancel,
+                                               delay=delay))
 
     def add_OrderCancelRequest_FIXStandard(self, session: str, account: str, venue: str, cancel: bool):
         return self.sim.createOrderCancelRequestFIXStandard(
@@ -263,14 +264,15 @@ class RuleManager:
                                                        trade=trade,
                                                        price=price))
 
-    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float):
+    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleIOC(
             request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
                                             account=account,
                                             venue=venue,
                                             trade=trade,
                                             tradedQty=tradedQty,
-                                            price=price
+                                            price=price,
+                                            delay=delay
                                             ))
 
     def add_NewOrdSingle_IOC_FIXStandard(self, session: str, account: str, venue: str, trade: bool, tradedQty: int,

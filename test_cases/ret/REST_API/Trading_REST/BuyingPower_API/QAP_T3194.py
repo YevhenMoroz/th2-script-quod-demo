@@ -1,6 +1,5 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
@@ -9,6 +8,7 @@ from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormula
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingleSimulate import \
     ApiMessageNewOrderSingleSimulate
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 
 
 class QAP_T3194(TestCase):
@@ -29,14 +29,13 @@ class QAP_T3194(TestCase):
         self.noss_message.set_default_request()
         noss_response_buy = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-        try:
-            net_order_value = self.buying_power_manager.calc_net_order_value(noss_response_buy, side='Buy')
-            verifier(case_id=self.test_id,
-                     event_name="Check Net Order Value with side=Buy",
-                     expected_value=net_order_value,
-                     actual_value=float(noss_response_buy['NetOrdAmt']))
-        except (KeyError, TypeError):
-            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
+
+        net_order_value = self.buying_power_manager.calc_net_order_value(self.test_id, noss_response_buy, side='Buy')
+
+        data_validation(test_id=self.test_id,
+                        event_name="Check Net Order Value with side=Buy",
+                        expected_result=net_order_value,
+                        actual_result=float(noss_response_buy['NetOrdAmt']))
         # endregion
 
         # region Step 3, send submitNewOrderSimulate with side=Sell request and check Net Order Value
@@ -44,12 +43,11 @@ class QAP_T3194(TestCase):
         self.noss_message.change_parameter(parameter_name='Side', new_parameter_value='Sell')
         noss_response_sell = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-        try:
-            net_order_value = self.buying_power_manager.calc_net_order_value(noss_response_sell, side='Sell')
-            verifier(case_id=self.test_id,
-                     event_name="Check Net Order Value with side=Sell",
-                     expected_value=net_order_value,
-                     actual_value=float(noss_response_sell['NetOrdAmt']))
-        except (KeyError, TypeError):
-            bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
+
+        net_order_value = self.buying_power_manager.calc_net_order_value(self.test_id, noss_response_sell,
+                                                                         side='Sell')
+        data_validation(test_id=self.test_id,
+                        event_name="Check Net Order Value with side=Sell",
+                        expected_result=net_order_value,
+                        actual_result=float(noss_response_sell['NetOrdAmt']))
         # endregion

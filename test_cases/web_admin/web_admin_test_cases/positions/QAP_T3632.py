@@ -43,7 +43,7 @@ class QAP_T3632(CommonTestCase):
                 "name": 'QAP5418',
                 "disclose_exec": 'Manual',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
-                "desk": 'QUOD DESK',
+                "desk": 'Quod Desk',
                 "user_manager": 'adm_desk'
             },
             "cash_position": {
@@ -60,7 +60,7 @@ class QAP_T3632(CommonTestCase):
         login_page.login_to_web_admin(self.test_data['adm_user']['login'], self.test_data['adm_user']['password'])
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_users_page()
+        side_menu.open_clients_page()
         time.sleep(2)
         client_page = ClientsPage(self.web_driver_container)
         client_page.set_name(self.test_data['client']['name'])
@@ -72,6 +72,7 @@ class QAP_T3632(CommonTestCase):
             client_values_tab.set_id(self.test_data['client']['id'])
             client_values_tab.set_name(self.test_data['client']['name'])
             client_values_tab.set_ext_id_client(self.test_data['client']['ext_id_client'])
+            client_values_tab.set_disclose_exec(self.test_data['client']['disclose_exec'])
             client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
             client_assignments_tab.set_desk(self.test_data['client']['desk'])
             client_assignments_tab.set_user_manager(self.test_data['client']['user_manager'])
@@ -91,9 +92,11 @@ class QAP_T3632(CommonTestCase):
         cash_positions_wizard.set_venue_cash_account_id(self.test_data['cash_position']['venue_cash_account_id'])
         cash_positions_wizard.set_currency(self.test_data['cash_position']['currency'])
         cash_positions_wizard.set_client(self.test_data['cash_position']['client'])
+        cash_positions_wizard.click_on_save_changes()
         time.sleep(2)
 
         common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         common_act.click_on_user_icon()
         time.sleep(1)
         common_act.click_on_logout()

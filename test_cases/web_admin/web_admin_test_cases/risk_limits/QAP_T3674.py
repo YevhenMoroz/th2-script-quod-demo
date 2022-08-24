@@ -66,6 +66,7 @@ class QAP_T3674(CommonTestCase):
                         main_page.is_searched_cum_trading_limits_found(self.description))
 
             common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_info_error_message_pop_up()
             common_act.click_on_user_icon()
             time.sleep(1)
             common_act.click_on_logout()
