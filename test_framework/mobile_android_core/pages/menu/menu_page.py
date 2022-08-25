@@ -46,7 +46,6 @@ class MenuPage(CommonPage):
     def set_preferred_communication_method(self, method):
 
         if method == "Mobile No":
-            print (self.get_attribute_of_element_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_EMAIL,"clickable"))
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_EMAIL).click()
             self.appium_driver.wait_time(1)
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_SELECTION_MOBILE_NO).click()

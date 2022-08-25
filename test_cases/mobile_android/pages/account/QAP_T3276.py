@@ -33,7 +33,7 @@ class QAP_T3276(CommonTestCase):
         menu_page = MenuPage(self.appium_driver)
 
         login_page.login_to_mobile_trading(self.login, self.password)
-        self.appium_driver.wait_time(1)
+        self.appium_driver.wait_time(5)
         self.verify("Login successful", None, main_page.check_if_element_presented(MainPageConstants.PORTFOLIO_TITLE))
         # endregion
 
@@ -42,6 +42,7 @@ class QAP_T3276(CommonTestCase):
         # Step 1
         main_page.click_on_menu()
         menu_page.click_on_personal_details()
+        self.appium_driver.wait_time(5)
         self.verify("Step 1 - Personal Details is opened", None, menu_page.check_if_element_presented(MenuConstants.PERSONAL_DETAILS_TITLE))
         # endregion
 
@@ -66,7 +67,7 @@ class QAP_T3276(CommonTestCase):
                     menu_page.check_if_element_presented(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_MOBILE_NO))
         self.verify("Step 4 - Mobile No: 123456789", "123456789, Mobile No",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_MOBILE_NO, "text"))
-        self.verify("Step 5 - Email: mail@quodfinancial.com", "mail@quodfinancial.com, Email",
+        self.verify("Step 4 - Email: mail@quodfinancial.com", "mail@quodfinancial.com, Email",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_EMAIL, "text"))
         # endregion
 
