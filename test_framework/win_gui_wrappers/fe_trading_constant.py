@@ -197,6 +197,8 @@ class TradeBookColumns(Enum):
     basis = "Basis"
     amount = "Amount"
     fee_type = "FeeType"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -647,7 +649,10 @@ class ExchangeRateCalc(Enum):
 class Basis(Enum):
     per_unit = 'PerUnit'
     absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
 
 
 class FeeTypeForMiscFeeTab(Enum):
     agent = "Agent"
+    stamp = "Stamp"
