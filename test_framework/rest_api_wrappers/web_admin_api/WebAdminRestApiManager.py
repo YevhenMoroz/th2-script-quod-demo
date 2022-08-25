@@ -3,8 +3,8 @@ import logging
 from google.protobuf.json_format import MessageToDict
 from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiMessages import WebAdminRestApiMessages
-from test_framework.old_wrappers.ret_wrappers import verifier
-from custom.basic_custom_actions import  convert_to_get_request
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
+from custom.basic_custom_actions import convert_to_get_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 
@@ -112,23 +112,22 @@ class WebAdminRestApiManager:
 
         verification_event = bca.create_event(f"Verification Step {step}", test_id)
         try:
-            rule = self.parse_response_details(response,filter_dict={"riskLimitDimensionName": rules_name})
+            rule = self.parse_response_details(response, filter_dict={"riskLimitDimensionName": rules_name})
             for key, value in rule[0].items():
                 if key != "alive" and key != "riskLimitDimensionID" and key != "institutionID":
                     if isinstance(rule[0][key], list):
                         for key_sub_list, value_sub_list in rule[0][key][0].items():
-                            verifier(case_id=verification_event,
-                                     event_name=f"Step {step}. Check that value={value_sub_list} was set for {key_sub_list}",
-                                     expected_value=str(rule_parameters[key][0][key_sub_list]),
-                                     actual_value=rule[0][key][0][key_sub_list])
+                            data_validation(test_id=verification_event,
+                                            event_name=f"Step {step}. Check that value={value_sub_list} was set for {key_sub_list}",
+                                            expected_result=str(rule_parameters[key][0][key_sub_list]),
+                                            actual_result=rule[0][key][0][key_sub_list])
                     else:
-                        verifier(case_id=verification_event,
-                                 event_name=f"Step {step}. Check that value={value} was set for {key}",
-                                 expected_value=str(rule_parameters[key]),
-                                 actual_value=rule[0][key])
+                        data_validation(test_id=verification_event,
+                                        event_name=f"Step {step}. Check that value={value} was set for {key}",
+                                        expected_result=str(rule_parameters[key]),
+                                        actual_result=rule[0][key])
         except (KeyError, TypeError, IndexError):
             bca.create_event(f'Step {step}. Response is empty.', status='FAILED', parent_id=verification_event)
-
 
     def get_response_details(self, response, response_name, expected_entity_name, entity_field_id):
         """
