@@ -13,17 +13,18 @@ def test_run(parent_id=None):
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
+        version = root.find(".//version").text
 
         if eval(root.find(".//component[@name='Twap']").attrib["run"]):
-            twap_regression.test_run(report_id)
+            twap_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
             pass
         if eval(root.find(".//component[@name='Parcitipation']").attrib["run"]):
-            participation_regression.test_run(report_id)
+            participation_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Iceberg']").attrib["run"]):
-            iceberg_regression.test_run(parent_id=report_id)
+            iceberg_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Multilisted']").attrib["run"]):
-            multilisted_regression.test_run(report_id)
+            multilisted_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Peg']").attrib["run"]):
             pass
         if eval(root.find(".//component[@name='Stop']").attrib["run"]):
@@ -37,15 +38,15 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='Web_admin']").attrib["run"]):
             pass
         if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
-            kepler_sors_mpdark_regression.test_run(report_id)
+            kepler_sors_mpdark_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Synth_min_qty']").attrib["run"]):
-            kepler_sors_synthminqty_regression.test_run(report_id)
+            kepler_sors_synthminqty_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
-            kepler_sors_iceberg_regression.test_run(report_id)
+            kepler_sors_iceberg_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
-            kepler_sors_sorping_regression.test_run(report_id)
+            kepler_sors_sorping_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Multiple_emulation']").attrib["run"]):
-            kepler_sors_multiple_emulation_regression.test_run(report_id)
+            kepler_sors_multiple_emulation_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='PreOpen_Auction']").attrib["run"]):
             pass
         if eval(root.find(".//component[@name='Expity_Auction']").attrib["run"]):

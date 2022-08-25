@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-<!--  set_name must be like that 5.1.149.162|Regression|-->
-    <name>set_name</name>
+    <name>Regression</name>
+    <version>5.1.156.169</version>
     <product_lines>
         <product_line name="algo" run="True">
             <components>

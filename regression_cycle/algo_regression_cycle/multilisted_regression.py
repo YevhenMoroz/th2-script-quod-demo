@@ -47,8 +47,9 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def test_run(parent_id= None):
-    report_id = bca.create_event('Algo', parent_id)
+
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"Multilisted" if version is None else f"Multilisted | {version}", parent_id)
     try:
         configuration = ComponentConfiguration("Multilisted")
         QAP_T4139(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
