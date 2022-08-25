@@ -33,4 +33,5 @@ PyPDF2
 webdriver_manager
 datetimerange
 
+Appium-Python-Client==2.2.0
 
