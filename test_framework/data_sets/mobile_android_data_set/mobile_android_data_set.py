@@ -14,4 +14,3 @@ class MobileDataSet(BaseDataSet):
     instrument = MobileInstrument
     order_type = MobileOrderType
     time_in_force = MobileTimeInForce
-    # index = MobileIndex

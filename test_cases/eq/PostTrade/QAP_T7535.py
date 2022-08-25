@@ -1,201 +1,106 @@
 import logging
 import time
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from rule_management import RuleManager
-from stubs import Stubs
-from test_framework.old_wrappers import eq_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
+    MiddleOfficeColumns, ExchangeRateCalc
+from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7535"
-    case_id = create_event(case_name, report_id)
-    # region Declarations
-    qty = "900"
-    price = "40"
-    client = "MOClient"
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_T7535(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.client = self.data_set.get_client_by_name('client_pt_1')
+        self.all_acc = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        self.currency = self.data_set.get_currency_by_name('currency_5')
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('Account', self.client)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.allocation_message = FixMessageAllocationInstructionReportOMS()
+        self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
+        self.rule_manager = RuleManager(Simulators.equity)
 
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    #  endregion
-    #  region Create CO
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', "XPAR", float(price))
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportTrade(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + '_PARIS', 'XPAR', float(price), int(qty),
-            1)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 1, price)
-        time.sleep(1)
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        response = fix_message.pop('response')
-        rule_manager.remove_rule(nos_rule)
-        rule_manager.remove_rule(nos_rule2)
-    # endregion
-    # region verify order
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled', False)
-    eq_wrappers.verify_order_value(base_request, case_id, 'PostTradeStatus', 'ReadyToBook', False)
-    #  endregion
-    #  region Book
-    response_book = eq_wrappers.book_order(base_request, client, price, settlement_currency='UAH', exchange_rate='2',
-                                           exchange_rate_calc='Multiple', toggle_recompute=True)
-    # endregion
-    # region Verify
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'RootSettlCurrFxRateCalc': 'M',
-        'AvgPx': response_book['book.agreedPrice'].replace(',', ''),
-        'Side': '*',
-        'Currency': 'UAH',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'RootSettlCurrFxRateCalc': 'M',
-        'LastMkt': '*',
-        # 'SettlType': 0,
-        'GrossTradeAmt': response_book['book.grossAmount'].replace(',', ''),
-        'NoRootMiscFeesList': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': response_book['book.netAmount'].replace(',', ''),
-        'BookingType': '*',
-        'AllocType': '*',
-        'RootSettlCurrency': 'UAH',
-        'RootSettlCurrAmt': response_book['book.netAmount'].replace(',', ''),
-        'RootSettlCurrFxRate': 2,
-        'RootOrClientCommission': '*',
-        'AllocTransType': '0',
-        'ReportedPx': '*',
-        'RootOrClientCommissionCurrency': '*',
-        'RootCommTypeClCommBasis': '*'
-
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocTransType'])
-    # endregion
-    # region aprrove block
-    eq_wrappers.approve_block(base_request)
-    # endregion
-    # region Verify
-    param = [{"Security Account": "MOClientSA1", "Alloc Qty": qty}]
-    responce_allocation = eq_wrappers.allocate_order(base_request, param)
-    params = {
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'AllocQty': 900,
-        'AllocAccount': '*',
-        'ConfirmType': 2,
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'MatchStatus': '*',
-        'ConfirmStatus': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'ReportedPx': '*',
-        'CpctyConfGrp': '*',
-        'ConfirmTransType': '*',
-        'CommissionData': '*',
-        'NoMiscFees': '*',
-        'ConfirmID': '*',
-        'SettlCurrFxRate': '2',
-        'SettlCurrFxRateCalc': 'M',
-        'SettlCurrency': 'UAH',
-        'SettlCurrAmt': "*"
-    }
-    fix_verifier_ss.CheckConfirmation(params, response, ['NoOrders'])
-
-    params = {
-        'Quantity': qty,
-        'TradeDate': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'Side': '*',
-        'Currency': '*',
-        'NoParty': '*',
-        'Instrument': '*',
-        'header': '*',
-        'SettlDate': '*',
-        'LastMkt': '*',
-        'GrossTradeAmt': '*',
-        'QuodTradeQualifier': '*',
-        'NoOrders': [
-            {'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-             'OrderID': '*'}
-        ],
-        'AllocID': '*',
-        'NetMoney': '*',
-        'BookingType': '*',
-        'AllocType': '2',
-        'RootSettlCurrAmt': '*',
-        'AllocTransType': '0',
-        'RootSettlCurrFxRateCalc': 'M',
-
-        'ReportedPx': '*',
-        'NoAllocs': [
-            {
-                'AllocNetPrice': '*',
-                'AllocAccount': 'MOClientSA1',
-                'AllocPrice': str(int(float(price) * 2)),
-                'AllocQty': qty,
-                'AllocSettlCurrAmt': str(int(float(responce_allocation['book.netAmount'].replace(',', '')) * 2)),
-                'AllocSettlCurrency': 'UAH',
-                'SettlCurrAmt': str(int(float(responce_allocation['book.netAmount'].replace(',', '')) * 2)),
-                'SettlCurrFxRate': '2',
-                'SettlCurrency': 'UAH',
-                'ComissionData': {
-                    'CommissionType': '*',
-                    'Commission': '*',
-                    'CommCurrency': '*'
-                },
-                'SettlCurrFxRateCalc': 'M',
-                'NoMiscFees': [
-                    {
-                        'MiscFeeAmt': '*',
-                        'MiscFeeCurr': '*',
-                        'MiscFeeType': '*',
-                    }
-                ]
-            }
-        ],
-        'RootSettlCurrency': 'UAH',
-        'RootSettlCurrFxRate': '2',
-        'RootSettlCurrFxRateCalc': 'M'
-    }
-    fix_verifier_ss.CheckAllocationInstruction(params, response, ['NoOrders', 'AllocType'])
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create order
+        order_id = None
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.client_for_rule,
+                                                                                                  self.exec_destination,
+                                                                                                  float(self.price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.client_for_rule,
+                                                                                            self.exec_destination,
+                                                                                            float(self.price),
+                                                                                            int(self.qty),
+                                                                                            delay=0)
+            # endregion
+            # region create order
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            order_id = response[0].get_parameter("OrderID")
+        except Exception:
+            logger.setLevel(logging.DEBUG)
+            logging.debug('RULE WORK CORRECTLY. (: NOT :)')
+        finally:
+            time.sleep(10)
+            self.rule_manager.remove_rule(trade_rule)
+            self.rule_manager.remove_rule(nos_rule)
+        #  endregion
+        # region book order
+        self.mid_office.set_modify_ticket_details(toggle_recompute=True, settl_currency=self.currency,
+                                                  exchange_rate='2', exchange_rate_calc=ExchangeRateCalc.multiple.value)
+        self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
+        #  endregion
+        # region check Alloc Report
+        self.allocation_message.set_default_ready_to_book(self.fix_message)
+        self.allocation_message.change_parameters(
+            {'AvgPx': str(int(self.price) * 2), 'Currency': self.currency, 'RootSettlCurrency': self.currency,
+             "RootSettlCurrAmt": str(int(self.price) * 2 * int(self.qty)),
+             'tag5120': "*", "GrossTradeAmt": str(int(self.price) * 2 * int(self.qty)),
+             'NetMoney': str(int(self.price) * 2 * int(self.qty))})
+        self.fix_verifier.check_fix_message_fix_standard(self.allocation_message)
+        #  endregion
+        # region approve and allocate
+        self.mid_office.approve_block()
+        param = [{"Security Account": self.all_acc, "Alloc Qty": self.qty}]
+        self.mid_office.set_modify_ticket_details(is_alloc_amend=True, arr_allocation_param=param)
+        self.mid_office.allocate_block([MiddleOfficeColumns.order_id.value, order_id])
+        #  endregion
+        # region check confirmation report
+        conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
+            self.fix_message)
+        conf_report.change_parameters(
+            {'AvgPx': str(int(self.price) * 2), 'Currency': self.currency, "tag5120": "*",
+             "GrossTradeAmt": str(int(self.price) * 2 * int(self.qty)),
+             "NetMoney": str(int(self.price) * 2 * int(self.qty)),
+             "SettlCurrAmt": str(int(self.price) * 2 * int(self.qty) * 2), "SettlCurrency": self.currency,
+              "Account": self.client, "AllocInstructionMiscBlock2": '*', "AllocNetPrice": str(int(self.price) * 2)})
+        self.fix_verifier.check_fix_message_fix_standard(conf_report)
+        #  endregion

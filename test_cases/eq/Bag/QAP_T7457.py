@@ -23,6 +23,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7457(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -39,7 +40,7 @@ class QAP_T7457(TestCase):
         self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
         self.rule_manager = RuleManager(Simulators.equity)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '3668'

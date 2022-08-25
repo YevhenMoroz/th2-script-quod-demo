@@ -1,17 +1,14 @@
 import logging
-import time
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns, AllocationsColumns, ExecSts, SecondLevelTabs, TradeBookColumns
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, TradeBookColumns, \
+    SecondLevelTabs, MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
@@ -21,6 +18,7 @@ from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7299(TestCase):
@@ -34,7 +32,7 @@ class QAP_T7299(TestCase):
         self.client_acc = self.data_set.get_account_by_name("client_fees_1_acc_1")
         self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
         self.fix_message.change_parameters({'Account': self.client})
@@ -44,9 +42,14 @@ class QAP_T7299(TestCase):
         self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
         self.trade_book = OMSTradesBook(self.case_id, self.session_id)
         self.booking_win = OMSBookingWindow(self.case_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region send commission
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.send_default_fee()
         # endregion
         # region send order
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
@@ -59,18 +62,13 @@ class QAP_T7299(TestCase):
         # endregion
         # region complete and book order
         self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
-        self.__check_2_lvl_trades_details(order_id, '10', TradeBookColumns.rate.value, TradeBookColumns.mics_tab.value)
+        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.rate.value], [SecondLevelTabs.executions.value,
+                                                                                      TradeBookColumns.misc_tab.value],
+                                                      {OrderBookColumns.order_id.value: order_id})
+        self.order_book.compare_values({TradeBookColumns.rate.value: "1"}, rate, "Compare Rate")
+
         self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
-        self.__check_booked_order('Root Misc Fees')
+        total_fee = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value,
+                                                        [MiddleOfficeColumns.order_id.value, order_id])
+        self.mid_office.compare_values({MiddleOfficeColumns.total_fees.value: "1"}, total_fee, "Compare total fee")
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __check_2_lvl_trades_details(self, order_id:str,expected:str, column_name:str, tab:str):
-        act_value = self.trade_book.extract_sub_lvl_fields([column_name], tab, 1, filter={TradeBookColumns.order_id.value: order_id})
-        print(act_value)
-        self.trade_book.compare_values({column_name: expected}, act_value, "Check Executions field")
-
-    def __check_booked_order(self, tab_name):
-        act_res = self.booking_win.extract_from_second_level_tab(tab_name)
-        print(act_res)
-

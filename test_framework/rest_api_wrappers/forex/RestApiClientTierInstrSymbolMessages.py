@@ -117,11 +117,12 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         for tenor in tenors:
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
             tenor["clientTierInstrSymbolTenorQty"].append({
                 "upperQty": str(sweepable_qty),
                 "MDQuoteType": "TRD",
                 "activeQuote": "true",
-                "indiceUpperQty": str(int(len(tenors)) + int(1)),
+                "indiceUpperQty": indiceUpperQty,
                 'defaultBidMargin': 0 if default_bid_margin is None else str(default_bid_margin),
                 'defaultOfferMargin': 0 if default_offer_margin is None else str(default_offer_margin),
                 'parentIndiceUpperQty': parent_indice_upper_qty,
@@ -130,6 +131,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             })
             tenor.update({'lastUpdateTime': timestamp})
         self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
+        return self
 
     def set_sweepable_qty(self, sweepable_qty_list: list, default_bid_margin=None, default_offer_margin=None):
         timestamp = str(datetime.now().timestamp())
@@ -187,3 +189,52 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             tenor.update({'lastUpdateTime': timestamp})
         self.update_parameters({'clientTierInstrSymbolQty': qty_list, 'clientTierInstrSymbolTenor': tenors})
         return self
+
+    def remove_all_qty(self):
+        self.remove_parameter('clientTierInstrSymbolQty')
+        self.remove_field_from_component('clientTierInstrSymbolTenor', "clientTierInstrSymbolTenorQty")
+        return self
+
+    def set_published_false(self, bands_to_update: list = None):
+        sweepable = self.get_parameter('clientTierInstrSymbolQty')
+        tenors = self.get_parameter('clientTierInstrSymbolTenor')
+        if bands_to_update is not None:
+            for band in sweepable:
+                if band["upperQty"] in bands_to_update:
+                    band.update({"publishPrices": "false"})
+            for tenor in tenors:
+                for band in tenor['clientTierInstrSymbolTenorQty']:
+                    if band["upperQty"] in bands_to_update:
+                        band.update({"publishPrices": "false"})
+        else:
+            for band in sweepable:
+                band.update({"publishPrices": "false"})
+            for tenor in tenors:
+                for band in tenor['clientTierInstrSymbolTenorQty']:
+                    band.update({"publishPrices": "false"})
+        self.update_parameters({'clientTierInstrSymbolQty': sweepable, 'clientTierInstrSymbolTenor': tenors})
+        return self
+
+
+    def add_tenor_qty(self, qty, default_bid_margin=None, default_offer_margin=None):
+        tenors = self.get_parameter('clientTierInstrSymbolTenor')
+        timestamp = str(datetime.now().timestamp())
+        timestamp = timestamp.split(".", 1)
+        timestamp = timestamp[0]
+        for tenor in tenors:
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
+            tenor["clientTierInstrSymbolTenorQty"].append({
+                "upperQty": str(qty),
+                "MDQuoteType": "TRD",
+                "activeQuote": "true",
+                "indiceUpperQty": indiceUpperQty,
+                'defaultBidMargin': 0 if default_bid_margin is None else str(default_bid_margin),
+                'defaultOfferMargin': 0 if default_offer_margin is None else str(default_offer_margin),
+                'editableQty': 'true',
+                'publishPrices': 'true'
+            })
+            tenor.update({'lastUpdateTime': timestamp})
+        self.update_parameters({'clientTierInstrSymbolTenor': tenors})
+        return self
+
+

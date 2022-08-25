@@ -14,11 +14,11 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     # region SINGLE
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status = Status.Fill):
+                                         status: Status = Status.Fill, text: str = None):
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
         elif status is Status.Reject:
-            self.__set_reject_sell(new_order_single)
+            self.__set_reject_sell(new_order_single, text)
         else:
             raise Exception('Incorrect Status')
         return self
@@ -32,7 +32,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         return self
 
     def set_params_from_new_order_single_ccy2(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status = Status.Fill):
+                                              status: Status = Status.Fill):
         if status is Status.Fill:
             self.__set_fill_sell_ccy2(new_order_single)
         else:
@@ -91,7 +91,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             super().add_tag({"LastForwardPoints": "*"})
         return self
 
-    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None, text: str = None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
@@ -99,25 +99,27 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             HandlInst="1",
             LastQty="0",
             OrderQty=new_order_single.get_parameter("OrderQty"),
-            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
+            # SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
-            SettlType=new_order_single.get_parameter("SettlType"),
+            # SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
-            LastMkt="*",
+            Account="*",
+            # LastMkt="*",
             OrdStatus="8",
             TransactTime="*",
-            ExecRestatementReason="*",
+            # ExecRestatementReason="*",
             AvgPx="*",
             ExecID="*",
             LastPx="*",
+            OrdRejReason="99",
             OrderID="*",
             OrderCapacity="A",
             SettlDate="*",
             ExecType="8",
             LeavesQty="0",
-            Text="*",
+            Text=text if text is not None else "*",
             QtyType="0",
             Instrument=new_order_single.get_parameter("Instrument"),
             NoParty="*"
@@ -248,6 +250,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
     def set_params_from_new_order_swap_ccy2(self, new_order_single: FixMessageNewOrderMultiLegFX):
         self.prepare_swap_ccy2_exec_report(new_order_single)
+        if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[0].pop("LegLastForwardPoints")
+        elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0":
+            self.get_parameter("NoLegs")[1].pop("LegLastForwardPoints")
         return self
 
     def set_params_from_new_order_swap_ndf(self, new_order_single: FixMessageNewOrderMultiLegFX):
@@ -385,7 +391,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  )
         ]
         temp = dict(
-            Account=new_order_single.get_parameter('Account'),
+            Account="*",
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
             CumQty=new_order_single.get_parameter('OrderQty'),
             Currency=new_order_single.get_parameter('Currency'),

@@ -1239,3 +1239,33 @@ class QuickButtonCreationDetails:
     def build(self):
         return self._request
 
+
+class ActionsHotKeysDetails:
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self.request = order_book_pb2.ActionWithOrdersViaHotKeysDetails(base=base_request)
+        else:
+            self.request = order_book_pb2.ActionWithOrdersViaHotKeysDetails()
+
+    def set_default_params(self, base_request):
+        self.request.base.CopyFrom(base_request)
+
+
+    def set_row_number(self, rows_numbers: list):
+        for row in rows_numbers:
+            self.request.rowNumbers.append(row)
+
+    def set_filter(self, filter_dict: dict):
+        self.request.filter.update(filter_dict)
+
+    def set_cancel_hotkey(self):
+        self.request.hotkeys.append(order_book_pb2.ActionWithOrdersViaHotKeysDetails.HotKeys.DEL)
+
+    def set_enter_hotkey(self):
+        self.request.hotkeys.append(order_book_pb2.ActionWithOrdersViaHotKeysDetails.HotKeys.ENTER)
+
+    def build(self):
+        return self.request
+
+
+

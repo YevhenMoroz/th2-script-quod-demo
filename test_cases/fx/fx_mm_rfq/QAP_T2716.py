@@ -19,8 +19,10 @@ class QAP_T2716(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
         self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
@@ -52,5 +54,5 @@ class QAP_T2716(TestCase):
         # endregion
         # region Step 3
         self.execution_report.set_params_from_new_order_single(self.new_order_single)
-        self.fix_verifier.check_fix_message(self.execution_report)
+        self.fix_verifier_dc.check_fix_message(self.execution_report, key_parameters=['ClientQuoteID', 'OrdStatus'])
         # endregion

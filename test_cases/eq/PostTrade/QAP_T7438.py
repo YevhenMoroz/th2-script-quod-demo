@@ -32,7 +32,6 @@ class QAP_T7438(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
