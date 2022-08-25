@@ -655,6 +655,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'Currency': 'EUR',
             'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_ME_Y',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
