@@ -236,7 +236,7 @@ class QAP_T2528(TestCase):
         self.fix_verifier.check_fix_message_sequence(
             [self.quote,self.quote_1, self.quote_4],
             key_parameters_list=[key_params, key_params, key_params],
-            pre_filter=prefilter, message_name="Check 4 Quotes")
+            pre_filter=prefilter, message_name="Check 3 Quotes")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
