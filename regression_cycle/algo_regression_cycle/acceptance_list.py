@@ -39,7 +39,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     pc_name = get_pc_name()  # getting PC name
-    full_ver = '5.1.161.174' # site version
+    full_ver = '5.1.163.176' # site version
     ver = full_ver[-3:]
     report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver, report_id_main)
