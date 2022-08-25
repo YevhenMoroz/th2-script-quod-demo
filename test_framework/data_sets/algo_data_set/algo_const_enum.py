@@ -183,6 +183,8 @@ class AlgoAccounts(Enum):
     account_10 = "TQDARK_KEPLER"
     account_11 = "TRQX_KEPLER"
     account_12 = "BATS_KEPLER"
+    account_13 = "CHIX_KEPLER"
+    account_14 = "XAMS_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -232,6 +234,7 @@ class AlgoMic(Enum):
     mic_28 = "QDL11"  # QUODLIT11
     mic_29 = "QDL12"  # QUODLIT12
     mic_30 = "CHIX"   # CHIX
+    mic_31 = "XAMS"   # Euronext Amsterdam
 
 
 class AlgoListingId(Enum):
@@ -264,6 +267,8 @@ class AlgoListingId(Enum):
     listing_27 = "1225020507"    # QUODLIT11 for QUODTESTQA05
     listing_28 = "1225020508"    # QUODLIT12 for QUODTESTQA05
     listing_29 = "1803729"       # Euronext Paris for FR0000121329
+    listing_30 = "1325020507"    # Euronext Amsterdam for IE00B5BMR087
+    listing_31 = "1863318"       # CHIX for IE00B5BMR087
 
 
 class AlgoCurrency(Enum):
