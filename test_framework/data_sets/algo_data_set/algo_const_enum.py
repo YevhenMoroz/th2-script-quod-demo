@@ -146,6 +146,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_19 = dict(
+        Symbol='IE00B5BMR087',
+        SecurityID='IE00B5BMR087',
+        SecurityIDSource='4',
+        SecurityExchange='XAMS',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
