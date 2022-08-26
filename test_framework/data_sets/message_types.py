@@ -68,3 +68,7 @@ class ResAPIMessageType(Enum):
     CreateVenue = "CreateVenue"
     ModifyVenue = "ModifyVenue"
     FindAllVenue = "FindAllVenue"
+    CreateOrderVelocity = "CreateOrderVelocityLimit"
+    FindAllOrderVelocity = "FindAllOrderVelocityLimit"
+    DeleteOrderVelocity = "DeleteOrderVelocityLimit"
+    ModifyOrderVelocity = "ModifyOrderVelocityLimit"
