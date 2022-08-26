@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4873(TestCase):
@@ -30,6 +31,7 @@ class QAP_T4873(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.read_log_verifier = ReadLogVerifier("log319-updating-status", self.test_id)
         # endregion
 
         # region order parameters
@@ -54,6 +56,7 @@ class QAP_T4873(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.execution_report = constants.CompareMessage.execution_report_open_to_cancel.value
         # endregion
 
         # region instrument
@@ -77,7 +80,10 @@ class QAP_T4873(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        self.key_params_read_log = ['OldStatus', 'NewStatus']
         # endregion
+
+        self.timeout_for_read_log = 60000
 
         self.rule_list = []
 
@@ -156,6 +162,12 @@ class QAP_T4873(TestCase):
         # region check cancel first dma child order
         er_cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        # endregion
+
+        # region check cancel SynthTimeInForce algo child
+        time.sleep(20)
+        self.read_log_verifier.check_read_log_message(self.execution_report, self.key_params_read_log, timeout=self.timeout_for_read_log)
+        # TODO add check message sequence for readlog (execution report x 3)
 
         er_cancel_SORPING_GTC_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_GTC_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_GTC_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
