@@ -183,10 +183,18 @@ class TargetStrategy(Enum):
     SynthBlock = '1019'
 
 
-
 class OrderSide(Enum):
     Buy = 1
     Sell = 2
+
+
+class CompareMessage(Enum):
+    execution_report_open_to_cancel = dict(
+        OrderId="*",
+        OldStatus="Open",
+        NewStatus="Cancel"
+        )
+
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
