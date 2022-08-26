@@ -17,7 +17,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -507,6 +507,17 @@ class RuleManager:
         )
 
         # ------------------------
+
+    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int, reply_delay: int = 0):
+        return self.sim.createNewOrdSingleRQFRejected(
+            request=TemplateNewOrdSingleRQFRejected(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=ex_destination,
+                orderQty=order_qty,
+                reply_delay=reply_delay
+            )
+        )
 
 
 if __name__ == '__main__':
