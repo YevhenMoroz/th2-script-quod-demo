@@ -30,6 +30,7 @@ from test_cases.fx.fx_mm_rfq.QAP_T2979 import QAP_T2979
 from test_cases.fx.fx_mm_rfq.QAP_T2978 import QAP_T2978
 from test_cases.fx.fx_mm_rfq.QAP_T2977 import QAP_T2977
 from test_cases.fx.fx_mm_rfq.QAP_T2974 import QAP_T2974
+from test_cases.fx.fx_mm_rfq.QAP_T7967 import QAP_T7967
 from test_cases.fx.fx_mm_rfq.QAP_T7981 import QAP_T7981
 from test_cases.fx.fx_mm_rfq.QAP_T2970 import QAP_T2970
 from test_cases.fx.fx_mm_rfq.QAP_T2963 import QAP_T2963
@@ -287,6 +288,7 @@ def test_run(parent_id=None):
         QAP_T8168(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8409(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8419(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7967(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
         # region Deposit and Loan
