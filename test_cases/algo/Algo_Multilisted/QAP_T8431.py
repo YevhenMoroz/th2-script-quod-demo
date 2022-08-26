@@ -33,10 +33,10 @@ class QAP_T8431(TestCase):
 
         # region order parameters
         self.qty = 100
-        self.price = 15.5
+        self.price = 45
         self.traded_qty = 0
-        self.price_ask_trqx = 20
-        self.price_ask_paris = 15
+        self.price_ask_trqx = 50
+        self.price_ask_paris = 40
         self.price_bid = 14.95
         self.qty_ask_trqx = 100
         self.qty_ask_paris = 100
@@ -162,8 +162,8 @@ class QAP_T8431(TestCase):
         # endregion
 
         # region Check Eliminate Multilisted algo order
-        cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
-        self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
+        er_eliminate_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        self.fix_verifier_sell.check_fix_message(er_eliminate_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
