@@ -17,7 +17,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -189,6 +189,15 @@ class RuleManager:
                                                venue=venue,
                                                cancel=cancel,
                                                delay=delay))
+
+    def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int, delay: int = 0):
+        return self.sim.createOrderCancelRequestWithQty(
+            request=TemplateOrderCancelRequestWithQty(connection_id=ConnectionID(session_alias=session),
+                                                      account=account,
+                                                      venue=venue,
+                                                      cancel=cancel,
+                                                      qty=qty,
+                                                      delay=delay))
 
     def add_OrderCancelRequest_FIXStandard(self, session: str, account: str, venue: str, cancel: bool):
         return self.sim.createOrderCancelRequestFIXStandard(
