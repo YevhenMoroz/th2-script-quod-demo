@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8433 import QAP_T8433
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8215 import QAP_T8215
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8205 import QAP_T8205
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3971 import QAP_T3971
@@ -27,6 +28,9 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3812 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3811 import QAP_T3811
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3810 import QAP_T3810
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3805 import QAP_T3805
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3762 import QAP_T3762
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3733 import QAP_T3733
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3724 import QAP_T3724
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3714 import QAP_T3714
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3713 import QAP_T3713
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3682 import QAP_T3682
@@ -49,6 +53,9 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3490 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3407 import QAP_T3407
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3357 import QAP_T3357
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3356 import QAP_T3356
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3349 import QAP_T3349
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3348 import QAP_T3348
+
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
@@ -113,6 +120,12 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T3805(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3762(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3733(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3724(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3714(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3713(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -157,9 +170,15 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T3356(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3349(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3348(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T8205(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8215(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8433(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

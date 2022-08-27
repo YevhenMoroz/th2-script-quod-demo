@@ -40,6 +40,9 @@ class ClientsValuesSubWizard(CommonPage):
     def set_disclose_exec(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, value)
 
+    def clear_disclose_exec(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, "")
+
     def get_disclose_exec(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH)
 

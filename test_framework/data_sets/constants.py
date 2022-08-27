@@ -182,5 +182,5 @@ class WebBrowser(Enum):
     firefox = "firefox"
 
 class WebTradingURL(Enum):
-    luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
-    kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"
+    luna_315 = "http://10.0.22.38:6680/trd/qakharkiv315Trading/#/signin"
+    kuiper_320 = "http://10.0.22.38:6780/trd/qakharkiv320Trading/#/signin"

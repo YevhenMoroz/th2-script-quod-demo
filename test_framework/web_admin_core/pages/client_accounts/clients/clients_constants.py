@@ -160,7 +160,7 @@ class ClientsConstants:
     VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     VENUES_TAB_VENUE_XPATH = '//*[@placeholder="Venue *"]'
-    VENUES_TAB_VENUE_FILTER_XPATH = '//*[@class="ng2-smart-th venue ng-star-inserted"]//input'
+    VENUES_TAB_VENUE_FILTER_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//tr[2]//th[2]//input'
     VENUES_TAB_VENUE_CLIENT_NAME_XPATH = '//*[@placeholder="Venue Client Name *"]'
     VENUES_TAB_VENUE_CLIENT_NAME_FILTER_XPATH = '//nb-accordion-item//*[text()=" Venues "]/following-sibling::nb-accordion-item-body//thead//tr[2]//th[2]//input'
     VENUES_TAB_VENUE_CLIENT_ACCOUNT_GROUP_NAME_XPATH = '//*[@placeholder="Venue Client AccountGroup Name"]'
@@ -175,9 +175,9 @@ class ClientsConstants:
     VENUES_TAB_MAX_COMMISSION_VALUE_FILTER_XPATH = '//*[@class="maxCommissionValue ng2-smart-th ng-star-inserted"]//input'
     VENUES_TAB_PRICE_PRECISION_XPATH = '//*[@placeholder="Max Commission Value"]'
     VENUES_TAB_PRICE_PRECISION_FILTER_XPATH = '//*[@class="ng2-smart-th pxPrecision ng-star-inserted"]//input'
-    VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[10]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
-    VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[11]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
-    VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[12]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
+    VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[10]//nb-checkbox'
+    VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[11]//nb-checkbox'
+    VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[12]//nb-checkbox'
     VENUES_TAB_SAVED_VENUE_XPATH = "//nb-accordion-item//*[text()=' Venues ']/following-sibling::nb-accordion-item-body//tbody//td[2]"
 
     # Routes tab

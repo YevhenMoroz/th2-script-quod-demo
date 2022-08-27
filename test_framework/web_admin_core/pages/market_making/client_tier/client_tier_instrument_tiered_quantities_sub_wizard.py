@@ -28,7 +28,7 @@ class ClientTiersInstrumentTieredQuantitiesSubWizard(CommonPage):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_DELETE_BUTTON_XPATH).click()
 
-    def set_quantity(self, value: int):
+    def set_quantity(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH,
                                str(value))
 

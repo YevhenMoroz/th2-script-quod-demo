@@ -40,6 +40,9 @@ from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3795 import QA
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3710 import QAP_T3710
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3575 import QAP_T3575
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3524 import QAP_T3524
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3354 import QAP_T3354
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3355 import QAP_T3355
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3334 import QAP_T3334
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -132,6 +135,12 @@ class RunMarketMaking:
             QAP_T3575(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3524(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3354(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3355(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3334(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
