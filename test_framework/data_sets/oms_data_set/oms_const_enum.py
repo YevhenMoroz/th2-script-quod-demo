@@ -83,6 +83,7 @@ class OmsClients(Enum):
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     client_pt_8 = "MOClient7"
     client_pt_9 = "MOClient_9"
+    client_pt_10 = "MOClient10" # CS Manual Fully auto
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -112,6 +113,7 @@ class OmsVenueClientNames(Enum):
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
+    client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""
@@ -147,6 +149,7 @@ class OmsAccounts(Enum):
     client_pt_6_acc_2 = "MOClient6_SA2"
     client_pt_7_acc_1 = "MOClient7_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
+    client_pt_10_acc_1 = "MOClient10_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Commissions"""
@@ -291,6 +294,7 @@ class OmsQtyTypes(Enum):
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+    pset_3 = ('CREST', "EUREX_EQU_DEU_MOClient_BIC")
 
 
 class OMSCommissionAndFeeBasis(Enum):

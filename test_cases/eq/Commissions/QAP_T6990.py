@@ -45,7 +45,6 @@ class QAP_T6990(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.currency = self.data_set.get_currency_by_name('currency_3')
         self.currency_post_trade = self.data_set.get_currency_by_name('currency_2')
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_pt_10')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_10_acc_1')
