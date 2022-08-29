@@ -156,6 +156,9 @@ class RetCashTransferTypes(Enum):
     )
 
 
-class DirectionEnum(Enum):
-    FromQuod = "FIRST"
-    ToQuod = "SECOND"
+class RetFee:
+    fees_1 = 5
+
+
+class RetCommission:
+    commission_1 = 3

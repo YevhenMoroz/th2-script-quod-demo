@@ -225,12 +225,12 @@ class RetFormulasManager:
             bca.create_event(f'Failed to get cache component values', status='FAILED', parent_id=test_id)
             logging.error("Error parsing", exc_info=True)
 
-    def calc_booked_amount(self, test_id, response_wa_cash_account, response_wa_security_account, response_nos,
-                           amended_net_order_value=None, position_type='N'):
+    def calc_booked_amount_buy_side(self, test_id, response_wa_cash_account, response_wa_security_account, initial_net_order_value,
+                                    execution_type, amended_net_order_value=None, position_type='N'):
 
         try:
-            initial_net_order_value = float(response_nos['NetOrdAmt'])
-            execution_type = response_nos['ExecType']
+            initial_net_order_value = float(initial_net_order_value)
+            execution_type = execution_type
             cash_component_values = self.get_cash_component_values(test_id, response_wa_cash_account)
             security_values_dict = self.calc_security_value(test_id, response_wa_security_account)
             booked_amount = cash_component_values['bookedAmt']
@@ -277,7 +277,7 @@ class RetFormulasManager:
                 net_order_value_delta = amended_net_order_value - initial_net_order_value
                 buying_power = self.calc_buying_power(test_id, response_wa_cash_account, response_wa_security_account)
                 amended_booked_amount_value = net_order_value_delta / applicable_cash_components
-                if amended_booked_amount_value > 0 and net_order_value_delta >= buying_power:
+                if amended_booked_amount_value > 0 and buying_power >= net_order_value_delta:
                     booked_amount += amended_booked_amount_value
                     booked_cash_loan += amended_booked_amount_value
                     booked_temporary_cash += amended_booked_amount_value
@@ -309,5 +309,36 @@ class RetFormulasManager:
                     }
 
         except(ValueError, IndexError, TypeError, ZeroDivisionError):
-            bca.create_event(f'Booked Amount was not calculated', status='FAILED', parent_id=test_id)
+            bca.create_event(f'Booked Amount was not calculated. (Side=Buy)', status='FAILED', parent_id=test_id)
+            logging.error("Error parsing", exc_info=True)
+
+    def calc_booked_amount_sell_side(self, test_id, response_wa_cash_account, response_wa_security_account, fee,
+                                     commission, position_type='N'):
+        try:
+            cash_component_values = self.get_cash_component_values(test_id, response_wa_cash_account)
+            security_values_dict = self.calc_security_value(test_id, response_wa_security_account)
+            booked_amount = cash_component_values['bookedAmt']
+            booked_cash_loan = cash_component_values['bookedCashLoan']
+            booked_temporary_cash = cash_component_values['bookedTempCash']
+            booked_collateral_cash = cash_component_values['bookedCollateralCash']
+            reserved_qty = 0
+
+            if position_type == 'N':
+                reserved_qty = round(security_values_dict['reservedQtyNet'], 3)
+            if position_type == 'L':
+                reserved_qty = round(security_values_dict['reservedQtyLong'], 3)
+            if position_type == 'S':
+                reserved_qty = round(security_values_dict['reservedQtyShort'], 3)
+
+            booked_amount += fee + commission
+            return {
+                booked_amount,
+                booked_cash_loan,
+                booked_temporary_cash,
+                booked_collateral_cash,
+                reserved_qty
+            }
+
+        except(ValueError, IndexError, TypeError):
+            bca.create_event(f'Booked Amount was not calculated. (Side=Sell)', status='FAILED', parent_id=test_id)
             logging.error("Error parsing", exc_info=True)
