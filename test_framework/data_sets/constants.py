@@ -188,12 +188,11 @@ class OrderSide(Enum):
     Sell = 2
 
 
-class CompareMessage(Enum):
-    execution_report_open_to_cancel = dict(
-        OrderId="*",
-        OldStatus="Open",
-        NewStatus="Cancel"
-        )
+class ReadLogVerifiers(Enum):
+    log_319_updating_status = "log319-updating-status"
+    log_319_cancel_child = "log319-cancel-child"
+    log_319_check_primary_listing = "log319-check-primary-listing"
+    log_319_check_party_info = "log319-check-party-info"
 
 
 class WebAdminURL(Enum):
