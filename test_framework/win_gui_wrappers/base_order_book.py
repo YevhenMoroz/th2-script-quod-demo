@@ -397,7 +397,7 @@ class BaseOrderBook(BaseWindow):
 
     def mass_execution_summary_at_average_price(self, row_count: int):
         self.mass_exec_summary_average_price_detail.set_count_of_selected_rows(row_count)
-        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail)
+        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail.build())
         self.clear_details([self.mass_exec_summary_average_price_detail])
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
