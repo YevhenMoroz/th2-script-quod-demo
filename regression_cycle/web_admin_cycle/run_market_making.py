@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3991 import QAP_T3991
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3990 import QAP_T3990
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3989 import QAP_T3989
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3988 import QAP_T3988
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3987 import QAP_T3987
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3986 import QAP_T3986
@@ -63,6 +64,8 @@ class RunMarketMaking:
             QAP_T3991(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3990(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3989(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3988(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

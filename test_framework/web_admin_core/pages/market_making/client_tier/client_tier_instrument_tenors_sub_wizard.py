@@ -35,7 +35,7 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH, value)
 
     def get_tenor(self):
-        return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH)
+        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH)
 
     def click_on_created_tenor(self, value):
         self.find_by_xpath(ClientTierConstants
