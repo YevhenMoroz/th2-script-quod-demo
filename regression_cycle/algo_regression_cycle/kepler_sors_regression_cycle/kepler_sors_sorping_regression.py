@@ -70,7 +70,6 @@ def test_run(parent_id=None, version=None):
     try:
         # region SORPING
         configuration = ComponentConfiguration("Sorping")
-        QAP_1234(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4797(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4798(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4799(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
