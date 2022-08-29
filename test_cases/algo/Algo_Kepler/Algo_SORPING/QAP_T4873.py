@@ -31,7 +31,6 @@ class QAP_T4873(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.read_log_verifier = ReadLogVerifier("log319-updating-status", self.test_id)
         # endregion
 
         # region order parameters
@@ -56,7 +55,6 @@ class QAP_T4873(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
-        self.execution_report = constants.CompareMessage.execution_report_open_to_cancel.value
         # endregion
 
         # region instrument
@@ -83,7 +81,11 @@ class QAP_T4873(TestCase):
         self.key_params_read_log = ['OldStatus', 'NewStatus']
         # endregion
 
-        self.timeout_for_read_log = 60000
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_updating_status.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_updating_status")
+        # endregion
 
         self.rule_list = []
 
@@ -164,10 +166,19 @@ class QAP_T4873(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
-        # region check cancel SynthTimeInForce algo child
-        time.sleep(20)
-        self.read_log_verifier.check_read_log_message(self.execution_report, self.key_params_read_log, timeout=self.timeout_for_read_log)
-        # TODO add check message sequence for readlog (execution report x 3)
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "OrderId": "*",
+            "OldStatus": "Open",
+            "NewStatus": "Cancelled"
+        }
+
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        # TODO add Check read log message sequence instead checking one message
+        self.read_log_verifier.check_read_log_message(execution_report, self.key_params_read_log)
+        # endregion
 
         er_cancel_SORPING_GTC_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_GTC_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_GTC_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
