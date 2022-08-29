@@ -33,7 +33,7 @@ class QAP_T7358(TestCase):
         self.price = "20"
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
             "instrument_3").change_parameters(
             {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
@@ -43,14 +43,14 @@ class QAP_T7358(TestCase):
         self.fix_message.change_parameters(
             {'Account': self.client, "OrderQtyData": {'OrderQty': self.qty}, "Price": self.price})
         self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])

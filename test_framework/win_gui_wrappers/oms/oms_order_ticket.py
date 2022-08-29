@@ -66,7 +66,7 @@ class OMSOrderTicket(BaseOrderTicket):
             self.order_details.set_settl_date(settl_date)
         if recipient is not None:
             self.order_details.set_care_order(recipient, partial_desk, disclose_flag)
-        if alloc_details is not None and set_alt_account is True:
+        if alloc_details and set_alt_account:
             allocation_row_details = list()
             for account_name, percent in alloc_details.items():
                 allocation_row_details.append(AllocationsGridRowDetails(alt_account=account_name, percentage=percent).build())

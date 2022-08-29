@@ -93,6 +93,7 @@ class OrderBookColumns(Enum):
     exec_firm_value = "ExecutingFirm"
     exec_type = "ExecType"
     nin = "NIN"
+    custodian = "Custodian"
     # endregion
 
 
@@ -200,6 +201,11 @@ class TradeBookColumns(Enum):
     fee_type = "FeeType"
     fee_basis = "Basis"
     fee_currency = "Currency"
+    rate = "Rate"
+    basis = "Basis"
+    amount = "Amount"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
 
     """Client Commissions tab"""
     cl_comm_tab = "Client Commissions"
@@ -390,6 +396,8 @@ class MiddleOfficeColumns(Enum):
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -397,6 +405,9 @@ class MiddleOfficeColumns(Enum):
     unmatched_sts = "Unmatched"
     matched_agreed_sts = "MatchedAgreed"
     cancelled_sts = 'Cancelled'
+    """Confirmation"""
+    external = "External"
+    manual = "Manual"
 
 
 class AllocationsColumns(Enum):
@@ -430,6 +441,8 @@ class SecondLevelTabs(Enum):
     algo_parameters_external = "Algo Parameters External"
     pre_trade_alloc_tab = "Pre Trade Allocations"
     counterpart_list = "Counterpart List"
+    commissions = "Client Commissions"
+    fees = "Misc Fees"
 
 
 class PreTradeAllocations(Enum):
@@ -618,6 +631,7 @@ class DoneForDays(Enum):
 
 class Suspended(Enum):
     yes = "Yes"
+    no = "No"
 
 
 class OrdersTabColumnFromBag(Enum):
@@ -638,13 +652,25 @@ class ReferencePrice(Enum):
     open = "Open"
 
 
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
 class ExchangeRateCalc(Enum):
     multiple = 'Multiple'
     divide = "Divide"
 
 
-class ConfirmationServices(Enum):
-    manual = "Manual"
+class Basis(Enum):
+    per_unit = 'PerUnit'
+    absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
+
+
+class FeeTypeForMiscFeeTab(Enum):
+    agent = "Agent"
+    stamp = "Stamp"
 
 
 class CommissionType(Enum):

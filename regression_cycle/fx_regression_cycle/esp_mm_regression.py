@@ -44,6 +44,9 @@ from test_cases.fx.fx_mm_esp.QAP_T2411 import QAP_T2411
 from test_cases.fx.fx_mm_esp.QAP_T2386 import QAP_T2386
 from test_cases.fx.fx_mm_esp.QAP_T2375 import QAP_T2375
 from test_cases.fx.fx_mm_synthetic import QAP_T2782
+from test_cases.fx.fx_mm_esp.QAP_T2479 import QAP_T2479
+from test_cases.fx.fx_mm_esp.QAP_T2602 import QAP_T2602
+from test_cases.fx.fx_mm_esp.QAP_T2957 import QAP_T2957
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -148,7 +151,12 @@ def test_run(parent_id=None):
         QAP_T2411(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2386(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2375(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
+        QAP_T2479(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+        QAP_T2602(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
+        QAP_T2957(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                  environment=configuration.environment).execute()
 
 
     except Exception:

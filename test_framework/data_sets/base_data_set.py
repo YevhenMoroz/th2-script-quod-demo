@@ -58,6 +58,7 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    contra_firm = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -121,6 +122,7 @@ class BaseDataSet:
     counterpart_id = None
     cl_list_id = None
     instr_type = None
+    pre_filter = None
     # endregion
 
     # region fields added by Web Trading team
@@ -516,6 +518,11 @@ class BaseDataSet:
         if hasattr(self.scenario, name):
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        raise ValueError(f"{self.contra_firm} not found!")
 
     # region WebAdmin getters
 

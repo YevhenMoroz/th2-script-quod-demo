@@ -120,7 +120,6 @@ class OmsVenueClientNames(Enum):
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
     """Commissions"""
     client_com_1_venue_2 = "CLIENT_COMM_1_EUREX"
-    client_fees_1_venue_2 = "CLIENT_FEES_1_EUREX"
     """Counterparts"""
     client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
@@ -159,7 +158,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 =  "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
@@ -220,7 +219,7 @@ class OmsRoutes(Enum):
 
 
 class OmsRouteID(Enum):
-    route_1 = '24'
+    route_1 = 24
 
 
 class OmsVenueClientAccounts(Enum):
@@ -238,6 +237,8 @@ class OMSCommissionProfiles(Enum):
     bas_qty = 6
     abs_amt_usd = 7
     abs_amt_2 = 8
+    abs_amt_3 = 9
+    commission_with_minimal_value = 600018
 
 
 class OMSFeeType(Enum):
@@ -262,7 +263,7 @@ class OMSExecScope(Enum):
     all_exec = "ALL"
     day_first_exec = "DAF"
     first_exec = "FST"
-    on_calc = "CAL"
+    on_calculated = "CAL"
 
 
 class OMSFeeOrderScope(Enum):
@@ -274,6 +275,7 @@ class OMSFee(Enum):
     fee1 = 1
     fee2 = 2
     fee3 = 3
+    fee_vat = 11
 
 
 class OMSCommission(Enum):
@@ -363,6 +365,7 @@ class OMSBagScenario(Enum):
 
 class OMSVenueID(Enum):
     paris = "PARIS"
+    eurex = "EUREX"
 
 
 class OMSCounterpartID(Enum):
@@ -372,3 +375,11 @@ class OMSCounterpartID(Enum):
 
 class OMSInstumentType(Enum):
     equity = 'EQU'
+
+
+class OMSInstrType(Enum):
+    equity = "EQU"
+
+
+class OMSContraFirm(Enum):
+    contra_firm_1 = "Contra Firm"

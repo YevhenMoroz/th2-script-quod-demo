@@ -81,7 +81,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
 
     def set_POV_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
-            'Account': "CLIENT2",
+            'Account': self.get_data_set().get_account_by_name("account_1"),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             "HandlInst": "2",
             "Side": "1",
@@ -91,13 +91,17 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": datetime.utcnow().isoformat(),
             "OrderCapacity": "A",
             "Price": "20",
-            'Currency': "EUR",
-            'ExDestination': "XPAR",
-            "Instrument": Instrument.BUI.value,
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
             "TargetStrategy": "2",
-            'QuodFlatParameters': {
-                'MaxPercentageVolume': '10'
-            }
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'PercentageVolume',
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.1'
+                }
+            ]
         }
         super().change_parameters(base_parameters)
         return self
@@ -378,7 +382,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 {
                     'StrategyParameterName': 'PercentageVolume',
                     'StrategyParameterType': '6',
-                    'StrategyParameterValue': '0.9'
+                    'StrategyParameterValue': '0.3'
                 },
                 {
                     'StrategyParameterName': 'ChildMinValue',
