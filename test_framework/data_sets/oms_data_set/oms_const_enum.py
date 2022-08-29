@@ -161,8 +161,6 @@ class OmsAccounts(Enum):
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
-    client_counterpart_1_acc_2 = "CLIENT_COUNTERPART_SA2"
-    client_counterpart_2_acc_2 = "CLIENT_COUNTERPART2_SA2"
 
 
 class AlgoParametersExternal(Enum):

@@ -91,6 +91,7 @@ class OrderBookColumns(Enum):
     exec_firm_value = "ExecutingFirm"
     exec_type = "ExecType"
     nin = "NIN"
+    custodian = "Custodian"
     # endregion
 
 
