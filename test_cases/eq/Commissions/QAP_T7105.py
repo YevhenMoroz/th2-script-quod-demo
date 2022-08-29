@@ -56,11 +56,14 @@ class QAP_T7105(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region send fees and commission
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(comm_profile=self.comm_profile).change_message_params(
             {'venueID': self.venue}).send_post_request()
         self.rest_commission_sender.clear_commissions()
-        self.rest_commission_sender.set_modify_client_commission_message(comm_profile=self.comm_profile).send_post_request()
+        self.rest_commission_sender.set_modify_client_commission_message(comm_profile=self.comm_profile).change_message_params(
+            {'venueID': self.venue}).send_post_request()
         # endregion
         # region send order
         self.__send_fix_orders()
