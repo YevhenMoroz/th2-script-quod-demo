@@ -297,6 +297,10 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
+    key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
+    key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
+    key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
 
 
 class AlgoPreFilter(Enum):
