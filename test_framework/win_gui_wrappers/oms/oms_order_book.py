@@ -107,4 +107,6 @@ class OMSOrderBook(BaseOrderBook):
         self.hot_keys_action_call = Stubs.win_act_order_book.selectedRowInOrderBook
         self.force_cancel_order_call = Stubs.win_act_order_book.forceCancelOrder
         self.force_cancel_order_details = ForceCancelOrderDetails(self.base_request)
+        self.mark_reviewed_call = Stubs.win_act_order_book.markReviewed
+        self.mark_unreviewed_call = Stubs.win_act_order_book.markUnreviewed
         # endregion
