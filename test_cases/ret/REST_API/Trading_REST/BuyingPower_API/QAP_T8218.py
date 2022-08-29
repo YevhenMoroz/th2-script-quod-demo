@@ -52,7 +52,6 @@ class QAP_T8218(TestCase):
 
         response = self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
         nos_response = self.trd_api_manager.parse_response_details(response=response)
-        print(nos_response)
 
         if 'ExecType' in nos_response.keys() and nos_response['ExecType'] == 'Open':
             initial_net_order_value = float(nos_response['NetOrdAmt'])
@@ -71,7 +70,6 @@ class QAP_T8218(TestCase):
             modified_response = self.trd_api_manager.parse_response_details(
                 response=self.trd_api_manager.send_http_request_and_receive_websocket_response(
                     self.modification_message))
-            print(modified_response)
 
             if 'ExecType' in modified_response.keys() and modified_response['ExecType'] == 'Replaced':
                 execution_type_order_modified = modified_response['ExecType']
@@ -93,7 +91,6 @@ class QAP_T8218(TestCase):
                     initial_net_order_value=initial_net_order_value,
                     execution_type=execution_type_order_modified,
                     amended_net_order_value=amended_net_order_value)
-                print(calculation_results_after_order_modification)
                 booked_amount_validation(test_id=self.test_id, booked_amount_current=booked_amount_after_modification_increase[0],
                                          booked_amount_simulated=calculation_results_after_order_modification,
                                          reserved_qty_current=position_after_modification_increase[0])
@@ -104,7 +101,6 @@ class QAP_T8218(TestCase):
                 modified_response = self.trd_api_manager.parse_response_details(
                     response=self.trd_api_manager.send_http_request_and_receive_websocket_response(
                         self.modification_message))
-                print(modified_response)
 
                 if 'ExecType' in modified_response.keys() and modified_response['ExecType'] == 'Replaced':
                     self.cash_account_message.find_cash_account_counters(cash_account_id=self.cash_account_id)
@@ -123,7 +119,6 @@ class QAP_T8218(TestCase):
                         initial_net_order_value=amended_net_order_value,
                         execution_type=execution_type_order_modified,
                         amended_net_order_value=self.qty * self.price + self.commission + self.fee)
-                    print(calculation_results_after_order_modification)
                     booked_amount_validation(test_id=self.test_id,
                                              booked_amount_current=booked_amount_after_modification_decrease[0],
                                              booked_amount_simulated=calculation_results_after_order_modification,
