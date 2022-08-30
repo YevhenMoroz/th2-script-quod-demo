@@ -14,6 +14,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4995(TestCase):
@@ -77,6 +78,12 @@ class QAP_T4995(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_tags_5052_and_207_mapping.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_tags_5052_and_207_mapping")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -110,11 +117,22 @@ class QAP_T4995(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_LitDark_Iceberg_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.ClOrdId = self.SORPING_order.get_parameter('ClOrdID')
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TargetStrategy=self.strategy, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(StrategyName=self.algopolicy, ExDestination=self.ex_destination_qdl1))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        # endregion
 
-        time.sleep(3)
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "SecurityExchange": "QDL1",
+            "ClOrdID": self.ClOrdId,
+            "ExternalStrategyName": "QA_Auto_SORPING_1",
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(execution_report)
         # endregion
 
         # region Check Sell side
