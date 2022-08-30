@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4944(TestCase):
@@ -85,6 +86,12 @@ class QAP_T4944(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_primary_listing.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_primary_listing")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -141,6 +148,18 @@ class QAP_T4944(TestCase):
 
         er_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # endregion
+
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "OrderId": '*',
+            "PrimaryListingID": self.listing_id_xams,
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        # TODO Add check read lom message sequence instead of checking one message
+        self.read_log_verifier.check_read_log_message(execution_report)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
