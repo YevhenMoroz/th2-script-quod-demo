@@ -38,7 +38,6 @@ class QAP_T2983(TestCase):
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         time.sleep(4)
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigClientVenueID", "OrigMDTime"])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

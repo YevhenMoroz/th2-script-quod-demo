@@ -43,6 +43,7 @@ class QAP_T3822(CommonTestCase):
         self.venue_at_forward_venue_tab = self.data_set.get_venue_by_name("venue_5")
         self.client_at_external_clients_tab = self.data_set.get_client("client_1")
         self.tenor = self.data_set.get_tenor_by_name("tenor_2")
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -55,6 +56,7 @@ class QAP_T3822(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
@@ -86,6 +88,7 @@ class QAP_T3822(CommonTestCase):
             client_tier_instrument_main_page.click_on_new()
             time.sleep(2)
             client_tiers_instrument_values_sub_wizard.set_symbol(self.symbol)
+            client_tiers_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
             client_tiers_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
             time.sleep(2)
             client_tiers_instrument_forward_venue_sub_wizard.click_on_plus()

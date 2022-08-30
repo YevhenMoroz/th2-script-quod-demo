@@ -1,11 +1,12 @@
 from appium.webdriver.common.mobileby import AppiumBy
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 from appium.webdriver.common.touch_action import TouchAction
-
+from test_framework.mobile_android_core.utils.waits import Waits
 
 class CommonPage:
     def __init__(self, driver: AppiumDriver):
         self.appium_driver = driver
+        self.Waiter = Waits(self.appium_driver.appium_driver, 10)
 
     def find_by_xpath(self, xpath):
         return self.appium_driver.get_driver().find_element_by_xpath(xpath)
@@ -19,8 +20,11 @@ class CommonPage:
     def tap_by_coordinates(self, x, y):
         TouchAction(driver=self.appium_driver.get_driver()).tap(x, y).perform()
 
-    def get_attribute_of_element_by_xpath(self, xpath, element):
-        return self.find_by_xpath(xpath).get_attribute(str(element))
+    def get_attribute_of_element_by_xpath(self, xpath, value):
+        return self.find_by_xpath(xpath).get_attribute(str(value))
+
+    def check_if_element_presented(self, xpath):
+        return self.Waiter.WaitUntilVisibleByXPath(self.find_by_xpath(xpath))
 
     #TODO: there must be determined coordinate (x,y)
     def swipe_right_to_left(self):

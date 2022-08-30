@@ -197,9 +197,9 @@ class VenuesConstants:
 
     ROUTING_PARAM_GROUPS_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
     ROUTING_PARAM_GROUPS_TAB_NAME_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[1]'
-    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH = '//*[text()="Positive Routes *"]'
+    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH = '//*[text()="Positive Routes *" or @class="select-button bottom"]'
     ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[2]'
-    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *"]'
+    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *" or @class="select-button bottom"]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[3]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH = "//*[@class='cdk-overlay-pane']//*[text()='{}']"
     CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[normalize-space(text()) = "Routing Param Groups"]//following::td[2]//span'

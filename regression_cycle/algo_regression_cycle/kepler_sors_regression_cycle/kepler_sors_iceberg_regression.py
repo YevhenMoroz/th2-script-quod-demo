@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 logging.getLogger().setLevel(logging.WARN)
 
 
-def test_run(parent_id=None):
+def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event('Iceberg', parent_id)
+    report_id = bca.create_event(f"LitDark" if version is None else f"LitDark | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
-        configuration = ComponentConfiguration("lit_dark_iceberg")
+        configuration = ComponentConfiguration("Lit_dark_iceberg")
         QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4871(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4870(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
