@@ -26,13 +26,13 @@ bs_connectivity = SessionAliasOMS().bs_connectivity
 class QAP_T7359(TestCase):
     def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         fix_manager = FixManager(ss_connectivity)
         qty = '5000'
         fix_message = FixMessageNewOrderSingleOMS(self.data_set)

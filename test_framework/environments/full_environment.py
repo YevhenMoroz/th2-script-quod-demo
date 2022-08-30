@@ -5,6 +5,7 @@ from test_framework.environments.fe_environment import FEEnvironment
 from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.environments.java_api_environment import JavaApiEnvironment
 from test_framework.environments.read_log_envirenment import ReadLogEnvironment
+from test_framework.environments.ssh_client_environment import SshClientEnvironment
 from test_framework.environments.web_admin_environment import WebAdminEnvironment
 from test_framework.environments.web_admin_rest_api_environment import WebAdminRestApiEnvironment
 from test_framework.environments.trading_rest_api_environment import TradingRestApiEnvironment
@@ -23,6 +24,7 @@ class FullEnvironment:
         self.__list_mobile_environment = list()
         self.__list_java_api_environment = list()
         self.__list_read_log_environment = list()
+        self.__list_ssh_client_environment = list()
 
         for session_environment in component_environment:
             environment = session_environment.getchildren()
@@ -52,6 +54,9 @@ class FullEnvironment:
                 if instance.tag == "read_log_environment":
                     self.__list_read_log_environment.append(
                         ReadLogEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "ssh_client_environment":
+                    self.__list_ssh_client_environment.append(
+                        SshClientEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
     def get_list_fix_environment(self) -> typing.List[FixEnvironment]:
@@ -78,6 +83,9 @@ class FullEnvironment:
     def get_list_java_api_environment(self) -> typing.List[JavaApiEnvironment]:
         return self.__list_java_api_environment
 
-    def get_list_read_log_environment(self):
+    def get_list_read_log_environment(self) -> typing.List[ReadLogEnvironment]:
         return self.__list_read_log_environment
+
+    def get_list_ssh_client_environment(self) -> typing.List[SshClientEnvironment]:
+        return self.__list_ssh_client_environment
     # endregion
