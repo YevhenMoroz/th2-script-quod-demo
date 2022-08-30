@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -44,7 +45,9 @@ class InstitutionsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH)
 
     def get_all_client_time_zone_from_drop_menu(self):
-        return self._get_all_items_from_drop_down(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH)
+        self.set_text_by_xpath(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(InstitutionsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_position_flattening_period(self, value):
         """

@@ -27,13 +27,13 @@ class AccountsWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH)
 
-    def set_description(self, value: str):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
-
     def get_all_clients_from_drop_menu(self):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, "")
+        self.set_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH, "")
         time.sleep(1)
         return self._get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
+
+    def set_description(self, value: str):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
 
     def get_description(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH)

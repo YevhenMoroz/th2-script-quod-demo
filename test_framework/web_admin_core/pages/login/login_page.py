@@ -42,7 +42,21 @@ class LoginPage(CommonPage):
         self.set_password(password)
         time.sleep(1)
         self.click_login_button()
-        self.check_is_login_successful()
 
     def is_change_password_page_opened(self):
         return self.is_element_present(LoginConstants.CHANGE_PASSWORD_PAGE_XPATH)
+
+    def click_on_forgot_password_link(self):
+        self.find_by_xpath(LoginConstants.FORGOT_PASSWORD_LINK_XPATH).click()
+
+    def click_on_back_link(self):
+        self.find_by_xpath(LoginConstants.BACK_LINK_XPATH).click()
+
+    def set_email(self, value: str):
+        self.set_text_by_xpath(LoginConstants.EMAIL_INPUT_XPATH, value)
+
+    def click_on_reset_password_button(self):
+        self.find_by_xpath(LoginConstants.RESET_PASSWORD_BUTTON_XPATH).click()
+
+    def get_change_password_info_message(self):
+        return self.find_by_xpath(LoginConstants.CHANGE_PASSWORD_INFO_MESSAGE_XPATH).text

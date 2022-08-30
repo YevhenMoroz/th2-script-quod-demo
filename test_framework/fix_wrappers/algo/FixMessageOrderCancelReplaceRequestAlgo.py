@@ -35,8 +35,12 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
 
     def __update_fix_message(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('OrdType') in [3, 4]:
+        if new_order_single.is_parameter_exist('Price'):
+            temp.update(Price=new_order_single.get_parameter('Price'))
+        if new_order_single.is_parameter_exist('StopPx'):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
+        if new_order_single.is_parameter_exist('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(
                 ClientAlgoPolicyID=new_order_single.get_parameter('ClientAlgoPolicyID'),
@@ -49,6 +53,8 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             temp.update(NoStrategyParameters=new_order_single.get_parameter('NoStrategyParameters'))
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy=new_order_single.get_parameter('TargetStrategy'))
+        if new_order_single.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
@@ -59,7 +65,6 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             OrdType=new_order_single.get_parameter('OrdType'),
             TransactTime=datetime.utcnow().isoformat(),
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            Price=new_order_single.get_parameter('Price'),
             Currency=new_order_single.get_parameter('Currency'),
             Instrument=new_order_single.get_parameter('Instrument'),
             OrigClOrdID=new_order_single.get_parameter("ClOrdID"),

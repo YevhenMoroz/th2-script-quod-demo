@@ -192,8 +192,9 @@ class TradeBookColumns(Enum):
     exec_type = 'ExecType'
     unmatched_qty = 'UnmatchedQty'
     """Mics Fees tab"""
-    mics_tab = "Mics Fees"
+    misc_tab = "Misc Fees"
     rate = "Rate"
+    amount = "Amount"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -377,6 +378,7 @@ class MiddleOfficeColumns(Enum):
     settl_currency = 'SettlCurrency'
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
+    net_amt = 'Net Amt'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -384,6 +386,9 @@ class MiddleOfficeColumns(Enum):
     unmatched_sts = "Unmatched"
     matched_agreed_sts = "MatchedAgreed"
     cancelled_sts = 'Cancelled'
+    """Confirmation"""
+    external = "External"
+    manual = "Manual"
 
 
 class AllocationsColumns(Enum):

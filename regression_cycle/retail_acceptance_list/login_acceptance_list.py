@@ -1,4 +1,4 @@
-from test_cases.ret.Login import QAP_4281, QAP_4278
+from test_cases.ret.Login import QAP_T3766, QAP_T3769
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -13,8 +13,8 @@ channels = dict()
 def test_run(session_id, parent_id=None):
     report_id = bca.create_event('Login', parent_id)
     try:
-        QAP_4278.execute(session_id, report_id)
-        QAP_4281.execute(session_id, report_id)
+        QAP_T3769.execute(session_id, report_id)
+        QAP_T3766.execute(session_id, report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

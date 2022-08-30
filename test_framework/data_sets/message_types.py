@@ -20,6 +20,7 @@ class FIXMessageType(Enum):
     MarketDataRequestReject = "MarketDataRequestReject"
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
+    BusinessMessageReject = "BusinessMessageReject"
 
 
 class ORSMessageType(Enum):
@@ -37,10 +38,12 @@ class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     NewOrderSingleReply = "NewOrderReply"
     OrderUpdate = "OrderUpdate"
+    ExecutionReport = "ExecutionReport"
     NewOrderSingleSimulate = "NewOrderSingleSimulate"
     NewOrderSingleSimulateReply = "NewOrderSingleSimulateReply"
     OrderModificationRequest = "OrderModificationRequest"
     OrderModificationReply = "OrderModificationReply"
+    OrderModificationReject = "OrderModificationReject"
     MarketDataRequest = "MarketDataRequest"
     MarketDataReply = "MarketDataReply"
     MarketQuoteRequest = "MarketQuoteRequest"

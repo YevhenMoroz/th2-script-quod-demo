@@ -14,7 +14,7 @@ class PositionsLimitsConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -59,10 +59,10 @@ class PositionsLimitsConstants:
 
     # Dimensions tab
 
-    DIMENSIONS_TAB_INSTRUMENT_XPATH = '//*[@id="securityBlock"]'
-    DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH = '//*[@id="instrumentGroup"]'
-    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[@id="instrType"]'
-    DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[@id="account"]'
+    DIMENSIONS_TAB_INSTRUMENT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="securityBlock"]'
+    DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrumentGroup"]'
+    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrType"]'
+    DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="account"]'
     DIMENSIONS_TAB_WILD_CARD_INSTRUMENT_CHECKBOX_XPATH = '//*[text()="Wild Card Instrument"]/preceding-sibling::span'
     DIMENSIONS_TAB_WILD_CARD_INSTR_GROUP_CHECKBOX_XPATH = '//*[text()="Wild Card Instr Group"]/preceding-sibling::span'
     DIMENSIONS_TAB_WILD_CARD_INSTR_TYPE_XPATH = '//*[text()="Wild Card Instr Type"]/preceding-sibling::span'

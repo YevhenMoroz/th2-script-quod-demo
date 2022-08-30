@@ -154,6 +154,10 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
     qa_sorping_3 = "QA_Auto_SORPING_3"
+    qa_sorping_4 = "QA_Auto_SORPING_4"
+    qa_sorping_5 = "QA_Auto_SORPING_5"
+    qa_sorping_6 = "QA_Auto_SORPING_6"
+    qa_sorping_7 = "QA_Auto_SORPING_7"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 
@@ -165,9 +169,31 @@ class OrderType(Enum):
     StopLimit = 4
 
 
+class TargetStrategy(Enum):
+    VWAP = '1'
+    Participate = '2'
+    SynthStop = '1001'
+    SynthTIF = '1003'
+    Iceberg = '1004'
+    TWAP = '1005'
+    Multilisted = '1008'
+    SynthPeg = '1009'
+    DarkPool = '1010'
+    LitDark = '1011'
+    SynthBlock = '1019'
+
+
 class OrderSide(Enum):
     Buy = 1
     Sell = 2
+
+
+class ReadLogVerifiers(Enum):
+    log_319_updating_status = "log319-updating-status"
+    log_319_cancel_child = "log319-cancel-child"
+    log_319_check_primary_listing = "log319-check-primary-listing"
+    log_319_check_party_info = "log319-check-party-info"
+
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
