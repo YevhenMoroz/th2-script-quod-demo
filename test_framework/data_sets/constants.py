@@ -193,6 +193,8 @@ class ReadLogVerifiers(Enum):
     log_319_cancel_child = "log319-cancel-child"
     log_319_check_primary_listing = "log319-check-primary-listing"
     log_319_check_party_info = "log319-check-party-info"
+    log_319_check_party_info_v2 = "log319-check-party-info-v2"
+    log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
 
 
 class WebAdminURL(Enum):
