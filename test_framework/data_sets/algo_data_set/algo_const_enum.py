@@ -301,6 +301,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
+    key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
 
 
 class AlgoPreFilter(Enum):
