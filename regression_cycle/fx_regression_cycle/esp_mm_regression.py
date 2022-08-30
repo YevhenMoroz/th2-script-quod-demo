@@ -1,8 +1,8 @@
-from test_cases.fx.fx_mm_esp import QAP_T2916,  QAP_T2870, QAP_T2801, QAP_T2793, \
-     QAP_T2965, \
+from test_cases.fx.fx_mm_esp import QAP_T2916, QAP_T2870, QAP_T2801, QAP_T2793, \
+    QAP_T2965, \
     QAP_T2751, QAP_T2734, QAP_T2733, \
     QAP_T2729, QAP_T2730, QAP_T2735, QAP_T2719, QAP_T2926, \
-    QAP_T2547, QAP_T2947, QAP_T2718,  QAP_T2912, QAP_T2911, QAP_T2966
+    QAP_T2547, QAP_T2947, QAP_T2718, QAP_T2912, QAP_T2911, QAP_T2966
 from test_cases.fx.fx_mm_esp.QAP_T2430 import QAP_T2430
 from test_cases.fx.fx_mm_esp.QAP_T2458 import QAP_T2458
 from test_cases.fx.fx_mm_esp.QAP_T2460 import QAP_T2460
@@ -84,8 +84,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('ESP MM regression', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_MM_ESP" if version is None else f"FX_MM_ESP | {version}", parent_id)
     session_id = set_session_id("ostronov")
     main_window_name = "Quod Financial - Quod site 314"
     configuration = ComponentConfiguration("ESP_MM")
