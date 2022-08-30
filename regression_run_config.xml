@@ -336,6 +336,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Counterparts" run="True">

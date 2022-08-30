@@ -19,7 +19,7 @@ timeouts = True
 class QAP_T7337(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
@@ -27,8 +27,8 @@ class QAP_T7337(TestCase):
     def qap_4658(self):
         # region Declaration
         fix_manager = FixManager(self.ss_connectivity, self.report_id)
-        ord_book = OMSOrderBook(self.case_id, self.session_id)
-        main_window = BaseMainWindow(self.case_id, self.session_id)
+        ord_book = OMSOrderBook(self.test_id, self.session_id)
+        main_window = BaseMainWindow(self.test_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']

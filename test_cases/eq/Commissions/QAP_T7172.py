@@ -28,13 +28,13 @@ class QAP_T7172(TestCase):
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_4")
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
         self.qty = "5734"
         self.price = "5734"
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
