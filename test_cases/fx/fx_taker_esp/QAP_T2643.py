@@ -24,7 +24,7 @@ class QAP_T2643(TestCase):
         self.md_snapshot_ebs = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
         self.silver = self.data_set.get_client_by_name("client_mm_1")
-        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.verifier = Verifier(self.test_id)
         self.md_req_id_db = "EUR/USD:SPO:REG:DB"
         self.md_req_id_ebs = "EUR/USD:SPO:REG:EBS-CITI"
@@ -34,7 +34,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19550,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -43,7 +43,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19674,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -52,7 +52,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.18517,
                 "MDEntrySize": 6000000,
                 "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -61,7 +61,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19625,
                 "MDEntrySize": 6000000,
                 "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             }
@@ -72,7 +72,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19568,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -81,7 +81,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19679,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -90,7 +90,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.18507,
                 "MDEntrySize": 6000000,
                 "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -99,7 +99,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19628,
                 "MDEntrySize": 6000000,
                 "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S"),
             },
@@ -108,7 +108,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.18400,
                 "MDEntrySize": 12000000,
                 "MDEntryPositionNo": 3,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
@@ -117,7 +117,7 @@ class QAP_T2643(TestCase):
                 "MDEntryPx": 1.19632,
                 "MDEntrySize": 12000000,
                 "MDEntryPositionNo": 3,
-                "SettlDate": self.settle_type_spot,
+                "SettlDate": self.settle_date_spot,
                 "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
