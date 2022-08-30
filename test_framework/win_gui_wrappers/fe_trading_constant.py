@@ -199,6 +199,8 @@ class TradeBookColumns(Enum):
     basis = "Basis"
     amount = "Amount"
     fee_type = "FeeType"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -383,6 +385,8 @@ class MiddleOfficeColumns(Enum):
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -635,10 +639,22 @@ class ReferencePrice(Enum):
     open = "Open"
 
 
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
+
+
 class Basis(Enum):
     per_unit = 'PerUnit'
     absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
 
 
 class FeeTypeForMiscFeeTab(Enum):
     agent = "Agent"
+    stamp = "Stamp"
