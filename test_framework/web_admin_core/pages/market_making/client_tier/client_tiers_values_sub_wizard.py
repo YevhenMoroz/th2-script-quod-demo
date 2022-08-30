@@ -29,3 +29,9 @@ class ClientTiersValuesSubWizard(CommonPage):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH).click()
         time.sleep(2)
         return self._get_all_items_from_drop_down(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH)
+
+    def set_tod_end_time(self, value):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_TOD_END_TIME, value)
+
+    def click_on_manage_button_for_schedules(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON).click()

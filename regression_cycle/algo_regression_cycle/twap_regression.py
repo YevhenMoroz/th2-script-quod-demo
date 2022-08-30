@@ -13,8 +13,9 @@ work_dir = Stubs.custom_config['qf_trading_fe_folder']
 username = Stubs.custom_config['qf_trading_fe_user']
 password = Stubs.custom_config['qf_trading_fe_password']
 
-def test_run(parent_id= None):
-    report_id = bca.create_event('Algo', parent_id)
+def test_run(parent_id= None, version = None):
+
+    report_id = bca.create_event(f"TWAP" if version is None else f"TWAP | {version}", parent_id)
     try:
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:

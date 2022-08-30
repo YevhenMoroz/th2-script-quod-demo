@@ -34,7 +34,7 @@ class QAP_T4970(TestCase):
 
         # region order parameters
         self.qty = 100
-        self.price = 39
+        self.price = 25
         self.dark_price = 44
         self.traded_qty = 0
         self.qty_for_md = 1000
@@ -80,7 +80,6 @@ class QAP_T4970(TestCase):
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
         self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_5")
-        self.listing_id_qdl3 = self.data_set.get_listing_id_by_name("listing_16")
         # endregion
 
         # region Key parameters
@@ -132,7 +131,7 @@ class QAP_T4970(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Side=self.sell))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Side=self.sell, Instrument=self.instrument))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
@@ -179,7 +178,7 @@ class QAP_T4970(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
         self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_bid, TimeInForce=self.tif_ioc, Side=self.sell))
+        self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_bid, TimeInForce=self.tif_ioc, Side=self.sell, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_pending)

@@ -26,9 +26,9 @@ class QAP_T3819(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_5")
-        self.dark_parameter_1 = "LIS Phase"
-        self.dark_parameter_2 = "LIS Resident Time"
-        self.dark_parameter_3 = "LIS Pools"
+        self.dark_parameter_1 = "LISPhase"
+        self.dark_parameter_2 = "LISResidentTime"
+        self.dark_parameter_3 = "LISPools"
         self.venue = self.data_set.get_venue_by_name("venue_6")
 
     def precondition(self):
@@ -42,11 +42,8 @@ class QAP_T3819(CommonTestCase):
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
         time.sleep(2)
         strategies_wizard.set_strategy_type(self.strategy_type)
-        time.sleep(1)
         strategies_wizard.set_user(self.user)
-        time.sleep(1)
         strategies_wizard.set_name(self.name)
-        time.sleep(1)
         strategies_wizard.click_on_dark_block()
         time.sleep(2)
         dark_sub_wizard = ExecutionStrategiesDarkSubWizard(self.web_driver_container)

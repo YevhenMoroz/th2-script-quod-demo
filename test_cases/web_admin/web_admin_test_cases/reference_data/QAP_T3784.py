@@ -97,9 +97,6 @@ class QAP_T3784(CommonTestCase):
             time.sleep(1)
             self.verify("Venue has been saved with the empty Position Flattering Period field", True,
                         venues_page.is_searched_venue_found(self.test_data["name"]))
-            venues_wizard.click_on_close()
-            time.sleep(1)
-            venues_wizard.click_on_ok_button()
 
             side_menu.open_subvenues_page()
             time.sleep(2)

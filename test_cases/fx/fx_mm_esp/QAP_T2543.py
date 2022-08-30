@@ -1,64 +1,46 @@
 from pathlib import Path
-
-from custom.tenor_settlement_date import spo
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-
 from custom import basic_custom_actions as bca
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium1'
-account = 'Palladium1_1'
-connectivity = 'fix-ss-308-mercury-standard'
-side = '1'
-orderqty = 1
-ordtype = '2'
-timeinforce = '4'
-currency = 'EUR'
-settlcurrency = 'USD'
-settltype = 0
-symbol = 'EUR/XXX'
-securitytype = 'FXSPOT'
-securityidsource = '8'
-securityid = 'EUR/USD'
-bands = [2000000, 6000000, 12000000]
-ord_status = 'Filled'
-md = None
-settldate = spo()
-text = 'no active client tier'
-defaultmdsymbol_spo = 'EUR/USD:SPO:REG:HSBC'
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
+class QAP_T2543(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
+        self.ss_connectivity = self.fix_env.sell_side_esp
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.web_adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.gbp_xxx = "GBP/XXX"
+        self.security_type_spot = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.instrument_spot = {
+            'Symbol': self.gbp_xxx,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.instrument_spot,
+            'SettlType': self.settle_type_spot}]
 
-        # Preconditions
-        params_sell = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate,
-                                        symbol=symbol, securitytype=securitytype)
-        FixClientSellEsp(params_sell).send_md_request().send_md_unsubscribe()
-        # Send market data to the HSBC venue EUR/USD spot
-        FixClientBuy(CaseParamsBuy(case_id, defaultmdsymbol_spo, symbol, securitytype)). \
-            send_market_data_spot()
-
-        params = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                   timeinforce=timeinforce, currency=currency,
-                                   settlcurrency=settlcurrency, settltype=settltype, settldate=settldate, symbol=symbol,
-                                   securitytype=securitytype,
-                                   securityidsource=securityidsource, securityid=securityid)
-        params.prepare_md_for_verification(bands)
-        md = FixClientSellEsp(params).send_md_request().verify_md_rejected(text=text)
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            md.send_md_unsubscribe()
-        except:
-            bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.md_request.set_md_req_parameters_maker()
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        # region Step 2
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_reject.set_md_reject_params(self.md_request, text="no active client tier")
+        self.fix_verifier.check_fix_message(fix_message=self.md_reject)
+        # endregion

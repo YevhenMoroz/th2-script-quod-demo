@@ -34,6 +34,7 @@ class QAP_T3852(CommonTestCase):
         self.tenor = "2W"
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,11 +45,10 @@ class QAP_T3852(CommonTestCase):
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
         client_tiers_main_page.click_on_new()
         time.sleep(2)
-        time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
-        time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
@@ -68,6 +68,7 @@ class QAP_T3852(CommonTestCase):
             time.sleep(2)
             client_tiers_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
             client_tiers_instrument_values_sub_wizard.set_symbol(self.symbol)
+            client_tiers_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
             client_tier_instrument_wizard.click_on_save_changes()
             ########
             client_tiers_main_page.set_name(self.name)
