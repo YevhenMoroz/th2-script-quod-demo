@@ -6,12 +6,11 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns,  OrderType
+from test_framework.win_gui_wrappers.fe_trading_constant import  OrderBookColumns,  OrderType
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from win_gui_modules.utils import close_fe, set_session_id
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
