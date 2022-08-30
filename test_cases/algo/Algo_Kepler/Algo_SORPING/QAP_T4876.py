@@ -9,6 +9,7 @@ from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySid
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
+from test_framework.fix_wrappers.algo.FixMessageBusinessMessageRejectReportAlgo import FixMessageBusinessMessageRejectReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -39,6 +40,12 @@ class QAP_T4876(TestCase):
         self.qty_for_md = 1000
         self.price_ask = 40
         self.price_bid = 30
+
+        self.no_strategy_1 = [
+            {'StrategyParameterName': 'ReleasedNbr', 'StrategyParameterType': '1',
+             'StrategyParameterValue': '1'},
+        ]
+
         # endregion
 
         # region Gateway Side
@@ -73,6 +80,12 @@ class QAP_T4876(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        # endregion
+
+        # region Parameters for BusinessMessageReject
+        self.text = "Conditionally Required Field Missing (847)"
+        self.refMsgType = "G"
+        self.businessRejectReason = 5
         # endregion
 
         self.rule_list = []
@@ -146,31 +159,36 @@ class QAP_T4876(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.SORPING_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.SORPING_order)
-        self.SORPING_order_replace_params.remove_parameter('TargetStrategy')
-        # self.SORPING_order_replace_params.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName':'ReleasedNbr', 'StrategyParameterType':'1', 'StrategyParameterValue':'1'}, {'StrategyParameterName':'ReleasedQty', 'StrategyParameterType':'8', 'StrategyParameterValue':'100'}])
+        self.SORPING_order_replace_params.remove_parameter('TargetStrategy').add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy_1)
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order_replace_params, case_id_2)
 
-        time.sleep(1)
+        time.sleep(3)
 
         self.fix_verifier_sell.check_fix_message(self.SORPING_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
+
+        business_message_reject = FixMessageBusinessMessageRejectReportAlgo().set_params_for_business_message_reject()
+        business_message_reject.change_parameters(dict(Text=self.text, RefMsgType=self.refMsgType, BusinessRejectReason=self.businessRejectReason))
+        self.fix_verifier_sell.check_fix_message(business_message_reject, message_name='Sell side Business Message Reject')
+        # endregion
+
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
-        # case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
-        # self.fix_verifier_sell.set_case_id(case_id_2)
-        # cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
-        #
-        # self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
-        # self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-        #
-        # # region check cancel third dma child order
-        # er_cancel_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_cancel)
-        # self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
-        # # endregion
-        #
-        # er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
-        # self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_2)
+        cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
+
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
+        self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        # region check cancel dma child order
+        er_cancel_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA order")
+        # endregion
+
+        er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
+        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
         rule_manager = RuleManager()
