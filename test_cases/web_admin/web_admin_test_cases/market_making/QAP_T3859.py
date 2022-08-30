@@ -29,6 +29,7 @@ class QAP_T3859(CommonTestCase):
         self.day = "Monday"
         self.from_time = "00:00:00"
         self.to_time = "00:30:00"
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,8 +42,11 @@ class QAP_T3859(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        client_tiers_values_sub_wizard.click_on_manage_button_for_schedules()
+        time.sleep(1)
         client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
         client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
         client_tiers_schedules_sub_wizard.set_day(self.day)

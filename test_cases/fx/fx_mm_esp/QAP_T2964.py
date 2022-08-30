@@ -1,215 +1,143 @@
-import logging
-from pathlib import Path
-from custom.verifier import Verifier, VerificationMethod
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, ExtractRatesTileValues
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from datetime import datetime
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-
-# FIX_data
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Silver1'
-connectivity = 'fix-ss-esp-314-luna-standard'
-settltype = '0'
-symbol = 'EUR/USD'
-securitytype = 'FXSPOT'
-securityidsource = '8'
-securityid = 'EUR/USD'
-bands = [1000000, 2000000, 3000000]
-md = None
-settldate = tsd.spo()
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_T2964(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
 
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = self.symbol + "-Spot"
 
-def modify_rates_tile(base_request, service, instrument, client_tier):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client_tier)
-    call(service.modifyRatesTile, modify_request.build())
+        self.market_data_event = "MD effected the tile"
+        self.modify_spread_event = "Spread is modified"
+        self.use_defaults_event = "Use Defaults effected the tile"
+        self.pips_1 = "1"
+        self.ask_pips = PriceNaming.ask_pips
+        self.bid_pips = PriceNaming.bid_pips
+        self.widen_spread = ClientPrisingTileAction.widen_spread
+        self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
+        self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
+        self.no_md_entries = [
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.1815,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18151,
+                    "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 1,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.1813,
+                    "MDEntrySize": 5000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 2,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18165,
+                    "MDEntrySize": 5000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 2,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "0",
+                    "MDEntryPx": 1.181,
+                    "MDEntrySize": 10000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 3,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                },
+                {
+                    "MDEntryType": "1",
+                    "MDEntryPx": 1.18186,
+                    "MDEntrySize": 10000000,
+                    "MDQuoteType": 1,
+                    "MDEntryPositionNo": 3,
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
+                }
+            ]
+        self.expected_default_bid = "150"
+        self.expected_modified_bid = "140"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step Precondition
+        self.fix_md.set_market_data().\
+            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
+        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD")
+        self.sleep(10)
+        # endregion
+        # region step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.instrument, client_tier=self.client)
+        self.rates_tile.press_use_default()
 
-def modify_spread(base_request, service, pips):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_pips(pips)
-    modify_request.skew_towards_ask()
-    call(service.modifyRatesTile, modify_request.build())
+        bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
+        actual_default_bid = bid_n_ask_values[self.bid_pips.value]
+        self.rates_tile.compare_values(self.expected_default_bid, actual_default_bid,
+                                       event_name=self.market_data_event)
 
+        self.rates_tile.modify_client_tile(pips=self.pips_1)
+        self.rates_tile.modify_spread(self.widen_spread)
 
-def use_default(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_use_defaults()
-    call(service.modifyRatesTile, modify_request.build())
+        bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
+        actual_modified_bid = bid_n_ask_values[self.bid_pips.value]
+        self.rates_tile.compare_values(self.expected_modified_bid, actual_modified_bid,
+                                       event_name=self.modify_spread_event)
 
+        self.rates_tile.press_use_default()
+        bid_n_ask_values = self.rates_tile.extract_prices_from_tile(self.bid_pips, self.ask_pips)
+        self.actual_default_bid = bid_n_ask_values[self.bid_pips.value]
 
-def check_ask(base_request, service):
-    extract_value_request = ExtractRatesTileValues(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_value_request.set_extraction_id(extraction_id)
-    extract_value_request.extract_ask_large_value("rates_tile.ask_large")
-    extract_value_request.extract_ask_pips("rates_tile.ask_pips")
-    response = call(service.extractRateTileValues, extract_value_request.build())
-    ask = float(response["rates_tile.ask_large"] + response["rates_tile.ask_pips"])
-    return float(ask)
+        self.rates_tile.compare_values(self.expected_default_bid, self.actual_default_bid,
+                                       event_name=self.use_defaults_event)
+        # endregion
 
-
-def compare_prices(case_id, ask_before, ask_after, pips):
-    pips = float(pips) / 10000
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices")
-    verifier.compare_values("Price ask", str(ask_before + pips), str(ask_after))
-    verifier.verify()
-
-
-def compare_prices_from_fix_not_eq(case_id, ask_before, ask_after):
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices not equal ")
-    verifier.compare_values("Price", str(ask_before), str(ask_after), VerificationMethod.NOT_EQUALS)
-    verifier.verify()
-
-
-def compare_prices_from_fix_eq(case_id, ask_before, ask_after):
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare prices equal")
-    verifier.compare_values("Price", str(ask_before), str(ask_after))
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-    simulator = Stubs.simulator
-    act = Stubs.fix_act
-
-    cp_service = Stubs.win_act_cp_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "EUR/USD-Spot"
-    client_tier = "Silver"
-    pips = "20"
-    mdu_params_spo = {
-        "MDReqID": simulator.getMDRefIDForConnection314(
-            request=RequestMDRefID(
-                symbol="EUR/USD:SPO:REG:HSBC",
-                connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT'
-        },
-        "NoMDEntries": [
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.19597,
-                "MDEntrySize": 2000000,
-                "MDEntryPositionNo": 1,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.19609,
-                "MDEntrySize": 2000000,
-                "MDEntryPositionNo": 1,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.19594,
-                "MDEntrySize": 6000000,
-                "MDEntryPositionNo": 2,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.19612,
-                "MDEntrySize": 6000000,
-                "MDEntryPositionNo": 2,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.19591,
-                "MDEntrySize": 12000000,
-                "MDEntryPositionNo": 3,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.19615,
-                "MDEntrySize": 12000000,
-                "MDEntryPositionNo": 3,
-                'SettlDate': tsd.spo(),
-                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-            },
-        ]
-    }
-    try:
-        # Step 1
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data SPOT',
-                'fix-fh-314-luna',
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, 'fix-fh-314-luna')
-            ))
-        params = CaseParamsSellEsp(connectivity, client, case_id, settltype=settltype, settldate=settldate,
-                                   symbol=symbol, securitytype=securitytype, securityidsource=securityidsource,
-                                   securityid=securityid)
-        md = MarketDataRequest(params). \
-            set_md_params() \
-            .send_md_request() \
-            .prepare_md_response(bands) \
-            .verify_md_pending()
-        price1 = md.extract_filed('price')
-
-        # Step 2
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        ask_before = check_ask(base_details, cp_service)
-        compare_prices_from_fix_eq(case_id, price1, ask_before)
-        modify_spread(base_details, cp_service, pips)
-        ask_after = check_ask(base_details, cp_service)
-        compare_prices(case_id, ask_before, ask_after, pips)
-        # Step 3
-        md = MarketDataRequest(params). \
-            set_md_params() \
-            .send_md_request() \
-            .prepare_md_response(bands) \
-            .verify_md_pending()
-        price2 = md.extract_filed('price')
-        # Step 4
-        use_default(base_details, cp_service)
-        ask_after_default = check_ask(base_details, cp_service)
-        compare_prices(case_id, ask_before, ask_after_default, "0")
-        # Step 5
-        compare_prices_from_fix_not_eq(case_id, price1, price2)
-        compare_prices_from_fix_eq(case_id, ask_after, price2)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            md.send_md_unsubscribe()
-            call(cp_service.closeRatesTile, base_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()
+        self.fix_md.set_market_data().\
+            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
+        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD")

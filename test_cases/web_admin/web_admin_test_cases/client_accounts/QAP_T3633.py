@@ -41,7 +41,7 @@ class QAP_T3633(CommonTestCase):
                 "name": 'QAP5416',
                 "disclose_exec": 'Manual',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
-                "desk": 'QUOD DESK',
+                "desk": 'Quod Desk',
                 "user_manager": 'adm_desk'
             },
             "account": {
@@ -70,6 +70,7 @@ class QAP_T3633(CommonTestCase):
             client_values_tab.set_id(self.test_data['client']['id'])
             client_values_tab.set_name(self.test_data['client']['name'])
             client_values_tab.set_ext_id_client(self.test_data['client']['ext_id_client'])
+            client_values_tab.set_disclose_exec(self.test_data['client']['disclose_exec'])
             client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
             client_assignments_tab.set_desk(self.test_data['client']['desk'])
             client_assignments_tab.set_user_manager(self.test_data['client']['user_manager'])
@@ -89,12 +90,13 @@ class QAP_T3633(CommonTestCase):
             account_values_tab.set_id(self.test_data['account']['id'])
             account_values_tab.set_ext_id_client(self.test_data['account']['ext_id_client'])
             account_values_tab.set_client(self.test_data['account']['client'])
-            account_values_tab.set_clearing_account_type(self.test_data['account']['clearing_account_type'])
+            # account_values_tab.set_clearing_account_type(self.test_data['account']['clearing_account_type'])
             account_values_tab.set_client_id_source(self.test_data['account']['client_id_source'])
             account_values_tab.click_save_button()
             time.sleep(2)
 
         common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         common_act.click_on_user_icon()
         time.sleep(1)
         common_act.click_on_logout()

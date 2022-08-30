@@ -43,6 +43,7 @@ class QAP_T3485(CommonTestCase):
         time.sleep(2)
         page = VenuesPage(self.web_driver_container)
         page.click_on_new()
+        time.sleep(2)
 
         venues_wizard_values = VenuesValuesSubWizard(self.web_driver_container)
         venues_wizard_values.set_name(self.name)
@@ -60,6 +61,7 @@ class QAP_T3485(CommonTestCase):
 
         venues_wizard = VenuesWizard(self.web_driver_container)
         venues_wizard.click_on_save_changes()
+        time.sleep(2)
 
     def test_context(self):
         try:
@@ -67,10 +69,9 @@ class QAP_T3485(CommonTestCase):
 
             page = VenuesPage(self.web_driver_container)
             page.set_name_filter(self.name)
-            time.sleep(2)
+            time.sleep(1)
             page.click_on_more_actions()
-
-            time.sleep(2)
+            time.sleep(1)
             page.click_on_edit()
             time.sleep(2)
             venues_wizard_dark = VenuesDarkAlgoCommissionSubWizard(self.web_driver_container)

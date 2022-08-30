@@ -38,10 +38,10 @@ class QAP_T4030(CommonTestCase):
         self.tick_size_profile = self.data_set.get_tick_size_profile("tick_size_profile_1")
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile_1")
 
-
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_subvenues_page()
         time.sleep(2)
@@ -50,9 +50,7 @@ class QAP_T4030(CommonTestCase):
         time.sleep(2)
         description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
-        time.sleep(2)
         description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
-        time.sleep(2)
         wizard = SubVenuesWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         time.sleep(2)

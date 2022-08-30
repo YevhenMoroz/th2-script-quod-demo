@@ -41,7 +41,8 @@ class QAP_T3621(CommonTestCase):
             },
             "desk_user": "adm_desk",
             "zone_user": "adm_zone",
-            "location_user": "adm_loca"
+            "location_user": "adm_loca",
+            "inst_user": "adm_inst"
         }
 
     def precondition(self):
