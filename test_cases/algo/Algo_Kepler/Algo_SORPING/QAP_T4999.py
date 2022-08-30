@@ -119,18 +119,19 @@ class QAP_T4999(TestCase):
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        # endregion
 
         # region Check Read log
         time.sleep(70)
 
         execution_report = {
             "PartyID": "TestINITIATOR-UTI",
-            "OrdrMisc6": "TestINITIATOR-UTI",
+            "MiscNumber": "OrdrMisc6",
+            "OrdrMisc": "TestINITIATOR-UTI",
             "ClOrdID": self.ClOrdId
         }
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(execution_report)
-        # endregion
         # endregion
 
         # region Check Sell side
