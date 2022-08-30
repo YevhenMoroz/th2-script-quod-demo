@@ -324,6 +324,7 @@ class BaseOrderBook(BaseWindow):
             self.transfer_pool_details.confirm_ticket_accept()
         else:
             self.transfer_pool_details.cancel_ticket_reject()
+        self.internal_transfer_action.add_transfer_pool_details(self.transfer_pool_details)
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
