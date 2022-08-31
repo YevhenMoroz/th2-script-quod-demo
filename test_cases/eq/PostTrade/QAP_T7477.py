@@ -6,11 +6,12 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.read_log_wrappers.oms_messages.AlsMessages import AlsMessages
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -23,12 +24,12 @@ class QAP_T7477(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -57,7 +58,7 @@ class QAP_T7477(TestCase):
         exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.fix_message.change_parameter('ExDestination', exec_destination)
         rule_manager = RuleManager(Simulators.equity)
-        read_log_verifier = ReadLogVerifier(self.read_log_conn, self.case_id)
+        read_log_verifier = ReadLogVerifier(self.read_log_conn, self.test_id)
         trade_rule = None
         new_order_single_rule = None
         # endregion
@@ -75,7 +76,7 @@ class QAP_T7477(TestCase):
             self.fix_manager.send_message_fix_standard(self.fix_message)
         except Exception as ex:
             logger.exception(f'{ex} - your exception')
-            bca.create_event('Exception regarding rules', self.case_id, status='FAIL')
+            bca.create_event('Exception regarding rules', self.test_id, status='FAIL')
 
         finally:
             time.sleep(10)
@@ -83,22 +84,15 @@ class QAP_T7477(TestCase):
             rule_manager.remove_rule(new_order_single_rule)
         # endregion
         # region Check ALS logs Status New
-        als_logs_params = {
-            "ConfirmationID": "*",
-            "ConfirmStatus": "New",
-            "ClientAccountID": account_first
-        }
-        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
+        als_message = AlsMessages.execution_report.value
+        als_message.update({"ConfirmStatus": "New", "ClientAccountID": account_first})
+        read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=50000)
         # endregion
         # region amend allocate
         self.middle_office.set_modify_ticket_details(is_alloc_amend=True,agreed_price=new_price)
         self.middle_office.amend_allocate()
         # endregion
         # region Check ALS logs Status Canceled
-        als_logs_params = {
-            "ConfirmationID": "*",
-            "ConfirmStatus": "Replace",
-            "ClientAccountID": account_first
-        }
-        read_log_verifier.check_read_log_message(als_logs_params, ["ConfirmStatus"], timeout=50000)
+        als_message.update({"ConfirmStatus": "Replace"})
+        read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=50000)
         # endregion

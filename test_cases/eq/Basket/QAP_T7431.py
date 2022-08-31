@@ -26,15 +26,15 @@ timeouts = True
 class QAP_T7431(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.trade_book = OMSTradesBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.oms_basket_book = OMSBasketOrderBook(self.case_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.oms_basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
         self.price = '10'
         self.fix_message = FixMessageNewOrderListOMS(self.data_set, parameters={
             'BidType': "1",
@@ -92,7 +92,7 @@ class QAP_T7431(TestCase):
                 }
             ]}
         })
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')

@@ -1,7 +1,7 @@
 import typing
 
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
+from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails,  ModifyTicketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
@@ -36,6 +36,14 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_unallocate_call = None
         self.extract_value_from_tab_of_allocation_ticket_call = None
         self.override_confirmation_service_call = None
+        self.booking_ticket_closing_and_opening_details = None
+        self.only_open_booking_ticket_call = None
+        self.only_set_details_in_booking_ticket_call = None
+        self.only_extraction_from_booking_ticket_call = None
+        self.only_closing_booking_ticket_call = None
+        self.internal_extraction_details = None
+        self.extract_allocation_sub_lvl_data_details = None
+        self.extract_value_from_second_level_of_allocation = None
 
     # endregion
     # region Common func
@@ -133,7 +141,8 @@ class BaseMiddleOffice(BaseWindow):
                                                     block_panels_extraction: list = None,
                                                     block_filter_dict: dict = None, alloc_filter_dict: dict = None):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
-        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
+        if block_filter_dict is not None:
+            self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_filter_allocations_grid(alloc_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
         self.allocation_ticket_extraction_details.set_block_panels(block_panels_extraction)
@@ -152,7 +161,8 @@ class BaseMiddleOffice(BaseWindow):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
         self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
-        result = call(self.extract_value_from_tab_of_allocation_ticket_call, self.allocation_ticket_extraction_details.build())
+        result = call(self.extract_value_from_tab_of_allocation_ticket_call,
+                      self.allocation_ticket_extraction_details.build())
         return result
 
     '''
@@ -335,8 +345,10 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def approve_block(self):
-        call(self.approve_block_call, self.view_order_extraction_details.build())
+    def approve_block(self, filter_list: typing.List[str] = None):
+        if filter_list:
+            self.modify_ticket_details.set_filter(filter_list)
+        call(self.approve_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
 
         '''
@@ -366,7 +378,44 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details(self.modify_ticket_details)
         return error
 
-    def override_confirmation_service(self, filter_dict: dict):
-        self.mass_approve_details.set_filter(filter_dict)
+    def override_confirmation_service(self, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.mass_approve_details.set_filter(filter_dict)
         call(self.override_confirmation_service_call, self.mass_approve_details.build())
         self.clear_details([self.mass_approve_details])
+
+    def only_opening_booking_ticket(self, selected_row: int = 1, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.booking_ticket_closing_and_opening_details.set_filter(filter_dict)
+        self.booking_ticket_closing_and_opening_details.set_selected_row(selected_row)
+        call(self.only_open_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+        self.clear_details([self.booking_ticket_closing_and_opening_details])
+
+    def only_set_details_to_booking_ticket(self, details: ModifyTicketDetails):
+        call(self.only_set_details_in_booking_ticket_call, details.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def only_extract_value_from_booking_ticket(self, list_extraction):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request, panels=list_extraction)
+        result = call(self.only_extraction_from_booking_ticket_call, self.extraction_panel_details.build())
+        self.clear_details([self.extraction_panel_details])
+        return result
+
+    def only_close_booking_ticket(self):
+        call(self.only_closing_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+
+    def set_extract_sub_lvl_fields(self, column_names: list, tab_name, row_count: int):
+        self.internal_extraction_details.set_default_params(self.base_request)
+        self.internal_extraction_details.set_column_names(column_names)
+        self.internal_extraction_details.set_tab_name(tab_name)
+        self.internal_extraction_details.set_row_number(row_count)
+
+    def extract_allocation_sub_lvl(self, block_filter: dict, allocation_filter: dict):
+        self.extract_allocation_sub_lvl_data_details.set_internal_extraction_details(
+            self.internal_extraction_details.build())
+        self.extract_allocation_sub_lvl_data_details.set_allocation_filter(allocation_filter)
+        self.extract_allocation_sub_lvl_data_details.set_block_filter(block_filter)
+        result = call(self.extract_value_from_second_level_of_allocation,
+                      self.extract_allocation_sub_lvl_data_details.build())
+        self.clear_details([self.internal_extraction_details, self.extract_allocation_sub_lvl_data_details])
+        return result

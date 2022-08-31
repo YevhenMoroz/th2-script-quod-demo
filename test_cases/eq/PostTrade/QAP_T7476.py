@@ -24,13 +24,12 @@ class QAP_T7476(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.read_log_conn = self.environment.get_list_read_log_environment()[0].read_log_conn
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -65,7 +64,7 @@ class QAP_T7476(TestCase):
             self.fix_manager.send_message_fix_standard(self.fix_message)
         except Exception as ex:
             logger.exception(f'{ex} - your exception')
-            bca.create_event('Exception regarding rules', self.case_id, status='FAIL')
+            bca.create_event('Exception regarding rules', self.test_id, status='FAIL')
 
         finally:
             time.sleep(10)
@@ -121,7 +120,7 @@ class QAP_T7476(TestCase):
         # endregion
 
         # region allocate block (step 4 , step 5, step 6)
-        fix_verifier = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         confirmation_message = FixMessageConfirmationReportOMS(self.data_set)
         confirmation_message.set_default_confirmation_new(self.fix_message)
         confirmation_message.add_tag({'Account': '*'}).add_tag({'SettlCurrFxRate': '*'}). \

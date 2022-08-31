@@ -37,6 +37,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
         self.extraction_error_message_details = None
+        self.hot_keys_details = None
         self.extract_direct_values = None
         self.order_ticket_details = None
         self.extract_error_from_order_ticket = None
@@ -99,6 +100,9 @@ class BaseOrderBook(BaseWindow):
         self.create_quick_button_call = None
         self.edit_quick_button_call = None
         self.click_quick_button_call = None
+        self.hot_keys_action_call = None
+        self.force_cancel_order_call = None
+        self.force_cancel_order_details = None
     # endregion
 
     # region Common func
@@ -285,6 +289,19 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
+    def force_cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
+                     filter_list: list = None):
+        if cancel_children is not None:
+            self.force_cancel_order_details.set_cancel_children(cancel_children)
+        if row_count is not None:
+            self.force_cancel_order_details.set_selected_row_count(row_count)
+        if comment is not None:
+            self.force_cancel_order_details.set_comment(comment)
+        if filter_list is not None:
+            self.force_cancel_order_details.set_filter(filter_list)
+        call(self.force_cancel_order_call, self.force_cancel_order_details.build())
+        self.clear_details([self.force_cancel_order_details])
+
     def refresh_order(self, filter_list: list = None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
@@ -364,9 +381,9 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list: dict = None):
-        if filter_list is not None:
-            self.suspend_order_details.set_filter(filter_list)
+    def suspend_order(self, cancel_children: bool = None, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.suspend_order_details.set_filter(filter_dict)
         if cancel_children is not None:
             self.suspend_order_details.set_cancel_children(cancel_children)
         call(self.suspend_order_call, self.suspend_order_details.build())
@@ -380,7 +397,7 @@ class BaseOrderBook(BaseWindow):
 
     def mass_execution_summary_at_average_price(self, row_count: int):
         self.mass_exec_summary_average_price_detail.set_count_of_selected_rows(row_count)
-        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail)
+        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail.build())
         self.clear_details([self.mass_exec_summary_average_price_detail])
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
@@ -418,7 +435,17 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                         trade_type: str = None, net_gross_ind: str = None, sec_last_mkt: str = None,
+                         set_other_tab: bool = False, settlement_type: str = None,
+                         settl_currency: str = None, exchange_rate: str = None,
+                         exchange_rate_calc: str = None, agent_fees: str = None,
+                         market_fees: str = None, route_fees: str = None
+
+                         ):
+        other_tab_details = None
+        if set_other_tab:
+            other_tab_details = self.manual_executing_details.add_other_details()
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -434,6 +461,26 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if trade_type and other_tab_details:
+            other_tab_details.set_trade_type(trade_type)
+        if net_gross_ind and other_tab_details:
+            other_tab_details.set_net_gross_ind(net_gross_ind)
+        if sec_last_mkt and other_tab_details:
+            other_tab_details.set_sec_last_mkt(sec_last_mkt)
+        if settlement_type and other_tab_details:
+            other_tab_details.set_settlement_type(settlement_type)
+        if settl_currency and other_tab_details:
+            other_tab_details.set_settl_currency(settl_currency)
+        if exchange_rate and other_tab_details:
+            other_tab_details.set_exchange_rate(exchange_rate)
+        if agent_fees and other_tab_details:
+            other_tab_details.set_agent_fees(agent_fees)
+        if market_fees and other_tab_details:
+            other_tab_details.set_market_fees(market_fees)
+        if route_fees and other_tab_details:
+            other_tab_details.set_route_fees(route_fees)
+        if exchange_rate_calc and other_tab_details:
+            other_tab_details.set_exchange_rate_cacl(exchange_rate_calc)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.manual_execution_order_call, self.manual_executing_details.build())
@@ -749,3 +796,13 @@ class BaseOrderBook(BaseWindow):
             self.quick_button_details.set_qty(qty)
         call(self.click_quick_button_call, self.quick_button_details.build())
         self.clear_details([self.quick_button_details])
+
+    def cancel_by_hotkey(self, row_count: list, filter: dict = None):
+        self.hot_keys_details.set_default_params(self.base_request)
+        self.hot_keys_details.set_row_number(row_count)
+        if filter is not None:
+            self.hot_keys_details.set_filter(filter)
+        self.hot_keys_details.set_cancel_hotkey()
+        self.hot_keys_details.set_enter_hotkey()
+        call(self.hot_keys_action_call, self.hot_keys_details.build())
+        self.clear_details([self.hot_keys_details])

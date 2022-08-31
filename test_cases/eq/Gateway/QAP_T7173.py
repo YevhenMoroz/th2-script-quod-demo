@@ -25,7 +25,7 @@ timeouts = True
 class QAP_T7173(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.test_id)
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
@@ -34,10 +34,10 @@ class QAP_T7173(TestCase):
 
     def qap_5728(self):
         # region Declaration
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        base_window = BaseMainWindow(self.case_id, self.session_id)
-        client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        base_window = BaseMainWindow(self.test_id, self.session_id)
+        client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        fix_manager = FixManager(self.ss_connectivity, self.test_id)
         client = 'CLIENT_COMM_1'
         change_params = {'Account': client,
                          "Instrument": Instrument.ISI1.value,
@@ -47,12 +47,12 @@ class QAP_T7173(TestCase):
                                  'AllocAccount': "CLIENT_COMM_1_SA2",
                                  'AllocQty': "100"}]}}
         fix_message = FixMessageNewOrderSingleOMS().set_default_care_limit().change_parameters(change_params)
-        fix_verifier = FixVerifier(self.dc_connectivity, self.case_id)
-        middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        fix_verifier = FixVerifier(self.dc_connectivity, self.test_id)
+        middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
-        fee_commission = RestCommissionsSender(self.wa_connectivity, self.case_id)
+        fee_commission = RestCommissionsSender(self.wa_connectivity, self.test_id)
         fee_commission.send_default_fee()
         fee_commission.modify_client_commission_request(comm_profile=CommissionProfiles.Perc_Qty)
         fee_commission.send_post_request()

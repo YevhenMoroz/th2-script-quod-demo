@@ -33,11 +33,11 @@ class QAP_T7489(TestCase):
         self.price = "10"
         self.client = CommissionClients.CLIENT_COMM_1.value
         self.account = CommissionAccounts.CLIENT_COMM_1_SA1
-        self.case_id = create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.test_id = create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -60,7 +60,7 @@ class QAP_T7489(TestCase):
                 self.data_set.get_mic_by_name("mic_2"), float(self.price), float(self.price), int(self.qty),
                 int(self.qty), 1)
             new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
-                "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+                "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
                  'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
             self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)

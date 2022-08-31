@@ -82,6 +82,7 @@ class OmsClients(Enum):
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     client_pt_8 = "MOClient7"
+    client_pt_9 = "MOClient_9"
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -103,11 +104,14 @@ class OmsVenueClientNames(Enum):
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
     client_pt_2_venue_1 = "MOClient2_PARIS"
+    client_pt_2_venue_2 = "MOClient2_EUREX"
     client_pt_3_venue_1 = "MOClient3_PARIS"
+    client_pt_3_venue_2 = "MOClient3_EUREX"
     client_pt_4_venue_1 = "MOClient4_PARIS"
     client_pt_5_venue_1 = "MOClient5_PARIS"
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
+    client_pt_9_venue_1 = "MOClient9_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""
@@ -142,6 +146,7 @@ class OmsAccounts(Enum):
     client_pt_6_acc_1 = "MOClient6_SA1"
     client_pt_6_acc_2 = "MOClient6_SA2"
     client_pt_7_acc_1 = "MOClient7_SA1"
+    client_pt_9_acc_1 = "MOClient9_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Commissions"""
@@ -152,7 +157,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 =  "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
@@ -231,6 +236,8 @@ class OMSCommissionProfiles(Enum):
     bas_qty = 6
     abs_amt_usd = 7
     abs_amt_2 = 8
+    abs_amt_3 = 9
+    commission_with_minimal_value = 600018
 
 
 class OMSFeeType(Enum):
@@ -255,6 +262,7 @@ class OMSExecScope(Enum):
     all_exec = "ALL"
     day_first_exec = "DAF"
     first_exec = "FST"
+    on_calculated = "CAL"
 
 
 class OMSFeeOrderScope(Enum):
@@ -352,3 +360,17 @@ class OMSBagScenario(Enum):
 
 class OMSVenueID(Enum):
     paris = "PARIS"
+    eurex = "EUREX"
+
+
+class OMSCounterpartID(Enum):
+    contra_firm = "200003"
+    contra_firm2 = "1000009"
+
+
+class OMSInstrType(Enum):
+    equity = "EQU"
+
+
+class OMSContraFirm(Enum):
+    contra_firm_1 = "Contra Firm"

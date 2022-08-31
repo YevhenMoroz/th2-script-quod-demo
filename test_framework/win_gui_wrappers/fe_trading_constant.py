@@ -91,6 +91,7 @@ class OrderBookColumns(Enum):
     exec_firm_value = "ExecutingFirm"
     exec_type = "ExecType"
     nin = "NIN"
+    custodian = "Custodian"
     # endregion
 
 
@@ -192,8 +193,13 @@ class TradeBookColumns(Enum):
     exec_type = 'ExecType'
     unmatched_qty = 'UnmatchedQty'
     """Mics Fees tab"""
-    mics_tab = "Mics Fees"
+    misc_tab = "Misc Fees"
     rate = "Rate"
+    basis = "Basis"
+    amount = "Amount"
+    fee_type = "FeeType"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -377,6 +383,9 @@ class MiddleOfficeColumns(Enum):
     settl_currency = 'SettlCurrency'
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
+    net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -384,6 +393,9 @@ class MiddleOfficeColumns(Enum):
     unmatched_sts = "Unmatched"
     matched_agreed_sts = "MatchedAgreed"
     cancelled_sts = 'Cancelled'
+    """Confirmation"""
+    external = "External"
+    manual = "Manual"
 
 
 class AllocationsColumns(Enum):
@@ -417,6 +429,8 @@ class SecondLevelTabs(Enum):
     algo_parameters_external = "Algo Parameters External"
     pre_trade_alloc_tab = "Pre Trade Allocations"
     counterpart_list = "Counterpart List"
+    commissions = "Client Commissions"
+    fees = "Misc Fees"
 
 
 class PreTradeAllocations(Enum):
@@ -538,8 +552,6 @@ class ChildOrderBookColumns(Enum):
     percent = '%'
 
 
-
-
 class OrderBookColumnName(Enum):
     id = 'Id'
     order_bag_id = 'OrderBagID'
@@ -605,6 +617,7 @@ class DoneForDays(Enum):
 
 class Suspended(Enum):
     yes = "Yes"
+    no = "No"
 
 
 class OrdersTabColumnFromBag(Enum):
@@ -620,5 +633,27 @@ class BlockStatuses(Enum):
 class OffsetTypes(Enum):
     price = "Price"
 
+
 class ReferencePrice(Enum):
     open = "Open"
+
+
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
+
+
+class Basis(Enum):
+    per_unit = 'PerUnit'
+    absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
+
+
+class FeeTypeForMiscFeeTab(Enum):
+    agent = "Agent"
+    stamp = "Stamp"

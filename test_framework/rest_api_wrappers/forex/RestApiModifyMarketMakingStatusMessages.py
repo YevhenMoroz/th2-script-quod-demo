@@ -8,7 +8,7 @@ class RestApiModifyMarketMakingStatusMessages(RestApiMessages):
 
     def set_default_params(self):
         self.parameters = {
-            "MDQuoteType": "IND",
+            "MDQuoteType": "TRD",
             "activeQuote": 'true',
             "marketMakingStatusID": '1'
         }
@@ -16,11 +16,11 @@ class RestApiModifyMarketMakingStatusMessages(RestApiMessages):
         return self
 
     def set_executable_enable(self):
-        self.parameters.update({"MDQuoteType": "IND"})
+        self.parameters.update({"MDQuoteType": "TRD"})
         return self
 
     def set_executable_disable(self):
-        self.parameters.update({"MDQuoteType": "TRD"})
+        self.parameters.update({"MDQuoteType": "IND"})
         return self
 
     def set_pricing_enable(self):

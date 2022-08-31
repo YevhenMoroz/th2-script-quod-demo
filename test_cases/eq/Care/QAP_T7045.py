@@ -30,12 +30,12 @@ class QAP_T7045(TestCase):
         self.new_price = "15"
         self.client = self.data_set.get_client_by_name("client_pt_1")
         self.venue_client_name = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.nos_rule = None
         self.cancel_replace_rule = None

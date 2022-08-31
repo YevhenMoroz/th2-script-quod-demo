@@ -22,21 +22,22 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7520(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.test_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
         self.act_java_api = Stubs.act_java_api
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -113,6 +114,7 @@ class QAP_T7520(TestCase):
                                                                    'synthetic')})
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_wave_status(self, filter_list, status: str, tab_name: str):
         fields = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1',
                                                                                sub_extraction_fields=[
@@ -123,6 +125,7 @@ class QAP_T7520(TestCase):
             {WaveColumns.status.value:
                  fields[WaveColumns.status.value]}, 'Comparing Status of Wave')
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_child_order_after_waving(self, order_ids: list, expected_result):
         for order in order_ids:
             values = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,

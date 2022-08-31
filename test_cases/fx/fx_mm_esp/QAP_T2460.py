@@ -45,12 +45,12 @@ class QAP_T2460(TestCase):
             'SettlType': self.settle_type_1w}]
         self.sts_filled = Status.Fill
         self.sts_rejected = Status.Reject
-        self.md_req_id = 'EUR/USD:FXF:WK1:MS'
+        self.md_req_id = 'EUR/USD:SPO:REG:HSBC'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.fix_md.set_market_data_fwd(). \
+        self.fix_md.set_market_data(). \
             update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0'). \
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
@@ -65,8 +65,7 @@ class QAP_T2460(TestCase):
 
         self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
         self.sleep(4)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # endregion
 
         # region Step 3
@@ -91,7 +90,7 @@ class QAP_T2460(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Step 5
-        self.fix_md.set_market_data_fwd(). \
+        self.fix_md.set_market_data(). \
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")

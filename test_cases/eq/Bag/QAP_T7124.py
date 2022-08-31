@@ -23,19 +23,20 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7124(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
 
@@ -108,6 +109,7 @@ class QAP_T7124(TestCase):
         self.__check_execution_price(filter_bag_list, orders_id, price_2)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_value_of_dma_orders(self, expected_result, columns: list, price: str):
         result = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1', sub_extraction_fields=columns,
                                                                                sub_filter=[
@@ -117,6 +119,7 @@ class QAP_T7124(TestCase):
         self.bag_order_book.compare_values(expected_result, result,
                                            f"Comparing values of DMA order with limit price = {price}")
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __creating_and_trading_DMA_orders(self, price, exec_destination, venue_client_account, qty,
                                           client, name_of_bag):
         new_order_single_rule = trade_rule = None
@@ -141,6 +144,7 @@ class QAP_T7124(TestCase):
             self.rule_manager.remove_rule(trade_rule)
             self.rule_manager.remove_rule(new_order_single_rule)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __check_execution_price(self, filter_bag_list, orders_id, price):
         for order_id in orders_id:
             values = self.bag_order_book.extraction_from_sub_levels_and_others_tab('1',

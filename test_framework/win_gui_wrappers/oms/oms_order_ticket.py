@@ -48,7 +48,8 @@ class OMSOrderTicket(BaseOrderTicket):
                           tif=None, account=None, display_qty=None, is_sell_side=False, instrument=None, washbook=None,
                           capacity=None, settl_date=None, recipient=None, partial_desk=False,
                           disclose_flag=DiscloseFlagEnum.DEFAULT_VALUE,
-                          alloc_details: dict = None, error_expected=None):
+                          alloc_details: dict = None, error_expected=None, set_alt_account: bool = False,
+                          set_qty=True):
         self.order_details = super().set_order_details(client=client, limit=limit, stop_price=stop_price, qty=qty,
                                                        order_type=order_type, tif=tif, account=account,
                                                        display_qty=display_qty, is_sell_side=is_sell_side,
@@ -65,12 +66,22 @@ class OMSOrderTicket(BaseOrderTicket):
             self.order_details.set_settl_date(settl_date)
         if recipient is not None:
             self.order_details.set_care_order(recipient, partial_desk, disclose_flag)
-        if alloc_details:
+        if alloc_details and set_alt_account:
             allocation_row_details = list()
-            for account_name, qty in alloc_details.items():
-                allocation_row_details.append(AllocationsGridRowDetails(account_name, qty).build())
-            allocation_details = MoreTabAllocationsDetails(allocation_row_details).build()
+            for account_name, percent in alloc_details.items():
+                allocation_row_details.append(AllocationsGridRowDetails(alt_account=account_name, percentage=percent).build())
+            more_tab_allocation_details = MoreTabAllocationsDetails(allocation_row_details)
+            more_tab_allocation_details.set_alt_acc_checkbox(True)
+            allocation_details = more_tab_allocation_details.build()
             self.order_details.set_allocations_details(allocation_details)
+        else:
+            if alloc_details:
+                allocation_row_details = list()
+                for account_name, alloc_qty in alloc_details.items():
+                    allocation_row_details.append(AllocationsGridRowDetails(account=account_name, qty=alloc_qty).build())
+                more_tab_allocation_details = MoreTabAllocationsDetails(allocation_row_details)
+                allocation_details = more_tab_allocation_details.build()
+                self.order_details.set_allocations_details(allocation_details)
         return self
 
     # endregion

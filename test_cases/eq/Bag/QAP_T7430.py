@@ -23,21 +23,22 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7430(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.act_java_api = Stubs.act_java_api
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -134,6 +135,7 @@ class QAP_T7430(TestCase):
                                           expected_done_for_day=DoneForDays.yes.value)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __extracting_and_comparing_value_for_bag_order(self, bag_column_extraction: list, expected_values: list,
                                                        return_order_bag_id: bool, action: str):
         fields = self.bag_order_book.extract_order_bag_book_details('1', bag_column_extraction)
@@ -149,6 +151,7 @@ class QAP_T7430(TestCase):
         if return_order_bag_id:
             return order_bag_id
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __checking_post_trade_status(self, orders_id: list, expected_done_for_day, expected_post_trade_status):
         post_trade_column = OrderBookColumns.post_trade_status.value
         done_for_day_column = OrderBookColumns.done_for_day.done_for_day.value

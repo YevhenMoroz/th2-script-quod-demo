@@ -2,8 +2,9 @@ from test_framework.win_gui_wrappers.base_middle_office import BaseMiddleOffice
 from stubs import Stubs
 from win_gui_modules.middle_office_wrappers import ModifyTicketDetails, ViewOrderExtractionDetails, \
     ExtractMiddleOfficeBlotterValuesRequest, AllocationsExtractionDetails, AllocationBlockExtractionDetails, \
-    MassApproveDetails
+    MassApproveDetails, OpeningBookingTicket, ExtractAllocationSubLvlDataDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
+from win_gui_modules.trades_blotter_wrappers import ExtractTradesBookSubLvlDataDetails
 
 
 class OMSMiddleOffice(BaseMiddleOffice):
@@ -34,4 +35,12 @@ class OMSMiddleOffice(BaseMiddleOffice):
         self.mass_unallocate_call = Stubs.win_act_middle_office_service.massUnAllocate
         self.extract_value_from_tab_of_allocation_ticket_call = Stubs.win_act_middle_office_service.extractAllocationBlockValuesAllocationTicket
         self.override_confirmation_service_call = Stubs.win_act_middle_office_service.overrideConfirmationService
+        self.booking_ticket_closing_and_opening_details = OpeningBookingTicket(self.base_request)
+        self.only_open_booking_ticket_call = Stubs.win_act_middle_office_service.onlyOpeningBookingTicket
+        self.only_set_details_in_booking_ticket_call = Stubs.win_act_middle_office_service.onlySettingValuesInBookingTicket
+        self.only_extraction_from_booking_ticket_call = Stubs.win_act_middle_office_service.onlyExtractValuesFromBookingTicket
+        self.only_closing_booking_ticket_call = Stubs.win_act_middle_office_service.onlyClosingBookingTicket
+        self.internal_extraction_details = ExtractTradesBookSubLvlDataDetails()
+        self.extract_allocation_sub_lvl_data_details = ExtractAllocationSubLvlDataDetails(self.base_request)
+        self.extract_value_from_second_level_of_allocation = Stubs.win_act_middle_office_service.extractValueFromSecondLevelOfAllocation
         # endregion

@@ -30,18 +30,21 @@ class QAP_T3987(CommonTestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.external_client = ''
         self.internal_client = ''
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
+        time.sleep(2)
         client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
         client_tier_instrument_main_page.click_on_new()
         time.sleep(2)
         client_tier_instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
         client_tier_instrument_values_tab.set_symbol(self.symbol)
+        client_tier_instrument_values_tab.set_tod_end_time(self.tod_end_time)
         client_tier_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
             self.web_driver_container)
         client_tier_external_clients_sub_wizard.click_on_plus()
