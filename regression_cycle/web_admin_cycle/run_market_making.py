@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T7868 import QAP_T7868
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3991 import QAP_T3991
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3990 import QAP_T3990
 from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T3989 import QAP_T3989
@@ -61,6 +62,8 @@ class RunMarketMaking:
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
+            QAP_T7868(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3991(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3990(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

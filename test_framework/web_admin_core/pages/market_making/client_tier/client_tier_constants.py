@@ -160,8 +160,8 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH = '//*[@placeholder ="Quantity *"]'
-    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="ng2-smart-th upperQty ng-star-inserted"]//input'
-
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[normalize-space()="Tiered Quantities"]//..//*[@placeholder="Filter"]'
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_WARNING_XPATH = '//*[normalize-space()="Tiered Quantities"]//..//*[@class="max-sweep-qty-warning"]'
     # tenors tab
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="plus"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="checkmark"]'

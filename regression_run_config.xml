@@ -1,6 +1,6 @@
 <regression>
     <target_server_win></target_server_win>
-<!--  set_name must be like that 5.1.149.162|Regression|-->
+<!--  set_name must be like that WebAdmin | 5.1.161.174-->
     <name>set_name</name>
     <product_lines>
         <product_line name="algo" run="True">

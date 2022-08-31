@@ -103,3 +103,4 @@ class FeesConstants:
     DIMENSIONS_TAB_INSTRUMENT_LIST_XPATH = '//*[@id = "instrumentList"]'
     DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH = '//*[@id = "instrumentGroup"]'
     DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH = '//*[@class="option-list"]//span'
+    DIMENSIONS_TAB_ROUTE_XPATH = '//*[@id="route"]'

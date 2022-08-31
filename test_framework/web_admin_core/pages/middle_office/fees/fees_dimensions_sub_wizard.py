@@ -74,3 +74,14 @@ class FeesDimensionsSubWizard(CommonPage):
 
     def get_instrument_group(self):
         return self.get_text_by_xpath(FeesConstants.DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH)
+
+    def set_route(self, value):
+        self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_ROUTE_XPATH, value)
+
+    def get_route(self):
+        return self.get_text_by_xpath(FeesConstants.DIMENSIONS_TAB_ROUTE_XPATH)
+
+    def get_all_route_from_drop_menu(self):
+        self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_ROUTE_XPATH).click()
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
