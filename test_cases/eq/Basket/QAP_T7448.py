@@ -25,7 +25,6 @@ class QAP_T7448(TestCase):
         self.symbol = "ISIN"
         self.client = self.data_set.get_client_by_name('client_co_1')
         self.instrument = self.data_set.get_fix_instrument_by_name('instrument_1')["Symbol"]
-        print(self.instrument)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
