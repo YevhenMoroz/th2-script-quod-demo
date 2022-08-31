@@ -34,14 +34,14 @@ class QAP_T3277(CommonTestCase):
 
         login_page.login_to_mobile_trading(self.login, self.password)
         # self.appium_driver.wait_time(2)
-        self.verify("Login successful", None, main_page.check_if_element_presented(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_TITLE))
         # endregion
         # region - test details
 
         # Step 1
         main_page.click_on_menu()
         menu_page.click_on_personal_details()
-        self.verify("Personal Details is opened", None, menu_page.check_if_element_presented(MenuConstants.PERSONAL_DETAILS_TITLE))
+        self.verify("Personal Details is opened", None, menu_page.wait_element_presence(MenuConstants.PERSONAL_DETAILS_TITLE))
         # endregion
 
         # Step 2

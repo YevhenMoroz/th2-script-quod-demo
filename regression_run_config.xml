@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
     <name>Regression</name>
-    <version>5.1.156.169</version>
+    <version>5.1.159.172</version>
     <product_lines>
         <product_line name="algo" run="True">
             <components>
@@ -483,7 +483,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>

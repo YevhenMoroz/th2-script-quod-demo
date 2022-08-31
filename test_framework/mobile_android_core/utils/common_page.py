@@ -9,7 +9,7 @@ class CommonPage:
         self.Waiter = Waits(self.appium_driver.appium_driver, 10)
 
     def find_by_xpath(self, xpath):
-        return self.appium_driver.get_driver().find_element_by_xpath(xpath)
+        return self.appium_driver.get_driver().find_element(AppiumBy.XPATH, xpath)
 
     def find_by_class(self, class_name):
         return self.appium_driver.get_driver().find_element(AppiumBy.CLASS_NAME, class_name)
@@ -23,8 +23,14 @@ class CommonPage:
     def get_attribute_of_element_by_xpath(self, xpath, value):
         return self.find_by_xpath(xpath).get_attribute(str(value))
 
-    def check_if_element_presented(self, xpath):
-        return self.Waiter.WaitUntilVisibleByXPath(self.find_by_xpath(xpath))
+    def wait_element_presence(self, xpath):
+        return self.Waiter.wait_until_presence_by_xpath(xpath)
+
+    def wait_element_is_clickable(self, xpath):
+        return self.Waiter.wait_until_clickable_by_xpath(xpath)
+
+    def wait_edit_mode(self, xpath):
+        return self.Waiter.wait_until_attribute_value_equals_by_xpath(xpath, 'focused', 'true')
 
     #TODO: there must be determined coordinate (x,y)
     def swipe_right_to_left(self):
