@@ -28,7 +28,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.ceil(remaining_ord_qty / remaining_waves)
+        return math.floor(remaining_ord_qty / remaining_waves)
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
