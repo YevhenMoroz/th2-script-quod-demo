@@ -112,6 +112,25 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                     })
                     md_entry_type += 1
 
+    def set_params_for_md_response_taker_wk1(self, md_request: FixMessageMarketDataRequestFX,
+                                             no_md_entries_count: list):
+        self.prepare_params_for_md_response(md_request)
+        if len(no_md_entries_count) > 0:
+            self.get_parameter("NoMDEntries").clear()
+            for qty in no_md_entries_count:
+                md_entry_type = 0
+                while md_entry_type < 2:
+                    self.get_parameter("NoMDEntries").append({
+                        "MDEntryPx": "*",
+                        "MDEntrySize": qty,
+                        "OrdType": "2",
+                        "SettlDate": wk1(),
+                        "MDQuoteType": "*",
+                        "MDEntryType": "*",
+
+                    })
+                    md_entry_type += 1
+
     def set_params_for_md_response_taker_bda(self, md_request: FixMessageMarketDataRequestFX,
                                              no_md_entries_count: list):
         self.prepare_params_for_md_response(md_request)
