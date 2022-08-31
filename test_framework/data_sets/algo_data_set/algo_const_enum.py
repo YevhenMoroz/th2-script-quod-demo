@@ -269,6 +269,9 @@ class AlgoListingId(Enum):
     listing_29 = "1803729"       # Euronext Paris for FR0000121329
     listing_30 = "1325020507"    # Euronext Amsterdam for IE00B5BMR087
     listing_31 = "1863318"       # CHIX for IE00B5BMR087
+    listing_32 = "1874187"       # BATS for FR0010411884
+    listing_33 = "1863556"       # CHIX for FR0010411884
+    listing_34 = "125911519"       # JANESTREET for FR0010411884
 
 
 class AlgoCurrency(Enum):
