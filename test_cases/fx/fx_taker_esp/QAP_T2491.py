@@ -9,7 +9,6 @@ from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportTakerMO import FixMessageExecutionReportTakerMO
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
@@ -28,10 +27,6 @@ class QAP_T2491(TestCase):
         self.fix_verifier = FixVerifier(self.esp_t_connectivity, self.test_id)
         self.new_order_single = FixMessageNewOrderSingleTaker(data_set=self.data_set)
         self.execution_report = FixMessageExecutionReportAlgoFX()
-        self.execution_report_mo_1 = FixMessageExecutionReportTakerMO()
-        self.execution_report_mo_2 = FixMessageExecutionReportTakerMO()
-        self.status = Status.Fill
-        self.acc_argentina = self.data_set.get_client_by_name("client_mm_3")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
         self.eur = self.data_set.get_currency_by_name("currency_eur")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
