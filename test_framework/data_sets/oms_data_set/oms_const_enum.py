@@ -150,6 +150,8 @@ class OmsAccounts(Enum):
     client_pt_9_acc_1 = "MOClient9_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
+    """Dummy"""
+    client_co_1_dummy_acc = "CLIENT_FIX_CARE_DUMMY_SA1"
     """Commissions"""
     client_com_1_acc_1 = "CLIENT_COMM_1_SA1"
     client_com_1_acc_2 = "CLIENT_COMM_1_SA2"
@@ -173,6 +175,7 @@ class OmsWashbookAccounts(Enum):
     washbook_account_1 = "DMA Washbook"
     washbook_account_2 = "CareWB"
     washbook_account_3 = "DefaultWashBook"
+    washbook_account_4 = "AlgoWashBook"
 
 
 class OmsRecipients(Enum):
@@ -275,13 +278,13 @@ class OMSFee(Enum):
     fee1 = 1
     fee2 = 2
     fee3 = 3
-    fee_vat = 11
 
 
 class OMSCommission(Enum):
     commission1 = 1
     commission2 = 2
     commission3 = 3
+
 
 class OMSClientListID(Enum):
     cl_list_comm_1 = 400006
@@ -373,13 +376,27 @@ class OMSCounterpartID(Enum):
     contra_firm2 = "1000009"
 
 
-class OMSInstumentType(Enum):
-    equity = 'EQU'
-
-
 class OMSInstrType(Enum):
     equity = "EQU"
 
 
 class OMSContraFirm(Enum):
     contra_firm_1 = "Contra Firm"
+
+
+class OMSReferencePrice(Enum):
+    ref_pr_1 = 'DayLow'
+    ref_pr_2 = 'DayHigh'
+    ref_pr_3 = 'LastTradedPrice'
+    ref_pr_4 = 'Open'
+    ref_pr_5 = 'Close'
+    ref_pr_6 = 'LTP'
+    ref_pr_7 = 'CLO'
+    ref_pr_8 = 'OPN'
+    ref_pr_9 = 'DHI'
+    ref_pr_10 = 'DLO'
+
+
+class OMSWashBookRule(Enum):
+    RuleForTest = 200004
+    name_washbook_rule = 'washbook1'
