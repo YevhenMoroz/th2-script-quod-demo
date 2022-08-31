@@ -121,8 +121,8 @@ class BaseDataSet:
     party_role = None
     counterpart_id = None
     cl_list_id = None
-    instr_type = None
     pre_filter = None
+    reference_price = None
     # endregion
 
     # region fields added by Web Trading team
@@ -469,6 +469,11 @@ class BaseDataSet:
     def get_commissions(self):
         if self.commission:
             return self.commission
+
+    def get_washbook_rule_pair_by_name(self, name: str):
+        if hasattr(self.washbook_rules, name):
+            return getattr(self.washbook_rules, name)
+        raise ValueError(f"{self.washbook_rules} not found!")
 
     def get_pset(self, name: str):
         """
@@ -839,14 +844,13 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
-
     def get_cl_list_id(self, name:str):
         if hasattr(self.cl_list_id, name):
             return getattr(self.cl_list_id, name).value
         return ValueError(f"{self.cl_list_id} not found!")
 
-    def get_instr_type_name(self, name:str):
-        if hasattr(self.instr_type, name):
-            return getattr(self.instr_type, name).value
-        return ValueError(f"{self.instr_type} not found!")
+    def get_ref_price(self, name:str):
+        if hasattr(self.reference_price, name):
+            return getattr(self.reference_price, name).value
+        return ValueError(f"{self.reference_price} not found!")
     # endregion
