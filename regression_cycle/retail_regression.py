@@ -5,13 +5,15 @@ from custom import basic_custom_actions as bca
 from regression_cycle.retail_regression_cycle import trading_rest_api_dma, trading_rest_api_market_data,\
     trading_rest_api_risk_limits, trading_rest_api_buying_power, trading_rest_api_others, \
     webadmin_rest_api_client_accounts, webadmin_rest_api_positions,  webadmin_rest_api_risk_limits
-
+from regression_cycle.mobile_android_cycle.login.run_login import RunLogin
+from test_framework.mobile_android_core.utils.driver import AppiumDriver
 
 def test_run(parent_id=None):
     try:
         report_id = bca.create_event('Retail regression_cycle', parent_id)
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
+        version = root.find(".//version").text
         logging.getLogger().setLevel(logging.WARN)
 
         # region __TradingRestApi__ block
@@ -43,6 +45,12 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='WA_REST_API_Others']").attrib["run"]):
             pass
         # endregion
+
+        # # region __MobileAndroidRegression__ block
+        driver = AppiumDriver()
+        if eval(root.find(".//component[@name='Mobile_LoginLogout']").attrib["run"]):
+            RunLogin(driver, report_id, version).execute()
+        # # endregion
 
         # TODO: Add additional blocks for WebTrading and MobileTrading
 
