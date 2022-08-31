@@ -19,6 +19,7 @@ class AutoHedgerConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     POSITION_BOOK_ALREADY_ASSIGNED_TO_MESSAGE = '//*[contains(text(),"Position Book already assigned to")]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
 
 
     # main page
@@ -84,12 +85,12 @@ class AutoHedgerConstants:
 
     # Instruments tab
 
-    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="plus"]'
-    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
-    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="cancel"]'
-    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
-    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@data-name="edit"]'
-    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments * "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
+    INSTRUMENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    INSTRUMENTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    INSTRUMENTS_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@data-name="cancel"]'
+    INSTRUMENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
+    INSTRUMENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    INSTRUMENTS_TAB_SYMBOL_FILTER_XPATH = '//*[text()=" Instruments "]/parent::nb-accordion-item//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
     INSTRUMENTS_TAB_SYMBOL_FIELD_XPATH = '//*[@placeholder="Symbol *"]'
     INSTRUMENTS_TAB_HEDGING_STRATEGY_FIELD_XPATH = '//*[text()="Hedging Strategy *"]/preceding-sibling::input'
     INSTRUMENTS_TAB_LONG_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Long Threshold Qty (EUR)"]/preceding-sibling::input'
@@ -102,6 +103,6 @@ class AutoHedgerConstants:
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_FIELD_XPATH = '//*[@id ="hedgeOrderDestination"]'
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-auto-hedger/ngx-ah-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[5]/nb-accordion-item-body/div/div/ngx-ah-instrument-form/div/div[2]/form/div[3]/div[3]/div/div[1]/nb-checkbox/label/span[1]'
     INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGE_FIELD_XPATH = '//*[text()="Synthetic Combination to Auto-Hedge"]'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy"]/preceding-sibling::input'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy TIF"]'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH = '//*[text()= "Hedging Execution Strategy Max Duration (sec)"]'
+    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Execution Strategy"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH = '//*[text()= "Execution Strategy TIF"]'
+    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH = '//*[text()= "Execution Strategy Max Duration (sec)"]'

@@ -27,6 +27,11 @@ class AccountsWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH)
 
+    def get_all_clients_from_drop_menu(self):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_description(self, value: str):
         self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
 
@@ -122,8 +127,13 @@ class AccountsWizard(CommonPage):
         return self.is_pdf_contains_value(value)
 
     def is_incorrect_or_missing_value_message_displayed(self):
-        if self.find_by_xpath(
-                AccountsConstants.INCORRECT_OR_MISSING_VALUES_XPATH).text == "Incorrect or missing values":
-            return True
-        else:
-            return False
+        return self.find_by_xpath(AccountsConstants.INCORRECT_OR_MISSING_VALUES_XPATH).is_displayed()
+
+    def click_on_dummy_checkbox(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_DUMMY_CHECKBOX_XPATH).click()
+
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(AccountsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
+
+    def is_wizard_page_open(self):
+        return self.is_element_present(AccountsConstants.WIZARD_TITLE_XPATH)

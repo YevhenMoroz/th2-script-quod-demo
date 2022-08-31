@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -21,3 +22,7 @@ class CommissionsValuesSubWizard(CommonPage):
 
     def click_on_re_calculate_for_allocations(self):
         self.find_by_xpath(CommissionsConstants.VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH).click()
+
+    def is_re_calculate_for_allocations_selected(self):
+        return self.is_checkbox_selected(CommissionsConstants.VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH)
+

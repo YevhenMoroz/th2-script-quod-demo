@@ -25,8 +25,54 @@ class BaseTileDetails:
         return self.base_details
 
 
+class SettlementTabDetails:
+    def __init__(self):
+        self.request = common_pb2.SettlementTabDetails()
+
+    def set_settl_currency(self, settl_currency):
+        self.request.settlementCurrency = settl_currency
+
+    def set_settl_type(self, settl_type):
+        self.request.settlementType = settl_type
+
+    def set_settl_date(self, settl_date):
+        self.request.settlementDate = settl_date
+
+    def set_exchange_rate(self, exchange_rate):
+        self.request.exchangeRate = exchange_rate
+
+    def set_exchange_rate_calc(self, exchange_rate_calc):
+        self.request.exchangeRateCalc = exchange_rate_calc
+
+    def set_cash_account(self, cash_account):
+        self.request.cashAccount = cash_account
+
+    def build(self):
+        return self.request
+
+
+class CommissionsTabTableParams:
+    def __init__(self):
+        self.request = common_pb2.CommissionsTabTableParams()
+
+    def set_basis(self, basis: str):
+        self.request.basis = basis
+
+    def set_rate(self, rate: str):
+        self.request.rate = rate
+
+    def set_amount(self, amount: str):
+        self.request.amount = amount
+
+    def set_currency(self, currency: str):
+        self.request.currency = currency
+
+    def build(self):
+        return self.request
+
+
 class CommissionsDetails:
-    def __init__(self, commission_details: common_pb2.CommissionsDetails()):
+    def __init__(self, commission_details: common_pb2.CommissionsDetails() = common_pb2.CommissionsDetails()):
         self.request = commission_details
 
     def toggle_manual(self):
@@ -43,11 +89,15 @@ class CommissionsDetails:
         if currency is not None:
             var.currency = currency
 
+    def add_commission_params(self, commission_params: list):
+        self.request.commissionsTableParams.extend(commission_params)
+
     def remove_commissions(self):
         self.request.removeCommissions = True
 
     def build(self):
         return self.request
+
 
 class SpreadAction(Enum):
     WIDEN_SPREAD = common_pb2.WIDEN_SPREAD
@@ -159,9 +209,9 @@ class GridScrollingDetails:
 
 
 class SimpleRequest:
-    def __init__(self, base: EmptyRequest = None, filter: dict = None):
-        if base is not None:
-            self._request = common_pb2.SimpleRequest(base=base)
+    def __init__(self, base_request: EmptyRequest = None, filter: dict = None):
+        if base_request is not None:
+            self._request = common_pb2.SimpleRequest(base=base_request)
         else:
             self._request = common_pb2.SimpleRequest()
 
@@ -172,7 +222,8 @@ class SimpleRequest:
         self._request.base.CopyFrom(base)
 
     def set_filter(self, filter: dict):
-        self._request.filter.update(filter)
+        if filter is not None:
+            self._request.filter.update(filter)
 
     def build(self):
         return self._request

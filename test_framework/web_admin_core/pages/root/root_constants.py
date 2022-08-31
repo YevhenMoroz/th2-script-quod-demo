@@ -9,6 +9,8 @@ class RootConstants:
     SYSTEM_COMMANDS_ITEM_XPATH = "//span[text()='System Commands']"
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
+    SITE_TAB_XPATH = '//*[@title="Site"]'
+    SITE_COLLAPSE_XPATH = '//*[@title="Site"]//..//ul'
     INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"
     ZONES_ITEM_XPATH = "//span[text()='Zones']"
     LOCATIONS_ITEM_XPATH = "//span[text()='Locations']"
@@ -27,6 +29,7 @@ class RootConstants:
     INSTR_SYMBOL_INFO_ITEM_XPATH = "//span[text()='InstrSymbolInfo']"
     INSTRUMENT_GROUP_ITEM_XPATH = "//span[text()='Instrument Group']"
     INSTRUMENT_LIST_ITEM_XPATH = "//span[text()='Instrument List']"
+    VENUE_LISTS_XPATH = "//span[text()='Venue Lists']"
 
     CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR = "a[title='Client/Accounts']"
     ACCOUNTS_ITEM_XPATH = "//span[text()='Accounts']"
@@ -65,6 +68,7 @@ class RootConstants:
     LISTING_CUMTRDLMT_COUNTER_ITEM_XPATH = "//span[text()='Listing CumTrdLmt Counter']"
     CUMTRDLMT_COUNTER_ITEM_XPATH = "//span[text()='CumTrdLmt Counter']"
     POSITION_LIMITS_ITEM_XPATH = "//span[text()='PositionLimits']"
+    RISK_LIMIT_DIMENSIONS_XPATH = "//span[text()='Risk Limit Dimensions']"
     FX_POSITION_LIMITS_ITEM_XPATH = "//span[text()='FX Position Limits']"
     PRICE_TOLERANCE_CONTROL_ITEM_XPATH = "//span[text()='Price Tolerance Control']"
     EXTERNAL_CHECK_ITEM_XPATH = "//span[text()='External Check']"

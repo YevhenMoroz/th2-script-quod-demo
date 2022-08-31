@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from stubs import Stubs
 from custom import basic_custom_actions as bca
-from test_cases.web_admin import QAP_758, login_logout_example
+from test_cases.web_admin import QAP_T4033, login_logout_example
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ channels = dict()
 
 test_cases = {
     '303': [login_logout_example,
-            QAP_758,
+            QAP_T4033,
             ],
     '305': [login_logout_example,
             ]

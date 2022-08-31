@@ -1,11 +1,18 @@
 import logging
-import traceback
+import os
 from datetime import datetime
+from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from test_cases.eq.DMA import QAP_2001, QAP_2002, QAP_2003, QAP_2005, QAP_2551, QAP_4393, QAP_4375, QAP_2006, QAP_2007, \
-    QAP_2008, QAP_2522, QAP_3723, QAP_2000, QAP_2546, QAP_2547
+from custom.basic_custom_actions import timestamps
 from stubs import Stubs
+from test_cases.eq.DMA.QAP_T6913 import QAP_T6913
+from test_cases.eq.DMA.QAP_T7029 import QAP_T7029
+from test_cases.eq.DMA.QAP_T7214 import QAP_T7214
+from test_cases.eq.DMA.QAP_T7227 import QAP_T7227
+from test_cases.eq.DMA.QAP_T7412 import QAP_T7412
+from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -14,38 +21,102 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def safe(f):
-    def safe_f(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except Exception as e:
-            logging.error(
-                traceback.format_exc())
-        finally:
-            pass
 
-    return safe_f
-
-@safe
 def test_run(parent_id=None):
     report_id = bca.create_event('DMA ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
-    session_id = set_session_id()
-    QAP_2000.execute(report_id, session_id)
+    seconds, nanos = timestamps()  # Store case start time
+    configuration = ComponentConfiguration("DMA")
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    session_id = set_session_id(fe_env.target_server_win)
+    data_set = configuration.data_set
+    test_id = bca.create_event(Path(__file__).name[:-3], report_id)
+    base_main_window = BaseMainWindow(test_id, session_id)
+    layout_path = os.path.abspath("regression_cycle\eq_regression_cycle/layouts")
+    layout_name = "all_columns_layout.xml"
+    try:
+        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
+        base_main_window.import_layout(layout_path, layout_name)
 
-    QAP_2001.execute(report_id, session_id)
-    QAP_2002.execute(report_id, session_id)
-    QAP_2003.execute(report_id, session_id)
-    QAP_2005.execute(report_id, session_id)
-    QAP_2006.execute(report_id, session_id)
-    QAP_2007.execute(report_id, session_id)
-    QAP_2008.execute(report_id, session_id)
-    QAP_2551.execute(report_id, session_id)
-    QAP_4393.execute(report_id, session_id)
-    QAP_4375.execute(report_id, session_id)
-    QAP_2522.execute(report_id, session_id)
-    QAP_2546.execute(report_id, session_id)
-    QAP_2547.execute(report_id,session_id)
-    QAP_3723.execute(report_id, session_id)
+        QAP_T6913(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7029(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7113(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7115(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7117(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7127(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7185(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7193(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        QAP_T7214(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7227(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7255(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7295(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7315(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7370(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7375(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7387(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        QAP_T7412(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7427(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7436(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7445(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7459(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7549(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7560(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7561(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7562(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7563(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7564(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7565(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7610(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7611(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7611(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7612(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7613(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7614(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7615(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7616(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        # QAP_T7617(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+
+    except Exception:
+        logging.error("Error execution", exc_info=True)
+    finally:
+        logger.info(f"DMA regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        base_main_window.close_fe()
 
 
 if __name__ == '__main__':

@@ -2,11 +2,10 @@ import logging
 from custom import basic_custom_actions as bca
 from test_cases.algo.Algo_Redburn.Algo_MOE import EXP_LIM_01, EXP_VO_01, EXP_WW_01, EXP_WW_02, EXP_FPC_01, EXP_SCO_01, EXP_LIM_02_NEX, EXP_LIM_03_NEX, EXP_LIM_04_NEX, EXP_LIM_05_NEX, EXP_LIM_06_NEX, EXP_TWAP_01, EXP_VWAP_01, EXP_POV_01, EXP_DMA_01
 from test_cases.algo.Algo_Redburn.Algo_TWAP import TWAP_WW_01, TWAP_BA_01, TWAP_AUC_01, TWAP_MaxP_01, TWAP_MinP_01, \
-    TWAP_NAV_02, TWAP_NAV_01, QA_TWAP_NAV_WW_MAXPercentage, QA_TWAP_NAV_WW_MAXShares, QA_TWAP_NAV_WW_01_sell, \
-    QA_TWAP_NAV_WW_02_sell, QA_TWAP_NAV_WW_03_sell, QA_TWAP_NAV_WW_01_buy, QA_TWAP_NAV_WW_02_buy, QA_TWAP_NAV_WW_03_buy, \
+    TWAP_NAV_02, TWAP_NAV_01, \
     QA_TWAP_NAV_WW_REF_01_buy, QA_TWAP_NAV_WW_REF_01_sell, MULT_TWAP_BA_01, TWAP_BA_LSE, TWAP_BA_COPENHAGEN, TWAP_BA_DUBLIN, TWAP_BA_XETRA, TWAP_BA_SIX, TWAP_BA_LISBON, TWAP_BA_HELSINKI
 from test_cases.algo.Algo_Redburn.Algo_VWAP import VWAP_AUC_01, VWAP_BA_01, VWAP_MaxP_01, VWAP_MinP_01, VWAP_NAV_01, \
-    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_BA_LSE, VWAP_BA_SIX, VWAP_BA_COPENHAGEN, VWAP_BA_HELSINKI, VWAP_BA_DUBLIN, VWAP_BA_XETRA, VWAP_BA_LISBON, VWAP_BA_XETRA
+    VWAP_NAV_02, VWAP_WW_01, MULT_VWAP_BA_01, VWAP_BA_LSE, VWAP_BA_SIX, VWAP_BA_COPENHAGEN, VWAP_BA_HELSINKI, VWAP_BA_DUBLIN, VWAP_BA_XETRA, VWAP_BA_LISBON, VWAP_BA_XETRA, VWAP_STO
 from test_cases.algo.Algo_Redburn.Algo_POV import POV_AUC_01, POV_BA_01, POV_MinMax_01, POV_NAV_01, POV_NAV_02, POV_WW_01, \
     POV_SCAP_01, MULT_POV_BA_01
 from test_cases.algo.Algo_Redburn.Algo_MOO import OPN_FPC_01, OPN_LIM_01, OPN_VO_01, OPN_WW_01, \
@@ -25,6 +24,9 @@ from test_cases.algo.Algo_Redburn.Many_Venues.MOO import MOO_AMS, MOO_ATH, MOO_B
 from test_cases.algo.Algo_Redburn.Many_Venues.MOC import MOC_AMS, MOC_ATH, MOC_BRU, MOC_COP, MOC_DUB, MOC_HEL, MOC_LIS, MOC_LSE, MOC_MAD, MOC_MIL, MOC_OSL, MOC_PAR, MOC_SIX, MOC_STO, MOC_WIE, MOC_XET
 from test_cases.algo.Algo_Redburn.Many_Venues import MULT_BA_01
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Market_Orders import MOO_MKT_LSE, MOC_MKT_LSE, MOC_MKT_MIL, MOO_MKT_SIX, MOO_MKT_MIL, \
+    MOC_MKT_SIX, TWAP_AUC_MKT_LSE, TWAP_AUC_MKT_SIX, TWAP_AUC_MKT_XETRA, VWAP_AUC_MKT_LSE, VWAP_AUC_MKT_SIX, \
+    VWAP_AUC_MKT_XETRA, POV_AUC_MKT_LSE, POV_AUC_MKT_SIX, POV_AUC_MKT_XETRA
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ def test_run():
     report_id = bca.create_event('Redburn morning tests')
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        #region Calums venues
+        # region Calums venues
 
         #AMSTERDAM
         MOO_AMS.execute(report_id)
@@ -65,9 +67,9 @@ def test_run():
         #LSE
         MOO_LSE.execute(report_id)
         MOC_LSE.execute(report_id)
-        #MADRID
-        MOO_MAD.execute(report_id)
-        MOC_MAD.execute(report_id)
+        # #MADRID
+        # MOO_MAD.execute(report_id)
+        # MOC_MAD.execute(report_id)
         #MILAN
         MOO_MIL.execute(report_id)
         MOC_MIL.execute(report_id)
@@ -224,7 +226,7 @@ def test_run():
         MULT_BA_01.execute(report_id)
         # endregion
 
-        # region Calum's orders
+        # region Calum's orders with Forbidden venues
         TWAP_BA_LSE.execute(report_id)
         VWAP_BA_LSE.execute(report_id)
         TWAP_BA_COPENHAGEN.execute(report_id)
@@ -239,19 +241,45 @@ def test_run():
         VWAP_BA_SIX.execute(report_id)
         TWAP_BA_XETRA.execute(report_id)
         VWAP_BA_XETRA.execute(report_id)
+        VWAP_STO.execute(report_id)
         # endregion
 
+        # region Market price checks PDAT-1875QA
+        # Auctions
+        MOO_MKT_LSE.execute(report_id)
+        MOO_MKT_SIX.execute(report_id)
+        MOO_MKT_MIL.execute(report_id)
+
+        MOC_MKT_LSE.execute(report_id)
+        MOC_MKT_SIX.execute(report_id)
+        MOC_MKT_MIL.execute(report_id)
+
+        # Benchmarks + Auc + Forbidden venues
+        TWAP_AUC_MKT_LSE.execute(report_id)
+        TWAP_AUC_MKT_SIX.execute(report_id)
+        TWAP_AUC_MKT_XETRA.execute(report_id)
+
+        VWAP_AUC_MKT_LSE.execute(report_id)
+        VWAP_AUC_MKT_SIX.execute(report_id)
+        VWAP_AUC_MKT_XETRA.execute(report_id)
+
+        POV_AUC_MKT_LSE.execute(report_id)
+        POV_AUC_MKT_SIX.execute(report_id)
+        POV_AUC_MKT_XETRA.execute(report_id)
+        # endregion
+
+
         # # region TWAP NAV WW
-        # # QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
-        # # QA_TWAP_NAV_WW_MAXShares.execute(report_id)
-        # # QA_TWAP_NAV_WW_01_sell.execute(report_id)
-        # # QA_TWAP_NAV_WW_02_sell.execute(report_id)
-        # # QA_TWAP_NAV_WW_03_sell.execute(report_id)
-        # # QA_TWAP_NAV_WW_01_buy.execute(report_id)
-        # # QA_TWAP_NAV_WW_02_buy.execute(report_id)
-        # # QA_TWAP_NAV_WW_03_buy.execute(report_id)
-        # # QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
-        # # QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_MAXPercentage.execute(report_id)
+        # QA_TWAP_NAV_WW_MAXShares.execute(report_id)
+        # QA_TWAP_NAV_WW_01_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_02_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_03_sell.execute(report_id)
+        # QA_TWAP_NAV_WW_01_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_02_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_03_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_REF_01_buy.execute(report_id)
+        # QA_TWAP_NAV_WW_REF_01_sell.execute(report_id)
         # # endregion
 
     except Exception:

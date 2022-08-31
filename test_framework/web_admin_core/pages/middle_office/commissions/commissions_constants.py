@@ -20,26 +20,24 @@ class CommissionsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # main page
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
-    MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
-    MAIN_PAGE_VENUE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
-    MAIN_PAGE_SIDE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
-    MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
-    MAIN_PAGE_VIRTUAL_POLICY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
-    MAIN_PAGE_CLIENT_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[8]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[text()="Name"]//following::*[contains(@style, "left: 0px;")]//input'
+    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[text()="Description"]//following::*[contains(@style, "left: 200px;")]//input'
+    MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[text()="Instr Type"]//following::*[contains(@style, "left: 400px;")]//input'
+    MAIN_PAGE_VENUE_FILTER_XPATH = '//*[text()="Venue"]//following::*[contains(@style, "left: 600px;")]//input'
+    MAIN_PAGE_SIDE_FILTER_XPATH = '//*[text()="Side"]//following::*[contains(@style, "left: 800px;")]//input'
+    MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH = '//*[text()="Execution Policy"]//following::*[contains(@style, "left: 1000px;")]//input'
+    MAIN_PAGE_VIRTUAL_ACCOUNT_FILTER_XPATH = '//*[text()="Virtual Account"]//following::*[contains(@style, "left: 1200px;")]//input'
+    MAIN_PAGE_CLIENT_FILTER_XPATH = '//*[text()="Client"]//following::*[contains(@style, "left: 1400px;")]//input'
 
-    MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
-    MAIN_PAGE_CLIENT_LIST_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
-    MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
-    MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
-    MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH = '//*[@class="boolean-filter ng-untouched ng-pristine ng-valid"]'
-
-
-
-
+    MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '(//*[contains(@style, "left: 1600px;")]//input)[2]'
+    MAIN_PAGE_CLIENT_LIST_FILTER_XPATH = '(//*[contains(@style, "left: 1800px;")]//input)[2]'
+    MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH = '(//*[contains(@style, "left: 2000px;")]//input)[2]'
+    MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH = '(//*[contains(@style, "left: 2200px;")]//input)[2]'
+    MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH = '//*[contains(@style, "left: 2400px;")]//select'
+    MAIN_PAGE_VENUE_LIST_FILTER_XPATH = '(//*[contains(@style, "left: 2600px;")]//input)[2]'
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
 
     # dimensions tab
@@ -59,15 +57,16 @@ class CommissionsConstants:
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="clCommissionName"]'
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="clCommissionDescription"]'
     VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH = '//*[text()="Re-Calculate for Allocations"]/preceding-sibling::span'
+    VALUES_TAB_VENUE_LIST_XPATH = '//*[@id="venueList"]'
 
     # commission profiles
-    COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = "//*[@class='commissionProfileName ng2-smart-th ng-star-inserted']//input"
+    COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = '//*[normalize-space(text()) = "Commission Profile Name"]//ancestor::client-commission-commission-profile//*[@placeholder="Filter"]'
     COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
-    COMMISSION_PROFILES_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-plus ng2-main-add-btn"]'
-    COMMISSION_PROFILES_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-checkmark"]'
-    COMMISSION_PROFILES_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-close ng2-main-cancel-btn"]'
-    COMMISSION_PROFILES_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-edit ng2-main-edit-btn"]'
-    COMMISSION_PROFILES_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-trash"]'
+    COMMISSION_PROFILES_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
+    COMMISSION_PROFILES_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
+    COMMISSION_PROFILES_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
+    COMMISSION_PROFILES_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="edit"]'
+    COMMISSION_PROFILES_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="trash-2"]'
 
     COMMISSION_PROFILES_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
     COMMISSION_PROFILES_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'
@@ -81,11 +80,11 @@ class CommissionsConstants:
     COMMISSION_PROFILES_ROUNDING_MODULUS_XPATH = '//*[@formcontrolname = "commRoundingModulus"]'
 
     # Commission Profile Points
-    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="nb-plus piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-checkmark"]'
-    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-close"]'
-    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-edit piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-trash piloted-table-action"]'
+    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="plus"]'
+    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="checkmark"]'
+    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="close"]'
+    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="edit"]'
+    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="trash-2"]'
 
     COMMISSION_PROFILE_BASE_VALUE_XPATH = '//*[@placeholder = "Base Value *"]'
     COMMISSION_PROFILE_MIN_COMMISSION_XPATH = '//*[@placeholder = "Min Commission"]'

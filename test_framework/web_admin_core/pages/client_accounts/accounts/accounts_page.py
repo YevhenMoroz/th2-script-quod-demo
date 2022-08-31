@@ -59,6 +59,8 @@ class AccountsPage(CommonPage):
         return text
 
     def get_clearing_account_type(self):
+        if not self.is_element_present(AccountsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE):
+            self.horizontal_scroll(AccountsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE)
         return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLEARING_ACCOUNT_TYPE).text
 
     def get_client(self):
@@ -78,3 +80,6 @@ class AccountsPage(CommonPage):
         time.sleep(2)
         self.click_on_load_button()
         time.sleep(2)
+
+    def is_searched_account_found(self, value):
+        return self.is_element_present(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value))

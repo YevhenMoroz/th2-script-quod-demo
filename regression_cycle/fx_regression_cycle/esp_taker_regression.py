@@ -1,8 +1,12 @@
-from test_cases.fx.fx_taker_esp import QAP_110, QAP_1115, QAP_3364, QAP_382, QAP_2854, QAP_2947, QAP_231, QAP_3042, \
-    QAP_492, QAP_2948, QAP_1591, QAP_2949, QAP_833, QAP_4156, QAP_404, QAP_2373, QAP_2416, QAP_4677, QAP_4673, QAP_4768, \
-    QAP_2, QAP_19, QAP_105, QAP_228, QAP_458, QAP_530, QAP_851, QAP_3066, QAP_3068, QAP_3069, QAP_3157, QAP_3644, \
-    QAP_3742, QAP_2812, QAP_2761, QAP_3414, QAP_3415, QAP_3418
-from test_cases.fx.fx_mm_autohedging.QAP_6598 import QAP_6598
+from test_cases.fx.fx_taker_esp import QAP_T3097, QAP_T2987, QAP_T2654, QAP_T3092, QAP_T2743, QAP_T2725, QAP_T3093, \
+    QAP_T2711, \
+    QAP_T3087, QAP_T2724, QAP_T2958, QAP_T2723, QAP_T3001, QAP_T2540, QAP_T3091, QAP_T2832, QAP_T2826, QAP_T2524, \
+    QAP_T2525, QAP_T2521, \
+    QAP_T3112, QAP_T3106, QAP_T3100, QAP_T3094, QAP_T3090, QAP_T3083, QAP_T2992, QAP_T2704, QAP_T2702, QAP_T2701, \
+    QAP_T2680, QAP_T2607, \
+    QAP_T2591, QAP_T2756, QAP_T2766, QAP_T2643, QAP_T2642, QAP_T2640, QAP_T2493, QAP_T2491, QAP_T2490, QAP_T2489, \
+    QAP_T2488, QAP_T2685
+from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -23,59 +27,67 @@ def run_full_amount(report_id, session_id):
     """
     Need to run on 309 or 308
     """
-    QAP_2812.execute(report_id, session_id)
+    QAP_T2756.execute(report_id, session_id)
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('ESP Taker regression', parent_id)
-    session_id = set_session_id()
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_Taker_ESP" if version is None else f"FX_Taker_ESP | {version}", parent_id)
+    session_id = set_session_id(target_server_win="quod_11q")
     data_set = FxDataSet()
     configuration = ComponentConfiguration("ESP_Taker")
+    window_name = "Quod Financial - Quod site 314"
+    Stubs.frontend_is_open = True
 
     try:
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
-            get_opened_fe(report_id, session_id)
-        QAP_2.execute(report_id, session_id)
-        QAP_19.execute(report_id, session_id)
-        QAP_105.execute(report_id, session_id)
-        QAP_110.execute(report_id, session_id)
-        QAP_228.execute(report_id, session_id)
-        QAP_231.execute(report_id, session_id)
-        QAP_382.execute(report_id, session_id)
-        QAP_404.execute(report_id, session_id)
-        QAP_458.execute(report_id, session_id)
-        QAP_492.execute(report_id, session_id)
-        QAP_530.execute(report_id, session_id)
-        QAP_833.execute(report_id, session_id)
-        QAP_851.execute(report_id, session_id)
-        QAP_1115.execute(report_id, session_id)
-        QAP_1591.execute(report_id, session_id)
-        QAP_2373.execute(report_id, session_id)
-        QAP_2416.execute(report_id, session_id)
-        QAP_2761.execute(report_id, session_id)
-        QAP_2854.execute(report_id, session_id)
-        QAP_2947.execute(report_id, session_id)
-        QAP_2948.execute(report_id, session_id)
-        QAP_2949.execute(report_id, session_id)
-        QAP_3042.execute(report_id, session_id)
-        QAP_3066.execute(report_id, session_id)
-        QAP_3068.execute(report_id, session_id)
-        QAP_3069.execute(report_id, session_id)
-        QAP_3157.execute(report_id, session_id)
-        QAP_3364.execute(report_id, session_id)
-        QAP_3644.execute(report_id, session_id)
-        QAP_3742.execute(report_id, session_id)
-        QAP_4156.execute(report_id, session_id)
-        QAP_4673.execute(report_id, session_id)
-        QAP_4677.execute(report_id, session_id)
-        QAP_4768.execute(report_id, session_id)
+            get_opened_fe(report_id, session_id, window_name)
+        QAP_T2685.execute(report_id, session_id)
+        QAP_T3112.execute(report_id, session_id)
+        QAP_T3106.execute(report_id, session_id)
+        QAP_T3100.execute(report_id, session_id)
+        QAP_T3097.execute(report_id, session_id)
+        QAP_T3094.execute(report_id, session_id)
+        QAP_T3093.execute(report_id, session_id)
+        QAP_T3092.execute(report_id, session_id)
+        QAP_T3091.execute(report_id, session_id)
+        QAP_T3090.execute(report_id, session_id)
+        QAP_T3087.execute(report_id, session_id)
+        QAP_T3083.execute(report_id, session_id)
+        QAP_T3001.execute(report_id, session_id)
+        QAP_T2992.execute(report_id, session_id)
+        QAP_T2987.execute(report_id, session_id)
+        QAP_T2958.execute(report_id, session_id)
+        QAP_T2832.execute(report_id, session_id)
+        QAP_T2826.execute(report_id, session_id)
+        QAP_T2766.execute(report_id, session_id)
+        QAP_T2743.execute(report_id, session_id)
+        QAP_T2725.execute(report_id, session_id)
+        QAP_T2724.execute(report_id, session_id)
+        QAP_T2723.execute(report_id, session_id)
+        QAP_T2711.execute(report_id, session_id)
+        QAP_T2704.execute(report_id, session_id)
+        QAP_T2702.execute(report_id, session_id)
+        QAP_T2701.execute(report_id, session_id)
+        QAP_T2680.execute(report_id, session_id)
+        QAP_T2654.execute(report_id, session_id)
+        QAP_T2607.execute(report_id, session_id)
+        QAP_T2591.execute(report_id, session_id)
+        QAP_T2540.execute(report_id, session_id)
+        QAP_T2525.execute(report_id, session_id)
+        QAP_T2524.execute(report_id, session_id)
+        QAP_T2521.execute(report_id, session_id)
+        QAP_T2493.execute(report_id, session_id)
+        QAP_T2491.execute(report_id, session_id)
+        QAP_T2490.execute(report_id, session_id)
+        QAP_T2489.execute(report_id, session_id, configuration.data_set)
+        QAP_T2488.execute(report_id, session_id, configuration.data_set)
 
         stop_fxfh()
-        QAP_3414.execute(report_id)
-        QAP_3415.execute(report_id)
-        QAP_3418.execute(report_id)
+        QAP_T2643.execute(report_id)
+        QAP_T2642.execute(report_id)
+        QAP_T2640.execute(report_id)
         start_fxfh()
 
         # run_full_amount(report_id, session_id)

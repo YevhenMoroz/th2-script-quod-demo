@@ -19,6 +19,8 @@ class TradingLimitsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DISPLAYED_ROUTE_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -31,10 +33,10 @@ class TradingLimitsConstants:
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="tradingLimitDesc"]//span//span[4]'
     MAIN_PAGE_EXTERNAL_ID_XPATH = '//*[@col-id="externalTradingLimitID"]//span//span[4]'
     MAIN_PAGE_CURRENCY_XPATH ='//*[@col-id="maxOrdAmtCurrency"]//span//span[4]'
-    MAIN_PAGE_MAX_QTY_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_AMT_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_QTY_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
-    MAIN_PAGE_MAX_SOFT_AMT_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_QTY_VALUE_XPATH = '//*[@col-id="maxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_AMT_VALUE_XPATH = '//*[@col-id="maxOrdAmt"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_QTY_VALUE_XPATH = '//*[@col-id="softMaxOrdQty"]//span//span[4]'
+    MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH = '//*[@col-id="softMaxOrdAmt"]//span//span[4]'
 
     # Values tab
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="tradingLimitDesc"]'
@@ -46,18 +48,18 @@ class TradingLimitsConstants:
     VALUES_TAB_MAX_SOFT_AMOUNT_XPATH = '//*[@formcontrolname="softMaxOrdAmt"]'
 
     # Dimensions tab
-    DIMENSIONS_TAB_VENUE_XPATH = '//*[@id="venue"]'
-    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[@id="subVenue"]'
-    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[@id="listingGroup"]'
-    DIMENSIONS_TAB_USER_XPATH = '//*[@id="userBlock"]'
-    DIMENSIONS_TAB_CLIENT_XPATH = '//*[@id="accountGroup"]'
-    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
-    DIMENSIONS_TAB_DESK_XPATH = '//*[@id="desk"]'
-    DIMENSIONS_TAB_ROUTE_XPATH = '//*[@id="route"]'
-    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[@id="instrType"]'
-    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
-    DIMENSIONS_TAB_EXECUTION_POLICY_XPATH = '//*[@id="executionPolicy"]'
-    DIMENSIONS_TAB_PHASE_XPATH = '//*[@id="standardTradingPhase"]'
+    DIMENSIONS_TAB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="venue"]'
+    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="subVenue"]'
+    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listingGroup"]'
+    DIMENSIONS_TAB_USER_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="userBlock"]'
+    DIMENSIONS_TAB_CLIENT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="accountGroup"]'
+    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="clientGroup"]'
+    DIMENSIONS_TAB_DESK_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="desk"]'
+    DIMENSIONS_TAB_ROUTE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="route"]'
+    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrType"]'
+    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrSymbol"]'
+    DIMENSIONS_TAB_EXECUTION_POLICY_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="executionPolicy"]'
+    DIMENSIONS_TAB_PHASE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="standardTradingPhase"]'
 
 
 

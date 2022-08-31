@@ -1,7 +1,7 @@
 import typing
 
 from test_framework.win_gui_wrappers.base_window import BaseWindow
-from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails
+from win_gui_modules.middle_office_wrappers import AllocationBlockExtractionDetails, ExtractionPanelDetails,  ModifyTicketDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
 from win_gui_modules.utils import call
 
@@ -34,6 +34,16 @@ class BaseMiddleOffice(BaseWindow):
         self.mass_approve_call = None
         self.mass_allocate_call = None
         self.mass_unallocate_call = None
+        self.extract_value_from_tab_of_allocation_ticket_call = None
+        self.override_confirmation_service_call = None
+        self.booking_ticket_closing_and_opening_details = None
+        self.only_open_booking_ticket_call = None
+        self.only_set_details_in_booking_ticket_call = None
+        self.only_extraction_from_booking_ticket_call = None
+        self.only_closing_booking_ticket_call = None
+        self.internal_extraction_details = None
+        self.extract_allocation_sub_lvl_data_details = None
+        self.extract_value_from_second_level_of_allocation = None
 
     # endregion
     # region Common func
@@ -93,7 +103,9 @@ class BaseMiddleOffice(BaseWindow):
         return response
 
     def extract_list_of_allocate_fields(self, list_of_column: list, filter_dict_allocate: dict = None,
-                                        allocate_number=1, filter_dict_block: dict = None) -> dict:
+                                        allocate_number=1, filter_dict_block: dict = None,
+                                        clear_filter_from_allocation: bool = False,
+                                        clear_filter_from_block=False) -> dict:
         list_of_extraction = []
         for column in list_of_column:
             field = self.extraction_detail(column, column)
@@ -105,6 +117,10 @@ class BaseMiddleOffice(BaseWindow):
         order_details = self.extract_allocation_details.add_order_details()
         order_details.set_order_number(allocate_number)
         order_details.add_extraction_details(list_of_extraction)
+        if clear_filter_from_allocation:
+            order_details.clear_filter()
+        if clear_filter_from_block:
+            order_details.clear_filter_from_book()
         response = call(self.extract_allocations_table_data,
                         self.extract_allocation_details.build())
         self.clear_details([self.extract_allocation_details])
@@ -125,7 +141,8 @@ class BaseMiddleOffice(BaseWindow):
                                                     block_panels_extraction: list = None,
                                                     block_filter_dict: dict = None, alloc_filter_dict: dict = None):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
-        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
+        if block_filter_dict is not None:
+            self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_filter_allocations_grid(alloc_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
         self.allocation_ticket_extraction_details.set_block_panels(block_panels_extraction)
@@ -138,6 +155,14 @@ class BaseMiddleOffice(BaseWindow):
                                                                list_extraction
                                                                )
         result = call(self.amend_ticket_book_extraction_details_call, self.extraction_panel_details.build())
+        return result
+
+    def extracting_values_from_allocation_ticket(self, panels_extraction: list, block_filter_dict: dict):
+        self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
+        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
+        self.allocation_ticket_extraction_details.set_panels(panels_extraction)
+        result = call(self.extract_value_from_tab_of_allocation_ticket_call,
+                      self.allocation_ticket_extraction_details.build())
         return result
 
     '''
@@ -164,7 +189,7 @@ class BaseMiddleOffice(BaseWindow):
                                   exchange_rate_calc=None, toggle_recompute=False, misc_trade_date=None,
                                   bo_fields: list = None, extract_book=False, extract_alloc=False, toggle_manual=False,
                                   alloc_account_filter=None, alloc_row_number: int = None, arr_allocation_param=None,
-                                  pset=None):
+                                  clear_alloc_greed=False, pset=None, clear_filter=False, net_price: str = None):
         """
             1)extract_data can be book or alloc
             2)example of arr_allocation_param:param=[{"Security Account": "YM_client_SA1", "Alloc Qty": "200"},
@@ -172,6 +197,8 @@ class BaseMiddleOffice(BaseWindow):
         """
         if selected_row_count is not None:
             self.modify_ticket_details.set_selected_row_count(selected_row_count)
+        if clear_filter:
+            self.modify_ticket_details.clear_filter()
         if is_alloc_amend:
             amend_allocations_details = self.modify_ticket_details.add_amend_allocations_details()
             if alloc_account_filter is not None:
@@ -183,6 +210,10 @@ class BaseMiddleOffice(BaseWindow):
         if arr_allocation_param is not None:
             for i in arr_allocation_param:
                 allocations_details.add_allocation_param(i)
+        if clear_alloc_greed:
+            allocations_details.clear_greed()
+        if net_price:
+            ticket_details.set_net_price(net_price)
         if client is not None:
             ticket_details.set_client(client)
         if trade_date is not None:
@@ -218,7 +249,7 @@ class BaseMiddleOffice(BaseWindow):
         if settl_currency is not None:
             settlement_details.set_settlement_currency(settl_currency)
         if exchange_rate is not None:
-            settlement_details.set_settlement_amount(exchange_rate)
+            settlement_details.set_exchange_rate(exchange_rate)
         if exchange_rate_calc is not None:
             settlement_details.set_exchange_rate_calc(exchange_rate_calc)
         if pset:
@@ -252,14 +283,18 @@ class BaseMiddleOffice(BaseWindow):
             extraction_details.extract_total_fees(extract_data + ".totalFees")
             extraction_details.extract_agreed_price(extract_data + ".agreedPrice")
             extraction_details.extract_pset_bic(extract_data + ".psetBic")
-            extraction_details.extract_exchange_rate(extract_data + ".settlementType")
-            extraction_details.extract_settlement_type(extract_data + ".exchangeRate")
+            extraction_details.extract_exchange_rate(extract_data + ".exchangeRate")
+            extraction_details.extract_settlement_type(extract_data + ".settlementType")
+            extraction_details.extract_fees_row(extract_data + ".Fees")
+            extraction_details.extract_commission_row(extract_data + ".Commission")
         return self.modify_ticket_details
 
     # endregion
 
     # region Action
-    def book_order(self):
+    def book_order(self, filter: typing.List[str] = None):
+        if filter:
+            self.modify_ticket_details.set_filter(filter)
         response = call(self.book_order_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
         return response
@@ -310,8 +345,10 @@ class BaseMiddleOffice(BaseWindow):
         self.clear_details([self.modify_ticket_details])
         return response
 
-    def approve_block(self):
-        call(self.approve_block_call, self.view_order_extraction_details.build())
+    def approve_block(self, filter_list: typing.List[str] = None):
+        if filter_list:
+            self.modify_ticket_details.set_filter(filter_list)
+        call(self.approve_block_call, self.modify_ticket_details.build())
         self.clear_details([self.modify_ticket_details])
 
         '''
@@ -338,4 +375,47 @@ class BaseMiddleOffice(BaseWindow):
     def check_error_in_book(self):
         self.modify_ticket_details.set_partial_error_message("error_in_book")
         error = call(self.book_order_call, self.modify_ticket_details.build())
+        self.clear_details(self.modify_ticket_details)
         return error
+
+    def override_confirmation_service(self, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.mass_approve_details.set_filter(filter_dict)
+        call(self.override_confirmation_service_call, self.mass_approve_details.build())
+        self.clear_details([self.mass_approve_details])
+
+    def only_opening_booking_ticket(self, selected_row: int = 1, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.booking_ticket_closing_and_opening_details.set_filter(filter_dict)
+        self.booking_ticket_closing_and_opening_details.set_selected_row(selected_row)
+        call(self.only_open_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+        self.clear_details([self.booking_ticket_closing_and_opening_details])
+
+    def only_set_details_to_booking_ticket(self, details: ModifyTicketDetails):
+        call(self.only_set_details_in_booking_ticket_call, details.build())
+        self.clear_details([self.modify_ticket_details])
+
+    def only_extract_value_from_booking_ticket(self, list_extraction):
+        self.extraction_panel_details = ExtractionPanelDetails(self.base_request, panels=list_extraction)
+        result = call(self.only_extraction_from_booking_ticket_call, self.extraction_panel_details.build())
+        self.clear_details([self.extraction_panel_details])
+        return result
+
+    def only_close_booking_ticket(self):
+        call(self.only_closing_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+
+    def set_extract_sub_lvl_fields(self, column_names: list, tab_name, row_count: int):
+        self.internal_extraction_details.set_default_params(self.base_request)
+        self.internal_extraction_details.set_column_names(column_names)
+        self.internal_extraction_details.set_tab_name(tab_name)
+        self.internal_extraction_details.set_row_number(row_count)
+
+    def extract_allocation_sub_lvl(self, block_filter: dict, allocation_filter: dict):
+        self.extract_allocation_sub_lvl_data_details.set_internal_extraction_details(
+            self.internal_extraction_details.build())
+        self.extract_allocation_sub_lvl_data_details.set_allocation_filter(allocation_filter)
+        self.extract_allocation_sub_lvl_data_details.set_block_filter(block_filter)
+        result = call(self.extract_value_from_second_level_of_allocation,
+                      self.extract_allocation_sub_lvl_data_details.build())
+        self.clear_details([self.internal_extraction_details, self.extract_allocation_sub_lvl_data_details])
+        return result

@@ -30,8 +30,8 @@ class CaseParamsSellRfq:
     drop_filter_params = None
     quotes_sequence_params=None
 
-    def __init__(self, client, case_id, side: str = '', leg1_side: str = '', leg2_side: str = '', orderqty=1,
-                 leg1_ordqty='', leg2_ordqty='',
+    def __init__(self, client, case_id, side: str = '', leg1_side: str = '', leg2_side: str = '',
+                 leg1_ordqty='', leg2_ordqty='', orderqty='',
                  ordtype='D', timeinforce='4', currency='EUR',
                  settlcurrency='USD', settltype=0, leg1_settltype=0, leg2_settltype=0, settldate='', leg1_settldate='',
                  leg2_settldate='', symbol='EUR/USD', leg1_symbol='',
@@ -45,7 +45,7 @@ class CaseParamsSellRfq:
         self.side = side
         self.leg1_side = leg1_side
         self.leg2_side = leg2_side
-        self.orderqty = orderqty
+        # self.orderqty = orderqty
         self.leg1_ordqty = leg1_ordqty
         self.leg2_ordqty = leg2_ordqty
         self.ordtype = ordtype
@@ -101,7 +101,7 @@ class CaseParamsSellRfq:
                 'SettlType': self.settltype,
                 'Currency': self.currency,
                 'QuoteType': '1',
-                'OrderQty': self.orderqty,
+                'OrderQty': self.leg1_ordqty,
                 'OrdType': 'D'
                 # 'ExpireTime': (datetime.now() + timedelta(seconds=self.ttl)).strftime("%Y%m%d-%H:%M:%S.000"),
                 # 'TransactTime': (datetime.utcnow().isoformat())
@@ -162,7 +162,7 @@ class CaseParamsSellRfq:
                     'Account': self.client,
                     'Side': self.side,
                     'Currency': self.currency,
-                    'OrderQty': self.orderqty,
+                    'OrderQty': self.leg1_ordqty,
                     'Instrument': {
                         'Symbol': self.symbol,
                         'SecurityType': self.securitytype
@@ -205,8 +205,8 @@ class CaseParamsSellRfq:
             'OfferSpotRate': '*',
             'OfferPx': '*',
             'BidPx': '*',
-            'OfferSize': self.orderqty,
-            'BidSize': self.orderqty,
+            'OfferSize': self.leg1_ordqty,
+            'BidSize': self.leg1_ordqty,
             'OfferSwapPoints': '*',
             'BidSwapPoints': '*',
             # 'Side': self.side,
@@ -277,7 +277,7 @@ class CaseParamsSellRfq:
             'Account': self.client,
             'HandlInst': self.handlinstr,
             'Side': self.side,
-            'OrderQty': self.orderqty,
+            'OrderQty': self.leg1_ordqty,
             'TimeInForce': self.timeinforce,
             'Price': '',
             'QuoteID': '',
@@ -309,7 +309,7 @@ class CaseParamsSellRfq:
             'ClOrdID': self.clordid,
             'OrdType': 'D',
             'TransactTime': (datetime.utcnow().isoformat()),
-            'OrderQty': self.orderqty,
+            'OrderQty': self.leg1_ordqty,
             'Currency': self.currency,
             'SettlCurrency': self.settlcurrency,
             'Price': '*',
@@ -363,7 +363,7 @@ class CaseParamsSellRfq:
             'LastPx': '0',
             'LastQty': '0',
             'QtyType': '0',
-            'OrderQty': self.orderqty,
+            'OrderQty': self.leg1_ordqty,
             'Price': '*',
             'SettlCurrency': self.settlcurrency,
             'AvgPx': '0',
@@ -374,7 +374,7 @@ class CaseParamsSellRfq:
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'LeavesQty': self.orderqty,
+            'LeavesQty': self.leg1_ordqty,
 
         }
         self.order_exec_report = def_order_exec_report
@@ -401,7 +401,7 @@ class CaseParamsSellRfq:
             'LastMkt': 'XQFX',
             'OrderID': '*',
             'TimeInForce': self.timeinforce,
-            'OrderQty': self.orderqty,
+            'OrderQty': self.leg1_ordqty,
             'LastQty': '*',
             'Instrument': {
                 'Symbol': self.symbol,
@@ -416,7 +416,7 @@ class CaseParamsSellRfq:
                 'PartyIDSource': 'D',
                 'PartyRole': '36'
             }],
-            'CumQty': self.orderqty,
+            'CumQty': self.leg1_ordqty,
             'TransactTime': '*',
             'LastPx': '*',
             'OrdType': 'D',
@@ -535,8 +535,8 @@ class CaseParamsSellRfq:
         self.order_filled['SettlType'] = self.settltype
         self.order_filled['SettlDate'] = self.settldate
         self.order_filled['SpotSettlDate'] = spo()
-        self.order_filled['LastQty'] = self.orderqty
-        self.order_filled['CumQty'] = self.orderqty
+        self.order_filled['LastQty'] = self.leg1_ordqty
+        self.order_filled['CumQty'] = self.leg1_ordqty
         self.order_filled['LeavesQty'] = '0'
         self.order_filled['TradeDate'] = tsd.today()
         self.order_filled['LastMkt'] = 'XQFX'
@@ -570,8 +570,8 @@ class CaseParamsSellRfq:
         self.order_filled_drop_copy['SettlType'] = self.settltype
         self.order_filled_drop_copy['SettlDate'] = self.settldate
         self.order_filled_drop_copy['SpotSettlDate'] = spo()
-        self.order_filled_drop_copy['LastQty'] = self.orderqty
-        self.order_filled_drop_copy['CumQty'] = self.orderqty
+        self.order_filled_drop_copy['LastQty'] = self.leg1_ordqty
+        self.order_filled_drop_copy['CumQty'] = self.leg1_ordqty
         self.order_filled_drop_copy['LeavesQty'] = '0'
         self.order_filled_drop_copy['TradeDate'] = tsd.today()
         self.order_filled_drop_copy['GrossTradeAmt'] = '*'

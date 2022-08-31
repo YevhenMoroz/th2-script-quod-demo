@@ -2,16 +2,25 @@ class BaseDataSet:
     """
     Base class that describes the common attributes and methods for all product lines datasets.
     """
+    trading_api_instruments = None
     fix_instruments = None
+    instruments = None
+    instrument_id = None
     venues = None
     clients = None
     accounts = None
+    cash_accounts = None
+    cash_account_counters = None
     washbook_accounts = None
+    washbook_rules = None
     recipients = None
+    web_admin_rest_api_users = None
+    risk_limit_dimensions = None
+    cash_transfer_types = None
     listing_id = None
-    instrument_id = None
     mic = None  # Market Identifier Code
     currency = None
+    settl_currency = None
     venue_client_names = None
     symbols = None
     security_types = None
@@ -33,17 +42,28 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
-    counterparts = None
+    counterpart = None
     qty_types = None
     venue_client_accounts = None
     verifier_key_parameters = None
     fee_order_scope = None
     pset = None
+    basket_templates = None
+    give_up_brokers = None
+    fee_type_in_booking_ticket = None
+    client_desks = None
+    middle_office_status = None
+    middle_office_match_status = None
+    capacity = None
+    scenario = None
+    strategy = None
+    market_ids = None
+    contra_firm = None
     # region fields added by Web Admin team
     user = None
     password = None
     component_id = None
-    admin_command = None
+    system_command = None
     desk = None
     location = None
     institution = None
@@ -66,6 +86,7 @@ class BaseDataSet:
     instr_symbol = None
     symbol = None
     instr_type = None
+    fx_istr_type_wa = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -98,6 +119,8 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
+    counterpart_id = None
+    pre_filter = None
     # endregion
 
     # region fields added by Web Trading team
@@ -111,6 +134,18 @@ class BaseDataSet:
         if self.fix_instruments:
             return self.fix_instruments.__members__
 
+    def get_instrument_id(self):
+        if self.instruments:
+            return self.instrument_id.__members__
+
+    def get_currency(self):
+        if self.currency:
+            return self.currency.__members__
+
+    def get_settl_currency(self):
+        if self.settl_currency:
+            return self.settl_currency.__members__
+
     def get_venues(self):
         if self.venues:
             return self.venues.__members__
@@ -123,13 +158,42 @@ class BaseDataSet:
         if self.accounts:
             return self.accounts.__members__
 
+    def get_cash_accounts(self):
+        if self.cash_accounts:
+            return self.cash_accounts.__members__
+
+    def get_cash_account_counters(self):
+        if self.cash_account_counters:
+            return self.cash_account_counters.__members__
+
     def get_washbook_accounts(self):
         if self.washbook_accounts:
             return self.washbook_accounts.__members__
 
+    def get_washbook_rule(self):
+        if self.washbook_rules:
+            return self.washbook_rules.__members__
+
     def get_recipients(self):
         if self.recipients:
             return self.recipients.__members__
+
+    def get_web_admin_rest_api_users(self):
+        if self.web_admin_rest_api_users:
+            return self.web_admin_rest_api_users.__members__
+
+    def get_risk_limit_dimensions(self):
+        if self.accounts:
+            return self.accounts.__members__
+
+    def get_cash_transfer_types(self):
+        if self.cash_transfer_types:
+            return self.cash_account_counters.__members__
+
+    def get_trading_api_instrument_by_name(self, name: str):
+        if hasattr(self.trading_api_instruments, name):
+            return getattr(self.trading_api_instruments, name).value
+        raise ValueError(f"{self.trading_api_instruments} not found!")
 
     def get_fix_instrument_by_name(self, name: str):
         if hasattr(self.fix_instruments, name):
@@ -151,15 +215,45 @@ class BaseDataSet:
             return getattr(self.accounts, name).value
         raise ValueError(f"{self.accounts} not found!")
 
+    def get_cash_account_by_name(self, name: str):
+        if hasattr(self.cash_accounts, name):
+            return getattr(self.cash_accounts, name).value
+        raise ValueError(f"{self.cash_accounts} not found!")
+
+    def get_cash_account_counters_by_name(self, name: str):
+        if hasattr(self.cash_account_counters, name):
+            return getattr(self.cash_account_counters, name).value
+        raise ValueError(f"{self.cash_account_counters} not found!")
+
     def get_washbook_account_by_name(self, name: str):
         if hasattr(self.washbook_accounts, name):
             return getattr(self.washbook_accounts, name).value
         raise ValueError(f"{self.washbook_accounts} not found!")
 
+    def get_washbook_rule_by_name(self, name: str):
+        if hasattr(self.washbook_rules, name):
+            return getattr(self.washbook_rules, name).value
+        raise ValueError(f"{self.washbook_rules} not found!")
+
     def get_recipient_by_name(self, name: str):
         if hasattr(self.recipients, name):
             return getattr(self.recipients, name).value
         raise ValueError(f"{self.recipients} not found!")
+
+    def get_web_admin_rest_api_users_by_name(self, name: str):
+        if hasattr(self.web_admin_rest_api_users, name):
+            return getattr(self.web_admin_rest_api_users, name).value
+        raise ValueError(f"{self.web_admin_rest_api_users} not found!")
+
+    def get_risk_limit_dimension_by_name(self, name: str):
+        if hasattr(self.risk_limit_dimensions, name):
+            return getattr(self.risk_limit_dimensions, name).value
+        raise ValueError(f"{self.risk_limit_dimensions} not found!")
+
+    def get_cash_transfer_types_by_name(self, name: str):
+        if hasattr(self.cash_transfer_types, name):
+            return getattr(self.cash_transfer_types, name).value
+        raise ValueError(f"{self.cash_transfer_types} not found!")
 
     def get_listing_id_by_name(self, name: str):
         if hasattr(self.listing_id, name):
@@ -171,6 +265,11 @@ class BaseDataSet:
             return getattr(self.instrument_id, name).value
         raise ValueError(f"{self.instrument_id} not found!")
 
+    def get_fx_instr_type_wa(self, name: str):
+        if hasattr(self.fx_istr_type_wa, name):
+            return getattr(self.fx_istr_type_wa, name).value
+        return ValueError(f"{self.fx_istr_type_wa} not found!")
+
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
             return getattr(self.mic, name).value
@@ -180,6 +279,11 @@ class BaseDataSet:
         if hasattr(self.currency, name):
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
+
+    def get_settl_currency_by_name(self, name: str):
+        if hasattr(self.settl_currency, name):
+            return getattr(self.settl_currency, name).value
+        raise ValueError(f"{self.settl_currency} not found!")
 
     def get_venue_client_names_by_name(self, name: str):
         if hasattr(self.venue_client_names, name):
@@ -305,6 +409,15 @@ class BaseDataSet:
             return getattr(self.algo_policies_id, name).value
         raise ValueError(f"{self.algo_policies_id} not found!")
 
+    def get_market_id_by_name(self, name: str):
+        """
+        get Market ID by name from FxMarketIDs
+        example ---> get_market_id_by_name("market_1"):
+        """
+        if hasattr(self.market_ids, name):
+            return getattr(self.market_ids, name).value
+        raise ValueError(f"{self.market_ids} not found!")
+
     # endregion
 
     def get_lookup_by_name(self, name: str):
@@ -320,7 +433,7 @@ class BaseDataSet:
     def get_venue_client_account(self, name: str):
         if hasattr(self.venue_client_accounts, name):
             return getattr(self.venue_client_accounts, name).value
-        raise ValueError(f"{self.lookups} not found!")
+        raise ValueError(f"{self.venue_client_accounts} not found!")
 
     def get_comm_profile_by_name(self, name: str):
         if hasattr(self.commission_profiles, name):
@@ -374,6 +487,46 @@ class BaseDataSet:
             return getattr(self.qty_types, name).value
         raise ValueError(f"{self.qty_types} not found!")
 
+    def get_give_up_broker(self, name: str):
+        if hasattr(self.give_up_brokers, name):
+            return getattr(self.give_up_brokers, name).value
+        raise ValueError(f"{self.give_up_brokers} not found!")
+
+    def get_client_desk(self, name: str):
+        if hasattr(self.client_desks, name):
+            return getattr(self.client_desks, name).value
+        raise ValueError(f"{self.client_desks} not found!")
+
+    def get_fee_type_from_booking_ticket(self, name: str):
+        if hasattr(self.fee_type_in_booking_ticket, name):
+            return getattr(self.fee_type_in_booking_ticket, name).value
+        raise ValueError(f"{self.fee_type_in_booking_ticket} not found!")
+
+    def get_middle_office_status(self, name: str):
+        if hasattr(self.middle_office_status, name):
+            return getattr(self.middle_office_status, name).value
+        raise ValueError(f"{self.middle_office_status} not found!")
+
+    def get_middle_office_match_status(self, name: str):
+        if hasattr(self.middle_office_match_status, name):
+            return getattr(self.middle_office_match_status, name).value
+        raise ValueError(f"{self.middle_office_match_status} not found!")
+
+    def get_strategy(self, name: str):
+        if hasattr(self.strategy, name):
+            return getattr(self.strategy, name).value
+        raise ValueError(f"{self.strategy} not found!")
+
+    def get_scenario(self, name: str):
+        if hasattr(self.scenario, name):
+            return getattr(self.scenario, name).value
+        raise ValueError(f"{self.scenario} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        raise ValueError(f"{self.contra_firm} not found!")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):
@@ -391,10 +544,10 @@ class BaseDataSet:
             return getattr(self.component_id, name).value
         return ValueError(f"{self.component_id} not found!")
 
-    def get_system_commands(self, name: str):
-        if hasattr(self.admin_command, name):
-            return getattr(self.admin_command, name).value
-        return ValueError(f"{self.admin_command} not found!")
+    def get_system_command(self, name: str):
+        if hasattr(self.system_command, name):
+            return getattr(self.system_command, name).value
+        return ValueError(f"{self.system_command} not found!")
 
     def get_desk(self, name: str):
         if hasattr(self.desk, name):
@@ -594,7 +747,12 @@ class BaseDataSet:
     def get_exec_policy(self, name: str):
         if hasattr(self.exec_policy, name):
             return getattr(self.exec_policy, name).value
-        return ValueError(f"{self.exec_policy,} not found!")
+        return ValueError(f"{self.exec_policy} not found!")
+
+    def get_basket_template(self, name: str):
+        if hasattr(self.basket_templates, name):
+            return getattr(self.basket_templates, name).value
+        return ValueError(f"{self.basket_templates} not found!")
 
     def get_commission_amount_type(self, name: str):
         if hasattr(self.commission_amount_type, name):
@@ -651,6 +809,10 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    def get_pre_filter(self, name: str):
+        if hasattr(self.pre_filter, name):
+            return getattr(self.pre_filter, name).value
+        return ValueError(f"{self.pre_filter,} not found!")
     # endregion
 
     # region WebTrading getters
@@ -664,8 +826,24 @@ class BaseDataSet:
             return getattr(self.time_in_force, name).value
         return ValueError(f"{self.time_in_force,} not found!")
 
-    def get_commission_basis(self, name:str):
+    def get_commission_basis(self, name: str):
         if hasattr(self.commission_basis, name):
             return getattr(self.commission_basis, name).value
         return ValueError(f"{self.commission_basis} not found!")
+
+    def get_capacity(self, name: str):
+        if hasattr(self.capacity, name):
+            return getattr(self.capacity, name).value
+        return ValueError(f"{self.capacity} not found!")
+
+    def get_counterpart_id(self, name: str):
+        if hasattr(self.counterpart_id, name):
+            return getattr(self.counterpart_id, name).value
+        return ValueError(f"{self.counterpart_id} not found!")
+
+    def get_counterpart(self, name: str):
+        if hasattr(self.counterpart, name):
+            return getattr(self.counterpart, name).value
+        return ValueError(f"{self.counterpart} not found!")
+
     # endregion

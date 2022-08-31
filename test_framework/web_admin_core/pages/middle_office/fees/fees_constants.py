@@ -3,6 +3,7 @@ class FeesConstants:
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
+    DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
@@ -18,6 +19,7 @@ class FeesConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
     # Main page
 
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -43,11 +45,11 @@ class FeesConstants:
 
     # Order fee profile sub wizard
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
-    ORDER_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-plus ng2-main-add-btn"]'
-    ORDER_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-checkmark"]'
-    ORDER_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-close ng2-main-cancel-btn"]'
-    ORDER_FEE_PROFILE_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-edit ng2-main-edit-btn"]'
-    ORDER_FEE_PROFILE_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-trash"]'
+    ORDER_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
+    ORDER_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
+    ORDER_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
+    ORDER_FEE_PROFILE_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="edit"]'
+    ORDER_FEE_PROFILE_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="trash-2"]'
 
     ORDER_FEE_PROFILE_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
     ORDER_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'
@@ -61,11 +63,11 @@ class FeesConstants:
     ORDER_FEE_PROFILE_ROUNDING_MODULUS_XPATH = '//*[@formcontrolname = "commRoundingModulus"]'
 
     # Commission Profile Points
-    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-plus piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-checkmark"]'
-    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-close"]'
-    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-edit piloted-table-action"]'
-    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@class="nb-trash piloted-table-action"]'
+    COMMISSION_PROFILE_POINTS_PLUS_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="plus"]'
+    COMMISSION_PROFILE_POINTS_CHECKMARK_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="checkmark"]'
+    COMMISSION_PROFILE_POINTS_CANCEL_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="close"]'
+    COMMISSION_PROFILE_POINTS_EDIT_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="edit"]'
+    COMMISSION_PROFILE_POINTS_DELETE_BUTTON_XPATH = '//*[@class="sub-list-label"]/parent::div//*[@data-name="trash-2"]'
 
     COMMISSION_PROFILE_BASE_VALUE_XPATH = '//*[@placeholder = "Base Value *"]'
     COMMISSION_PROFILE_MIN_COMMISSION_XPATH = '//*[@placeholder = "Min Commission"]'
@@ -74,11 +76,11 @@ class FeesConstants:
 
     # Exec fee profile
     EXEC_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
-    EXEC_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-plus ng2-main-add-btn"]'
-    EXEC_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-checkmark"]'
-    EXEC_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-close ng2-main-cancel-btn"]'
-    EXEC_FEE_PROFILE_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-edit ng2-main-edit-btn"]'
-    EXEC_FEE_PROFILE_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@class="nb-trash"]'
+    EXEC_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
+    EXEC_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
+    EXEC_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
+    EXEC_FEE_PROFILE_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="edit"]'
+    EXEC_FEE_PROFILE_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="trash-2"]'
 
     EXEC_FEE_PROFILE_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
     EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'

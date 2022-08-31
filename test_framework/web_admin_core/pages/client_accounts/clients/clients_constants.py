@@ -1,5 +1,6 @@
 class ClientsConstants:
     CLIENTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Clients ']"
+    WIZARD_PAGE_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
@@ -20,10 +21,12 @@ class ClientsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
-    REQUEST_FAILED_MESSAGE_XPATH = "//*[text()='Request failed, verify the input data. If the problem persists, please contact the administrator for full details']"
+    REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     CLIENT_LOAD_FILTER = "//*[@id='lookup-input']"
     LOAD_BUTTON = "//button[contains(@class, 'lookup-btn')]"
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
+    DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
+
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -34,10 +37,10 @@ class ClientsConstants:
     MAIN_PAGE_DISCLOSE_EXEC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@col-id="clearingAccountType"]//span//span[4]'
-    MAIN_PAGE_CLIENT_NAME = '//*[@col-id="accountGroupName"]//span[@class="ag-group-value"]'
+    MAIN_PAGE_CLIENT_NAME = '(//*[@ref="eCenterViewport"]//span[@ref="eValue"])[1]'
 
     # values tab
-    VALUES_TAB_ID_XPATH = '//*[@class="breadcrumbs entity-title"]'
+    VALUES_TAB_ID_XPATH = '//*[@id="accountGroupID"]'
     VALUES_NAME_XPATH = '//*[@formcontrolname="accountGroupName"]'
     VALUES_TAB_EXT_ID_CLIENT_XPATH = '//*[@formcontrolname="clientAccountGroupID"]'
     VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@id="clearingAccountType"]'
@@ -61,7 +64,12 @@ class ClientsConstants:
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
-    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="accountMgrDesk"]'
+    ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][text()="User Manager"]'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
+    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
+    ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
+    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'
 
     # External sources tab
     EXTERNAL_SOURCES_TAB_BIC_VENUE_ACT_GRP_NAME = '//*[@id="BIC"]'
@@ -130,11 +138,11 @@ class ClientsConstants:
 
     # Instr types
 
-    INSTR_TYPES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-plus"]'
-    INSTR_TYPES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-checkmark"]'
-    INSTR_TYPES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-close"]'
-    INSTR_TYPES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-edit"]'
-    INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@class="nb-trash"]'
+    INSTR_TYPES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="plus"]'
+    INSTR_TYPES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
+    INSTR_TYPES_TAB_CANCEL_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="close"]'
+    INSTR_TYPES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="edit"]'
+    INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     INSTR_TYPES_TAB_INSTR_TYPE_XPATH = '//*[@placeholder="Instr Type *"]'
     INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH = '//*[@class="instrType ng2-smart-th ng-star-inserted"]//input'
@@ -177,9 +185,10 @@ class ClientsConstants:
     ROUTES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     ROUTES_TAB_ROUTE_XPATH = '//*[@placeholder="Route *"]'
-    ROUTES_TAB_ROUTE_FILTER_XPATH = '//*[@class="ng2-smart-th route ng-star-inserted"]//input'
+    ROUTES_TAB_ROUTE_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[1]'
     ROUTES_TAB_ROUTE_CLIENT_NAME_XPATH = '//*[@placeholder="Route Client Name *"]'
-    ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th routeActGrpName ng-star-inserted"]//input'
+    ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[2]'
+    ROUTES_TAB_ROUTE_AGENT_FEE_EXEMPTION = '//*[text()=" Agent Fee Exemption "]//following::span[contains(@class, "custom-checkbox")]'
 
     # Trade confirm
     TRADE_CONFIRM_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Trade Confirm "]/parent::nb-accordion-item//*[@data-name="plus"]'

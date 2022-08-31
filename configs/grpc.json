@@ -319,7 +319,7 @@
       "service-class": "ActService",
       "endpoints": {
         "act_java_api": {
-          "host": "10.0.22.22",
+          "host": "10.0.22.49",
           "port": 31221
         }
       },
@@ -372,6 +372,81 @@
         "name": "robin",
         "endpoints": [
           "act_basket_ticket"
+        ]
+      }
+    },
+    "Win_Act_Booking_Blotter": {
+      "service-class": "BookingsBlotterServiceService",
+      "endpoints": {
+        "act_booking_blotter": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_booking_blotter"
+        ]
+      }
+    },
+    "Win_Act_Risk_Management": {
+      "service-class": "RiskManagementServiceService",
+      "endpoints": {
+        "act_risk_management": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_risk_management"
+        ]
+      }
+    },
+     "Win_Act_Child_Order_Book": {
+      "service-class": "ChildOrderBookServiceService",
+      "endpoints": {
+        "act_child_order_book": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_child_order_book"
+        ]
+      }
+    },
+     "Win_Act_Order_Book_Archive": {
+      "service-class": "OrderBookArchiveServiceService",
+      "endpoints": {
+        "act_order_book_archive": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_order_book_archive"
+        ]
+      }
+    },
+    "Win_Act_Trade_Book_Archive": {
+      "service-class": "TradeBookArchiveServiceService",
+      "endpoints": {
+        "act_trade_book_archive": {
+          "host": "10.0.22.24",
+          "port": 32223
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "act_trade_book_archive"
         ]
       }
     }

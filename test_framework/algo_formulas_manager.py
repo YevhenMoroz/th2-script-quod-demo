@@ -1,4 +1,6 @@
 import math
+from math import ceil
+from functools import wraps
 
 
 class AlgoFormulasManager:
@@ -53,3 +55,115 @@ class AlgoFormulasManager:
         first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
         reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
         return reserve
+
+    @staticmethod
+    def get_child_qty_on_venue_weights(parent_qty: int, minqty: int = None, *venue_weights: int) -> list:
+        sum_of_weight = 0
+        count_of_venue = 0
+        qty_list = []
+
+        for i in venue_weights:
+            sum_of_weight += i
+            count_of_venue += 1
+
+        if minqty is None:                                                  # for tests without minQty
+            one_weight = parent_qty / sum_of_weight
+            j = 0
+            while j < len(venue_weights):
+                qty_list.append(int(one_weight * venue_weights[j]))
+                j += 1
+            sum_of_qty = 0
+            for k in qty_list:
+                sum_of_qty += k
+            different = parent_qty - sum_of_qty                             # if parent qty not completely divided by venue weights
+            if different > 0:
+                qty_list[0] += different
+        else:                                                               # for tests with minQty
+            qty_for_distribution = parent_qty - minqty * count_of_venue
+            if parent_qty - minqty < minqty:                                # for tests when parentQty - minQty < minQty (only 1 child)
+                one_weight = parent_qty
+                qty_list.append(one_weight)
+            elif qty_for_distribution <= 0:                                 # for tests when parentQty - minty * countOfVenue <= 0 (qty of each child = minQty)
+                count_of_venue = parent_qty / minqty
+                one_weight = minqty
+                j = 0
+                while j < count_of_venue:
+                    qty_list.append(ceil(one_weight))
+                    j += 1
+            else:                                                          # for everyone else
+                one_weight = qty_for_distribution / sum_of_weight
+                j = 0
+                while j < len(venue_weights):
+                    qty_list.append(int(one_weight * venue_weights[j] + minqty))
+                    j += 1
+                sum_of_qty = 0
+                for k in qty_list:
+                    sum_of_qty += k
+                different = parent_qty - sum_of_qty
+                if different > 0:
+                    qty_list[0] += different
+        return qty_list
+
+    @staticmethod
+    # Calculating childs qty for Multilisted algo (PostMode=Spraying)
+    def get_child_qty_for_spraying(parent_qty: int, *venue_weights: int) -> list:
+        sum_of_weight = 0
+        count_of_venue = 0
+        qty_list = []
+
+        for i in venue_weights:
+            sum_of_weight += i
+            count_of_venue += 1
+
+        one_weight = parent_qty / sum_of_weight
+        j = 0
+        while j < len(venue_weights):
+            qty_list.append(int(one_weight * venue_weights[j]))
+            j += 1
+        sum_of_qty = 0
+        for k in qty_list:
+            sum_of_qty += k
+        different = parent_qty - sum_of_qty                                            # if parent qty not completely divided by venue weights
+        if different > 0:
+            qty_list[0] += different
+        return qty_list
+
+    @staticmethod
+    def create_string_for_strategy_weight(venues: dict) -> str:
+        final_string = str()
+        list_len = 0
+        for venue in venues:
+            final_string += f"{venue}={venues[venue]}"
+            list_len += 1
+            if list_len < len(venues):
+                final_string += "/"
+        return final_string
+
+    @staticmethod
+    def create_string_for_strategy_venues(*venue: str) -> str:
+        final_string = str()
+        for idx, v in enumerate(venue):
+            final_string += v
+            if len(venue) - 1 != idx:
+                final_string += "/"
+        return final_string
+
+    @staticmethod
+    def make_expire_date_next_sunday(day: int) -> int:
+        days = [0, 1, 2, 3, 4, 5, 6]
+        shift = 6
+        res_shift = 0
+        for i in days:
+            if day == i:
+                res_shift = shift
+            shift -= 1
+        return res_shift
+
+    @staticmethod
+    def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
+        return math.ceil((ltq * volume) / (1 - volume))
+
+
+
+
+

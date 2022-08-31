@@ -13,8 +13,27 @@ class ClientsAssignmentsSubWizard(CommonPage):
     def get_user_manager(self):
         return self.get_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH)
 
+    def is_user_manager_field_displayed_and_has_correct_name(self):
+        return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH)
+
     def set_desk(self, value):
-        self.set_combobox_value(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH, value)
+        self.set_checkbox_list(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH, value)
 
     def get_desk(self):
         return self.get_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH)
+
+    def is_desk_field_displayed_and_has_correct_name(self):
+        return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_DESK_LABEL_XPATH)
+
+    def click_on_account_link(self, account_name):
+        self.find_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH.format(account_name)).click()
+
+    def click_on_client_list_link(self, client_list_name):
+        self.find_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH.format(client_list_name)).click()
+
+    def get_all_assigned_accounts(self) -> list:
+        return [_.text.strip() for _ in self.find_elements_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_ACCOUNTS_XPATH)]
+    
+    def get_all_assigned_client_lists(self) -> list:
+        return [_.text.strip() for _ in self.find_elements_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH)]
+

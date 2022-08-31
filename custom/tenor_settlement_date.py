@@ -12,11 +12,11 @@ def broken_1():
 
 
 def broken_2():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=4)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
 
 
 def broken_w1w2():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=8)).date().strftime('%Y%m%d')
 
 
 def today():
@@ -43,6 +43,10 @@ def wk1_ndf():
     return (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d')
 
 
+def wk1_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=5)).date().strftime('%Y%m%d')
+
+
 def wk2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y%m%d')
 
@@ -51,8 +55,16 @@ def wk2_ndf():
     return (tm(datetime.utcnow().isoformat()) + bd(n=11)).date().strftime('%Y%m%d')
 
 
+def wk2_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=10)).date().strftime('%Y%m%d')
+
+
 def wk3():
     return (tm(datetime.utcnow().isoformat()) + bd(n=17)).date().strftime('%Y%m%d')
+
+
+def wk3_ndf_maturity():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=16)).date().strftime('%Y%m%d')
 
 
 def m1():
@@ -172,7 +184,7 @@ def ndf_wk3_front_end():
 
 
 def ndf_m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=23)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=21)).date().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def ndf_m2_front_end():
@@ -208,7 +220,11 @@ def fixing_ndf_wk3_front_end():
 
 
 def fixing_ndf_m1_front_end():
-    return (tm(datetime.utcnow().isoformat()) + bd(n=22)).date().strftime('%Y-%m-%d %H:%M:%S')
+    return (tm(datetime.utcnow().isoformat()) + bd(n=20)).date().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def custom(days: int = 2):
+    return (tm(datetime.utcnow().isoformat()) + bd(n=days)).date().strftime('%Y%m%d')
 
 
 def fixing_ndf_m2_front_end():

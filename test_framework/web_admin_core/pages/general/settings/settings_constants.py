@@ -1,5 +1,5 @@
 class SettingsConstants:
-    SETTINGS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Settings ']"
+    SETTINGS_PAGE_TITLE_XPATH = '//*[@class="entity-title left"]'
 
     SETTINGS_SETTING_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     SETTINGS_SETTING_XPATH = '//*[@col-id="settingDescription"]//span//span[4]'

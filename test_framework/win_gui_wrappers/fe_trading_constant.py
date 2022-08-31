@@ -12,6 +12,7 @@ class OrderBookColumns(Enum):
     security_id = "Security Id"
     symbol = "Symbol"
     side = "Side"
+    ccy_side = "CCY1 Side"
     lookup = "Lookup"
     stop_price = "Stop Price"
     inst_type = "InstType"
@@ -20,7 +21,10 @@ class OrderBookColumns(Enum):
     exec_progress = "ExecProgress"
     exec_sts = "ExecSts"
     cd_sts = "CDSts"
+    near_leg_qty = "NearLegQty"
+    far_leg_qty = "FarLegQty"
     qty = "Qty"
+    exec_pcy = "ExecPcy"
     display_qty = "DisplayQty"
     unmatched_qty = "UnmatchedQty"
     limit_price = "Limit Price"
@@ -39,18 +43,23 @@ class OrderBookColumns(Enum):
     instrument_type = 'InstrType'
     currency = 'Currency'
     venue_client_account = "Venue Client Account"
+    client_venue_account = "Client Venue Account"
     account_id = 'Account ID'
     done_for_day = 'DoneForDay'
     tenor = "Tenor"
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
     beneficiary = 'Beneficiary'
+    net_amount = 'NetAmount'
+    net_price = 'NetPrice'
+    exec_inst = 'ExecInst'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
     last_market = 'LastMkt'
     post_trade_status = 'PostTradeStatus'
     disclose_exec = "DiscloseExec"
+    disclosed_exec = "DisclosedExec"
     exec_fees = "Exec Fees"
     washbook = 'Wash Book'
     capacity = 'Capacity'
@@ -68,6 +77,21 @@ class OrderBookColumns(Enum):
     settle_date = 'Settle Date'
     day_cum_qty = 'DayCumQty'
     day_cum_amt = 'DayCumAmt'
+    day_avg_price = 'DayAvgPrice'
+    isin = "ISIN"
+    is_locked = "IsLocked"
+    basket_name = "Basket Name"
+    basket_id = "Basket ID"
+    strategy_type = "Strategy Type"
+    ex_str_name = "ExternalStrategyName"
+    route_descr = "RouteDescription"
+    contra_firm = "Contra Firm"
+    contra_firm_value = "ContraFirm"
+    exec_firm = "Executing Firm"
+    exec_firm_value = "ExecutingFirm"
+    exec_type = "ExecType"
+    nin = "NIN"
+    custodian = "Custodian"
     # endregion
 
 
@@ -115,6 +139,11 @@ class ExecType(Enum):
     calculated = "Calculated"
 
 
+class ExecPcy(Enum):
+    dma = "DMA"
+    care = "Care"
+
+
 class QuoteBookColumns(Enum):
     quote_id = 'Id'
     account_group = 'AccountGroup'
@@ -140,6 +169,7 @@ class TradeBookColumns(Enum):
     venue = 'Venue'
     qty = 'Qty'
     side = 'Side'
+    tenor = 'Tenor'
     exec_price = 'ExecPrice'
     last_market = 'LastMkt'
     instrument_type = 'InstrType'
@@ -161,6 +191,15 @@ class TradeBookColumns(Enum):
     far_settl_date = 'Far Leg Settle Date'
     last_spot_rate = 'LastSpotRate'
     exec_type = 'ExecType'
+    unmatched_qty = 'UnmatchedQty'
+    """Mics Fees tab"""
+    misc_tab = "Misc Fees"
+    rate = "Rate"
+    basis = "Basis"
+    amount = "Amount"
+    fee_type = "FeeType"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -179,6 +218,8 @@ class QuoteRequestBookColumns(Enum):
     client = 'Client'
     client_tier = 'ClientTier'
     tenor = 'Tenor'
+    near_tenor = 'Near Leg Tenor'
+    far_tenor = 'Far Leg Tenor'
     # region Quotes sub-level
     quote_id = 'ID'
     account_group = 'AccountGroup'
@@ -202,10 +243,36 @@ class BasketBookColumns(Enum):
     status = "Status"
     basket_name = "Basket Name"
     cl_basket_id = "Client Basket ID"
+    time_in_force = "TimeInForce"
+    list_exec_inst_type = "ListExecInstType"
+    orders_tab = "Orders"
+    waves_tab = "Waves"
+    """Orders Tab"""
+    order_id = "Id"
+    orders_sts = "Sts"
     """Waves Tab"""
     percent_qty_to_release = "Percent Qty To Release"
     percent_profile = "Percentage Profile"
     client_basket_id = 'Client Basket ID'
+    status_wave = "Status"
+    route_name = "Route Name"
+    """Template ticket"""
+    template_name_field = "Name"
+    name = "Name"
+    description = "Description"
+    """Context menu"""
+    remove_from_basket = "Remove from Basket"
+    """Orders Tab"""
+    limit_price = "LmtPrice"
+    """Basket sts"""
+    exec_sts = "Executing"
+    all_done = 'AllDone'
+    """Exec policy value"""
+    care = "Care"
+    """List Exec Inst Type value"""
+    immediate = "Immediate"
+    """Time in Force value"""
+    DAY = "DAY"
 
 
 class ExecSts(Enum):
@@ -217,6 +284,9 @@ class ExecSts(Enum):
     held = 'Held'
     partially_filled = 'PartiallyFilled'
     terminated = 'Terminated'
+    sent = 'Sent'
+    new = "New"
+    trade_cancel = "TradeCancel"
 
 
 class Status(Enum):
@@ -225,6 +295,9 @@ class Status(Enum):
     new = 'New'
     rejected = 'Rejected'
     frozen = 'Frozen'
+    canceled = "Canceled"
+    cancelled = "Cancelled"
+    pmo = "PMO"
 
 
 class QuoteStatus(Enum):
@@ -307,6 +380,22 @@ class MiddleOfficeColumns(Enum):
     settltype = 'SettlType'
     account_id = 'Account ID'
     trade_date = 'TradeDate'
+    settl_currency = 'SettlCurrency'
+    exchange_rate = 'ExchangeRate'
+    settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
+    net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
+    """MiddleOfficeSTS"""
+    appr_pending_sts = "ApprovalPending"
+    accepted_sts = "Accepted"
+    matched_sts = "Matched"
+    unmatched_sts = "Unmatched"
+    matched_agreed_sts = "MatchedAgreed"
+    cancelled_sts = 'Cancelled'
+    """Confirmation"""
+    external = "External"
+    manual = "Manual"
 
 
 class AllocationsColumns(Enum):
@@ -322,17 +411,42 @@ class AllocationsColumns(Enum):
     avg_px = 'Avg Px'
     pset = 'PSET'
     pset_bic = 'PSET BIC'
-    trade_date = 'TradeDate'
+    trade_date = 'Trade Date'
+    """AllocateSTS"""
+    cancelled_sts = "Cancelled"
+    affirmed_sts = 'Affirmed'
+    unmatched_sts = 'Unmatched'
+    matced_sts = 'Matched'
 
 
 class SecondLevelTabs(Enum):
     child_tab = 'Child Orders'
     executions = 'Executions'
+    orders_tab = 'Orders'
+    alloc_instruction_qties = "Alloc Instruction Qties"
+    slicing_orders = 'Slicing Orders'
+    order_bag_waves = 'Order Bag Waves'
+    algo_parameters_external = "Algo Parameters External"
+    pre_trade_alloc_tab = "Pre Trade Allocations"
+    counterpart_list = "Counterpart List"
+    commissions = "Client Commissions"
+    fees = "Misc Fees"
+
+
+class PreTradeAllocations(Enum):
+    id = "Id"
+    qty = "Quantity"
 
 
 class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
+    ready_to_book_from_second_level_tab_of_bag = "RDY"
+
+
+class AlgoParametersExternal(Enum):
+    parameter_name = "ParameterName"
+    parameter_value = "ParameterValue"
 
 
 class RFQPanelValues(Enum):
@@ -412,14 +526,30 @@ class OrderBagColumn(Enum):
     ord_bag_name = 'OrdBagName'
     id = 'Id'
     leaves_qty = 'LeavesQty'
+    bag_status = 'BagStatus'
+    client_name = 'Client Name'
+    client_desk = 'Client Desc'
 
 
-class BasketSecondTabName(Enum):
+class BasketSecondLvlTabName(Enum):
     orders = 'Orders'
 
 
 class MatchWindowsColumns(Enum):
     order_id = 'OrderId'
+
+
+class ChildOrderBookColumns(Enum):
+    order_id = "Order ID"
+    exec_id = "ExecID"
+    parent_ord_id = 'ParentOrdID'
+    """Pre Trade Allocation"""
+    pre_all_tab = "Pre Trade Allocations"
+    id_allocation = "Id"
+    qty_alloc = "Quantity"
+    """Executions"""
+    exec_tab = "Executions"
+    percent = '%'
 
 
 class OrderBookColumnName(Enum):
@@ -432,7 +562,98 @@ class MenuItemFromOrderBook(Enum):
     split_bag_by_avg_px_priority = 'Split Bag By Avg Px Priority'
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
+    add_to_basket = 'Add to Basket'
 
 
 class ClientInboxColumns(Enum):
     order_id = "Order ID"
+    cl_ord_id = 'ClOrdId'
+    qty = 'Qty'
+    client_name = 'ClientName'
+
+
+class BagStatuses(Enum):
+    new = 'New'
+    terminated = 'Terminated'
+    cl_ord_id = "ClOrdId"
+    canceled = 'Canceled'
+
+
+class SymbolSource(Enum):
+    isin = 'ISIN'
+    blmbrg = "Blmbrg"
+    sedol = "SEDOL"
+
+
+class WaveColumns(Enum):
+    status = 'Status'
+    peg_offset_type = "PegOffsetType"
+    peg_offset_value = "PegOffsetValue"
+    price = 'Price'
+    time_in_force = 'TimeInForce'
+
+
+class BookingBlotterColumns(Enum):
+    give_up_broker = 'Give-up Broker'
+    qty = 'Qty'
+    order_id = 'Order ID'
+    status = 'Status'
+    match_status = 'Match Status'
+    summary_status = "Summary Status"
+
+
+class BookingOrderResult(Enum):
+    multi = 'Multi'
+
+
+class AllocInstructionQties(Enum):
+    booking_qty = 'Booking Qty'
+    give_up_broker = 'Give-up Broker'
+
+
+class DoneForDays(Enum):
+    yes = 'Yes'
+
+
+class Suspended(Enum):
+    yes = "Yes"
+    no = "No"
+
+
+class OrdersTabColumnFromBag(Enum):
+    unmatched_qty = 'UnmatchQty'
+    limit_price = 'LimitPrice'
+
+
+class BlockStatuses(Enum):
+    accepted = "Accepted"
+    matched = 'Matched'
+
+
+class OffsetTypes(Enum):
+    price = "Price"
+
+
+class ReferencePrice(Enum):
+    open = "Open"
+
+
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
+
+
+class Basis(Enum):
+    per_unit = 'PerUnit'
+    absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
+
+
+class FeeTypeForMiscFeeTab(Enum):
+    agent = "Agent"
+    stamp = "Stamp"

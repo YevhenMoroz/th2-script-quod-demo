@@ -22,6 +22,10 @@ class InstitutionsConstants:
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     ENABLE_DISABLE_TOGGLE_INPUT_XPATH = "//*[contains(@role, 'switch')]"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
+    DOWNLOAD_CSV_BUTTON_XPATH = '//*[@nbtooltip="Download CSV"]'
+    DISPLAYED_INSTITUTIONS_XPATH = '//*[@ref="eCenterContainer"]//*[@role="row"]'
+    DROP_DOWN_MENU_XPATH = '//nb-option//span'
 
     # Main page
 
@@ -38,11 +42,14 @@ class InstitutionsConstants:
     MAIN_PAGE_ENABLED_XPATH = '//*[@col-id="alive"]//span'
 
     # Values tab
+    VALUES_TAB = '//*[@class="institution-detail-settings"]//*[text()=" Values "]'
     VALUES_TAB_INSTITUTION_NAME = '//*[@formcontrolname="institutionName"]'
     VALUES_TAB_LEI_NAME = '//*[@formcontrolname="institutionLEI"]'
     VALUES_TAB_CTM_BIC_NAME = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_COUNTERPART_NAME = '//*[@id="counterpart"]'
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
+    VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
+    VALUES_TAB_POSITION_FLATTENING_PERIOD = '//*[@id="posFlatteningTime"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'

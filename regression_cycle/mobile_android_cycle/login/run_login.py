@@ -1,7 +1,10 @@
 import traceback
 from custom import basic_custom_actions as bca
-from test_cases.mobile_android.pages.login.QAP_6491 import QAP_6491
+from test_cases.mobile_android.pages.loginlogout.QAP_T3432 import QAP_T3432
+from test_cases.mobile_android.pages.loginlogout.QAP_T3374 import QAP_T3374
+from test_cases.mobile_android.pages.loginlogout.QAP_T3373 import QAP_T3373
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
+from test_framework.configurations.component_configuration import ComponentConfiguration
 
 
 class RunLogin:
@@ -13,7 +16,16 @@ class RunLogin:
 
     def execute(self):
         try:
-            QAP_6491(self.appium_driver, self.second_lvl_id).run()
-
+            configuration = ComponentConfiguration("Mobile_LoginLogout")
+            # QAP_T3467(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3432(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3375(self.appium_driver, self.second_lvl_id).run()
+            QAP_T3374(self.appium_driver, self.second_lvl_id, data_set=configuration.data_set,
+                     environment=configuration.environment).run()
+            # QAP_T3373(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3372(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3371(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3370(self.appium_driver, self.second_lvl_id).run()
+            # QAP_T3369(self.appium_driver, self.second_lvl_id).run()
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

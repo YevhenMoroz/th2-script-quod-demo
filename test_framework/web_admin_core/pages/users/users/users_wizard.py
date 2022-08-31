@@ -17,7 +17,10 @@ class UsersWizard(CommonPage):
         self.find_by_xpath(UsersConstants.SAVE_CHANGES_BUTTON).click()
 
     def click_on_clear_changes(self):
-        self.find_by_xpath(UsersConstants.CLEAR_CHANGES_BUTTON).click()
+        self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).click()
+
+    def is_revert_changes_button_enabled(self):
+        return self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).is_enabled()
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
@@ -31,3 +34,21 @@ class UsersWizard(CommonPage):
             return True
         else:
             return False
+
+    def is_warning_displayed(self):
+        return True if self.is_element_present(UsersConstants.WARNING_MESSAGE) else False
+
+    def is_request_failed_message_displayed(self):
+        return self.find_by_xpath(UsersConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
+
+    def is_online_status_displayed(self):
+        return self.is_element_present(UsersConstants.ONLINE_STATUS_XPATH)
+
+    def is_confirmation_pop_displayed(self):
+        return self.is_element_present(UsersConstants.CONFIRM_POP_UP)
+
+    def accept_or_cancel_confirmation(self, confirm: bool):
+        self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click() if confirm \
+            else self.find_by_xpath(UsersConstants.CANCEL_BUTTON_XPATH).click()
+
+

@@ -57,6 +57,9 @@ class WashBookConstants:
     COUNTERPART_AT_VALUES_TAB = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_COUNTERPART_AT_VALUES_TAB = '//*[text()="Manage"]'
 
+    # ---ASSIGNMENTS TAB---
+    INSTITUTION_AT_ASSIGNMENT_TAB = '//*[@id="institution"]'
+
     # -DIMENSIONS TAB-
     PLUS_AT_DIMENSIONS_TAB = '//*[@class="wash-book-security-account-detail-settings"]//nb-accordion-item[2]//*[@class="nb-plus"]'
     CHECKMARK_AT_DIMENSIONS_TAB = '//*[@class="wash-book-security-account-detail-settings"]//nb-accordion-item[2]//*[@class="nb-checkmark"]'

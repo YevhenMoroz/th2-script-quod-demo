@@ -1,6 +1,7 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
+    broken_w1w2, spo_ndf
 
 
 class FxInstruments(Enum):
@@ -17,6 +18,7 @@ class FxVenues(Enum):
     venue_5 = "DB"
     venue_6 = "BARX"
     venue_7 = "EBS"
+    venue_8 = "GS"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -25,6 +27,14 @@ class FxVenues(Enum):
     venue_rfq_5 = "DBR"
     venue_rfq_6 = "BARR"
     venue_rfq_7 = "EBS"
+
+
+class FxMarketIDs(Enum):
+    market_1 = "CITI-SW"
+    market_2 = "HSBC-SW"
+    market_3 = "MS-SW"
+    market_4 = "JPM-SW"
+    market_5 = "DB-SW"
 
 
 class FxClients(Enum):
@@ -57,6 +67,8 @@ class FxClients(Enum):
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "Aurum1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
+    client_mm_10 = "CLIENT1"  # For Deposit And Loan
+    client_mm_11 = "Platinum1"  # For Margin Format testing
 
 
 class FxAccounts(Enum):
@@ -85,7 +97,6 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "Aurum1_1"
-
 
 
 class FxClientTiers(Enum):
@@ -118,6 +129,14 @@ class FxSecurityTypes(Enum):
     fx_nds = "FXNDS"
 
 
+class FxInstrTypeWA(Enum):
+    fx_spot = "SPO"
+    fx_fwd = "FXF"
+    fx_swap = "FXS"
+    fx_ndf = "NDF"
+    fx_nds = "NDS"
+
+
 class FxSettleTypes(Enum):
     today = "1"
     tomorrow = "2"
@@ -126,13 +145,14 @@ class FxSettleTypes(Enum):
     wk2 = "W2"
     wk3 = "W3"
     m1 = "M1"
+    broken = "B"
     # TODO add more settle types
 
 
 class FxTenors(Enum):
     tenor_spot = "Spot"
     tenor_tod = "Today"
-    tenor_tom = "Tom"
+    tenor_tom = "TOM"
     tenor_1w = "1W"
     tenor_2w = "2W"
     tenor_3w = "3W"
@@ -151,7 +171,12 @@ class FxSettleDates(Enum):
     wk1 = wk1()
     wk2 = wk2()
     wk3 = wk3()
-    wk_ndf = wk1_ndf()
+    spo_ndf = spo_ndf()
+    wk1_ndf = wk1_ndf()
+    wk2_ndf = wk2_ndf()
+    broken_1 = broken_1()
+    broken_2 = broken_2()
+    broken_w1w2 = broken_w1w2()
     # TODO add more settle dates
 
 
@@ -171,12 +196,14 @@ class FxSymbols(Enum):
     symbol_13 = "EUR/CAD"
     symbol_14 = "NOK/SEK"
     symbol_15 = "USD/NOK"
+    symbol_16 = "AUD/USD"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
     symbol_ndf_3 = "AUD/BRL"
     symbol_ndf_4 = "USD/RUB"
     symbol_ndf_5 = "USD/KRW"
+    symbol_ndf_6 = "EUR/RUB"
 
     symbol_synth_1 = "NOK/SEK"  # cross through EURtoUSD
     symbol_synth_2 = "CHF/THB"  # cross through USDtoEUR
@@ -194,6 +221,9 @@ class FxCurrencies(Enum):
     currency_php = "PHP"
     currency_cad = "CAD"
     currency_aud = "AUD"
+    currency_sek = "SEK"
+    currency_jpy = "JPY"
+    currency_nok = "NOK"
 
 
 class FxRecipients(Enum):
@@ -248,4 +278,3 @@ class FXAlgoPoliciesID(Enum):
     algo_policy_id_1 = "400019"
     algo_policy_id_2 = "200011"
     algo_policy_id_3 = "400024"
-

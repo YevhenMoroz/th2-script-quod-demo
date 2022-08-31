@@ -29,7 +29,7 @@ class FeesPage(CommonPage):
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(FeesConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(FeesConstants.DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
@@ -56,3 +56,6 @@ class FeesPage(CommonPage):
 
     def set_exec_scope(self, value):
         self.set_text_by_xpath(FeesConstants.MAIN_PAGE_EXEC_COMMISSION_PROFILE_FILTER_XPATH, value)
+
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(FeesConstants.DISPLAYED_ENTITY_XPATH.format(value))

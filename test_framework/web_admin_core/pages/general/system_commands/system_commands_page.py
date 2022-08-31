@@ -45,5 +45,7 @@ class SystemCommandsPage(CommonPage):
         self.find_by_xpath(SystemCommandsConstants.SEND_BUTTON_XPATH).click()
 
     def is_error_displayed(self):
-        error_name = "Request failed, verify the input data. If the problem persists, please contact the administrator for full details"
-        return error_name == self.find_by_xpath(SystemCommandsConstants.ERROR_XPATH).text
+        return self.is_element_present(SystemCommandsConstants.ERROR_XPATH)
+
+    def is_command_field_displayed(self):
+        return self.is_element_present(SystemCommandsConstants.SYSTEM_COMMANDS_XPATH)

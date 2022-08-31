@@ -18,6 +18,9 @@ class BaseTradesBook(BaseWindow):
         self.cancel_manual_execution_call = None
         self.get_trade_book_details_call = None
         self.un_match_call = None
+        self.manual_match_n_to_1_call = None
+        self.extract_trades_book_sub_lvl_data_details = None
+        self.extract_trades_book_sub_lvl_data_call = None
 
     # endregion
     # region Common func
@@ -64,21 +67,46 @@ class BaseTradesBook(BaseWindow):
         response = call(self.get_trade_book_details_call, self.order_details.request())
         return response
 
+    def extract_sub_lvl_fields(self, column_names: list, tab_name, row_count: int, filter: dict = None):
+        self.extract_trades_book_sub_lvl_data_details.set_default_params(self.base_request)
+        self.extract_trades_book_sub_lvl_data_details.set_filter(filter)
+        self.extract_trades_book_sub_lvl_data_details.set_column_names(column_names)
+        self.extract_trades_book_sub_lvl_data_details.set_tab_name(tab_name)
+        self.extract_trades_book_sub_lvl_data_details.set_row_number(row_count)
+        result = call(self.extract_trades_book_sub_lvl_data_call, self.extract_trades_book_sub_lvl_data_details.build())
+        self.clear_details([self.extract_trades_book_sub_lvl_data_details])
+        return result
+
     # endregion
     # region Action
-    def manual_match(self, qty_to_match=None, order_filter_list=None, trades_filter_list=None):
+    def manual_match(self, qty_to_match=None, order_filter_list=None, trades_filter_list=None, error_expected=False):
         if order_filter_list is not None:
             self.match_details.set_filter(order_filter_list)
         if qty_to_match is not None:
             self.match_details.set_qty_to_match(qty_to_match)
+        if error_expected:
+            self.match_details.set_expected_error()
         self.match_details.click_match()
         modify_trades_details = ModifyTradesDetails(self.match_details)
         modify_trades_details.set_default_params(self.base_request)
         if trades_filter_list is not None:
             modify_trades_details.set_filter(trades_filter_list)
-        call(self.manual_match_call, modify_trades_details.build())
+        result = call(self.manual_match_call, modify_trades_details.build())
+        return result
 
-    def un_match(self, qty_to_match=None,  trades_filter_list=None):
+    def manual_match_n_to_1(self, order_to_match=None, exec_rows_list=None, trades_filter_list=None):
+        self.match_details.click_match()
+        modify_trades_details = ModifyTradesDetails(self.match_details)
+        modify_trades_details.set_default_params(self.base_request)
+        if trades_filter_list is not None:
+            modify_trades_details.set_filter(trades_filter_list)
+        if exec_rows_list is not None:
+            modify_trades_details.set_selected_rows(exec_rows_list)
+        if order_to_match is not None:
+            modify_trades_details.set_order_to_match(order_to_match)
+        call(self.manual_match_n_to_1_call, modify_trades_details.build())
+
+    def un_match(self, qty_to_match=None, trades_filter_list=None):
         if qty_to_match is not None:
             self.match_details.set_qty_to_match(qty_to_match)
         self.match_details.click_match()
@@ -93,6 +121,7 @@ class BaseTradesBook(BaseWindow):
         if trades_filter_list is not None:
             self.cancel_manual_execution_details.set_filter(trades_filter_list)
         call(self.cancel_manual_execution_call, self.cancel_manual_execution_details.build())
+
     # endregion
     # region Check
 
@@ -107,4 +136,5 @@ class BaseTradesBook(BaseWindow):
             self.verifier.compare_values(key, str(value).replace(',', ''), str(actual_list[key]).replace(',', ''),
                                          verification_method)
         self.verifier.verify()
+
     # endregion

@@ -122,15 +122,23 @@ def direct_loc_request(qty_type: str, qty_percentage: str, route: str,
     return request
 
 
-def direct_child_care(qty_type: str, qty_percentage: str, recipient: str, route: str,
-                      direct_values: ExtractDirectsValuesRequest = None):
+def direct_child_care(qty_type: str, qty_percentage: str, recipient: str, route: str, select_rows: list,
+                      filter: dict = None, direct_values: ExtractDirectsValuesRequest = None):
     request = act_ui_win_pb2.DirectChildCareDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
-    request.qtyType = qty_type
-    request.qtyPercentage = qty_percentage
-    request.recipient = recipient
-    request.route = route
-    request.directsValues.CopyFrom(direct_values)
-
+    if qty_type:
+        request.qtyType = qty_type
+    if qty_percentage:
+        request.qtyPercentage = qty_percentage
+    if recipient:
+        request.recipient = recipient
+    if route:
+        request.route = route
+    if select_rows:
+        request.selectedRows.extend(select_rows)
+    if filter:
+        request.filter.CopyFrom(client_inbox_filter(filter=filter))
+    if direct_values:
+        request.directsValues.CopyFrom(direct_values)
     return request
 
 
@@ -144,7 +152,7 @@ def direct_moc_request(qty_type: str, qty_percentage: str, route: str,
     return request
 
 
-def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
+def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict = None):
     request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
@@ -153,7 +161,7 @@ def direct_loc_request_correct(qty_type: str, qty_percentage: str, route: str, f
     return request
 
 
-def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
+def direct_moc_request_correct(qty_type: str, qty_percentage: str, route: str, filter: dict = None):
     request = act_ui_win_pb2.DirectMocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
@@ -178,7 +186,7 @@ def reject_order_request(instr: str, qty: str, limit: str):
     return request
 
 
-def direct_order_request(qty_type: str, qty_percentage: str, route: str, filter: dict=None):
+def direct_order_request(qty_type: str, qty_percentage: str, route: str, filter: dict = None):
     request = act_ui_win_pb2.DirectOrderDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
@@ -187,14 +195,15 @@ def direct_order_request(qty_type: str, qty_percentage: str, route: str, filter:
     return request
 
 
-def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percentage, route, filter: dict=None):
-    request = act_ui_win_pb2.DirectLocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
+def direct_poc_request_correct(qty_type, reference_price, percentage, qty_percentage, route, filter: dict = None, instruction = ''):
+    request = act_ui_win_pb2.DirectPocDetails(sessionID=BaseParams.session_id, parentEventId=BaseParams.event_id)
     request.qtyType = qty_type
     request.qtyPercentage = qty_percentage
     request.route = route
     request.percentage = percentage
-    request.reference_price = reference_price
+    request.referencePrice = reference_price
     request.filter.CopyFrom(client_inbox_filter(filter=filter))
+    request.instructions = instruction
     return request
 
 

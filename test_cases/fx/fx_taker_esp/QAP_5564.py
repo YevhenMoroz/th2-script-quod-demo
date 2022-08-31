@@ -3,6 +3,7 @@ from datetime import datetime
 from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers import DataSet
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
@@ -12,7 +13,7 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleAlgoFX import FixMessageNewOrderSingleAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 alias_fh = "fix-fh-314-luna"
 alias_gtw = "fix-sell-esp-t-314-stand"
@@ -78,6 +79,7 @@ def execute(report_id, session_id):
     fix_manager_gtw = FixManager(alias_gtw, case_id)
     fix_manager_fh = FixManager(alias_fh, case_id)
     fix_verifier = FixVerifier(alias_gtw, case_id)
+    data_set = FxDataSet()
     try:
 
         # Send market data to the BARX venue EUR/USD spot
@@ -93,7 +95,7 @@ def execute(report_id, session_id):
         fix_manager_fh.send_message(market_data_snap_shot, "Send MD CITI EUR/USD ")
 
         # STEP 1
-        new_order_sor = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters({'TimeInForce': '3'})
+        new_order_sor = FixMessageNewOrderSingleTaker(data_set=data_set).set_default_SOR().change_parameters({'TimeInForce': '3'})
         new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor)
 
@@ -113,7 +115,7 @@ def execute(report_id, session_id):
              ob_col.qty.value: "1,000,000"})
 
         # STEP 2
-        new_order_sor_2 = FixMessageNewOrderSingleAlgoFX().set_default_SOR().change_parameters(
+        new_order_sor_2 = FixMessageNewOrderSingleTaker(data_set=data_set).set_default_SOR().change_parameters(
             {'TimeInForce': '3', 'OrderQty': '5000000'})
         new_order_sor_2.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
         fix_manager_gtw.send_message_and_receive_response(new_order_sor_2)

@@ -46,11 +46,13 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
         return self
 
     def set_default_preliminary(self, new_order_single: FixMessageNewOrderSingle):
-        no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
-        for no_alloc in no_allocs:
-            no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
-            no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
-
+        if 'PreAllocGrp' in new_order_single.get_parameters():
+            no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
+            for no_alloc in no_allocs:
+                no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
+                no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
+        else:
+            no_allocs = "*"
         change_parameters = {
             'Account': new_order_single.get_parameter('Account'),
             'AllocType': '2',

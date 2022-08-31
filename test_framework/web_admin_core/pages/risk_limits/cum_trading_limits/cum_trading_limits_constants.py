@@ -17,6 +17,8 @@ class CumTradingLimitsConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_CUM_TRADING_LIMIT_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -47,18 +49,22 @@ class CumTradingLimitsConstants:
     VALUES_TAB_SOFT_MAX_SELL_QTY_XPATH = '//*[@formcontrolname="softMaxCumSellOrdQty"]'
     VALUES_TAB_MAX_SELL_AMT_XPATH = '//*[@formcontrolname="maxCumSellOrdAmt"]'
     VALUES_TAB_SOFT_MAX_SELL_AMT_XPATH = '//*[@formcontrolname="softMaxCumSellOrdAmt"]'
+    VALUES_TAB_MAX_OPEN_ORDER_AMOUNT_XPATH = '//*[@formcontrolname="maxCumLeavesOrdAmt"]'
 
     # Dimensions tab
-    DIMENSIONS_TAB_VENUE_XPATH = '//*[@id="venue"]'
-    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[@id="subVenue"]'
-    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[@id="listingGroup"]'
-    DIMENSIONS_TAB_LISTING_XPATH = '//*[@id="listing"]'
+    DIMENSIONS_TAB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="venue"]'
+    DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="subVenue"]'
+    DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listingGroup"]'
+    DIMENSIONS_TAB_LISTING_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listing"]'
     DIMENSIONS_TAB_WILDCARD_LISTING_CHECKBOX_XPATH = '//*[text()="Wildcard Listing"]/preceding-sibling::span'
-    DIMENSIONS_TAB_USER_XPATH = '//*[@id="userBlock"]'
-    DIMENSIONS_TAB_DESK_XPATH = '//*[@id="desk"]'
-    DIMENSIONS_TAB_ROUTE_XPATH = '//*[@id="route"]'
-    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[@id="instrType"]'
-    DIMENSIONS_TAB_CLIENT_XPATH = '//*[@id="accountGroup"]'
-    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
-    DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[@id="account"]'
-    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
+    DIMENSIONS_TAB_USER_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="userBlock"]'
+    DIMENSIONS_TAB_DESK_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="desk"]'
+    DIMENSIONS_TAB_ROUTE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="route"]'
+    DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrType"]'
+    DIMENSIONS_TAB_CLIENT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="accountGroup"]'
+    DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="clientGroup"]'
+    DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="account"]'
+    DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrSymbol"]'
+
+    # Assignments tab
+    INSTITUTION = '//*[@id="institution"]'

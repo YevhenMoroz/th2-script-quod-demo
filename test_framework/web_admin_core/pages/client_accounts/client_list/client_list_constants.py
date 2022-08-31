@@ -17,6 +17,7 @@ class ClientListConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_CLIENT_LIST_XPATH = '//*[text()="{}"]'
 
     # Main page
 
@@ -34,8 +35,11 @@ class ClientListConstants:
     WIZARD_CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
     WIZARD_EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
     WIZARD_DELETE_BUTTON_XPATH = '//*[@data-name="trash-2"]'
-    WIZARD_CLIENT_FILTER_XPATH = '//*[@class="accountGroup ng2-smart-th ng-star-inserted"]//input'
+    WIZARD_CLIENT_FILTER_XPATH = '//app-inline-table//input[@placeholder="Filter"]'
     WIZARD_CLIENT_XPATH = '//*[@placeholder="Client *"]'
+    WIZARD_DISPLAYED_CLIENTS_AT_TABLE = '//tbody//div//span'
+    WIZARD_WARNING_MESSAGE_TEXT_XPATH = '//nb-alert//span'
+    WIZARD_TITLE_CLIENT_LIST_XPATH = '//nb-card-header//span[text()="Client List"]'
 
 
 

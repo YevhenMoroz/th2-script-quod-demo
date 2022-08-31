@@ -18,6 +18,7 @@ class InstrSymbolInfoConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # Main page
 
@@ -44,3 +45,4 @@ class InstrSymbolInfoConstants:
     WIZARD_CROSS_THROUGH_USD_CHECKBOX_XPATH = '//*[@formcontrolname="crossThroughUSD"]//span'
     WIZARD_CROSS_THROUGH_USD_TO_EUR_CHECKBOX_XPATH = '//*[@formcontrolname="crossThroughUSDToEUR"]//span'
     WIZARD_CROSS_THROUGH_EUR_TO_USD_CHECKBOX_XPATH = '//*[@formcontrolname="crossThroughEURToUSD"]//span'
+    WIZARD_ERROR_MESSAGE_XPATH = '//nb-toast[contains(@class, "danger")]'

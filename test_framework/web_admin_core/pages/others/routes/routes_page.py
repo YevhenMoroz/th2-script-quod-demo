@@ -85,3 +85,6 @@ class RoutesPage(CommonPage):
 
     def get_support_contra_firm_commission_value(self):
         return self.find_by_xpath(RoutesConstants.SUPPORT_CONTRA_FIRM_COMMISSION_VALUE_XPATH).text
+
+    def is_searched_route_found(self, value):
+        return self.is_element_present(RoutesConstants.DISPLAYED_ROUTE_XPATH.format(value))

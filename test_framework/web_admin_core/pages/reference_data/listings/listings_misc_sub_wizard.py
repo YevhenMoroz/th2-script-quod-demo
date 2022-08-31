@@ -11,7 +11,7 @@ class ListingsMiscSubWizard(CommonPage):
         self.set_text_by_xpath(ListingsConstants.MISC_TAB_MISC_0, value)
 
     def get_misc_0(self):
-        self.get_text_by_xpath(ListingsConstants.MISC_TAB_MISC_0)
+        return self.get_text_by_xpath(ListingsConstants.MISC_TAB_MISC_0)
 
     def set_misc_1(self, value):
         self.set_text_by_xpath(ListingsConstants.MISC_TAB_MISC_1, value)

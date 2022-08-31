@@ -6,6 +6,7 @@ from th2_grpc_act_gui_quod import order_book_pb2, order_book_fx_pb2
 from th2_grpc_act_gui_quod.care_orders_pb2 import TransferPoolDetails
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
 
+from win_gui_modules.basket_ticket_wrappers import RowDetails
 from win_gui_modules.common_wrappers import CommissionsDetails
 from win_gui_modules.order_ticket import OrderTicketDetails, FXOrderDetails
 
@@ -96,6 +97,39 @@ class ModifyFXOrderDetails:
 class CancelOrderDetails:
     def __init__(self, base_request):
         self.cancel_order_details = order_book_pb2.CancelOrderDetails()
+        if base_request is not None:
+            self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.cancel_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_default_params(self, base_request):
+        self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_comment(self, comment: str):
+        self.cancel_order_details.comment = comment
+
+    def set_cancel_children(self, cancel_children: bool):
+        self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def cancel_by_icon(self):
+        self.cancel_order_details.cancelByIcon = True
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.cancel_order_details
+
+
+class ForceCancelOrderDetails:
+    def __init__(self, base_request):
+        self.cancel_order_details = order_book_pb2.ForceCancelOrderDetails()
         if base_request is not None:
             self.cancel_order_details.base.CopyFrom(base_request)
 
@@ -375,9 +409,9 @@ class ExtractEventRows:
 
 class SuspendOrderDetails:
 
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.SuspendOrderDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.SuspendOrderDetails(base=base_request)
         else:
             self._request = order_book_pb2.SuspendOrderDetails()
 
@@ -524,9 +558,9 @@ class OrderInfo:
 
 
 class MassExecSummaryAveragePriceDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.MassExecSummaryAveragePriceDetails(base=base_request)
         else:
             self._request = order_book_pb2.MassExecSummaryAveragePriceDetails()
 
@@ -592,6 +626,41 @@ class ExecutionsDetails:
         self.request.settlementDateOffset = offset
 
 
+class OtherTabDetails:
+    def __init__(self, request: order_book_pb2.ManualExecutionDetails.OtherTabDetails):
+        self._request = request
+
+    def set_trade_type(self, trade_type: str):
+        self._request.tradeType = trade_type
+
+    def set_net_gross_ind(self, net_gross_ind: str):
+        self._request.netGrossInd = net_gross_ind
+
+    def set_sec_last_mkt(self, sec_last_mkt: str):
+        self._request.secLastMkt = sec_last_mkt
+
+    def set_settlement_type(self, set_settlement_type: str):
+        self._request.settlementType = set_settlement_type
+
+    def set_settl_currency(self, settl_currency: str):
+        self._request.settlCurrency = settl_currency
+
+    def set_exchange_rate(self, exchange_rate: str):
+        self._request.exchangeRate = exchange_rate
+
+    def set_exchange_rate_cacl(self, exchange_rate_cacl):
+        self._request.exchangeRateCacl = exchange_rate_cacl
+
+    def set_agent_fees(self, agent_fees: str):
+        self._request.agentFees = agent_fees
+
+    def set_market_fees(self, market_fees: str):
+        self._request.marketFees = market_fees
+
+    def set_route_fees(self, route_fees: str):
+        self._request.routeFees = route_fees
+
+
 class MenuItemDetails:
     def __init__(self, base_request: EmptyRequest = None):
         if base_request is not None:
@@ -616,9 +685,9 @@ class MenuItemDetails:
 
 
 class ManualExecutingDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.ManualExecutionDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.ManualExecutionDetails(base=base_request)
         else:
             self._request = order_book_pb2.ManualExecutionDetails()
 
@@ -635,6 +704,10 @@ class ManualExecutingDetails:
         var = self._request.executionDetails.add()
         return ExecutionsDetails(var)
 
+    def add_other_details(self) -> OtherTabDetails:
+        var = self._request.othertabDetails.add()
+        return OtherTabDetails(var)
+
     def set_error_expected(self, error_expected: bool):
         self._request.errorExpected = error_expected
 
@@ -643,9 +716,9 @@ class ManualExecutingDetails:
 
 
 class CompleteOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.CompleteOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.CompleteOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.CompleteOrdersDetails()
 
@@ -718,12 +791,15 @@ class ManualCrossDetails:
         for row in row_numbers:
             self._request.selectedRows.append(row)
 
+    def set_extract_footer(self):
+        self._request.manualCrossValues.CopyFrom(ExtractManualCrossValuesRequest("ErrorMessage").build())
+
     def build(self):
         return self._request
 
 
 class ExtractManualCrossValuesRequest:
-    def __init__(self, extraction_id: int = None, manual_cross_extracted_value: list = None):
+    def __init__(self, extraction_id: str = None, manual_cross_extracted_value: list = None):
         self._request = order_book_pb2.ExtractManualCrossValuesRequest()
         if extraction_id is not None:
             self._request.extractionId = extraction_id
@@ -852,24 +928,6 @@ class FXOrderInfo:
         return self.order_info
 
 
-class SuspendOrderDetails:
-
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.SuspendOrderDetails(base=base)
-        else:
-            self._request = order_book_pb2.SuspendOrderDetails()
-
-    def set_filter(self, table_filter: dict):
-        self._request.filter.update(table_filter)
-
-    def set_cancel_children(self, cancel_children: bool):
-        self._request.cancelChildren = cancel_children
-
-    def build(self):
-        return self._request
-
-
 class AddToBasketDetails:
     def __init__(self, base: EmptyRequest = None, row_numbers: list = None, basket_name: str = None):
         if base is not None:
@@ -927,9 +985,11 @@ class CreateBasketDetails:
     def set_name(self, name: str):
         self._request.name = name
 
-    def set_row_details(self, row_details: list):
-        for detail in row_details:
-            self._request.rowsDetails.append(detail)
+    def set_rows_for_delete(self, delete_rows: int):
+        i = 0
+        while i < delete_rows:
+            self._request.rowsDetails.append(RowDetails(delete_row=True).build())
+            i += 1
 
     def build(self):
         return self._request
@@ -1144,100 +1204,136 @@ class MassManualExecutionDetails:
     def build(self):
         return self._request
 
-# class QuoteRequestDetails:
-#     def __init__(self):
-#         self.base = None
-#         self.extractionId = None
-#         self.quote_request_details = ar_operations_pb2.QuoteRequestDetailsInfo()
-#
-#     @staticmethod
-#     def create(order_info_list: list = None, info=None):
-#         order_details = QuoteRequestDetails()
-#
-#         if order_info_list is not None:
-#             for i in order_info_list:
-#                 order_details.add_single_order_info(i)
-#
-#         if info is not None:
-#             order_details.add_single_order_info(info)
-#
-#         return order_details
-#
-#     def set_extraction_id(self, extraction_id: str):
-#         self.extractionId = extraction_id
-#
-#     def set_filter(self, filter_list: list):
-#         length = len(filter_list)
-#         i = 0
-#         while i < length:
-#             self.quote_request_details.filter[filter_list[i]] = filter_list[i + 1]
-#             i += 2
-#
-#     def set_order_info(self, order_info_list: list):
-#         for quoteRequestInfo in order_info_list:
-#             self.quote_request_details.quoteRequestInfo.append(quoteRequestInfo.build())
-#
-#     def add_single_order_info(self, quoteRequestInfo):
-#         self.quote_request_details.quoteRequestInfo.append(quoteRequestInfo.build())
-#
-#     def set_default_params(self, base_request):
-#         self.base = base_request
-#
-#     def extract_length(self, count_id: str):
-#         self.quote_request_details.extractCount = True
-#         self.quote_request_details.countId = count_id
-#
-#     def request(self):
-#         request = ar_operations_pb2.QuoteRequestDetailsRequest()
-#         request.base.CopyFrom(self.base)
-#         request.extractionId = self.extractionId
-#         request.orderDetails.CopyFrom(self.quote_request_details)
-#         return request
-#
-#     def details(self):
-#         return self.quote_request_details
+
+class UnmatchAndTransferDetails:
+    def __init__(self, base_request):
+        self.transfer_details = order_book_pb2.UnmatchAndTransferDetails()
+        self.transfer_details.base.CopyFrom(base_request)
+
+    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict = None):
+        self.transfer_details.filter.update(filter_dict)
+        if sub_filter_dict:
+            self.transfer_details.subFilter.update(sub_filter_dict)
+
+    def set_account_destination(self, account_destination: str):
+        self.transfer_details.account = account_destination
+
+    def build(self):
+        return self.transfer_details
 
 
-# class QuoteRequestInfo:
-#     def __init__(self):
-#         self.order_info = ar_operations_pb2.QuoteRequestInfo()
-#
-#     @staticmethod
-#     def create(action=None, actions: list = None, sub_order_details: QuoteRequestDetails = None):
-#         quote_request_info = QuoteRequestInfo()
-#         if action is not None:
-#             quote_request_info.add_single_order_action(action)
-#
-#         if actions is not None:
-#             quote_request_info.add_order_actions(actions)
-#
-#         if sub_order_details is not None:
-#             quote_request_info.set_sub_orders_details(sub_order_details)
-#
-#         return quote_request_info
-#
-#     def set_sub_orders_details(self, sub_order_details: QuoteRequestDetails):
-#         self.order_info.subOrders.CopyFrom(sub_order_details.details())
-#
-#     def set_number(self, number: int):
-#         self.order_info.number = number
-#
-#     def add_order_actions(self, actions: list):
-#         for action in actions:
-#             self.add_single_order_action(action)
-#
-#     def add_single_order_action(self, action):
-#         quote_request_action = ar_operations_pb2.QuoteRequestAction()
-#         if isinstance(action, ContextActionsQuoteBook):
-#             quote_request_action.contextActionsQuoteBook = action.value
-#         else:
-#             raise Exception("Unsupported action type")
-#         self.order_info.quoteRequestActions.append(quote_request_action)
-#
-#     def build(self):
-#         return self.order_info
-# #
-#
-# class ContextActionsQuoteBook(Enum):
-#     reject = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.REJECT
-#     unassign = ar_operations_pb2.QuoteRequestAction.ContextActionsQuoteBook.UNASSIGN
+class SubLvlInfo:
+    def __init__(self):
+        self._request = order_book_pb2.SubLvlInfo()
+
+    def set_filter(self, filter_dict: dict = None):
+        if filter_dict is not None:
+            self._request.filter.update(filter_dict)
+
+    def set_tab_name(self, tab_name):
+        self._request.tabName = tab_name
+
+    def build(self):
+        return self._request
+
+
+class GetSubLvlDetails:
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.GetSubLvlDetails(base=base_request)
+        else:
+            self._request = order_book_pb2.GetSubLvlDetails()
+
+    def set_base_request(self, base_request=None):
+        if base_request is not None:
+            self._request.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict = None):
+        if filter_dict is not None:
+            self._request.filter.update(filter_dict)
+
+    def set_column_names(self, column_names: list):
+        self._request.columnNames.extend(column_names)
+
+    def set_sub_lvl_info(self, sub_lvl_info: list):
+        self._request.subLvlInfo.append(sub_lvl_info)
+
+    def build(self):
+        return self._request
+
+
+class QuickButtonCreationDetails:
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.SplitShortcutCreationButtonDetails(base=base_request)
+        else:
+            self._request = order_book_pb2.SplitShortcutCreationButtonDetails()
+
+    def set_btn_name(self, btn_name: str):
+        self._request.btnName = btn_name
+
+    def set_custom_name(self, custom_name: str):
+        self._request.customName = custom_name
+
+    def set_qty(self, qty: str):
+        self._request.qty = qty
+
+    def set_qty_type(self, qty_type: str):
+        self._request.qtyType = qty_type
+
+    def set_action_type(self, action_type: str):
+        self._request.actionType = action_type
+
+    def set_tif(self, tif: str):
+        self._request.tif = tif
+
+    def set_routes(self, routes: str):
+        self._request.routes = routes
+
+    def set_strategy(self, strategy: str):
+        self._request.strategy = strategy
+
+    def set_strategy_type(self, strategy_type: str):
+        self._request.strategyType = strategy_type
+
+    def set_child_strategy(self, child_strategy: str):
+        self._request.childStrategy = child_strategy
+
+    def set_order_type(self, order_type: str):
+        self._request.orderType = order_type
+
+    def set_recipient(self, recipient: str):
+        self._request.recipient = recipient
+
+    def set_order_id(self, order_id: str):
+        self._request.ordBookFilter["Order ID"] = order_id
+
+    def build(self):
+        return self._request
+
+
+class ActionsHotKeysDetails:
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self.request = order_book_pb2.ActionWithOrdersViaHotKeysDetails(base=base_request)
+        else:
+            self.request = order_book_pb2.ActionWithOrdersViaHotKeysDetails()
+
+    def set_default_params(self, base_request):
+        self.request.base.CopyFrom(base_request)
+
+    def set_row_number(self, rows_numbers: list):
+        for row in rows_numbers:
+            self.request.rowNumbers.append(row)
+
+    def set_filter(self, filter_dict: dict):
+        self.request.filter.update(filter_dict)
+
+    def set_cancel_hotkey(self):
+        self.request.hotkeys.append(order_book_pb2.ActionWithOrdersViaHotKeysDetails.HotKeys.DEL)
+
+    def set_enter_hotkey(self):
+        self.request.hotkeys.append(order_book_pb2.ActionWithOrdersViaHotKeysDetails.HotKeys.ENTER)
+
+    def build(self):
+        return self.request

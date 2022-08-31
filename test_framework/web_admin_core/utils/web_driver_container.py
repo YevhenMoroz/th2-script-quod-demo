@@ -51,7 +51,7 @@ class WebDriverContainer:
         return self.wait_driver
 
     def stop_driver(self):
-        self.web_driver.close()
+        self.web_driver.quit()
 
     def __create_dir_if_not_exist(self, directory: str):
         if not path.isdir(directory):

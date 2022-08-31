@@ -12,8 +12,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle, side: GatewaySide,
-                                         status: Status):
+    def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
+                                         side: GatewaySide = GatewaySide.Sell,
+                                         status: Status = Status.Fill):
         if side is GatewaySide.Buy:
             if status is Status.Pending:
                 self.__set_pending_new_buy(new_order_single)
@@ -38,6 +39,8 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
                 self.__set_partial_fill_sell(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_sell(new_order_single)
+            elif status is Status.Reject:
+                self.__set_reject_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -53,9 +56,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             Account=new_order_single.get_parameter("Account"),
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             Currency=new_order_single.get_parameter("Currency"),
-            SettlCurrency=new_order_single.get_parameter("Instrument")["Symbol"][-3:],
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Instrument=new_order_single.get_parameter("Instrument"),
+            SettlDate=new_order_single.get_parameter("SettlDate"),
             NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
             ExecID="*",
             OrderID="*",
@@ -142,7 +145,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             Side=new_order_single.get_parameter('Side'),
             SettlType=new_order_single.get_parameter('SettlType'),
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            NoStrategyParameters=new_order_single.get_parameter("NoStrategyParameters"),
+            NoStrategyParameters="*",
             SpotSettlDate=spo(),
             StrategyName='1555',
             Price="*",
@@ -155,6 +158,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SecondaryOrderID='*',
             AvgPx='*',
             ExecID='*',
+            LastMkt='*',
             LastPx='*',
             OrderID='*',
             Text='*',
@@ -273,6 +277,46 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SecAltIDGrp='*',
         )
         super().change_parameters(temp)
+        return self
+
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Currency=new_order_single.get_parameter('Currency'),
+            CumQty="0",
+            ExecID='*',
+            ExecType='8',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            Instrument=new_order_single.get_parameter('Instrument'),
+            LastPx='*',
+            LastQty="0",
+            LeavesQty=0,
+            NoParty="*",
+            OrderCapacity="A",
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus='8',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Price="*",
+            QtyType=0,
+            SettlDate='*',
+            Side=new_order_single.get_parameter('Side'),
+            StrategyName='1555',
+            TargetStrategy='1008',
+            Text='*',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*'
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
         return self
 
     # BUY SIDE

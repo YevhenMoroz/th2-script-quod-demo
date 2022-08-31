@@ -48,3 +48,12 @@ class DesksPage(CommonPage):
 
     def is_desk_enable_disable(self):
         return self.is_toggle_button_enabled(DesksConstants.ENABLE_DISABLE_BUTTON_XPATH)
+
+    def is_searched_desk_found(self, value):
+        return self.is_element_present(DesksConstants.DISPLAYED_DESK_XPATH.format(value))
+
+    def get_list_of_all_locations(self):
+        return self._get_all_items_from_table_column(DesksConstants.LOCATIONS_COLUMN_XPATH)
+
+    def get_list_of_all_desks_name(self):
+        return self._get_all_items_from_table_column(DesksConstants.DESKS_NAME_COLUMN_XPATH)

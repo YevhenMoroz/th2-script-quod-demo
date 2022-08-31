@@ -116,7 +116,9 @@ class UsersPage(CommonPage):
         self.set_combobox_value(UsersConstants.LOCKED_FILTER_AT_MAIN_PAGE, value)
 
     def set_connected(self, value):
-        self.set_combobox_value(UsersConstants.CONNECTED_FILTER_AT_MAIN_PAGE, value)
+        if not self.is_element_present(UsersConstants.CONNECTED_FILTER_AT_MAIN_PAGE):
+            self.horizontal_scroll(UsersConstants.CONNECTED_FILTER_AT_MAIN_PAGE)
+        self.select_value_from_dropdown_list(UsersConstants.CONNECTED_FILTER_AT_MAIN_PAGE, value)
 
     def get_disabled_massage(self):
         return self.find_by_xpath(UsersConstants.DISABLED_ENABLED_SUCCESSFUL_MESSAGE).text
@@ -180,3 +182,15 @@ class UsersPage(CommonPage):
 
     def is_user_enable_disable(self):
         return self.is_toggle_button_enabled(UsersConstants.ENABLE_DISABLE_BUTTON_XPATH)
+
+    def is_searched_user_found(self, value):
+        return self.is_element_present(UsersConstants.DISPLAYED_USER_XPATH.format(value))
+
+    def is_online_status_displayed(self):
+        return self.is_element_present(UsersConstants.ONLINE_STATUS_XPATH)
+
+    def count_displayed_users(self):
+        return len(self.find_elements_by_xpath(UsersConstants.ALL_DISPLAYED_USERS_XPATH))
+
+    def count_online_status_for_displayed_users(self):
+        return len(self.find_elements_by_xpath(UsersConstants.ONLINE_STATUS_XPATH))

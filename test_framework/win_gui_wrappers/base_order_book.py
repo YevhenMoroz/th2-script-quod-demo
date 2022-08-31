@@ -6,7 +6,7 @@ from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionActi
     InternalTransferActionDetails
 from win_gui_modules.utils import call
 from win_gui_modules.wrappers import direct_moc_request_correct, direct_loc_request_correct, direct_loc_request, \
-    direct_moc_request, direct_order_request
+    direct_moc_request, direct_order_request, direct_child_care
 
 
 class BaseOrderBook(BaseWindow):
@@ -37,6 +37,7 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
         self.extraction_error_message_details = None
+        self.hot_keys_details = None
         self.extract_direct_values = None
         self.order_ticket_details = None
         self.extract_error_from_order_ticket = None
@@ -45,6 +46,7 @@ class BaseOrderBook(BaseWindow):
         self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
+        self.house_fill_call = None
         self.is_menu_item_present_call = None
         self.group_modify_order_call = None
         self.get_orders_details_call = None
@@ -62,6 +64,7 @@ class BaseOrderBook(BaseWindow):
         self.add_to_basket_call = None
         self.create_basket_call = None
         self.cancel_order_call = None
+        self.refresh_order_call = None
         self.manual_cross_call = None
         self.mass_unbook_call = None
         self.mass_book_call = None
@@ -83,7 +86,23 @@ class BaseOrderBook(BaseWindow):
         self.transfer_pool_details = None
         self.internal_transfer_action = None
         self.group_modify_details = None
-
+        self.mass_manual_execution_call = None
+        self.mass_manual_execution_details = None
+        self.unmatch_and_transfer_details = None
+        self.unmatch_and_transfer_call = None
+        self.direct_child_care_call = None
+        self.get_empty_rows_call = None
+        self.sub_lvl_info_details = None
+        self.get_sub_lvl_details = None
+        self.extract_sub_lvl_details_call = None
+        self.exec_summary_call = None
+        self.quick_button_details = None
+        self.create_quick_button_call = None
+        self.edit_quick_button_call = None
+        self.click_quick_button_call = None
+        self.hot_keys_action_call = None
+        self.force_cancel_order_call = None
+        self.force_cancel_order_details = None
     # endregion
 
     # region Common func
@@ -109,16 +128,23 @@ class BaseOrderBook(BaseWindow):
     # endregion
 
     # region Get
-    def extract_field(self, column_name: str, row_number: int = 1) -> str:
+    def extract_field(self, column_name: str, row_number: int = 1,
+                      expected_empty_rows: bool = False):
         field = ExtractionDetail("orderBook." + column_name, column_name)
         info = self.order_info.create(
             action=ExtractionAction.create_extraction_action(extraction_details=[field]))
         info.set_number(row_number)
         self.order_details.add_single_order_info(info)
-        response = call(self.get_orders_details_call, self.order_details.request())
-        self.clear_details([self.order_details])
-        self.set_order_details()
-        return response[field.name]
+        if expected_empty_rows is False:
+            response = call(self.get_orders_details_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response[field.name]
+        else:
+            response = call(self.get_empty_rows_call, self.order_details.request())
+            self.clear_details([self.order_details])
+            self.set_order_details()
+            return response
 
     def extract_fields_list(self, list_fields: dict, row_number: int = None) -> dict:
         """
@@ -181,7 +207,22 @@ class BaseOrderBook(BaseWindow):
         self.second_level_extraction_details.set_tabs_details([self.second_level_tab_details.build()])
         result = call(self.extraction_from_second_level_tabs_call, self.second_level_extraction_details.build())
         self.clear_details([self.second_level_extraction_details, self.second_level_tab_details])
-        return BaseWindow.split_2lvl_values(result)
+        return BaseWindow.split_fees(result)
+
+    def extract_sub_lvl_fields(self, column_names: list, tab_names: list, filter_dict: dict = None,
+                               sub_lvl_filter_dicts: [dict] = []):
+        """extract from any sub lvl"""
+        self.get_sub_lvl_details.set_column_names(column_names)
+        self.get_sub_lvl_details.set_filter(filter_dict)
+
+        for i in range(len(tab_names)):
+            self.sub_lvl_info_details.set_tab_name(tab_names[i])
+            if len(sub_lvl_filter_dicts) > i:
+                self.sub_lvl_info_details.set_filter(sub_lvl_filter_dicts[i])
+            self.get_sub_lvl_details.set_sub_lvl_info(self.sub_lvl_info_details.build())
+        result = call(self.extract_sub_lvl_details_call, self.get_sub_lvl_details.build())
+        self.clear_details([self.sub_lvl_info_details, self.get_sub_lvl_details])
+        return result
 
     # endregion
 
@@ -220,14 +261,14 @@ class BaseOrderBook(BaseWindow):
                                          verification_method)
         self.verifier.verify()
 
-    def is_menu_item_present(self, menu_item, orders_count: list, filter_list=None):
+    def is_menu_item_present(self, menu_item, orders_count: list, filter_dict=None):
         """
         check order context menu and return a bool value
         """
         self.menu_item_details.set_selected_rows(orders_count)
         self.menu_item_details.set_menu_item(menu_item)
-        if filter_list is not None:
-            self.menu_item_details.set_filter(filter_list)
+        if filter_dict is not None:
+            self.menu_item_details.set_filter(filter_dict)
         result = call(self.is_menu_item_present_call, self.menu_item_details.build())
         self.clear_details([self.menu_item_details])
         return result['isMenuItemPresent']
@@ -248,6 +289,25 @@ class BaseOrderBook(BaseWindow):
         call(self.cancel_order_call, self.cancel_order_details.build())
         self.clear_details([self.cancel_order_details])
 
+    def force_cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
+                     filter_list: list = None):
+        if cancel_children is not None:
+            self.force_cancel_order_details.set_cancel_children(cancel_children)
+        if row_count is not None:
+            self.force_cancel_order_details.set_selected_row_count(row_count)
+        if comment is not None:
+            self.force_cancel_order_details.set_comment(comment)
+        if filter_list is not None:
+            self.force_cancel_order_details.set_filter(filter_list)
+        call(self.force_cancel_order_call, self.force_cancel_order_details.build())
+        self.clear_details([self.force_cancel_order_details])
+
+    def refresh_order(self, filter_list: list = None):
+        if filter_list is not None:
+            self.modify_order_details.set_filter(filter_list)
+        call(self.refresh_order_call, self.modify_order_details.build())
+        self.clear_details([self.modify_order_details])
+
     def transfer_order(self, desk: str, partial_desk: bool = False, filter_list: list = None):
         self.transfer_order_details.set_default_params(self.base_request)
         if filter_list is not None:
@@ -264,7 +324,7 @@ class BaseOrderBook(BaseWindow):
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
-    def complete_order(self, row_count=None, filter_list=None):
+    def complete_order(self, row_count: int = None, filter_list: list = None):
         if filter_list is not None:
             self.modify_order_details.set_filter(filter_list)
         if row_count is not None:
@@ -321,9 +381,9 @@ class BaseOrderBook(BaseWindow):
         call(self.check_out_order_call, self.modify_order_details.build())
         self.clear_details([self.modify_order_details])
 
-    def suspend_order(self, cancel_children: bool = None, filter_list=None):
-        if filter_list is not None:
-            self.suspend_order_details.set_filter(filter_list)
+    def suspend_order(self, cancel_children: bool = None, filter_dict: dict = None):
+        if filter_dict is not None:
+            self.suspend_order_details.set_filter(filter_dict)
         if cancel_children is not None:
             self.suspend_order_details.set_cancel_children(cancel_children)
         call(self.suspend_order_call, self.suspend_order_details.build())
@@ -337,7 +397,7 @@ class BaseOrderBook(BaseWindow):
 
     def mass_execution_summary_at_average_price(self, row_count: int):
         self.mass_exec_summary_average_price_detail.set_count_of_selected_rows(row_count)
-        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail)
+        call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail.build())
         self.clear_details([self.mass_exec_summary_average_price_detail])
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
@@ -361,7 +421,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.add_to_basket_details])
         return result
 
-    def create_basket(self, orders_rows: [] = None, basket_name=None):
+    def create_basket(self, orders_rows: [int] = None, basket_name=None, rows_for_delete: int = None):
         """
         orders_rows - select rows from order book
         """
@@ -369,11 +429,66 @@ class BaseOrderBook(BaseWindow):
             self.create_basket_details.set_name(basket_name)
         if orders_rows is not None:
             self.create_basket_details.set_row_numbers(orders_rows)
+        if rows_for_delete is not None:
+            self.create_basket_details.set_rows_for_delete(rows_for_delete)
         call(self.create_basket_call, self.create_basket_details.build())
         self.clear_details([self.create_basket_details])
 
     def manual_execution(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                         last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                         trade_type: str = None, net_gross_ind: str = None, sec_last_mkt: str = None,
+                         set_other_tab: bool = False, settlement_type: str = None,
+                         settl_currency: str = None, exchange_rate: str = None,
+                         exchange_rate_calc: str = None, agent_fees: str = None,
+                         market_fees: str = None, route_fees: str = None
+
+                         ):
+        other_tab_details = None
+        if set_other_tab:
+            other_tab_details = self.manual_executing_details.add_other_details()
+        execution_details = self.manual_executing_details.add_executions_details()
+        if qty is not None:
+            execution_details.set_quantity(qty)
+        if price is not None:
+            execution_details.set_price(price)
+        if execution_firm is not None:
+            execution_details.set_executing_firm(execution_firm)
+        if contra_firm is not None:
+            execution_details.set_contra_firm(contra_firm)
+        if settl_date is not None:
+            execution_details.set_settlement_date_offset(settl_date)
+        if last_capacity is not None:
+            execution_details.set_last_capacity(last_capacity)
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        if trade_type and other_tab_details:
+            other_tab_details.set_trade_type(trade_type)
+        if net_gross_ind and other_tab_details:
+            other_tab_details.set_net_gross_ind(net_gross_ind)
+        if sec_last_mkt and other_tab_details:
+            other_tab_details.set_sec_last_mkt(sec_last_mkt)
+        if settlement_type and other_tab_details:
+            other_tab_details.set_settlement_type(settlement_type)
+        if settl_currency and other_tab_details:
+            other_tab_details.set_settl_currency(settl_currency)
+        if exchange_rate and other_tab_details:
+            other_tab_details.set_exchange_rate(exchange_rate)
+        if agent_fees and other_tab_details:
+            other_tab_details.set_agent_fees(agent_fees)
+        if market_fees and other_tab_details:
+            other_tab_details.set_market_fees(market_fees)
+        if route_fees and other_tab_details:
+            other_tab_details.set_route_fees(route_fees)
+        if exchange_rate_calc and other_tab_details:
+            other_tab_details.set_exchange_rate_cacl(exchange_rate_calc)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
+        result = call(self.manual_execution_order_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
+        return result
+
+    def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -391,11 +506,11 @@ class BaseOrderBook(BaseWindow):
             self.manual_executing_details.set_error_expected(error_expected)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
-        result = call(self.manual_execution_order_call, self.manual_executing_details.build())
+        result = call(self.house_fill_call, self.manual_executing_details.build())
         self.clear_details([self.manual_executing_details])
         return result
 
-    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None):
+    def manual_cross_orders(self, selected_rows: list, qty=None, price=None, last_mkt=None, extract_footer=False):
         if qty is not None:
             self.manual_cross_details.set_quantity(qty)
         if price is not None:
@@ -403,7 +518,10 @@ class BaseOrderBook(BaseWindow):
         if last_mkt is not None:
             self.manual_cross_details.set_last_mkt(last_mkt)
         self.manual_cross_details.set_selected_rows(selected_rows)
-        call(self.manual_cross_call, self.manual_cross_details.build())
+        if extract_footer:
+            self.manual_cross_details.set_extract_footer()
+        result = call(self.manual_cross_call, self.manual_cross_details.build())
+        return result["Footer value"]
 
     def mass_book(self, row_list: list):
         self.rows_numbers_for_grid.set_rows_numbers(row_list)
@@ -421,10 +539,11 @@ class BaseOrderBook(BaseWindow):
     Method extracting values from Booking Ticket
     '''
 
-    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict):
+    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict, count_of_rows: int = 1):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
-                                                               panel_of_extraction
+                                                               panel_of_extraction,
+                                                               count_of_rows
                                                                )
         result = call(self.extract_booking_block_values_call, self.extraction_panel_details.build())
         return result
@@ -434,6 +553,21 @@ class BaseOrderBook(BaseWindow):
 
     def direct_loc_order(self, qty, route, qty_type):
         call(self.direct_loc_request_correct_call, direct_loc_request_correct(qty_type, qty, route))
+
+    def direct_child_care_order(self, qty_percentage: str = None, recipient: str = None, route: str = None,
+                                qty_type: str = None, selected_rows: list = None, filter_dict: dict = None,
+                                extracted_error: bool = False):
+        result = None
+        if extracted_error:
+            self.extract_direct_values.extractedValues.append(self.extraction_error_message_details)
+            result = call(self.direct_child_care_call,
+                          direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict,
+                                            self.extract_direct_values))
+        else:
+            call(self.direct_child_care_call,
+                 direct_child_care(qty_type, qty_percentage, recipient, route, selected_rows, filter_dict))
+        self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
+        return result
 
     def set_error_message_details(self):
         self.extraction_error_message_details.name = "ErrorMessage"
@@ -572,18 +706,6 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.extraction_error_message_details, self.extract_direct_values])
         return response
 
-    def set_order_ticket_details(self, qty, type, price):
-        order_ticket_details = self.order_ticket_details()
-        order_ticket_details.set_quantity(qty)
-        order_ticket_details.set_order_type(type)
-        order_ticket_details.set_limit(price)
-        self.modify_order_details.set_order_details(order_ticket_details)
-        return self.modify_order_details
-
-    def split_limit_order(self):
-        call(self.split_limit_call, self.modify_order_details.build())
-        # self.clear_details([self.modify_order_details])
-
     def extract_error_message_from_order_ticket(self):
         self.extract_error_from_order_ticket.extract_error_message()
         result = call(self.extract_error_from_order_ticket_call, self.extract_error_from_order_ticket.build())
@@ -597,3 +719,90 @@ class BaseOrderBook(BaseWindow):
         self.mass_book_details.set_rows_numbers(positions_of_orders)
         call(self.mass_book_call, self.mass_book_details.build())
         self.clear_details([self.mass_book_details])
+
+    def mass_manual_execution(self, price: str, rows: int):
+        self.mass_manual_execution_details.set_price(price)
+        self.mass_manual_execution_details.set_count_of_selected_rows(rows)
+        call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
+
+    def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict = None):
+        self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
+        self.unmatch_and_transfer_details.set_account_destination(account_destination)
+        call(self.unmatch_and_transfer_call, self.unmatch_and_transfer_details.build())
+        self.clear_details([self.unmatch_and_transfer_details])
+
+    def exec_summary(self, qty=None, price=None, execution_firm=None, contra_firm=None,
+                     last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+        execution_details = self.manual_executing_details.add_executions_details()
+        if qty is not None:
+            execution_details.set_quantity(qty)
+        if price is not None:
+            execution_details.set_price(price)
+        if execution_firm is not None:
+            execution_details.set_executing_firm(execution_firm)
+        if contra_firm is not None:
+            execution_details.set_contra_firm(contra_firm)
+        if settl_date is not None:
+            execution_details.set_settlement_date_offset(settl_date)
+        if last_capacity is not None:
+            execution_details.set_last_capacity(last_capacity)
+        if error_expected is True:
+            self.manual_executing_details.set_error_expected(error_expected)
+        if filter_dict is not None:
+            self.manual_executing_details.set_filter(filter_dict)
+        result = call(self.exec_summary_call, self.manual_executing_details.build())
+        self.clear_details([self.manual_executing_details])
+        return result
+
+    def create_quick_button(self, custom_name: str, qty: str, action_type: str = None, tif: str = None,
+                            qty_type: str = None, routes: str = None, strategy_type: str = None, strategy: str = None,
+                            child_strategy: str = None, order_type: str = None, recipient: str = None):
+        self.quick_button_details.set_custom_name(custom_name)
+        self.quick_button_details.set_qty(qty)
+        if action_type is not None:
+            self.quick_button_details.set_action_type(action_type)
+        if tif is not None:
+            self.quick_button_details.set_tif(tif)
+        if qty_type is not None:
+            self.quick_button_details.set_qty_type(qty_type)
+        if routes is not None:
+            self.quick_button_details.set_routes(routes)
+        if strategy_type is not None:
+            self.quick_button_details.set_strategy_type(strategy_type)
+        if strategy is not None:
+            self.quick_button_details.set_strategy(strategy)
+        if child_strategy is not None:
+            self.quick_button_details.set_child_strategy(child_strategy)
+        if order_type is not None:
+            self.quick_button_details.set_order_type(order_type)
+        if recipient is not None:
+            self.quick_button_details.set_recipient(recipient)
+        call(self.create_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def edit_quick_button(self, btn_name: str, custom_name: str = None, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        if custom_name is not None:
+            self.quick_button_details.set_custom_name(custom_name)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.edit_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def click_quick_button(self, btn_name: str, order_id: str, qty: str = None):
+        self.quick_button_details.set_btn_name(btn_name)
+        self.quick_button_details.set_order_id(order_id)
+        if qty is not None:
+            self.quick_button_details.set_qty(qty)
+        call(self.click_quick_button_call, self.quick_button_details.build())
+        self.clear_details([self.quick_button_details])
+
+    def cancel_by_hotkey(self, row_count: list, filter: dict = None):
+        self.hot_keys_details.set_default_params(self.base_request)
+        self.hot_keys_details.set_row_number(row_count)
+        if filter is not None:
+            self.hot_keys_details.set_filter(filter)
+        self.hot_keys_details.set_cancel_hotkey()
+        self.hot_keys_details.set_enter_hotkey()
+        call(self.hot_keys_action_call, self.hot_keys_details.build())
+        self.clear_details([self.hot_keys_details])

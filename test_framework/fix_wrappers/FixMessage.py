@@ -12,13 +12,16 @@ class FixMessage:
     def get_message_type(self) -> str:
         return self.__message_type
 
+    def is_parameter_exist(self, key: str) -> bool:
+        return key in self.__parameters
+
     def get_parameter(self, parameter_name: str):
         return self.__parameters[parameter_name]
 
     def get_parameters(self) -> dict:
         return self.__parameters
 
-    def change_parameter(self, parameter_name: str, new_parameter_value) -> None:
+    def change_parameter(self, parameter_name: str, new_parameter_value):
         self.__parameters[parameter_name] = new_parameter_value
         return self
 
@@ -111,10 +114,29 @@ class FixMessage:
                 item.update({key_in_group: new_value})
         return self
 
-    def update_repeating_group_by_index(self, component: str, index: int, **kwargs):
+    def update_repeating_group_by_index(self, component: str, index: int = 0, **kwargs):
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
         return self
 
+    def remove_values_in_repeating_group_by_index(self, component: str, index: int = 0, *args):
+        """
+        Removing list of values from repeating group by index, for example
+        we can delete MDEntryPx and MDEntryTime from this msg:
+        {'MDReqID': '0289630222', ..., 'Instrument': {'Symbol': 'EUR/USD'},
+        'NoMDEntries': [
+        {'SettlType': '0', 'MDEntryPx': '*', 'MDEntryTime': '*', ..., 'SettlDate': '20220815'},
+        {'SettlType': '0', 'MDEntryPx': '*', 'MDEntryTime': '*', ..., 'SettlDate': '20220815'}
+        ]}
+        fix_message.remove_values_in_repeating_group_by_index("NoMDEntries", 1, ("MDEntryPx", "MDEntryTime"))
+        """
+        new_repeating_gr = self.get_parameter(component)
+        for i in args[0]:
+            new_repeating_gr[index].pop(i)
+        return self
+
     def get_data_set(self):
         return self.__data_set
+
+    def delete_group(self, field):
+        del self.__parameters[field]

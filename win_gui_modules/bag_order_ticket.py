@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
-from th2_grpc_act_gui_quod import bag_mgt_pb2
-from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails, OrderBagBookDetails, GetOrderBagBookDetailsRequest
-from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod import bag_mgt_pb2, order_ticket_pb2
+from th2_grpc_act_gui_quod.bag_mgt_pb2 import OrderBagTicketDetails
+from win_gui_modules.algo_strategies import TWAPStrategy
+from win_gui_modules.order_ticket import OrderTicketDetails
 
 
 class PegsOrdDetails:
@@ -44,6 +46,24 @@ class SubLevelDetails:
         return self.order
 
 
+class ScenarioDetails:
+    def __init__(self):
+        self.scenarioDetails = bag_mgt_pb2.OrderBagTicketDetails.ScenarioDetails()
+
+    def set_scenario(self, scenario: str):
+        self.scenarioDetails.scenario = scenario
+
+    def set_strategy(self, strategy: str):
+        self.scenarioDetails.strategyType = strategy
+
+    def add_twap_strategy_param(self) -> TWAPStrategy:
+        self.scenarioDetails.twapStrategy.CopyFrom(order_ticket_pb2.TWAPStrategyParams())
+        return TWAPStrategy(self.scenarioDetails.twapStrategy)
+
+    def build(self):
+        return self.scenarioDetails
+
+
 class BagOrderTicketDetails:
 
     def __init__(self):
@@ -58,6 +78,12 @@ class BagOrderTicketDetails:
     def set_price(self, price: str):
         self.order.price = price
 
+    def set_tif(self, tif: str):
+        self.order.tif = tif
+
+    def set_expire_date(self, expire_date: str):
+        self.order.expireDate = expire_date
+
     def confirm_ticket_creation(self):
         self.order.confirm = OrderBagTicketDetails.Confirmation.OK
 
@@ -67,9 +93,14 @@ class BagOrderTicketDetails:
     def add_pegs_details(self, pegs_details: PegsOrdDetails):
         self.order.pegsOrdDetails.CopyFrom(pegs_details)
 
-    def modify_wave_bag_details(self, wave_bag_details: List[SubLevelDetails]):
-        for details in wave_bag_details:
-            self.order.subLevelDetails.append(details)
+    def add_scenario_details(self, scenario_details: ScenarioDetails):
+        self.order.scenarioDetails.CopyFrom(scenario_details)
+
+    def modify_wave_bag_details(self, wave_bag_details: SubLevelDetails):
+        self.order.subLevelDetails.append(wave_bag_details)
+
+    def clear(self, on_deleting=False):
+        self.order.clear = on_deleting
 
     '''
     this method use only for creation of bag order
@@ -140,7 +171,7 @@ class GetOrderBagBookDetails:
         length = len(filter_list)
         i = 0
         while i < length:
-            self.orderbag_details.filter[filter_list[i]] = filter_list[i + 1]
+            self.order_bag_details.filter[filter_list[i]] = filter_list[i + 1]
             i += 2
 
     def add_bag_order_info(self, bag_order_info_list: list):
@@ -253,12 +284,98 @@ class OrderBagCreationDetails:
             self.order_bag_creation.selectedRows.append(row)
 
     def set_order_bag_ticket_details(self, order: BagOrderTicketDetails):
-        # order = bag_mgt_pb2.OrderBagTicketDetails()
-        # bag_mgt_pb2.OrderBagTicketDetails()
-        # order.bagName = name
-        # if price:
-        #     order.price = price
         self.order_bag_creation.orderBagTicketDetails.CopyFrom(order.build())
+
+    def set_is_order_book(self, is_order_book=True):
+        self.order_bag_creation.isOrderBook = is_order_book
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_creation.filter.update(filter_dict)
 
     def build(self):
         return self.order_bag_creation
+
+
+class OrderBagCompleteDetails:
+    def __init__(self, base_request):
+        self.order_bag_complete_details = bag_mgt_pb2.OrderBagCompleteDetails()
+        self.order_bag_complete_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.order_bag_complete_details.filter.update(filter_dict)
+
+    def set_is_complete(self, is_complete):
+        self.order_bag_complete_details.isComplete = is_complete
+
+    def build(self):
+        return self.order_bag_complete_details
+
+
+class CreateOrderDetails:
+    def __init__(self, base_request):
+        self.__create_order_via_bag_details = bag_mgt_pb2.CreateOrderDetails()
+        self.__create_order_via_bag_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__create_order_via_bag_details.filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__create_order_via_bag_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__create_order_via_bag_details
+
+
+class ModifySubLevelBagOrderDetails:
+    def __init__(self, base_request):
+        self.__modify_sub_level_details = bag_mgt_pb2.ModifySubLevelBagOrderDetails()
+        self.__modify_sub_level_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.filter.update(filter_dict)
+
+    def set_sub_filter(self, filter_dict: dict):
+        self.__modify_sub_level_details.sub_filter.update(filter_dict)
+
+    def set_order_details(self, order_details: OrderTicketDetails):
+        self.__modify_sub_level_details.orderDetails.CopyFrom(order_details.build())
+
+    def build(self):
+        return self.__modify_sub_level_details
+
+
+class WaveTicketExtractedValue(Enum):
+    TIF = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.TIF
+    ERROR_MESSAGE = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.ERROR_MESSAGE
+    QTY_TO_RELEASE = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedType.QTY_TO_RELEASE
+
+
+class ExtractWaveTicketValuesRequest:
+    def __init__(self, base_request, extractionId: str = 'extractWaveTicketValues'):
+        self.__request = bag_mgt_pb2.ExtractWaveTicketValuesRequest()
+        self.__request.base.CopyFrom(base_request)
+        self.__request.extractionId = extractionId
+
+    def set_bag_order_details(self, bag_order_details: BagOrderTicketDetails):
+        self.__request.orderBagTicketDetails.CopyFrom(bag_order_details.build())
+
+    def get_tif_state(self):
+        self.get_extract_value(WaveTicketExtractedValue.TIF, "TIF")
+
+    def get_error_message(self):
+        self.get_extract_value(WaveTicketExtractedValue.ERROR_MESSAGE, 'ERROR_MESSAGE')
+
+    def get_qty_to_release(self):
+        self.get_extract_value(WaveTicketExtractedValue.QTY_TO_RELEASE, 'QTY_TO_RELEASE')
+
+    def get_extract_value(self, field: WaveTicketExtractedValue, name: str):
+        extracted_value = bag_mgt_pb2.ExtractWaveTicketValuesRequest.WaveTicketExtractedValue()
+        extracted_value.type = field.value
+        extracted_value.name = name
+        self.__request.extractedValues.append(extracted_value)
+
+    def set_filter(self, filter_dict: dict):
+        self.__request.filter.update(filter_dict)
+
+    def build(self):
+        return self.__request

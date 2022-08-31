@@ -1,9 +1,45 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_Multilisted import QAP_1963, QAP_1988, QAP_1954, QAP_1979, QAP_1968, QAP_1953, QAP_1983, QAP_1965, QAP_1961, QAP_1992, QAP_1967, QAP_1995, QAP_1974, QAP_2476, QAP_1996, \
-    QAP_1960, QAP_1959, QAP_1975, QAP_2982, QAP_3058, QAP_3028, QAP_3027, QAP_1977, QAP_1951, QAP_3025, QAP_1976, QAP_1984, QAP_3134, QAP_1990, QAP_1958, QAP_1957, QAP_1997, QAP_1998, QAP_3022, \
-    QAP_1962, QAP_1966, QAP_3021, QAP_1986, QAP_1969, QAP_1980, QAP_1810, QAP_1985, QAP_1952, QAP_3019
+from test_cases.algo.Algo_Multilisted import QAP_T4122, QAP_T4091, QAP_T4084, QAP_T4085, QAP_T4086, QAP_T4116,\
+    QAP_T4087, QAP_T4876, QAP_T4088, QAP_T4089, QAP_T4090
+from test_cases.algo.Algo_Multilisted.QAP_T4139 import QAP_T4139
+from test_cases.algo.Algo_Multilisted.QAP_T4138 import QAP_T4138
+from test_cases.algo.Algo_Multilisted.QAP_T4137 import QAP_T4137
+from test_cases.algo.Algo_Multilisted.QAP_T4136 import QAP_T4136
+from test_cases.algo.Algo_Multilisted.QAP_T4135 import QAP_T4135
+from test_cases.algo.Algo_Multilisted.QAP_T4132 import QAP_T4132
+from test_cases.algo.Algo_Multilisted.QAP_T4131 import QAP_T4131
+from test_cases.algo.Algo_Multilisted.QAP_T4130 import QAP_T4130
+from test_cases.algo.Algo_Multilisted.QAP_T4129 import QAP_T4129
+from test_cases.algo.Algo_Multilisted.QAP_T4128 import QAP_T4128
+from test_cases.algo.Algo_Multilisted.QAP_T4127 import QAP_T4127
+from test_cases.algo.Algo_Multilisted.QAP_T4126 import QAP_T4126
+from test_cases.algo.Algo_Multilisted.QAP_T4124 import QAP_T4124
+from test_cases.algo.Algo_Multilisted.QAP_T4123 import QAP_T4123
+from test_cases.algo.Algo_Multilisted.QAP_T4122 import QAP_T4122
+from test_cases.algo.Algo_Multilisted.QAP_T4121 import QAP_T4121
+from test_cases.algo.Algo_Multilisted.QAP_T4120 import QAP_T4120
+from test_cases.algo.Algo_Multilisted.QAP_T4119 import QAP_T4119
+from test_cases.algo.Algo_Multilisted.QAP_T4118 import QAP_T4118
+from test_cases.algo.Algo_Multilisted.QAP_T4117 import QAP_T4117
+from test_cases.algo.Algo_Multilisted.QAP_T4116 import QAP_T4116
+from test_cases.algo.Algo_Multilisted.QAP_T4115 import QAP_T4115
+from test_cases.algo.Algo_Multilisted.QAP_T4114 import QAP_T4114
+from test_cases.algo.Algo_Multilisted.QAP_T4111 import QAP_T4111
+from test_cases.algo.Algo_Multilisted.QAP_T4110 import QAP_T4110
+from test_cases.algo.Algo_Multilisted.QAP_T4109 import QAP_T4109
+from test_cases.algo.Algo_Multilisted.QAP_T4108 import QAP_T4108
+from test_cases.algo.Algo_Multilisted.QAP_T4106 import QAP_T4106
+from test_cases.algo.Algo_Multilisted.QAP_T4104 import QAP_T4104
+from test_cases.algo.Algo_Multilisted.QAP_T4102 import QAP_T4102
+from test_cases.algo.Algo_Multilisted.QAP_T4099 import QAP_T4099
+from test_cases.algo.Algo_Multilisted.QAP_T4098 import QAP_T4098
+from test_cases.algo.Algo_Multilisted.QAP_T4097 import QAP_T4097
+from test_cases.algo.Algo_Multilisted.QAP_T4096 import QAP_T4096
+from test_cases.algo.Algo_Multilisted.QAP_T4094 import QAP_T4094
+
+from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -11,53 +47,55 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def test_run(parent_id= None):
-    report_id = bca.create_event('Algo', parent_id)
+
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"Multilisted" if version is None else f"Multilisted | {version}", parent_id)
     try:
-        QAP_1810.execute(report_id)
-        QAP_1951.execute(report_id)
-        QAP_1952.execute(report_id)
-        QAP_1953.execute(report_id)
-        QAP_1954.execute(report_id)
-        QAP_1957.execute(report_id)
-        QAP_1958.execute(report_id)
-        QAP_1959.execute(report_id)
-        QAP_1960.execute(report_id)
-        QAP_1961.execute(report_id)
-        QAP_1962.execute(report_id)
-        QAP_1963.execute(report_id)
-        QAP_1965.execute(report_id)
-        QAP_1966.execute(report_id)
-        QAP_1967.execute(report_id)
-        QAP_1968.execute(report_id)
-        QAP_1969.execute(report_id)
-        QAP_1974.execute(report_id)
-        QAP_1975.execute(report_id)
-        QAP_1976.execute(report_id)
-        QAP_1977.execute(report_id)
-        QAP_1979.execute(report_id)
-        QAP_1980.execute(report_id)
-        QAP_1983.execute(report_id)
-        QAP_1984.execute(report_id)
-        QAP_1985.execute(report_id)
-        QAP_1986.execute(report_id)
-        QAP_1988.execute(report_id)
-        QAP_1990.execute(report_id)
-        QAP_1992.execute(report_id)
-        QAP_1995.execute(report_id)
-        QAP_1996.execute(report_id)
-        QAP_1997.execute(report_id)
-        QAP_1998.execute(report_id)
-        QAP_2476.execute(report_id)
-        QAP_2982.execute(report_id)
-        QAP_3019.execute(report_id)
-        QAP_3021.execute(report_id)
-        QAP_3022.execute(report_id)
-        QAP_3025.execute(report_id)
-        QAP_3027.execute(report_id)
-        QAP_3028.execute(report_id)
-        QAP_3058.execute(report_id)
-        QAP_3134.execute(report_id)
+        configuration = ComponentConfiguration("Multilisted")
+        QAP_T4139(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4138(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4137(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4136(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4135(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4132(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4131(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4130(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4129(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4128(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4127(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4126(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4124(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4123(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4122(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4121(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4119(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4118(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4117(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4116(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4114(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4111(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4110(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4109(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4108(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4106(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4104(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4102(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4099(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4098(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4097(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4096(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4094(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4091.execute(report_id)
+        QAP_T4090.execute(report_id)
+        QAP_T4089.execute(report_id)
+        QAP_T4088.execute(report_id)
+        QAP_T4087.execute(report_id)
+        QAP_T4086.execute(report_id)
+        QAP_T4085.execute(report_id)
+        QAP_T4084.execute(report_id)
+        QAP_T4876.execute(report_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
 

@@ -72,3 +72,6 @@ class CumTradingLimitsPage(CommonPage):
 
     def get_currency(self):
         return self.find_by_xpath(CumTradingLimitsConstants.MAIN_PAGE_CURRENCY_XPATH).text
+
+    def is_searched_cum_trading_limits_found(self, value):
+        return self.is_element_present(CumTradingLimitsConstants.DISPLAYED_CUM_TRADING_LIMIT_XPATH.format(value))
