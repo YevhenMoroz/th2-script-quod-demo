@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from test_framework.data_sets.constants import GatewaySide, Status
+from test_framework.data_sets.constants import Status
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -9,6 +9,7 @@ from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportTakerMO import FixMessageExecutionReportTakerMO
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
@@ -27,6 +28,8 @@ class QAP_T2491(TestCase):
         self.fix_verifier = FixVerifier(self.esp_t_connectivity, self.test_id)
         self.new_order_single = FixMessageNewOrderSingleTaker(data_set=self.data_set)
         self.execution_report = FixMessageExecutionReportAlgoFX()
+        self.execution_report_mo_1 = FixMessageExecutionReportTakerMO()
+        self.execution_report_mo_2 = FixMessageExecutionReportTakerMO()
         self.status = Status.Fill
         self.acc_argentina = self.data_set.get_client_by_name("client_mm_3")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
@@ -39,7 +42,7 @@ class QAP_T2491(TestCase):
             {
                 "MDEntryType": "0",
                 "MDEntryPx": 1.18066,
-                "MDEntrySize": 1000000,
+                "MDEntrySize": 5000000,
                 "MDEntryPositionNo": 1,
                 'SettlDate': self.settle_date_spot,
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -47,7 +50,7 @@ class QAP_T2491(TestCase):
             {
                 "MDEntryType": "1",
                 "MDEntryPx": 1.18146,
-                "MDEntrySize": 1000000,
+                "MDEntrySize": 5000000,
                 "MDEntryPositionNo": 1,
                 'SettlDate': self.settle_date_spot,
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
@@ -59,6 +62,7 @@ class QAP_T2491(TestCase):
                 "MDEntryPx": 1.18075,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
                 'SettlDate': self.settle_date_spot,
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             },
@@ -67,11 +71,11 @@ class QAP_T2491(TestCase):
                 "MDEntryPx": 1.18141,
                 "MDEntrySize": 1000000,
                 "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
                 'SettlDate': self.settle_date_spot,
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             }
         ]
-
         self.no_strategy_parameters = [{'StrategyParameterName': 'AggressiveSingleOrderOnImmediateOrCancel',
                                         'StrategyParameterType': '13', 'StrategyParameterValue': 'Y'},
                                        {"StrategyParameterName": "AllowedVenues", "StrategyParameterType": "14",
@@ -93,28 +97,17 @@ class QAP_T2491(TestCase):
         # region 2
         self.new_order_single.set_default_SOR().update_repeating_group("NoStrategyParameters",
                                                                        self.no_strategy_parameters)
-        self.new_order_single.change_parameters({"TimeInForce": "3"})
+        self.new_order_single.change_parameters({'TimeInForce': '3', "Side": "2", "Price": "1.18"})
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
 
-        gateway_side_sell = GatewaySide.Sell
-        status = Status.Fill
         self.sleep(5)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, gateway_side_sell, status)
-        self.execution_report.change_parameters({"Account": "*"})
-        self.execution_report.remove_parameters(["NoStrategyParameters"])
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report)
-
-        self.new_order_single.set_default_SOR().update_repeating_group("NoStrategyParameters",
-                                                                       self.no_strategy_parameters)
-        self.new_order_single.change_parameters({"TimeInForce": "3", "OrderQty": "5000000"})
-        self.fix_manager.send_message_and_receive_response(self.new_order_single)
-
-        gateway_side_sell = GatewaySide.Sell
-        status = Status.Fill
-        self.sleep(5)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, gateway_side_sell, status)
-        self.execution_report.change_parameters({"Account": "*", "LastQty": "*"})
-        self.execution_report.remove_parameters(["NoStrategyParameters"])
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Fill)
+        self.execution_report.change_parameters({"Account": "*",
+                                                 "LastQty": "1000000",
+                                                 "AvgPx": "1.18075",
+                                                 "LastMkt": "CITI-ID",
+                                                 "CumQty": "1000000"
+                                                 })
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 
