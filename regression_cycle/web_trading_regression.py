@@ -30,18 +30,18 @@ def test_run(parent_id=None):
             RunLoginAndLogout(report_id).execute()
         if eval(root.find(".//component[@name='WebTrading_OrderTicket_And_Book']").attrib["run"]):
             RunOrderTicketAndBook(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_Other']").attrib["run"]):
-        #     RunOther(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_Positions']").attrib["run"]):
-        #     RunPositions(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_Trades']").attrib["run"]):
-        #     RunTrades(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_UserProfile']").attrib["run"]):
-        #     RunUserProfile(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_WatchList']").attrib["run"]):
-        #     RunWatchList(report_id).execute()
-        # if eval(root.find(".//component[@name='WebTrading_Account_Summary']").attrib["run"]):
-        #     RunAccountSummary(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_Other']").attrib["run"]):
+            RunOther(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_Positions']").attrib["run"]):
+            RunPositions(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_Trades']").attrib["run"]):
+            RunTrades(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_UserProfile']").attrib["run"]):
+            RunUserProfile(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_WatchList']").attrib["run"]):
+            RunWatchList(report_id).execute()
+        if eval(root.find(".//component[@name='WebTrading_Account_Summary']").attrib["run"]):
+            RunAccountSummary(report_id).execute()
 
 
         end_time = time.monotonic()

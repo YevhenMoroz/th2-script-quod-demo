@@ -52,7 +52,7 @@ class RunLoginAndLogout:
             # QAP_T3415(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
             #          environment=configuration.environment).run()
             end_time = time.monotonic()
-            print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+            print("Run Login And Logout ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)
