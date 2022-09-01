@@ -14,7 +14,7 @@ def regression_run():
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
 
-        report_id = bca.create_event(root.find("name").text + start.strftime(' %Y%m%d-%H:%M:%S'))
+        report_id = bca.create_event(root.find("name").text)
 
         # if eval(root.find(".//product_line[@name='algo']").attrib["run"]):
         #     algo_regression.test_run(report_id)
