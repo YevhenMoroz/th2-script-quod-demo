@@ -22,7 +22,7 @@ class AppiumDriver:
             device_data = json.load(json_file)
         desired_cap = {**device_data[device_data['currentDevice']], **app_data[app_data['currentApp']]}
         self.appium_driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_cap)
-        self.wait_time(10)
+        self.wait_time(3)
         # endregion
 
     def stop_appium_service(self):

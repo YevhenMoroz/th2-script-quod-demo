@@ -1,4 +1,6 @@
 from appium.webdriver.common.mobileby import AppiumBy
+from selenium.webdriver import ActionChains
+
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 from appium.webdriver.common.touch_action import TouchAction
 from test_framework.mobile_android_core.utils.waits import Waits
@@ -7,6 +9,15 @@ class CommonPage:
     def __init__(self, driver: AppiumDriver):
         self.appium_driver = driver
         self.Waiter = Waits(self.appium_driver.appium_driver, 10)
+
+    def element_exists_by_xpath(self, xpath):
+        if len(self.appium_driver.get_driver().find_elements(AppiumBy.XPATH, xpath))==0:
+            return False
+        else:
+            return True
+
+    def find_all_by_xpath(self, xpath):
+        return self.appium_driver.get_driver().find_elements(AppiumBy.XPATH, xpath)
 
     def find_by_xpath(self, xpath):
         return self.appium_driver.get_driver().find_element(AppiumBy.XPATH, xpath)
@@ -17,8 +28,8 @@ class CommonPage:
     def find_by_accessibility_id(self, id):
         return self.appium_driver.get_driver().find_element(AppiumBy.ACCESSIBILITY_ID, id)
 
-    def tap_by_coordinates(self, x, y):
-        TouchAction(driver=self.appium_driver.get_driver()).tap(x, y).perform()
+    def find_by_link_text(self, text):
+        return self.appium_driver.get_driver().find_element(AppiumBy.LINK_TEXT)
 
     def get_attribute_of_element_by_xpath(self, xpath, value):
         return self.find_by_xpath(xpath).get_attribute(str(value))
@@ -32,7 +43,12 @@ class CommonPage:
     def wait_edit_mode(self, xpath):
         return self.Waiter.wait_until_attribute_value_equals_by_xpath(xpath, 'focused', 'true')
 
-    #TODO: there must be determined coordinate (x,y)
+    def tap_by_coordinates(self, x, y, count=1):
+        TouchAction(driver=self.appium_driver.get_driver()).tap(None, x, y, count).perform()
+
+    def swipe_by_coordinates(self, start_x, start_y, end_x, end_y):
+        TouchAction(self.appium_driver.get_driver()).long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
+
     def swipe_right_to_left(self):
         device_size = self.appium_driver.get_driver().get_window_size()
         screen_width = device_size['width']
@@ -43,3 +59,15 @@ class CommonPage:
         end_y = screen_height / 2
         actions = TouchAction(self.appium_driver.get_driver())
         actions.long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
+
+    def click_keyboard(self, key):
+        self.appium_driver.get_driver().press_keycode(self.get_keycode(key))
+
+    def get_keycode(self, key):
+        switcher ={
+            "Back":4,
+            "Backspace":67,
+            "Enter":66,
+            "Space":62
+        }
+        return switcher.get(key, "Invalid key constant field")

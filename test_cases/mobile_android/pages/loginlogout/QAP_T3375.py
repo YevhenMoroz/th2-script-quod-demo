@@ -51,7 +51,7 @@ class QAP_T3375(CommonTestCase):
 
         # Step 3
         login_page.click_on_login_button()
-        self.verify("Step 3 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Step 3 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
         # endregion
 
         # Step 4
@@ -62,7 +62,7 @@ class QAP_T3375(CommonTestCase):
 
         # Step 5
         login_page.login_to_mobile_trading(self.login, self.password)
-        self.verify("Step 5 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Step 5 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
         # endregion
 
         # region - postconditions

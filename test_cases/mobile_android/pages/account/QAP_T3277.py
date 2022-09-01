@@ -34,7 +34,7 @@ class QAP_T3277(CommonTestCase):
 
         login_page.login_to_mobile_trading(self.login, self.password)
         # self.appium_driver.wait_time(2)
-        self.verify("Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
         # endregion
         # region - test details
 
