@@ -3,7 +3,6 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_1234 import QAP_1234
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5076 import QAP_T5076
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5075 import QAP_T5075
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5074 import QAP_T5074
@@ -31,7 +30,9 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4939 import QAP_T4939
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4940 import QAP_T4940
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4941 import QAP_T4941
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4944 import QAP_T4944
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4958 import QAP_T4958
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4963 import QAP_T4963
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4964 import QAP_T4964
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4965 import QAP_T4965
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4966 import QAP_T4966
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4967 import QAP_T4967
@@ -88,7 +89,9 @@ def test_run(parent_id=None, version=None):
         QAP_T4940(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4941(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4944(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4958(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4963(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4964(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4965(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
