@@ -93,6 +93,7 @@ class OrderBookColumns(Enum):
     nin = "NIN"
     custodian = "Custodian"
     reviewed = "Reviewed"
+    recipient = "Recpt"
     # endregion
 
 
