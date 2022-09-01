@@ -72,3 +72,8 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+
+
+class PKSMessageType(Enum):
+    RequestForPositions = "Order_RequestForPositions"
+    RequestForFXPositions = "Order_RequestForFXPositions"
