@@ -36,6 +36,7 @@ class BaseOrderBook(BaseWindow):
         self.extraction_panel_details = None
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
+        self.mass_exec_summary_detail = None
         self.extraction_error_message_details = None
         self.hot_keys_details = None
         self.extract_direct_values = None
@@ -43,6 +44,7 @@ class BaseOrderBook(BaseWindow):
         self.extract_error_from_order_ticket = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
+        self.mass_exec_summary_call = None
         self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
@@ -404,6 +406,13 @@ class BaseOrderBook(BaseWindow):
         call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail.build())
         self.clear_details([self.mass_exec_summary_average_price_detail])
 
+    def mass_execution_summary(self, row_count: int, qty: str):
+        self.mass_exec_summary_detail.set_default_params(self.base_request)
+        self.mass_exec_summary_detail.set_count_of_selected_rows(row_count)
+        self.mass_exec_summary_detail.set_reported_price_value(qty)
+        call(self.mass_exec_summary_call, self.mass_exec_summary_detail.build())
+        self.clear_details([self.mass_exec_summary_detail])
+
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
         """ type_disclose - can have next values: disable, real_time, manual """
         if type_disclose == 'manual':
@@ -729,6 +738,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_price(price)
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
+        self.clear_details([self.mass_manual_execution_details])
 
     def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict = None):
         self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
