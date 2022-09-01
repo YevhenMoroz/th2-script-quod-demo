@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4964(TestCase):
@@ -88,6 +89,12 @@ class QAP_T4964(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_that_venue_was_suspended")
         # endregion
 
         self.rule_list = []
@@ -214,6 +221,16 @@ class QAP_T4964(TestCase):
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chixdark_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Eliminate Dark Child DMA order on venue CHIXDELTA")
         # endregion
 
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "OrderID": "*",
+            "VenueName": "Euronext Paris",
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(execution_report)
+        # endregion
 
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
