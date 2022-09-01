@@ -15,20 +15,12 @@ class LoginPage(CommonPage):
         self.wait_edit_mode(LoginConstants.EMAIL)
         email_input.send_keys(email)
 
-        if (self.get_attribute_of_element_by_xpath(LoginConstants.EMAIL, "text")=="Email"):
-            print("Email - Shit Here We Go Again")
-            email_input.send_keys(email)
-
     def set_password(self, password):
         self.wait_element_presence(LoginConstants.PASSWORD)
         password_input = self.find_by_xpath(LoginConstants.PASSWORD)
         password_input.click()
         self.wait_edit_mode(LoginConstants.PASSWORD)
         password_input.send_keys(password)
-        # self.Waiter.WaitUntilTextIsPresentedByXPath(LoginConstants.PASSWORD, password+", Password")
-        if (self.get_attribute_of_element_by_xpath(LoginConstants.PASSWORD, "text")=="Password"):
-            print("Password - Shit Here We Go Again")
-            password_input.send_keys(password)
 
     def click_on_login_button(self):
         self.find_by_xpath(LoginConstants.LOGIN_BUTTON).click()
