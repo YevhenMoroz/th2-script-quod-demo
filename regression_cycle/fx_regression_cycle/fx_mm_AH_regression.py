@@ -22,10 +22,10 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('ESP MM AH regression', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_MM_Position" if version is None else f"FX_MM_Position | {version}", parent_id)
     session_id = set_session_id()
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
+    window_name = "Quod Financial - Quod site 314"
     fe_dir = Stubs.custom_config['qf_trading_fe_folder']
     fe_user = Stubs.custom_config['qf_trading_fe_user']
     fe_password = Stubs.custom_config['qf_trading_fe_password']
@@ -35,9 +35,10 @@ def test_run(parent_id=None):
         # prepare_position()
         Stubs.frontend_is_open = True
         if not Stubs.frontend_is_open:
-            prepare_fe(report_id, session_id, fe_dir, fe_user, fe_password)
+            # prepare_fe(report_id, session_id, fe_dir, fe_user, fe_password)
+            pass
         else:
-            get_opened_fe(report_id, session_id)
+            get_opened_fe(report_id, session_id,window_name)
 
         # import_AH_layout.execute(report_id, session_id)
         # AH_Precondition.execute(report_id)

@@ -10,7 +10,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Mobile Android regression_cycle', parent_id)
+    report_id = bca.create_event(f"Sorping" if version is None else f"Sorping | {version}", parent_id)
     try:
         driver = AppiumDriver()
 

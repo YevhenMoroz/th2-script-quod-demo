@@ -85,7 +85,7 @@ class QAP_T4807(TestCase):
         # region Rule creation
         rule_manager = RuleManager()
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, True)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
 

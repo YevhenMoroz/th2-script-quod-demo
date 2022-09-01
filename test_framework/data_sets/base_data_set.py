@@ -58,6 +58,7 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    contra_firm = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -278,6 +279,11 @@ class BaseDataSet:
         if hasattr(self.currency, name):
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
+
+    def get_settl_currency_by_name(self, name: str):
+        if hasattr(self.settl_currency, name):
+            return getattr(self.settl_currency, name).value
+        raise ValueError(f"{self.settl_currency} not found!")
 
     def get_venue_client_names_by_name(self, name: str):
         if hasattr(self.venue_client_names, name):
@@ -515,6 +521,11 @@ class BaseDataSet:
         if hasattr(self.scenario, name):
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        raise ValueError(f"{self.contra_firm} not found!")
 
     # region WebAdmin getters
 

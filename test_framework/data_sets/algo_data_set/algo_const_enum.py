@@ -130,6 +130,30 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_17 = dict(
+        Symbol='QUODTESTQA05',
+        SecurityID='TESTQA05',
+        SecurityIDSource='8',
+        SecurityExchange='QDL11',
+        SecurityType='CS'
+    )
+
+    instrument_18 = dict(
+        Symbol='FR0000121329',
+        SecurityID='FR0000121329',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_19 = dict(
+        Symbol='IE00B5BMR087',
+        SecurityID='IE00B5BMR087',
+        SecurityIDSource='4',
+        SecurityExchange='XAMS',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -158,6 +182,7 @@ class AlgoAccounts(Enum):
     account_9 = "KEPLER"
     account_10 = "TQDARK_KEPLER"
     account_11 = "TRQX_KEPLER"
+    account_12 = "BATS_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -203,6 +228,10 @@ class AlgoMic(Enum):
     mic_24 = "QDL8"  # QUODLIT8
     mic_25 = "QDL9"  # QUODLIT9
     mic_26 = "QDL10"  # QUODLIT10
+    mic_27 = "BATE"  # BATS UK
+    mic_28 = "QDL11"  # QUODLIT11
+    mic_29 = "QDL12"  # QUODLIT12
+    mic_30 = "CHIX"   # CHIX
 
 
 class AlgoListingId(Enum):
@@ -230,6 +259,11 @@ class AlgoListingId(Enum):
     listing_22 = "925020509"  # QUODLIT10 for QUODTESTQA04
     listing_23 = "897587663"  # TRQX for FR0000133308
     listing_24 = "1803699"    # Euronext Paris for FR0000133308
+    listing_25 = "1872430"    # BATS UK for FR0000133308
+    listing_26 = "768319009"    # CHIX UK for FR0000133308
+    listing_27 = "1225020507"    # QUODLIT11 for QUODTESTQA05
+    listing_28 = "1225020508"    # QUODLIT12 for QUODTESTQA05
+    listing_29 = "1803729"       # Euronext Paris for FR0000121329
 
 
 class AlgoCurrency(Enum):
@@ -254,9 +288,10 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_cancel_reject_parent = ['ClOrdID', 'OrdStatus']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
     verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
-    verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
+    verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType", "ExDestination"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
 
 
 class AlgoPreFilter(Enum):
@@ -275,3 +310,15 @@ class AlgoPreFilter(Enum):
                 },
                 'ExecType': ('4', "EQUAL")
                 }
+    pre_filer_equal_order_cancel_reject = {
+                'header': {
+                    'MsgType': ('9', "EQUAL")
+                }
+                }
+
+    pre_filer_equal_ER_fill = {
+        'header': {
+            'MsgType': ('8', "EQUAL")
+        },
+        'ExecType': ('F', "EQUAL")
+    }
