@@ -305,6 +305,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
+    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
 
 
 class AlgoPreFilter(Enum):
