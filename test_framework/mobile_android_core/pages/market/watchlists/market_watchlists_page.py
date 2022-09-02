@@ -33,6 +33,23 @@ class MarketWatchlistsPage(CommonPage):
                                   watchlist_params['x'],
                                   watchlist_params['y'])
 
+    def reorder_watchlist(self, name, direction=1):
+        xpath = self.get_watchlist_xpath(name)
+        watchlist = self.find_by_xpath(xpath)
+        watchlist_params = watchlist.rect
+        self.reorder_by_coordinates(watchlist_params['x'] + watchlist_params['width'] - 1,
+                                  watchlist_params['y'] + watchlist_params['height'] / 2,
+                                    watchlist_params['x'] + watchlist_params['width'] - 1,
+                                    watchlist_params['y'] + watchlist_params['height'] * (direction+0.5))
+
+    def compare_watchlists_positioning(self, firstWatchlist, secondWatchlist):
+        firstWatchlist_params = self.find_by_xpath(self.get_watchlist_xpath(firstWatchlist)).rect
+        secondWatchlist_params = self.find_by_xpath(self.get_watchlist_xpath(secondWatchlist)).rect
+        if firstWatchlist_params['y']<secondWatchlist_params['y']:
+            return f"{firstWatchlist} is upper"
+        else:
+            return f"{firstWatchlist} is lower"
+
     def click_watchlist(self, name):
         self.find_by_xpath(self.get_watchlist_xpath(name)).click()
 

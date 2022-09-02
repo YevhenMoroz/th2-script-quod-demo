@@ -53,6 +53,9 @@ class CommonPage:
     def swipe_by_coordinates(self, start_x, start_y, end_x, end_y):
         TouchAction(self.appium_driver.get_driver()).long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
 
+    def reorder_by_coordinates(self, start_x, start_y, end_x, end_y):
+        TouchAction(self.appium_driver.get_driver()).long_press(None, start_x, start_y, 3000).move_to(None, end_x, end_y).release().perform()
+
     def swipe_right_to_left(self):
         device_size = self.appium_driver.get_driver().get_window_size()
         screen_width = device_size['width']
