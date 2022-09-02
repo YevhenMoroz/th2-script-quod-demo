@@ -8,14 +8,12 @@ from rule_management import RuleManager
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 
 
 class QAP_T4714(TestCase):
@@ -90,7 +88,7 @@ class QAP_T4714(TestCase):
         rule_manager = RuleManager()
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
         # TODO Need similar rule without ER Trade
-        market_rule = rule_manager.add_NewOrdSingle_Market(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True, 0, 0)
+        market_rule = rule_manager.add_NewOrdSingle_Market(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True, self.qty, 0)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
         self.rule_list = [rfq_rule, market_rule, cancel_rule]
         # endregion
