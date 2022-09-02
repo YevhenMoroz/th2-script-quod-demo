@@ -59,6 +59,7 @@ class BaseDataSet:
     strategy = None
     market_ids = None
     contra_firm = None
+    all_venue_sec_account_names_of_acc = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -521,6 +522,11 @@ class BaseDataSet:
         if hasattr(self.contra_firm, name):
             return getattr(self.contra_firm, name).value
         raise ValueError(f"{self.contra_firm} not found!")
+
+    def get_all_venue_sec_account_names_of_acc(self, name: str):
+        if hasattr(self.all_venue_sec_account_names_of_acc, name):
+            return getattr(self.all_venue_sec_account_names_of_acc, name).value
+        raise ValueError(f"{self.all_venue_sec_account_names_of_acc} not found!")
 
     # region WebAdmin getters
 

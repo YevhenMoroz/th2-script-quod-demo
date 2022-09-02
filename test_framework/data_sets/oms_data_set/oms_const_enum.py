@@ -83,7 +83,7 @@ class OmsClients(Enum):
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     client_pt_8 = "MOClient7"
     client_pt_9 = "MOClient_9"
-    client_pt_10 = "MOClient10" # CS Manual Fully auto
+    client_pt_10 = "MOClient10"  # CS Manual Fully auto
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -365,6 +365,8 @@ class OMSBagScenario(Enum):
 class OMSVenueID(Enum):
     paris = "PARIS"
     eurex = "EUREX"
+    chix = "CHIX"
+    jse = "JSE"
 
 
 class OMSCounterpartID(Enum):
@@ -378,3 +380,49 @@ class OMSInstrType(Enum):
 
 class OMSContraFirm(Enum):
     contra_firm_1 = "Contra Firm"
+
+
+class VenueAccountIDSource(Enum):
+    oth = 'OTH'
+
+
+class OMSVenueAccountNamesOfSecurityAccounts(Enum):
+    venue_account_name_of_security_acc_1_chix = "MOClient_SA1_CHIX"
+    venue_account_name_of_security_acc_1_eurex = "MOClient_SA1_EUREX"
+    venue_account_name_of_security_acc_1_jse = "MOClient_SA1_JSE"
+    venue_account_name_of_security_acc_1_paris = "MOClient_SA1_PARIS"
+
+
+class OMSVenueSecAccountNames(Enum):
+    venue_sec_act_name_pt_1_acc_1_rec_1 = [False, False, False, VenueAccountIDSource.oth.value,
+                                           OMSVenueAccountNamesOfSecurityAccounts.venue_account_name_of_security_acc_1_chix.value,
+                                           OmsVenueClientAccounts.client_pt_1_acc_1_venue_client_account.value,
+                                           OMSVenueID.chix.value
+                                           ]
+    venue_sec_act_name_pt_1_acc_1_rec_2 = [False, False, False, VenueAccountIDSource.oth.value,
+                                           OMSVenueAccountNamesOfSecurityAccounts.venue_account_name_of_security_acc_1_eurex.value,
+                                           OmsVenueClientAccounts.client_pt_1_acc_1_venue_client_account.value,
+                                           OMSVenueID.eurex.value
+                                           ]
+    venue_sec_act_name_pt_1_acc_1_rec_3 = [False, False, False, VenueAccountIDSource.oth.value,
+                                           OMSVenueAccountNamesOfSecurityAccounts.venue_account_name_of_security_acc_1_jse.value,
+                                           OmsVenueClientAccounts.client_pt_1_acc_1_venue_client_account.value,
+                                           OMSVenueID.jse.value
+                                           ]
+    venue_sec_act_name_pt_1_acc_1_rec_4 = [False, False, False, VenueAccountIDSource.oth.value,
+                                           OMSVenueAccountNamesOfSecurityAccounts.venue_account_name_of_security_acc_1_paris.value,
+                                           OmsVenueClientAccounts.client_pt_1_acc_1_venue_client_account.value,
+                                           OMSVenueID.paris.value
+                                           ]
+
+
+class OMSCommonVenueSecAccountNamesOfAcc(Enum):
+    client_pt_1_acc_1 = (OMSVenueSecAccountNames.venue_sec_act_name_pt_1_acc_1_rec_1.value,
+                         OMSVenueSecAccountNames.venue_sec_act_name_pt_1_acc_1_rec_2.value,
+                         OMSVenueSecAccountNames.venue_sec_act_name_pt_1_acc_1_rec_3.value,
+                         OMSVenueSecAccountNames.venue_sec_act_name_pt_1_acc_1_rec_4.value
+                         )
+
+
+class OMSClearingAccountTypes(Enum):
+    institutional = 'INS'
