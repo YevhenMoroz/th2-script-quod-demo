@@ -373,4 +373,5 @@ class OMSInstrType(Enum):
 
 
 class OMSContraFirm(Enum):
-    contra_firm_1 = "Contra Firm"
+    contra_firm_1 = "ContraFirm"
+    contra_firm_2 = "ContraFirm2"
