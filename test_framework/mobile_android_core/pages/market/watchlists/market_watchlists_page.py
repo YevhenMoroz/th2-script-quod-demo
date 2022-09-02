@@ -45,7 +45,7 @@ class MarketWatchlistsPage(CommonPage):
     def compare_watchlists_positioning(self, firstWatchlist, secondWatchlist):
         firstWatchlist_params = self.find_by_xpath(self.get_watchlist_xpath(firstWatchlist)).rect
         secondWatchlist_params = self.find_by_xpath(self.get_watchlist_xpath(secondWatchlist)).rect
-        if firstWatchlist_params['y']<secondWatchlist_params['y']:
+        if firstWatchlist_params['y'] < secondWatchlist_params['y']:
             return f"{firstWatchlist} is upper"
         else:
             return f"{firstWatchlist} is lower"

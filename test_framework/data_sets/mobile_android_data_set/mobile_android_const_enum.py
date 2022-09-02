@@ -37,8 +37,8 @@ class MobileCashAccounts(Enum):
 
 class MobileInstrument(Enum):
     instrument_1 = "TCS-IQ"
-    instrument_2 = "SPICEJET-IQ"
-    instrument_3 = "SBIN-IQ"
+    instrument_2 = "SBIN-IQ"
+    instrument_3 = "SPICEJET-IQ"
 
 class MobileOrderType(Enum):
     order_type_1 = "Limit"
