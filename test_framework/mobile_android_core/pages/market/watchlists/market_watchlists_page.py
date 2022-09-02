@@ -24,6 +24,15 @@ class MarketWatchlistsPage(CommonPage):
         self.tap_by_coordinates(watchlist_params['x'] + watchlist_params['width'] - 1,
                                 watchlist_params['y'] + watchlist_params['height'] - 1)
 
+    def swipe_watchlist(self, name):
+        xpath = self.get_watchlist_xpath(name)
+        watchlist = self.find_by_xpath(xpath)
+        watchlist_params = watchlist.rect
+        self.swipe_by_coordinates(watchlist_params['x'] + watchlist_params['width'] - 1,
+                                  watchlist_params['y'] + watchlist_params['height'] - 1,
+                                  watchlist_params['x'],
+                                  watchlist_params['y'])
+
     def click_watchlist(self, name):
         self.find_by_xpath(self.get_watchlist_xpath(name)).click()
 
@@ -44,6 +53,9 @@ class MarketWatchlistsPage(CommonPage):
     def get_watchlist_exist(self, name):
         return self.get_element_exists_by_xpath(self.get_watchlist_xpath(name))
 
+    def get_count_of_watchlists(self):
+        return self.get_count_elements_by_xpath("//android.view.View[contains(@content-desc, 'Watchlist'")
+
     def get_edit_watchlist_xpath(self, name=''):
         if name=='':
             value = f'''Watchlist title'''
@@ -56,5 +68,6 @@ class MarketWatchlistsPage(CommonPage):
 
     def rename_watchlist(self, oldName, newName):
         self.click_watchlist(oldName)
-        self.clear_watchlist(oldName)
+        self.clear_watchlist()
         self.set_watchlist_name(newName)
+        self.click_keyboard("Enter")

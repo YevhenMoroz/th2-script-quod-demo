@@ -16,6 +16,9 @@ class CommonPage:
         else:
             return True
 
+    def get_count_elements_by_xpath(self, xpath):
+        return len(self.appium_driver.get_driver().find_elements(AppiumBy.XPATH, xpath))
+
     def find_all_by_xpath(self, xpath):
         return self.appium_driver.get_driver().find_elements(AppiumBy.XPATH, xpath)
 
