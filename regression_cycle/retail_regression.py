@@ -62,8 +62,8 @@ def test_run(parent_id=None):
             Mobile_Market(driver, report_id, version).execute()
         # if eval(root.find(".//component[@name='Mobile_OrderTicket_OrderBook']").attrib["run"]):
         #     Mobile_OrderTicket_OrderBook(driver, report_id, version).execute()
-        # if eval(root.find(".//component[@name='Mobile_Portfolio']").attrib["run"]):
-        #     Mobile_Portfolio(driver, report_id, version).execute()
+        if eval(root.find(".//component[@name='Mobile_Portfolio']").attrib["run"]):
+            Mobile_Portfolio(driver, report_id, version).execute()
         # if eval(root.find(".//component[@name='Mobile_Others']").attrib["run"]):
         #     Mobile_Others(driver, report_id, version).execute()
         # # endregion

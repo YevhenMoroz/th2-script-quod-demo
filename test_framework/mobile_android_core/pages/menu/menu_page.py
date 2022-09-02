@@ -66,11 +66,12 @@ class MenuPage(CommonPage):
     # endregion
 
     # region Preferences
-    def set_default_client(self):
-        pass
+    def set_default_client(self, name):
+        self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).click()
+        self.find_by_xpath(f'//android.view.View[@content-desc="{name}"]').click()
 
     def get_default_client(self):
-        pass
+        return self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).get_attribute('content-desc')
 
      #TODO: need to create one constant for that, currently incorrect xpath
     def click_on_go_back_button(self):

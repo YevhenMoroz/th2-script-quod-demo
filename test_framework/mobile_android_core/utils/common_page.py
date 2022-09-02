@@ -46,6 +46,7 @@ class CommonPage:
     def tap_by_coordinates(self, x, y, count=1):
         TouchAction(driver=self.appium_driver.get_driver()).tap(None, x, y, count).perform()
 
+
     def swipe_by_coordinates(self, start_x, start_y, end_x, end_y):
         TouchAction(self.appium_driver.get_driver()).long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
 
@@ -53,12 +54,26 @@ class CommonPage:
         device_size = self.appium_driver.get_driver().get_window_size()
         screen_width = device_size['width']
         screen_height = device_size['height']
-        start_x = screen_width * 8 / 9
+        start_x = screen_width - 3
         end_x = screen_width / 9
         start_y = screen_height / 2
         end_y = screen_height / 2
         actions = TouchAction(self.appium_driver.get_driver())
         actions.long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
+
+    def swipe_left_to_right(self):
+        device_size = self.appium_driver.get_driver().get_window_size()
+        screen_width = device_size['width']
+        screen_height = device_size['height']
+        start_x = 3
+        end_x = screen_width * 8 / 9
+        start_y = screen_height / 2
+        end_y = screen_height / 2
+        actions = TouchAction(self.appium_driver.get_driver())
+        actions.long_press(None, start_x, start_y).move_to(None, end_x, end_y).release().perform()
+
+    def go_back(self):
+        self.appium_driver.get_driver().back()
 
     def click_keyboard(self, key):
         self.appium_driver.get_driver().press_keycode(self.get_keycode(key))
