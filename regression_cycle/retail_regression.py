@@ -3,16 +3,11 @@ from xml.etree import ElementTree
 
 from stubs import Stubs, ROOT_DIR
 from custom import basic_custom_actions as bca
-from regression_cycle.retail_regression_cycle import trading_rest_api_dma, trading_rest_api_market_data,\
-    trading_rest_api_risk_limits, trading_rest_api_buying_power, trading_rest_api_others, \
-    webadmin_rest_api_client_accounts, webadmin_rest_api_positions,  webadmin_rest_api_risk_limits
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
-from regression_cycle.retail_regression_cycle.mobile_account import Mobile_Account
-from regression_cycle.retail_regression_cycle.mobile_loginlogout import Mobile_LoginLogout
-from regression_cycle.retail_regression_cycle.mobile_market import Mobile_Market
-from regression_cycle.retail_regression_cycle.mobile_orderticket_orderbook import Mobile_OrderTicket_OrderBook
-from regression_cycle.retail_regression_cycle.mobile_others import Mobile_Others
-from regression_cycle.retail_regression_cycle.mobile_portfolio import Mobile_Portfolio
+from regression_cycle.retail_regression_cycle.mobile_regression_cycle.mobile_account import Mobile_Account
+from regression_cycle.retail_regression_cycle.mobile_regression_cycle.mobile_loginlogout import Mobile_LoginLogout
+from regression_cycle.retail_regression_cycle.mobile_regression_cycle.mobile_market import Mobile_Market
+from regression_cycle.retail_regression_cycle.mobile_regression_cycle.mobile_portfolio import Mobile_Portfolio
 
 def test_run(parent_id=None):
     try:
