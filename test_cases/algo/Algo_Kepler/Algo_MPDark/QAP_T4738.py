@@ -40,8 +40,8 @@ class QAP_T4738(TestCase):
         self.qty_1_chix_child, self.qty_1_bats_child, self.qty_itg_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats, self.weight_itg)
         self.price = 20
         self.reason = 99
-        self.delay_for_reject = 4000
-        self.delay_for_cancel = 6000
+        self.delay_for_reject = 5000
+        self.delay_for_cancel = 8000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_3.value
         # endregion
 
@@ -86,12 +86,15 @@ class QAP_T4738(TestCase):
 
         self.rule_list = []
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
+        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
         nos_1_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price, self.reason, delay=self.delay_for_reject)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.delay_for_cancel)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
@@ -186,6 +189,11 @@ class QAP_T4738(TestCase):
         # region Check cancel parent MPDark order
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        # endregion
+
+        # region Check that the rebalance didn`t happen after canceling an order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that is no new childs after order is canceled", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order, self.dma_itg_order], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
