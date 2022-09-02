@@ -42,7 +42,7 @@ class MarketWatchlistsPage(CommonPage):
         return f'''//android.view.View[@content-desc="{name}"]'''
 
     def get_watchlist_exist(self, name):
-        return self.element_exists_by_xpath(self.get_watchlist_xpath(name))
+        return self.get_element_exists_by_xpath(self.get_watchlist_xpath(name))
 
     def get_edit_watchlist_xpath(self, name=''):
         if name=='':
@@ -52,7 +52,7 @@ class MarketWatchlistsPage(CommonPage):
         return f"//div[contains(@text, '{value}'"
 
     def get_edit_watchlist_exist(self, name=''):
-        return self.element_exists_by_xpath('//android.widget.EditText')
+        return self.get_element_exists_by_xpath('//android.widget.EditText')
 
     def rename_watchlist(self, oldName, newName):
         self.click_watchlist(oldName)

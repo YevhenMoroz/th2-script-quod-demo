@@ -12,3 +12,57 @@ class MarketPage(CommonPage):
     def click_market_plus_button(self, count=1):
         self.tap_by_coordinates(MarketConstants.MARKET_PLUS_BUTTON_X, MarketConstants.MARKET_PLUS_BUTTON_Y, count)
 
+    def delete_instrument(self, name):
+        pass
+
+    def click_watchlist(self, name):
+        self.get_watchlist_name(name).click()
+
+    def click_search_field(self):
+        self.find_by_xpath(MarketConstants.MARKET_SEARCH_FIELD).click()
+
+    def click_in_search(self):
+        pass
+
+    def set_search(self, name=''):
+        self.find_by_xpath(MarketConstants.SEARCH_FIELD).send_keys(name)
+
+    def clear_search_input(self):
+        pass
+
+    def click_clear_button(self):
+        pass
+
+    def click_instrument_by_search_result(self, name):
+        self.get_instrument_by_xpath(name).click()
+
+    def get_watchlist_by_xpath(self, name):
+        return self.find_by_xpath(self.get_watchlist_name(name))
+
+    def get_watchlist_name(self, name):
+        return MarketConstants.WATCHLIST_NAME_START + name + MarketConstants.WATCHLIST_NAME_END
+
+    def get_instrument_by_xpath(self, name):
+        return self.find_by_xpath(self.get_instrument_name(name))
+
+    def get_instrument_name(self, name):
+        return MarketConstants.INSTRUMENT_START + name + MarketConstants.INSTRUMENT_END
+
+    def delete_instrument_from_watchlist(self, watchlist=None, instrument=''):
+        if watchlist != None:
+            self.click_watchlist(watchlist)
+        instrument_params = self.get_instrument_by_xpath(instrument).rect
+        self.swipe_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
+                                  instrument_params['y'] + instrument_params['height'] - 1,
+                                  instrument_params['x'],
+                                  instrument_params['y'])
+        self.tap_by_coordinates(instrument_params['x'] + instrument_params['width'] * 3 / 4,
+                                instrument_params['y'] + instrument_params['height'] / 2)
+
+    def add_new_instrument(self, watchlist=None, instrument=''):
+        if watchlist != None:
+            self.click_watchlist(watchlist)
+        self.click_search_field()
+        self.set_search(instrument)
+        self.click_instrument_by_search_result(instrument)
+

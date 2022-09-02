@@ -63,17 +63,17 @@ class QAP_T7793(CommonTestCase):
 
         # Step 3
         account_summary_page.swipe_cash_account(self.cash_acc1_c1_1)
-        self.verify("Step 3 - Statement button is shown", True, account_summary_page.element_exists_by_xpath(AccountSummaryConstants.STATEMENT_BUTTON))
+        self.verify("Step 3 - Statement button is shown", True, account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_BUTTON))
         # endregion
 
         # Step 4
         account_summary_page.click_statement_button()
-        self.verify("Step 4 - Cash Balance Statement pop-up is displayed", True, account_summary_page.element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
+        self.verify("Step 4 - Cash Balance Statement pop-up is displayed", True, account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
         # endregion
 
         # Step 5
         self.verify("Step 5 - Title Cash Balance Statement", True,
-                    account_summary_page.element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
+                    account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
         self.verify(f"Step 5 - Cash Account = {self.cash_acc1_c1_1}", True, True)
         self.verify(f"Step 5 - From Date = {datetime.now().strftime('%Y/%m/01')}",
                     f"{datetime.now().strftime('%Y/%m/01')}, From Date",
@@ -82,15 +82,15 @@ class QAP_T7793(CommonTestCase):
                     f"{datetime.now().strftime('%Y/%m/%d')}, To Date",
                     account_summary_page.find_by_xpath(AccountSummaryConstants.TO_DATE).text)
         self.verify("Step 5 - PDF radiobutton exists", True,
-                    account_summary_page.element_exists_by_xpath(AccountSummaryConstants.PDF_RADIOBUTTON))
+                    account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.PDF_RADIOBUTTON))
         self.verify("Step 5 - PDF radiobutton is checked", "true",
                     account_summary_page.get_attribute_of_element_by_xpath(AccountSummaryConstants.PDF_RADIOBUTTON, "checked"))
         self.verify("Step 5 - CSV radiobutton exists", True,
-                    account_summary_page.element_exists_by_xpath(AccountSummaryConstants.CSV_RADIOBUTTON))
+                    account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.CSV_RADIOBUTTON))
         self.verify("Step 5 - CSV radiobutton is unchecked", "false",
                     account_summary_page.get_attribute_of_element_by_xpath(AccountSummaryConstants.CSV_RADIOBUTTON, "checked"))
         self.verify("Step 5 - Retrieve button exists", True,
-                    account_summary_page.element_exists_by_xpath(AccountSummaryConstants.STATEMENT_RETRIEVE))
+                    account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_RETRIEVE))
         # endregion
 
         # Step 6
@@ -102,7 +102,7 @@ class QAP_T7793(CommonTestCase):
         # Step 7
         account_summary_page.open_cash_balance_statement(self.cash_acc1_c1_1)
         self.verify("Step 7 - Cash Balance Statement pop-up is displayed", True,
-                    account_summary_page.element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
+                    account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
         # endregion
 
         # Step 8

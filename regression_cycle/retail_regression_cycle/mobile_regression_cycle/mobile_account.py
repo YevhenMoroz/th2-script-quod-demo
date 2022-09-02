@@ -8,7 +8,6 @@ from test_framework.configurations.component_configuration import ComponentConfi
 class Mobile_Account:
     def __init__(self, driver: AppiumDriver, parent_id, version=None):
         self.folder_name = 'FEMobile'
-        self.cycle_name = 'V172_Mobile'
         self.report_id = bca.create_event("Mobile_Account", parent_id)
         self.appium_driver = driver
 

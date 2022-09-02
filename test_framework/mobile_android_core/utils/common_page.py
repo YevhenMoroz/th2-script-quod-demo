@@ -10,7 +10,7 @@ class CommonPage:
         self.appium_driver = driver
         self.Waiter = Waits(self.appium_driver.appium_driver, 10)
 
-    def element_exists_by_xpath(self, xpath):
+    def get_element_exists_by_xpath(self, xpath):
         if len(self.appium_driver.get_driver().find_elements(AppiumBy.XPATH, xpath))==0:
             return False
         else:

@@ -8,9 +8,7 @@ from test_framework.configurations.component_configuration import ComponentConfi
 class Mobile_OrderTicket_OrderBook:
     def __init__(self, driver: AppiumDriver, parent_id, version=None):
         self.folder_name = 'FEMobile'
-        self.cycle_name = 'V172_Mobile'
-        self.report_id = bca.create_event(f"{self.cycle_name}" if version is None else f"{self.cycle_name} | {version}",
-                                          parent_id)
+        self.report_id = bca.create_event("Mobile_OrderTicket_OrderBook", parent_id)
         self.appium_driver = driver
 
     def execute(self):

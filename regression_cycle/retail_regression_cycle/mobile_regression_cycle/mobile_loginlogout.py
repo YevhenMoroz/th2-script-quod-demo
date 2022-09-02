@@ -11,7 +11,6 @@ from test_framework.configurations.component_configuration import ComponentConfi
 class Mobile_LoginLogout:
     def __init__(self, driver: AppiumDriver, parent_id, version=None):
         self.folder_name = 'FEMobile'
-        self.cycle_name = 'V172_Mobile'
         self.report_id = bca.create_event("Mobile_LoginLogout", parent_id)
         self.appium_driver = driver
 
