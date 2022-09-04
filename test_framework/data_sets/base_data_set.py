@@ -59,6 +59,8 @@ class BaseDataSet:
     strategy = None
     market_ids = None
     contra_firm = None
+    all_venue_sec_account_names_of_acc = None
+    venue_list = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -816,6 +818,11 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    def get_pre_filter(self, name: str):
+        if hasattr(self.pre_filter, name):
+            return getattr(self.pre_filter, name).value
+        return ValueError(f"{self.pre_filter,} not found!")
+
     # endregion
 
     # region WebTrading getters
@@ -858,4 +865,8 @@ class BaseDataSet:
         if hasattr(self.reference_price, name):
             return getattr(self.reference_price, name).value
         return ValueError(f"{self.reference_price} not found!")
+    def get_venue_list(self, name: str):
+        if hasattr(self.venue_list, name):
+            return getattr(self.venue_list, name).value
+        return ValueError(f"{self.counterpart} not found!")
     # endregion

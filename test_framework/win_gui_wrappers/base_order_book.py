@@ -501,7 +501,8 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                   source_account=None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -517,6 +518,8 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if source_account:
+            execution_details.set_source_account(source_account)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.house_fill_call, self.manual_executing_details.build())

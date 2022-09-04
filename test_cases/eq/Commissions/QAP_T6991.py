@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
     FixMessageAllocationInstructionReportOMS
+import xml.etree.ElementTree as ET
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -19,7 +20,6 @@ from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
     ExecSts, TradeBookColumns, SecondLevelTabs, Basis, FeeTypeForMiscFeeTab, MiddleOfficeColumns, \
     AllocationsColumns
-import xml.etree.ElementTree as ET
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -32,7 +32,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-class QAP_T6990(TestCase):
+class QAP_T6991(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -45,6 +45,7 @@ class QAP_T6990(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.currency = self.data_set.get_currency_by_name('currency_3')
         self.currency_post_trade = self.data_set.get_currency_by_name('currency_2')
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_10_venue_1')
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_pt_10')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_10_acc_1')
@@ -65,11 +66,11 @@ class QAP_T6990(TestCase):
         self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_backend.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
         # endregion
-        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        new_order_single = trade_rule = order_id = None
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
         fee = self.data_set.get_fee_by_name('fee3')
@@ -84,56 +85,55 @@ class QAP_T6990(TestCase):
         self.rest_commission_sender.send_post_request()
         # endregion
 
-        # region set configuration on backend (precondition)
+        # region set up configuration on BackEnd(precondition)
         tree = ET.parse(self.local_path)
         element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
         quod = tree.getroot()
         quod.append(element)
         tree.write("temp.xml")
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart all")
         time.sleep(120)
         # endregion
 
-        # region create CO  and partially fill it step 1
-        self.fix_message.set_default_care_limit(instr='instrument_3')
-        self.fix_message.change_parameters(
-            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
-             'Currency': self.currency, 'ExDestination': 'XEUR'})
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order({OrderBookColumns.order_id.value: order_id})
-        allocation_qty = str(int(int(self.qty) / 2))
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        filter_dict = {MiddleOfficeColumns.order_id.value: order_id}
-        contra_firm = self.data_set.get_contra_firm('contra_firm_1')
-        self.order_book.manual_execution(allocation_qty, price=self.price, contra_firm=contra_firm)
-        # endregion
+        # region create DMA  and fill it step 1
+        try:
+            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.bs_connectivity,
+                self.venue_client_names,
+                self.venue,
+                float(self.price)
+            )
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client_names,
+                                                                                            self.venue,
+                                                                                            float(self.price),
+                                                                                            int(self.qty), 0
+                                                                                            )
+            self.fix_message.set_default_dma_limit(instr='instrument_3')
+            self.fix_message.change_parameters(
+                {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
+                 'Currency': self.currency, 'ExDestination': 'XEUR'})
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            order_id = response[0].get_parameters()['OrderID']
+        except Exception as E:
+            logger.error(f"Error is {E}", exc_info=True)
+        finally:
+            time.sleep(3)
+            self.rule_manager.remove_rule(new_order_single)
+            self.rule_manager.remove_rule(trade_rule)
+            filter_list = [OrderBookColumns.order_id.value, order_id]
+            filter_dict = {MiddleOfficeColumns.order_id.value: order_id}
 
-        # region check actually  result from step 1
-        dict_of_extraction = {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value}
-        expected_result = {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value}
-        message = "Check values from expecter result of step 1"
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
         # endregion
-
-        # region step 2
-        self.order_book.manual_execution(allocation_qty, price=self.price, contra_firm=contra_firm)
-        # endregion
-
-        # region check actually result from step 2
+        # region check actually result from step 2 (first part)
         dict_of_extraction = {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value}
         expected_result = {OrderBookColumns.exec_sts.value: ExecSts.filled.value}
-        message = message.replace('1', '2')
+        message = "Check values from expecter result of step 2"
         self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
         # endregion
 
-        # region step 3
-        self.order_book.complete_order(filter_list=filter_list)
-        # endregion
-
-        # region check actually result from step 3
+        # region check actually result from step 2 (second part)
         filter_list_block = [MiddleOfficeColumns.order_id.value, order_id]
         dict_of_extraction.clear()
         dict_of_extraction.update({OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value})
@@ -159,7 +159,7 @@ class QAP_T6990(TestCase):
                                           message)
         # endregion
 
-        # region step 4
+        # region step 3
         list_of_column = [TradeBookColumns.fee_type.value, TradeBookColumns.rate.value, TradeBookColumns.basis.value,
                           TradeBookColumns.amount.value]
         rate = '1'
@@ -167,7 +167,7 @@ class QAP_T6990(TestCase):
         amount = str(round(int(rate) / 100, 2))
         avg_px = str(round(int(self.price) / 100, 1))
         exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                      [TradeBookColumns.exec_id.value], [3], filter_dict)[0]
+                                                      [TradeBookColumns.exec_id.value], [2], filter_dict)[0]
         expected_result = [{TradeBookColumns.fee_type.value + '1': FeeTypeForMiscFeeTab.agent.value},
                            {TradeBookColumns.rate.value + '1': rate},
                            {TradeBookColumns.basis.value + '1': Basis.absolute.value},
@@ -176,7 +176,7 @@ class QAP_T6990(TestCase):
         self.__compare_values_of_fees(exec_id, expected_result, list_of_column, message)
         # endregion
 
-        # region check 35=8 message step 5
+        # region check 35=8 message step 4
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_calculated(self.fix_message)
         execution_report.remove_parameter('Parties')
@@ -192,7 +192,7 @@ class QAP_T6990(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
 
-        # region step 6
+        # region step 5
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'AvgPx': avg_px, 'Currency': self.currency_post_trade,
@@ -234,7 +234,6 @@ class QAP_T6990(TestCase):
         for value in list_of_column:
             actual_result = self.trade_book.extract_sub_lvl_fields(
                 [value], SecondLevelTabs.fees.value, 1, filter_dict)
-            print(actual_result)
             self.order_book.compare_values(expected_result[list_of_column.index(value)], actual_result,
                                            message)
 
