@@ -22,11 +22,45 @@ class JavaApiManager:
                 parent_event_id=self.get_case_id()))
 
     def send_message_and_receive_response(self, message: JavaApiMessage):
-        response = self.act.submitFixNewOrderSingle(
-            request=ActJavaSubmitMessageRequest(
-                message=bca.message_to_grpc_fix_standard(message.get_message_type(),
-                                                         message.get_parameters(), self.get_session_alias()),
-                parent_event_id=self.get_case_id()))
+        if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
+            response = self.act.submitFixNewOrderSingle(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderSubmit.value:
+            response = self.act.submitOrderSubmit(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.TradeEntryRequest.value:
+            response = self.act.submitTradeEntry(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderCancelRequest.value:
+            response = self.act.submitOrderCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value:
+            response = self.act.submitDFDManagementBatch(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.AllocationInstruction.value:
+            response = self.act.submitAllocationInstruction(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        else:
+            response = None
+            print(response)
         return self.parse_response(response)
 
     def parse_response(self, response: ActJavaSubmitMessageResponses) -> list:
