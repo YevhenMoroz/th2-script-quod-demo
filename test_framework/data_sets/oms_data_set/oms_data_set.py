@@ -7,9 +7,7 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
     OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
     OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, OMSClientListIDForCommission, \
-    OMSVenueListForCommissionAndFees
-    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSClientListID, OMSInstrType, \
-    OMSContraFirm, OMSReferencePrice,  OMSWashBookRule
+    OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID
 
 
 class OmsDataSet(BaseDataSet):
