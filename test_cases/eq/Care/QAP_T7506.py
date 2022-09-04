@@ -32,9 +32,11 @@ class QAP_T7506(TestCase):
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.dc_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.client = self.data_set.get_client_by_name('client_pt_1')
+        self.fix_message.change_parameters({"Account": self.client})
         self.price = self.fix_message.get_parameter('Price')
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.mic = self.fix_message.get_parameter('ExDestination')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)

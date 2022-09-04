@@ -1,80 +1,53 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from test_framework.old_wrappers import eq_wrappers
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
+import time
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.oms.RestApiWashBookRuleMessages import RestApiWashBookRuleMessages
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7328"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
-    price = "40"
-    client = "CLIENT_FIX_CARE_WB"
-    account = "CLIENT_FIX_CARE_WB_SB1"
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    case_id = create_event(case_name, report_id)
-    base_request = get_base_request(session_id, case_id)
-    # endregion
-    # region Open FE
-    no_allocs = [
-        {
-            'AllocAccount': account,
-            'AllocQty': qty
-        }
-    ]
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
-    # region create order via fix
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price, no_allocs)
-    response = fix_message['response']
-    # endregion
-    eq_wrappers.accept_order('VETO', qty, price)
-    # Cancel order via hot key
-    # params = {
-    #     'OrderQty': qty,
-    #     'ExecType': '0',
-    #     'Account': '*',
-    #     'OrdStatus': 0,
-    #     'Side': 1,
-    #     'Price': price,
-    #     'TimeInForce': 0,
-    #     'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-    #     'ExecID': '*',
-    #     'LastQty': '*',
-    #     'OrderID': '*',
-    #     'TransactTime': '*',
-    #     'AvgPx': '*',
-    #     'SettlDate': '*',
-    #     'Currency': '*',
-    #     'HandlInst': '*',
-    #     'LeavesQty': '*',
-    #     'CumQty': '*',
-    #     'LastPx': '*',
-    #     'OrdType': '*',
-    #     'OrderCapacity': '*',
-    #     'QtyType': '*',
-    #     'SettlDate': '*',
-    #     'SettlType': '*',
-    #     'NoParty': '*',
-    #     'Instrument': '*',
-    #     'header': '*',
-    #     'ExpireDate': '*'
-    # }
-    # fix_verifier_ss = FixVerifier(eq_wrappers.get_sell_connectivity(), case_id)
-    # fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params',
-    #                                      key_parameters=['ClOrdID', 'ExecType', 'OrdStatus'])
-    eq_wrappers.verify_order_value(base_request, case_id, 'Account ID', 'CLIENT_FIX_CARE_WB_SB1')
-    eq_wrappers.verify_order_value(base_request, case_id, 'Wash Book', 'CareWB', False)
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_T7328(TestCase):
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.ss_connectivity = self.fix_env.sell_side
+        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.client = self.fix_message.get_parameter('Account')
+        self.rest_wash_book_message = RestApiWashBookRuleMessages(self.data_set)
+        self.api_manager = RestApiManager(self.wa_connectivity, self.case_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.wash_book = self.rest_wash_book_message.default_washbook_account
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # endregion
+        # region set up wash book rule
+        self.rest_wash_book_message.modify_wash_book_rule(client=self.client)
+        self.api_manager.send_post_request(self.rest_wash_book_message)
+        # endregion
+        # region send order
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        time.sleep(5)
+        order_id = response[0].get_parameter("OrderID")
+        # endregion
+        # region check fields
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+            {OrderBookColumns.client_name.value: self.client,
+             OrderBookColumns.washbook.value: self.wash_book})
+        # endregion
