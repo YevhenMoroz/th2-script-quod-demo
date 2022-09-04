@@ -6,7 +6,8 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
     OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
     OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
-    OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource
+    OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, OMSClientListIDForCommission, \
+    OMSVenueListForCommissionAndFees
 
 
 class OmsDataSet(BaseDataSet):
@@ -58,4 +59,7 @@ class OmsDataSet(BaseDataSet):
     all_venue_sec_account_names_of_acc = OMSCommonVenueSecAccountNamesOfAcc
     clearing_account_type = OMSClearingAccountTypes
     account_id_source = VenueAccountIDSource
+    client_list = OMSClientListIDForCommission
+    venue_list = OMSVenueListForCommissionAndFees
+    oms_route_id = OmsRouteID
 

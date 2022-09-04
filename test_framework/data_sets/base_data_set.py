@@ -60,6 +60,7 @@ class BaseDataSet:
     market_ids = None
     contra_firm = None
     all_venue_sec_account_names_of_acc = None
+    venue_list = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -814,6 +815,7 @@ class BaseDataSet:
         if hasattr(self.pre_filter, name):
             return getattr(self.pre_filter, name).value
         return ValueError(f"{self.pre_filter,} not found!")
+
     # endregion
 
     # region WebTrading getters
@@ -847,4 +849,8 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
+    def get_venue_list(self, name: str):
+        if hasattr(self.venue_list, name):
+            return getattr(self.venue_list, name).value
+        return ValueError(f"{self.counterpart} not found!")
     # endregion

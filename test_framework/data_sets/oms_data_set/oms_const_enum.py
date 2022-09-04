@@ -426,3 +426,11 @@ class OMSCommonVenueSecAccountNamesOfAcc(Enum):
 
 class OMSClearingAccountTypes(Enum):
     institutional = 'INS'
+
+
+class OMSClientListIDForCommission(Enum):
+    client_list_comm = 400006
+
+
+class OMSVenueListForCommissionAndFees(Enum):
+    venue_list_1 = 1
