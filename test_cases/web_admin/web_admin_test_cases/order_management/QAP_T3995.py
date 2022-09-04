@@ -1,4 +1,5 @@
 import sys
+import time
 import traceback
 
 from custom import basic_custom_actions
@@ -26,10 +27,10 @@ class QAP_T3995(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
-        side_menu.wait_for_button_to_become_active()
+        side_menu.open_order_management_rules_page()
         page = OrderManagementRulesPage(self.web_driver_container)
         page.click_on_new_button()
+        time.sleep(2)
 
     def test_context(self):
 

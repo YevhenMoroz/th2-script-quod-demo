@@ -18,15 +18,15 @@ def test_run():
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
 
-        if eval(root.find(".//component[@name='sors_iceberg']").attrib["run"]):
+        if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
             kepler_sors_iceberg_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='mp_dark']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='sorping']").attrib["run"]):
+        if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
             kepler_sors_sorping_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='synth_min_qty']").attrib["run"]):
+        if eval(root.find(".//component[@name='Synth_min_qty']").attrib["run"]):
             kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='multiple_emulation']").attrib["run"]):
+        if eval(root.find(".//component[@name='Multiple_emulation']").attrib["run"]):
             kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
 
     except Exception:

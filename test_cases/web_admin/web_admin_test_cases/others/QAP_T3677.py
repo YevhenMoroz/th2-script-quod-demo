@@ -31,7 +31,7 @@ class QAP_T3677(CommonTestCase):
         self.venue = "BATS"
         self.instr_symbol = "AUD/DKK"
         self.price_multiplier = str(random.randint(1, 10))
-        self.strategy_type = ["External CUSTOM1"]
+        self.strategy_type = "External CUSTOM1"
         self.default_scenario = "External CUSTOM1"
 
     def precondition(self):
@@ -60,9 +60,7 @@ class QAP_T3677(CommonTestCase):
         insrt_symbols_tab.set_price_multiplier_at_instr_symbols_tab(self.price_multiplier)
         insrt_symbols_tab.click_on_checkmark_button_at_instr_symbols_tab()
         strategy_type = RoutesStrategyTypeSubWizard(self.web_driver_container)
-        strategy_type.click_on_strategy_type_at_strategy_type_tab()
         strategy_type.set_strategy_type_at_strategy_type_tab(self.strategy_type)
-        strategy_type.click_on_strategy_type_at_strategy_type_tab()
         strategy_type.set_default_scenario_at_strategy_type_tab(self.default_scenario)
 
     def test_context(self):
@@ -81,7 +79,7 @@ class QAP_T3677(CommonTestCase):
             main_page = RoutesPage(self.web_driver_container)
             main_page.set_name_at_filter(self.name)
             time.sleep(2)
-            self.verify("New Route is saved", True, main_page.is_searched_account_found(self.name))
+            self.verify("New Route is saved", True, main_page.is_searched_route_found(self.name))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

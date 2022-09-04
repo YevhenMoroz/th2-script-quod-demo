@@ -1,48 +1,55 @@
-import logging
 from datetime import datetime
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
 
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-from stubs import Stubs
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium2'
-settltype_spo = '0'
-settltype_mo1 = 'M1'
-symbol = 'EUR/USD'
-securitytype_spo = 'FXSPOT'
-securitytype_fwd = 'FXFWD'
-securityidsource = '8'
-securityid = 'EUR/USD'
-bands = [1000000,5000000,10000000]
-md = None
-settldate_spo= tsd.spo()
-# settldate_mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S')
-settldate_mo1 = tsd.m1()
-spo = tsd.spo()
-# mo1 = (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d %H:%M:%S').split(' ')[0]
-mo1 = tsd.m1()
-fwd_pts_offer = '0.0000101'
-fwd_pts_bid = '-0.0000099'
-
-defmdsymb_eur_usd_spo="EUR/USD:SPO:REG:HSBC"
-no_md_entries_spo=[
+class QAP_T2768(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.palladium2 = self.data_set.get_client_by_name("client_mm_5")
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        self.settle_type_1m = self.data_set.get_settle_type_by_name('m1')
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.bid_fwd_pts = '-0.0000099'
+        self.offer_fwd_pts = '0.0000101'
+        self.bands_eur_usd = ["*", '*', '*']
+        self.instrument = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_fwd,
+            'Product': '4', }
+        self.no_related_symbols = [{
+            'Instrument': self.instrument,
+            'SettlType': self.settle_type_1m}]
+        self.md_eur_usd_spo = "EUR/USD:SPO:REG:HSBC"
+        self.no_md_entries_spo = [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.19597,
                     "MDEntrySize": 2000000,
                     "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
@@ -50,7 +57,7 @@ no_md_entries_spo=[
                     "MDEntryPx": 1.19609,
                     "MDEntrySize": 2000000,
                     "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
@@ -58,7 +65,7 @@ no_md_entries_spo=[
                     "MDEntryPx": 1.19594,
                     "MDEntrySize": 6000000,
                     "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
@@ -66,7 +73,7 @@ no_md_entries_spo=[
                     "MDEntryPx": 1.19612,
                     "MDEntrySize": 6000000,
                     "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
@@ -74,7 +81,7 @@ no_md_entries_spo=[
                     "MDEntryPx": 1.19591,
                     "MDEntrySize": 12000000,
                     "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
                 {
@@ -82,12 +89,12 @@ no_md_entries_spo=[
                     "MDEntryPx": 1.19615,
                     "MDEntrySize": 12000000,
                     "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
+                    'SettlDate': self.settle_date_spot,
                     "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
                 },
             ]
-defmdsymb_eur_usd_mo1="EUR/USD:FXF:MO1:HSBC"
-no_md_entries_mo1=[
+        self.md_eur_usd_fwd = "EUR/USD:FXF:MO1:HSBC"
+        self.no_md_entries_fwd = [
                 {
                     "MDEntryType": "0",
                     "MDEntryPx": 1.19585,
@@ -106,136 +113,40 @@ no_md_entries_mo1=[
                 },
             ]
 
-no_md_entries = [
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '1000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 1,
-        'MDEntryDate': '*',
-        'MDEntryType': 0,
-        'MDEntryForwardPoints': fwd_pts_bid,
-        'MDEntrySpotRate': '1.19596',
-    },
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '1000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 1,
-        'MDEntryDate': '*',
-        'MDEntryType': 1,
-        'MDEntryForwardPoints': fwd_pts_offer,
-        'MDEntrySpotRate': '1.1961',
-    },
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '5000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 2,
-        'MDEntryDate': '*',
-        'MDEntryType': 0,
-        'MDEntryForwardPoints': fwd_pts_bid,
-        'MDEntrySpotRate': '1.19592',
-    },
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '5000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 2,
-        'MDEntryDate': '*',
-        'MDEntryType': 1,
-        'MDEntryForwardPoints': fwd_pts_offer,
-        'MDEntrySpotRate': '1.19614',
-    },
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '10000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 3,
-        'MDEntryDate': '*',
-        'MDEntryType': 0,
-        'MDEntryForwardPoints': fwd_pts_bid,
-        'MDEntrySpotRate': '1.19588',
-    },
-    {
-        'SettlType': 'M1',
-        'MDEntryPx': '*',
-        'MDEntryTime': '*',
-        'MDEntryID': '*',
-        'MDEntrySize': '10000000',
-        'QuoteEntryID': '*',
-        'MDOriginType': 1,
-        'SettlDate': mo1,
-        'MDQuoteType': 1,
-        'MDEntryPositionNo': 3,
-        'MDEntryDate': '*',
-        'MDEntryType': 1,
-        'MDEntryForwardPoints': fwd_pts_offer,
-        'MDEntrySpotRate': '1.19618',
-    },
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 2
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spo)
+        self.fix_md.update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.fix_md.set_market_data_fwd().update_repeating_group("NoMDEntries", self.no_md_entries_fwd)
+        self.fix_md.update_MDReqID(self.md_eur_usd_fwd, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        # endregion
 
-]
+        # region Step 3-4
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium2)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryForwardPoints=self.bid_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryForwardPoints=self.offer_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryForwardPoints=self.bid_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryForwardPoints=self.offer_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryForwardPoints=self.bid_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryForwardPoints=self.offer_fwd_pts)
+        self.sleep(4)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, key_parameters=["MDReqID"])
+        # endregion
 
-
-        #Send MD for Spot HSBC
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol, securitytype=securitytype_spo,
-                                   settldate=settldate_spo, settltype=settltype_spo)).send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_eur_usd_spo, symbol, securitytype_spo).
-                     prepare_custom_md_spot(no_md_entries_spo)).send_market_data_spot()
-
-        #Send MD for MO1 HSBC
-        FixClientSellEsp(CaseParamsSellEsp(client, case_id, symbol=symbol, securitytype=securitytype_fwd,
-                                   settldate=settldate_mo1, settltype=settltype_mo1)).send_md_request().send_md_unsubscribe()
-        FixClientBuy(CaseParamsBuy(case_id, defmdsymb_eur_usd_mo1, symbol, securitytype_fwd).
-                     prepare_custom_md_fwd(no_md_entries_mo1)).send_market_data_fwd()
-
-
-
-
-        params = CaseParamsSellEsp(client, case_id, settltype=settltype_mo1, settldate= settldate_mo1, symbol=symbol,
-                                   securitytype=securitytype_fwd,securityidsource=securityidsource, securityid=securityid)
-        params.prepare_md_for_verification_custom(no_md_entries)
-        md = FixClientSellEsp(params).send_md_request().verify_md_pending()
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            md.send_md_unsubscribe()
-        except:
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.fix_md.set_market_data_fwd()
+        self.fix_md.update_MDReqID(self.md_eur_usd_fwd, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)

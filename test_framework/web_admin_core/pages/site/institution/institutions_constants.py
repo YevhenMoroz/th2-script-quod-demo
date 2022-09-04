@@ -25,6 +25,7 @@ class InstitutionsConstants:
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
     DOWNLOAD_CSV_BUTTON_XPATH = '//*[@nbtooltip="Download CSV"]'
     DISPLAYED_INSTITUTIONS_XPATH = '//*[@ref="eCenterContainer"]//*[@role="row"]'
+    DROP_DOWN_MENU_XPATH = '//nb-option//span'
 
     # Main page
 

@@ -48,7 +48,7 @@ class FeesOrderFeeProfileSubWizard(CommonPage):
         return self.get_text_by_xpath(FeesConstants.ORDER_FEE_PROFILE_VENUE_COMMISSION_PROFILE_ID_XPATH)
 
     def set_comm_type(self, value):
-        self.set_combobox_value(FeesConstants.ORDER_FEE_PROFILE_COMM_TYPE_XPATH, value).is_displayed()
+        self.set_combobox_value(FeesConstants.ORDER_FEE_PROFILE_COMM_TYPE_XPATH, value)
 
     def get_comm_type(self):
         return self.get_text_by_xpath(FeesConstants.ORDER_FEE_PROFILE_COMM_TYPE_XPATH)

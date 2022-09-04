@@ -8,6 +8,8 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
     OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, OMSClientListIDForCommission, \
     OMSVenueListForCommissionAndFees
+    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSClientListID, OMSInstrType, \
+    OMSContraFirm, OMSReferencePrice,  OMSWashBookRule
 
 
 class OmsDataSet(BaseDataSet):
@@ -54,8 +56,11 @@ class OmsDataSet(BaseDataSet):
     strategy = OMSBagStrategy
     venue_id = OMSVenueID
     counterpart_id = OMSCounterpartID
+    cl_list_id = OMSClientListID
     instr_type = OMSInstrType
     contra_firm = OMSContraFirm
+    reference_price = OMSReferencePrice
+    washbook_rules = OMSWashBookRule
     all_venue_sec_account_names_of_acc = OMSCommonVenueSecAccountNamesOfAcc
     clearing_account_type = OMSClearingAccountTypes
     account_id_source = VenueAccountIDSource

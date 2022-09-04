@@ -25,7 +25,7 @@ class QAP_T7681(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.lookup = "VETO"
+        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.qty = '100'
         self.qty2 = '240'
         self.price = '10'

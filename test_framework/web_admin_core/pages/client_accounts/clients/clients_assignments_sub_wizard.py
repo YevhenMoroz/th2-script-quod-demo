@@ -17,7 +17,7 @@ class ClientsAssignmentsSubWizard(CommonPage):
         return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH)
 
     def set_desk(self, value):
-        self.set_combobox_value(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH, value)
+        self.set_checkbox_list(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH, value)
 
     def get_desk(self):
         return self.get_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_DESK_XPATH)

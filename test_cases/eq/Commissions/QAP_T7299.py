@@ -62,10 +62,10 @@ class QAP_T7299(TestCase):
         # endregion
         # region complete and book order
         self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
-        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.rate.value], [SecondLevelTabs.executions.value,
+        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.fee_rate.value], [SecondLevelTabs.executions.value,
                                                                                       TradeBookColumns.misc_tab.value],
                                                       {OrderBookColumns.order_id.value: order_id})
-        self.order_book.compare_values({TradeBookColumns.rate.value: "1"}, rate, "Compare Rate")
+        self.order_book.compare_values({TradeBookColumns.fee_rate.value: "1"}, rate, "Compare Rate")
 
         self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
         total_fee = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value,

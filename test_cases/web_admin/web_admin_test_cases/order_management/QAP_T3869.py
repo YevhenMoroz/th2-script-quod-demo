@@ -26,7 +26,7 @@ class QAP_T3869(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter_at_dark_block = "Dark Broker Sequence"
+        self.parameter_at_dark_block = "DarkBrokerSequence"
         self.first_strategy = "TestSuperStrategy1"
         self.first_value = "1"
         self.second_strategy = "test1582"
@@ -46,7 +46,6 @@ class QAP_T3869(CommonTestCase):
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
         time.sleep(1)
         strategies_wizard.set_name(self.name)
-        time.sleep(1)
         strategies_wizard.set_user(self.user)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_dark_block()
@@ -54,6 +53,7 @@ class QAP_T3869(CommonTestCase):
         dark_block.click_on_plus_button()
         dark_block.set_parameter(self.parameter_at_dark_block)
         dark_block.click_on_plus_at_actions_sub_wizard()
+        time.sleep(1)
         dark_block.set_strategy_at_actions_sub_wizard(self.first_strategy)
         dark_block.set_value_at_actions_sub_wizard(self.first_value)
         dark_block.click_on_checkmark_at_actions_sub_wizard()
