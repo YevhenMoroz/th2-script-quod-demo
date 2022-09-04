@@ -2,6 +2,7 @@ import traceback
 from custom import basic_custom_actions as bca
 from test_cases.mobile_android.pages.loginlogout.QAP_T3375 import QAP_T3375
 from test_cases.mobile_android.pages.market.QAP_T3368 import QAP_T3368
+from test_cases.mobile_android.pages.market.QAP_T3381 import QAP_T3381
 from test_cases.mobile_android.pages.market.QAP_T3382 import QAP_T3382
 from test_cases.mobile_android.pages.market.QAP_T3383 import QAP_T3383
 from test_cases.mobile_android.pages.market.QAP_T3385 import QAP_T3385
@@ -18,13 +19,15 @@ class Mobile_Market:
     def execute(self):
         try:
             configuration = ComponentConfiguration("Mobile_Market")
+            QAP_T3368(self.appium_driver, self.report_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3381(self.appium_driver, self.report_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3382(self.appium_driver, self.report_id, data_set=configuration.data_set,
                   environment=configuration.environment).run()
             QAP_T3383(self.appium_driver, self.report_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3385(self.appium_driver, self.report_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3368(self.appium_driver, self.report_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

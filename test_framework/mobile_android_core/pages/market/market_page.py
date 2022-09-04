@@ -48,6 +48,28 @@ class MarketPage(CommonPage):
     def get_instrument_name(self, name):
         return MarketConstants.INSTRUMENT_START + name + MarketConstants.INSTRUMENT_END
 
+    def add_new_instrument(self, watchlist=None, instrument=''):
+        if watchlist != None:
+            self.click_watchlist(watchlist)
+        self.click_search_field()
+        self.set_search(instrument)
+        self.click_instrument_by_search_result(instrument)
+
+    def reorder_instrument(self, instrument, direction=1):
+        instrument_params = self.get_instrument_by_xpath(instrument).rect
+        self.reorder_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
+                                    instrument_params['y'] + instrument_params['height'] / 2,
+                                    instrument_params['x'] + instrument_params['width'] - 1,
+                                    instrument_params['y'] + instrument_params['height'] * (direction + 0.5))
+
+    def compare_instruments(self, firstInstrument, secondInstrument):
+        firstInstrument_params = self.get_instrument_by_xpath(firstInstrument).rect
+        secondInstrument_params = self.get_instrument_by_xpath(secondInstrument).rect
+        if firstInstrument_params['y'] < secondInstrument_params['y']:
+            return f"{firstInstrument} is upper"
+        else:
+            return f"{firstInstrument} is lower"
+
     def delete_instrument_from_watchlist(self, watchlist=None, instrument=''):
         if watchlist != None:
             self.click_watchlist(watchlist)
@@ -70,27 +92,3 @@ class MarketPage(CommonPage):
 
     def swipe_instrument_right(self, watchlist=None, instrument=''):
         pass
-
-    def add_new_instrument(self, watchlist=None, instrument=''):
-        if watchlist != None:
-            self.click_watchlist(watchlist)
-        self.click_search_field()
-        self.set_search(instrument)
-        self.click_instrument_by_search_result(instrument)
-
-    def reorder_instrument(self, instrument, direction=1):
-        instrument_params = self.get_instrument_by_xpath(instrument).rect
-        print(instrument_params['y'] + instrument_params['height'] / 2)
-        print(instrument_params['y'] + instrument_params['height'] * (direction + 0.5))
-        self.reorder_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
-                                    instrument_params['y'] + instrument_params['height'] / 2,
-                                    instrument_params['x'] + instrument_params['width'] - 1,
-                                    instrument_params['y'] + instrument_params['height'] * (direction + 0.5))
-
-    def compare_instruments(self, firstInstrument, secondInstrument):
-        firstInstrument_params = self.get_instrument_by_xpath(firstInstrument).rect
-        secondInstrument_params = self.get_instrument_by_xpath(secondInstrument).rect
-        if firstInstrument_params['y'] < secondInstrument_params['y']:
-            return f"{firstInstrument} is upper"
-        else:
-            return f"{firstInstrument} is lower"

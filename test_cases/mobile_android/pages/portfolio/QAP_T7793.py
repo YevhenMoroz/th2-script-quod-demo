@@ -1,7 +1,7 @@
 import sys
 import time
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from custom import basic_custom_actions
 from test_cases.mobile_android.common_test_case import CommonTestCase
@@ -75,11 +75,11 @@ class QAP_T7793(CommonTestCase):
         self.verify("Step 5 - Title Cash Balance Statement", True,
                     account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.STATEMENT_TITLE))
         self.verify(f"Step 5 - Cash Account = {self.cash_acc1_c1_1}", True, True)
-        self.verify(f"Step 5 - From Date = {datetime.now().strftime('%Y/%m/01')}",
-                    f"{datetime.now().strftime('%Y/%m/01')}, From Date",
+        self.verify(f"Step 5 - From Date = {(datetime.now() - timedelta(hours = 3)).strftime('%Y/%m/01')}",
+                    f"{(datetime.now() - timedelta(hours = 3)).strftime('%Y/%m/01')}, From Date",
                     account_summary_page.find_by_xpath(AccountSummaryConstants.FROM_DATE).text)
-        self.verify(f"Step 5 - To Date = {datetime.now().strftime('%Y/%m/%d')}",
-                    f"{datetime.now().strftime('%Y/%m/%d')}, To Date",
+        self.verify(f"Step 5 - To Date = {(datetime.now() - timedelta(hours = 3)).strftime('%Y/%m/%d')}",
+                    f"{(datetime.now() - timedelta(hours = 3)).strftime('%Y/%m/%d')}, To Date",
                     account_summary_page.find_by_xpath(AccountSummaryConstants.TO_DATE).text)
         self.verify("Step 5 - PDF radiobutton exists", True,
                     account_summary_page.get_element_exists_by_xpath(AccountSummaryConstants.PDF_RADIOBUTTON))
