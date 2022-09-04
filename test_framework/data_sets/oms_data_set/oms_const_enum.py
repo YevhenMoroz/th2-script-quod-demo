@@ -82,8 +82,7 @@ class OmsClients(Enum):
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
     client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
     client_pt_8 = "MOClient7"
-    client_pt_9 = "MOClient8"
-    client_pt_10 = "MOClient_9"
+    client_pt_9 = "MOClient_9"
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -382,7 +381,8 @@ class OMSInstrType(Enum):
 
 
 class OMSContraFirm(Enum):
-    contra_firm_1 = "Contra Firm"
+    contra_firm_1 = "ContraFirm"
+    contra_firm_2 = "ContraFirm2"
 
 
 class OMSReferencePrice(Enum):

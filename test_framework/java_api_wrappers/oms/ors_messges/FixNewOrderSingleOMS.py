@@ -5,47 +5,44 @@ from pandas.tseries.offsets import BusinessDay as bd
 
 from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
+from test_framework.java_api_wrappers.ors_messages.FixNewOrderSingle import FixNewOrderSingle
 
 
-class OrderSubmitOMS(OrderSubmit):
+class FixNewOrderSingleOMS(FixNewOrderSingle):
     def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)
         self.data_set = data_set
         self.base_parameters = {
-            'SEND_SUBJECT': 'QUOD.ORS.FE',
-            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'SEND_SUBJECT': 'QUOD.ORS.FIX',
+            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
             'NewOrderSingleBlock': {
                 'Side': 'Buy',
+                'Price': "10",
                 'QtyType': 'Units',
-                'OrdType': 'Market',
+                'OrdType': 'Limit',
                 'TimeInForce': 'Day',
                 'PositionEffect': 'Open',
-                'SettlCurrency': 'EUR',
+                'SettlCurrency': data_set.get_currency_by_name("currency_1"),
                 'OrdCapacity': 'Agency',
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'MaxPriceLevels': "1",
-                'ExecutionOnly': 'No',
                 'ClientInstructionsOnly': 'No',
-                'BookingType': 'RegularBooking',
                 'OrdQty': "100",
-                'AccountGroupID': data_set.get_client_by_name("client_1"),
+                'ClientAccountGroupID': data_set.get_client_by_name("client_1"),
                 'ExecutionPolicy': 'DMA',
-                'ListingList': {'ListingBlock': [{'ListingID': data_set.get_listing_id_by_name("listing_1")}]},
-                'InstrID': data_set.get_instrument_id_by_name("instrument_1"),
+                "InstrumentBlock": {"InstrSymbol": "FR0010436584_EUR",
+                                    "SecurityID": "FR0010436584",
+                                    "SecurityIDSource": "ISIN",
+                                    "InstrType": "Equity"},
                 "ClOrdID": basic_custom_actions.client_orderid(9),
             }
         }
 
-    def set_default_care_limit(self, recipient, role="HSD", desk="1"):
-        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
-                                                   'RecipientRoleID': role,
-                                                   'RecipientDeskID': desk}}
+    def set_default_care_limit(self):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
-        self.add_tag(params)
         return self
 
     def set_default_dma_limit(self):
@@ -57,11 +54,7 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
-    def set_default_care_market(self, recipient, role="HSD", desk="1"):
-        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
-                                                   'RecipientRoleID': role,
-                                                   'RecipientDeskID': desk}}
+    def set_default_care_market(self):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Care'})
-        self.add_tag(params)
         return self
