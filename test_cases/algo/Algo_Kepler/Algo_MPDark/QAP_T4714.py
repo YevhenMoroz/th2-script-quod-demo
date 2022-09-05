@@ -37,7 +37,7 @@ class QAP_T4714(TestCase):
         self.mdEntryType = 5
         self.qty_for_incr = 0
         self.order_type = constants.OrderType.Market.value
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_9.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_11.value
         # endregion
 
         # region Gateway Side
