@@ -200,6 +200,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -214,6 +217,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -228,6 +234,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -242,6 +251,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -256,6 +268,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -270,6 +285,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -284,6 +302,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                       <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -298,6 +319,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -312,6 +336,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
             </components>

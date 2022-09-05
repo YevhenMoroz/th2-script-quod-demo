@@ -30,6 +30,7 @@ class Connectivity(Enum):
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
+    Luna_314_ja = "314_java_api"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
