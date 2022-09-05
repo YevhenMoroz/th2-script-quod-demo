@@ -82,8 +82,6 @@ class QAP_T4799(TestCase):
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_order_cancel_reject")
-
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -195,8 +193,10 @@ class QAP_T4799(TestCase):
 
         time.sleep(2)
 
+        # region Check that is no modification rejection
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that is no modification rejection", self.test_id))
         self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_replaced_SORPING_order_params, er_fill_SORPING_order_params], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

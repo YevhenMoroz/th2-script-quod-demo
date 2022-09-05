@@ -272,6 +272,7 @@ class AlgoListingId(Enum):
     listing_32 = "1874187"       # BATS for FR0010411884
     listing_33 = "1863556"       # CHIX for FR0010411884
     listing_34 = "125911519"       # JANESTREET for FR0010411884
+    listing_35 = "1803739"       # Euronext Paris for FR0000121220
 
 
 class AlgoCurrency(Enum):
@@ -305,6 +306,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
+    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
 
 
 class AlgoPreFilter(Enum):

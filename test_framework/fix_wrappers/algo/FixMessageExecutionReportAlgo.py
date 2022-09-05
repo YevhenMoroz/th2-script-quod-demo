@@ -1167,7 +1167,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             "OrderQty": nos_rfq.get_parameter("OrderQty"),
             "OrdStatus": 0,
             "OrdType": "P",
-            "Price": nos_rfq.get_parameter("Price"),
             "Side": nos_rfq.get_parameter("Side"),
             "TimeInForce": nos_rfq.get_parameter("TimeInForce"),
             "TransactTime": "*",
@@ -1184,6 +1183,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             "Instrument": "*",
             "NoParty": "*",
         }
+        if nos_rfq.is_parameter_exist('Price'):
+            temp.update(Price=nos_rfq.get_parameter('Price'))
         super().change_parameters(temp)
         return self
 

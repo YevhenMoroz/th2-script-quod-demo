@@ -18,7 +18,7 @@ from test_framework.data_sets import constants
 from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
-class QAP_T4964(TestCase):
+class QAP_T4958(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -36,8 +36,9 @@ class QAP_T4964(TestCase):
         # region order parameters
         self.qty = 100
         self.price = 3.2
-        self.qty_for_md = 100
         self.traded_qty = 0
+        self.dark_child_price = 3
+        self.qty_for_md = 100
         self.price_ask = 3
         self.price_bid = 2.9
         self.px_for_incr = 0
@@ -101,6 +102,7 @@ class QAP_T4964(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Rule creation
         rule_manager = RuleManager()
         nos_ioc_1_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_batsdark, self.ex_destination_batsdark, False, self.traded_qty, self.price_bid)
         nos_ioc_2_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chixdark, self.ex_destination_chixdark, False, self.traded_qty, self.price_bid)
@@ -126,9 +128,9 @@ class QAP_T4964(TestCase):
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
-        
+
         market_data_snap_shot_trqx = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_trqx, self.fix_env1.feed_handler)
-        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, SecurityTradingStatus=self.trading_status)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
 
         market_data_snap_shot_bats = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_bats, self.fix_env1.feed_handler)
@@ -137,7 +139,7 @@ class QAP_T4964(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_bats)
 
         market_data_snap_shot_bats = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_bats, self.fix_env1.feed_handler)
-        market_data_snap_shot_bats.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        market_data_snap_shot_bats.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, SecurityTradingStatus=self.trading_status)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_bats)
 
         market_data_snap_shot_chix = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_chix, self.fix_env1.feed_handler)
@@ -146,7 +148,7 @@ class QAP_T4964(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_chix)
 
         market_data_snap_shot_chix = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_chix, self.fix_env1.feed_handler)
-        market_data_snap_shot_chix.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        market_data_snap_shot_chix.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, SecurityTradingStatus=self.trading_status)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_chix)
 
         market_data_snap_shot_janestreet = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_janestreet, self.fix_env1.feed_handler)
@@ -155,7 +157,7 @@ class QAP_T4964(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_janestreet)
 
         market_data_snap_shot_janestreet = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_janestreet, self.fix_env1.feed_handler)
-        market_data_snap_shot_janestreet.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        market_data_snap_shot_janestreet.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, SecurityTradingStatus=self.trading_status)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_janestreet)
 
         time.sleep(3)
@@ -271,6 +273,7 @@ class QAP_T4964(TestCase):
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
-        
+
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
+        

@@ -150,6 +150,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_6 = "QA_Auto_MPDark6"
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
+    qa_mpdark_9 = "QA_Auto_MPDark9"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -158,6 +159,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_5 = "QA_Auto_SORPING_5"
     qa_sorping_6 = "QA_Auto_SORPING_6"
     qa_sorping_7 = "QA_Auto_SORPING_7"
+    qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 
@@ -195,6 +197,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info = "log319-check-party-info"
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
+    log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
 
 
 class WebAdminURL(Enum):
