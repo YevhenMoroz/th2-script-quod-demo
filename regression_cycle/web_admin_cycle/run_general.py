@@ -7,6 +7,7 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T3918 import QAP_T391
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3910 import QAP_T3910
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3908 import QAP_T3908
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3907 import QAP_T3907
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T3904 import QAP_T3904
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3899 import QAP_T3899
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3898 import QAP_T3898
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3895 import QAP_T3895
@@ -53,6 +54,8 @@ class RunGeneral:
             QAP_T3908(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3907(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3904(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3899(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

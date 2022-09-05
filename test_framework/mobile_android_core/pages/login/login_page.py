@@ -1,3 +1,5 @@
+import time
+
 from test_framework.mobile_android_core.pages.login.login_constant import LoginConstants
 from test_framework.mobile_android_core.utils.common_page import CommonPage
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
@@ -7,20 +9,18 @@ class LoginPage(CommonPage):
         super().__init__(driver)
 
     def set_email(self, email):
-        self.Waiter.WaitUntilClickableByXPath(LoginConstants.EMAIL)
+        self.wait_element_presence(LoginConstants.EMAIL)
         email_input = self.find_by_xpath(LoginConstants.EMAIL)
         email_input.click()
-        self.appium_driver.wait_time(1)
+        self.wait_edit_mode(LoginConstants.EMAIL)
         email_input.send_keys(email)
-        self.appium_driver.wait_time(1)
 
     def set_password(self, password):
-        self.Waiter.WaitUntilClickableByXPath(LoginConstants.PASSWORD)
+        self.wait_element_presence(LoginConstants.PASSWORD)
         password_input = self.find_by_xpath(LoginConstants.PASSWORD)
         password_input.click()
-        self.appium_driver.wait_time(1)
+        self.wait_edit_mode(LoginConstants.PASSWORD)
         password_input.send_keys(password)
-        self.appium_driver.wait_time(1)
 
     def click_on_login_button(self):
         self.find_by_xpath(LoginConstants.LOGIN_BUTTON).click()

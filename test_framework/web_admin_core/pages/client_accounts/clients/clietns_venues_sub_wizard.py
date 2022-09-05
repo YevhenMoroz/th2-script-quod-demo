@@ -96,11 +96,20 @@ class ClientsVenuesSubWizard(CommonPage):
     def click_on_stamp_fee_exemption_checkbox(self):
         self.find_by_xpath(ClientsConstants.VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH).click()
 
+    def is_stamp_fee_exemption_selected(self):
+        return self.is_checkbox_selected(ClientsConstants.VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH)
+
     def click_on_levy_fee_exemption(self):
         self.find_by_xpath(ClientsConstants.VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH).click()
 
+    def is_levy_fee_exemption_selected(self):
+        return self.is_checkbox_selected(ClientsConstants.VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH)
+
     def click_per_transac_fee_exemption(self):
         self.find_by_xpath(ClientsConstants.VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH).click()
+
+    def is_per_transac_fee_exemption_selected(self):
+        return self.is_checkbox_selected(ClientsConstants.VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH)
 
     def is_venue_present(self):
         return self.is_element_present(ClientsConstants.VENUES_TAB_DELETE_BUTTON_XPATH)

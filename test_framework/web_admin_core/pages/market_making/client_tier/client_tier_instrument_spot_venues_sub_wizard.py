@@ -27,7 +27,7 @@ class ClientTiersInstrumentSpotVenuesSubWizard(CommonPage):
         self.set_combobox_value(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH, value)
 
     def get_venue(self):
-        return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH)
+        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH)
 
     def click_on_critical_venue_checkbox(self):
         self.find_by_xpath(
