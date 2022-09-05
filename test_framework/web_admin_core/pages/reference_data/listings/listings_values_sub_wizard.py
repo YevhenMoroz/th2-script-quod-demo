@@ -19,6 +19,9 @@ class ListingsValuesSubWizard(CommonPage):
     def get_instr_type(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
 
+    def is_instr_type_field_required(self):
+        return self.is_field_required(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
+
     def set_security_exchange(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_SECURITY_EXCHANGE_XPATH, value)
 

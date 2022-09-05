@@ -3,7 +3,7 @@
     <name>Regression</name>
     <version>5.1.156.169</version>
     <product_lines>
-        <product_line name="algo" run="True">
+        <product_line name="algo" run="False">
             <components>
                 <component name="Twap" run="True">
                     <data_set>AlgoDataSet</data_set>
@@ -770,7 +770,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Middle_Office" run="True">
+                <component name="WA_Middle_Office" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -778,7 +778,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Market_Making" run="True">
+                <component name="WA_Market_Making" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -786,7 +786,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Risk_Limits" run="True">
+                <component name="WA_Price_Cleansing" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -794,7 +794,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Positions" run="True">
+                <component name="WA_Risk_Limits" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -802,7 +802,15 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Others" run="True">
+                <component name="WA_Positions" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Others" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>

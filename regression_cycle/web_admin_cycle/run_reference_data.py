@@ -44,6 +44,9 @@ from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T4030 import Q
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T4029 import QAP_T4029
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T4028 import QAP_T4028
 from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T3403 import QAP_T3403
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T3250 import QAP_T3250
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T3248 import QAP_T3248
+from test_cases.web_admin.web_admin_test_cases.reference_data.QAP_T3247 import QAP_T3247
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -148,6 +151,12 @@ class ReferenceData:
             QAP_T3358(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3289(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3250(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3248(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3247(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
