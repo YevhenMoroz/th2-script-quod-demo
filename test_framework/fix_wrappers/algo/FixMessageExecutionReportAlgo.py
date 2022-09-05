@@ -1277,10 +1277,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.get_parameter('Account') == 'KEPLER':
+        if new_order_single.is_parameter_exist("NoStrategyParameters"):
+            temp.update(NoStrategyParameters='*')
+        if new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
                 Account='*',
-                NoStrategyParameters='*',
                 SecondaryAlgoPolicyID='*',
                 SettlDate='*',
                 Currency='*',
@@ -1309,7 +1310,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderQty=new_order_single.get_parameter('OrderQty'),
             OrdStatus=8,
             Side=new_order_single.get_parameter('Side'),
-            Text='*',
             TransactTime='*',
             ExecType=8,
             LeavesQty=0

@@ -44,6 +44,8 @@ class QAP_T4876(TestCase):
         self.no_strategy_1 = [
             {'StrategyParameterName': 'ReleasedNbr', 'StrategyParameterType': '1',
              'StrategyParameterValue': '1'},
+            {'StrategyParameterName': 'ReleasedQty', 'StrategyParameterType': '8',
+             'StrategyParameterValue': '100'},
         ]
 
         # endregion
