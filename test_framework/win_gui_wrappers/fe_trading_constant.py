@@ -688,3 +688,7 @@ class CommissionType(Enum):
 class CommissionBasis(Enum):
     persentage = "Percentage"
 
+
+class OMSFeeType(Enum):
+    value_added_tax = "ValueAddedTax"
+
