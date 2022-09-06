@@ -658,7 +658,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
+        if new_order_single.is_parameter_exist('Price'):
             temp.update(Price=new_order_single.get_parameter("Price"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
@@ -1378,5 +1378,43 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             "Instrument": "*",
             "OrderCapacity": "A",
         }
+        super().change_parameters(temp)
+        return self
+
+    def set_RFQ_reject_params(self, nos_rfq: FixMessageNewOrderSingle):
+        temp = {
+            "Account": nos_rfq.get_parameter("Account"),
+            "AvgPx": 0,
+            "ClOrdID": "*",
+            "CumQty": 0,
+            "Currency": nos_rfq.get_parameter("Currency"),
+            "ExecID": "*",
+            "ExecInst": "uncrossing-only",
+            "LastPx": 0,
+            "LastQty": 0,
+            "OrderID": "*",
+            "OrderQty": nos_rfq.get_parameter("OrderQty"),
+            "OrdStatus": 8,
+            "OrdType": "P",
+            "Side": nos_rfq.get_parameter("Side"),
+            "TimeInForce": nos_rfq.get_parameter("TimeInForce"),
+            "TransactTime": "*",
+            "ExDestination": nos_rfq.get_parameter("ExDestination"),
+            "ExecType": 8,
+            "LeavesQty": 0,
+            "SecondaryOrderID": "*",
+            "OrderCapacity": "A",
+            "AccountType": "1",
+            "AlgoCst01": "ioi",
+            "ShortCode": "14519",
+            "CustomKeplerTag": "14519",
+            "NoParty": "*",
+            "OrdRejReason": "*",
+            "Text": "*",
+            "AlgoCst04": 'invited'
+
+        }
+        if nos_rfq.is_parameter_exist('Price'):
+            temp.update(Price=nos_rfq.get_parameter('Price'))
         super().change_parameters(temp)
         return self
