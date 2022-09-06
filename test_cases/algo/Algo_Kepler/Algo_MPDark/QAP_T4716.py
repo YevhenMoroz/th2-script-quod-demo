@@ -142,15 +142,8 @@ class QAP_T4716(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_5)
 
         self.nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
+        self.nos_chixlis_order.change_parameters(dict(OrderQty=self.qty))
         self.fix_verifier_buy.check_fix_message(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
-
-        er_pending_new_dma_2_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_2_chixlis_order_params.change_parameters(dict(ExDestination=self.ex_destination_chixlis))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child DMA order on venue CHIXLIS')
-
-        er_new_dma_2_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_2_chixlis_order_params.change_parameters(dict(ExDestination=self.ex_destination_chixlis))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_2_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New child DMA order on venue CHIXLIS')
 
         er_reject_dma_chixlis_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_reject)
         self.fix_verifier_buy.check_fix_message(er_reject_dma_chixlis_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject child DMA order on venue CHIXLIS")
@@ -172,15 +165,8 @@ class QAP_T4716(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_5)
 
         self.nos_trqxlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
+        self.nos_trqxlis_order.change_parameters(dict(OrderQty=self.qty))
         self.fix_verifier_buy.check_fix_message(self.nos_trqxlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on TRQXLIS', direction=self.FromQuod)
-
-        er_pending_new_dma_2_trqxlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_trqxlis_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_2_trqxlis_order_params.change_parameters(dict(ExDestination=self.ex_destination_trql))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_trqxlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child DMA order on venue TRQXLIS')
-
-        er_new_dma_2_trqxlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_trqxlis_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_2_trqxlis_order_params.change_parameters(dict(ExDestination=self.ex_destination_trql))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_2_trqxlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New child DMA order on venue TRQXLIS')
 
         er_reject_dma_trqxlis_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_trqxlis_order, self.gateway_side_buy, self.status_reject)
         self.fix_verifier_buy.check_fix_message(er_reject_dma_trqxlis_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject child DMA order on venue TRQXLIS")
