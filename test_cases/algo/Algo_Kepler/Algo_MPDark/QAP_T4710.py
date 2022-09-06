@@ -140,6 +140,7 @@ class QAP_T4710(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_5)
 
         self.nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
+        self.nos_chixlis_order.change_parameters(dict(Price=self.price, OrderQty=self.qty))
         self.fix_verifier_buy.check_fix_message(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
         er_pending_new_dma_2_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_pending)
