@@ -216,7 +216,7 @@ class AlgoMic(Enum):
     mic_10 = "QDL1" # QUODLIT1
     mic_11 = "QDL2" # QUODLIT2
     mic_12 = "LISX" # CHIX LIS UK
-    mic_13 = "TRQL" # URQUOISE LIS
+    mic_13 = "TRQL" # TURQUOISE LIS
     mic_14 = "QDD1" # QUODDKP1
     mic_15 = "QDD2" # QUODDKP2
     mic_16 = "QDL4"  # QUODLIT4
@@ -307,6 +307,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
     key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
+    key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
 
 
 class AlgoPreFilter(Enum):
