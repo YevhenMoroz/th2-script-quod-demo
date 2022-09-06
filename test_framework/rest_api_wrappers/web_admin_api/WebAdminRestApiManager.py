@@ -48,6 +48,19 @@ class WebAdminRestApiManager:
 
         return response.response_message
 
+    def send_multiple_request(self, api_message: WebAdminRestApiMessages):
+        message = convert_to_get_request(description="Send http requests: Post/Get",
+                                         connectivity=self.session_alias,
+                                         event_id=self.case_id,
+                                         message=bca.wrap_message(content=api_message.get_parameters(),
+                                                                  message_type=api_message.get_message_type(),
+                                                                  session_alias=self.session_alias),
+                                         request_type=api_message.get_message_type(),
+                                         response_type=api_message.get_message_type() + "Reply")
+        response = self.act.sendGetRequest(message)
+
+        return response.response_message
+
     @staticmethod
     def parse_response_details(response, filter_dict: dict = None):
         """
@@ -106,6 +119,17 @@ class WebAdminRestApiManager:
                 for key in result.keys():
                     result_list.append(result[key])
             return result_list
+        except Exception:
+            logging.error("Error parsing", exc_info=True)
+
+    @staticmethod
+    def parse_response_error_message_details(response):
+        try:
+            response_to_dict = MessageToDict(response)  # Convert grpc message to dictionary
+            if 'fields' in response_to_dict.keys():
+                for key, _ in response_to_dict['fields'].items():
+                    if key == 'errorMessage':
+                        return response_to_dict['fields']['errorMessage']['simpleValue']
         except Exception:
             logging.error("Error parsing", exc_info=True)
 
