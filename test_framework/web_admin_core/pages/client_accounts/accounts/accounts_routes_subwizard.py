@@ -45,7 +45,7 @@ class AccountsRoutesSubWizard(CommonPage):
         return self.get_text_by_xpath(AccountsConstants.ROUTES_DEFAULT_ROUTE_XPATH)
 
     def select_agent_fee_exemption_checkbox(self):
-        self.find_by_xpath(AccountsConstants.ROUTES_AGENT_FEE_EXEMPTION_XPATH)
+        self.find_by_xpath(AccountsConstants.ROUTES_AGENT_FEE_EXEMPTION_XPATH).click()
         
     def is_agent_fee_exemption_selected(self):
         return self.is_checkbox_selected(AccountsConstants.ROUTES_AGENT_FEE_EXEMPTION_XPATH)

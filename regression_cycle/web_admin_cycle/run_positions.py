@@ -11,6 +11,7 @@ from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3947 import QAP_T3
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3946 import QAP_T3946
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3634 import QAP_T3634
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3632 import QAP_T3632
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3486 import QAP_T3486
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3430 import QAP_T3430
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3412 import QAP_T3412
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3406 import QAP_T3406
@@ -41,6 +42,8 @@ class RunPositions:
             QAP_T3634(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3632(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3486(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3430(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

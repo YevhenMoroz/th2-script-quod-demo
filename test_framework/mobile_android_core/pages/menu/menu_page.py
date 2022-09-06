@@ -47,31 +47,31 @@ class MenuPage(CommonPage):
 
         if method == "Mobile No":
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_EMAIL).click()
-            self.appium_driver.wait_time(1)
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_SELECTION_MOBILE_NO).click()
         else:
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_MOBILE_NO).click()
-            self.appium_driver.wait_time(1)
             self.find_by_xpath(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_SELECTION_EMAIL).click()
-        self.appium_driver.wait_time(1)
 
     def pd_fill_mobile_no(self, value):
         self.click_pd_mobile_no()
+        # self.wait_edit_mode(MenuConstants.PD_MOBILE_NO)
         self.clear_pd_mobile_no()
         self.set_pd_mobile_no(value)
 
     def pd_fill_email(self, value):
         self.click_pd_email()
+        # self.wait_edit_mode(MenuConstants.PD_MOBILE_NO)
         self.clear_pd_email()
         self.set_pd_email(value)
     # endregion
 
     # region Preferences
-    def set_default_client(self):
-        pass
+    def set_default_client(self, name):
+        self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).click()
+        self.find_by_xpath(f'//android.view.View[@content-desc="{name}"]').click()
 
     def get_default_client(self):
-        pass
+        return self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).get_attribute('content-desc')
 
      #TODO: need to create one constant for that, currently incorrect xpath
     def click_on_go_back_button(self):

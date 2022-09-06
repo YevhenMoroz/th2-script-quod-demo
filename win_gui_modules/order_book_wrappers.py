@@ -625,6 +625,9 @@ class ExecutionsDetails:
     def set_settlement_date_offset(self, offset: int):
         self.request.settlementDateOffset = offset
 
+    def set_source_account(self, source_account: str):
+        self.request.sourceAccount = source_account
+
 
 class OtherTabDetails:
     def __init__(self, request: order_book_pb2.ManualExecutionDetails.OtherTabDetails):

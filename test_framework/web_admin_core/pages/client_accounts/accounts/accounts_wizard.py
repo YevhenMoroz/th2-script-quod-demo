@@ -13,7 +13,9 @@ class AccountsWizard(CommonPage):
         self.set_text_by_xpath(AccountsConstants.WIZARD_ID_INPUT_XPATH, value)
 
     def get_id(self):
-        return self.get_text_by_xpath(AccountsConstants.WIZARD_ID_INPUT_XPATH)
+        account_id = self.find_by_xpath(AccountsConstants.WIZARD_ID_EDITOR_XPATH).text
+        account_id = account_id.strip().split(" ")
+        return account_id[-1]
 
     def set_ext_id_client(self, value: str):
         self.set_text_by_xpath(AccountsConstants.WIZARD_EXT_ID_CLIENT_INPUT_XPATH, value)
