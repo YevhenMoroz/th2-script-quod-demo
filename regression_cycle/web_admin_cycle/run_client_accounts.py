@@ -2,7 +2,9 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8357 import QAP_T8357
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8433 import QAP_T8433
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8329 import QAP_T8329
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8215 import QAP_T8215
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8205 import QAP_T8205
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3971 import QAP_T3971
@@ -183,6 +185,10 @@ class RunClientsAccounts:
             QAP_T8205(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8215(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8329(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8357(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8433(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

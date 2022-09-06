@@ -21,7 +21,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_CSV_XPATH = "//*[@class='ct-grid']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_PDF_XPATH ="//*[@class='cdk-overlay-container']//*[@data-name='download']"
-    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = "//*[@class='ct-grid']//*[text()='New']"
+    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[text()="New"]'
     MAIN_PAGE_CLIENT_TIER_NAME_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
@@ -34,13 +34,21 @@ class ClientTierConstants:
     CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[normalize-space()="Schedule"]//following::button[normalize-space()="Manage"]'
     # schedules
-    CLIENT_TIER_SCHEDULES_TAB_ENABLE_SCHEDULE_CHECKBOX_XPATH = "//*[text()='Enable Schedule']/preceding-sibling::span"
     # schedules schedules
-    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH = "//p-table//*[@data-name='plus']"
-    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH = "//p-table//*[@data-name='checkmark']"
-    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH = "//p-table//*[@data-name='close']"
-    CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//p-table//*[@data-name="edit"]'
-    CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//p-table//*[@data-name="trash-2"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_XPATH = '//*[@placeholder="Schedule Name *"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_FILTER_XPATH = '//*[normalize-space()="Schedule Name"]//*[@placeholder="Filter"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_PLUS_BUTTON = '//*[normalize-space()="Schedule Name"]//*//*[@data-name="plus"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_CHECKMARK_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_CANCEL_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="close"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_DELETE_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="trash-2"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_EDIT_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_SEARCHED_ENTITY_XPATH = '//*[normalize-space()="Schedule Name"]//*[text()="{}"]'
+
+    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="plus"]'
+    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="close"]'
+    CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="trash-2"]'
 
     CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = "//*[@class='schedule']//*[@placeholder='Day *']"
     CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
