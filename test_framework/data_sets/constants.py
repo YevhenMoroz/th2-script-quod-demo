@@ -198,6 +198,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
     log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
+    log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
 
 
 class WebAdminURL(Enum):
