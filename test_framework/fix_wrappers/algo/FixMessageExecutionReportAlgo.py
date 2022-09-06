@@ -332,8 +332,18 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011']:
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011', '1010']:
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
+        if new_order_single.get_parameter('TargetStrategy') != '1010':
+            temp.update(
+                SecAltIDGrp='*',
+                SecondaryClOrdID='*',
+            )
+        if new_order_single.get_parameter('TargetStrategy') == '1010':
+            temp.update(
+                LastMkt='*',
+                ChildOrderID='*',
+            )
         if new_order_single.get_parameter('TargetStrategy') == '1011' or new_order_single.get_parameter('TargetStrategy') == '1004':
             temp.update(
                 ExDestination='*',
@@ -407,9 +417,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             GrossTradeAmt='*',
             NoParty='*',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            SecAltIDGrp='*',
             QtyType=0,
-            SecondaryClOrdID='*',
             Instrument='*',
             SecondaryExecID='*'
         )
@@ -1277,7 +1285,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.is_parameter_exist("NoStrategyParameters"):
+        if new_order_single.is_parameter_exist("NoStrategyParameters") or new_order_single.get_parameter('TargetStrategy') == '1008':
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
@@ -1293,7 +1301,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 ExecRestatementReason='*',
                 TargetStrategy='*',
                 Instrument='*',
-                LastQty='*'
+                LastQty='*',
+                Text='*'
             )
         if new_order_single.is_parameter_exist('ExDestination'):
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
