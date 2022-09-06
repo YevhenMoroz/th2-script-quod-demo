@@ -17,7 +17,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -172,6 +172,13 @@ class RuleManager:
                                                                      account=account,
                                                                      venue=venue,
                                                                      price=price))
+
+    def add_NewOrdSingleExecutionReportOnlyPending(self, session: str, account: str, venue: str, price: float):
+        return self.sim.createNewOrdSingleExecutionReportOnlyPending(
+            request=TemplateNewOrdSingleExecutionReportOnlyPending(connection_id=ConnectionID(session_alias=session),
+                                                                   account=account,
+                                                                   venue=venue,
+                                                                   price=price))
 
     def add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self, session: str, account: str, venue: str,
                                                                  price: float):
