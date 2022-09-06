@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4725(TestCase):
@@ -67,7 +68,11 @@ class QAP_T4725(TestCase):
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_lis_phase_is_skipping.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_lis_phase_is_skipping")
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -89,19 +94,23 @@ class QAP_T4725(TestCase):
 
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
-
-        er_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check reject parent order
-        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_reject)
-        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
+        er_reject_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_reject)
+        er_reject_mp_dark_order_params.remove_parameter('Text')
+        self.fix_verifier_sell.check_fix_message(er_reject_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
 
-        # region Check there are no LIS Phase and no RFQ
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no LIS Phase and no RFQ", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([], key_parameters_list=[], direction=self.FromQuod, pre_filter=self.pre_filter)
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "OrderID": '*',
+            "Text": 'skipping LIS phase'
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(execution_report)
         # endregion
 
 
