@@ -51,7 +51,9 @@ def round_decimals_down(number: float, decimals: int):
 #     return qty
 
 
-def random_qty(from_number: int, to_number: int, len: int):
+def random_qty(from_number: int, to_number: int = None, len: int = 7):
+    if to_number is None:
+        to_number = from_number + 1
     second_part = ''
     for _ in range(0, len - 1):
         second_part = f'{second_part}{random.randint(1, 9)}'
