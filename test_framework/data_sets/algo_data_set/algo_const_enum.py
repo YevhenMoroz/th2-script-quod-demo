@@ -154,6 +154,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_20 = dict(
+        Symbol='SE0006288015',
+        SecurityID='SE0006288015',
+        SecurityIDSource='4',
+        SecurityExchange='XSTO',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -281,6 +289,7 @@ class AlgoCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "SEK"
 
 
 class AlgoVerifierKeyParameters(Enum):
@@ -308,6 +317,8 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
     key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
     key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
+    key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
+    key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
 
 
 class AlgoPreFilter(Enum):
@@ -338,3 +349,12 @@ class AlgoPreFilter(Enum):
         },
         'ExecType': ('F', "EQUAL")
     }
+
+    pre_filter_primary_listing_id = {
+        'PrimaryListingID': ('*', "EQUAL")
+    }
+
+    pre_filter_primary_status_of_transaction= {
+        'NewStatus': ('*', "EQUAL")
+    }
+
