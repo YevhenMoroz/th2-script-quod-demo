@@ -228,8 +228,7 @@ class QAP_T4932(TestCase):
         }
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        # TODO add Check read log message sequence instead checking one message
-        self.read_log_verifier.check_read_log_message(execution_report, self.key_params_read_log)
+        self.read_log_verifier.check_read_log_message_sequence([execution_report, execution_report], [None, None])
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
