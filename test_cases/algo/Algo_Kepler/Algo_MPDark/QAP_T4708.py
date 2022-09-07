@@ -2,19 +2,17 @@ import os
 import time
 from pathlib import Path
 
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
@@ -52,6 +50,7 @@ class QAP_T4708(TestCase):
         self.status_new = Status.New
         self.status_reject = Status.Reject
         self.status_fill = Status.Fill
+        self.status_cancel = Status.Cancel
         # endregion
 
         # region instrument
@@ -67,7 +66,6 @@ class QAP_T4708(TestCase):
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
         self.ex_destination_trql = self.data_set.get_mic_by_name("mic_13")
         self.client = self.data_set.get_client_by_name("client_4")
-
         # endregion
 
         # region Key parameters
@@ -92,7 +90,7 @@ class QAP_T4708(TestCase):
         rfq_2_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty, self.qty, self.new_reply, self.restated_reply)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
         nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price, self.price, self.qty, self.qty, self.delay)
-        self.rule_list = [rfq_1_rule, rfq_2_rule,nos_rule, nos_trade_rule]
+        self.rule_list = [rfq_1_rule, rfq_2_rule, nos_rule, nos_trade_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -134,11 +132,15 @@ class QAP_T4708(TestCase):
         case_id_3 = bca.create_event("RFQ accepted on CHIXLIS", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_3)
 
-        er_rfq_new_trqxlis_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_new_trqxlis_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
+        er_rfq_new_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
+        self.fix_verifier_buy.check_fix_message(er_rfq_new_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
 
-        er_rfq_restated_trqxlis_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new_trqxlis_chixlis).change_parameters({"OrderQty": self.qty})
-        self.fix_verifier_buy.check_fix_message(er_rfq_restated_trqxlis_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
+        er_rfq_restated_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new_chixlis).change_parameters({"OrderQty": self.qty})
+        self.fix_verifier_buy.check_fix_message(er_rfq_restated_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
+        # endregion
+
+        # region quote canceled on TRQX
+        ocr_rfq_canceled = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
         # endregion
 
         # region MO on Venue ChixLis
@@ -170,7 +172,7 @@ class QAP_T4708(TestCase):
 
         # region Check that is no cancel request for LIS child
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that is no cancel request for LIS child", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.nos_chixlis_order], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, ocr_rfq_canceled, self.nos_chixlis_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
