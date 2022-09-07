@@ -32,7 +32,8 @@ class ReadLogVerifier:
                 timeout
             )
         )
-    def check_fix_message_sequence(self, compare_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
+
+    def check_read_log_message_sequence(self, compare_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
                                    message_name: str = None, pre_filter: dict = None):
         pre_filter_req = basic_custom_actions.prefilter_to_grpc(pre_filter)
         message_filters_req = list()
