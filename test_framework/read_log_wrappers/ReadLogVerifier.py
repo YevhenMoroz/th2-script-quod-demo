@@ -32,3 +32,27 @@ class ReadLogVerifier:
                 timeout
             )
         )
+    def check_fix_message_sequence(self, compare_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
+                                   message_name: str = None, pre_filter: dict = None):
+        pre_filter_req = basic_custom_actions.prefilter_to_grpc(pre_filter)
+        message_filters_req = list()
+        if len(compare_messages_list) != len(key_parameters_list):
+            raise ValueError("Not correct qty of object at list expect len(fix_messages_list) equal len(key_parameters_list)")
+
+        for index, message in enumerate(compare_messages_list):
+            message_filters_req.append(basic_custom_actions.filter_to_grpc("Csv_Message", message.get_parameters(), key_parameters_list[index]))
+
+        if message_name is None:
+            message_name = "Check banch of messages"
+
+        self.__verifier.submitCheckSequenceRule(
+            basic_custom_actions.create_check_sequence_rule(
+                description=message_name,
+                prefilter=pre_filter_req,
+                msg_filters=message_filters_req,
+                checkpoint=self.__checkpoint,
+                connectivity=self.__session_alias,
+                event_id=self.__case_id,
+                direction=Direction.Value(direction.value)
+            )
+        )
