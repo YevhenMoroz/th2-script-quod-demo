@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
@@ -91,6 +92,7 @@ class QAP_T4781(TestCase):
         self.new_reply = True
         self.restated_reply = True
         self.rule_list = []
+        self.read_log_verifier = ReadLogVerifier("log319-updating-status", report_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -263,7 +265,15 @@ class QAP_T4781(TestCase):
         nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.inc_qty - self.traded_qty, ExDestination=self.ex_destination_trql, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
-        time.sleep(10)
+        time.sleep(70)
+
+        execution_report = {
+            "OrderId": "*",
+            "OldStatus": "New",
+            "NewStatus": "Open"
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(execution_report)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -276,12 +286,11 @@ class QAP_T4781(TestCase):
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
         cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
-
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*')).change_parameters(dict(CxlQty=self.qty_after_trade, AvgPx=self.price, CumQty=self.traded_qty))
+        er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*')).change_parameters(dict(CxlQty=self.qty_after_trade, AvgPx=self.price, CumQty=self.traded_qty, OrderQty=self.inc_qty))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
         # endregion

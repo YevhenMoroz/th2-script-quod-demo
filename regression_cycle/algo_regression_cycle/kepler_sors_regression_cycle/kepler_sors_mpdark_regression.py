@@ -1,9 +1,15 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4521 import QAP_T4521
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4578 import QAP_T4578
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4586 import QAP_T4586
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4589 import QAP_T4589
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4614 import QAP_T4614
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4674 import QAP_T4674
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4675 import QAP_T4675
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4717 import QAP_T4717
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4729 import QAP_T4729
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4741 import QAP_T4741
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4742 import QAP_T4742
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4743 import QAP_T4743
@@ -138,8 +144,14 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region MP Dark (other)
-        QAP_T4724(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4521(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4578(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4674(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4675(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4717(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4724(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4729(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4358(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 

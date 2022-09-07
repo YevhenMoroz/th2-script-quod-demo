@@ -17,7 +17,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.data_sets import constants
 
 
-class QAP_T4674(TestCase):
+class QAP_T4521(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -41,12 +41,11 @@ class QAP_T4674(TestCase):
         self.weight_cboe = 1
         self.weight_itg = 1
         self.qty_1_chix_child, self.qty_1_bats_child, self.qty_1_cboe_child, self.qty_1_itg_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats, self.weight_cboe, self.weight_itg)
-        self.remaining_qty = self.inc_qty - self.qty_1_itg_child
+        self.remaining_qty = self.inc_qty - self.qty_1_chix_child
         self.qty_2_chix_child, self.qty_2_bats_child, self.qty_2_cboe_child, self.qty_2_itg_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.remaining_qty, None, self.weight_chix, self.weight_bats, self.weight_cboe, self.weight_itg)
         self.price = 1
-        self.delay_for_fill = 9000
-        self.delay_for_cancel = 9000
-        self.delay_for_cancel_itg = 9000
+        self.delay_for_fill = 4000
+        self.delay_for_cancel = 6000
         self.status = 1
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_4.value
         # endregion
@@ -101,12 +100,12 @@ class QAP_T4674(TestCase):
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, self.price)
         nos_4_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
-        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg,  self.price, self.price, self.qty_1_itg_child, self.qty_1_itg_child, self.delay_for_fill)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.delay_for_cancel)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True, self.delay_for_cancel)
-        ocr_4_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, False, self.qty_1_itg_child, self.delay_for_cancel_itg)
-        ocr_5_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True, self.qty_2_itg_child, self.delay_for_cancel_itg)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix,  self.price, self.price, self.qty_1_chix_child, self.qty_1_chix_child, self.delay_for_fill)
+        ocr_1_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, False, self.qty_1_chix_child, self.delay_for_cancel)
+        ocr_2_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty_2_chix_child, self.delay_for_cancel)
+        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
+        ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True, self.delay_for_cancel)
+        ocr_5_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True)
         self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_trade_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule]
         # endregion
 
