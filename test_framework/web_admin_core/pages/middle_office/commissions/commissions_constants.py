@@ -57,7 +57,7 @@ class CommissionsConstants:
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="clCommissionName"]'
     VALUES_TAB_DESCRIPTION_XPATH = '//*[@formcontrolname="clCommissionDescription"]'
     VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH = '//*[text()="Re-Calculate for Allocations"]/preceding-sibling::span'
-    VALUES_TAB_VENUE_LIST_XPATH = '//*[@id="venueList"]'
+    VALUES_TAB_VENUE_LIST_XPATH = '//*[normalize-space()="Dimensions"]//..//*[@id="venueList"]'
 
     # commission profiles
     COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = '//*[normalize-space(text()) = "Commission Profile Name"]//ancestor::client-commission-commission-profile//*[@placeholder="Filter"]'

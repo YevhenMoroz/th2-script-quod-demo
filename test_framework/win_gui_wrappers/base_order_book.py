@@ -36,6 +36,7 @@ class BaseOrderBook(BaseWindow):
         self.extraction_panel_details = None
         self.second_level_extraction_details = None
         self.mass_exec_summary_average_price_detail = None
+        self.mass_exec_summary_detail = None
         self.extraction_error_message_details = None
         self.hot_keys_details = None
         self.extract_direct_values = None
@@ -43,6 +44,7 @@ class BaseOrderBook(BaseWindow):
         self.extract_error_from_order_ticket = None
         self.extraction_from_second_level_tabs_call = None
         self.mass_exec_summary_average_price_call = None
+        self.mass_exec_summary_call = None
         self.extract_booking_block_values_call = None
         self.order_book_grid_scrolling_call = None
         self.manual_execution_order_call = None
@@ -103,6 +105,9 @@ class BaseOrderBook(BaseWindow):
         self.hot_keys_action_call = None
         self.force_cancel_order_call = None
         self.force_cancel_order_details = None
+        self.mark_reviewed_call = None
+        self.mark_unreviewed_call = None
+
     # endregion
 
     # region Common func
@@ -290,7 +295,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.cancel_order_details])
 
     def force_cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
-                     filter_list: list = None):
+                           filter_list: list = None):
         if cancel_children is not None:
             self.force_cancel_order_details.set_cancel_children(cancel_children)
         if row_count is not None:
@@ -321,6 +326,7 @@ class BaseOrderBook(BaseWindow):
             self.transfer_pool_details.confirm_ticket_accept()
         else:
             self.transfer_pool_details.cancel_ticket_reject()
+        self.internal_transfer_action.add_transfer_pool_details(self.transfer_pool_details)
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
@@ -399,6 +405,13 @@ class BaseOrderBook(BaseWindow):
         self.mass_exec_summary_average_price_detail.set_count_of_selected_rows(row_count)
         call(self.mass_exec_summary_average_price_call, self.mass_exec_summary_average_price_detail.build())
         self.clear_details([self.mass_exec_summary_average_price_detail])
+
+    def mass_execution_summary(self, row_count: int, qty: str):
+        self.mass_exec_summary_detail.set_default_params(self.base_request)
+        self.mass_exec_summary_detail.set_count_of_selected_rows(row_count)
+        self.mass_exec_summary_detail.set_reported_price_value(qty)
+        call(self.mass_exec_summary_call, self.mass_exec_summary_detail.build())
+        self.clear_details([self.mass_exec_summary_detail])
 
     def set_disclose_flag_via_order_book(self, type_disclose: str, row_numbers=None):
         """ type_disclose - can have next values: disable, real_time, manual """
@@ -488,7 +501,8 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                   source_account=None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -504,6 +518,8 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if source_account:
+            execution_details.set_source_account(source_account)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.house_fill_call, self.manual_executing_details.build())
@@ -539,7 +555,8 @@ class BaseOrderBook(BaseWindow):
     Method extracting values from Booking Ticket
     '''
 
-    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict, count_of_rows: int = 1):
+    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict,
+                                              count_of_rows: int = 1):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
                                                                panel_of_extraction,
@@ -724,6 +741,7 @@ class BaseOrderBook(BaseWindow):
         self.mass_manual_execution_details.set_price(price)
         self.mass_manual_execution_details.set_count_of_selected_rows(rows)
         call(self.mass_manual_execution_call, self.mass_manual_execution_details.build())
+        self.clear_details([self.mass_manual_execution_details])
 
     def unmatch_and_transfer(self, account_destination, filter_list: dict, sub_filter_dict: dict = None):
         self.unmatch_and_transfer_details.set_filter_and_sub_filter(filter_list, sub_filter_dict)
@@ -806,3 +824,15 @@ class BaseOrderBook(BaseWindow):
         self.hot_keys_details.set_enter_hotkey()
         call(self.hot_keys_action_call, self.hot_keys_details.build())
         self.clear_details([self.hot_keys_details])
+
+    def mark_reviewed(self, filter_list=None):
+        if filter_list is not None:
+            self.base_order_details.set_filter(filter_list)
+        call(self.mark_reviewed_call, self.base_order_details.build())
+        self.clear_details([self.base_order_details])
+
+    def mark_unreviewed(self, filter_list=None):
+        if filter_list is not None:
+            self.base_order_details.set_filter(filter_list)
+        call(self.mark_unreviewed_call, self.base_order_details.build())
+        self.clear_details([self.base_order_details])

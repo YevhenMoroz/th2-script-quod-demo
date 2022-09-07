@@ -625,6 +625,9 @@ class ExecutionsDetails:
     def set_settlement_date_offset(self, offset: int):
         self.request.settlementDateOffset = offset
 
+    def set_source_account(self, source_account: str):
+        self.request.sourceAccount = source_account
+
 
 class OtherTabDetails:
     def __init__(self, request: order_book_pb2.ManualExecutionDetails.OtherTabDetails):
@@ -738,9 +741,9 @@ class CompleteOrdersDetails:
 
 # Use for ReOrder Action and ReOrder Leaves Action
 class BaseOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.BaseOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.BaseOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.BaseOrdersDetails()
 

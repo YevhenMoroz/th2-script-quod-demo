@@ -57,3 +57,6 @@ class RestCommissionsSender(RestApiManager):
     def change_message_params(self, params):
         self.message.change_params(params)
         return self
+
+    def remove_parameter(self, parameter_name):
+        self.message.remove_parameter(parameter_name)

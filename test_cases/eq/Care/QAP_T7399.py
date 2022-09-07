@@ -26,40 +26,34 @@ class QAP_T7399(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.desk = environment.get_list_fe_environment()[0].desk_3
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message1 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.fix_message2 = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.rule_manager = RuleManager(Simulators.equity)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_co_1_venue_1')
-        self.qty = self.fix_message1.get_parameter('OrderQtyData')['OrderQty']
-        self.price = self.fix_message1.get_parameter('Price')
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.account = self.data_set.get_client_by_name('client_co_1')
-        self.fix_message1.change_parameter("Account", self.account)
-        self.fix_message2.change_parameter("Account", self.account)
+        self.account = self.fix_message.get_parameter('Account')
         self.price_sum = "22.2"
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declarations
-        # region create first CO
-        self.fix_manager.send_message_fix_standard(self.fix_message1)
-        self.client_inbox.accept_order()
-        order_id1 = self.order_book.set_filter([OrderBookColumns.qty.value, self.qty]).extract_field(
-            OrderBookColumns.order_id.value)
+        # region create CO orders
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id1 = response[0].get_parameter("OrderID")
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id2 = response[0].get_parameter("OrderID")
         # endregion
-        # region create second CO
-        self.fix_manager.send_message_fix_standard(self.fix_message2)
+        # region accept orders
         self.client_inbox.accept_order()
-        order_id2 = self.order_book.set_filter([OrderBookColumns.qty.value, self.qty]).extract_field(
-            OrderBookColumns.order_id.value)
+        self.client_inbox.accept_order()
         # endregion
         # region set manual disclose flag
         self.order_book.set_disclose_flag_via_order_book("manual", [1, 2])
@@ -95,10 +89,10 @@ class QAP_T7399(TestCase):
         self.order_book.mass_execution_summary(2, self.price_sum)
         # endregion
         # verify LastPX by minifix gtw
-        self.exec_report.set_default_calculated(self.fix_message1)
-        self.exec_report.change_parameters({"LastPx": self.price_sum, "VenueType":"*"})
-        self.fix_verifier.check_fix_message(self.exec_report)
-        self.exec_report.set_default_calculated(self.fix_message2)
-        self.exec_report.change_parameters({"LastPx": self.price_sum, "VenueType":"*"})
-        self.fix_verifier.check_fix_message(self.exec_report)
+        time.sleep(5)
+        self.exec_report.set_default_calculated(self.fix_message)
+        self.exec_report.change_parameters({"LastPx": self.price_sum, "VenueType":"*", 'OrderID': order_id1})
+        self.fix_verifier.check_fix_message(self.exec_report, ['OrderID', 'ExecType'])
+        self.exec_report.change_parameters({'OrderID': order_id2})
+        self.fix_verifier.check_fix_message(self.exec_report, ['OrderID', 'ExecType'])
         # endregion

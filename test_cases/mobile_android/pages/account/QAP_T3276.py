@@ -33,8 +33,7 @@ class QAP_T3276(CommonTestCase):
         menu_page = MenuPage(self.appium_driver)
 
         login_page.login_to_mobile_trading(self.login, self.password)
-        self.appium_driver.wait_time(5)
-        self.verify("Login successful", None, main_page.check_if_element_presented(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Precondition - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
         # endregion
 
         # region - test details
@@ -42,29 +41,26 @@ class QAP_T3276(CommonTestCase):
         # Step 1
         main_page.click_on_menu()
         menu_page.click_on_personal_details()
-        self.appium_driver.wait_time(5)
-        self.verify("Step 1 - Personal Details is opened", None, menu_page.check_if_element_presented(MenuConstants.PERSONAL_DETAILS_TITLE))
+        self.verify("Step 1 - Personal Details is opened", None, menu_page.wait_element_presence(MenuConstants.PERSONAL_DETAILS_TITLE))
         # endregion
 
         # Step 2
         menu_page.set_preferred_communication_method("Mobile No")
-        self.appium_driver.wait_time(1)
         menu_page.click_pd_mobile_no()
-        self.appium_driver.wait_time(1)
+        # menu_page.wait_edit_mode(MenuConstants.PD_MOBILE_NO)
         menu_page.clear_pd_mobile_no()
-        self.appium_driver.wait_time(1)
         self.verify("Step 2 - Mobile No field is clear", "Mobile No", menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_MOBILE_NO, "text"))
         # endregion
 
         # Step 3
         menu_page.click_pd_go_back()
-        self.verify("Step 3 - User Profile is opened", None, menu_page.check_if_element_presented(MenuConstants.USER_PROFILE_TITLE))
+        self.verify("Step 3 - User Profile is opened", None, menu_page.wait_element_presence(MenuConstants.USER_PROFILE_TITLE))
         # endregion
 
         # Step 4
         menu_page.click_on_personal_details()
         self.verify("Step 4 - Preferred Communication Method: Mobile No", None,
-                    menu_page.check_if_element_presented(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_MOBILE_NO))
+                    menu_page.wait_element_presence(MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_MOBILE_NO))
         self.verify("Step 4 - Mobile No: 123456789", "123456789, Mobile No",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_MOBILE_NO, "text"))
         self.verify("Step 4 - Email: mail@quodfinancial.com", "mail@quodfinancial.com, Email",
@@ -74,6 +70,7 @@ class QAP_T3276(CommonTestCase):
         # Step 5
         menu_page.set_preferred_communication_method("Email")
         menu_page.click_pd_email()
+        # menu_page.wait_edit_mode(MenuConstants.PD_EMAIL)
         menu_page.clear_pd_email()
         self.verify("Step 5 - Email field is clear", "Email",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_EMAIL, "text"))
@@ -83,7 +80,7 @@ class QAP_T3276(CommonTestCase):
         menu_page.click_pd_go_back()
         menu_page.click_on_personal_details()
         self.verify("Step 6 - Preferred Communication Method: Email", None,
-                    menu_page.check_if_element_presented(
+                    menu_page.wait_element_presence(
                         MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_EMAIL))
         self.verify("Step 6 - Mobile No: 123456789", "123456789, Mobile No",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_MOBILE_NO, "text"))
@@ -100,7 +97,7 @@ class QAP_T3276(CommonTestCase):
         menu_page.click_pd_go_back()
         menu_page.click_on_personal_details()
         self.verify("Step 7 - Preferred Communication Method: Email", None,
-                    menu_page.check_if_element_presented(
+                    menu_page.wait_element_presence(
                         MenuConstants.PD_PREFERRED_COMMUNICATION_METHOD_DROPDOWN_EMAIL))
         self.verify("Step 7 - Mobile No: 123", "123, Mobile No",
                     menu_page.get_attribute_of_element_by_xpath(MenuConstants.PD_MOBILE_NO, "text"))

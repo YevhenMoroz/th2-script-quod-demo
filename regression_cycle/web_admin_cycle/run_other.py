@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.others.QAP_T3291 import QAP_T3291
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3973 import QAP_T3973
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3972 import QAP_T3972
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3970 import QAP_T3970
@@ -98,6 +99,8 @@ class RunOthers:
             QAP_T3476(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3405(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3291(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

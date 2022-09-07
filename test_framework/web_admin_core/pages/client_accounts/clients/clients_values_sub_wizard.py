@@ -40,6 +40,9 @@ class ClientsValuesSubWizard(CommonPage):
     def set_disclose_exec(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, value)
 
+    def clear_disclose_exec(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, "")
+
     def get_disclose_exec(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH)
 
@@ -127,3 +130,20 @@ class ClientsValuesSubWizard(CommonPage):
     def clear_disclose_exec_field(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).clear()
 
+    def set_allocation_matching_service(self, value):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, value)
+
+    def get_allocation_matching_service(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH)
+
+    def set_external_allocation_matching_service(self, value):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
+
+    def get_external_allocation_matching_service(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
+
+    def is_external_allocation_matching_service_field_enable(self):
+        return self.is_field_enabled(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
+
+    def click_on_manage_external_allocation_matching_service(self):
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH).click()
