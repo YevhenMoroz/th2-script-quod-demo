@@ -198,6 +198,11 @@ class FxSymbols(Enum):
     symbol_14 = "NOK/SEK"
     symbol_15 = "USD/NOK"
     symbol_16 = "AUD/USD"
+    symbol_17 = "EUR/AUD"
+    symbol_18 = "AUD/GBP"
+    symbol_19 = "ZAR/MXN"
+    symbol_20 = "USD/ZAR"
+    symbol_21 = "EUR/MXN"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
