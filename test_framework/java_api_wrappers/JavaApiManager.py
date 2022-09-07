@@ -1,7 +1,7 @@
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
@@ -76,12 +76,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        # elif message.get_message_type() == ORSMessageType.CDOrdAckBatchRequest.value:
-        #     response = self.act.submitCDOrdAckBatchRequest(
-        #         request=ActJavaSubmitMessageRequest(
-        #             message=bca.message_to_grpc_fix_standard(message.get_message_type(),
-        #                                                      message.get_parameters(), self.get_session_alias()),
-        #             parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == CSMessageType.CDOrdAckBatchRequest.value:
+            response = self.act.submitCDOrdAckBatchRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
             print(response)

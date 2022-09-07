@@ -85,3 +85,7 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+
+
+class CSMessageType(Enum):
+    CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"

@@ -38,7 +38,7 @@ class OrderSubmitOMS(OrderSubmit):
             }
         }
 
-    def set_default_care_limit(self, recipient, role="HSD", desk="1"):
+    def set_default_care_limit(self, recipient, desk="1", role="HSD"):
         params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
                                                    'RecipientRoleID': role,
                                                    'RecipientDeskID': desk}}
@@ -57,7 +57,7 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
-    def set_default_care_market(self, recipient, role="HSD", desk="1"):
+    def set_default_care_market(self, recipient, desk="1", role="HSD"):
         params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
                                                    'RecipientRoleID': role,
                                                    'RecipientDeskID': desk}}
