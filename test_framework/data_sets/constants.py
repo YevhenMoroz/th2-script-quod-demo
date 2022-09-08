@@ -198,6 +198,7 @@ class AlgoCurrencyRate(Enum):
 
 class Venues(Enum):
     chixlis = "CHIXLIS"
+    paris = "Euronext Paris"
 
 
 class ReadLogVerifiers(Enum):
