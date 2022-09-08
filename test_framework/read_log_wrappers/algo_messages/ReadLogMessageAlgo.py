@@ -26,3 +26,28 @@ class ReadLogMessageAlgo(ReadLogMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_compare_message_for_check_the_skips_lis_phase(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderID": '*',
+            "Text": 'skipping LIS phase'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_the_venue_was_suspended(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderID": "*",
+            "VenueName": "Euronext Paris",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tags_5052_and_207_mapping(self) -> ReadLogMessage:
+        base_parameters = {
+            "SecurityExchange": "QDL1",
+            "ClOrdID": "*",
+            "ExternalStrategyName": "QA_Auto_SORPING_1",
+        }
+        super().change_parameters(base_parameters)
+        return self
