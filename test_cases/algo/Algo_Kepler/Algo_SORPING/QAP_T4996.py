@@ -43,7 +43,7 @@ class QAP_T4996(TestCase):
         self.price_bid = 30
         self.party_id = constants.PartyID.party_id_1.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
-        self.party_role = constants.PartyRole.party_role_1.value
+        self.party_role = constants.PartyRole.party_role_24.value
 
         self.no_party = [
             {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
