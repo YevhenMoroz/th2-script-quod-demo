@@ -15,7 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4964(TestCase):
@@ -93,8 +94,11 @@ class QAP_T4964(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_that_venue_was_suspended")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.venue = constants.Venues.paris.value
         # endregion
 
         self.rule_list = []
@@ -104,7 +108,7 @@ class QAP_T4964(TestCase):
         rule_manager = RuleManager()
         nos_ioc_1_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_batsdark, self.ex_destination_batsdark, False, self.traded_qty, self.price_bid)
         nos_ioc_2_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chixdark, self.ex_destination_chixdark, False, self.traded_qty, self.price_bid)
-        # TODO Maybe another venue
+        # TODO Passive or aggressive child?
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, True)
         self.rule_list = [nos_ioc_1_rule, nos_ioc_2_rule, nos_rule, ocr_rule]
@@ -224,12 +228,11 @@ class QAP_T4964(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "OrderID": "*",
-            "VenueName": "Euronext Paris",
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
+        compare_message.change_parameters(dict(VenueName=self.venue))
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Lit child DMA order
