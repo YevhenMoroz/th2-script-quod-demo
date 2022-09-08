@@ -84,3 +84,6 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+
+class ReadLogMessageType(Enum):
+    Csv_Message = "Csv_Message"
