@@ -163,6 +163,14 @@ class AlgoFormulasManager:
     def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
         return math.ceil((ltq * volume) / (1 - volume))
 
+    @staticmethod
+    def get_lis_amount_for_order(qty: int, price: float) -> float:
+        return qty * price
+
+    @staticmethod
+    def convert_pre_trade_lis_amount_for_another_currency(pre_trade_lis_amount: float, rate: float) -> float:
+        return pre_trade_lis_amount * rate
+
 
 
 
