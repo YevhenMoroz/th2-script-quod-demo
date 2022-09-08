@@ -22,7 +22,7 @@ from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
 
-class QAP_T8588(TestCase):
+class QAP_T8587(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
