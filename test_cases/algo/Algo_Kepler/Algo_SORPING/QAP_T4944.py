@@ -123,12 +123,7 @@ class QAP_T4944(TestCase):
         self.SORPING_GTC_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_GTC_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algopolicy, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ComplianceID='FX5', AlgoOrderStrategy='2146849719'))
 
-        responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_GTC_order, case_id_1)
-        parent_lit_dark_order_id = list(responce[0].get_parameter('ExecID'))
-        parent_lit_dark_order_id[-1] = '2'
-        multilisted_algo_child_order_id = ''.join(parent_lit_dark_order_id)
-        parent_lit_dark_order_id[-1] = '3'
-        time_in_force_algo_child_order_id = ''.join(parent_lit_dark_order_id)
+        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_GTC_order, case_id_1)
 
         time.sleep(3)
         # endregion
@@ -161,21 +156,21 @@ class QAP_T4944(TestCase):
         time.sleep(70)
 
         execution_report_1 = {
-            "OrderId": parent_lit_dark_order_id,
+            "OrderId": '*',
             "PrimaryListingID": self.listing_id_xams,
         }
 
         execution_report_2 = {
-            "OrderId": multilisted_algo_child_order_id,
+            "OrderId": '*',
             "PrimaryListingID": self.listing_id_xams,
         }
 
         execution_report_3 = {
-            "OrderId": time_in_force_algo_child_order_id,
+            "OrderId": '*',
             "PrimaryListingID": self.listing_id_xams,
         }
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message_sequence([execution_report_1, execution_report_2, execution_report_3], [self.key_params_read_log, self.key_params_read_log, self.key_params_read_log], pre_filter=self.pre_filter)
+        self.read_log_verifier.check_read_log_message_sequence([execution_report_1, execution_report_2, execution_report_3], [None, None, None], pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
