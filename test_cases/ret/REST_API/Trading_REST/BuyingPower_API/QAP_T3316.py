@@ -16,7 +16,7 @@ from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormula
 from test_framework.rest_api_wrappers.utils.booked_amount_verifier import booked_amount_validation
 
 
-class QAP_T8217(TestCase):
+class QAP_T3316(TestCase):
     def __init__(self, report_id, data_set: BaseDataSet, environment):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], report_id)
