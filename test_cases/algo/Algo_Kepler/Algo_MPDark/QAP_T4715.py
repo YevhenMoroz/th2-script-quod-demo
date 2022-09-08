@@ -202,10 +202,6 @@ class QAP_T4715(TestCase):
 
         compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_skips_lis_phase()
 
-        execution_report = {
-            "OrderID": '*',
-            "Text": 'skipping LIS phase'
-        }
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
