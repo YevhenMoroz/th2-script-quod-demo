@@ -51,3 +51,23 @@ class ReadLogMessageAlgo(ReadLogMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_compare_message_for_check_party_info(self) -> ReadLogMessage:
+        base_parameters = {
+            "PartyID": "TestCLIENTACCOUNT",
+            "MiscNumber": "OrdrMisc0",
+            "OrdrMisc": "TestCLIENTACCOUNT",
+            "ClOrdID": '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_updating_status(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*",
+            "OldStatus": "Open",
+            "NewStatus": "Cancelled"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
