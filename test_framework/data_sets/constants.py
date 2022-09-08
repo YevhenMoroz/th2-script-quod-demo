@@ -192,6 +192,14 @@ class OrderSide(Enum):
     Sell = 2
 
 
+class AlgoCurrencyRate(Enum):
+    eur_to_sek = "9.960000000"
+
+
+class Venues(Enum):
+    chixlis = "CHIXLIS"
+
+
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
     log_319_cancel_child = "log319-cancel-child"
