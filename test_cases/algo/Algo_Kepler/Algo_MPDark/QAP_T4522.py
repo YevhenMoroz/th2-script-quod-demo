@@ -8,15 +8,16 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
-from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
-from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_T4522(TestCase):
@@ -26,7 +27,6 @@ class QAP_T4522(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
         self.fix_env1 = self.environment.get_list_fix_environment()[0]
-        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
 
         # region th2 components
         self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
@@ -38,6 +38,7 @@ class QAP_T4522(TestCase):
         # region order parameters
         self.qty = 100
         self.price = 15
+        self.pre_trade_lis_amount = 200000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_2.value
         self.weight_chix = 6
         self.weight_bats = 4
@@ -83,10 +84,16 @@ class QAP_T4522(TestCase):
         # region Read log verifier params
         self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_the_currency_rate.value
         self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_the_lis_amount.value
-        self.read_log_verifier_1 = ReadLogVerifier(self.log_verifier_by_name_1, report_id)
-        self.read_log_verifier_2 = ReadLogVerifier(self.log_verifier_by_name_2, report_id)
-        self.key_params_read_log_1 = data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_the_currency_rate")
-        self.key_params_read_log_2 = data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_the_lis_amount")
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.rate = constants.AlgoCurrencyRate.eur_to_sek.value
+        self.amount_1 = str(int(AlgoFormulasManager.get_lis_amount_for_order(self.qty, self.price)))
+        self.result_amount = AlgoFormulasManager.convert_pre_trade_lis_amount_for_another_currency(self.pre_trade_lis_amount, float(self.rate))
+        self.amount_2 = str(format(self.result_amount, '.9f'))
+        self.venue = constants.Venues.chixlis.value
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -127,10 +134,16 @@ class QAP_T4522(TestCase):
         # region Check Read log
         time.sleep(70)
 
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_the_currency_rate()
+        compare_message_1.change_parameters(dict(Currency=self.currency, Rate=self.rate))
+
         execution_report_1 = {
             "Currency": 'SEK',
             "Rate": '9.960000000'
         }
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_the_lis_amount()
+        compare_message_2.change_parameters(dict(Amount1=self.amount_1, Amount2=self.amount_2, Venue=self.venue))
 
         execution_report_2 = {
             "Amount1": '1500',
@@ -138,10 +151,10 @@ class QAP_T4522(TestCase):
             "Venue": 'CHIXLIS'
         }
         self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog 1", self.test_id))
-        self.read_log_verifier_1.check_read_log_message(execution_report_1)
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
 
         self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog 2", self.test_id))
-        self.read_log_verifier_2.check_read_log_message(execution_report_2)
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
         # endregion
 
         # region Check 1 child DMA order on venue CHIX DARKPOOL UK
