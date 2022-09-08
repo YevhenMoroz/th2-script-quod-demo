@@ -53,7 +53,6 @@ class QAP_T4739(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_reject = Status.Reject
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -81,7 +80,7 @@ class QAP_T4739(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
-        self.key_params_ER_reject_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
+        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
         # endregion
 
         self.rule_list = []
@@ -170,9 +169,9 @@ class QAP_T4739(TestCase):
 
         time.sleep(10)
 
-        # region check reject child DMA order on venue ITG
-        er_reject_dma_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_itg_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 3 order on venue ITG")
+        # region check eliminate child DMA order on venue ITG
+        er_eliminate_dma_itg_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_itg_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_itg_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order on venue ITG")
         # endregion
 
         # region check cancel first dma child order on venue CHIX
