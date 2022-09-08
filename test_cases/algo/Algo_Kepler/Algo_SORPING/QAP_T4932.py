@@ -100,6 +100,9 @@ class QAP_T4932(TestCase):
         self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_updating_status")
         # endregion
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_primary_status_of_transaction")
+        self.pre_filter['NewStatus'] = ('Cancelled', "EQUAL")
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -228,7 +231,7 @@ class QAP_T4932(TestCase):
         }
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message_sequence([execution_report, execution_report], [None, None])
+        self.read_log_verifier.check_read_log_message_sequence([execution_report, execution_report], [None, None], pre_filter=self.pre_filter)
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
