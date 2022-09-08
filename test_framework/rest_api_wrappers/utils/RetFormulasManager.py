@@ -234,8 +234,11 @@ class RetFormulasManager:
             cash_component_values = self.get_cash_component_values(test_id, response_wa_cash_account)
             security_values_dict = self.calc_security_value(test_id, response_wa_security_account)
             booked_amount = cash_component_values['bookedAmt']
+            cash_loan = cash_component_values['cashLoaned']
             booked_cash_loan = cash_component_values['bookedCashLoan']
+            temporary_cash = cash_component_values['temporaryCash']
             booked_temporary_cash = cash_component_values['bookedTempCash']
+            collateral_cash = cash_component_values['collateralCash']
             booked_collateral_cash = cash_component_values['bookedCollateralCash']
             applicable_cash_components = cash_component_values['applicableCashComponents']
             reserved_qty = 0
@@ -256,11 +259,13 @@ class RetFormulasManager:
 
             if execution_type == 'Open':
                 total_booked_amount_value = initial_net_order_value / applicable_cash_components
-
                 booked_amount += total_booked_amount_value
-                booked_cash_loan += total_booked_amount_value
-                booked_temporary_cash += total_booked_amount_value
-                booked_collateral_cash += total_booked_amount_value
+                if cash_loan > booked_cash_loan:
+                    booked_cash_loan += total_booked_amount_value
+                if temporary_cash > booked_temporary_cash:
+                    booked_temporary_cash += total_booked_amount_value
+                if collateral_cash > booked_collateral_cash:
+                    booked_collateral_cash += total_booked_amount_value
                 if applicable_cash_components == 5:
                     reserved_qty += total_booked_amount_value
 
@@ -279,9 +284,12 @@ class RetFormulasManager:
                 amended_booked_amount_value = net_order_value_delta / applicable_cash_components
                 if amended_booked_amount_value > 0 and buying_power >= net_order_value_delta:
                     booked_amount += amended_booked_amount_value
-                    booked_cash_loan += amended_booked_amount_value
-                    booked_temporary_cash += amended_booked_amount_value
-                    booked_collateral_cash += amended_booked_amount_value
+                    if cash_loan > booked_cash_loan:
+                        booked_cash_loan += amended_booked_amount_value
+                    if temporary_cash > booked_temporary_cash:
+                        booked_temporary_cash += amended_booked_amount_value
+                    if collateral_cash > booked_collateral_cash:
+                        booked_collateral_cash += amended_booked_amount_value
                     if applicable_cash_components == 5:
                         reserved_qty += amended_booked_amount_value
                     return {
@@ -294,9 +302,12 @@ class RetFormulasManager:
                     }
                 elif amended_booked_amount_value < 0:
                     booked_amount -= abs(amended_booked_amount_value)
-                    booked_cash_loan -= abs(amended_booked_amount_value)
-                    booked_temporary_cash -= abs(amended_booked_amount_value)
-                    booked_collateral_cash -= abs(amended_booked_amount_value)
+                    if cash_loan > booked_cash_loan:
+                        booked_cash_loan -= abs(amended_booked_amount_value)
+                    if temporary_cash > booked_temporary_cash:
+                        booked_temporary_cash -= abs(amended_booked_amount_value)
+                    if collateral_cash > booked_collateral_cash:
+                        booked_collateral_cash -= abs(amended_booked_amount_value)
                     if applicable_cash_components == 5:
                         reserved_qty -= abs(amended_booked_amount_value)
                     return {
@@ -308,12 +319,33 @@ class RetFormulasManager:
                         'amendedBookedAmount': amended_booked_amount_value
                     }
 
+            if execution_type == 'Cancelled':
+                total_booked_amount_value = initial_net_order_value / applicable_cash_components
+                booked_amount -= total_booked_amount_value
+                if cash_loan > booked_cash_loan:
+                    booked_cash_loan -= total_booked_amount_value
+                if temporary_cash > booked_temporary_cash:
+                    booked_temporary_cash -= total_booked_amount_value
+                if collateral_cash > booked_collateral_cash:
+                    booked_collateral_cash -= total_booked_amount_value
+                if applicable_cash_components == 5:
+                    reserved_qty -= total_booked_amount_value
+
+                return {
+                    'bookedAmt': booked_amount,
+                    'bookedCashLoan': booked_cash_loan,
+                    'bookedTempCash': booked_temporary_cash,
+                    'bookedCollateralCash': booked_collateral_cash,
+                    'reservedQty': reserved_qty,
+                    'totalBookedAmount': total_booked_amount_value
+                }
+
         except(ValueError, IndexError, TypeError, ZeroDivisionError):
             bca.create_event(f'Booked Amount was not calculated. (Side=Buy)', status='FAILED', parent_id=test_id)
             logging.error("Error parsing", exc_info=True)
 
     def calc_booked_amount_sell_side(self, test_id, response_wa_cash_account, response_wa_security_account, fee,
-                                     commission, position_type='N'):
+                                     commission, execution_type, position_type='N'):
         try:
             cash_component_values = self.get_cash_component_values(test_id, response_wa_cash_account)
             security_values_dict = self.calc_security_value(test_id, response_wa_security_account)
@@ -330,14 +362,24 @@ class RetFormulasManager:
             if position_type == 'S':
                 reserved_qty = round(security_values_dict['reservedQtyShort'], 3)
 
-            booked_amount += fee + commission
-            return {
-                booked_amount,
-                booked_cash_loan,
-                booked_temporary_cash,
-                booked_collateral_cash,
-                reserved_qty
-            }
+            if execution_type == 'Open':
+                booked_amount += fee + commission
+                return {
+                    'bookedAmt': booked_amount,
+                    'bookedCashLoan': booked_cash_loan,
+                    'bookedTempCash': booked_temporary_cash,
+                    'bookedCollateralCash': booked_collateral_cash,
+                    'reservedQty': reserved_qty
+                }
+            if execution_type == 'Cancelled':
+                booked_amount -= fee + commission
+                return {
+                    'bookedAmt': booked_amount,
+                    'bookedCashLoan': booked_cash_loan,
+                    'bookedTempCash': booked_temporary_cash,
+                    'bookedCollateralCash': booked_collateral_cash,
+                    'reservedQty': reserved_qty
+                }
 
         except(ValueError, IndexError, TypeError):
             bca.create_event(f'Booked Amount was not calculated. (Side=Sell)', status='FAILED', parent_id=test_id)
