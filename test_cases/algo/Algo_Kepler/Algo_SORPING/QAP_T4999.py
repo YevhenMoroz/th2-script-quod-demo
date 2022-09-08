@@ -14,7 +14,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4999(TestCase):
@@ -78,8 +79,14 @@ class QAP_T4999(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_party_info.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_party_info")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.party_id = constants.PartyID.party_id_4.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_1.value
+        self.party_role = constants.PartyRole.party_role_55.value
+        self.misc_number = constants.MiscNumber.ordr_misc_6.value
         # endregion
 
         self.rule_list = []
@@ -124,14 +131,11 @@ class QAP_T4999(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "PartyID": "TestINITIATOR-UTI",
-            "MiscNumber": "OrdrMisc6",
-            "OrdrMisc": "TestINITIATOR-UTI",
-            "ClOrdID": self.ClOrdId
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
+        compare_message.change_parameters(dict(PartyID=self.party_id, MiscNumber=self.misc_number, OrdrMisc=self.party_id, ClOrdID=self.ClOrdId))
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Sell side
