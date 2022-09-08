@@ -7,9 +7,13 @@ from test_framework.read_log_wrappers.ReadLogMessage import ReadLogMessage
 from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
-class ReadLogVerifierAlgo(ReadLogVerifier):
+class ReadLogVerifierAlgo:
     def __init__(self, session_alias, case_id=None):
-        super().__init__(session_alias=session_alias, case_id=case_id)
+        self.__verifier = Stubs.verifier
+        self.__session_alias = session_alias
+        self.__case_id = case_id
+        self.__checkpoint = self.__verifier.createCheckpoint(
+            basic_custom_actions.create_checkpoint_request(self.__case_id)).checkpoint
 
     def get_case_id(self):
         return self.__case_id
