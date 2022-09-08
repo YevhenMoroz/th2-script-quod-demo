@@ -134,6 +134,10 @@ class BaseDataSet:
 
     # endregion
 
+    # region fields added by FEMobileTrading team
+    user_personal_details = None
+    # endregion
+
     def get_instruments(self):
         if self.fix_instruments:
             return self.fix_instruments.__members__
@@ -869,4 +873,11 @@ class BaseDataSet:
         if hasattr(self.venue_list, name):
             return getattr(self.venue_list, name).value
         return ValueError(f"{self.counterpart} not found!")
+    # endregion
+
+    # region FEMobileTrading getters
+    def get_user_personal_details(self, name: str):
+        if hasattr(self.user_personal_details, name):
+            return getattr(self.user_personal_details, name).value
+        return ValueError(f"{self.user_personal_details} not found!")
     # endregion

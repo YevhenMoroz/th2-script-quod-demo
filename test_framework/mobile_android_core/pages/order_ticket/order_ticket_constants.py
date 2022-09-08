@@ -3,6 +3,7 @@ class OrderTicketConstants:
 
     # region OrderTicket label
     ARROW_BACK = '//android.widget.Button[1]'
+    ORDER_TICKET_TITLE = ''
     # endregion
 
     # region Side
