@@ -135,19 +135,9 @@ class QAP_T4522(TestCase):
         compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_the_currency_rate()
         compare_message_1.change_parameters(dict(Currency=self.currency, Rate=self.rate))
 
-        execution_report_1 = {
-            "Currency": 'SEK',
-            "Rate": '9.960000000'
-        }
-
         compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_the_lis_amount()
         compare_message_2.change_parameters(dict(Amount1=self.amount_1, Amount2=self.amount_2, Venue=self.venue))
 
-        execution_report_2 = {
-            "Amount1": '1500',
-            "Amount2": '1992000.000000000',
-            "Venue": 'CHIXLIS'
-        }
         self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog 1", self.test_id))
         self.read_log_verifier_1.check_read_log_message(compare_message_1)
 
