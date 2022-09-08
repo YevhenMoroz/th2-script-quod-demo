@@ -201,6 +201,37 @@ class Venues(Enum):
     paris = "Euronext Paris"
 
 
+class PartyID(Enum):
+    party_id_1 = "TestCLIENTACCOUNT"
+    party_id_2 = "TestClientID"
+    party_id_3 = "TestEXTERNAL-UTI"
+    party_id_4 = "TestINITIATOR-UTI"
+
+
+class PartyIDSource(Enum):
+    party_id_source_1 = "D"
+
+
+class PartyRole(Enum):
+    party_role_3 = "3"
+    party_role_24 = "24"
+    party_role_58 = "58"
+    party_role_55 = "55"
+
+
+class MiscNumber(Enum):
+    ordr_misc_0 = "OrdrMisc0"
+    ordr_misc_6 = "OrdrMisc6"
+    ordr_misc_7 = "OrdrMisc7"
+    ordr_misc_8 = "OrdrMisc8"
+
+
+class TransactionStatus(Enum):
+    new = "New"
+    open = "Open"
+    canceled = "Cancelled"
+
+
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
     log_319_cancel_child = "log319-cancel-child"
