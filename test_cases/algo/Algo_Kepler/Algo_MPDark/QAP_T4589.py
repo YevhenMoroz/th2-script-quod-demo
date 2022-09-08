@@ -44,7 +44,7 @@ class QAP_T4589(TestCase):
         self.weight_chix = 6
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats)
         self.qty_chix_child2, self.qty_bats_child2 = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty - self.qty_bats_child, None, self.weight_chix, self.weight_bats)
-        self.qty_after_trade = self.qty - self.qty_bats_child
+        self.qty_after_trade = self.qty - self.trade_qty
         # endregion
 
         # region Gateway Side
@@ -184,46 +184,16 @@ class QAP_T4589(TestCase):
         # endregion
 
         # region MO partial filled
-        self.fix_verifier_buy.set_case_id(bca.create_event("Full fill dark order on BATS DARK", self.test_id))
-        er_filled_batsdark = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order,side=GatewaySide.Buy, status=Status.Fill)
-        self.fix_verifier_buy.check_fix_message(er_filled_batsdark, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
+        self.fix_verifier_buy.set_case_id(bca.create_event("Partial fill dark order on BATS DARK", self.test_id))
+        er_part_filled_batsdark = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, side=GatewaySide.Buy, status=Status.PartialFill)
+        self.fix_verifier_buy.check_fix_message(er_part_filled_batsdark, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PartFill Child order')
         # endregion
 
-        # region check cancel second dma child order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Dark venue order on CHIXDELTA canceled", self.test_id))
-        er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
-        # endregion
 
-        # region dark orders sended on market
-        self.fix_verifier_buy.set_case_id(bca.create_event("After trade on dark venue algo generate new dark childs", self.test_id))
-        # CHIXDELTA
-        self.dma_chix_order2 = deepcopy(self.dma_chix_order).change_parameter("OrderQty", self.qty_chix_child2)
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
-        er_pending_new_dma_chix_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_chix_order_params2.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on chix_delta')
 
-        er_new_dma_chix_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_new)
-        er_new_dma_chix_order_params2.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
-
-        # BATSDARK
-        self.dma_bats_order2 = deepcopy(self.dma_bats_order).change_parameter("OrderQty", self.qty_bats_child2)
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
-
-        er_pending_new_dma_bats_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_bats_order_params2.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on bats_dark')
-
-        er_new_dma_bats_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_bats_order_params2.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child on bats_dark')
-        # endregion
         # region chixlist rfq accepted
-        case_id_3 = bca.create_event("RFQ accepted on CHIXLIS", self.test_id)
-        self.fix_verifier_buy.set_case_id(case_id_3)
+        self.fix_verifier_buy.set_case_id(bca.create_event("RFQ accepted on CHIXLIS", self.test_id))
 
         er_rfq_new = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
         self.fix_verifier_buy.check_fix_message(er_rfq_new, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
@@ -232,6 +202,17 @@ class QAP_T4589(TestCase):
         self.fix_verifier_buy.check_fix_message(er_rfq_restated, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
 
         # endregion
+
+
+        # region check cancel second dma child order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Dark venue orders canceled", self.test_id))
+        er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
+
+        er_cancel_bats_dark = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_bats_dark, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on bats_dark")
+        # endregion
+
         # region quote canceled on TRQX
         case_id_4 = bca.create_event("RFQ cancel on TRQX", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_4)
@@ -260,15 +241,6 @@ class QAP_T4589(TestCase):
         er_new_dma_2_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_new)
         er_new_dma_2_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chixlis))
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order')
-
-        # region check cancel second dma child order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Second 2 Dark venue order canceled", self.test_id))
-        er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
-
-        er_cancel_bats_dark_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order2, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_bats_dark_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on bats_dark")
-        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
