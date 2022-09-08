@@ -1,140 +1,127 @@
 import os
 
 from custom import basic_custom_actions as bca
-from test_framework.old_wrappers.ret_wrappers import verifier
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
+from test_framework.core.test_case import TestCase
+from test_framework.rest_api_wrappers.web_admin_api.Users_API.RestApiUserMessages import RestApiUserMessages
+from test_framework.rest_api_wrappers.web_admin_api.Site_API.RestApiInstitutionMessages import \
+    RestApiInstitutionMessages
+from test_framework.rest_api_wrappers.web_admin_api.Site_API.RestApiZoneMessages import RestApiZoneMessages
+from test_framework.rest_api_wrappers.web_admin_api.Site_API.RestApiLocationMessages import RestApiLocationMessages
+from test_framework.rest_api_wrappers.web_admin_api.Site_API.RestApiDeskMessages import RestApiDeskMessages
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
+from test_framework.rest_api_wrappers.utils.hierarchical_level_updater import hierarchical_level_updater
 
 
-def execute(report_id):
-    case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
+class QAP_T3583(TestCase):
+    def __init__(self, report_id, data_set: BaseDataSet, environment):
+        super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], report_id)
+        self.session_alias_wa_site = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.session_alias_wa_test = self.environment.get_list_web_admin_rest_api_environment()[1].session_alias_wa
+        self.wa_api_manager_site = WebAdminRestApiManager(session_alias=self.session_alias_wa_site,
+                                                          case_id=self.test_id)
+        self.wa_api_manager_test = WebAdminRestApiManager(session_alias=self.session_alias_wa_test,
+                                                          case_id=self.test_id)
+        self.user_message = RestApiUserMessages(data_set=data_set)
+        self.institution_message = RestApiInstitutionMessages(data_set=data_set)
+        self.zone_message = RestApiZoneMessages(data_set=data_set)
+        self.location_message = RestApiLocationMessages(data_set=data_set)
+        self.desk_message = RestApiDeskMessages(data_set=data_set)
+        self.test_user = self.data_set.get_web_admin_rest_api_users_by_name('web_admin_rest_api_user_2')
+        self.hierarchical_level_test = self.data_set.get_hierarchical_level_by_name('hierarchical_level_2')
+        self.institution_id = self.hierarchical_level_test['institutionID']
+        self.zone_id = self.hierarchical_level_test['zoneID']
+        self.location_id = self.hierarchical_level_test['locationID']
+        self.desk_id = self.hierarchical_level_test['deskID']
+        self.user_desk = 'user_desk'
 
-    # for this connection used - site_adm_rest user
-    api_message_site_adm = RestApiMessages()
-    api_manager_site_adm = RestApiManager(session_alias='rest_wa315luna_site_admin', case_id=case_id)
+    @try_except(test_id=os.path.basename(__file__)[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Pre-Condition, set hierarchical level - Institution for test user and check result
+        self.user_message.find_user(user_id=self.test_user)
+        test_api_user = self.wa_api_manager_site.parse_response_details(
+            response=self.wa_api_manager_site.send_get_request_with_parameters(self.user_message))
 
-    # for this connection used - adm_rest user
-    api_message_tested_user = RestApiMessages()
-    api_manager_tested_user = RestApiManager(session_alias='rest_wa315luna', case_id=case_id)
+        new_user_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=test_api_user,
+                                                         new_hierarchical_assignment=self.institution_id)
+        self.user_message.modify_user(custom_params=new_user_parameters)
+        self.wa_api_manager_site.send_post_request(self.user_message)
 
-    # region Set hierarchy level - Test_Institution(id=3) - step 2
-    institution_params = {
+        self.user_message.find_user(user_id=self.test_user)
+        test_api_user_pre_condition = self.wa_api_manager_site.parse_response_details(
+            response=self.wa_api_manager_site.send_get_request_with_parameters(self.user_message))
+        data_validation(test_id=self.test_id,
+                        event_name=f"Check that hierarchical level - 'Institution(id=3)' was set for '{self.test_user}' user.",
+                        expected_result=self.institution_id['institutionID'],
+                        actual_result=int(test_api_user_pre_condition[0]['institutionID']))
+        # endregion
 
-        "userConfirmFollowUp": "false",
-        "userID": "adm_rest",
-        "useOneTimePasswd": "false",
-        "pingRequired": "false",
-        "generatePassword": "false",
-        "generatePINCode": "false",
-        "headOfDesk": "false",
-        "institutionID": 3
-    }
-    api_message_site_adm.modify_user(institution_params)
-    api_manager_site_adm.send_post_request(api_message_site_adm)
+        # region step 2, Check that user with hierarchical leve - Institution can set Institution level for the user from same hierarchy
+        self.user_message.find_user(user_id=self.user_desk)
+        user_desk = self.wa_api_manager_test.parse_response_details(
+            response=self.wa_api_manager_test.send_get_request(self.user_message))
+        new_user_institution_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_desk,
+                                                                     new_hierarchical_assignment=self.institution_id)
+        self.user_message.modify_user(custom_params=new_user_institution_parameters)
+        self.wa_api_manager_test.send_post_request(self.user_message)
 
-    # region Send Get request and verify result
-    api_message_tested_user.find_all_user()
-    user_params = api_manager_tested_user.get_response_details(
-        response=api_manager_tested_user.send_get_request(api_message_tested_user),
-        response_name="UserResponse",
-        expected_entity_name="adm_rest",
-        entity_field_id="userID")
+        self.user_message.find_user(user_id=self.user_desk)
+        user_institution = self.wa_api_manager_test.parse_response_details(
+            response=self.wa_api_manager_test.send_get_request(self.user_message))
+        data_validation(test_id=self.test_id,
+                        event_name="Check that user with hierarchical leve - Institution"
+                                   " can set Institution level for the user from same hierarchy.",
+                        expected_result=self.institution_id['institutionID'],
+                        actual_result=int(user_institution[0]['institutionID']))
+        # endregion
 
-    verifier(case_id=case_id,
-             event_name="Check User HierarchicalLevel after change on institutionID=3",
-             expected_value="3",
-             actual_value=user_params["institutionID"].simple_value)
-    # endregion
+        # region step 3 Check that user with hierarchical leve - Institution can set Zone level for the user from same hierarchy
+        new_user_zone_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_institution,
+                                                              new_hierarchical_assignment=self.zone_id)
+        self.user_message.modify_user(custom_params=new_user_zone_parameters)
+        self.wa_api_manager_test.send_post_request(self.user_message)
 
-    # region Set hierarchy level - Test_Zone(id=6) - step 3
-    zone_params = {
+        self.user_message.find_user(user_id=self.user_desk)
+        user_zone = self.wa_api_manager_test.parse_response_details(
+            response=self.wa_api_manager_test.send_get_request(self.user_message))
+        data_validation(test_id=self.test_id,
+                        event_name="Check that user with hierarchical leve - Institution"
+                                   " can set Zone level for the user from same hierarchy.",
+                        expected_result=self.zone_id['zoneID'],
+                        actual_result=int(user_zone[0]['zoneID']))
+        # endregion
 
-        "userConfirmFollowUp": "false",
-        "userID": "adm_rest",
-        "useOneTimePasswd": "false",
-        "pingRequired": "false",
-        "generatePassword": "false",
-        "generatePINCode": "false",
-        "headOfDesk": "false",
-        "zoneID": 6
-    }
-    api_message_site_adm.modify_user(zone_params)
-    api_manager_site_adm.send_post_request(api_message_site_adm)
+        # region step 4, Check that user with hierarchical leve - Institution can set Location level for the user from same hierarchy
+        new_user_location_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_zone,
+                                                                  new_hierarchical_assignment=self.location_id)
+        self.user_message.modify_user(custom_params=new_user_location_parameters)
+        self.wa_api_manager_test.send_post_request(self.user_message)
 
-    # region Send Get request and verify result
-    api_message_tested_user.find_all_user()
-    user_params = api_manager_tested_user.get_response_details(
-        response=api_manager_tested_user.send_get_request(api_message_tested_user),
-        response_name="UserResponse",
-        expected_entity_name="adm_rest",
-        entity_field_id="userID")
+        self.user_message.find_user(user_id=self.user_desk)
+        user_location = self.wa_api_manager_test.parse_response_details(
+            response=self.wa_api_manager_test.send_get_request(self.user_message))
+        data_validation(test_id=self.test_id,
+                        event_name="Check that user with hierarchical leve - Institution"
+                                   " can set Location level for the user from same hierarchy.",
+                        expected_result=self.location_id['locationID'],
+                        actual_result=int(user_location[0]['locationID']))
+        # endregion
 
-    verifier(case_id=case_id,
-             event_name="Check User HierarchicalLevel after change on zoneID=6",
-             expected_value="6",
-             actual_value=user_params["zoneID"].simple_value)
-    # endregion
+        # region step 5, Check that user with hierarchical leve - Institution can set Desk level for the user from same hierarchy
+        new_user_desk_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_location,
+                                                                  new_hierarchical_assignment=self.desk_id)
+        self.user_message.modify_user(custom_params=new_user_desk_parameters)
+        self.wa_api_manager_test.send_post_request(self.user_message)
 
-    # region Set hierarchy level - Test_Location(id=6) - step 4
-    location_params = {
-
-        "userConfirmFollowUp": "false",
-        "userID": "adm_rest",
-        "useOneTimePasswd": "false",
-        "pingRequired": "false",
-        "generatePassword": "false",
-        "generatePINCode": "false",
-        "headOfDesk": "false",
-        "locationID": 6
-    }
-    api_message_site_adm.modify_user(location_params)
-    api_manager_site_adm.send_post_request(api_message_site_adm)
-
-    # region Send Get request and verify result
-    api_message_tested_user.find_all_user()
-    user_params = api_manager_tested_user.get_response_details(
-        response=api_manager_tested_user.send_get_request(api_message_tested_user),
-        response_name="UserResponse",
-        expected_entity_name="adm_rest",
-        entity_field_id="userID")
-
-    verifier(case_id=case_id,
-             event_name="Check User HierarchicalLevel after change on locationID=6",
-             expected_value="6",
-             actual_value=user_params["locationID"].simple_value)
-    # endregion
-
-    # region Pre-Condition Set hierarchy level - Test_Desk(id=5) - step 5
-    desk_params = {
-
-        "userConfirmFollowUp": "false",
-        "userID": "adm_rest",
-        "useOneTimePasswd": "false",
-        "pingRequired": "false",
-        "generatePassword": "false",
-        "generatePINCode": "false",
-        "headOfDesk": "false",
-        "deskUserRole": [
-            {
-                "deskID": 5
-            }
-        ]
-    }
-    api_message_site_adm.modify_user(desk_params)
-    api_manager_site_adm.send_post_request(api_message_site_adm)
-    # endregion
-
-    # # region Send Get request and verify result
-    api_message_tested_user.find_all_user()
-    user_params = api_manager_tested_user.get_response_details(
-        response=api_manager_tested_user.send_get_request(api_message_tested_user),
-        response_name="UserResponse",
-        expected_entity_name="adm_rest",
-        entity_field_id="userID")
-
-    verifier(case_id=case_id,
-             event_name="Check User HierarchicalLevel after change on deskID=5",
-             expected_value="5",
-             actual_value=user_params["deskUserRole"].list_value.values[0].message_value.fields["deskID"].simple_value)
-    # endregion
-
+        self.user_message.find_user(user_id=self.user_desk)
+        user_desk = self.wa_api_manager_test.parse_response_details(
+            response=self.wa_api_manager_test.send_get_request(self.user_message))
+        data_validation(test_id=self.test_id,
+                        event_name="Check that user with hierarchical leve - Institution"
+                                   " can set Desk level for the user from same hierarchy.",
+                        expected_result=self.desk_id['deskID']['deskUserRole'][0]['deskID'],
+                        actual_result=int(user_desk[0]['deskUserRole'][0]['deskID']))
+        # endregion

@@ -58,6 +58,7 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    hierarchical_levels = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -187,7 +188,11 @@ class BaseDataSet:
 
     def get_cash_transfer_types(self):
         if self.cash_transfer_types:
-            return self.cash_account_counters.__members__
+            return self.cash_transfer_types.__members__
+
+    def get_hierarchical_levels(self):
+        if self.hierarchical_levels:
+            return self.hierarchical_levels.__members__
 
     def get_trading_api_instrument_by_name(self, name: str):
         if hasattr(self.trading_api_instruments, name):
@@ -253,6 +258,11 @@ class BaseDataSet:
         if hasattr(self.cash_transfer_types, name):
             return getattr(self.cash_transfer_types, name).value
         raise ValueError(f"{self.cash_transfer_types} not found!")
+
+    def get_hierarchical_level_by_name(self, name: str):
+        if hasattr(self.hierarchical_levels, name):
+            return getattr(self.hierarchical_levels, name).value
+        raise ValueError(f"{self.hierarchical_levels} not found!")
 
     def get_listing_id_by_name(self, name: str):
         if hasattr(self.listing_id, name):

@@ -26,8 +26,8 @@ class RetTradingApiInstruments(Enum):
         SecurityExchange="XNSE"
     )
     instrument_4 = dict(
-        InstrSymbol="SBIN-EQ[NSE]",
-        SecurityID="3045",
+        InstrSymbol="VALECHAENG-EQ[NSE]",
+        SecurityID="13555",
         SecurityIDSource="ExchSymb",
         InstrType="Equity",
         SecurityExchange="XNSE"
@@ -49,6 +49,8 @@ class RetInstrumentID(Enum):
     instrument_id_2 = "ePKRr68Nr7pDFdVkx6amaQ"
     # SBIN-EQ[NSE]
     instrument_id_3 = "0ihdikxdDxvmz9PFjLsDRw"
+    # VALECHAENG-EQ[NSE]
+    instrument_id_4 = "gVZuHbpY32wstjJNQ18MvA"
 
 
 class RetCurrency(Enum):
@@ -153,6 +155,21 @@ class RetCashTransferTypes(Enum):
         temporary_cash="TCD",
         temporary_cash_withdrawal="TCW",
         withdrawal="WDR"
+    )
+
+
+class RetHierarchicalLevels(Enum):
+    hierarchical_level_1 = dict(
+        institutionID={'institutionID': 1},
+        zoneID={'zoneID': 1},
+        locationID={'location': 1},
+        deskID={'deskUserRole': [{'deskID': 1}]}
+    )
+    hierarchical_level_2 = dict(
+        institutionID={'institutionID': 3},
+        zoneID={'zoneID': 6},
+        locationID={'location': 6},
+        deskID={'deskUserRole': [{'deskID': 5}]}
     )
 
 
