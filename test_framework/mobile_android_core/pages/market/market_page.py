@@ -8,6 +8,8 @@ class MarketPage(CommonPage):
         super().__init__(driver)
 
     # region market
+    def click_on_menu(self):
+        self.find_by_xpath(MarketConstants.MENU_BUTTON).click()
 
     def click_market_plus_button(self, count=1):
         self.tap_by_coordinates(MarketConstants.MARKET_PLUS_BUTTON_X, MarketConstants.MARKET_PLUS_BUTTON_Y, count)
@@ -16,7 +18,7 @@ class MarketPage(CommonPage):
         pass
 
     def click_watchlist(self, name):
-        self.get_watchlist_name(name).click()
+        self.get_watchlist_xpath(name).click()
 
     def click_search_field(self):
         self.find_by_xpath(MarketConstants.MARKET_SEARCH_FIELD).click()
@@ -34,18 +36,18 @@ class MarketPage(CommonPage):
         pass
 
     def click_instrument_by_search_result(self, name):
-        self.get_instrument_by_xpath(name).click()
+        self.get_instrument_element_by_name(name).click()
+
+    def get_watchlist_element_by_name(self, name):
+        return self.find_by_xpath(self.get_watchlist_xpath(name))
 
     def get_watchlist_xpath(self, name):
-        return self.find_by_xpath(self.get_watchlist_name(name))
-
-    def get_watchlist_name(self, name):
         return MarketConstants.WATCHLIST_NAME_START + name + MarketConstants.WATCHLIST_NAME_END
 
-    def get_instrument_by_xpath(self, name):
-        return self.find_by_xpath(self.get_instrument_name(name))
+    def get_instrument_element_by_name(self, name):
+        return self.find_by_xpath(self.get_instrument_xpath(name))
 
-    def get_instrument_name(self, name):
+    def get_instrument_xpath(self, name):
         return MarketConstants.INSTRUMENT_START + name + MarketConstants.INSTRUMENT_END
 
     def add_new_instrument(self, watchlist=None, instrument=''):
@@ -56,15 +58,15 @@ class MarketPage(CommonPage):
         self.click_instrument_by_search_result(instrument)
 
     def reorder_instrument(self, instrument, direction=1):
-        instrument_params = self.get_instrument_by_xpath(instrument).rect
+        instrument_params = self.get_instrument_element_by_name(instrument).rect
         self.reorder_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
                                     instrument_params['y'] + instrument_params['height'] / 2,
                                     instrument_params['x'] + instrument_params['width'] - 1,
                                     instrument_params['y'] + instrument_params['height'] * (direction + 0.5))
 
     def compare_instruments(self, firstInstrument, secondInstrument):
-        firstInstrument_params = self.get_instrument_by_xpath(firstInstrument).rect
-        secondInstrument_params = self.get_instrument_by_xpath(secondInstrument).rect
+        firstInstrument_params = self.get_instrument_element_by_name(firstInstrument).rect
+        secondInstrument_params = self.get_instrument_element_by_name(secondInstrument).rect
         if firstInstrument_params['y'] < secondInstrument_params['y']:
             return f"{firstInstrument} is upper"
         else:
@@ -73,7 +75,7 @@ class MarketPage(CommonPage):
     def delete_instrument_from_watchlist(self, watchlist=None, instrument=''):
         if watchlist != None:
             self.click_watchlist(watchlist)
-        instrument_params = self.get_instrument_by_xpath(instrument).rect
+        instrument_params = self.get_instrument_element_by_name(instrument).rect
         self.swipe_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
                                   instrument_params['y'] + instrument_params['height'] - 1,
                                   instrument_params['x'],
@@ -84,7 +86,7 @@ class MarketPage(CommonPage):
     def swipe_instrument_left(self, watchlist=None, instrument=''):
         if watchlist != None:
             self.click_watchlist(watchlist)
-        instrument_params = self.get_instrument_by_xpath(instrument).rect
+        instrument_params = self.get_instrument_element_by_name(instrument).rect
         self.swipe_by_coordinates(instrument_params['x'] + instrument_params['width'] - 1,
                                   instrument_params['y'] + instrument_params['height'] - 1,
                                   instrument_params['x'],
