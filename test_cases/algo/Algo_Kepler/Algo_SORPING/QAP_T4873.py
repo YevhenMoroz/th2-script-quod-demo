@@ -15,7 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4873(TestCase):
@@ -78,13 +79,16 @@ class QAP_T4873(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
-        self.key_params_read_log = ['OldStatus', 'NewStatus']
         # endregion
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_updating_status.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_updating_status")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.old_status = constants.TransactionStatus.open.value
+        self.new_status = constants.TransactionStatus.canceled.value
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filter_primary_status_of_transaction")
@@ -101,17 +105,17 @@ class QAP_T4873(TestCase):
         # endregion
 
         # region Send_MarketData
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl6)
-
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl7 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl7, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl7.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_qdl7.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl7)
+        # self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        # market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)
+        # market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        # market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl6)
+        #
+        # self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        # market_data_snap_shot_qdl7 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl7, self.fix_env1.feed_handler)
+        # market_data_snap_shot_qdl7.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        # market_data_snap_shot_qdl7.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl7)
 
         time.sleep(3)
         # endregion
@@ -171,14 +175,11 @@ class QAP_T4873(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "OrderId": "*",
-            "OldStatus": "Open",
-            "NewStatus": "Cancelled"
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_updating_status()
+        compare_message.change_parameters(dict(OldStatus=self.old_status, NewStatus=self.new_status))
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message_sequence([execution_report, execution_report, execution_report], [None, None, None], pre_filter=self.pre_filter)
+        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message, compare_message], [None, None, None], pre_filter=self.pre_filter)
         # endregion
 
         er_cancel_SORPING_GTC_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_GTC_order, self.gateway_side_sell, self.status_cancel)
