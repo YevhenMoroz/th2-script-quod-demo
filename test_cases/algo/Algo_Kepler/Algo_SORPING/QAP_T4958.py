@@ -58,7 +58,7 @@ class QAP_T4958(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminate = Status.Eliminate
-        self.status_cancel = Status.Cancel
+        self.status_fill = Status.Fill
         # endregion
 
         # region instrument
@@ -76,14 +76,14 @@ class QAP_T4958(TestCase):
         self.ex_destination_chixdark = self.data_set.get_mic_by_name("mic_5")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.account_chix = self.data_set.get_account_by_name("account_11")
+        self.account_chix = self.data_set.get_account_by_name("account_13")
         self.account_batsdark = self.data_set.get_account_by_name("account_7")
         self.account_chixdark = self.data_set.get_account_by_name("account_8")
         self.listing_id_par = self.data_set.get_listing_id_by_name("listing_6")
-        self.listing_id_chix = self.data_set.get_listing_id_by_name("listing_15")
         self.listing_id_bats = self.data_set.get_listing_id_by_name("listing_32")
         self.listing_id_chix = self.data_set.get_listing_id_by_name("listing_33")
         self.listing_id_janestreet = self.data_set.get_listing_id_by_name("listing_34")
+        self.listing_id_trqx = self.data_set.get_listing_id_by_name("listing_15")
         # endregion
 
         # region Key parameters
@@ -110,10 +110,8 @@ class QAP_T4958(TestCase):
         rule_manager = RuleManager()
         nos_ioc_1_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_batsdark, self.ex_destination_batsdark, False, self.traded_qty, self.price_bid)
         nos_ioc_2_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chixdark, self.ex_destination_chixdark, False, self.traded_qty, self.price_bid)
-        # TODO Passive or aggressive child?
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_chix, True, self.qty, self.price_ask)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_chix, True)
-        self.rule_list = [nos_ioc_1_rule, nos_ioc_2_rule, nos_ioc_rule, ocr_rule]
+        nos_ioc_3_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty, self.price_ask)
+        self.rule_list = [nos_ioc_1_rule, nos_ioc_2_rule, nos_ioc_3_rule]
         # endregion
 
         # region Send_MarkerData
@@ -163,6 +161,15 @@ class QAP_T4958(TestCase):
         market_data_snap_shot_janestreet = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_janestreet, self.fix_env1.feed_handler)
         market_data_snap_shot_janestreet.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_janestreet)
+
+        market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_trqx, self.fix_env1.feed_handler)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
+
+        market_data_snap_shot_trqx = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_trqx, self.fix_env1.feed_handler)
+        market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
 
         time.sleep(3)
         # endregion
@@ -241,36 +248,26 @@ class QAP_T4958(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_chix_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Lit Child DMA order')
 
         er_pending_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix))
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Lit Child DMA order')
 
         er_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix))
         self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+
+        er_fill_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_fill)
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Lit Child DMA order")
+        # endregion
+
+        # region Check fill parent algo order
+        er_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(er_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_4 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_4)
-        cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_4)
-        self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel first dma child order
-        er_cancel_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Lit Child DMA order")
-
-        er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
-
         # region return TradingStatus=T for Paris
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
