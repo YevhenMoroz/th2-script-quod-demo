@@ -36,6 +36,8 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4744 import QAP_T4744
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4745 import QAP_T4745
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4779 import QAP_T4779
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4780 import QAP_T4780
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4781 import QAP_T4781
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4782 import QAP_T4782
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4784 import QAP_T4784
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4785 import QAP_T4785
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4786 import QAP_T4786
@@ -160,6 +162,11 @@ def test_run(parent_id=None, version=None):
         QAP_T4743(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4742(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Cancelation
+        QAP_T4781(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4782(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MP Dark (other)
