@@ -15,7 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4944(TestCase):
@@ -42,13 +43,16 @@ class QAP_T4944(TestCase):
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_multiple_y.value
+        self.party_id = constants.PartyID.party_id_5.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_1.value
+        self.party_role = constants.PartyRole.party_role_12.value
 
         now = datetime.today() - timedelta(hours=3)
         self.ExpireDate=(now + timedelta(days=365)).strftime("%Y%m%d")
 
         self.no_party = [
-            {'PartyID': '12345678', 'PartyIDSource': 'D',
-             'PartyRole': '12'}
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
            ]
         # endregion
 
@@ -88,8 +92,7 @@ class QAP_T4944(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_primary_listing.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_primary_listing")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filter_primary_listing_id")
@@ -155,22 +158,11 @@ class QAP_T4944(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report_1 = {
-            "OrderId": '*',
-            "PrimaryListingID": self.listing_id_xams,
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_primary_listing()
+        compare_message.change_parameters(dict(PrimaryListingID=self.listing_id_xams))
 
-        execution_report_2 = {
-            "OrderId": '*',
-            "PrimaryListingID": self.listing_id_xams,
-        }
-
-        execution_report_3 = {
-            "OrderId": '*',
-            "PrimaryListingID": self.listing_id_xams,
-        }
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message_sequence([execution_report_1, execution_report_2, execution_report_3], [None, None, None], pre_filter=self.pre_filter)
+        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message, compare_message], [None, None, None], pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
