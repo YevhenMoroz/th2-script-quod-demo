@@ -58,6 +58,8 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4996 import QAP_T4996
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4997 import QAP_T4997
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4998 import QAP_T4998
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4999 import QAP_T4999
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8641 import QAP_T8641
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -126,6 +128,7 @@ def test_run(parent_id=None, version=None):
         QAP_T5074(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8641(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
