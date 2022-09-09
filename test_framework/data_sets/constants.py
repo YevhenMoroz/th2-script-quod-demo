@@ -206,14 +206,17 @@ class PartyID(Enum):
     party_id_2 = "TestClientID"
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
+    party_id_5 = "12345678"
 
 
 class PartyIDSource(Enum):
     party_id_source_1 = "D"
+    party_id_source_2 = "P"
 
 
 class PartyRole(Enum):
     party_role_3 = "3"
+    party_role_12 = "12"
     party_role_24 = "24"
     party_role_58 = "58"
     party_role_55 = "55"

@@ -71,3 +71,11 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_primary_listing(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*",
+            "PrimaryListingID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
