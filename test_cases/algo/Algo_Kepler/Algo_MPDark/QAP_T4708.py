@@ -65,6 +65,7 @@ class QAP_T4708(TestCase):
         # region venue param
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
         self.ex_destination_trql = self.data_set.get_mic_by_name("mic_13")
+        self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         self.client = self.data_set.get_client_by_name("client_4")
         # endregion
 
@@ -87,10 +88,10 @@ class QAP_T4708(TestCase):
         # region Rule creation
         rule_manager = RuleManager()
         rfq_1_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
-        rfq_2_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty, self.qty, self.new_reply, self.restated_reply)
+        rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
         nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price, self.price, self.qty, self.qty, self.delay)
-        self.rule_list = [rfq_1_rule, rfq_2_rule, nos_rule, nos_trade_rule]
+        self.rule_list = [rfq_1_rule, rfq_cancel_rule, nos_rule, nos_trade_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -140,7 +141,15 @@ class QAP_T4708(TestCase):
         # endregion
 
         # region quote canceled on TRQX
+        case_id_4 = bca.create_event("RFQ cancel on TRQX", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_4)
+
         ocr_rfq_canceled = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
+        self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled, key_parameters=self.key_params_NOS_child, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
+
+        # TRQX accepted cancel rfq
+        er_rfq_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
+        self.fix_verifier_buy.check_fix_message(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
         # endregion
 
         # region MO on Venue ChixLis
