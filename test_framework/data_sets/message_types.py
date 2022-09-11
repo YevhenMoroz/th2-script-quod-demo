@@ -37,6 +37,13 @@ class ORSMessageType(Enum):
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
     AllocationInstruction = 'Order_AllocationInstruction'
+    OrdUpdate = 'Order_OrdUpdate'
+    AllocationReport = 'Order_AllocationReport'
+    Confirmation = 'Order_Confirmation'
+    ConfirmationReport = 'Order_ConfirmationReport'
+    ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
+    ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
+    CDNotifDealer = 'Order_CDNotifDealer'
 
 
 class TradingRestApiMessageType(Enum):
