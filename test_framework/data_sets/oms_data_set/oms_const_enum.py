@@ -42,10 +42,14 @@ class OmsFixInstruments(Enum):
 
 class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
+    instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
+    instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
 
 
 class OmsListingId(Enum):
     listing_1 = "1200"
+    listing_2 = '9500000049'
+    listing_3 = "704"
 
 
 class OmsVenues(Enum):
@@ -58,6 +62,7 @@ class OmsLookupForVenues(Enum):
     """USED FOR CREATING ORDER VIA FE"""
     lookup_1 = 'VETO'
     lookup_2 = 'DNX'
+    lookup_for_listing_eurex_web_admin = 'EUR[EUREX]'
 
 
 class OmsClients(Enum):
@@ -407,6 +412,7 @@ class OMSWashBookRule(Enum):
     RuleForTest = 200004
     name_washbook_rule = 'washbook1'
 
+
 class VenueAccountIDSource(Enum):
     oth = 'OTH'
 
@@ -453,9 +459,21 @@ class OMSClearingAccountTypes(Enum):
     institutional = 'INS'
 
 
-class OMSClientListIDForCommission(Enum):
-    client_list_comm = 400006
-
-
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+
+
+class OMSISINSecurityAltIDs(Enum):
+    isin_security_alt_id_isi_3 = 'IS0000000001'
+
+
+class OMSSecurityIDSourceForListings(Enum):
+    security_id_source = "ISI"
+
+
+class OMS_SymbolForListingsFromWebAdmin(Enum):
+    symbol_1 = "EUR"
+
+
+class OMSTickSizeProfile(Enum):
+    tick_size_profile_1 = 3
