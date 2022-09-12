@@ -40,7 +40,7 @@ class ExtractPositionsDetails:
             if 'DAILY_PL' in FieldForExtraction.__members__:
                 self.__position_details.panelFields.append(eval(f'risk_management_pb2.{field}'))
             else:
-                raise ValueError('You go fuck yourself')
+                raise ValueError('Error message')
 
     def build(self):
         return self.__position_details

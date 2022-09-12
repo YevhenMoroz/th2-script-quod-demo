@@ -13,7 +13,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status):
+                                         status: Status = Status.Fill):
 
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
@@ -27,6 +27,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
 
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
+            Account="*",
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty=new_order_single.get_parameter("OrderQty"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -44,6 +45,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             TradeReportingIndicator="*",
             TransactTime="*",
             LastSpotRate="*",
+            LastMkt="*",
             AvgPx="*",
             ExecID="*",
             LastPx="*",
@@ -93,6 +95,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             TradeReportingIndicator="*",
             TransactTime="*",
             LastSpotRate="*",
+            LastMkt="*",
             AvgPx="*",
             ExecID="*",
             LastPx="*",
@@ -137,6 +140,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
+            Account="*",
             LastMkt="*",
             OrdStatus="8",
             TransactTime="*",

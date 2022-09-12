@@ -11,7 +11,7 @@ class CommonConstants:
     CONFIRM_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH = "//*[@formcontrolname='confirmNewPassword']"
     CHANGE_PASSWORD_BUTTON_AT_LOGIN_PAGE_XPATH = '//button[text()=" Change password "]'
     BACK_BUTTON_AT_LOGIN_PAGE_XPATH = '//a[text()="Back"]'
-    HELP_ICON_XPATH = '//*[@icon="question-mark-circle-outline"]//*[@class="icon-container ng-star-inserted"]'
+    HELP_ICON_XPATH = '//*[@nbtooltip="Help"]'
     HELP_ICON_AT_LOGIN_PAGE_XPATH = '//*[@icon="question-mark-circle-outline"]'
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     USER_NAME_XPATH = '//*[@class="logged-in-user ng-star-inserted"]'

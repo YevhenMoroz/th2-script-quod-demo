@@ -105,6 +105,9 @@ class BaseOrderBook(BaseWindow):
         self.hot_keys_action_call = None
         self.force_cancel_order_call = None
         self.force_cancel_order_details = None
+        self.mark_reviewed_call = None
+        self.mark_unreviewed_call = None
+
     # endregion
 
     # region Common func
@@ -292,7 +295,7 @@ class BaseOrderBook(BaseWindow):
         self.clear_details([self.cancel_order_details])
 
     def force_cancel_order(self, cancel_children: bool = None, row_count: int = None, comment=None,
-                     filter_list: list = None):
+                           filter_list: list = None):
         if cancel_children is not None:
             self.force_cancel_order_details.set_cancel_children(cancel_children)
         if row_count is not None:
@@ -323,6 +326,7 @@ class BaseOrderBook(BaseWindow):
             self.transfer_pool_details.confirm_ticket_accept()
         else:
             self.transfer_pool_details.cancel_ticket_reject()
+        self.internal_transfer_action.add_transfer_pool_details(self.transfer_pool_details)
         call(self.transfer_pool_call, self.internal_transfer_action.build())
         self.clear_details([self.transfer_pool_details])
 
@@ -497,7 +501,8 @@ class BaseOrderBook(BaseWindow):
         return result
 
     def house_fill(self, qty=None, price=None, execution_firm=None, contra_firm=None,
-                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None):
+                   last_capacity=None, settl_date: int = None, error_expected=False, filter_dict: dict = None,
+                   source_account=None):
         execution_details = self.manual_executing_details.add_executions_details()
         if qty is not None:
             execution_details.set_quantity(qty)
@@ -513,6 +518,8 @@ class BaseOrderBook(BaseWindow):
             execution_details.set_last_capacity(last_capacity)
         if error_expected is True:
             self.manual_executing_details.set_error_expected(error_expected)
+        if source_account:
+            execution_details.set_source_account(source_account)
         if filter_dict is not None:
             self.manual_executing_details.set_filter(filter_dict)
         result = call(self.house_fill_call, self.manual_executing_details.build())
@@ -548,7 +555,8 @@ class BaseOrderBook(BaseWindow):
     Method extracting values from Booking Ticket
     '''
 
-    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict, count_of_rows: int = 1):
+    def extracting_values_from_booking_ticket(self, panel_of_extraction: list, filter_dict: dict,
+                                              count_of_rows: int = 1):
         self.extraction_panel_details = ExtractionPanelDetails(self.base_request,
                                                                filter_dict,
                                                                panel_of_extraction,
@@ -816,3 +824,15 @@ class BaseOrderBook(BaseWindow):
         self.hot_keys_details.set_enter_hotkey()
         call(self.hot_keys_action_call, self.hot_keys_details.build())
         self.clear_details([self.hot_keys_details])
+
+    def mark_reviewed(self, filter_list=None):
+        if filter_list is not None:
+            self.base_order_details.set_filter(filter_list)
+        call(self.mark_reviewed_call, self.base_order_details.build())
+        self.clear_details([self.base_order_details])
+
+    def mark_unreviewed(self, filter_list=None):
+        if filter_list is not None:
+            self.base_order_details.set_filter(filter_list)
+        call(self.mark_unreviewed_call, self.base_order_details.build())
+        self.clear_details([self.base_order_details])

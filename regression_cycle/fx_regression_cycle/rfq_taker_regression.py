@@ -78,8 +78,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('RFQ Taker regression', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_Taker_RFQ" if version is None else f"FX_Taker_RFQ | {version}", parent_id)
     session_id = set_session_id(target_server_win="ostronov")
     configuration = ComponentConfiguration("RFQ_Taker")
     try:

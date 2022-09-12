@@ -97,6 +97,8 @@ class OrderBookColumns(Enum):
     exec_type = "ExecType"
     nin = "NIN"
     custodian = "Custodian"
+    reviewed = "Reviewed"
+    recipient = "Recpt"
     # endregion
 
 

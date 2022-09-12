@@ -30,6 +30,7 @@ class Connectivity(Enum):
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
+    Luna_314_ja = "314_java_api"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -151,6 +152,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_6 = "QA_Auto_MPDark6"
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
+    qa_mpdark_11 = "QA_Auto_MPDark11"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -158,6 +160,8 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_4 = "QA_Auto_SORPING_4"
     qa_sorping_5 = "QA_Auto_SORPING_5"
     qa_sorping_6 = "QA_Auto_SORPING_6"
+    qa_sorping_7 = "QA_Auto_SORPING_7"
+    qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 
@@ -169,9 +173,34 @@ class OrderType(Enum):
     StopLimit = 4
 
 
+class TargetStrategy(Enum):
+    VWAP = '1'
+    Participate = '2'
+    SynthStop = '1001'
+    SynthTIF = '1003'
+    Iceberg = '1004'
+    TWAP = '1005'
+    Multilisted = '1008'
+    SynthPeg = '1009'
+    DarkPool = '1010'
+    LitDark = '1011'
+    SynthBlock = '1019'
+
+
 class OrderSide(Enum):
     Buy = 1
     Sell = 2
+
+
+class ReadLogVerifiers(Enum):
+    log_319_updating_status = "log319-updating-status"
+    log_319_cancel_child = "log319-cancel-child"
+    log_319_check_primary_listing = "log319-check-primary-listing"
+    log_319_check_party_info = "log319-check-party-info"
+    log_319_check_party_info_v2 = "log319-check-party-info-v2"
+    log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
+    log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
+    log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
 
 
 class WebAdminURL(Enum):

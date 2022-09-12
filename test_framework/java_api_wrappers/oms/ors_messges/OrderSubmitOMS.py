@@ -3,7 +3,7 @@ from datetime import datetime
 from pandas import Timestamp as tm
 from pandas.tseries.offsets import BusinessDay as bd
 
-from stubs import Stubs
+from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 
@@ -33,11 +33,12 @@ class OrderSubmitOMS(OrderSubmit):
                 'AccountGroupID': data_set.get_client_by_name("client_1"),
                 'ExecutionPolicy': 'DMA',
                 'ListingList': {'ListingBlock': [{'ListingID': data_set.get_listing_id_by_name("listing_1")}]},
-                'InstrID': data_set.get_instrument_id_by_name("instrument_1")
+                'InstrID': data_set.get_instrument_id_by_name("instrument_1"),
+                "ClOrdID": basic_custom_actions.client_orderid(9),
             }
         }
 
-    def set_default_care_limit(self, recipient=Stubs.custom_config['qf_trading_fe_user'], role="HSD", desk="1"):
+    def set_default_care_limit(self, recipient, desk="1", role="HSD"):
         params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
                                                    'RecipientRoleID': role,
                                                    'RecipientDeskID': desk}}
@@ -56,7 +57,7 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
-    def set_default_care_market(self, recipient=Stubs.custom_config['qf_trading_fe_user'], role="HSD", desk="1"):
+    def set_default_care_market(self, recipient, desk="1", role="HSD"):
         params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
                                                    'RecipientRoleID': role,
                                                    'RecipientDeskID': desk}}

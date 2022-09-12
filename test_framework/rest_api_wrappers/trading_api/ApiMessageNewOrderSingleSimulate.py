@@ -15,7 +15,7 @@ class ApiMessageNewOrderSingleSimulate(TradingRestApiMessage):
                          response_type_http=TradingRestApiMessageType.NewOrderSingleSimulateReply.value,
                          data_set=data_set)
         super().change_parameters(parameters)
-        self.tested_instrument_noss = self.data_set.get_trading_api_instrument_by_name("instrument_2")
+        self.default_instrument_noss = self.data_set.get_trading_api_instrument_by_name("instrument_2")
         self.default_currency_noss = self.data_set.get_currency_by_name('currency_1')
         self.default_settl_currency_noss = self.data_set.get_settl_currency_by_name('settl_currency_1')
         self.default_client_noss = self.data_set.get_client_by_name('client_4')
@@ -42,11 +42,11 @@ class ApiMessageNewOrderSingleSimulate(TradingRestApiMessage):
                            ],
                            'OrdQty': 1,
                            'Instrument': {
-                               'InstrSymbol': self.tested_instrument_noss['InstrSymbol'],
-                               'SecurityID': self.tested_instrument_noss['SecurityID'],
-                               'SecurityIDSource': self.tested_instrument_noss['SecurityIDSource'],
-                               'InstrType': self.tested_instrument_noss['InstrType'],
-                               'SecurityExchange': self.tested_instrument_noss['SecurityExchange']
+                               'InstrSymbol': self.default_instrument_noss['InstrSymbol'],
+                               'SecurityID': self.default_instrument_noss['SecurityID'],
+                               'SecurityIDSource': self.default_instrument_noss['SecurityIDSource'],
+                               'InstrType': self.default_instrument_noss['InstrType'],
+                               'SecurityExchange': self.default_instrument_noss['SecurityExchange']
                            }
                            }
         super().change_parameters(base_parameters)

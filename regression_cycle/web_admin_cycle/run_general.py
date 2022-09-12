@@ -7,6 +7,7 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T3918 import QAP_T391
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3910 import QAP_T3910
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3908 import QAP_T3908
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3907 import QAP_T3907
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T3904 import QAP_T3904
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3899 import QAP_T3899
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3898 import QAP_T3898
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3895 import QAP_T3895
@@ -41,47 +42,49 @@ class RunGeneral:
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
             QAP_T4018(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                    environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T4017(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                    environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3921(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3918(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3910(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3908(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3907(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
+            QAP_T3904(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3899(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3898(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3895(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3894(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3881(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3855(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3797(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3681(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3566(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3539(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3517(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3507(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3351(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
             QAP_T3255(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                     environment=configuration.environment).run()
+                      environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

@@ -22,9 +22,6 @@ class QAP_T3947(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = self.data_set.get_instr_type("instr_type_1")
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.client = self.data_set.get_client("client_1")
-        self.user = self.data_set.get_user("user_4")
-        self.desk = self.data_set.get_desk("desk_1")
         self.institution = self.data_set.get_institution("institution_1")
         self.account = ''
 
@@ -47,12 +44,6 @@ class QAP_T3947(CommonTestCase):
         self.account = random.choice(wizard.get_all_account_from_drop_menu())
         wizard.set_account(self.account)
         time.sleep(1)
-        wizard.set_client(self.client)
-        time.sleep(1)
-        wizard.set_user(self.user)
-        time.sleep(1)
-        wizard.set_desk(self.desk)
-        time.sleep(1)
         wizard.set_institution(self.institution)
         time.sleep(1)
         wizard.click_on_save_changes()
@@ -66,8 +57,8 @@ class QAP_T3947(CommonTestCase):
             page.set_name_at_filter(self.name)
             time.sleep(2)
             page.click_on_more_actions()
-            expected_pdf_content = [self.name, self.client, self.instr_type, self.execution_policy,
-                                    self.account, self.user, self.desk]
+            expected_pdf_content = [self.name, self.instr_type, self.execution_policy,
+                                    self.account]
             self.verify("Is pdf contains values ", True,
                         page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
         except Exception:
