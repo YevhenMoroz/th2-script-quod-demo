@@ -105,8 +105,9 @@ class QAP_T4674(TestCase):
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.delay_for_cancel)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
         ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True, self.delay_for_cancel)
-        ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True, self.delay_for_cancel_itg)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_trade_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule]
+        ocr_4_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, False, self.qty_1_itg_child, self.delay_for_cancel_itg)
+        ocr_5_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True, self.qty_2_itg_child, self.delay_for_cancel_itg)
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_trade_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -254,7 +255,7 @@ class QAP_T4674(TestCase):
         # region Check child DMA order on venue ITG
         self.dma_2_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
         self.dma_2_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_2_itg_child, Price=self.price, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(self.dma_1_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on ITG')
+        self.fix_verifier_buy.check_fix_message(self.dma_2_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on ITG')
 
         er_pending_new_dma_2_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_itg_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew 2nd child DMA order on ITG')

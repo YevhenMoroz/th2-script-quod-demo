@@ -1,6 +1,5 @@
 import logging
 
-from regression_cycle.mobile_android_cycle.login.run_login import RunLogin
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 from stubs import Stubs
 from custom import basic_custom_actions as bca
