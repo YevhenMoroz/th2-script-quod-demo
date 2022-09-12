@@ -528,6 +528,16 @@ class RuleManager:
             )
         )
 
+    def add_NewOrdSingle_MarketPreviouslyQuoted(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float, delay: int = 0):
+        return self.sim.createNewOrdSingleMarket(
+            request=TemplateNewOrdSingleMarket(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               venue=venue,
+                                               trade=trade,
+                                               tradedQty=tradedQty,
+                                               avgPrice=avgPrice,
+                                               delay=delay))
+
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
