@@ -9,7 +9,7 @@ from stubs import Stubs
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, get_opened_fe
 from win_gui_modules.wrappers import set_base
 
-from test_cases.wrapper import eq_wrappers
+from test_framework.old_wrappers import eq_wrappers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

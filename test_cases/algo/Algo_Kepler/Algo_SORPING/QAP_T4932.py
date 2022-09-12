@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4932(TestCase):
@@ -91,6 +92,12 @@ class QAP_T4932(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_er_fill_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_updating_status.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_updating_status")
         # endregion
 
         self.rule_list = []
@@ -209,6 +216,20 @@ class QAP_T4932(TestCase):
         # region check cancel third dma child order
         er_cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Passive child DMA 2 order")
+        # endregion
+
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "OrderId": "*",
+            "OldStatus": "Open",
+            "NewStatus": "Cancelled"
+        }
+
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        # TODO add Check read log message sequence instead checking one message
+        self.read_log_verifier.check_read_log_message(execution_report, self.key_params_read_log)
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)

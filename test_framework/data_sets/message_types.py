@@ -20,6 +20,7 @@ class FIXMessageType(Enum):
     MarketDataRequestReject = "MarketDataRequestReject"
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
+    BusinessMessageReject = "BusinessMessageReject"
 
 
 class ORSMessageType(Enum):
@@ -85,6 +86,11 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+
+
+class PKSMessageType(Enum):
+    RequestForPositions = "Order_RequestForPositions"
+    RequestForFXPositions = "Order_RequestForFXPositions"
 
 
 class CSMessageType(Enum):
