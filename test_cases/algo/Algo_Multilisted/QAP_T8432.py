@@ -88,8 +88,9 @@ class QAP_T8432(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True, self.price_ask_paris)
-        self.rule_list = [nos_fok_rule]
+        self.nos_fok_1_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, self.price_ask_paris)
+        nos_fok_2_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True, self.price_ask_paris, 5000)
+        self.rule_list = [nos_fok_2_rule]
         # endregion
 
         # region Send_MarketData
@@ -118,7 +119,8 @@ class QAP_T8432(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
-        time.sleep(3)
+        time.sleep(2)
+        rule_manager.remove_rule(self.nos_fok_1_rule)
         # endregion
 
         # region Check Sell side
@@ -145,8 +147,26 @@ class QAP_T8432(TestCase):
         er_new_dma_1_xpar_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
         self.fix_verifier_buy.check_fix_message(er_new_dma_1_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Passive Child DMA 2 order')
 
-        er_fill_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_1_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive Child DMA 1 order")
+        er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_1_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate Aggressive Child DMA 1 order")
+        # endregion
+        
+        # region Check 2nd child DMA order
+        dma_2_xpar_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        dma_2_xpar_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price_ask_paris, Instrument=self.instrument, TimeInForce=self.tif_fok))
+
+        er_pending_new_dma_2_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_2_xpar_order, self.gateway_side_buy, self.status_pending)
+        er_pending_new_dma_2_xpar_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
+        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Passive Child DMA 2 order')
+
+        er_new_dma_2_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_2_xpar_order, self.gateway_side_buy, self.status_pending)
+        er_new_dma_2_xpar_order_params.change_parameters(dict(ExDestination=self.ex_destination_xpar))
+        self.fix_verifier_buy.check_fix_message(er_new_dma_2_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Passive Child DMA 2 order')
+
+        time.sleep(5)
+
+        er_fill_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_2_xpar_order, self.gateway_side_buy, self.status_fill)
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_2_xpar_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive Child DMA 1 order")
         # endregion
 
         # region Check Fill Multilisted algo order
@@ -156,7 +176,7 @@ class QAP_T8432(TestCase):
 
         # region Check there are no any new child orders after the full fill parent order
         self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no new childs after terminated parent algo order", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([dma_1_xpar_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence([dma_1_xpar_order, dma_2_xpar_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
