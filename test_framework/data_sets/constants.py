@@ -192,6 +192,49 @@ class OrderSide(Enum):
     Sell = 2
 
 
+class AlgoCurrencyRate(Enum):
+    eur_to_sek = "9.960000000"
+
+
+class Venues(Enum):
+    chixlis = "CHIXLIS"
+    paris = "Euronext Paris"
+
+
+class PartyID(Enum):
+    party_id_1 = "TestCLIENTACCOUNT"
+    party_id_2 = "TestClientID"
+    party_id_3 = "TestEXTERNAL-UTI"
+    party_id_4 = "TestINITIATOR-UTI"
+    party_id_5 = "12345678"
+
+
+class PartyIDSource(Enum):
+    party_id_source_1 = "D"
+    party_id_source_2 = "P"
+
+
+class PartyRole(Enum):
+    party_role_3 = "3"
+    party_role_12 = "12"
+    party_role_24 = "24"
+    party_role_58 = "58"
+    party_role_55 = "55"
+
+
+class MiscNumber(Enum):
+    ordr_misc_0 = "OrdrMisc0"
+    ordr_misc_6 = "OrdrMisc6"
+    ordr_misc_7 = "OrdrMisc7"
+    ordr_misc_8 = "OrdrMisc8"
+
+
+class TransactionStatus(Enum):
+    new = "New"
+    open = "Open"
+    canceled = "Cancelled"
+
+
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
     log_319_cancel_child = "log319-cancel-child"
@@ -201,6 +244,8 @@ class ReadLogVerifiers(Enum):
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
     log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
     log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
+    log_319_check_the_currency_rate = "log319-check-the-currency-rate"
+    log_319_check_the_lis_amount = "log319-check-the-lis=amount"
 
 
 class WebAdminURL(Enum):

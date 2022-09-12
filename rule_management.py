@@ -264,13 +264,14 @@ class RuleManager:
                 md_entry_px=md_entry_px,
                 symbol=symbol))
 
-    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float):
+    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleFOK(
             request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
                                             account=account,
                                             venue=venue,
                                             trade=trade,
-                                            price=price))
+                                            price=price,
+                                            delay=delay))
 
     def add_NewOrdSingle_FOK_FIXStandard(self, session: str, account: str, venue: str, trade: bool, price: float, ):
         return self.sim.createNewOrdSingleFOKFIXStandard(
@@ -435,12 +436,13 @@ class RuleManager:
         )
 
     def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str,
-                                                     price: float):
+                                                     price: float, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportEliminate(
             request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
                                                                  account=account,
                                                                  exdestination=ex_destination,
-                                                                 price=price
+                                                                 price=price,
+                                                                 delay=delay
                                                                  ))
 
     def add_OrderCancelReplaceRequestWithDelayFixStandard(self, session: str, account: str, ex_destination: str,

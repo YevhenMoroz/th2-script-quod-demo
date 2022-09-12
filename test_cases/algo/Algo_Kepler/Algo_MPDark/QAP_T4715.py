@@ -8,9 +8,9 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
@@ -19,7 +19,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4720(TestCase):
+class QAP_T4715(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -37,12 +37,13 @@ class QAP_T4720(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 1000000
+        self.qty = 100000
         self.price = 20
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_11.value
+        self.reason = 99
         self.weight_chix = 6
         self.weight_bats = 4
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats)
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_11.value
         # endregion
 
         # region Gateway Side
@@ -74,16 +75,16 @@ class QAP_T4720(TestCase):
         self.client = self.data_set.get_client_by_name("client_4")
         self.account_bats = self.data_set.get_account_by_name("account_7")
         self.account_chix = self.data_set.get_account_by_name("account_8")
-        self.listing_id_xpar = self.data_set.get_listing_id_by_name("listing_35")
         # endregion
 
         # region Key parameters
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
-        self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
-        self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
+        self.key_params_RFQ_MO = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_RFQ")
+        self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
         self.new_reply = True
@@ -94,23 +95,25 @@ class QAP_T4720(TestCase):
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_lis_phase_is_skipping.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
-
+        
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region modify strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.remove_parameters(self.algopolicy, "DarkPhase")
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPhase", 'Y')
         # endregion
 
         # region Rule creation
         rule_manager = RuleManager()
-        nos_rfq_1_reject_rule = rule_manager.add_NewOrderSingle_RFQ_Reject(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty)
-        nos_rfq_2_reject_rule = rule_manager.add_NewOrderSingle_RFQ_Reject(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty)
+        rfq_1_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
+        rfq_2_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty, self.qty, self.new_reply, self.restated_reply)
+        nos_1_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price, self.reason)
+        nos_2_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.price, self.reason)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
-        self.rule_list = [nos_rfq_1_reject_rule, nos_rfq_2_reject_rule, nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
+        self.rule_list = [rfq_1_rule, rfq_2_rule, nos_1_reject_rule, nos_2_reject_rule, nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -135,25 +138,63 @@ class QAP_T4720(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(2)
-
         case_id_2 = bca.create_event("Create RFQ on buy side", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
-        # region check that RFQ send to CHIX LIS UK and reject
+        # region check that RFQ send to CHIX LIS UK
         nos_chixlis_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
-
-        er_rfq_reject_chixlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_chixlis_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_reject_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on CHIXLIS')
         # endregion
 
-        # region check that RFQ send to TURQUOISE LIS and reject
+        # region check that RFQ send to TURQUOISE LIS
         nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on TQLIS')
+        # endregion
 
-        er_rfq_reject_trqxlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_trql_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_reject_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on TRQXLIS', direction=self.ToQuod)
+        # region chixlist rfq accepted
+        case_id_3 = bca.create_event("RFQ accepted on CHIXLIS", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_3)
+
+        er_rfq_new_trqxlis_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
+        self.fix_verifier_buy.check_fix_message(er_rfq_new_trqxlis_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
+
+        er_rfq_restated_trqxlis_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new_trqxlis_chixlis).change_parameters({"OrderQty": self.qty})
+        self.fix_verifier_buy.check_fix_message(er_rfq_restated_trqxlis_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
+        # endregion
+
+        # region MO on Venue ChixLis
+        case_id_5 = bca.create_event("MO order on CHIXLIS", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_5)
+
+        self.nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
+        self.nos_chixlis_order.change_parameters(dict(OrderQty=self.qty))
+        self.fix_verifier_buy.check_fix_message(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
+
+        er_reject_dma_chixlis_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_reject)
+        self.fix_verifier_buy.check_fix_message(er_reject_dma_chixlis_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject child DMA order on venue CHIXLIS")
+        # endregion
+
+        # region trql rfq accepted
+        case_id_3 = bca.create_event("RFQ accepted on TRQXLIS", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_3)
+
+        er_rfq_new_trqxlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_trql_rfq)
+        self.fix_verifier_buy.check_fix_message(er_rfq_new_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on TRQXLIS', direction=self.ToQuod)
+
+        er_rfq_restated_trqxlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new_trqxlis).change_parameters({"OrderQty": self.qty})
+        self.fix_verifier_buy.check_fix_message(er_rfq_restated_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on TRQXLIS', direction=self.ToQuod)
+        # endregion
+
+        # region MO on Venue TRQXLIS
+        case_id_5 = bca.create_event("MO order on TRQXLIS", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_5)
+
+        self.nos_trqxlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
+        self.nos_trqxlis_order.change_parameters(dict(OrderQty=self.qty))
+        self.fix_verifier_buy.check_fix_message(self.nos_trqxlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on TRQXLIS', direction=self.FromQuod)
+
+        er_reject_dma_trqxlis_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_trqxlis_order, self.gateway_side_buy, self.status_reject)
+        self.fix_verifier_buy.check_fix_message(er_reject_dma_trqxlis_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject child DMA order on venue TRQXLIS")
         # endregion
 
         # region Check Read log
@@ -220,18 +261,9 @@ class QAP_T4720(TestCase):
         # endregion
 
         time.sleep(5)
-
         # region Revert modifying strategy
-        new_parameter = {
-            "algoParameterValue": "N",
-            "isEditable": "false",
-            "isVisible": "false",
-            "scenarioParameterName": "DarkPhase",
-            "scenarioParameterRequired": "false",
-            "scenarioParameterType": "B",
-        }
-
-        self.rest_api_manager.add_parameter(self.algopolicy, new_parameter)
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPhase", 'N')
         # endregion
 
         rule_manager = RuleManager()

@@ -3,9 +3,11 @@ from th2_grpc_common.common_pb2 import Direction
 from custom import basic_custom_actions
 from stubs import Stubs
 from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_framework.read_log_wrappers.ReadLogMessage import ReadLogMessage
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
-class ReadLogVerifier:
+class ReadLogVerifierAlgo:
     def __init__(self, session_alias, case_id=None):
         self.__verifier = Stubs.verifier
         self.__session_alias = session_alias
@@ -19,12 +21,12 @@ class ReadLogVerifier:
     def set_case_id(self, case_id):
         self.__case_id = case_id
 
-    def check_read_log_message(self, compare_message: dict, key_parameters: list = None,
+    def check_read_log_message(self, compare_message: ReadLogMessage, key_parameters: list = None,
                                direction: DirectionEnum = DirectionEnum.FromQuod, timeout: int = 3000):
         self.__verifier.submitCheckRule(
             basic_custom_actions.create_check_rule(
                 "Log Msg Received",
-                basic_custom_actions.filter_to_grpc_fix_standard("Csv_Message", compare_message, key_parameters),
+                basic_custom_actions.filter_to_grpc_fix_standard("Csv_Message", compare_message.get_parameters(), key_parameters),
                 self.__checkpoint,
                 self.__session_alias,
                 self.__case_id,
@@ -43,8 +45,11 @@ class ReadLogVerifier:
         if len(compare_messages_list) != len(key_parameters_list):
             raise ValueError("Not correct qty of object at list expect len(fix_messages_list) equal len(key_parameters_list)")
 
+
         for index, message in enumerate(compare_messages_list):
-            message_filters_req.append(basic_custom_actions.filter_to_grpc("Csv_Message", message, key_parameters_list[index]))
+            if not isinstance(message, ReadLogMessage):
+                raise ValueError("Not correct object type at fix_messages_list, expect only FixMessages")
+            message_filters_req.append(basic_custom_actions.filter_to_grpc("Csv_Message", message.get_parameters(), key_parameters_list[index]))
 
         if message_name is None:
             message_name = "Check banch of messages"

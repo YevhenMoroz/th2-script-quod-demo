@@ -19,7 +19,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4720(TestCase):
+class QAP_T4719(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -53,7 +53,6 @@ class QAP_T4720(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_reject = Status.Reject
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -86,10 +85,6 @@ class QAP_T4720(TestCase):
         self.key_params_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
         # endregion
 
-        self.new_reply = True
-        self.restated_reply = True
-        self.rule_list = []
-
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_lis_phase_is_skipping.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
@@ -99,8 +94,10 @@ class QAP_T4720(TestCase):
     def run_pre_conditions_and_steps(self):
         # region modify strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.remove_parameters(self.algopolicy, "DarkPhase")
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPhase", 'Y')
         # endregion
+
+        self.rule_list = []
 
         # region Rule creation
         rule_manager = RuleManager()
@@ -220,18 +217,9 @@ class QAP_T4720(TestCase):
         # endregion
 
         time.sleep(5)
-
         # region Revert modifying strategy
-        new_parameter = {
-            "algoParameterValue": "N",
-            "isEditable": "false",
-            "isVisible": "false",
-            "scenarioParameterName": "DarkPhase",
-            "scenarioParameterRequired": "false",
-            "scenarioParameterType": "B",
-        }
-
-        self.rest_api_manager.add_parameter(self.algopolicy, new_parameter)
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPhase", 'N')
         # endregion
 
         rule_manager = RuleManager()

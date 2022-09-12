@@ -19,7 +19,7 @@ def test_run(parent_id=None):
             twap_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
             pass
-        if eval(root.find(".//component[@name='Parcitipation']").attrib["run"]):
+        if eval(root.find(".//component[@name='Participation']").attrib["run"]):
             participation_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Iceberg']").attrib["run"]):
             iceberg_regression.test_run(report_id, version)
