@@ -19,7 +19,7 @@ timeouts = True
 class QAP_T7157(TestCase):
     def __init__(self, report_id, session_id, date_set):
         super().__init__(report_id, session_id, date_set)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -38,9 +38,9 @@ class QAP_T7157(TestCase):
         venue_client_column_name = OrderBookColumns.venue_client_account.value
         account_id_column_name = OrderBookColumns.account_id.value
         # create CO order
-        oms_order_book = OMSOrderBook(self.case_id, self.session_id)
-        oms_order_inbox = OMSClientInbox(self.case_id, self.session_id)
-        oms_order_ticket = OMSOrderTicket(self.case_id, self.session_id)
+        oms_order_book = OMSOrderBook(self.test_id, self.session_id)
+        oms_order_inbox = OMSClientInbox(self.test_id, self.session_id)
+        oms_order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         oms_order_ticket.set_order_details(client=client, limit=price, qty=qty, tif='Day', recipient=user,
                                            partial_desk=False, account=account)
         oms_order_ticket.create_order(self.data_set.get_lookup_by_name('lookup_1'))

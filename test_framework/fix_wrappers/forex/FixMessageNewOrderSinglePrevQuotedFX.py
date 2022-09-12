@@ -40,6 +40,36 @@ class FixMessageNewOrderSinglePrevQuotedFX(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_default_prev_quoted_ccy2(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
+                                     price: str = None,
+                                     side: str = None) -> FixMessageNewOrderSingle:
+        quote_price = None
+        if "Side" in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            if quote.get_parameter("Side") == "1":
+                quote_price = quote.get_parameter("BidPx")
+            else:
+                quote_price = quote.get_parameter("OfferPx")
+
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(9),
+            "Account": quote_request.get_parameter("NoRelatedSymbols")[0]["Account"],
+            "HandlInst": "1",
+            "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
+            quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
+            "OrderQty": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
+            "TimeInForce": "3",
+            "OrdType": "D",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Price": quote_price if quote_price is not None else price,
+            "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"],
+            "SettlDate": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            "SettlType": quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
+            "QuoteID": quote.get_parameter("QuoteID")
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_default_for_dealer(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
                                price: str = "1.184",
                                side: str = "1") -> FixMessageNewOrderSingle:
@@ -71,8 +101,8 @@ class FixMessageNewOrderSinglePrevQuotedFX(FixMessageNewOrderSingle):
         return self
 
     def set_default_for_dealer_ccy2(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
-                               price: str = "1.184",
-                               side: str = "1") -> FixMessageNewOrderSingle:
+                                    price: str = "1.184",
+                                    side: str = "1") -> FixMessageNewOrderSingle:
         quote_price = None
         if "Side" in quote_request.get_parameter("NoRelatedSymbols")[0]:
             if quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":

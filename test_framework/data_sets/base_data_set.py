@@ -42,7 +42,7 @@ class BaseDataSet:
     auto_hedgers_id = None
     algo_policies = None
     algo_policies_id = None
-    counterparts = None
+    counterpart = None
     qty_types = None
     venue_client_accounts = None
     verifier_key_parameters = None
@@ -58,6 +58,9 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    contra_firm = None
+    all_venue_sec_account_names_of_acc = None
+    venue_list = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -118,6 +121,10 @@ class BaseDataSet:
     comm_type = None
     core_spot_price_strategy = None
     party_role = None
+    counterpart_id = None
+    cl_list_id = None
+    pre_filter = None
+    reference_price = None
     # endregion
 
     # region fields added by Web Trading team
@@ -276,6 +283,11 @@ class BaseDataSet:
         if hasattr(self.currency, name):
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
+
+    def get_settl_currency_by_name(self, name: str):
+        if hasattr(self.settl_currency, name):
+            return getattr(self.settl_currency, name).value
+        raise ValueError(f"{self.settl_currency} not found!")
 
     def get_venue_client_names_by_name(self, name: str):
         if hasattr(self.venue_client_names, name):
@@ -465,6 +477,11 @@ class BaseDataSet:
         if self.commission:
             return self.commission
 
+    def get_washbook_rule_pair_by_name(self, name: str):
+        if hasattr(self.washbook_rules, name):
+            return getattr(self.washbook_rules, name)
+        raise ValueError(f"{self.washbook_rules} not found!")
+
     def get_pset(self, name: str):
         """
         @param name: name_of_pset
@@ -513,6 +530,11 @@ class BaseDataSet:
         if hasattr(self.scenario, name):
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        raise ValueError(f"{self.contra_firm} not found!")
 
     # region WebAdmin getters
 
@@ -796,6 +818,11 @@ class BaseDataSet:
             return getattr(self.party_role, name).value
         return ValueError(f"{self.party_role,} not found!")
 
+    def get_pre_filter(self, name: str):
+        if hasattr(self.pre_filter, name):
+            return getattr(self.pre_filter, name).value
+        return ValueError(f"{self.pre_filter,} not found!")
+
     # endregion
 
     # region WebTrading getters
@@ -818,4 +845,28 @@ class BaseDataSet:
         if hasattr(self.capacity, name):
             return getattr(self.capacity, name).value
         return ValueError(f"{self.capacity} not found!")
+
+    def get_counterpart_id(self, name: str):
+        if hasattr(self.counterpart_id, name):
+            return getattr(self.counterpart_id, name).value
+        return ValueError(f"{self.counterpart_id} not found!")
+
+    def get_counterpart(self, name: str):
+        if hasattr(self.counterpart, name):
+            return getattr(self.counterpart, name).value
+        return ValueError(f"{self.counterpart} not found!")
+
+    def get_cl_list_id(self, name:str):
+        if hasattr(self.cl_list_id, name):
+            return getattr(self.cl_list_id, name).value
+        return ValueError(f"{self.cl_list_id} not found!")
+
+    def get_ref_price(self, name:str):
+        if hasattr(self.reference_price, name):
+            return getattr(self.reference_price, name).value
+        return ValueError(f"{self.reference_price} not found!")
+    def get_venue_list(self, name: str):
+        if hasattr(self.venue_list, name):
+            return getattr(self.venue_list, name).value
+        return ValueError(f"{self.counterpart} not found!")
     # endregion

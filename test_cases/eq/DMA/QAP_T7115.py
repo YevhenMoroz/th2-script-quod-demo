@@ -30,19 +30,19 @@ IgnoreTradeDate=false at ex.xml
 class QAP6069(TestCase):
     def __init__(self, report_id, session_id, file_name):
         super().__init__(report_id, session_id)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.test_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.test_id)
         self.file_name = file_name
         self.ss_connectivity = SessionAliasOMS().ss_connectivity
         self.bs_connectivity = SessionAliasOMS().bs_connectivity
 
     def qap_6069(self):
         # region Declaration
-        order_book = OMSOrderBook(self.case_id, self.session_id)
-        base_window = BaseMainWindow(self.case_id, self.session_id)
+        order_book = OMSOrderBook(self.test_id, self.session_id)
+        base_window = BaseMainWindow(self.test_id, self.session_id)
         work_dir = Stubs.custom_config['qf_trading_fe_folder']
         username = Stubs.custom_config['qf_trading_fe_user']
         password = Stubs.custom_config['qf_trading_fe_password']
-        fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        fix_manager = FixManager(self.ss_connectivity, self.test_id)
         fix_message = FixMessageNewOrderSingleOMS()
         fix_message.set_default_dma_limit()
         client = fix_message.get_parameter('Account')

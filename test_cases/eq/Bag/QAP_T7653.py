@@ -16,16 +16,17 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7653(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.bag_order_book = OMSBagOrderBook(self.case_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_message.set_default_dma_limit()
 
@@ -67,6 +68,7 @@ class QAP_T7653(TestCase):
                                                  {OrderBookColumns.qty.value: qty})
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __verifying_presenting_item_at_menu(self, item_of_menu, list_of_orders: list, filter: dict):
         result_1 = self.order_book.is_menu_item_present(item_of_menu,
                                                         list_of_orders, filter)

@@ -33,14 +33,14 @@ class QAP_T7390(TestCase):
         self.price = "4232"
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -62,7 +62,7 @@ class QAP_T7390(TestCase):
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
         new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit(
-            "instrument_2").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+            "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
             {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
              'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
         self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)

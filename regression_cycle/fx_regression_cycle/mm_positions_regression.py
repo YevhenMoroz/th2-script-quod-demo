@@ -16,8 +16,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('FX_MM_Positions', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_MM_Position" if version is None else f"FX_MM_Position | {version}", parent_id)
     session_id = set_session_id()
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     fe_dir = Stubs.custom_config['qf_trading_fe_folder']

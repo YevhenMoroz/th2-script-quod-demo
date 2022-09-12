@@ -28,7 +28,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.ceil(remaining_ord_qty / remaining_waves)
+        return math.floor(remaining_ord_qty / remaining_waves)
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
@@ -140,6 +140,15 @@ class AlgoFormulasManager:
         return final_string
 
     @staticmethod
+    def create_string_for_strategy_venues(*venue: str) -> str:
+        final_string = str()
+        for idx, v in enumerate(venue):
+            final_string += v
+            if len(venue) - 1 != idx:
+                final_string += "/"
+        return final_string
+
+    @staticmethod
     def make_expire_date_next_sunday(day: int) -> int:
         days = [0, 1, 2, 3, 4, 5, 6]
         shift = 6
@@ -149,6 +158,10 @@ class AlgoFormulasManager:
                 res_shift = shift
             shift -= 1
         return res_shift
+
+    @staticmethod
+    def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
+        return math.ceil((ltq * volume) / (1 - volume))
 
 
 

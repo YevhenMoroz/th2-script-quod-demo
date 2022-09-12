@@ -43,4 +43,9 @@ class OrdReportOMS(OrdReport):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('OrdReportBlock',
                                         {"LastVenueOrdID": ord_id, "Price": "20", 'ClOrdID': ord_id})
+
+    def set_default_eliminated(self, ord_id, price):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('OrdReportBlock', {"LastVenueOrdID": ord_id, "Price": price, 'ClOrdID': ord_id,
+                                                           'ExecType': 'Eliminated'})
         return self
