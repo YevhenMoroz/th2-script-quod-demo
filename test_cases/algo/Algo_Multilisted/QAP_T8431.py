@@ -163,6 +163,7 @@ class QAP_T8431(TestCase):
 
         # region Check Eliminate Multilisted algo order
         er_eliminate_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        er_eliminate_multilisting_order_params.add_tag(dict(Text="no liquidity found", LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(er_eliminate_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
 
