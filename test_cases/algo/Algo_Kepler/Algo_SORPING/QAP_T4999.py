@@ -10,11 +10,11 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
-from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 
 
 class QAP_T4999(TestCase):
@@ -76,6 +76,12 @@ class QAP_T4999(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_party_info.value
+        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_party_info")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -109,11 +115,23 @@ class QAP_T4999(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_params_with_PartyInfo()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.ClOrdId = self.SORPING_order.get_parameter('ClOrdID')
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        # endregion
 
-        time.sleep(3)
+        # region Check Read log
+        time.sleep(70)
+
+        execution_report = {
+            "PartyID": "TestINITIATOR-UTI",
+            "MiscNumber": "OrdrMisc6",
+            "OrdrMisc": "TestINITIATOR-UTI",
+            "ClOrdID": self.ClOrdId
+        }
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(execution_report)
         # endregion
 
         # region Check Sell side
@@ -139,7 +157,6 @@ class QAP_T4999(TestCase):
         er_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
 
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
@@ -158,7 +175,6 @@ class QAP_T4999(TestCase):
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-        
-        
+
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
