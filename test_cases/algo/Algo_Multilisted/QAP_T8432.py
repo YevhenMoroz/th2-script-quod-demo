@@ -88,9 +88,7 @@ class QAP_T8432(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        self.nos_fok_1_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, self.price_ask_paris)
-        nos_fok_2_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True, self.price_ask_paris, 5000)
-        self.rule_list = [nos_fok_2_rule]
+        self.nos_fok_1_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, self.price_ask_paris, 4000)
         # endregion
 
         # region Send_MarketData
@@ -120,7 +118,10 @@ class QAP_T8432(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
         time.sleep(2)
+
         rule_manager.remove_rule(self.nos_fok_1_rule)
+        nos_fok_2_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True, self.price_ask_paris, 5000)
+        self.rule_list = [nos_fok_2_rule]
         # endregion
 
         # region Check Sell side
