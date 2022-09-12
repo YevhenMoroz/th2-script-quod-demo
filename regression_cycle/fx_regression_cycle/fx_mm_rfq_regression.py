@@ -1,7 +1,7 @@
 # from test_cases.fx.fx_mm_rfq.QAP_T2976 import QAP_T2976
-from test_cases.fx.fx_mm_rfq import QAP_T2845, QAP_T2843, QAP_T2678, QAP_T2629, \
-     QAP_T2931, QAP_T2863, QAP_T2846, QAP_T2844, QAP_T2819, QAP_T2818, QAP_T2817, QAP_T2816, QAP_T2815, \
-    QAP_T2814, QAP_T2740, QAP_T2732, QAP_T2731, QAP_T2721, QAP_2992, QAP_T2715, QAP_T2714, QAP_T2539, QAP_4748
+from test_cases.fx.fx_mm_rfq import QAP_T2845, QAP_T2843, QAP_T2629, \
+     QAP_T2931, QAP_T2846, QAP_T2844, QAP_T2819, QAP_T2818, QAP_T2817, QAP_T2816, QAP_T2815, \
+    QAP_T2814, QAP_T2740, QAP_T2732, QAP_T2731, QAP_2992, QAP_T2715, QAP_T2714, QAP_T2539, QAP_4748
 from test_cases.fx.fx_mm_rfq.QAP_T2443 import QAP_T2443
 from test_cases.fx.fx_mm_rfq.QAP_T2463 import QAP_T2463
 from test_cases.fx.fx_mm_rfq.QAP_T2466 import QAP_T2466
@@ -11,10 +11,13 @@ from test_cases.fx.fx_mm_rfq.QAP_T2528 import QAP_T2528
 from test_cases.fx.fx_mm_rfq.QAP_T2538 import QAP_T2538
 from test_cases.fx.fx_mm_rfq.QAP_T2614 import QAP_T2614
 from test_cases.fx.fx_mm_rfq.QAP_T2646 import QAP_T2646
+from test_cases.fx.fx_mm_rfq.QAP_T2678 import QAP_T2678
 from test_cases.fx.fx_mm_rfq.QAP_T2716 import QAP_T2716
+from test_cases.fx.fx_mm_rfq.QAP_T2721 import QAP_T2721
 from test_cases.fx.fx_mm_rfq.QAP_T2739 import QAP_T2739
 from test_cases.fx.fx_mm_rfq.QAP_T2741 import QAP_T2741
 from test_cases.fx.fx_mm_rfq.QAP_T2861 import QAP_T2861
+from test_cases.fx.fx_mm_rfq.QAP_T2863 import QAP_T2863
 from test_cases.fx.fx_mm_rfq.QAP_T2869 import QAP_T2869
 from test_cases.fx.fx_mm_rfq.QAP_T2880 import QAP_T2880
 from test_cases.fx.fx_mm_rfq.QAP_T2885 import QAP_T2885
@@ -126,7 +129,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     configuration = ComponentConfiguration("RFQ_MM")
-    report_id = bca.create_event(f"FX_MM_RFQ" if version is None else f"FX_MM_ESP | {version}", parent_id)
+    report_id = bca.create_event(f"FX_MM_RFQ" if version is None else f"FX_MM_RFQ | {version}", parent_id)
     session_id = set_session_id(target_server_win="ostronov")
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     try:
@@ -195,7 +198,7 @@ def test_run(parent_id=None, version=None):
         QAP_T2834(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2828(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2716(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2678.execute(report_id)
+        QAP_T2678(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2629.execute(report_id)
         QAP_T2614(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2546(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -236,7 +239,7 @@ def test_run(parent_id=None, version=None):
         QAP_T2878(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2877(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        QAP_T2863.execute(report_id, session_id)
+        QAP_T2863(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2846.execute(report_id, session_id)
         QAP_T2844.execute(report_id, session_id)
         QAP_T2820(report_id, session_id, configuration.data_set, configuration.environment).execute()
@@ -252,7 +255,7 @@ def test_run(parent_id=None, version=None):
         QAP_T2739(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2732.execute(report_id, session_id)
         QAP_T2731.execute(report_id, session_id)
-        QAP_T2721.execute(report_id, session_id)
+        QAP_T2721(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_2992.execute(report_id, session_id)
         QAP_T2715.execute(report_id, session_id)
         QAP_T2714.execute(report_id, session_id)

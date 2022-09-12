@@ -1,5 +1,4 @@
 from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import FixMessageMarketDataIncrementalRefresh
-from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from datetime import datetime
 
 
@@ -34,12 +33,11 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
                     'MDUpdateAction': '0',
                     'MDEntryType': '2',
                     'MDEntryPx': '40',
-                    'MDEntrySize': '3_000',
+                    'MDEntrySize': '3000',
                     'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                     'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
                     'TradingSessionSubID': '3',
                     'SecurityTradingStatus': '3',
-                    'LastTradingSessionSubID': '3'
                 }
             ]
         }

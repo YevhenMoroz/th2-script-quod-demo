@@ -33,8 +33,7 @@ class QAP_T3276(CommonTestCase):
         menu_page = MenuPage(self.appium_driver)
 
         login_page.login_to_mobile_trading(self.login, self.password)
-        self.appium_driver.wait_time(5)
-        self.verify("Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_TITLE))
+        self.verify("Precondition - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
         # endregion
 
         # region - test details

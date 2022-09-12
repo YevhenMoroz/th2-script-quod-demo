@@ -44,8 +44,6 @@ class QAP_T4967(TestCase):
         self.price_bid = 30
         self.px_for_incr = 0
         self.qty_for_incr = 0
-        self.ord_type = constants.OrderType.StopLimit.value
-        self.stop_px = 35
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_6.value
         # endregion
@@ -133,7 +131,7 @@ class QAP_T4967(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument, OrdType=self.ord_type)).add_tag(dict(StopPx=self.stop_px, MinQty=self.min_qty, DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument)).add_tag(dict(MinQty=self.min_qty, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 

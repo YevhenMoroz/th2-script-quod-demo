@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
     <name>Regression</name>
-    <version>5.1.156.169</version>
+    <version>5.1.159.172</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -184,6 +184,14 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="Acceptance_list" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
             </components>
         </product_line>
         <product_line name="fx" run="False">
@@ -200,6 +208,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -214,6 +225,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -228,6 +242,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -242,6 +259,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -256,6 +276,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -270,6 +293,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -284,6 +310,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                       <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -298,6 +327,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -312,6 +344,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
             </components>
@@ -483,7 +518,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>

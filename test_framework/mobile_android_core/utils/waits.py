@@ -19,3 +19,6 @@ class Waits:
 
     def wait_until_attribute_value_equals_by_xpath(self, xpath, attribute, text):
         self.wait.until(EC.text_to_be_present_in_element_attribute((By.XPATH, xpath), attribute, text))
+
+    def wait_until_staleness_by_xpath(self, xpath):
+        self.wait.until(EC.staleness_of((By.XPATH, xpath)))

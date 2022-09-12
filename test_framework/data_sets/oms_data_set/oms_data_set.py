@@ -5,7 +5,9 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSExecScope, OMSFee, OMSCommission, OmsRouteID, OMSFeeOrderScope, OMSPset, OmsCounterparts, OmsQtyTypes, \
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
     OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
-    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm
+    OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
+    OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, OMSClientListIDForCommission, \
+    OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID
 
 
 class OmsDataSet(BaseDataSet):
@@ -52,6 +54,15 @@ class OmsDataSet(BaseDataSet):
     strategy = OMSBagStrategy
     venue_id = OMSVenueID
     counterpart_id = OMSCounterpartID
+    cl_list_id = OMSClientListID
     instr_type = OMSInstrType
     contra_firm = OMSContraFirm
+    reference_price = OMSReferencePrice
+    washbook_rules = OMSWashBookRule
+    all_venue_sec_account_names_of_acc = OMSCommonVenueSecAccountNamesOfAcc
+    clearing_account_type = OMSClearingAccountTypes
+    account_id_source = VenueAccountIDSource
+    client_list = OMSClientListIDForCommission
+    venue_list = OMSVenueListForCommissionAndFees
+    oms_route_id = OmsRouteID
 
