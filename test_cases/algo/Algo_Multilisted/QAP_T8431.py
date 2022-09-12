@@ -132,8 +132,6 @@ class QAP_T8431(TestCase):
         # endregion
 
         # region 1st child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive Child DMA order", self.test_id))
-
         dma_1_xpar_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         dma_1_xpar_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price_ask_paris, Instrument=self.instrument, TimeInForce=self.tif_fok))
         er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
@@ -163,6 +161,7 @@ class QAP_T8431(TestCase):
 
         # region Check Eliminate Multilisted algo order
         er_eliminate_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        er_eliminate_multilisting_order_params.add_tag(dict(Text="no liquidity found", LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(er_eliminate_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
 

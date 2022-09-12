@@ -138,7 +138,7 @@ class FixMessage:
         new_component[index].update(kwargs)
         return self
 
-    def remove_values_in_repeating_group_by_index(self, component: str, index: int = 0, *args):
+    def remove_values_in_repeating_group_by_index(self, component: str, index: int = 0, *args: tuple):
         """
         Removing list of values from repeating group by index, for example
         we can delete MDEntryPx and MDEntryTime from this msg:

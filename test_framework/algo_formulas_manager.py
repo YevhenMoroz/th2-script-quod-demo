@@ -28,7 +28,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.ceil(remaining_ord_qty / remaining_waves)
+        return math.floor(remaining_ord_qty / remaining_waves)
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
@@ -162,6 +162,14 @@ class AlgoFormulasManager:
     @staticmethod
     def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
         return math.ceil((ltq * volume) / (1 - volume))
+
+    @staticmethod
+    def get_lis_amount_for_order(qty: int, price: float) -> float:
+        return qty * price
+
+    @staticmethod
+    def convert_pre_trade_lis_amount_for_another_currency(pre_trade_lis_amount: float, rate: float) -> float:
+        return pre_trade_lis_amount * rate
 
 
 

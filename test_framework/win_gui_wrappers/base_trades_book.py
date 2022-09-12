@@ -73,7 +73,9 @@ class BaseTradesBook(BaseWindow):
         self.extract_trades_book_sub_lvl_data_details.set_column_names(column_names)
         self.extract_trades_book_sub_lvl_data_details.set_tab_name(tab_name)
         self.extract_trades_book_sub_lvl_data_details.set_row_number(row_count)
-        call(self.extract_trades_book_sub_lvl_data_call, self.extract_trades_book_sub_lvl_data_details.build())
+        result = call(self.extract_trades_book_sub_lvl_data_call, self.extract_trades_book_sub_lvl_data_details.build())
+        self.clear_details([self.extract_trades_book_sub_lvl_data_details])
+        return result
 
     # endregion
     # region Action

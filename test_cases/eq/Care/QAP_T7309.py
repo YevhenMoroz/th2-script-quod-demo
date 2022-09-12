@@ -1,59 +1,69 @@
 import logging
-
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules import trades_blotter_wrappers
-from win_gui_modules.order_book_wrappers import ManualExecutingDetails
-
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base
+from pathlib import Path
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs, ExecSts, \
+    PostTradeStatuses
+from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7309"
-    # region Declarations
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_T7309(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
 
-    qty = "800"
-    price = "40"
-    lookup = "VETO"
-    client = "CLIENT_FIX_CARE"
-    # endregion
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        # region create CO order
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameter("OrderID")
+        self.client_inbox.accept_order()
+        # endregion
+        # region manual execute
+        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: order_id})
+        # endregion
+        # region check execution
+        self.exec_report.set_default_filled(self.fix_message)
+        self.exec_report.change_parameters({"LastMkt": "*", "VenueType": "*"})
+        self.exec_report.remove_parameters(['SecondaryExecID', 'SettlCurrency', 'LastExecutionPolicy', 'SecondaryOrderID'])
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        # endregion
+        # region trade cancel
+        exec_id = self.order_book.extract_2lvl_fields(tab=SecondLevelTabs.executions.value,
+                                                       column_names=[OrderBookColumns.exec_id.value], rows=[1],
+                                                       filter_dict={OrderBookColumns.order_id.value: order_id})
+        self.trade_book.cancel_execution({OrderBookColumns.exec_id.value: exec_id[0]['ExecID']})
+        # endregion
+        # region check cancelled exec
+        self.__check_exec_tab(OrderBookColumns.exec_type.value, ExecSts.trade_cancel.value, 1, {OrderBookColumns.order_id.value: order_id})
+        self.__check_exec_tab(OrderBookColumns.post_trade_status_exec.value, PostTradeStatuses.not_allocable.value, 1,
+                              {OrderBookColumns.order_id.value: order_id})
+        # endregion
 
-    # region Create CO
-    fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 3, 1, client, 2, qty, 0, price)
-    # region ManualExecute
-    # eq_wrappers.accept_order(lookup, qty, price)
-    manual_executing_details = ManualExecutingDetails(base_request)
-    executions_details = manual_executing_details.add_executions_details()
-    executions_details.set_quantity(qty)
-    executions_details.set_price(price)
-    executions_details.set_executing_firm('ExecutingTrader')
-    executions_details.set_settlement_date_offset(1)
-    executions_details.set_last_capacity("Agency")
-    call(Stubs.win_act_order_book.manualExecution, manual_executing_details.build())
-
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', 'Filled')
-    exec_id = eq_wrappers.get_2nd_lvl_detail(base_request, 'ExecID')
-    cancel_manual_execution_details = trades_blotter_wrappers.CancelManualExecutionDetails()
-    cancel_manual_execution_details.set_default_params(base_request)
-    cancel_manual_execution_details.set_filter({'ExecID': exec_id})
-
-    trades_service = Stubs.win_act_trades
-    call(trades_service.cancelManualExecution, cancel_manual_execution_details.build())
-    eq_wrappers.verify_order_value(base_request, case_id, 'ExecSts', '')
+    def __check_exec_tab(self, field:str, expect:str, row:int, filtr:dict = None):
+        acc_res = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
+                                                        [field], [row],
+                                                        filtr)
+        self.order_book.compare_values({field: expect}, {field: acc_res[0][field]}, "Check Execution tab")

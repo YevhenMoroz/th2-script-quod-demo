@@ -38,6 +38,9 @@ class AccountsDimensionsSubWizard(CommonPage):
     def get_venue(self):
         return self.get_text_by_xpath(AccountsConstants.DIMENSIONS_VENUE_COMBOBOX_XPATH)
 
+    def set_venue_filter(self, value: str):
+        self.set_text_by_xpath(AccountsConstants.DIMENSIONS_VENUE_FILTER_XPATH, value)
+
     def set_account_id_source(self, value: str):
         self.set_combobox_value(AccountsConstants.DIMENSIONS_ACCOUNT_ID_SOURCE_COMBOBOX_XPATH, value)
 

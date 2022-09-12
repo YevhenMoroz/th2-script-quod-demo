@@ -30,19 +30,19 @@ class QAP_T7299(TestCase):
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.client = self.data_set.get_client_by_name("client_fees_1")
         self.client_acc = self.data_set.get_account_by_name("client_fees_1_acc_1")
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
         self.fix_message.change_parameters({'Account': self.client})
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
-        self.trade_book = OMSTradesBook(self.case_id, self.session_id)
-        self.booking_win = OMSBookingWindow(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
+        self.booking_win = OMSBookingWindow(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -62,10 +62,10 @@ class QAP_T7299(TestCase):
         # endregion
         # region complete and book order
         self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
-        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.rate.value], [SecondLevelTabs.executions.value,
+        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.fee_rate.value], [SecondLevelTabs.executions.value,
                                                                                       TradeBookColumns.misc_tab.value],
                                                       {OrderBookColumns.order_id.value: order_id})
-        self.order_book.compare_values({TradeBookColumns.rate.value: "1"}, rate, "Compare Rate")
+        self.order_book.compare_values({TradeBookColumns.fee_rate.value: "1"}, rate, "Compare Rate")
 
         self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
         total_fee = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value,

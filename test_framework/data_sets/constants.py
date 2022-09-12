@@ -30,6 +30,7 @@ class Connectivity(Enum):
     Luna_314_dc = 'fix-sell-m-314luna-drop'
     Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
+    Luna_314_ja = "314_java_api"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -38,6 +39,7 @@ class Connectivity(Enum):
     Luna_315_web_trading_web_socket = 'api_session_315luna'
     Ganymede_317_ja = '317_java_api'
     Ganymede_317_als_email_report = 'log317-als-email-report'
+    Ganymede_317_ors_report = "log317-ors-report"
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
@@ -63,7 +65,7 @@ class FrontEnd(Enum):
     EXE_NAME = "QuodFrontEnd.exe"
     # target_server values
     TARGET_SERVER_WIN = find_target_server()
-    
+
     # region quod314
     USERS_314 = ["QA1"]
     PASSWORDS_314 = ["QA1"]
@@ -150,6 +152,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_6 = "QA_Auto_MPDark6"
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
+    qa_mpdark_11 = "QA_Auto_MPDark11"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -158,6 +161,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_5 = "QA_Auto_SORPING_5"
     qa_sorping_6 = "QA_Auto_SORPING_6"
     qa_sorping_7 = "QA_Auto_SORPING_7"
+    qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
 
@@ -188,6 +192,49 @@ class OrderSide(Enum):
     Sell = 2
 
 
+class AlgoCurrencyRate(Enum):
+    eur_to_sek = "9.960000000"
+
+
+class Venues(Enum):
+    chixlis = "CHIXLIS"
+    paris = "Euronext Paris"
+
+
+class PartyID(Enum):
+    party_id_1 = "TestCLIENTACCOUNT"
+    party_id_2 = "TestClientID"
+    party_id_3 = "TestEXTERNAL-UTI"
+    party_id_4 = "TestINITIATOR-UTI"
+    party_id_5 = "12345678"
+
+
+class PartyIDSource(Enum):
+    party_id_source_1 = "D"
+    party_id_source_2 = "P"
+
+
+class PartyRole(Enum):
+    party_role_3 = "3"
+    party_role_12 = "12"
+    party_role_24 = "24"
+    party_role_58 = "58"
+    party_role_55 = "55"
+
+
+class MiscNumber(Enum):
+    ordr_misc_0 = "OrdrMisc0"
+    ordr_misc_6 = "OrdrMisc6"
+    ordr_misc_7 = "OrdrMisc7"
+    ordr_misc_8 = "OrdrMisc8"
+
+
+class TransactionStatus(Enum):
+    new = "New"
+    open = "Open"
+    canceled = "Cancelled"
+
+
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
     log_319_cancel_child = "log319-cancel-child"
@@ -195,6 +242,10 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info = "log319-check-party-info"
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
+    log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
+    log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
+    log_319_check_the_currency_rate = "log319-check-the-currency-rate"
+    log_319_check_the_lis_amount = "log319-check-the-lis=amount"
 
 
 class WebAdminURL(Enum):
@@ -205,6 +256,16 @@ class WebBrowser(Enum):
     chrome = "chrome"
     firefox = "firefox"
 
+
 class WebTradingURL(Enum):
     luna_315 = "http://10.0.22.38:6680/quodtrading/qakharkiv315Trading/#/signin"
     kuiper_320 = "http://10.0.22.38:6780/quodtrading/qakharkiv320Trading/#/signin"
+
+
+class SshClientEnv(Enum):
+    HOST_317 = "10.0.22.35"
+    PORT_317 = 22
+    USER_317 = ""
+    PASSWORD_317 = ""
+    SU_USER_317 = "quod317"
+    SU_PASSWORD_317 = "quod317"

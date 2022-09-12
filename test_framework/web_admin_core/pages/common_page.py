@@ -113,6 +113,9 @@ class CommonPage:
         self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
+        if "custom-checkbox" not in self.find_by_xpath(checkbox_xpath).get_attribute("class"):
+            return True if "checked" in self.find_by_xpath(checkbox_xpath+'//span[contains(@class, "custom-checkbox")]')\
+                .get_attribute("class") else False
         return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
 
     def toggle_checkbox(self, checkbox_xpath: str):

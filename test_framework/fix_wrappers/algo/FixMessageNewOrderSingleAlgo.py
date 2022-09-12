@@ -849,7 +849,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Currency': 'EUR',
             'HandlInst': 1,
             'OrderQty': 3000000,
-            'OrdType': 2,
+            'OrdType': "D",
             'Price': 20,
             'Side': 1,
             'Instrument': "*",
@@ -859,7 +859,10 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'AlgoCst01': 'firm-up'
+            'AlgoCst01': 'firm-up',
+            'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
+            'QuoteID': '*',
+            'ChildOrderID': '*'
         }
         super().change_parameters(base_parameters)
         return self

@@ -2,6 +2,7 @@ from enum import Enum
 
 from th2_grpc_act_gui_quod import middle_office_pb2, common_pb2
 from th2_grpc_act_gui_quod.common_pb2 import EmptyRequest
+from th2_grpc_act_gui_quod.trades_pb2 import ExtractTradesBookSubLvlDataDetails
 
 from win_gui_modules.common_wrappers import CommissionsDetails, ContainedRow, TableCheckDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail
@@ -569,3 +570,27 @@ class OpeningBookingTicket:
 
     def build(self):
         return self.__opening_window
+
+
+class ExtractAllocationSubLvlDataDetails:
+    def __init__(self, base_request: EmptyRequest):
+        if base_request is not None:
+            self.__extractAllocationSubLvlDataDetails = middle_office_pb2.ExtractAllocationSubLvlDataDetails(
+                base=base_request)
+        else:
+            self.__extractAllocationSubLvlDataDetails = middle_office_pb2.ExtractAllocationSubLvlDataDetails()
+
+    def set_default_params(self, base_request):
+        self.__extractAllocationSubLvlDataDetails.base.CopyFrom(base_request)
+
+    def set_block_filter(self, filter_block):
+        self.__extractAllocationSubLvlDataDetails.blockFilter.update(filter_block)
+
+    def set_allocation_filter(self, allocation_filter):
+        self.__extractAllocationSubLvlDataDetails.allocationFilter.update(allocation_filter)
+
+    def set_internal_extraction_details(self, extraction_details: ExtractTradesBookSubLvlDataDetails):
+        self.__extractAllocationSubLvlDataDetails.extractionDetails.CopyFrom(extraction_details)
+
+    def build(self):
+        return self.__extractAllocationSubLvlDataDetails

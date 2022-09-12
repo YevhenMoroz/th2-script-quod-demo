@@ -26,15 +26,15 @@ class QAP_T7533(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.case_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -87,7 +87,7 @@ class QAP_T7533(TestCase):
         # endregion
 
         # region book order(step 1)
-        fix_verifier = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.middle_office.set_modify_ticket_details(settl_currency=self.data_set.get_currency_by_name('currency_5'),
                                                      exchange_rate='2',
                                                      exchange_rate_calc='Multiple',

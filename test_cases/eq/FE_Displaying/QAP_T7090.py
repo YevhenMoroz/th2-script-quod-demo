@@ -22,9 +22,9 @@ class QAP_T7090(TestCase):
         self.client = self.data_set.get_client_by_name("client_pt_1")
         self.account = self.data_set.get_account_by_name("client_pt_1_acc_3")
         self.venue_account = self.data_set.get_venue_client_account("client_pt_1_acc_3_venue_client_account")
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

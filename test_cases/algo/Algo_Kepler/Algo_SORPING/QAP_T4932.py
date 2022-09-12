@@ -15,7 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4932(TestCase):
@@ -47,13 +48,16 @@ class QAP_T4932(TestCase):
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
+        self.party_id = constants.PartyID.party_id_5.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_2.value
+        self.party_role = constants.PartyRole.party_role_12.value
 
         now = datetime.today() - timedelta(hours=3)
         self.ExpireDate = (now + timedelta(days=4)).strftime("%Y%m%d")
 
         self.no_party = [
-            {'PartyID': '12345678', 'PartyIDSource': 'P',
-             'PartyRole': '12'}
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
            ]
         # endregion
 
@@ -96,9 +100,16 @@ class QAP_T4932(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_updating_status.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_updating_status")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
+
+        # region Compare message parameters
+        self.old_status = constants.TransactionStatus.open.value
+        self.new_status = constants.TransactionStatus.canceled.value
+        # endregion
+
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_primary_status_of_transaction")
+        self.pre_filter['NewStatus'] = ('Cancelled', "EQUAL")
 
         self.rule_list = []
 
@@ -221,15 +232,11 @@ class QAP_T4932(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "OrderId": "*",
-            "OldStatus": "Open",
-            "NewStatus": "Cancelled"
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_updating_status()
+        compare_message.change_parameters(dict(OldStatus=self.old_status, NewStatus=self.new_status))
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        # TODO add Check read log message sequence instead checking one message
-        self.read_log_verifier.check_read_log_message(execution_report, self.key_params_read_log)
+        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message], [None, None], pre_filter=self.pre_filter)
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)

@@ -17,7 +17,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -173,6 +173,13 @@ class RuleManager:
                                                                      venue=venue,
                                                                      price=price))
 
+    def add_NewOrdSingleExecutionReportOnlyPending(self, session: str, account: str, venue: str, price: float):
+        return self.sim.createNewOrdSingleExecutionReportOnlyPending(
+            request=TemplateNewOrdSingleExecutionReportOnlyPending(connection_id=ConnectionID(session_alias=session),
+                                                                   account=account,
+                                                                   venue=venue,
+                                                                   price=price))
+
     def add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self, session: str, account: str, venue: str,
                                                                  price: float):
         return self.sim.createNewOrdSingleExecutionReportPendingAndNewFIXStandard(
@@ -257,13 +264,14 @@ class RuleManager:
                 md_entry_px=md_entry_px,
                 symbol=symbol))
 
-    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float):
+    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleFOK(
             request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
                                             account=account,
                                             venue=venue,
                                             trade=trade,
-                                            price=price))
+                                            price=price,
+                                            delay=delay))
 
     def add_NewOrdSingle_FOK_FIXStandard(self, session: str, account: str, venue: str, trade: bool, price: float, ):
         return self.sim.createNewOrdSingleFOKFIXStandard(
@@ -428,12 +436,13 @@ class RuleManager:
         )
 
     def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str,
-                                                     price: float):
+                                                     price: float, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportEliminate(
             request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
                                                                  account=account,
                                                                  exdestination=ex_destination,
-                                                                 price=price
+                                                                 price=price,
+                                                                 delay=delay
                                                                  ))
 
     def add_OrderCancelReplaceRequestWithDelayFixStandard(self, session: str, account: str, ex_destination: str,

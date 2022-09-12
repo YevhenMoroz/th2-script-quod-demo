@@ -31,14 +31,14 @@ class QAP_T7376(TestCase):
         self.price = "4373"
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
 
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id,
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id,
                                                             self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
