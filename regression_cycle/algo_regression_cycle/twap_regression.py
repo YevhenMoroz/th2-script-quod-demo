@@ -1,7 +1,6 @@
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_TWAP import QAP_T4886
 from test_cases.algo.Algo_TWAP.QAP_T4988 import QAP_T4988
 from test_cases.algo.Algo_TWAP.QAP_T5065 import QAP_T5065
 from test_cases.algo.Algo_TWAP.QAP_T4936 import QAP_T4936
@@ -14,6 +13,7 @@ from test_cases.algo.Algo_TWAP.QAP_T4884 import QAP_T4884
 from test_cases.algo.Algo_TWAP.QAP_T4883 import QAP_T4883
 from test_cases.algo.Algo_TWAP.QAP_T4882 import QAP_T4882
 from test_cases.algo.Algo_TWAP.QAP_T4760 import QAP_T4760
+from test_cases.algo.Algo_TWAP.QAP_T4886 import QAP_T4886
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -43,7 +43,7 @@ def test_run(parent_id= None, version = None):
         QAP_T4924(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4889(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4887(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4886.execute(report_id)
+        QAP_T4886(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4885(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4884(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4883(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
