@@ -132,8 +132,6 @@ class QAP_T8431(TestCase):
         # endregion
 
         # region 1st child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive Child DMA order", self.test_id))
-
         dma_1_xpar_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         dma_1_xpar_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price_ask_paris, Instrument=self.instrument, TimeInForce=self.tif_fok))
         er_eliminate_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_1_xpar_order, self.gateway_side_buy, self.status_eliminate)
