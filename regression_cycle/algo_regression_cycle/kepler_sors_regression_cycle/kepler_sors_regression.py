@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_mpdark_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression
+from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression, kepler_sors_mpdark_other_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -20,8 +20,12 @@ def test_run():
 
         if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
             kepler_sors_iceberg_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
-            kepler_sors_mpdark_regression.test_run(parent_id=report_id)
+        if eval(root.find(".//component[@name='Mp_dark_dark_phase']").attrib["run"]):
+            kepler_sors_mpdark_dark_phase_regression.test_run(parent_id=report_id)
+        if eval(root.find(".//component[@name='Mp_dark_LIS_and_dark_phase']").attrib["run"]):
+            kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id)
+        if eval(root.find(".//component[@name='Mp_dark_other']").attrib["run"]):
+            kepler_sors_mpdark_other_regression.test_run(parent_id=report_id)
         if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
             kepler_sors_sorping_regression.test_run(parent_id=report_id)
         if eval(root.find(".//component[@name='Synth_min_qty']").attrib["run"]):
