@@ -12,3 +12,6 @@ class WashBookAssignmentsSubWizard(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(WashBookConstants.INSTITUTION_AT_ASSIGNMENT_TAB)
+
+    def click_at_institution_link_by_name(self, name):
+        self.find_by_xpath(WashBookConstants.INSTITUTION_LINK_NAME_AT_ASSIGNMENTS_TAB.format(name)).click()

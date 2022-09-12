@@ -36,6 +36,7 @@ class OrderVelocityLimitConstants:
     MAIN_PAGE_LISTING_XPATH = '//*[@col-id="instr.symbol"]//span//span[4]'
     MAIN_PAGE_MOVING_TIME_WINDOW_XPATH = '//*[@col-id="movingTimeWindow"]//span//span[4]'
     MAIN_PAGE_MAX_QUANTITY_XPATH = '//*[@col-id="maxCumOrdQty"]//span//span[4]'
+    SEARCHED_VALUE_XPATH = '//*[text()="{}"]'
 
     # Values tab
     VALUES_TAB_ORDER_VELOCITY_LIMIT_NAME_XPATH = '//*[@formcontrolname="orderVelocityLimitName"]'
@@ -52,3 +53,6 @@ class OrderVelocityLimitConstants:
     DIMENSIONS_TAB_INSTR_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
     DIMENSIONS_TAB_LISTING_XPATH = '//*[@id="instr"]'
     DIMENSIONS_TAB_ALL_ORDERS_CHECKBOX_XPATH = '//*[text()="All Orders"]/preceding-sibling::span'
+
+    # Assignments tab
+    ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
