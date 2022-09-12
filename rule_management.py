@@ -264,13 +264,14 @@ class RuleManager:
                 md_entry_px=md_entry_px,
                 symbol=symbol))
 
-    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float):
+    def add_NewOrdSingle_FOK(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleFOK(
             request=TemplateNewOrdSingleFOK(connection_id=ConnectionID(session_alias=session),
                                             account=account,
                                             venue=venue,
                                             trade=trade,
-                                            price=price))
+                                            price=price,
+                                            delay=delay))
 
     def add_NewOrdSingle_FOK_FIXStandard(self, session: str, account: str, venue: str, trade: bool, price: float, ):
         return self.sim.createNewOrdSingleFOKFIXStandard(
