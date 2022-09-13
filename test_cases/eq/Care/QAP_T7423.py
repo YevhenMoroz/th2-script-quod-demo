@@ -49,8 +49,8 @@ class QAP_T7423(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message_care)
-        order_id_care = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_care)
+        order_id_care = response[0].get_parameters()['OrderID']
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()
@@ -67,14 +67,14 @@ class QAP_T7423(TestCase):
                                                                                             float(self.price),
                                                                                             int(self.qty),
                                                                                             delay=0)
-            self.fix_manager.send_message_fix_standard(self.fix_message_dma)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_dma)
+            order_id_dma = response[0].get_parameters()['OrderID']
         except Exception:
             logger.error("Error execution", exc_info=True)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        order_id_dma = self.order_book.extract_field(OrderBookColumns.order_id.value)
         exec_order_dma_id = self.order_book.set_filter(
             [OrderBookColumns.order_id.value, order_id_dma]).extract_2lvl_fields(
             SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [1])
