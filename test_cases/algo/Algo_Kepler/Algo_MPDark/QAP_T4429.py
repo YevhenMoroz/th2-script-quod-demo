@@ -181,19 +181,6 @@ class QAP_T4429(TestCase):
 
         time.sleep(5)
 
-        # region Check that only 3 cancel requests received
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check that only 3 cancel requests received", self.test_id))
-        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_trql)
-        rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
-        order_cancel_batsdark = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_bats_order)
-        self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx, order_cancel_batsdark], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
-        # endregion
-
-        # region Check there are no LIS child orders
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no LIS child orders", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_1_bats_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_2)
-        # endregion
-
         # region Check partial fill algo order
         er_partial_fill_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_partial_fill)
         self.fix_verifier_sell.check_fix_message(er_partial_fill_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial Fill')
@@ -234,30 +221,43 @@ class QAP_T4429(TestCase):
         er_new_dma_2_bats_order_params.change_parameters(dict(ExDestination=self.ex_destination_bats))
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order on venue BATS DARKPOOL UK')
         # endregion
+
+        # region Check that only 3 cancel requests received
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that only 3 cancel requests received", self.test_id))
+        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_trql)
+        rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
+        order_cancel_batsdark = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_bats_order)
+        self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx, order_cancel_batsdark], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
+        # endregion
+
+        # region Check there are no LIS child orders
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no LIS child orders", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_1_bats_order, self.dma_2_chix_order, self.dma_2_bats_order], key_parameters_list=[None, None, None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_2)
+        # endregion
         
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
-        # case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        # self.fix_verifier_sell.set_case_id(case_id_3)
-        # cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
-        #
-        # self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
-        # self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-        #
-        # # region check cancel first dma child order
-        # er_cancel_dma_2_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_chix_order, self.gateway_side_buy, self.status_cancel)
-        # self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order on venue CHIX DARKPOOL UK")
-        # # endregion
-        #
-        # # region check cancel second dma child order
-        # er_cancel_dma_2_bats_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_bats_order, self.gateway_side_buy, self.status_cancel)
-        # self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_bats_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order on venue BATS DARKPOOL UK")
-        # # endregion
-        #
-        # er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
-        # self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # # endregion
+        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_3)
+        cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
+
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
+        self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        # region check cancel first dma child order
+        er_cancel_dma_2_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_chix_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order on venue CHIX DARKPOOL UK")
+        # endregion
+
+        # region check cancel second dma child order
+        er_cancel_dma_2_bats_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_bats_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_bats_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order on venue BATS DARKPOOL UK")
+        # endregion
+
+        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
+        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        # endregion
         
         # region revert modifying strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
