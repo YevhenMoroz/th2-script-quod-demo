@@ -94,4 +94,5 @@ class PKSMessageType(Enum):
 
 
 class CSMessageType(Enum):
-    Order_CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
+    CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
+    CDOrdNotif = "Order_CDOrdNotif"
