@@ -54,22 +54,22 @@ class QAP_T7515(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region create CO1 order
-        self.fix_manager.send_message_fix_standard(self.fix_message1)
-        order_id1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message1)
+        order_id1 = response[0].get_parameters()['OrderID']
         # endregion
         # region accept first order
         self.client_inbox.accept_order()
         # endregion
         # region create CO2 order
-        self.fix_manager.send_message_fix_standard(self.fix_message2)
-        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message2)
+        order_id2 = response[0].get_parameters()['OrderID']
         # endregion
         # region accept second order
         self.client_inbox.accept_order()
         # endregion
         # region create CO3 order
-        self.fix_manager.send_message_fix_standard(self.fix_message3)
-        order_id3 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message3)
+        order_id3 = response[0].get_parameters()['OrderID']
         # endregion
         # region accept third order
         self.client_inbox.accept_order()
