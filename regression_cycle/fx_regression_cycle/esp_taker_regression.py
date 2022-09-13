@@ -10,6 +10,8 @@ from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_esp.QAP_T8648 import QAP_T8648
+from test_cases.fx.fx_taker_esp.QAP_T8667 import QAP_T8667
 from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -83,6 +85,8 @@ def test_run(parent_id=None, version=None):
         QAP_T2490.execute(report_id, session_id)
         QAP_T2489.execute(report_id, session_id, configuration.data_set)
         QAP_T2488.execute(report_id, session_id, configuration.data_set)
+        QAP_T8648(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8667(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         stop_fxfh()
         QAP_T2643.execute(report_id)
