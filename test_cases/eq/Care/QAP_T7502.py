@@ -12,7 +12,6 @@ from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.old_wrappers import eq_wrappers
 from win_gui_modules.utils import get_base_request
 
 logger = logging.getLogger(__name__)
@@ -48,8 +47,8 @@ class QAP_T7502(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()
