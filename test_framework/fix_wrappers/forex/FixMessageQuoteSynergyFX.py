@@ -149,16 +149,17 @@ class FixMessageQuoteSynergyFX(FixMessageQuoteFX):
     #         self.add_tag({"BidForwardPoints": "*"})
     #     return self
     #
-    # def set_params_for_quote_fwd(self, quote_request: FixMessageQuoteRequestFX):
-    #     self.set_params_for_quote(quote_request)
-    #     if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
-    #         self.add_tag({"BidForwardPoints": "*"})
-    #         self.add_tag({"OfferForwardPoints": "*"})
-    #     elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
-    #         self.add_tag({"OfferForwardPoints": "*"})
-    #     elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
-    #         self.add_tag({"BidForwardPoints": "*"})
-    #     return self
+    def set_params_for_quote_fwd(self, quote_request: FixMessageQuoteRequestFX):
+        self.set_params_for_quote(quote_request)
+        self.change_parameter("NoPartyIDs", "*")
+        if "Side" not in quote_request.get_parameter("NoRelatedSym")[0]:
+            self.add_tag({"BidForwardPoints": "*"})
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSym")[0]["Side"] == "1":
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSym")[0]["Side"] == "2":
+            self.add_tag({"BidForwardPoints": "*"})
+        return self
     #
     # def set_params_for_quote_fwd_ccy2(self, quote_request: FixMessageQuoteRequestFX):
     #     self.set_params_for_quote_ccy2(quote_request)
