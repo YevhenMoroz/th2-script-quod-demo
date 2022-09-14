@@ -26,8 +26,6 @@ class QAP_T8636(TestCase):
         self.quote_request = FixMessageQuoteRequestSynergyFX(data_set=self.data_set)
         self.quote = FixMessageQuoteSynergyFX()
         self.client = self.data_set.get_client_by_name("client_mm_3")
-        self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
-        self.settle_date_wk2 = self.data_set.get_settle_date_by_name("wk2")
         self.order = FixMessageNewOrderSinglePrevQuotedFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
 
