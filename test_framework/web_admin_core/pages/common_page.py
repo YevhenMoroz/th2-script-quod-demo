@@ -30,6 +30,14 @@ def waiting_until_page_requests_to_be_load(function):
                     time.sleep(0.25)
                 elif a == 240: raise TimeoutError
                 else: return function(*args)
+        elif not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+            a = 0
+            while True:
+                if not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+                    a += 1
+                    time.sleep(0.25)
+                elif a == 240: raise TimeoutError
+                else: return function(*args)
         else: return function(*args)
     return wrapper
 

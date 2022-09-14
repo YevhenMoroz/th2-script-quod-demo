@@ -1,6 +1,7 @@
 import random
 import string
 import sys
+import time
 import traceback
 
 from custom import basic_custom_actions
@@ -27,7 +28,7 @@ class QAP_T3814(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_fix_matching_profile_page()
+        side_menu.open_allocation_matching_profile_page()
         page = AllocationMatchingProfilePage(self.web_driver_container)
         page.click_on_new()
         wizard = AllocationMatchingProfileWizard(self.web_driver_container)
@@ -42,12 +43,11 @@ class QAP_T3814(CommonTestCase):
             page.set_name(self.fix_matching_profile_name)
             page.click_on_more_actions()
             page.click_on_delete(True)
-            try:
-                page.set_name(self.fix_matching_profile_name)
-                page.click_on_more_actions()
-                self.verify("Error, Fix matching profile name not deleted", True, False)
-            except Exception:
-                self.verify("Fix matching profile name deleted correctly", True, True)
+
+            page.set_name(self.fix_matching_profile_name)
+            time.sleep(1)
+            self.verify("Allocation Matching Profile deleted", True,
+                        page.is_searched_entity_found_by_name(self.fix_matching_profile_name))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

@@ -1,6 +1,8 @@
 import sys
 import time
 import traceback
+import random
+import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_external_clients_sub_wizard\
@@ -39,7 +41,7 @@ class QAP_T3989(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.name = 'QAP_T3989'
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = self.data_set.get_instr_symbol("instr_symbol_3")
         self.venue_at_spot_venues_tab = self.data_set.get_venue_by_name("venue_6")
@@ -158,6 +160,8 @@ class QAP_T3989(CommonTestCase):
                                self.sweepable_quantity, self.tired_quantity, self.tenor]
 
             self.verify("New Client Tiers Instrument contains all saved data", expected_result, actual_result)
+
+            instrument_wizard.click_on_save_changes()
 
             self.post_conditions()
 
