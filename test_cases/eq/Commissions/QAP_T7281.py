@@ -73,7 +73,8 @@ class QAP_T7281(TestCase):
         calculate_comm = self.order_book.extract_sub_lvl_fields([TradeBookColumns.client_commission.value],
                                                                 [SecondLevelTabs.executions.value],
                                                                 {OrderBookColumns.order_id.value: order_id},
-                                                                [{TradeBookColumns.exec_type.value: ExecType.calculated.value}])
+                                                                [{
+                                                                     TradeBookColumns.exec_type.value: ExecType.calculated.value}])
         self.order_book.compare_values({TradeBookColumns.client_commission.value: "0.01"}, calculate_comm,
                                        "Verify Calculated commissions")
         self.mid_office.set_modify_ticket_details(extract_book=True)
