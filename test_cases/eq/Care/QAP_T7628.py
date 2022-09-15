@@ -17,10 +17,11 @@ timeouts = True
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7628(TestCase):
 
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = Connectivity.Ganymede_317_ss.value
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
         self.fix_manager = FixManager(self.ss_connectivity)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
         self.fix_message.change_parameter("Account", "client2341")
