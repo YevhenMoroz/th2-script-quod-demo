@@ -4,6 +4,7 @@ class ExecutionStrategiesConstants:
     # --MAIN MENU--
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     OK_BUTTON_XPATH="//*[text()='Ok']"
+    DISPLAYED_EXECUTION_STRATEGY_XPATH = '//*[@text()="{}"]'
     # --more actions
     MORE_ACTIONS_BUTTON_XPATH = "//nb-icon[@title='More Actions']"
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'

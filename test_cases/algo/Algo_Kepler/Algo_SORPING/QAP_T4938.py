@@ -143,6 +143,7 @@ class QAP_T4938(TestCase):
 
         # region Check Fill Iceberg algo order
         er_fill_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_fill)
+        er_fill_Iceberg_order_params.add_tag(dict(misc5='#'))
         self.fix_verifier_sell.check_fix_message(er_fill_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 

@@ -1,15 +1,14 @@
 import random
 import string
 import sys
-import time
 import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.middle_office.fix_matching_profile.fix_matching_profile_page import \
-    FixMatchingProfilePage
-from test_framework.web_admin_core.pages.middle_office.fix_matching_profile.fix_matching_profile_wizard import \
-    FixMatchingProfileWizard
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_page import \
+    AllocationMatchingProfilePage
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_wizard import \
+    AllocationMatchingProfileWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -28,31 +27,23 @@ class QAP_T3814(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_fix_matching_profile_page()
-        time.sleep(1)
-        page = FixMatchingProfilePage(self.web_driver_container)
+        page = AllocationMatchingProfilePage(self.web_driver_container)
         page.click_on_new()
-        time.sleep(2)
-        wizard = FixMatchingProfileWizard(self.web_driver_container)
-        wizard.set_fix_matching_profile_name(self.fix_matching_profile_name)
-        time.sleep(2)
+        wizard = AllocationMatchingProfileWizard(self.web_driver_container)
+        wizard.set_name(self.fix_matching_profile_name)
         wizard.click_on_save_changes()
-        time.sleep(2)
 
     def test_context(self):
 
         try:
             self.precondition()
-            page = FixMatchingProfilePage(self.web_driver_container)
-            page.set_fix_matching_profile_name(self.fix_matching_profile_name)
-            time.sleep(2)
+            page = AllocationMatchingProfilePage(self.web_driver_container)
+            page.set_name(self.fix_matching_profile_name)
             page.click_on_more_actions()
-            time.sleep(2)
             page.click_on_delete(True)
             try:
-                page.set_fix_matching_profile_name(self.fix_matching_profile_name)
-                time.sleep(1)
+                page.set_name(self.fix_matching_profile_name)
                 page.click_on_more_actions()
                 self.verify("Error, Fix matching profile name not deleted", True, False)
             except Exception:

@@ -35,6 +35,7 @@ class PriceToleranceControlConstants:
     MAIN_PAGE_VENUE_XPATH = '//*[@col-id="venueID"]//span//span[4]'
     MAIN_PAGE_CLIENT_GROUP_XPATH = '//*[@col-id="clientGroup.clientGroupName"]//span//span[4]'
     MAIN_PAGE_LISTING_GROUP_XPATH = '//*[@col-id="listingGroup.listingGroupName"]//span//span[4]'
+    SEARCHED_VALUE_XPATH = '//*[text()="{}"]'
 
 
     # Values tab
@@ -108,6 +109,8 @@ class PriceToleranceControlConstants:
     PRICE_CONTROL_PROFILE_POINTS_SUB_WIZARD_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimit ng-star-inserted"]//input'
     PRICE_CONTROL_PROFILE_POINTS_SUB_WIZARD_UPPER_LIMIT_XPATH = '//*[@placeholder="Upper Limit"]'
 
+    # Assignments tab
+    ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
 
 
 

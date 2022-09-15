@@ -1,4 +1,4 @@
-class FixMatchingProfileConstants:
+class AllocationMatchingProfileConstants:
     FIX_MATCHING_PROFILE_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='FIX Matching Profile ']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
@@ -14,7 +14,7 @@ class FixMatchingProfileConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Allocation Matching Profile"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"

@@ -57,3 +57,9 @@ class InstitutionsValuesSubWizard(CommonPage):
 
     def get_position_flattening_period(self):
         return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD)
+
+    def click_at_select_unknown_accounts_checkbox(self):
+        self.find_by_xpath(InstitutionsConstants.VALUES_TAB_UNKNOWN_ACCOUNTS).click()
+
+    def is_select_unknown_accounts_selected(self):
+        return self.is_checkbox_selected(InstitutionsConstants.VALUES_TAB_UNKNOWN_ACCOUNTS)

@@ -5,6 +5,7 @@ from datetime import timedelta
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
+from test_cases.web_admin.web_admin_test_cases.site.QAP_T3127 import QAP_T3127
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3787 import QAP_T3787
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3786 import QAP_T3786
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3704 import QAP_T3704
@@ -58,6 +59,8 @@ class RunSite:
             # QAP_T3697(self.web_driver_container, self.second_lvl_id).run()
 
             # PRET ATs
+            QAP_T3127(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3703(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3701(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
