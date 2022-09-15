@@ -75,8 +75,8 @@ class QAP_T8620(TestCase):
         data_validation(test_id=self.test_id,
                         event_name=f"Create 'CumTradingLimit' rule with 'Institution'"
                                    f" which assigned to another hierarchical assignments.",
-                        expected_result=create_cum_trading_limit_response,
-                        actual_result=self.error_message_step1)
+                        expected_result=self.error_message_step1,
+                        actual_result=create_cum_trading_limit_response)
         print(create_cum_trading_limit_response)
         # endregion
 
@@ -105,6 +105,6 @@ class QAP_T8620(TestCase):
         data_validation(test_id=self.test_id,
                         event_name=f"Modify 'CumTradingLimit' rule with 'Institution'"
                                    f" which assigned to another hierarchical assignments.",
-                        expected_result=modify_cum_trading_limit_response,
-                        actual_result=self.error_message_step2)
+                        expected_result=self.error_message_step2,
+                        actual_result=modify_cum_trading_limit_response)
         # endregion

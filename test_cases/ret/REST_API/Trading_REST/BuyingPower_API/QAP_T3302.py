@@ -15,7 +15,7 @@ from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormula
 from test_framework.rest_api_wrappers.utils.booked_amount_verifier import booked_amount_validation
 
 
-class QAP_T8216(TestCase):
+class QAP_T3302(TestCase):
     def __init__(self, report_id, data_set: BaseDataSet, environment):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], report_id)
@@ -64,6 +64,7 @@ class QAP_T8216(TestCase):
         if 'ExecType' in nos_response.keys() and nos_response['ExecType'] == 'Open':
             initial_net_order_value = float(nos_response['NetOrdAmt'])
             self.cash_account_message.find_cash_account_counters(cash_account_id=self.cash_account_id)
+
             booked_amount_after_buy_order_creation = self.wa_api_manager.parse_response_details(
                 response=self.wa_api_manager.send_get_request_with_parameters(self.cash_account_message))
             self.security_position_message.find_positions(security_account_name=self.security_account)
@@ -74,10 +75,8 @@ class QAP_T8216(TestCase):
 
             calculation_results_buy_side = self.formulas_manager.calc_booked_amount_buy_side(
                 test_id=self.test_id,
-                response_wa_cash_account=
-                booked_amount_before_order_creation[0],
-                response_wa_security_account=
-                position_before_order_creation,
+                response_wa_cash_account=booked_amount_before_order_creation[0],
+                response_wa_security_account=position_before_order_creation,
                 initial_net_order_value=initial_net_order_value,
                 execution_type=nos_response['ExecType'])
 

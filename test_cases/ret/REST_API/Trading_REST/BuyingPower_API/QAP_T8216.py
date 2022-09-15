@@ -66,8 +66,8 @@ class QAP_T8216(TestCase):
             self.cash_account_message.find_cash_account_counters(cash_account_id=self.cash_account_id)
             booked_amount_after_buy_order_creation = self.wa_api_manager.parse_response_details(
                 response=self.wa_api_manager.send_get_request_with_parameters(self.cash_account_message))
-            self.security_position_message.find_positions(security_account_name=self.security_account)
 
+            self.security_position_message.find_positions(security_account_name=self.security_account)
             position_after_buy_order_creation = self.wa_api_manager.parse_response_details(
                 response=self.wa_api_manager.send_get_request_with_parameters(self.security_position_message),
                 filter_dict={'instrID': self.instrument_id})
@@ -82,6 +82,7 @@ class QAP_T8216(TestCase):
                 execution_type=nos_response['ExecType'])
 
             booked_amount_validation(test_id=self.test_id,
+                                     event_name='Booked Amount calculation upon order Creation. Side=Buy',
                                      booked_amount_current=booked_amount_after_buy_order_creation[0],
                                      booked_amount_simulated=calculation_results_buy_side,
                                      reserved_qty_current=position_after_buy_order_creation[0])
@@ -113,9 +114,11 @@ class QAP_T8216(TestCase):
                     response_wa_cash_account=booked_amount_after_buy_order_creation,
                     response_wa_security_account=position_after_buy_order_creation,
                     fee=self.fee,
-                    commission=self.commission
+                    commission=self.commission,
+                    execution_type=nos_response['ExecType']
                 )
                 booked_amount_validation(test_id=self.test_id,
+                                         event_name='Booked Amount calculation upon order Creation. Side=Sell',
                                          booked_amount_current=booked_amount_after_sell_order_creation[0],
                                          booked_amount_simulated=calculation_results_sell_side,
                                          reserved_qty_current=position_after_sell_order_creation[0])

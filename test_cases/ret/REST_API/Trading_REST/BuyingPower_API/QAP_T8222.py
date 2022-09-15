@@ -92,12 +92,15 @@ class QAP_T8222(TestCase):
                     initial_net_order_value=initial_net_order_value,
                     execution_type=execution_type_order_modified,
                     amended_net_order_value=amended_net_order_value)
-                booked_amount_validation(test_id=self.test_id, booked_amount_current=booked_amount_after_modification[0],
+                booked_amount_validation(test_id=self.test_id,
+                                         event_name='Booked Amount calculation upon order Modification. Side=Buy.'
+                                                    f'(Decrease Price to {self.price} and Increase Qty to {self.qty})',
+                                         booked_amount_current=booked_amount_after_modification[0],
                                          booked_amount_simulated=calculation_results_after_order_modification,
                                          reserved_qty_current=position_after_modification[0])
             else:
                 bca.create_event(f"Modification response wasn't received,"
-                                 f" (increase Price to {self.price} and decrease Qty to {self.qty})",
+                                 f"(Decrease Price to {self.price} and Increase Qty to {self.qty})",
                                  status="FAILED",
                                  parent_id=self.test_id)
         else:

@@ -91,7 +91,10 @@ class QAP_T8217(TestCase):
                     initial_net_order_value=initial_net_order_value,
                     execution_type=execution_type_order_modified,
                     amended_net_order_value=amended_net_order_value)
-                booked_amount_validation(test_id=self.test_id, booked_amount_current=booked_amount_after_modification_increase[0],
+                booked_amount_validation(test_id=self.test_id,
+                                         event_name='Booked Amount calculation upon order Modification. Side=Buy.'
+                                                    f'(Increase Qty to {self.qty})',
+                                         booked_amount_current=booked_amount_after_modification_increase[0],
                                          booked_amount_simulated=calculation_results_after_order_modification,
                                          reserved_qty_current=position_after_modification_increase[0])
 
@@ -120,6 +123,8 @@ class QAP_T8217(TestCase):
                         execution_type=execution_type_order_modified,
                         amended_net_order_value=self.qty * self.price + self.commission + self.fee)
                     booked_amount_validation(test_id=self.test_id,
+                                             event_name='Booked Amount calculation upon order Modification. Side=Buy'
+                                                        f'(Decrease Qty to {self.qty})',
                                              booked_amount_current=booked_amount_after_modification_decrease[0],
                                              booked_amount_simulated=calculation_results_after_order_modification,
                                              reserved_qty_current=position_after_modification_decrease[0])
