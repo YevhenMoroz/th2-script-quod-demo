@@ -129,6 +129,7 @@ class FxSecurityTypes(Enum):
     fx_swap = "FXSWAP"
     fx_ndf = "FXNDF"
     fx_nds = "FXNDS"
+    fx_mleg = "MLEG"
 
 
 class FxInstrTypeWA(Enum):
