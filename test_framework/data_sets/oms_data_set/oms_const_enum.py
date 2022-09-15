@@ -190,7 +190,7 @@ class OmsRecipients(Enum):
     recipient_desk_2 = ""
     recipient_desk_3 = ""
 
-    recipient_user_1 = ""
+    recipient_user_1 = "JavaApiUser"
     recipient_user_2 = ""
     recipient_user_3 = ""
 
