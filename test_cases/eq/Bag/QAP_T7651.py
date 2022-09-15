@@ -59,7 +59,7 @@ class QAP_T7651(TestCase):
                                                                           OrderBagColumn.ord_bag_name.value])
 
         self.bag_order_book.compare_values({OrderBagColumn.order_bag_qty.value: qty_of_bag_order,
-                                            OrderBagColumn.ord_bag_name.value: 'Bag_1'},
+                                            OrderBagColumn.ord_bag_name.value: 'QAP_T7651'},
                                            fields, 'Compare values from block')
 
         # endregion
