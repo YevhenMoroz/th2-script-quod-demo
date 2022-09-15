@@ -74,7 +74,7 @@ class QAP_T7173(TestCase):
         fix_response_confirmation = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         no_mics = {
-                "MiscFeeAmt": "*", "MiscFeeCurr": "*", "MiscFeeType": "*"}
+            "MiscFeeAmt": "*", "MiscFeeCurr": "*", "MiscFeeType": "*"}
         fix_response_confirmation.change_parameters(
             {'tag5120': "*", "AllocQty": self.qty, "AllocAccount": self.client_acc, "Account": self.client,
              "CommissionData": {"CommissionType": "*", "Commission": "*", "CommCurrency": "*"}, 'NoMiscFees': no_mics})

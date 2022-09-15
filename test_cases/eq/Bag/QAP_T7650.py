@@ -24,7 +24,7 @@ class QAP_T7650(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
@@ -70,11 +70,11 @@ class QAP_T7650(TestCase):
                                                                           OrderBagColumn.unmatched_qty.value,
                                                                           OrderBagColumn.leaves_qty.value
                                                                           ])
-        order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
-        expected_values_first = {'order_bag.' + OrderBagColumn.order_bag_qty.value: qty_of_bag,
-                                 'order_bag.' + OrderBagColumn.ord_bag_name.value: name_of_bag,
-                                 'order_bag.' + OrderBagColumn.unmatched_qty.value: qty_of_bag,
-                                 'order_bag.' + OrderBagColumn.leaves_qty.value: qty_of_bag,
+        order_bag_id = fields.pop(OrderBagColumn.id.value)
+        expected_values_first = {OrderBagColumn.order_bag_qty.value: qty_of_bag,
+                                 OrderBagColumn.ord_bag_name.value: name_of_bag,
+                                 OrderBagColumn.unmatched_qty.value: qty_of_bag,
+                                 OrderBagColumn.leaves_qty.value: qty_of_bag,
                                  }
         self.bag_order_book.compare_values(expected_values_first,
                                            fields, 'Compare values from bag_book before modification')
@@ -95,11 +95,11 @@ class QAP_T7650(TestCase):
                                                                             OrderBagColumn.unmatched_qty.value,
                                                                             OrderBagColumn.leaves_qty.value
                                                                             ])
-        expected_values_second = {'order_bag.' + OrderBagColumn.order_bag_qty.value: qty_of_bag_after_modification,
-                                  'order_bag.' + OrderBagColumn.ord_bag_name.value: name_of_bag,
-                                  'order_bag.' + OrderBagColumn.id.value: order_bag_id,
-                                  'order_bag.' + OrderBagColumn.unmatched_qty.value: qty_of_bag_after_modification,
-                                  'order_bag.' + OrderBagColumn.leaves_qty.value: qty_of_bag_after_modification
+        expected_values_second = {OrderBagColumn.order_bag_qty.value: qty_of_bag_after_modification,
+                                  OrderBagColumn.ord_bag_name.value: name_of_bag,
+                                  OrderBagColumn.id.value: order_bag_id,
+                                  OrderBagColumn.unmatched_qty.value: qty_of_bag_after_modification,
+                                  OrderBagColumn.leaves_qty.value: qty_of_bag_after_modification
                                   }
         self.bag_order_book.compare_values(expected_values_second,
                                            fields_2, 'Compare values from bag_book after modification')
