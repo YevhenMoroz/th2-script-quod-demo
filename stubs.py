@@ -41,7 +41,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 class Stubs:
     configs_dir = join(dirname(abspath(__file__)), 'configs')
     factory = CommonFactory(
-        grpc_router_config_filepath=join(configs_dir, "grpc.json"),
+        grpc_config_filepath=join(configs_dir, "grpc.json"),
         rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
         mq_router_config_filepath=join(configs_dir, "mq.json"),
         custom_config_filepath=join(configs_dir, "script-params.json"),

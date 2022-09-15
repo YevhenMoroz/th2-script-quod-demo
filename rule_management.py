@@ -46,7 +46,7 @@ class RuleManager:
     def print_active_rules(self):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
-            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
+            active_rules[rule.id.id] = [rule.class_name, rule.alias]
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
