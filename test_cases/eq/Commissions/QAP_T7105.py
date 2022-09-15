@@ -33,19 +33,19 @@ class QAP_T7105(TestCase):
         self.dc_connectivity = self.fix_env.drop_copy
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.cur = self.data_set.get_currency_by_name('currency_3')
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.price = self.fix_message.get_parameter('Price')
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.fee = self.data_set.get_fee_by_name('fee1')
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
@@ -62,7 +62,8 @@ class QAP_T7105(TestCase):
         self.rest_commission_sender.set_modify_fees_message(comm_profile=self.comm_profile).change_message_params(
             {'venueID': self.venue}).send_post_request()
         self.rest_commission_sender.clear_commissions()
-        self.rest_commission_sender.set_modify_client_commission_message(comm_profile=self.comm_profile).change_message_params(
+        self.rest_commission_sender.set_modify_client_commission_message(
+            comm_profile=self.comm_profile).change_message_params(
             {'venueID': self.venue}).send_post_request()
         # endregion
         # region send order
@@ -94,7 +95,7 @@ class QAP_T7105(TestCase):
             {"Account": self.client, "AvgPx": "*", "Currency": "*", "tag5120": "*",
              'RootOrClientCommission': comm_data['Commission'], 'RootCommTypeClCommBasis': comm_data['CommType'],
              "RootOrClientCommissionCurrency": self.com_cur,
-             'NoRootMiscFeesList': {"NoRootMiscFeesList": [no_root_misc]}, "RootSettlCurrAmt":"*"})
+             'NoRootMiscFeesList': {"NoRootMiscFeesList": [no_root_misc]}, "RootSettlCurrAmt": "*"})
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report)
         # endregion
 
@@ -114,4 +115,3 @@ class QAP_T7105(TestCase):
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
-
