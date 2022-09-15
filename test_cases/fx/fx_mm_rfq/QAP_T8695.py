@@ -4,13 +4,9 @@ from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
-    FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
@@ -26,15 +22,10 @@ class QAP_T8695(TestCase):
         self.ss_connectivity = self.fix_env.sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.status = Status.Fill
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_reject = FixMessageQuoteRequestRejectFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
-        self.new_order_single = FixMessageNewOrderMultiLegFX()
-        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_4")
-        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.text_1 = "11613 'Side': undefined error, according to 'LegSide' presence"
         self.text_2 = "11613 'Side': B error, according to 'LegSide' presence"
 
