@@ -4,12 +4,15 @@ from test_cases.fx.fx_taker_esp import QAP_T3097, QAP_T2987, QAP_T2654, QAP_T309
     QAP_T2525, QAP_T2521, \
     QAP_T3112, QAP_T3106, QAP_T3100, QAP_T3094, QAP_T3090, QAP_T3083, QAP_T2992, QAP_T2704, QAP_T2702, QAP_T2701, \
     QAP_T2680, QAP_T2607, \
-    QAP_T2591, QAP_T2756, QAP_T2766, QAP_T2643, QAP_T2642, QAP_T2640, QAP_T2493, QAP_T2491, QAP_T2490, QAP_T2489, \
+    QAP_T2591, QAP_T2756, QAP_T2766, QAP_T2493, QAP_T2491, QAP_T2490, QAP_T2489, \
     QAP_T2488, QAP_T2685
 from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_esp.QAP_T2640 import QAP_T2640
+from test_cases.fx.fx_taker_esp.QAP_T2642 import QAP_T2642
+from test_cases.fx.fx_taker_esp.QAP_T2643 import QAP_T2643
 from test_cases.fx.fx_taker_esp.QAP_T8648 import QAP_T8648
 from test_cases.fx.fx_taker_esp.QAP_T8667 import QAP_T8667
 from test_cases.fx.fx_wrapper.common_tools import stop_fxfh, start_fxfh
@@ -89,9 +92,9 @@ def test_run(parent_id=None, version=None):
         QAP_T8667(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         stop_fxfh()
-        QAP_T2643.execute(report_id)
-        QAP_T2642.execute(report_id)
-        QAP_T2640.execute(report_id)
+        QAP_T2643(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2642(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2640(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         start_fxfh()
 
         # run_full_amount(report_id, session_id)
