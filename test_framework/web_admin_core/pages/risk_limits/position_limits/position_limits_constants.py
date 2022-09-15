@@ -67,6 +67,9 @@ class PositionsLimitsConstants:
     DIMENSIONS_TAB_WILD_CARD_INSTR_GROUP_CHECKBOX_XPATH = '//*[text()="Wild Card Instr Group"]/preceding-sibling::span'
     DIMENSIONS_TAB_WILD_CARD_INSTR_TYPE_XPATH = '//*[text()="Wild Card Instr Type"]/preceding-sibling::span'
 
+    # Assignments tab
+    ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
+
 
 
 

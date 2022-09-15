@@ -14,12 +14,13 @@ class CumTrdLmtCounterConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="CumTrdLmt Counter"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DROP_DOWN_MENU = '//nb-option//span'
 
     # Main page
     MAIN_PAGE_CUM_TRADING_LIMIT_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -38,6 +39,7 @@ class CumTrdLmtCounterConstants:
     WIZARD_CUM_BUY_ORD_AMT_XPATH = '//*[@formcontrolname="cumBuyOrdAmt"]'
     WIZARD_CUM_ORD_QTY_XPATH = '//*[@formcontrolname="cumOrdQty"]'
     WIZARD_CUM_SELL_ORD_AMT_XPATH = '//*[@formcontrolname="cumSellOrdAmt"]'
+    WIZARD_CUM_LEAVES_ORD_AMT_XPATH = '//*[@formcontrolname="cumLeavesOrdAmt"]'
 
 
 

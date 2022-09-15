@@ -2,7 +2,9 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8357 import QAP_T8357
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8433 import QAP_T8433
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8329 import QAP_T8329
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8215 import QAP_T8215
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8205 import QAP_T8205
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3971 import QAP_T3971
@@ -21,6 +23,7 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3913 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3900 import QAP_T3900
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3884 import QAP_T3884
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3861 import QAP_T3861
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3857 import QAP_T3857
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3850 import QAP_T3850
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3832 import QAP_T3832
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3831 import QAP_T3831
@@ -57,6 +60,7 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3357 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3356 import QAP_T3356
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3349 import QAP_T3349
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3348 import QAP_T3348
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3307 import QAP_T3307
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -107,6 +111,8 @@ class RunClientsAccounts:
             QAP_T3884(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3861(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3857(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3850(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
@@ -180,9 +186,15 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T3348(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3307(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T8205(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8215(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8329(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8357(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8433(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
