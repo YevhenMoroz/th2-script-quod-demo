@@ -45,7 +45,8 @@ class Stubs:
         rabbit_mq_config_filepath=join(configs_dir, "rabbit.json"),
         mq_router_config_filepath=join(configs_dir, "mq.json"),
         custom_config_filepath=join(configs_dir, "script-params.json"),
-        prometheus_config_filepath=join(configs_dir, "prometheus.json")
+        prometheus_config_filepath=join(configs_dir, "prometheus.json"),
+        logging_config_filepath="logging.txt"
     )
     fix_act = factory.grpc_router.get_service(ActFixService)
     event_store = factory.event_batch_router

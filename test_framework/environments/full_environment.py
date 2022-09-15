@@ -27,7 +27,7 @@ class FullEnvironment:
         self.__list_ssh_client_environment = list()
 
         for session_environment in component_environment:
-            environment = session_environment.getchildren()
+            environment = list(session_environment)
             for instance in environment:
                 if instance.tag == "fix_environment":
                     self.__list_fix_environment.append(FixEnvironment.get_instance(EnvironmentType[instance.text]))
