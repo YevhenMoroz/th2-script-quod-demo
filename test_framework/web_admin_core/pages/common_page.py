@@ -70,6 +70,17 @@ class CommonPage:
     def get_text_by_xpath(self, xpath: str):
         if "button" in xpath:
             return self.find_by_xpath(xpath).text
+        elif self.find_by_xpath(xpath).get_attribute("disabled"):
+            element = self.find_by_xpath(xpath)
+            action = ActionChains(self.web_driver_container.get_driver())
+            action.double_click(element)
+            action.click()
+            action.key_down(Keys.CONTROL)
+            action.send_keys("C")
+            action.key_up(Keys.CONTROL)
+            action.perform()
+            value_from_element = pyperclip.paste()
+            return value_from_element
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
