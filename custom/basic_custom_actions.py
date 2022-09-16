@@ -15,7 +15,7 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
 
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
-    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
+    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint, SimpleList
 from th2_grpc_common.common_pb2 import ComparisonSettings
 from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
 from decimal import Decimal
@@ -261,11 +261,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
         elif isinstance(content[tag], dict):
             content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
-            print(type(content[tag]))
-            print(content[tag])
-            value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
-                simple_filter=str(value), operation=FilterOperation.Value(operation)
+                simple_list=SimpleList(simple_values=content[tag]), operation=FilterOperation.IN
             )
         elif isinstance(content[tag], list):
             for group in content[tag]:
