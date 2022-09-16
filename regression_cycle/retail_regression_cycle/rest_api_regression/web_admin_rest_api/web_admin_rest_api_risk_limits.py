@@ -36,6 +36,9 @@ from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3263 import QAP
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3271 import QAP_T3271
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8618 import QAP_T8618
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8620 import QAP_T8620
+from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8621 import QAP_T8621
+from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8622 import QAP_T8622
+from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8623 import QAP_T8623
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -118,6 +121,12 @@ def test_run(parent_id=None):
         QAP_T8618(report_id, configuration_admin_api_risk_limits.data_set,
                   configuration_admin_api_risk_limits.environment).execute()
         QAP_T8620(report_id, configuration_admin_api_risk_limits.data_set,
+                  configuration_admin_api_risk_limits.environment).execute()
+        QAP_T8621(report_id, configuration_admin_api_risk_limits.data_set,
+                  configuration_admin_api_risk_limits.environment).execute()
+        QAP_T8622(report_id, configuration_admin_api_risk_limits.data_set,
+                  configuration_admin_api_risk_limits.environment).execute()
+        QAP_T8623(report_id, configuration_admin_api_risk_limits.data_set,
                   configuration_admin_api_risk_limits.environment).execute()
 
     except Exception:
