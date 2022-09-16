@@ -13,8 +13,8 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Others_Trading_API', parent_id)
-    configuration_trading_api_others = ComponentConfiguration("Others_Trading_Api")
+    report_id = bca.create_event('Trading_REST_API_Others', parent_id)
+    configuration_trading_api_others = ComponentConfiguration("Trading_REST_API_Others")
     try:
         QAP_T3458(report_id, configuration_trading_api_others.data_set,
                   configuration_trading_api_others.environment).execute()

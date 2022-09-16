@@ -5,7 +5,9 @@ from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3600 import QAP_T3600
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3601 import QAP_T3601
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3603 import QAP_T3603
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3604 import QAP_T3604
+from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3605 import QAP_T3605
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3607 import QAP_T3607
+from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3608 import QAP_T3608
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3609 import QAP_T3609
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -28,7 +30,11 @@ def test_run(parent_id=None):
                   configuration_admin_api_users.environment).execute()
         QAP_T3604(report_id, configuration_admin_api_users.data_set,
                   configuration_admin_api_users.environment).execute()
+        QAP_T3605(report_id, configuration_admin_api_users.data_set,
+                  configuration_admin_api_users.environment).execute()
         QAP_T3607(report_id, configuration_admin_api_users.data_set,
+                  configuration_admin_api_users.environment).execute()
+        QAP_T3608(report_id, configuration_admin_api_users.data_set,
                   configuration_admin_api_users.environment).execute()
         QAP_T3609(report_id, configuration_admin_api_users.data_set,
                   configuration_admin_api_users.environment).execute()

@@ -10,6 +10,7 @@ from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3209 import QAP_T
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3216 import QAP_T3216
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3259 import QAP_T3259
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3260 import QAP_T3260
+from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3302 import QAP_T3302
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8217 import QAP_T8217
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8218 import QAP_T8218
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8219 import QAP_T8219
@@ -23,7 +24,6 @@ from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8248 import QAP_T
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8249 import QAP_T8249
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8250 import QAP_T8250
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8251 import QAP_T8251
-from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3302 import QAP_T3302
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3315 import QAP_T3315
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3316 import QAP_T3316
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8107 import QAP_T8107
