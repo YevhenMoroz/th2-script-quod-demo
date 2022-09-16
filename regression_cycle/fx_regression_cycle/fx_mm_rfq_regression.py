@@ -153,9 +153,7 @@ from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = False
-channels = dict()
+logging.getLogger().setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
