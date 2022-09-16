@@ -48,7 +48,7 @@ class RetFormulasManager:
                 security_position = response_wa_security_account[count].keys()
                 collateral_qty = 0
                 reserved_qty = float(response_wa_security_account[count]['reservedQty'])
-                average_price = float(response_wa_security_account[count]['grossAvgPx'])
+                average_price = float(response_wa_security_account[count]['grossWeightedAvgPx'])
                 if 'collateralQty' in security_position:
                     collateral_qty = float(response_wa_security_account[count]['collateralQty'])
                 if response_wa_security_account[count]['positionType'] == 'N':
