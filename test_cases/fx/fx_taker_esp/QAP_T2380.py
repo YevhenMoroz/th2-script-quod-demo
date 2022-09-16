@@ -15,7 +15,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 
-class QAP_8169(TestCase):
+class QAP_T2380(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)

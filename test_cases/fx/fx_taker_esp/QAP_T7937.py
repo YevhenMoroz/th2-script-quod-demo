@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 
 
-class QAP_8090(TestCase):
+class QAP_T3937(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
