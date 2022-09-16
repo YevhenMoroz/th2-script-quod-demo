@@ -99,8 +99,8 @@ class QAP_T2491(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Fill)
         self.execution_report.change_parameters({"Account": "*",
                                                  "LastQty": "1000000",
-                                                 "AvgPx": "1.18075",
-                                                 "LastMkt": "CITI-ID",
+                                                 "AvgPx": "1.18148",
+                                                 "LastMkt": "BARX",
                                                  "CumQty": "1000000"
                                                  })
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
