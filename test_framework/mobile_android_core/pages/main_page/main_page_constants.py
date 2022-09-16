@@ -1,9 +1,8 @@
 
 class MainPageConstants:
-    MARKET_BUTTON = 'android.widget.ImageView[@content-desc="Market"]'
+    MARKET_BUTTON = '//android.widget.ImageView[@content-desc="Market"]'
 
     PORTFOLIO_BUTTON = '//android.widget.ImageView[@content-desc="Portfolio"]'
-    PORTFOLIO_TITLE = '//android.view.View[@content-desc="Portfolio"]'
 
     ORDERS_BUTTON = '//android.widget.ImageView[@content-desc="Orders"]'
 

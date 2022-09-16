@@ -19,6 +19,7 @@ class FxVenues(Enum):
     venue_6 = "BARX"
     venue_7 = "EBS"
     venue_8 = "GS"
+    venue_9 = "D3"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -35,6 +36,7 @@ class FxMarketIDs(Enum):
     market_3 = "MS-SW"
     market_4 = "JPM-SW"
     market_5 = "DB-SW"
+    market_9 = "D3"
 
 
 class FxClients(Enum):
@@ -128,6 +130,7 @@ class FxSecurityTypes(Enum):
     fx_swap = "FXSWAP"
     fx_ndf = "FXNDF"
     fx_nds = "FXNDS"
+    fx_mleg = "MLEG"
 
 
 class FxInstrTypeWA(Enum):

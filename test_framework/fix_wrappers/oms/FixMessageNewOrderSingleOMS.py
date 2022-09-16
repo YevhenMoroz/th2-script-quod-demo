@@ -36,19 +36,31 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
         self.change_parameters(self.base_parameters)
         self.change_parameters({"OrdType": "2", "HandlInst": "3", "Price": "20"})
         if instr:
-            self.change_parameters({"Instrument":  self.data_set.get_fix_instrument_by_name(instr)})
+            self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
         return self
 
     def set_default_dma_market(self, instr: str = None):
         self.change_parameters(self.base_parameters)
         self.change_parameters({"OrdType": "1", "HandlInst": "1"})
         if instr:
-            self.change_parameters({"Instrument":  self.data_set.get_fix_instrument_by_name(instr)})
+            self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
         return self
 
     def set_default_care_market(self, instr: str = None):
         self.change_parameters(self.base_parameters)
         self.change_parameters({"OrdType": "1", "HandlInst": "3"})
         if instr:
-            self.change_parameters({"Instrument":  self.data_set.get_fix_instrument_by_name(instr)})
+            self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
+        return self
+
+    def set_default_iceberg(self, instr: str = None):
+        self.change_parameters(self.base_parameters)
+        self.change_parameters({'HandlInst': "2",
+                                "OrdType": "2",
+                                'Price': "20",
+                                'TargetStrategy': '1004',
+                                "DisplayInstruction": {
+                                    'DisplayQty': '100'}})
+        if instr:
+            self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
         return self

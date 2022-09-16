@@ -20,10 +20,12 @@ class FIXMessageType(Enum):
     MarketDataRequestReject = "MarketDataRequestReject"
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
+    BusinessMessageReject = "BusinessMessageReject"
 
 
 class ORSMessageType(Enum):
     OrderSubmit = 'Order_OrderSubmit'
+    FixNewOrderSingle = 'Fix_NewOrderSingle'
     TradeEntryRequest = 'Order_TradeEntryRequest'
     OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
     UnMatchRequest = 'Order_UnMatchRequest'
@@ -31,6 +33,11 @@ class ORSMessageType(Enum):
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
+    OrdReply = 'Order_OrdReply'
+    OrdNotification = 'Order_OrdNotification'
+    ExecutionReport = 'Order_ExecutionReport'
+    DFDManagementBatch = 'Order_DFDManagementBatch'
+    AllocationInstruction = 'Order_AllocationInstruction'
 
 
 class TradingRestApiMessageType(Enum):

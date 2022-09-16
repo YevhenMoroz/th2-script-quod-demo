@@ -183,6 +183,8 @@ class AlgoAccounts(Enum):
     account_10 = "TQDARK_KEPLER"
     account_11 = "TRQX_KEPLER"
     account_12 = "BATS_KEPLER"
+    account_13 = "CHIX_KEPLER"
+    account_14 = "XAMS_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -214,7 +216,7 @@ class AlgoMic(Enum):
     mic_10 = "QDL1" # QUODLIT1
     mic_11 = "QDL2" # QUODLIT2
     mic_12 = "LISX" # CHIX LIS UK
-    mic_13 = "TRQL" # URQUOISE LIS
+    mic_13 = "TRQL" # TURQUOISE LIS
     mic_14 = "QDD1" # QUODDKP1
     mic_15 = "QDD2" # QUODDKP2
     mic_16 = "QDL4"  # QUODLIT4
@@ -232,6 +234,7 @@ class AlgoMic(Enum):
     mic_28 = "QDL11"  # QUODLIT11
     mic_29 = "QDL12"  # QUODLIT12
     mic_30 = "CHIX"   # CHIX
+    mic_31 = "XAMS"   # Euronext Amsterdam
 
 
 class AlgoListingId(Enum):
@@ -264,6 +267,12 @@ class AlgoListingId(Enum):
     listing_27 = "1225020507"    # QUODLIT11 for QUODTESTQA05
     listing_28 = "1225020508"    # QUODLIT12 for QUODTESTQA05
     listing_29 = "1803729"       # Euronext Paris for FR0000121329
+    listing_30 = "1325020507"    # Euronext Amsterdam for IE00B5BMR087
+    listing_31 = "1863318"       # CHIX for IE00B5BMR087
+    listing_32 = "1874187"       # BATS for FR0010411884
+    listing_33 = "1863556"       # CHIX for FR0010411884
+    listing_34 = "125911519"       # JANESTREET for FR0010411884
+    listing_35 = "1803739"       # Euronext Paris for FR0000121220
 
 
 class AlgoCurrency(Enum):
@@ -289,9 +298,16 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_NOS_parent = ['ClOrdID']
     verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType", "ExDestination"]
-    verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
+    verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
+    key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
+    key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
+    key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
+    key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
+    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
+    key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
 
 
 class AlgoPreFilter(Enum):

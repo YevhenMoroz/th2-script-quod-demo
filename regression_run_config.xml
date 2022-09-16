@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
     <name>Regression</name>
-    <version>5.1.156.169</version>
+    <version>5.1.159.172</version>
     <product_lines>
         <product_line name="algo" run="True">
             <components>
@@ -181,6 +181,14 @@
                     <environments>
                         <fix_environments>
                             <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Acceptance_list" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -510,7 +518,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>
