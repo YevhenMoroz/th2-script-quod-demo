@@ -127,8 +127,7 @@ class QAP_T7507(TestCase):
         # region Set-up parameters and check 167=CS in Confirmation message
         self.confirmation_message.set_default_confirmation_new(self.fix_message)
         self.confirmation_message.change_parameters(
-            {'Account': self.client, 'AllocAccount': self.alloc_account, 'AllocInstructionMiscBlock2': '*',
-             'tag5120': '*', 'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1')})
+            {'tag5120': '*', 'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1')})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
                                                             ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
         # endregion

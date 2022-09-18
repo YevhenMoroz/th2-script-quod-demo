@@ -3,7 +3,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.fix_wrappers.DataSet import Instrument
+from test_framework.fix_wrappers.DataSet import Instrument, CommissionProfiles
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS

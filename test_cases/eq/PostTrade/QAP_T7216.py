@@ -34,7 +34,7 @@ class QAP_T7216(TestCase):
         self.price = '20'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.washbook = self.data_set.get_washbook_account_by_name('washbook_account_2')  # CareWB
+        self.washbook = self.data_set.get_washbook_account_by_name('washbook_account_3')
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')  # VETO
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
