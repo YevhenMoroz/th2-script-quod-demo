@@ -124,7 +124,7 @@ class QAP_T8123(TestCase):
             message = "Check values from expecter result of step 1"
             self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
             # endregion
-            time.sleep(30)
+            time.sleep(3)
             self.rule_manager.remove_rule(new_order_single)
             self.rule_manager.remove_rule(trade_rule)
 

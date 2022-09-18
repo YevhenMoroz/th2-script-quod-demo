@@ -131,7 +131,8 @@ class QAP_T7180(TestCase):
                                                                              filter_dict)
         values_splited = self.middle_office.split_fees(values)
         expected_result_for_fees = {'Basis': 'Absolute,', 'Rate': '100,', 'Amount': '100,', 'Currency': 'GBP'}
-        self.middle_office.compare_values(expected_result_for_fees, values_splited[0], 'Comparing minimum Client commission from allovation Ticket')
+        self.middle_office.compare_values(expected_result_for_fees, values_splited[0],
+                                          'Comparing minimum Client commission from allovation Ticket')
         # endregion
 
         # region step 5

@@ -2,7 +2,6 @@ import logging
 import os
 import time
 from pathlib import Path
-
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom import basic_custom_actions as bca
@@ -167,7 +166,7 @@ class QAP_T6989(TestCase):
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
         execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*','CommissionData': '*',
+                                            'Currency': self.currency, 'NoParty': '*', 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
                                             'NoMiscFees': [{
                                                 'MiscFeeAmt': amount,
@@ -250,7 +249,7 @@ class QAP_T6989(TestCase):
                 [AllocationsColumns.sts.value, AllocationsColumns.match_status.value,
                  AllocationsColumns.total_fees.value],
                 filter_dict_block=filter_dict,
-                clear_filter_from_block=True, allocate_number=index+1)
+                clear_filter_from_block=True, allocate_number=index + 1)
             self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
                                                AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value,
                                                AllocationsColumns.total_fees.value: ''},

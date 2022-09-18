@@ -82,7 +82,6 @@ class QAP_T7035(TestCase):
 
         # region set configuration on backend (precondition)
         tree = ET.parse(self.local_path)
-        print()
         element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
         quod = tree.getroot()
         quod.append(element)
