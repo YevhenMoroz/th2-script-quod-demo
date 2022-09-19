@@ -1,4 +1,4 @@
-from regression_cycle.fx_regression_cycle import fx_mm_rfq_regression, esp_mm_regression
+from regression_cycle.fx_regression_cycle import fx_mm_rfq_regression, esp_mm_regression, fx_price_cleansing_regression
 from stubs import Stubs, ROOT_DIR
 from xml.etree import ElementTree
 import logging
@@ -31,7 +31,8 @@ def test_run(parent_id=None):
         #     pass
         # if eval(root.find(".//component[@name='FX_Smoke_list']").attrib["run"]):
         #     pass
-
+        if eval(root.find(".//component[@name='Price_Cleansing']").attrib["run"]):
+            fx_price_cleansing_regression.test_run(report_id, version)
     except Exception:
         logging.error("Error execution", exc_info=True)
 
