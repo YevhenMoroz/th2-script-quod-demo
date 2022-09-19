@@ -32,7 +32,7 @@ class QAP_T4918(TestCase):
         # endregion
 
         # region order parameters
-        self.delay = 5000
+        self.delay = 10
         self.qty = 1000
         self.dec_qty = 60
         self.display_qty = self.dma1_qty = 50
@@ -149,7 +149,7 @@ class QAP_T4918(TestCase):
         self.iceberg_order_replace_params.change_parameter('OrderQty', self.dec_qty).add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
         self.fix_manager_sell.send_message_and_receive_response(self.iceberg_order_replace_params, case_id_2)
 
-        time.sleep(5)
+        time.sleep(15)
 
         self.fix_verifier_sell.check_fix_message(self.iceberg_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
