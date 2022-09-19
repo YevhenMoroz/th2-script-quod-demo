@@ -245,11 +245,24 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:
-        if isinstance(content[tag], (str, int, float)):
+        if isinstance(content[tag], (int, float)):
             if content[tag] == '*':
                 content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
             elif content[tag] == '#':
                 content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            else:
+                content[tag] = ValueFilter(
+                    simple_filter=str(content[tag]), key=(True if tag in keys else False)
+                )
+        if isinstance(content[tag], str):
+            if content[tag] == '*':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
+            elif content[tag] == '#':
+                content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            elif content[tag][0] == '>':
+                content[tag] = ValueFilter(operation=FilterOperation.MORE, simple_filter=str(content[tag][1:]))
+            elif content[tag][0] == '<':
+                content[tag] = ValueFilter(operation=FilterOperation.LESS, simple_filter=str(content[tag][1:]))
             else:
                 content[tag] = ValueFilter(
                     simple_filter=str(content[tag]), key=(True if tag in keys else False)
