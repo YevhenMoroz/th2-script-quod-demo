@@ -152,7 +152,7 @@ class QAP_T4126(TestCase):
 
         # region Check child Eliminate
         eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy,self.status_eliminate)
-        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['Account', 'LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
+        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod, "Buy side ExecReport Eliminate child order")
         # endregion
 
