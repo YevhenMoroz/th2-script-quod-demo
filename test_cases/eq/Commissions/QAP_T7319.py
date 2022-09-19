@@ -70,7 +70,8 @@ class QAP_T7319(TestCase):
         # region send order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameter("OrderID")
-        self.client_inbox.accept_order()
+        filter_dict = {OrderBookColumns.order_id.value: order_id}
+        self.client_inbox.accept_order(filter=filter_dict)
         # endregion
         # region first split order
         self.order_ticket.set_order_details(qty=self.qty_to_first_split, recipient=self.username, partial_desk=True)
