@@ -17,7 +17,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -46,7 +46,7 @@ class RuleManager:
     def print_active_rules(self):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
-            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
+            active_rules[rule.id.id] = [rule.class_name, rule.alias]
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
@@ -527,6 +527,16 @@ class RuleManager:
                 reply_delay=reply_delay
             )
         )
+
+    def add_NewOrdSingle_MarketPreviouslyQuoted(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float, delay: int = 0):
+        return self.sim.createNewOrdSingleMarketPreviouslyQuoted(
+            request=TemplateNewOrdSingleMarketPreviouslyQuoted(connection_id=ConnectionID(session_alias=session),
+                                                               account=account,
+                                                               venue=venue,
+                                                               trade=trade,
+                                                               tradedQty=tradedQty,
+                                                               avgPrice=avgPrice,
+                                                               delay=delay))
 
 
 if __name__ == '__main__':

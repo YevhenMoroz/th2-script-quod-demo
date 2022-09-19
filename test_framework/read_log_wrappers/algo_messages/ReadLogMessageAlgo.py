@@ -27,6 +27,22 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_quote_request_status(self) -> ReadLogMessage:
+        base_parameters = {
+            "Venue": '*',
+            "Status": '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_other_quote_requests_terminated(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderID": '*',
+            "Venue": '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_compare_message_for_check_the_skips_lis_phase(self) -> ReadLogMessage:
         base_parameters = {
             "OrderID": '*',
