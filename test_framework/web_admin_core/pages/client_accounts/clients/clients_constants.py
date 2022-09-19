@@ -71,7 +71,7 @@ class ClientsConstants:
     ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
     ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
-    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//*[normalize-space()="Assignments"]//..//*[@class="linked-entities-wrapper"]//*[normalize-space()="{}"]'
     ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'
 
     # External sources tab

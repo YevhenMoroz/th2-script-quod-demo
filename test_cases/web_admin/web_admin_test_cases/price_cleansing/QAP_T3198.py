@@ -89,6 +89,8 @@ class QAP_T3198(CommonTestCase):
 
             self.verify(f"Entity {self.new_name} has been modify", expected_resul, actual_result)
 
+            wizard.click_on_save_changes()
+
             self.post_conditions()
 
         except Exception:

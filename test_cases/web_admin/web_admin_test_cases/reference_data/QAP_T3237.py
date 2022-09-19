@@ -43,6 +43,7 @@ class QAP_T3237(CommonTestCase):
             profiles.click_on_trading_phase_profile_mange_button()
 
             trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
+            trading_phase_profile_sub_wizard.click_on_plus_button()
             trading_phase_profile_sub_wizard.click_on_plus_button_at_trading_phase_profile_sequences()
             trading_phase_profile_sub_wizard.set_trading_phase(self.trading_phase)
             trading_phase_profile_sub_wizard.set_end_time(self.end_time)
