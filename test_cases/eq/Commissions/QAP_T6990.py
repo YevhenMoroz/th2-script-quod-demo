@@ -71,6 +71,7 @@ class QAP_T6990(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
         self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
         fee = self.data_set.get_fee_by_name('fee3')
