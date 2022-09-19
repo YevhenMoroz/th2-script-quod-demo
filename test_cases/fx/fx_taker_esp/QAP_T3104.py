@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from test_framework.data_sets.constants import GatewaySide, Status
+from test_framework.data_sets.constants import Status
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -14,7 +14,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 
-class QAP_T2493(TestCase):
+class QAP_T3104(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
