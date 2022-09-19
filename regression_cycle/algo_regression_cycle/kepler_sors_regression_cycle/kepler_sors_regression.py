@@ -21,11 +21,11 @@ def test_run():
 
         if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
             kepler_sors_iceberg_regression.test_run(parent_id=report_id, version=version)
-        if eval(root.find(".//component[@name='Mp_dark_dark_phase']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_dark_phase_regression.test_run(parent_id=report_id, version=version)
-        if eval(root.find(".//component[@name='Mp_dark_LIS_and_dark_phase']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
-        if eval(root.find(".//component[@name='Mp_dark_other']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_other_regression.test_run(parent_id=report_id, version=version)
         if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
             kepler_sors_sorping_regression.test_run(parent_id=report_id, version=version)
