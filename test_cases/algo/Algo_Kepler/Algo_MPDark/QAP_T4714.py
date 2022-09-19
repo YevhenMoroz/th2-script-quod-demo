@@ -42,6 +42,7 @@ class QAP_T4714(TestCase):
         self.mdEntryType = 5
         self.qty_for_incr = 0
         self.order_type = constants.OrderType.Market.value
+        self.child_order_type = constants.OrderType.PreviouslyQuoted.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_11.value
         # endregion
 
@@ -93,7 +94,7 @@ class QAP_T4714(TestCase):
         rule_manager = RuleManager()
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
-        market_rule = rule_manager.add_NewOrdSingle_Market(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True, self.qty, self.price_ask)
+        market_rule = rule_manager.add_NewOrdSingle_MarketPreviouslyQuoted(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True, self.qty, self.price_ask)
         self.rule_list = [rfq_rule, rfq_cancel_rule, market_rule]
         # endregion
 
@@ -173,7 +174,7 @@ class QAP_T4714(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_5)
 
         self.nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
-        self.nos_chixlis_order.change_parameters(dict(OrderQty=self.qty, OrdType=self.order_type)).remove_parameter('Price')
+        self.nos_chixlis_order.change_parameters(dict(OrderQty=self.qty, OrdType=self.child_order_type)).remove_parameter('Price')
         self.fix_verifier_buy.check_fix_message(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
         er_pending_new_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_pending)

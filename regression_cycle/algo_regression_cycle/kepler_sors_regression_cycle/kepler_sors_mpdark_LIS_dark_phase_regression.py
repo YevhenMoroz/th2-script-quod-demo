@@ -36,6 +36,8 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4744 import QAP_T4744
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4745 import QAP_T4745
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4779 import QAP_T4779
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4780 import QAP_T4780
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4781 import QAP_T4781
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4782 import QAP_T4782
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4784 import QAP_T4784
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4785 import QAP_T4785
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4786 import QAP_T4786
@@ -83,31 +85,10 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"MP_Dark" if version is None else f"MP_Dark | {version}", parent_id)
+    report_id = bca.create_event(f"MPDark (LIS + Dark phase)" if version is None else f"MPDark (LIS + Dark phase) for th2 integration | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region MP Dark (Dark Phase Only)
-        configuration = ComponentConfiguration("Mp_dark")
-        QAP_T4777(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4776(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4775(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4774(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4773(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4772(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4770(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4767(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4765(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4764(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4762(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4759(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4735(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4733(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4732(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4731(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4730(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4156(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
-
+        configuration = ComponentConfiguration("Mp_dark_LIS_and_dark_phase")
         # LIS + DARK
         # region RFQ
         QAP_T4795(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -162,34 +143,9 @@ def test_run(parent_id=None, version=None):
         QAP_T4741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
-        # region MP Dark (other)
-        QAP_T4521(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4522(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4578(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4674(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4675(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4707(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4708(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4710(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4711(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4712(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4713(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4714(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4715(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4716(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4717(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4719(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4720(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4721(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4722(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4723(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4724(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4725(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4729(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4738(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4739(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4358(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # region Cancelation
+        QAP_T4781(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4782(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

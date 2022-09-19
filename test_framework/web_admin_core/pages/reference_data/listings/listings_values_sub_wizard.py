@@ -19,6 +19,9 @@ class ListingsValuesSubWizard(CommonPage):
     def get_instr_type(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
 
+    def is_instr_type_field_required(self):
+        return self.is_field_required(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
+
     def set_security_exchange(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_SECURITY_EXCHANGE_XPATH, value)
 
@@ -81,6 +84,9 @@ class ListingsValuesSubWizard(CommonPage):
 
     def get_instr_symbol(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_SYMBOL_XPATH)
+
+    def is_instr_symbol_field_required(self):
+        return self.is_field_required(ListingsConstants.VALUES_TAB_INSTR_SYMBOL_XPATH)
 
     def set_cfi(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_CFI_XPATH, value)
