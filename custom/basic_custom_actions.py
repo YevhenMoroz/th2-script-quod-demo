@@ -263,6 +263,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
                 content[tag] = ValueFilter(operation=FilterOperation.MORE, simple_filter=str(content[tag][1:]))
             elif content[tag][0] == '<':
                 content[tag] = ValueFilter(operation=FilterOperation.LESS, simple_filter=str(content[tag][1:]))
+            elif content[tag][0] == '%':
+                content[tag] = ValueFilter(operation=FilterOperation.LIKE, simple_filter=str(content[tag][1:]))
             else:
                 content[tag] = ValueFilter(
                     simple_filter=str(content[tag]), key=(True if tag in keys else False)
