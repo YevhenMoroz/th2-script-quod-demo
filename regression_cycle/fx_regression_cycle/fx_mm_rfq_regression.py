@@ -170,10 +170,10 @@ def test_run(parent_id=None, version=None):
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD9',
         }
-        # if not Stubs.frontend_is_open:
-        #     prepare_fe_2(report_id, session_id)
-        # else:
-        #     get_opened_fe(report_id, session_id, main_window_name)
+        if not Stubs.frontend_is_open:
+            prepare_fe_2(report_id, session_id)
+        else:
+            get_opened_fe(report_id, session_id, main_window_name)
 
         # region Rejection
         # update_settings_and_restart_qs("Rejection")
@@ -199,11 +199,11 @@ def test_run(parent_id=None, version=None):
         QAP_T2444(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2448(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2461(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2475(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2537(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        QAP_T2560(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        QAP_T2475(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2558(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2559(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2560(session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2572(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2573(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2574(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
