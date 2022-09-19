@@ -153,9 +153,7 @@ from win_gui_modules.utils import set_session_id, prepare_fe_2, get_opened_fe
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = False
-channels = dict()
+logging.getLogger().setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
@@ -172,21 +170,21 @@ def test_run(parent_id=None, version=None):
             'SenderCompID': 'QUODFX_UAT',
             'TargetCompID': 'QUOD9',
         }
-        if not Stubs.frontend_is_open:
-            prepare_fe_2(report_id, session_id)
-        else:
-            get_opened_fe(report_id, session_id, main_window_name)
+        # if not Stubs.frontend_is_open:
+        #     prepare_fe_2(report_id, session_id)
+        # else:
+        #     get_opened_fe(report_id, session_id, main_window_name)
 
         # region Rejection
-        update_settings_and_restart_qs("Rejection")
+        # update_settings_and_restart_qs("Rejection")
         QAP_T2581(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2598(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2595(session_id, configuration.data_set, configuration.environment).execute()
+        QAP_T2595(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2834(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Manual Intervention
-        update_settings_and_restart_qs("Manual Intervention")
+        # update_settings_and_restart_qs("Manual Intervention")
         QAP_T2442(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2549(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2550(report_id, session_id, configuration.data_set, configuration.environment).execute()
@@ -197,7 +195,7 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region Interpolation
-        update_settings_and_restart_qs("Interpolation")
+        # update_settings_and_restart_qs("Interpolation")
         QAP_T2444(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2448(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2461(report_id, session_id, configuration.data_set, configuration.environment).execute()
