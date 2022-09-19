@@ -17,7 +17,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_T4965(TestCase):
+class QAP_T8704(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
