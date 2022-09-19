@@ -180,3 +180,7 @@ class QAP_T7180(TestCase):
         actual_result = self.middle_office.extract_list_of_block_fields(list_of_column=list_of_column,
                                                                         filter_list=filter_list)
         self.middle_office.compare_values(expected_result, actual_result, message)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()

@@ -54,15 +54,27 @@ class QAP_T6992(TestCase):
         # region send order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameter("OrderID")
-        self.client_inbox.accept_order()
+        filter_dict = {OrderBookColumns.order_id.value: order_id}
+        self.client_inbox.accept_order(filter=filter_dict)
+        manual_day_cum_qty = str(int(int(self.qty) * int(self.price)))
+        manual_day_cum_qty = manual_day_cum_qty[0]+','+manual_day_cum_qty[1:]
         # endregion
         # region manual execute order
-        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: order_id})
+        self.order_book.manual_execution(filter_dict=filter_dict)
         # endregion
         # region check ManualDayCumAmt and ManualDayCumQty
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
+        actual_values = self.order_book.extract_fields_list(
+            {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
+             OrderBookColumns.manual_day_cum_amt.value: OrderBookColumns.manual_day_cum_amt.value,
+             OrderBookColumns.manual_day_cum_qty.value: OrderBookColumns.manual_day_cum_qty.value})
+        self.order_book.compare_values(
             {OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-             OrderBookColumns.manual_day_cum_amt.value: str(
-                 int(int(self.qty) * int(self.price))),
-             OrderBookColumns.manual_day_cum_qty: self.qty})
+             OrderBookColumns.manual_day_cum_amt.value: manual_day_cum_qty,
+             OrderBookColumns.manual_day_cum_qty.value: self.qty}, actual_values,
+            'Comparing expected and actual values')
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
