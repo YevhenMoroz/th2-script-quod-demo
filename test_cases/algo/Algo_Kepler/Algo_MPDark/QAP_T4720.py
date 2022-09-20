@@ -8,14 +8,14 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
-from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
@@ -92,8 +92,7 @@ class QAP_T4720(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_lis_phase_is_skipping.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_lis_phase_is_skipping")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -160,12 +159,10 @@ class QAP_T4720(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "OrderID": '*',
-            "Text": 'skipping LIS phase'
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_skips_lis_phase()
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check 1 child DMA order on venue CHIX DARKPOOL UK

@@ -49,6 +49,7 @@ from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4007 import
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4006 import QAP_T4006
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4005 import QAP_T4005
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4004 import QAP_T4004
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4815 import QAP_T4815
 
 
 class RunOrderManagement:
@@ -214,6 +215,8 @@ class RunOrderManagement:
             QAP_T3544(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3398(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T4815(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

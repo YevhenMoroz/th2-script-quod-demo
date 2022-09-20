@@ -38,7 +38,7 @@ class QAP_T3676(CommonTestCase):
         main_page = TradingLimitsPage(self.web_driver_container)
         main_page.set_description(self.description)
         time.sleep(1)
-        if not main_page.is_searched_route_found(self.description):
+        if not main_page.is_searched_entity_found_by_description(self.description):
             main_page.click_on_new()
             time.sleep(2)
             value_tab = TradingLimitsValuesSubWizardPage(self.web_driver_container)

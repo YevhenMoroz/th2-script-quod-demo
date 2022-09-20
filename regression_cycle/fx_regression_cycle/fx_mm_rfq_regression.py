@@ -129,7 +129,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     configuration = ComponentConfiguration("RFQ_MM")
-    report_id = bca.create_event(f"FX_MM_RFQ" if version is None else f"FX_MM_ESP | {version}", parent_id)
+    report_id = bca.create_event(f"FX_MM_RFQ" if version is None else f"FX_MM_RFQ | {version}", parent_id)
     session_id = set_session_id(target_server_win="ostronov")
     Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
     try:

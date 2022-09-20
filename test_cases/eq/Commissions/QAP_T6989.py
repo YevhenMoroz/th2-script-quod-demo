@@ -2,7 +2,6 @@ import logging
 import os
 import time
 from pathlib import Path
-
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom import basic_custom_actions as bca
@@ -72,6 +71,8 @@ class QAP_T6989(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
         fee = self.data_set.get_fee_by_name('fee3')
@@ -154,9 +155,10 @@ class QAP_T6989(TestCase):
         avg_px = str(round(int(self.price) / 100, 1))
         exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
                                                       [TradeBookColumns.exec_id.value], [3], filter_dict)[0]
-        expected_result = [{'1': FeeTypeForMiscFeeTab.agent.value}, {'1': rate},
-                           {'1': Basis.absolute.value},
-                           {'1': amount}]
+        expected_result = [{TradeBookColumns.fee_type.value + '1': FeeTypeForMiscFeeTab.agent.value},
+                           {TradeBookColumns.rate.value + '1': rate},
+                           {TradeBookColumns.basis.value + '1': Basis.absolute.value},
+                           {TradeBookColumns.amount.value + '1': amount}]
         message = message.replace('3', '4')
         self.__compare_values_of_fees(exec_id, expected_result, list_of_column, message)
         # endregion
@@ -167,7 +169,7 @@ class QAP_T6989(TestCase):
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
         execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*','CommissionData': '*',
+                                            'Currency': self.currency, 'NoParty': '*', 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
                                             'NoMiscFees': [{
                                                 'MiscFeeAmt': amount,
@@ -195,6 +197,7 @@ class QAP_T6989(TestCase):
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'AvgPx': avg_px, 'Currency': self.currency_post_trade,
                                              'tag5120': "*", 'RootSettlCurrAmt': '*'})
+        allocation_report.remove_parameter('Account')
         self.fix_verifier.check_fix_message_fix_standard(allocation_report)
         # endregion
 
@@ -250,7 +253,7 @@ class QAP_T6989(TestCase):
                 [AllocationsColumns.sts.value, AllocationsColumns.match_status.value,
                  AllocationsColumns.total_fees.value],
                 filter_dict_block=filter_dict,
-                clear_filter_from_block=True, allocate_number=index+1)
+                clear_filter_from_block=True, allocate_number=index + 1)
             self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
                                                AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value,
                                                AllocationsColumns.total_fees.value: ''},
@@ -274,6 +277,7 @@ class QAP_T6989(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(allocation_report)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         confirmation_report.set_default_confirmation_new(self.fix_message)
+        confirmation_report.remove_parameter('Account')
         confirmation_report.change_parameters({'AvgPx': avg_px, 'Account': '*', 'Currency': self.currency_post_trade,
                                                'tag5120': '*'})
         confirmation_report.change_parameters({'AllocQty': allocation_qty,
@@ -310,4 +314,5 @@ class QAP_T6989(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         os.remove("temp.xml")

@@ -42,7 +42,8 @@ class QAP_T4721(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_cancel = Status.Cancel
+        self.status_reject = Status.Reject
+        self.status_eliminate = Status.Eliminate
         # endregion
 
 
@@ -71,6 +72,7 @@ class QAP_T4721(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
+        self.key_params_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
         # endregion
 
         self.rule_list = []
@@ -109,19 +111,28 @@ class QAP_T4721(TestCase):
         case_id_2 = bca.create_event("Create RFQ on buy side", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
-        # region check that RFQ send to CHIX LIS UK
-        nos_chixlis_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
+        # region check that RFQ send to CHIX LIS UK and reject
+        nos_chixlis_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
+        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
+
+        er_rfq_reject_chixlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_chixlis_rfq)
+        self.fix_verifier_buy.check_fix_message(er_rfq_reject_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on CHIXLIS', direction=self.ToQuod)
         # endregion
 
-        # region check that RFQ send to TURQUOISE LIS
-        nos_trql_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+        # region check that RFQ send to TURQUOISE LIS and reject
+        nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
+        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+
+        er_rfq_reject_trqxlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_trql_rfq)
+        self.fix_verifier_buy.check_fix_message(er_rfq_reject_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on TRQXLIS', direction=self.ToQuod)
         # endregion
 
+        # region Check that parent order is Eliminated
+        er_eliminate_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_eliminate)
+        self.fix_verifier_sell.check_fix_message(er_eliminate_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)

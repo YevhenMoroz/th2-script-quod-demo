@@ -38,6 +38,13 @@ class ORSMessageType(Enum):
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
     AllocationInstruction = 'Order_AllocationInstruction'
+    OrdUpdate = 'Order_OrdUpdate'
+    AllocationReport = 'Order_AllocationReport'
+    Confirmation = 'Order_Confirmation'
+    ConfirmationReport = 'Order_ConfirmationReport'
+    ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
+    ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
+    CDNotifDealer = 'Order_CDNotifDealer'
 
 
 class TradingRestApiMessageType(Enum):
@@ -84,3 +91,10 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+
+class ReadLogMessageType(Enum):
+    Csv_Message = "Csv_Message"
+
+class CSMessageType(Enum):
+    CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
+    CDOrdNotif = "Order_CDOrdNotif"

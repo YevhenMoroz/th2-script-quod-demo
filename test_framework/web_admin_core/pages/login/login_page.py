@@ -42,6 +42,7 @@ class LoginPage(CommonPage):
         self.set_password(password)
         time.sleep(1)
         self.click_login_button()
+        self.check_is_login_successful()
 
     def is_change_password_page_opened(self):
         return self.is_element_present(LoginConstants.CHANGE_PASSWORD_PAGE_XPATH)

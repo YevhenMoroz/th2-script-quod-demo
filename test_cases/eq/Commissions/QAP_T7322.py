@@ -40,20 +40,20 @@ class QAP_T7322(TestCase):
         self.qty_to_second_split = "400"
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.price = "10"
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.fix_message.change_parameters(
             {"Account": self.client,
              "ExDestination": self.mic,
              "Currency": self.cur, "Price": self.price, 'OrderQtyData': {'OrderQty': self.qty}})
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.child_book = OMSChildOrderBook(self.case_id, self.session_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.child_book = OMSChildOrderBook(self.test_id, self.session_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_qty")
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
@@ -79,24 +79,28 @@ class QAP_T7322(TestCase):
         # region first split order
         self.__split_order(self.qty_to_first_split)
         child_order_id1 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
+            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
+                                                {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
         # endregion
         # region second split order
         self.__split_order(self.qty_to_second_split)
         child_order_id2 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
+            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
+                                                {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
         # endregion
         # region check FeeAgent
         self.__check_fee_sub_lvl_details(child_order_id1, '0.5')
         self.__check_fee_sub_lvl_details(child_order_id2, '0.4')
         # endregion
         # region extract execution id
-        exec_id_1 = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [1],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0][OrderBookColumns.exec_id.value]
-        exec_id_2 = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [2],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0][OrderBookColumns.exec_id.value]
+        exec_id_1 = \
+        self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [1],
+                                            {OrderBookColumns.order_id.value: self.order_id})[0][
+            OrderBookColumns.exec_id.value]
+        exec_id_2 = \
+        self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [2],
+                                            {OrderBookColumns.order_id.value: self.order_id})[0][
+            OrderBookColumns.exec_id.value]
         # endregion
         # region check ExecReports on BO
         no_misc1 = {"MiscFeeAmt": '0.5', "MiscFeeCurr": self.com_cur,
@@ -106,7 +110,7 @@ class QAP_T7322(TestCase):
             {'ExecID': exec_id_1, 'OrdStatus': '1', 'QuodTradeQualifier': "*", 'Currency': self.cur,
              'LastMkt': "*",
              "Account": self.client, "NoMiscFees": {"NoMiscFees": [no_misc1]}, "CommissionData": "*", "ExecBroker": "*",
-             "tag5120": "*", "NoParty": "*", 'BookID': "*", "OrderID": self.order_id, 'LastExecutionPolicy':"*"})
+             "tag5120": "*", "NoParty": "*", 'BookID': "*", "OrderID": self.order_id, 'LastExecutionPolicy': "*"})
         execution_report.remove_parameters(
             ['SettlCurrency', "TradeReportingIndicator", 'Parties', 'SecondaryOrderID'])
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report, ['ExecID'])
@@ -133,15 +137,15 @@ class QAP_T7322(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __check_fee_sub_lvl_details(self, order_id, expect_fee: str):
         res1 = self.child_book.get_child_order_sub_lvl_value(1, ChildOrderBookColumns.exec_fee_agent.value,
-                                                            SecondLevelTabs.executions.value,
-                                                            child_book_filter={
-                                                                OrderBookColumns.order_id.value:
-                                                                    order_id})
+                                                             SecondLevelTabs.executions.value,
+                                                             child_book_filter={
+                                                                 OrderBookColumns.order_id.value:
+                                                                     order_id})
         res2 = self.child_book.get_child_order_sub_lvl_value(1, ChildOrderBookColumns.exec_fees.value,
-                                                            SecondLevelTabs.executions.value,
-                                                            child_book_filter={
-                                                                OrderBookColumns.order_id.value:
-                                                                    order_id})
+                                                             SecondLevelTabs.executions.value,
+                                                             child_book_filter={
+                                                                 OrderBookColumns.order_id.value:
+                                                                     order_id})
         self.child_book.compare_values({"1": expect_fee, "2": expect_fee},
                                        {"1": res1, "2": res2},
                                        "Check Exec Fee and Fee Agent in Executions tab")

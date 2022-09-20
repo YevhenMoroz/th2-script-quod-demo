@@ -55,4 +55,7 @@ class WashBookWizard(CommonPage):
     def click_on_save_changes(self):
         self.find_by_xpath(WashBookConstants.SAVE_CHANGES_AT_WIZARD).click()
 
+    def click_on_no_button(self):
+        self.find_by_xpath(WashBookConstants.NO_BUTTON_AT_WIZARD).click()
+
     # endregion

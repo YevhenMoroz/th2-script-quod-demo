@@ -681,6 +681,7 @@ class Basis(Enum):
 class FeeTypeForMiscFeeTab(Enum):
     agent = "Agent"
     stamp = "Stamp"
+    exch_fees = "ExchFees"
 
 
 class CommissionType(Enum):

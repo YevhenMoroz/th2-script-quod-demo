@@ -61,6 +61,8 @@ class BaseDataSet:
     contra_firm = None
     all_venue_sec_account_names_of_acc = None
     venue_list = None
+    isin_security_alt_ids = None
+    security_id_source = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -540,6 +542,16 @@ class BaseDataSet:
             return getattr(self.contra_firm, name).value
         raise ValueError(f"{self.contra_firm} not found!")
 
+    def get_isin_security_alt_id_by_name(self, name: str):
+        if hasattr(self.isin_security_alt_ids,name):
+            return getattr(self.isin_security_alt_ids, name).value
+        raise ValueError(f"{self.isin_security_alt_ids} not found")
+
+    def get_security_id_source_by_name_for_listing_on_web_admin(self, name: str):
+        if hasattr(self.security_id_source,name):
+            return getattr(self.security_id_source, name).value
+        raise ValueError(f"{self.security_id_source} not found")
+
     # region WebAdmin getters
 
     def get_user(self, name: str):
@@ -860,15 +872,16 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
-    def get_cl_list_id(self, name:str):
+    def get_cl_list_id(self, name: str):
         if hasattr(self.cl_list_id, name):
             return getattr(self.cl_list_id, name).value
         return ValueError(f"{self.cl_list_id} not found!")
 
-    def get_ref_price(self, name:str):
+    def get_ref_price(self, name: str):
         if hasattr(self.reference_price, name):
             return getattr(self.reference_price, name).value
         return ValueError(f"{self.reference_price} not found!")
+
     def get_venue_list(self, name: str):
         if hasattr(self.venue_list, name):
             return getattr(self.venue_list, name).value

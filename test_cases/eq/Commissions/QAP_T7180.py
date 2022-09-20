@@ -131,7 +131,8 @@ class QAP_T7180(TestCase):
                                                                              filter_dict)
         values_splited = self.middle_office.split_fees(values)
         expected_result_for_fees = {'Basis': 'Absolute,', 'Rate': '100,', 'Amount': '100,', 'Currency': 'GBP'}
-        self.middle_office.compare_values(expected_result_for_fees, values_splited[0], 'Comparing minimum Client commission from allovation Ticket')
+        self.middle_office.compare_values(expected_result_for_fees, values_splited[0],
+                                          'Comparing minimum Client commission from allovation Ticket')
         # endregion
 
         # region step 5
@@ -179,3 +180,7 @@ class QAP_T7180(TestCase):
         actual_result = self.middle_office.extract_list_of_block_fields(list_of_column=list_of_column,
                                                                         filter_list=filter_list)
         self.middle_office.compare_values(expected_result, actual_result, message)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
