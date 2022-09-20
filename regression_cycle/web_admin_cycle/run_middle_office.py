@@ -32,6 +32,7 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3290 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3243 import QAP_T3243
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3242 import QAP_T3242
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3124 import QAP_T3124
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3114 import QAP_T3114
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -108,6 +109,8 @@ class RunMiddleOffice:
             QAP_T3242(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3124(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3114(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

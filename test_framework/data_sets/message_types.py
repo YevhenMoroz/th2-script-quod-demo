@@ -92,6 +92,8 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+class ReadLogMessageType(Enum):
+    Csv_Message = "Csv_Message"
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"

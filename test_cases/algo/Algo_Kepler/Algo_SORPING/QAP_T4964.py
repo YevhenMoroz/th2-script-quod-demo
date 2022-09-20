@@ -6,7 +6,6 @@ from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -15,7 +14,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4964(TestCase):
@@ -56,7 +56,7 @@ class QAP_T4964(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminate = Status.Eliminate
-        self.status_cancel = Status.Cancel
+        self.status_fill = Status.Fill
         # endregion
 
         # region instrument
@@ -69,12 +69,12 @@ class QAP_T4964(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
+        self.ex_destination_chix = self.data_set.get_mic_by_name("mic_30")
         self.ex_destination_batsdark = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chixdark = self.data_set.get_mic_by_name("mic_5")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.account_trqx = self.data_set.get_account_by_name("account_11")
+        self.account_chix = self.data_set.get_account_by_name("account_13")
         self.account_batsdark = self.data_set.get_account_by_name("account_7")
         self.account_chixdark = self.data_set.get_account_by_name("account_8")
         self.listing_id_par = self.data_set.get_listing_id_by_name("listing_6")
@@ -93,8 +93,11 @@ class QAP_T4964(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_that_venue_was_suspended")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.venue = constants.Venues.paris.value
         # endregion
 
         self.rule_list = []
@@ -104,10 +107,8 @@ class QAP_T4964(TestCase):
         rule_manager = RuleManager()
         nos_ioc_1_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_batsdark, self.ex_destination_batsdark, False, self.traded_qty, self.price_bid)
         nos_ioc_2_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chixdark, self.ex_destination_chixdark, False, self.traded_qty, self.price_bid)
-        # TODO Maybe another venue
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_trqx, True)
-        self.rule_list = [nos_ioc_1_rule, nos_ioc_2_rule, nos_rule, ocr_rule]
+        nos_ioc_3_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty, self.price_ask)
+        self.rule_list = [nos_ioc_1_rule, nos_ioc_2_rule, nos_ioc_3_rule]
         # endregion
 
         # region Send_MarkerData
@@ -224,48 +225,37 @@ class QAP_T4964(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "OrderID": "*",
-            "VenueName": "Euronext Paris",
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
+        compare_message.change_parameters(dict(VenueName=self.venue))
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_trqx_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_trqx_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_trqx, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_trqx_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Lit Child DMA order')
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Lit Child DMA order')
 
-        er_pending_new_dma_trqx_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_trqx_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_trqx_order_params.change_parameters(dict(ExDestination=self.ex_destination_trqx))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_trqx_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Lit Child DMA order')
+        er_pending_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Lit Child DMA order')
 
-        er_new_dma_trqx_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_trqx_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_trqx_order_params.change_parameters(dict(ExDestination=self.ex_destination_trqx))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_trqx_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+        er_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+
+        er_fill_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_fill)
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Lit Child DMA order")
+        # endregion
+
+        # region Check fill parent algo order
+        er_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(er_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_4 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_4)
-        cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_4)
-        self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel first dma child order
-        er_cancel_dma_trqx_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_trqx_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_trqx_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Lit Child DMA order")
-
-        er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
-
         # region return TradingStatus=T for Paris
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)

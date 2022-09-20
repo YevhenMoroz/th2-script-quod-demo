@@ -1,5 +1,5 @@
-class FixMatchingProfileConstants:
-    FIX_MATCHING_PROFILE_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='FIX Matching Profile ']"
+class AllocationMatchingProfileConstants:
+    ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Allocation Matching Profile"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -14,12 +14,13 @@ class FixMatchingProfileConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Allocation Matching Profile"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
 
     # Main page
     MAIN_PAGE_FIX_MATCHING_PROFILE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
