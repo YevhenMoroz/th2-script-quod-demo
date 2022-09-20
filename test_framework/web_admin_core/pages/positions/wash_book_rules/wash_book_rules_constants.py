@@ -14,7 +14,7 @@ class WashBookRulesConstants:
 
     OK_BUTTON_XPATH = "//*[text()='Ok']"
     CANCEL_BUTTON_XPATH = "//*[text()='Cancel']"
-    NO_BUTTON_XPATH = "//*[text()='No']"
+    NO_BUTTON_XPATH = '//button[normalize-space()="No"]'
 
     NEW_BUTTON_XPATH = "//*[text()='New']"
     DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
@@ -47,6 +47,8 @@ class WashBookRulesConstants:
     WIZARD_DESK_XPATH = "//*[text()='Desk']/preceding-sibling::input"
     WIZARD_INSTITUTION_XPATH = "//*[@id='institution']"
     WIZARD_CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
+    INSTITUTION_LINK_NAME_AT_ASSIGNMENTS_TAB = '//a[normalize-space()="{}"]'
+
 
     SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'
     CLEAR_CHANGES_XPATH = '//*[text()="Clear Changes"]'

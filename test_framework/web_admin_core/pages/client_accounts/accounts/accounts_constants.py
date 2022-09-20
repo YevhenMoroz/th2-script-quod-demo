@@ -11,6 +11,8 @@ class AccountsConstants:
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
+    MAIN_PAGE_CLIENT_MATCHING_ID_XPATH = '(//*[@col-id="clientMatchingID"])[2]//*[@class="ag-group-value"]'
+
     WIZARD_ID_INPUT_XPATH = "//input[@id='accountID']"
     WIZARD_ID_EDITOR_XPATH = '//*[@class="breadcrumbs entity-title"]'
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"

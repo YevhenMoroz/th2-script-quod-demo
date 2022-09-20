@@ -81,9 +81,10 @@ class QAP_T3334(CommonTestCase):
             client_tiers_frame = ClientTiersPage(self.web_driver_container)
             client_tiers_frame.set_name(self.name)
             client_tiers_frame.select_client_tier_by_name(self.name)
+            client_tiers_frame.click_on_more_actions()
+            time.sleep(1)
             client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_frame.click_on_more_actions()
-            time.sleep(1)
             client_tier_instrument_frame.click_on_edit()
             tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
             tenors_tab.set_tenor_filter(self.tenor)
@@ -115,8 +116,8 @@ class QAP_T3334(CommonTestCase):
             tenors_tab.set_tenor_filter(self.tenor)
             tenors_tab.click_on_edit()
             tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.base_margin_qty[2])
-            self.verify("Changes values found, and Publish Price checkbox unselected", False,
-                        tenors_tab.click_on_publish_prices_checkbox_at_base_margins_tab())
+            self.verify("Changes values found, and Publish Price checkbox unselected", True,
+                        tenors_tab.is_publish_prices_checkbox_selected_at_base_margins_tab())
             tenors_tab.click_on_checkmark_at_base_margins_tab()
 
             tenors_tab.click_on_delete_at_base_margins_tab_by_values(self.base_margin_qty[1])

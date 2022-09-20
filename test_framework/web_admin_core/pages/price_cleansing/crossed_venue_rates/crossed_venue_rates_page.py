@@ -80,3 +80,6 @@ class CrossedVenueRatesPage(CommonPage):
 
     def get_instr_type(self):
         return self.find_by_xpath(CrossedVenueRatesConstants.MAIN_PAGE_INSTR_TYPE_XPATH).text
+
+    def is_searched_entity_found_by_name(self, name):
+        return self.is_element_present(CrossedVenueRatesConstants.SEARCHED_ENTITY.format(name))

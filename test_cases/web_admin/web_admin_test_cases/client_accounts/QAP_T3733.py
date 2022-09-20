@@ -3,7 +3,6 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -48,8 +47,7 @@ class QAP_T3733(CommonTestCase):
             values_sub_wizard.set_ext_id_client(self.ext_id_client)
             wizard.click_on_save_changes()
             time.sleep(1)
-            common_act = CommonPage(self.web_driver_container)
-            self.verify("Such record already exists displayed", True, common_act.is_error_message_displayed())
+            self.verify("Such record already exists displayed", True, wizard.is_footer_warning_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

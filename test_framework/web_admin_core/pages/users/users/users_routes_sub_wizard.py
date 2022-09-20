@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.users.users.users_constants import UsersConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -29,6 +31,11 @@ class UsersRoutesSubWizard(CommonPage):
 
     def get_route(self):
         return self.get_text_by_xpath(UsersConstants.ROUTE_AT_ROUTES_SUB_WIZARD)
+
+    def get_all_routes_from_drop_menu(self):
+        self.set_text_by_xpath(UsersConstants.ROUTE_AT_ROUTES_SUB_WIZARD, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(UsersConstants.DROP_DOWN_MENU_XPATH)
 
     def set_route_user_name(self, value):
         self.set_text_by_xpath(UsersConstants.ROUTE_USER_NAME_AT_ROUTES_SUB_WIZARD, value)

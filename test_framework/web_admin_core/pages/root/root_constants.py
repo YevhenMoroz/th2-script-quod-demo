@@ -49,7 +49,7 @@ class RootConstants:
     FEES_ITEM_XPATH = "//span[text()='Fees']"
     COMMISSIONS_ITEM_XPATH = "//span[text()='Commissions']"
     SETTLEMENT_MODEL_ITEM_XPATH = "//span[text()='Settlement Model']"
-    FIX_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='FIX Matching Profile']"
+    ALLOCATION_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='Allocation Matching Profile']"
 
     FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='Market Making']"
     QUOTING_SESSIONS_ITEM_XPATH = "//span[text()='Quoting Sessions']"

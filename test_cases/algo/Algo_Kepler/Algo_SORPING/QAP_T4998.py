@@ -14,7 +14,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4998(TestCase):
@@ -40,11 +41,13 @@ class QAP_T4998(TestCase):
         self.price_ask_qdl1 = 40
         self.price_ask_qdl2 = 50
         self.price_bid = 30
-        self.algo_Cst = 'TestEXTERNAL-UTI'
+        self.party_id = constants.PartyID.party_id_3.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_1.value
+        self.party_role = constants.PartyRole.party_role_58.value
 
         self.no_party = [
-            {'PartyID': 'TestEXTERNAL-UTI', 'PartyIDSource': 'D',
-             'PartyRole': '58'}
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
            ]
         # endregion
 
@@ -84,8 +87,11 @@ class QAP_T4998(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_party_info.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_party_info")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.misc_number = constants.MiscNumber.ordr_misc_7.value
         # endregion
 
         self.rule_list = []
@@ -130,14 +136,11 @@ class QAP_T4998(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "PartyID": "TestEXTERNAL-UTI",
-            "MiscNumber": "OrdrMisc7",
-            "OrdrMisc": "TestEXTERNAL-UTI",
-            "ClOrdID": self.ClOrdId
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
+        compare_message.change_parameters(dict(PartyID=self.party_id, MiscNumber=self.misc_number, OrdrMisc=self.party_id, ClOrdID=self.ClOrdId))
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Sell side
@@ -155,7 +158,7 @@ class QAP_T4998(TestCase):
 
         self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
-        self.dma_qdl1_order.remove_parameter('AlgoCst01').add_tag(dict(AlgoCst02=self.algo_Cst))
+        self.dma_qdl1_order.remove_parameter('AlgoCst01').add_tag(dict(AlgoCst02=self.party_id))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_pending)

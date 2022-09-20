@@ -30,6 +30,14 @@ def waiting_until_page_requests_to_be_load(function):
                     time.sleep(0.25)
                 elif a == 240: raise TimeoutError
                 else: return function(*args)
+        elif not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+            a = 0
+            while True:
+                if not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+                    a += 1
+                    time.sleep(0.25)
+                elif a == 240: raise TimeoutError
+                else: return function(*args)
         else: return function(*args)
     return wrapper
 
@@ -62,6 +70,17 @@ class CommonPage:
     def get_text_by_xpath(self, xpath: str):
         if "button" in xpath:
             return self.find_by_xpath(xpath).text
+        elif self.find_by_xpath(xpath).get_attribute("disabled"):
+            element = self.find_by_xpath(xpath)
+            action = ActionChains(self.web_driver_container.get_driver())
+            action.double_click(element)
+            action.click()
+            action.key_down(Keys.CONTROL)
+            action.send_keys("C")
+            action.key_up(Keys.CONTROL)
+            action.perform()
+            value_from_element = pyperclip.paste()
+            return value_from_element
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
