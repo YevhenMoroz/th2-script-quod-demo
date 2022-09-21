@@ -9,6 +9,7 @@ class OrderReplyConst(Enum):
     PostTradeStatus_RDY = 'RDY'
     PostTradeStatus_BKD = 'BKD'
     DoneForDay_YES = "Y"
+    TransStatus_OPN = 'OPN'
 
 
 class SubmitRequestConst(Enum):
