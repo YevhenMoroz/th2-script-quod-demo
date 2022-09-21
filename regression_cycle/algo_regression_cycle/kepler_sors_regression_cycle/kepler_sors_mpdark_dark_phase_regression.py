@@ -89,7 +89,7 @@ def test_run(parent_id=None, version=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region MP Dark (Dark Phase Only)
-        configuration = ComponentConfiguration("Mp_dark_dark_phase")
+        configuration = ComponentConfiguration("Mp_dark")
         QAP_T4777(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4776(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4775(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

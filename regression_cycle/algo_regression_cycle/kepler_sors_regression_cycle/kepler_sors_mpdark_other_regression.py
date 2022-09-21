@@ -88,7 +88,7 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"MPDark (other)" if version is None else f"MPDark (other) for th2 integration | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        configuration = ComponentConfiguration("Mp_dark_other")
+        configuration = ComponentConfiguration("Mp_dark")
         # region MP Dark (other)
         QAP_T4521(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4522(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
