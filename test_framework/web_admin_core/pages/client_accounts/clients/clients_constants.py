@@ -64,6 +64,7 @@ class ClientsConstants:
     VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="confirmationService"]'
     VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="extConfirmationService"]'
     VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
+    VALUES_TAB_DEFAULT_ACCOUNT_XPATH = '//*[@id="defaultAccount"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'

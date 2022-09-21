@@ -50,7 +50,7 @@ class InstitutionsConstants:
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
     VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
     VALUES_TAB_POSITION_FLATTENING_PERIOD = '//*[@id="posFlatteningTime"]'
-    VALUES_TAB_UNKNOWN_ACCOUNTS = '//*[@formcontrolname="enableUnknownAccounts"]//*[@class="custom-checkbox"]'
+    VALUES_TAB_UNKNOWN_ACCOUNTS = '//*[@formcontrolname="enableUnknownAccounts"]//*[contains(@class, "custom-checkbox")]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'
