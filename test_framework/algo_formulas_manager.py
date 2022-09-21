@@ -171,6 +171,13 @@ class AlgoFormulasManager:
     def convert_pre_trade_lis_amount_for_another_currency(pre_trade_lis_amount: float, rate: float) -> float:
         return pre_trade_lis_amount * rate
 
+    @staticmethod
+    def get_pov_child_qty_ltq(per_vol: float, last_traded_volume: int) -> int:
+        if (per_vol > 0 and per_vol < 1):
+            return math.ceil((last_traded_volume * per_vol) / (1 - per_vol))
+        else:
+            return math.ceil((last_traded_volume * per_vol) / (100 - per_vol))
+
 
 
 
