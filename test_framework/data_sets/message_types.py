@@ -45,6 +45,8 @@ class ORSMessageType(Enum):
     ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
     ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
     CDNotifDealer = 'Order_CDNotifDealer'
+    TradeEntryNotif = 'Order_TradeEntryNotif'
+    Order_BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
 
 
 class TradingRestApiMessageType(Enum):

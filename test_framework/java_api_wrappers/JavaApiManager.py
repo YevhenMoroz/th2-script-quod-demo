@@ -13,6 +13,7 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRe
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
+from test_framework.java_api_wrappers.ors_messages.Order_TradeEntryNotif import Order_TradeEntryNotif
 
 
 class JavaApiManager:
@@ -119,11 +120,11 @@ class JavaApiManager:
             message_type = message.metadata.message_type
             response_fix_message = None
             if message_type == ORSMessageType.OrdReply.value:
-                response_fix_message = ExecutionReport()
+                response_fix_message = OrdReply()
             elif message_type == ORSMessageType.OrdNotification.value:
                 response_fix_message = OrdNotification()
             elif message_type == ORSMessageType.ExecutionReport.value:
-                response_fix_message = OrdReply()
+                response_fix_message = ExecutionReport()
             elif message_type == ORSMessageType.OrdUpdate.value:
                 response_fix_message = OrdUpdate()
             elif message_type == ORSMessageType.AllocationReport.value:
@@ -136,6 +137,8 @@ class JavaApiManager:
                 response_fix_message = ConfirmationReport()
             elif message_type == CSMessageType.CDOrdNotif.value:
                 response_fix_message = CDOrdNotif()
+            elif message_type == ORSMessageType.TradeEntryNotif.value:
+                response_fix_message = Order_TradeEntryNotif()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         return response_messages
