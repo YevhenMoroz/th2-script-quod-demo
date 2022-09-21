@@ -172,11 +172,11 @@ class AlgoFormulasManager:
         return pre_trade_lis_amount * rate
 
     @staticmethod
-    def get_pov_child_qty_ltq(per_vol: float, last_traded_volume: int) -> int:
-        if (per_vol > 0 and per_vol < 1):
-            return math.ceil((last_traded_volume * per_vol) / (1 - per_vol))
+    def get_pov_child_qty_ltq(percentage_vol: float, last_traded_volume: int) -> int:
+        if (percentage_vol > 0 and percentage_vol < 1):
+            return math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol))
         else:
-            return math.ceil((last_traded_volume * per_vol) / (100 - per_vol))
+            return math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol))
 
 
 
