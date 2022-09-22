@@ -49,6 +49,15 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_eliminate_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
+        elif side is GatewaySide.RBSell:
+            if status is Status.Pending:
+                self.__set_pending_new_rb_sell(new_order_single)
+            elif status is Status.New:
+                self.__set_new_rb_sell(new_order_single)
+            elif status is Status.Cancel:
+                self.__set_cancel_rb_sell(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
         return self
 
     def set_params_from_order_cancel_replace(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest, side: GatewaySide, status: Status):
@@ -1407,5 +1416,112 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         }
         if nos_rfq.is_parameter_exist('Price'):
             temp.update(Price=nos_rfq.get_parameter('Price'))
+        super().change_parameters(temp)
+        return self
+
+    def __set_pending_new_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst=new_order_single.get_parameter("HandlInst"),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
+            ExecType="A",
+            OrdStatus="A",
+            TransactTime='*',
+            AvgPx='0',
+            CumQty='0',
+            ExecID='*',
+            LastPx='0',
+            LastQty='0',
+            OrderCapacity='A',
+            QtyType='0',
+            OrderID='*',
+            SettlDate='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_new_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst=new_order_single.get_parameter("HandlInst"),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
+            ExecType="0",
+            OrdStatus="0",
+            TransactTime='*',
+            AvgPx='0',
+            CumQty='0',
+            ExecID='*',
+            LastPx='0',
+            LastQty='0',
+            OrderCapacity='A',
+            QtyType='0',
+            OrderID='*',
+            SettlDate='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            ExecRestatementReason=4,
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
+            QtyType='*',
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
         super().change_parameters(temp)
         return self
