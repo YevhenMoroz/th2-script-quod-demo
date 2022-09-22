@@ -42,7 +42,10 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_pov_child_qty(per_vol: float, market_vol: int, ord_qty: int) -> int:
-        return max(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
+        if (per_vol > 0 and per_vol < 1):
+            return min(math.ceil((market_vol * per_vol) / (1 - per_vol)), ord_qty)
+        else:
+            return min(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
 
     @staticmethod
     def get_twap_nav_child_qty(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
