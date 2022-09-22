@@ -154,7 +154,6 @@ class QAP_T7501(TestCase):
             responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
             class_name.print_message(f'CONFIRMATION FOR {account}', responses)
             self.return_result_for_confirmation_message_via_account(responses, account)
-            self.return_result_for_confirmation_message_via_account(responses, account)
             expected_result = {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
                                AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value}
             self.check_confirmation_message(expected_result,
@@ -199,7 +198,6 @@ class QAP_T7501(TestCase):
             })
             responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
             class_name.print_message(f'CONFIRMATION FOR {account}', responses)
-            self.return_result_for_confirmation_message_via_account(responses, account)
             self.return_result_for_confirmation_message_via_account(responses, account)
             expected_result = {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
                                AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value}
