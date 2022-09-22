@@ -30,6 +30,8 @@ class AllocationInstructionConst(Enum):
 class ConfirmationReportConst(Enum):
     ConfirmStatus_AFF = 'AFF'
     MatchStatus_MAT = 'MAT'
+    ConfirmStatus_CXL = 'CXL'
+    MatchStatus_UNM = 'UNM'
 
 
 class CommissionBasisConst(Enum):

@@ -105,6 +105,7 @@ class QAP_T7515(TestCase):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
+                break
 
     def check_execution_reports(self, change_parameters, list_of_ignore_fields):
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)

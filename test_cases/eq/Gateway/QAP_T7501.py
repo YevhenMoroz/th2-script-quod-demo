@@ -31,7 +31,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-class QAP_T7503(TestCase):
+class QAP_T7501(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -60,6 +60,7 @@ class QAP_T7503(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        class_name = QAP_T7501
         # region create CO  order (precondition)
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
@@ -87,18 +88,20 @@ class QAP_T7503(TestCase):
         # region step 1 and step 2( trade CO order)
         self.trade_entry_message.set_default_trade(order_id, self.price, self.qty)
         responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
+        class_name.print_message('TRADE', responses)
         self.return_result(responses, ORSMessageType.ExecutionReport.value)
         actually_result = self.result.get_parameters()['ExecutionReportBlock']['TransExecStatus']
-        self.return_result(responses, ORSMessageType.OrdNotification.value)
         self.order_book.compare_values(
             {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value},
-            {OrderBookColumns.exec_sts.value: actually_result, },
+            {OrderBookColumns.exec_sts.value: actually_result},
             f'Comparing {OrderBookColumns.exec_sts.value}')
+
         # endregion
 
         # region complete CO order (step 3)
         responses = self.java_api_manager.send_message_and_receive_response(
             self.complete_order.set_default_complete(order_id))
+        class_name.print_message('COMPLETE', responses)
         self.return_result(responses, ORSMessageType.OrdReply.value)
         actually_post_trade_status = self.result.get_parameter('OrdReplyBlock')['PostTradeStatus']
         actually_done_for_day = self.result.get_parameter('OrdReplyBlock')['DoneForDay']
@@ -110,33 +113,22 @@ class QAP_T7503(TestCase):
             "Comparing values of step 3")
         # endregion
 
-        # region book and approve CO order step 4 , 5 and 6
-        gross_currency_amt = str(int(self.qty) * int(self.price))
+        # region book CO order step 4 , 5
+        settl_currency_amt = str(int(self.qty) * int(self.price))
         self.allocation_instruction.set_default_book(order_id)
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {
-                                                                   'GrossTradeAmt': gross_currency_amt,
+                                                                   'GrossTradeAmt': settl_currency_amt,
                                                                    'AvgPx': self.price,
-                                                                   'Qty': self.qty,
-                                                                   "AllocInstructionMiscBlock": {
-                                                                       "AllocInstructionMisc0": "BOF1C",
-                                                                       "AllocInstructionMisc1": "BOF2C",
-                                                                       "AllocInstructionMisc2": "BOF3C",
-                                                                       "AllocInstructionMisc3": "BOF4C",
-                                                                       "AllocInstructionMisc4": "BOF5C"
-                                                                   }
+                                                                   'Qty': self.qty
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        class_name.print_message('BOOK', responses)
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         alloc_id = self.result.get_parameter('AllocationReportBlock')['ClientAllocID']
-        self.return_result(responses, ORSMessageType.OrdUpdate.value)
-        actually_post_trade_status = self.result.get_parameter('OrdUpdateBlock')['PostTradeStatus']
-        self.order_book.compare_values(
-            {OrderBookColumns.post_trade_status.value: OrderReplyConst.PostTradeStatus_BKD.value},
-            {OrderBookColumns.post_trade_status.value: actually_post_trade_status},
-            'Comparing actual and expected result from step 4, 5')
         self.approve_message.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_message)
+        class_name.print_message('APPROVE', responses)
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
         expected_match_status = self.result.get_parameters()['AllocationReportBlock']['MatchStatus']
@@ -144,10 +136,11 @@ class QAP_T7503(TestCase):
                                         MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value},
                                        {MiddleOfficeColumns.sts.value: expected_alloc_status,
                                         MiddleOfficeColumns.match_status.value: expected_match_status},
-                                       'Comparing actual and expected result from step 6')
+                                       'Comparing actual and expected result from step 5')
         # endregion
 
-        # region allocate block (step 7 and 8)
+        # region allocate block (step 6, 7)
+        alloc_qty = str(int((int(self.qty) / 2)))
         self.confirmation_request.set_default_allocation(alloc_id)
         sec_acc_1 = self.data_set.get_account_by_name('client_pt_1_acc_1')
         sec_acc_2 = self.data_set.get_account_by_name('client_pt_1_acc_2')
@@ -155,99 +148,113 @@ class QAP_T7503(TestCase):
         for account in list_of_security_account:
             self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
                 "AllocAccountID": account,
-                'AllocQty': str(int((int(self.qty) / 2))),
+                'AllocQty': alloc_qty,
                 'AvgPx': self.price,
-                'ConfirmationMiscBlock': {'ConfirmationMisc0': f"BOF1A{list_of_security_account.index(account)}",
-                                          'ConfirmationMisc1': f"BOF2A{list_of_security_account.index(account)}",
-                                          'ConfirmationMisc2': f"BOF3A{list_of_security_account.index(account)}",
-                                          'ConfirmationMisc3': f"BOF4A{list_of_security_account.index(account)}",
-                                          'ConfirmationMisc4': f"BOF5A{list_of_security_account.index(account)}"}
             })
             responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-            self.return_result(responses, ORSMessageType.ConfirmationReport.value)
-            actuall_allocation_status = self.result.get_parameter('ConfirmationReportBlock')['ConfirmStatus']
-            actuall_allocation_match_status = self.result.get_parameter('ConfirmationReportBlock')['MatchStatus']
+            class_name.print_message(f'CONFIRMATION FOR {account}', responses)
+            self.return_result_for_confirmation_message_via_account(responses, account)
+            self.return_result_for_confirmation_message_via_account(responses, account)
+            expected_result = {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                               AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value}
+            self.check_confirmation_message(expected_result,
+                                            f'Comparing actual and expected result from step 7 for allocation {account}')
 
-            self.order_book.compare_values(
-                {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
-                 AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value},
-                {AllocationsColumns.sts.value: actuall_allocation_status,
-                 AllocationsColumns.match_status.value: actuall_allocation_match_status},
-                f'Comparing actual and expected result from step 8 for allocation {account}')
-
-        self.return_result(responses, ORSMessageType.AllocationReport.value)
-        expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
-        expected_match_status = self.result.get_parameters()['AllocationReportBlock']['MatchStatus']
-        expected_summary_status = self.result.get_parameters()['AllocationReportBlock']['AllocSummaryStatus']
-        self.order_book.compare_values({MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
-                                        MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value,
-                                        MiddleOfficeColumns.summary_status.value: AllocationReportConst.AllocSummaryStatus_MAG.value},
-                                       {MiddleOfficeColumns.sts.value: expected_alloc_status,
-                                        MiddleOfficeColumns.match_status.value: expected_match_status,
-                                        MiddleOfficeColumns.summary_status.value: expected_summary_status},
-                                       f'Comparing actual and expected result from step 8 for middle office')
+        expected_result = {MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
+                           MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value,
+                           MiddleOfficeColumns.summary_status.value: AllocationReportConst.AllocSummaryStatus_MAG.value}
+        message = f'Comparing actual and expected result from step 7 for middle office'
+        self.check_allocation_message(responses, expected_result, message)
 
         # endregion
 
-        # region check message 35=J step 9
+        # region unallocate order step 8
+        self.unallocate_request.set_default(alloc_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.unallocate_request)
+        class_name.print_message('UN_ALLOCATE', responses)
+        for account in list_of_security_account:
+            self.return_result_for_confirmation_message_via_account(responses, account)
+            expected_result = {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_CXL.value,
+                               AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_UNM.value}
+            self.check_confirmation_message(expected_result,
+                                            f'Comparing actual and expected result from step 8 for allocation {account}')
+
+        expected_result = {MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
+                           MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value,
+                           MiddleOfficeColumns.summary_status.value: ''}
+        message = f'Comparing actual and expected result from step 8 for middle office'
+        self.check_allocation_message(responses, expected_result, message)
+        # endregion
+
+        # region step 9
+        self.confirmation_request.set_default_allocation(alloc_id)
+        sec_acc_1 = self.data_set.get_account_by_name('client_pt_1_acc_3')
+        sec_acc_2 = self.data_set.get_account_by_name('client_pt_1_acc_4')
+        list_of_security_account = [sec_acc_1, sec_acc_2]
+        for account in list_of_security_account:
+            self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
+                "AllocAccountID": account,
+                'AllocQty': str(int((int(self.qty) / 2))),
+                'AvgPx': self.price,
+            })
+            responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+            class_name.print_message(f'CONFIRMATION FOR {account}', responses)
+            self.return_result_for_confirmation_message_via_account(responses, account)
+            self.return_result_for_confirmation_message_via_account(responses, account)
+            expected_result = {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                               AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value}
+            self.check_confirmation_message(expected_result,
+                                            f'Comparing actual and expected result from step 9 for allocation {account}')
+
+        expected_result = {MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
+                           MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value,
+                           MiddleOfficeColumns.summary_status.value: AllocationReportConst.AllocSummaryStatus_MAG.value}
+        message = f'Comparing actual and expected result from step 9 for middle office'
+        self.check_allocation_message(responses, expected_result, message)
+        # endregion
+
+        # region step 10 (check 35= AK messages)
         change_parameters = {
-            'AllocType': 5,
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
                 'OrderID': '*'
-            }],
-            "AllocInstructionMiscBlock1": {
-                "BOMiscField0": "BOF1C",
-                "BOMiscField1": "BOF2C",
-                "BOMiscField2": "BOF3C",
-                "BOMiscField3": "BOF4C",
-                "BOMiscField4": "BOF5C"
-            }
+            }]
         }
         list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime',
                                   'AllocTransType', 'ReportedPx', 'Side', 'AvgPx',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
-                                  'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice']
-        allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
-        # endregion
+                                  'IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'AllocInstructionMiscBlock1']
 
-        # region check 35=J message step 10
-        no_alloc_list = []
-        dict_alloc_misc_fields = list()
-        for account in list_of_security_account:
-            dict_alloc_misc_fields.append({
-                'BOMiscField5': f"BOF1A{list_of_security_account.index(account)}",
-                'BOMiscField6': f"BOF2A{list_of_security_account.index(account)}",
-                'BOMiscField7': f"BOF3A{list_of_security_account.index(account)}",
-                'BOMiscField8': f"BOF4A{list_of_security_account.index(account)}",
-                'BOMiscField9': f"BOF5A{list_of_security_account.index(account)}"
-            })
-            no_alloc_list.append({
-                'AllocAccount': account,
-                'AllocInstructionMiscBlock2': dict_alloc_misc_fields[list_of_security_account.index(account)]
-            })
-        change_parameters['AllocType'] = 2
-        change_parameters['NoAllocs'] = no_alloc_list
-        allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
-        # endregion
-
-        # region check 35 = AK messages step 11
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType'])
-        del change_parameters['NoAllocs']
-        del change_parameters['AllocType']
+
         for account in list_of_security_account:
             change_parameters['AllocAccount'] = account
-            change_parameters.update(
-                {'AllocInstructionMiscBlock2': dict_alloc_misc_fields[list_of_security_account.index(account)]})
+            change_parameters['AllocQty'] = alloc_qty
             confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
             self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
                                                              ['AllocAccount', 'NoOrders'],
                                                              ignored_fields=list_of_ignored_fields)
+        # endregion
+
+        # region check 35=J message (step 11)
+        no_alloc_list = []
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice'])
+        del change_parameters['AllocQty']
+        del change_parameters['AllocAccount']
+        for account in list_of_security_account:
+            no_alloc_list.append({
+                'AllocAccount': account,
+                'AllocQty': alloc_qty,
+            })
+        change_parameters['AllocType'] = 2
+        change_parameters['NoAllocs'] = no_alloc_list
+        allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report,
+                                                         key_parameters=['ClOrdID', 'AllocType', 'NoAllocs'],
+                                                         ignored_fields=list_of_ignored_fields)
         # endregion
 
     def return_result(self, responses, message_type):
@@ -255,3 +262,41 @@ class QAP_T7503(TestCase):
             if response.get_message_type() == message_type:
                 self.result = response
                 break
+
+    def return_result_for_confirmation_message_via_account(self, responses, alloc_account):
+        for response in responses:
+            if 'ConfirmationReportBlock' in response.get_parameters():
+                if 'AllocAccountID' in response.get_parameters()['ConfirmationReportBlock']:
+                    if response.get_message_type() == ORSMessageType.ConfirmationReport.value and \
+                            response.get_parameters()['ConfirmationReportBlock']['AllocAccountID'] == alloc_account:
+                        self.result = response
+
+    def check_confirmation_message(self, expected_result, message):
+        actuall_allocation_status = self.result.get_parameter('ConfirmationReportBlock')['ConfirmStatus']
+        actuall_allocation_match_status = self.result.get_parameter('ConfirmationReportBlock')['MatchStatus']
+        self.order_book.compare_values(
+            expected_result,
+            {AllocationsColumns.sts.value: actuall_allocation_status,
+             AllocationsColumns.match_status.value: actuall_allocation_match_status},
+            message)
+
+    def check_allocation_message(self, responses, expected_result, message):
+        self.return_result(responses, ORSMessageType.AllocationReport.value)
+        expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
+        expected_match_status = self.result.get_parameters()['AllocationReportBlock']['MatchStatus']
+        if 'AllocSummaryStatus' in self.result.get_parameters()['AllocationReportBlock']:
+            expected_summary_status = self.result.get_parameters()['AllocationReportBlock']['AllocSummaryStatus']
+        else:
+            expected_summary_status = ''
+        self.order_book.compare_values(expected_result,
+                                       {MiddleOfficeColumns.sts.value: expected_alloc_status,
+                                        MiddleOfficeColumns.match_status.value: expected_match_status,
+                                        MiddleOfficeColumns.summary_status.value: expected_summary_status},
+                                       message)
+
+    @staticmethod
+    def print_message(message, responses):
+        logger.info(message)
+        for i in responses:
+            logger.info(i)
+            logger.info(i.get_parameters())
