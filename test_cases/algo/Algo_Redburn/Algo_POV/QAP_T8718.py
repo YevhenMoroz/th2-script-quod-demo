@@ -69,7 +69,6 @@ class QAP_T8718(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_partial_fill = Status.PartialFill
-        self.status_cancel_replace = Status.CancelReplace
         self.status_cancel = Status.Cancel
         # endregion
 
