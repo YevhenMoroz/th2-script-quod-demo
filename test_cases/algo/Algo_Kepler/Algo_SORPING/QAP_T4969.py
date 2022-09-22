@@ -180,14 +180,6 @@ class QAP_T4969(TestCase):
         market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
 
-        market_data_snap_shot_qdl9 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl9, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl9)
-
-        market_data_snap_shot_qdl10 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl10, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl10.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl10)
-
     # @try_except(test_id=Path(__file__).name[:-3])
     # def run_post_conditions(self):
     #     # region Cancel Algo Order
