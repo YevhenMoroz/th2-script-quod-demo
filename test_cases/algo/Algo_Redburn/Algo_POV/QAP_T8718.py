@@ -49,9 +49,10 @@ class QAP_T8718(TestCase):
         self.price_ltq = 50
         self.qty_ltq_1 = 30_000
         self.qty_ltq_2 = 20_000
+        self.total_traded_volume = self.qty_ltq_1 + self.qty_ltq_2
         
         self.qty_child_1 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
-        self.qty_child_2 = AlgoFormulasManager.get_pov_child_qty_for_worse_price_behavior(self.min_participation, self.percentage_volume, (self.qty_ltq_1 + self.qty_ltq_2), self.qty_trade)
+        self.qty_child_2 = AlgoFormulasManager.get_pov_child_qty_for_worse_price_behavior(self.min_participation, self.percentage_volume, self.total_traded_volume, self.qty, self.qty_trade)
         
         self.price_ask = 0
         self.qty_ask = 0
