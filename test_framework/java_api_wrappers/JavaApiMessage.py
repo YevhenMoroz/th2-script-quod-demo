@@ -1,11 +1,13 @@
 from custom import basic_custom_actions
+from test_framework.data_sets.base_data_set import BaseDataSet
 
 
 class JavaApiMessage:
 
-    def __init__(self, message_type: str):
+    def __init__(self, message_type: str, data_set: BaseDataSet = None):
         self.__parameters = dict()
         self.__message_type = message_type
+        self.__data_set = data_set
 
     def get_message_type(self) -> str:
         return self.__message_type
@@ -89,3 +91,6 @@ class JavaApiMessage:
         new_component = self.get_parameter(component)
         new_component[index].update(kwargs)
         return self
+
+    def get_data_set(self):
+        return self.__data_set

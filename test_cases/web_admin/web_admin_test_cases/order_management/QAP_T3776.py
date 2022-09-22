@@ -29,7 +29,7 @@ class QAP_T3776(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_execution_strategies_page()
+        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
         side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()

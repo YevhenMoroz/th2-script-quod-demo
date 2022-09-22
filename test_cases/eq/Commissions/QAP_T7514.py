@@ -62,9 +62,10 @@ class QAP_T7514(TestCase):
         # region check exec
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
-            {'MiscFeesGrp': "*",  'CommissionData': "*", 'VenueType': "*", 'LastMkt': "*",
+            {'MiscFeesGrp': "*", 'CommissionData': "*", 'VenueType': "*", 'LastMkt': "*",
              "Account": self.client_for_conf})
-        execution_report.remove_parameters(['SettlCurrency', 'LastExecutionPolicy', 'SecondaryOrderID', 'SecondaryExecID'])
+        execution_report.remove_parameters(
+            ['SettlCurrency', 'LastExecutionPolicy', 'SecondaryOrderID', 'SecondaryExecID'])
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
         # region complete order

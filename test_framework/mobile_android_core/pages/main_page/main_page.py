@@ -19,13 +19,6 @@ class MainPage(CommonPage):
     def click_on_news(self):
         self.find_by_xpath(MainPageConstants.NEWS_BUTTON).click()
 
-    def click_on_plus_at_market(self):
-        self.tap_by_coordinates("400", "138")
-
-    #TODO:Check new path for visible click on watchlist, propose like Watchlist1.....
-    def click_on_watchlist(self):
-        pass
-
     def click_on_create_new_order(self):
         self.find_by_xpath(MainPageConstants.NEW_ORDER_BUTTON).click()
 

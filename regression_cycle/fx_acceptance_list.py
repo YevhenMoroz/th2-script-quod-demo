@@ -23,17 +23,17 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
+def test_run(parent_id=None, version=None):
     report_id = bca.create_event('Acceptance list', parent_id)
     session_id = set_session_id()
-    Stubs.custom_config['qf_trading_fe_main_win_name'] = "Quod Financial - Quod site 314"
-    data_set = FxDataSet()
+    main_window_name = "Quod Financial - Quod site 314"
+
     configuration = ComponentConfiguration("FX_Acceptance_list")
     try:
         if not Stubs.frontend_is_open:
             prepare_fe_2(report_id, session_id)
         else:
-            get_opened_fe(report_id, session_id)
+            get_opened_fe(report_id, session_id, main_window_name)
 
             # region RFQ taker
             import_rfq_taker_layout.execute(report_id, session_id)

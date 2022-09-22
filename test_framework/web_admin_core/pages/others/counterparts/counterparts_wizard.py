@@ -59,3 +59,6 @@ class CounterpartsWizard(CommonPage):
 
     def click_on_save_changes(self):
         self.find_by_xpath(CounterpartsConstants.SAVE_CHANGES_XPATH).click()
+
+    def is_warning_message_displayed(self):
+        return self.is_element_present(CounterpartsConstants.FOOTER_WARNING_XPATH)

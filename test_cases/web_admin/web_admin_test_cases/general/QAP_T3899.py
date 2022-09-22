@@ -30,6 +30,7 @@ class QAP_T3899(CommonTestCase):
             try:
                 self.verify("Is help icon displayed", True, common_page.is_help_icon_displayed())
                 self.verify("Is send feedback icon displayed", True, common_page.is_send_feedback_icon_displayed())
+                time.sleep(2)
                 self.verify("Is user name icon displayed", True, common_page.is_user_name_icon_displayed())
                 self.verify("Is user icon displayed", True, common_page.is_user_icon_displayed())
 

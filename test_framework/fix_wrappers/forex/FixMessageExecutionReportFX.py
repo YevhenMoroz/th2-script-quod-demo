@@ -13,7 +13,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status):
+                                         status: Status = Status.Fill):
 
         if status is Status.Fill:
             self.__set_fill_sell(new_order_single)
@@ -140,6 +140,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
+            Account="*",
             LastMkt="*",
             OrdStatus="8",
             TransactTime="*",
