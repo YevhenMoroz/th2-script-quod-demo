@@ -87,6 +87,7 @@ class DirectionEnum(Enum):
 class GatewaySide(Enum):
     Sell = "Sell"
     Buy = "Buy"
+    RBSell = "RBSell"
 
 
 class MessageType(Enum):
