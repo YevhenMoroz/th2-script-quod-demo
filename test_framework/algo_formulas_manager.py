@@ -160,8 +160,13 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
-        return math.ceil((ltq * volume) / (1 - volume))
+    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int) -> int:
+        if (percentage_vol > 0 and percentage_vol < 1):
+            return math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol))
+        # elif (percentage_vol == 100 or percentage_vol == 1):
+        #     return math.ceil(last_traded_volume * percentage_vol)
+        else:
+            return math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol))
 
     @staticmethod
     def get_lis_amount_for_order(qty: int, price: float) -> float:
@@ -170,14 +175,6 @@ class AlgoFormulasManager:
     @staticmethod
     def convert_pre_trade_lis_amount_for_another_currency(pre_trade_lis_amount: float, rate: float) -> float:
         return pre_trade_lis_amount * rate
-
-    @staticmethod
-    def get_pov_child_qty_ltq(percentage_vol: float, last_traded_volume: int) -> int:
-        if (percentage_vol > 0 and percentage_vol < 1):
-            return math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol))
-        else:
-            return math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol))
-
 
 
 
