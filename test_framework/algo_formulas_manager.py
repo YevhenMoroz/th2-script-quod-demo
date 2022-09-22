@@ -163,13 +163,13 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int) -> int:
+    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:
         if (percentage_vol > 0 and percentage_vol < 1):
-            return math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol))
+            return min(math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol)), ord_qty)
         # elif (percentage_vol == 100 or percentage_vol == 1):
-        #     return math.ceil(last_traded_volume * percentage_vol)
+        #     return min(math.ceil(last_traded_volume * percentage_vol), ord_qty)
         else:
-            return math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol))
+            return min(math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol)), ord_qty)
 
     @staticmethod
     def get_lis_amount_for_order(qty: int, price: float) -> float:
