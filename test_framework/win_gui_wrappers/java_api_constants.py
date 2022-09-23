@@ -3,6 +3,7 @@ from enum import Enum
 
 class ExecutionReportConst(Enum):
     TransExecStatus_FIL = 'FIL'
+    TransExecStatus_PFL = 'PFL'
 
 
 class OrderReplyConst(Enum):
