@@ -144,7 +144,7 @@ class QAP_T4785(TestCase):
         self.MP_Dark_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.MP_Dark_order)
         self.MP_Dark_order_replace_params.change_parameters(dict(OrderQty=self.inc_qty))
         response = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order_replace_params, case_id_3)[0]
-        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=3)).isoformat()
+        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=1)).isoformat()
 
         time.sleep(1)
 
