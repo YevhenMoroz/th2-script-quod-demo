@@ -259,7 +259,6 @@ class QAP_T7501(TestCase):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
-                break
 
     def return_result_for_confirmation_message_via_account(self, responses, alloc_account):
         for response in responses:

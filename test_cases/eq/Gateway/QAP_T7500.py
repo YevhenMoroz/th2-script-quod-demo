@@ -253,4 +253,3 @@ class QAP_T7500(TestCase):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
-                break
