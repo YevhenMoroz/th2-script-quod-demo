@@ -89,6 +89,10 @@ class GatewaySide(Enum):
     Buy = "Buy"
     RBSell = "RBSell"
 
+class Aggressivity(Enum):
+    Passive = '1'
+    Neutral = '2'
+    Aggressive = '3'
 
 class MessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
