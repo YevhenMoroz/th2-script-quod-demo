@@ -106,12 +106,65 @@ class QAP_T4079(TestCase):
         case_id_1 = bca.create_event("Create Multilisted order and replace it", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
+        # region Payload
+        self.Multilisted_order_1 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_1.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_1.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_2.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_2.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_3 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_3.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_3.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_4 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_4.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_4.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_5 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_5.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_5.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_6 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_6.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_6.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_7 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_7.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_7.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_8 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_8.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_8.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_9 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_9.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_9.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+
+        self.Multilisted_order_10 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisted_order_10.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisted_order_10.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        # endregion
+
         self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
         self.Multilisted_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Multilisted_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
 
         self.Multilisted_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.Multilisted_order)
         self.Multilisted_order_replace_params.change_parameters(dict(OrderQty=self.dec_qty))
+
+        self.fix_manager_sell.send_message(self.Multilisted_order_1)
+        self.fix_manager_sell.send_message(self.Multilisted_order_2)
+        self.fix_manager_sell.send_message(self.Multilisted_order_3)
+        self.fix_manager_sell.send_message(self.Multilisted_order_4)
+        self.fix_manager_sell.send_message(self.Multilisted_order_5)
+        self.fix_manager_sell.send_message(self.Multilisted_order_6)
+        self.fix_manager_sell.send_message(self.Multilisted_order_7)
+        self.fix_manager_sell.send_message(self.Multilisted_order_8)
+        self.fix_manager_sell.send_message(self.Multilisted_order_9)
+        self.fix_manager_sell.send_message(self.Multilisted_order_10)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Multilisted_order, case_id_1)
         self.fix_manager_sell.send_message_and_receive_response(self.Multilisted_order_replace_params, case_id_1)
