@@ -13,8 +13,9 @@ class RestApiRiskLimitDimensions(WebAdminRestApiMessages):
         self.message_type = "CreateRiskLimitDimension"
         self.parameters = custom_params
 
-    def modify_risk_limit_dimension(self):
-        pass
+    def modify_risk_limit_dimension(self, params):
+        self.message_type = "ModifyRiskLimitDimension"
+        self.parameters = params
 
     def delete_risk_limit_dimension(self, risk_limit_dimension_id):
         self.message_type = "DeleteRiskLimitDimension"

@@ -1,6 +1,5 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
@@ -8,6 +7,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageHistoricalMarketDataRequest import \
     ApiMessageHistoricalMarketDataRequest
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 
 
 class QAP_T3420(TestCase):
@@ -28,14 +28,14 @@ class QAP_T3420(TestCase):
         response = self.trd_api_manager.send_http_request_and_receive_http_response(self.historical_md)
         parsed_response = self.trd_api_manager.parse_response_details(response)
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check MDEntryPx field",
-                     expected_value="3333.0",
-                     actual_value=parsed_response["MDEntryPx"])
-            verifier(case_id=self.test_id,
-                     event_name="Check MDEntryDateTime field",
-                     expected_value="2022-01-27T11:07:59",
-                     actual_value=parsed_response["MDEntryDateTime"])
+            data_validation(test_id=self.test_id,
+                            event_name="Check MDEntryPx field",
+                            expected_result="3333.0",
+                            actual_result=parsed_response["MDEntryPx"])
+            data_validation(test_id=self.test_id,
+                            event_name="Check MDEntryDateTime field",
+                            expected_result="2022-01-27T11:07:59",
+                            actual_result=parsed_response["MDEntryDateTime"])
         except:
             bca.create_event(f'Fail test event. Response is empty',
                              status='FAILED',
