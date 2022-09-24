@@ -29,10 +29,10 @@ class QAP_T7248(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set):
         super().__init__(report_id, session_id, data_set)
-        self.case_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.recipient = Stubs.custom_config['qf_trading_fe_user']
         self.work_dir = Stubs.custom_config['qf_trading_fe_folder']
         self.recipient_2 = Stubs.custom_config['qf_trading_fe_user_2']
@@ -44,13 +44,13 @@ class QAP_T7248(TestCase):
         # region switch on second user
         session_id2 = Stubs.win_act.register(
             rhbatch_pb2.RhTargetServer(target=Stubs.custom_config['target_server_win'])).sessionID
-        base_window_2 = BaseMainWindow(case_id=self.case_id, session_id=session_id2)
-        order_book_2 = OMSOrderBook(self.case_id, session_id2)
+        base_window_2 = BaseMainWindow(case_id=self.test_id, session_id=session_id2)
+        order_book_2 = OMSOrderBook(self.test_id, session_id2)
         base_window_2.open_fe(self.report_id, folder=self.work_dir, user=self.recipient_2, password=self.recipient_2,
                               is_open=False)
         # endregion
         # region switch on 1 user again
-        base_window = BaseMainWindow(case_id=self.case_id, session_id=self.session_id)
+        base_window = BaseMainWindow(case_id=self.test_id, session_id=self.session_id)
         base_window.switch_user()
         # endregion
 
@@ -76,7 +76,7 @@ class QAP_T7248(TestCase):
 
         # region accept in Internal Transfer
         order_book_2.internal_transfer(True)
-        close_fe(self.case_id, session_id2)
+        close_fe(self.test_id, session_id2)
         base_window.switch_user()
         # endregion
 

@@ -35,7 +35,7 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH, value)
 
     def get_tenor(self):
-        return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH)
+        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH)
 
     def click_on_created_tenor(self, value):
         self.find_by_xpath(ClientTierConstants
@@ -136,6 +136,14 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
     def click_on_edit_at_base_margins_tab(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EDIT_BUTTON_XPATH).click()
 
+    def click_on_edit_at_base_margins_tab_by_values(self, value):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EDIT_BUTTON_BY_VALUE_XPATH.
+                           format(value)).click()
+
+    def click_on_delete_at_base_margins_tab_by_values(self, value):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_DELETE_BUTTON_BY_VALUE_XPATH.
+                           format(value)).click()
+
     def click_on_checkmark_at_base_margins_tab(self):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_CHECKMARK_BUTTON_XPATH).click()
@@ -151,8 +159,19 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH).click()
 
+    def click_on_publish_prices_checkbox_at_base_margins_tab(self):
+        self.find_by_xpath(
+            ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PUBLISH_PRICES_CHECKBOX_XPATH).click()
+
+    def is_publish_prices_checkbox_selected_at_base_margins_tab(self):
+        return self.is_checkbox_selected(
+            ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PUBLISH_PRICES_CHECKBOX_XPATH)
+
     def set_quantity_at_base_margin_tab(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH, value)
+
+    def is_quantity_field_enable_at_base_margin_tab(self):
+        return self.is_field_enabled(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH)
 
     def get_quantity_at_base_margins_tab(self):
         return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH).text
@@ -253,3 +272,24 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
     def set_offer_margin_filter_at_position_levels_tab(self, value):
         self.set_text_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_FILTER_XPATH, value)
+
+    def click_on_plus_for_tiered_quantity(self):
+        self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_PLUS_BUTTON_AT_TENOR).click()
+
+    def click_on_edit_for_tiered_quantity(self):
+        self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_EDIT_BUTTON_AT_TENOR).click()
+
+    def click_on_delete_for_tiered_quantity(self):
+        self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_DELETE_BUTTON_AT_TENOR).click()
+
+    def click_on_checkmark_for_tiered_quantity(self):
+        self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_CHECKMARK_BUTTON_AT_TENOR).click()
+
+    def click_on_cancel_for_tiered_quantity(self):
+        self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_CANCEL_BUTTON_AT_TENOR).click()
+
+    def set_quantity_for_tiered_quantity(self, value):
+        self.set_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_QUANTITY_INPUT_AT_TENOR, value)
+
+    def get_quantity_for_tiered_quantity(self):
+        self.get_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_QUANTITY_INPUT_AT_TENOR)

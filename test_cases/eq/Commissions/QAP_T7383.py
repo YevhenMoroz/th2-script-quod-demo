@@ -9,6 +9,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -16,6 +17,7 @@ from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7383(TestCase):
@@ -26,44 +28,63 @@ class QAP_T7383(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
-        self.client = self.data_set.get_client_by_name("client_pt_1")
-        self.client_acc = self.data_set.get_account_by_name("client_pt_1_acc_1")
-        self.change_params = {'Account': self.client}
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
+        self.client = self.data_set.get_client_by_name("client_com_1")
+        self.cur = self.data_set.get_currency_by_name('currency_3')
+        self.com_cur = self.data_set.get_currency_by_name('currency_2')
+        self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
+        self.mic = self.data_set.get_mic_by_name("mic_2")
+        self.change_params = {'Account': self.client, "Currency": self.cur, "ExDestination": self.mic}
         self.fix_message.change_parameters(self.change_params)
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
-        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.venue = self.data_set.get_venue_by_name("venue_2")
         self.rule_manager = RuleManager(Simulators.equity)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
         self.cl_ord_id = self.fix_message.get_parameter('ClOrdID')
+        self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
+        self.comm = self.data_set.get_commission_by_name("commission1")
+        self.fee = self.data_set.get_fee_by_name('fee1')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee,
+                                                            comm_profile=self.comm_profile).change_message_params(
+            {'venueID': self.venue}).send_post_request()
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm,
+                                                                         comm_profile=self.comm_profile).send_post_request()
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                             self.client_for_rule, self.mic,
-                                                                                             int(self.price))
+                                                                                                  self.client_for_rule,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       self.client_for_rule, self.mic, int(self.price),
-                                                                                       int(self.qty), 2)
+                                                                                            self.client_for_rule,
+                                                                                            self.mic, int(self.price),
+                                                                                            int(self.qty), 2)
 
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        # order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region check exec
+        no_misc = {"MiscFeeAmt": '1', "MiscFeeCurr": self.com_cur,
+                   "MiscFeeType": "4"}
+        comm_data = {"Commission": "1", "CommType": "3"}
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
-            {'ReplyReceivedTime': "*", 'LastMkt': "*", 'Text': "*",
-             "Account": self.client_for_rule})
+            {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
+             "Account": self.client, "MiscFeesGrp": {"NoMiscFees": [no_misc]}, "CommissionData": comm_data})
         execution_report.remove_parameters(
             ['SettlCurrency'])
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
@@ -87,4 +108,3 @@ class QAP_T7383(TestCase):
         self.mid_office.compare_values({MiddleOfficeColumns.client_comm.value: ''}, total_comm,
                                        "Check Total Comm")
         # endregion
-

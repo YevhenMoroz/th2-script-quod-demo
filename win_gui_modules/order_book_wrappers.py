@@ -127,6 +127,39 @@ class CancelOrderDetails:
         return self.cancel_order_details
 
 
+class ForceCancelOrderDetails:
+    def __init__(self, base_request):
+        self.cancel_order_details = order_book_pb2.ForceCancelOrderDetails()
+        if base_request is not None:
+            self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_filter(self, filter_list: list):
+        length = len(filter_list)
+        i = 0
+        while i < length:
+            self.cancel_order_details.filter[filter_list[i]] = filter_list[i + 1]
+            i += 2
+
+    def set_default_params(self, base_request):
+        self.cancel_order_details.base.CopyFrom(base_request)
+
+    def set_comment(self, comment: str):
+        self.cancel_order_details.comment = comment
+
+    def set_cancel_children(self, cancel_children: bool):
+        self.cancel_order_details.cancelChildren.value = cancel_children
+
+    def cancel_by_icon(self):
+        self.cancel_order_details.cancelByIcon = True
+
+    def set_selected_row_count(self, selected_row_count: int):
+        self.cancel_order_details.multipleRowSelection = True
+        self.cancel_order_details.selectedRowCount = selected_row_count
+
+    def build(self):
+        return self.cancel_order_details
+
+
 class CancelFXOrderDetails:
     def __init__(self, base_request):
         self.cancel_order_details = order_book_fx_pb2.CancelFXOrderDetails()
@@ -592,6 +625,44 @@ class ExecutionsDetails:
     def set_settlement_date_offset(self, offset: int):
         self.request.settlementDateOffset = offset
 
+    def set_source_account(self, source_account: str):
+        self.request.sourceAccount = source_account
+
+
+class OtherTabDetails:
+    def __init__(self, request: order_book_pb2.ManualExecutionDetails.OtherTabDetails):
+        self._request = request
+
+    def set_trade_type(self, trade_type: str):
+        self._request.tradeType = trade_type
+
+    def set_net_gross_ind(self, net_gross_ind: str):
+        self._request.netGrossInd = net_gross_ind
+
+    def set_sec_last_mkt(self, sec_last_mkt: str):
+        self._request.secLastMkt = sec_last_mkt
+
+    def set_settlement_type(self, set_settlement_type: str):
+        self._request.settlementType = set_settlement_type
+
+    def set_settl_currency(self, settl_currency: str):
+        self._request.settlCurrency = settl_currency
+
+    def set_exchange_rate(self, exchange_rate: str):
+        self._request.exchangeRate = exchange_rate
+
+    def set_exchange_rate_cacl(self, exchange_rate_cacl):
+        self._request.exchangeRateCacl = exchange_rate_cacl
+
+    def set_agent_fees(self, agent_fees: str):
+        self._request.agentFees = agent_fees
+
+    def set_market_fees(self, market_fees: str):
+        self._request.marketFees = market_fees
+
+    def set_route_fees(self, route_fees: str):
+        self._request.routeFees = route_fees
+
 
 class MenuItemDetails:
     def __init__(self, base_request: EmptyRequest = None):
@@ -636,6 +707,10 @@ class ManualExecutingDetails:
         var = self._request.executionDetails.add()
         return ExecutionsDetails(var)
 
+    def add_other_details(self) -> OtherTabDetails:
+        var = self._request.othertabDetails.add()
+        return OtherTabDetails(var)
+
     def set_error_expected(self, error_expected: bool):
         self._request.errorExpected = error_expected
 
@@ -666,9 +741,9 @@ class CompleteOrdersDetails:
 
 # Use for ReOrder Action and ReOrder Leaves Action
 class BaseOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.BaseOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.BaseOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.BaseOrdersDetails()
 
@@ -854,7 +929,6 @@ class FXOrderInfo:
 
     def build(self):
         return self.order_info
-
 
 
 class AddToBasketDetails:
@@ -1139,7 +1213,7 @@ class UnmatchAndTransferDetails:
         self.transfer_details = order_book_pb2.UnmatchAndTransferDetails()
         self.transfer_details.base.CopyFrom(base_request)
 
-    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict=None):
+    def set_filter_and_sub_filter(self, filter_dict: dict, sub_filter_dict: dict = None):
         self.transfer_details.filter.update(filter_dict)
         if sub_filter_dict:
             self.transfer_details.subFilter.update(sub_filter_dict)
@@ -1190,6 +1264,7 @@ class GetSubLvlDetails:
     def build(self):
         return self._request
 
+
 class QuickButtonCreationDetails:
     def __init__(self, base_request: EmptyRequest = None):
         if base_request is not None:
@@ -1230,7 +1305,7 @@ class QuickButtonCreationDetails:
     def set_order_type(self, order_type: str):
         self._request.orderType = order_type
 
-    def set_recipient (self, recipient : str):
+    def set_recipient(self, recipient: str):
         self._request.recipient = recipient
 
     def set_order_id(self, order_id: str):
@@ -1250,7 +1325,6 @@ class ActionsHotKeysDetails:
     def set_default_params(self, base_request):
         self.request.base.CopyFrom(base_request)
 
-
     def set_row_number(self, rows_numbers: list):
         for row in rows_numbers:
             self.request.rowNumbers.append(row)
@@ -1266,6 +1340,3 @@ class ActionsHotKeysDetails:
 
     def build(self):
         return self.request
-
-
-

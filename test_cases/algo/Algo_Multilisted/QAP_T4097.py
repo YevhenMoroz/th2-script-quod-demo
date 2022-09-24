@@ -8,6 +8,7 @@ from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -32,16 +33,13 @@ class QAP_T4097(TestCase):
 
         # region order parameters
         self.qty = 1300
-        self.price = 40
-        self.last_price = 40
-        self.traded_qty = 0
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.order_type_ioc = constants.OrderType.Limit.value
         self.order_type = constants.OrderType.Market.value
-        self.price_ask = 50
         self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1000000
-        self.delay = 1
-        # endregion
+        self.price_ask = 40
+        self.qty_bid = self.qty_ask = 1_000_000
+        # # endregion
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -83,12 +81,11 @@ class QAP_T4097(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, self.traded_qty, self.price)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price_ask)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_ioc_rule, ocr_rule]
         # endregion
 
-        # TODO Need MD for liqudity and need after reset MD for creating only one child
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
@@ -101,41 +98,7 @@ class QAP_T4097(TestCase):
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryType=0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
-
-        time.sleep(3)
         # endregion
-
-	    # case_id_0 = bca.create_event("Send Market Data", case_id)
-        # market_data1 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '0',
-        #         'MDEntrySize': '0',
-        #         'MDEntryPositionNo': '1'
-        #     },
-        #     {
-        #         'MDEntryType': '1',
-        #         'MDEntryPx': '0',
-        #         'MDEntrySize': '0',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data(s_par, case_id_0, market_data1)
-        # market_data2 = [
-        #     {
-        #         'MDEntryType': '0',
-        #         'MDEntryPx': '0',
-        #         'MDEntrySize': '0',
-        #         'MDEntryPositionNo': '1'
-        #     },
-        #     {
-        #         'MDEntryType': '1',
-        #         'MDEntryPx': '0',
-        #         'MDEntrySize': '0',
-        #         'MDEntryPositionNo': '1'
-        #     }
-        # ]
-        # send_market_data(s_trqx, case_id_0, market_data2)
 
         # region Send NewOrderSingle (35=D) for Multilisting order
         case_id_1 = bca.create_event("Create Multilisting Order", self.test_id)
@@ -147,8 +110,6 @@ class QAP_T4097(TestCase):
         self.multilisting_order.remove_parameter('Price')
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
-
-        time.sleep(3)
         # endregion
 
         # region Check Sell side
@@ -165,7 +126,8 @@ class QAP_T4097(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA 1 order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_ioc))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Instrument=self.instrument, TimeInForce=self.tif_ioc, Price=self.price_ask))
+        # self.dma_order.remove_parameter("Price")
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -177,7 +139,16 @@ class QAP_T4097(TestCase):
 
         # region Cancel Algo Order
         # region check cancel first dma child order
+        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_3)
+        cancel_request_multilisting_order = FixMessageOrderCancelRequest(self.multilisting_order)
+
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
+        self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        # region check cancel dma child order
         cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
+        cancel_dma_order.change_parameters(dict(OrdType=self.order_type_ioc, TimeInForce=self.tif_ioc)).remove_parameter('OrigClOrdID')
         self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 

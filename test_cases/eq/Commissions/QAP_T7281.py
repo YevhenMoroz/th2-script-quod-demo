@@ -31,7 +31,7 @@ class QAP_T7281(TestCase):
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
@@ -41,14 +41,14 @@ class QAP_T7281(TestCase):
              "ExDestination": self.data_set.get_mic_by_name("mic_2"),
              "Currency": self.data_set.get_currency_by_name("currency_3")})
         self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.case_id)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -73,7 +73,8 @@ class QAP_T7281(TestCase):
         calculate_comm = self.order_book.extract_sub_lvl_fields([TradeBookColumns.client_commission.value],
                                                                 [SecondLevelTabs.executions.value],
                                                                 {OrderBookColumns.order_id.value: order_id},
-                                                                [{TradeBookColumns.exec_type.value: ExecType.calculated.value}])
+                                                                [{
+                                                                     TradeBookColumns.exec_type.value: ExecType.calculated.value}])
         self.order_book.compare_values({TradeBookColumns.client_commission.value: "0.01"}, calculate_comm,
                                        "Verify Calculated commissions")
         self.mid_office.set_modify_ticket_details(extract_book=True)

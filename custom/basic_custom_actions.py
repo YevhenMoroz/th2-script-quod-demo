@@ -15,7 +15,7 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
 
 from th2_grpc_common.common_pb2 import ValueFilter, FilterOperation, MessageMetadata, MessageFilter, ConnectionID, \
-    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint
+    EventID, ListValue, Value, Message, ListValueFilter, MessageID, Event, EventBatch, Direction, Checkpoint, SimpleList
 from th2_grpc_common.common_pb2 import ComparisonSettings
 from th2_grpc_common.common_pb2 import FIELDS_AND_MESSAGES, NO
 from decimal import Decimal
@@ -245,11 +245,32 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:
-        if isinstance(content[tag], (str, int, float)):
+        if isinstance(content[tag], (int, float)):
             if content[tag] == '*':
                 content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
             elif content[tag] == '#':
                 content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            else:
+                content[tag] = ValueFilter(
+                    simple_filter=str(content[tag]), key=(True if tag in keys else False)
+                )
+        if isinstance(content[tag], str):
+            if content[tag] == '*':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_EMPTY)
+            elif content[tag] == '#':
+                content[tag] = ValueFilter(operation=FilterOperation.EMPTY)
+            elif content[tag][0] == '>':
+                content[tag] = ValueFilter(operation=FilterOperation.MORE, simple_filter=str(content[tag][1:]))
+            elif content[tag][0] == '<':
+                content[tag] = ValueFilter(operation=FilterOperation.LESS, simple_filter=str(content[tag][1:]))
+            elif content[tag][0] == '%':
+                content[tag] = ValueFilter(operation=FilterOperation.LIKE, simple_filter=str(content[tag][1:]))
+            elif len(content[tag]) >= 2 and content[tag][:2] == '!%':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_LIKE, simple_filter=str(content[tag][2:]))
+            elif len(content[tag]) >= 2 and content[tag][:2] == '!<':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_LESS, simple_filter=str(content[tag][2:]))
+            elif len(content[tag]) >= 2 and content[tag][:2] == '!>':
+                content[tag] = ValueFilter(operation=FilterOperation.NOT_MORE, simple_filter=str(content[tag][2:]))
             else:
                 content[tag] = ValueFilter(
                     simple_filter=str(content[tag]), key=(True if tag in keys else False)
@@ -261,11 +282,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
         elif isinstance(content[tag], dict):
             content[tag] = ValueFilter(message_filter=(filter_to_grpc(tag, content[tag], keys)))
         elif isinstance(content[tag], tuple):
-            print(type(content[tag]))
-            print(content[tag])
-            value, operation = content[tag].__iter__()
             content[tag] = ValueFilter(
-                simple_filter=str(value), operation=FilterOperation.Value(operation)
+                simple_list=SimpleList(simple_values=content[tag]), operation=FilterOperation.IN
             )
         elif isinstance(content[tag], list):
             for group in content[tag]:

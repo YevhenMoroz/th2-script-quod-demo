@@ -7,7 +7,7 @@ class InstitutionsConstants:
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
-    NO_BUTTON_XPATH = '//*[text()="No"]'
+    NO_BUTTON_XPATH = '//*[normalize-space()="No"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@row-index='0']//*[@data-name = 'more-vertical']"
@@ -50,6 +50,7 @@ class InstitutionsConstants:
     VALUES_TAB_MANAGE_COUNTERPART_BUTTON_XPATH = '//*[@class="col-sm"]//button'
     VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
     VALUES_TAB_POSITION_FLATTENING_PERIOD = '//*[@id="posFlatteningTime"]'
+    VALUES_TAB_UNKNOWN_ACCOUNTS = '//*[@formcontrolname="enableUnknownAccounts"]//*[@class="custom-checkbox"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'
