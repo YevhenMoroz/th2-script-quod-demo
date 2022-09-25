@@ -11,7 +11,7 @@ class Order_BlockUnallocateRequest(JavaApiMessage):
     def set_default(self, allocation_id):
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.ALLOC.FE',
-            'REPLY_SUBJECT': '`QUOD.FE.ORS',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'BlockUnallocateRequestBlock': {
                 'AllocInstructionID': allocation_id
             }

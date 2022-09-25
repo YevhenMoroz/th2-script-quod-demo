@@ -47,6 +47,7 @@ class ORSMessageType(Enum):
     CDNotifDealer = 'Order_CDNotifDealer'
     TradeEntryNotif = 'Order_TradeEntryNotif'
     Order_BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
+    Order_BookingCancelRequest = 'Order_BookingCancelRequest'
 
 
 class TradingRestApiMessageType(Enum):
