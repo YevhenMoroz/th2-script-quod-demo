@@ -26,6 +26,10 @@ class AllocationReportConst(Enum):
 
 class AllocationInstructionConst(Enum):
     SettlType_REG = 'REG'
+    RootMiscFeeType_EXC = 'EXC'
+    CommissionAmountType_BRK = 'BRK'
+    COMM_AND_FEES_BASIS_A = 'A'
+    COMM_AND_FEES_BASIS_UNI = 'UNI'
 
 
 class ConfirmationReportConst(Enum):
