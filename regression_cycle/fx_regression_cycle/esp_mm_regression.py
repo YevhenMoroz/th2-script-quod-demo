@@ -122,8 +122,8 @@ def test_run(parent_id=None, version=None):
         # endregion
         # region FIX test
 
-        QAP_T2966.execute(report_id)
-        QAP_T2965.execute(report_id)
+        # QAP_T2966.execute(report_id)
+        # QAP_T2965.execute(report_id)
         QAP_T2751.execute(report_id)
         QAP_T2735.execute(report_id)
         QAP_T2734.execute(report_id)
