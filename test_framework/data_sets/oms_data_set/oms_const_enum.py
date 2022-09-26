@@ -40,6 +40,16 @@ class OmsFixInstruments(Enum):
     )
 
 
+class OmsJavaApiInstruments(Enum):
+    instrument_1 = dict(
+        InstrSymbol="FR0010436584_EUR",
+        SecurityID="FR0010436584",
+        SecurityIDSource="ISI",
+        InstrType="Equity",
+        SecurityExchange="XPAR"
+    )
+
+
 class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"

@@ -17,16 +17,12 @@ class ExecutionReport(JavaApiMessage):
 
     def set_default(self, data_set: BaseDataSet):
         base_parameters = {
-            'SEND_SUBJECT': 'QUOD.ES.FIXBUY.REPLY',
+            'SEND_SUBJECT': 'QUOD.ES.BUYGTW.REPLY',
             "Header": {"OnBehalfOf": {"OnBehalfOfCompID": "PARIS"},
                        "MsgTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                        "CreationTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
                            '%Y-%m-%dT%H:%M:%S')},
-            "ExecutionReportBlock": {"InstrumentBlock": {"InstrSymbol": "FR0010436584_EUR",
-                                                         "SecurityID": "FR0010436584",
-                                                         "SecurityIDSource": "ISI",
-                                                         "InstrType": "Equity",
-                                                         "SecurityExchange": "XPAR"},
+            "ExecutionReportBlock": {"InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
                                      "ClOrdID": "*",
                                      "VenueExecID": "*",
                                      "LastVenueOrdID": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
@@ -39,9 +35,9 @@ class ExecutionReport(JavaApiMessage):
                                          '%Y-%m-%dT%H:%M:%S'),
                                      "OrdType": "Limit",
                                      "Price": "10.0",
-                                     "Currency": "EUR",
+                                     "Currency": data_set.get_currency_by_name("currency_1"),
                                      "ExecType": "Trade",
-                                     "LastMkt": "XPAR",
+                                     "LastMkt": data_set.get_mic_by_name("mic_1"),
                                      "TimeInForce": "Day",
                                      "LeavesQty": "0.0",
                                      "CumQty": "100.0",
