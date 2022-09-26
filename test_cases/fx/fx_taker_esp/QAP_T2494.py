@@ -4,6 +4,7 @@ from pathlib import Path
 from stubs import Stubs
 from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.constants import GatewaySide, Status
@@ -18,6 +19,7 @@ from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixM
 
 
 class QAP_T2494(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
@@ -39,6 +41,7 @@ class QAP_T2494(TestCase):
         }]
         self.qty = random_qty(1, 2, 7)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
         new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set).set_default_SOR().change_parameters(
