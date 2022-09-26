@@ -127,6 +127,7 @@ class BaseDataSet:
     cl_list_id = None
     pre_filter = None
     reference_price = None
+    java_api_instruments = None
     # endregion
 
     # region fields added by Web Trading team
@@ -881,5 +882,10 @@ class BaseDataSet:
     def get_venue_list(self, name: str):
         if hasattr(self.venue_list, name):
             return getattr(self.venue_list, name).value
-        return ValueError(f"{self.counterpart} not found!")
+        return ValueError(f"{self.venue_list} not found!")
+
+    def get_java_api_instrument(self, name: str):
+        if hasattr(self.java_api_instruments, name):
+            return getattr(self.java_api_instruments, name).value
+        return ValueError(f"{self.java_api_instruments} not found!")
     # endregion

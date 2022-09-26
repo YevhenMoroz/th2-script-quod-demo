@@ -285,6 +285,7 @@ class BasketBookColumns(Enum):
     """Basket sts"""
     exec_sts = "Executing"
     all_done = 'AllDone'
+    canceling = "Cancelling"
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""
@@ -681,6 +682,7 @@ class Basis(Enum):
 class FeeTypeForMiscFeeTab(Enum):
     agent = "Agent"
     stamp = "Stamp"
+    exch_fees = "ExchFees"
 
 
 class CommissionType(Enum):

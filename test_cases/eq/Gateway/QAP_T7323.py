@@ -85,7 +85,7 @@ class QAP_T7323(TestCase):
         execution_report.set_default_filled(self.fix_message)
         execution_report.remove_parameter('SecondaryOrderID').remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
-            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0', 'TradePublishIndicator': '*'})
+            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
 

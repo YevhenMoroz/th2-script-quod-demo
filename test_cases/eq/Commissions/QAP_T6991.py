@@ -242,4 +242,5 @@ class QAP_T6991(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         os.remove("temp.xml")

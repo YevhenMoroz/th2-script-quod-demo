@@ -289,7 +289,7 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
         self.find_by_xpath(ClientTierConstants.TIRED_QUANTITY_CANCEL_BUTTON_AT_TENOR).click()
 
     def set_quantity_for_tiered_quantity(self, value):
-        self.set_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_CANCEL_BUTTON_AT_TENOR, value)
+        self.set_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_QUANTITY_INPUT_AT_TENOR, value)
 
     def get_quantity_for_tiered_quantity(self):
-        self.get_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_CANCEL_BUTTON_AT_TENOR)
+        self.get_text_by_xpath(ClientTierConstants.TIRED_QUANTITY_QUANTITY_INPUT_AT_TENOR)

@@ -45,6 +45,9 @@ class ORSMessageType(Enum):
     ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
     ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
     CDNotifDealer = 'Order_CDNotifDealer'
+    TradeEntryNotif = 'Order_TradeEntryNotif'
+    Order_BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
+    Order_BookingCancelRequest = 'Order_BookingCancelRequest'
 
 
 class TradingRestApiMessageType(Enum):
@@ -76,6 +79,7 @@ class TradingRestApiMessageType(Enum):
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
+    NewOrderReply = 'Gateway_NewOrderReply'
 
 
 class ResAPIMessageType(Enum):

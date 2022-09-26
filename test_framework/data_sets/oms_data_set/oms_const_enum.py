@@ -8,7 +8,7 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='DREAMNEX'
+        SecurityDesc='VETOQUINOL'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
@@ -37,6 +37,16 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
+    )
+
+
+class OmsJavaApiInstruments(Enum):
+    instrument_1 = dict(
+        InstrSymbol="FR0010436584_EUR",
+        SecurityID="FR0010436584",
+        SecurityIDSource="ISI",
+        InstrType="Equity",
+        SecurityExchange="XPAR"
     )
 
 
@@ -119,6 +129,7 @@ class OmsVenueClientNames(Enum):
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
+    client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""

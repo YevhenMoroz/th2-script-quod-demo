@@ -15,7 +15,7 @@ class ClientsConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Clients"]//..//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -26,7 +26,7 @@ class ClientsConstants:
     LOAD_BUTTON = "//button[contains(@class, 'lookup-btn')]"
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
-
+    FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -71,7 +71,7 @@ class ClientsConstants:
     ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
     ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
-    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//*[normalize-space()="Assignments"]//..//*[@class="linked-entities-wrapper"]//*[normalize-space()="{}"]'
     ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'
 
     # External sources tab

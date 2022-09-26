@@ -52,7 +52,7 @@ class QAP_T7429(TestCase):
         self.basket_book.cancel_basket({BasketBookColumns.client_basket_id.value: client_basket_id})
         # endregion
         # region check cancelled Basket sts
-        self.basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.all_done.value)
+        self.basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.canceling.value)
         # endregion
         # region accept cancel
         self.client_inbox.accept_and_cancel_children()

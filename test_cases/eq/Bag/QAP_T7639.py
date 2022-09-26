@@ -85,13 +85,14 @@ class QAP_T7639(TestCase):
         # region creation bag again(step 4 with restored orders)
         self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag=name_of_bag_re_creation)
         self.bag_order_book.create_bag()
+        expect_qty = "3,288"
         self.__extracting_and_comparing_value_for_bag_order([OrderBagColumn.ord_bag_name.value,
                                                              OrderBagColumn.bag_status.value,
                                                              OrderBagColumn.order_bag_qty.value,
                                                              OrderBagColumn.unmatched_qty.value,
                                                              OrderBagColumn.leaves_qty.value
                                                              ], [name_of_bag_re_creation, BagStatuses.new.value,
-                                                                 qty_of_bag, qty_of_bag, qty_of_bag],
+                                                                 expect_qty, expect_qty, expect_qty],
                                                             False, 're-creating after dissociate')
         # endregion
 
@@ -102,10 +103,10 @@ class QAP_T7639(TestCase):
         expected_values_bag = dict()
         order_bag_id = None
         if return_order_bag_id:
-            order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.pop(OrderBagColumn.id.value)
             bag_column_extraction.remove(OrderBagColumn.id.value)
         for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({'order_bag.' + bag_column_extraction[count]: expected_values[count]})
+            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
         self.bag_order_book.compare_values(expected_values_bag,
                                            fields, f'Compare values from bag_book after{action}')
         if return_order_bag_id:

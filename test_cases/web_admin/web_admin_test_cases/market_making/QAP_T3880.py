@@ -46,7 +46,7 @@ class QAP_T3880(CommonTestCase):
 
             schedules_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
             schedules_wizard.click_on_plus_button_at_schedule_name()
-            schedules_wizard.set_schedule_name(self.days[0])
+            schedules_wizard.set_schedule_name(self.name)
             schedules_wizard.click_on_plus_button_at_schedules()
             schedules_wizard.set_day(self.days[0])
             schedules_wizard.set_from_time(self.from_time)
@@ -62,7 +62,7 @@ class QAP_T3880(CommonTestCase):
             schedules_wizard.set_from_time(self.from_time)
             schedules_wizard.set_to_time(self.to_time)
             schedules_wizard.click_on_checkmark_button_at_schedules()
-            schedules_wizard.click_on_plus_button_at_schedule_name()
+            schedules_wizard.click_on_checkmark_button_at_schedule_name()
             schedules_wizard.set_schedule_name_filter(self.name)
             time.sleep(1)
 

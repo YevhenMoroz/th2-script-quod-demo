@@ -40,7 +40,6 @@ class QAP_T3354(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
         client_tiers_frame = ClientTiersPage(self.web_driver_container)
@@ -75,10 +74,10 @@ class QAP_T3354(CommonTestCase):
 
             client_tiers_frame = ClientTiersPage(self.web_driver_container)
             client_tiers_frame.set_name(self.name)
+            time.sleep(1)
             client_tiers_frame.select_client_tier_by_name(self.name)
             client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_frame.click_on_more_actions()
-            time.sleep(1)
             client_tier_instrument_frame.click_on_edit()
             tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
             tenors_tab.set_tenor_filter(self.tenor)
