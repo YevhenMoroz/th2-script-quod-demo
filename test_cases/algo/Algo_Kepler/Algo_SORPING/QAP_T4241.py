@@ -17,7 +17,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-# Warning! This is the manual test case. It needs to do manual checking audit trail
+# Warning! This is the manual test case. It needs to do manual checking audit trail and doesn`t include in regression script
 class QAP_T4241(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
@@ -69,6 +69,7 @@ class QAP_T4241(TestCase):
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
         self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_5")
+        self.listing_id_qdl3 = self.data_set.get_listing_id_by_name("listing_16")
         # endregion
 
         # region Key parameters
@@ -95,11 +96,21 @@ class QAP_T4241(TestCase):
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
+        market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=0, MDEntrySize=0)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
+
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_qdl3 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl3, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl3.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_qdl3.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl3)
 
         time.sleep(3)
         # endregion
@@ -142,16 +153,22 @@ class QAP_T4241(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        time.sleep(240)
+        time.sleep(15)
 
         market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=10, MDEntrySize=2000)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=2, MDEntrySize=2000)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
         time.sleep(3)
 
         market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=15, MDEntrySize=87)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=3.06, MDEntrySize=2000)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
+
+        time.sleep(3)
+
+        market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=1, MDEntrySize=87)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
     @try_except(test_id=Path(__file__).name[:-3])
