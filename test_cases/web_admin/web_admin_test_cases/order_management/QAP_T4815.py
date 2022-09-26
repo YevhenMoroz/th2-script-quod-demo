@@ -35,13 +35,15 @@ class QAP_T4815(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_execution_strategies_page()
+        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.wait_for_button_to_become_active()
 
     def test_context(self):
         try:
             self.precondition()
 
             main_menu = ExecutionStrategiesPage(self.web_driver_container)
+
             main_menu.click_on_new_button()
 
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
@@ -59,7 +61,7 @@ class QAP_T4815(CommonTestCase):
             passive_block.click_on_go_back_button()
 
             expected_result = [self.parameter, "Y"]
-            actual_result = [strategies_wizard.get_parameter_name_at_lit_passive_block(),
+            actual_result = [str(strategies_wizard.get_parameter_name_at_lit_passive_block())[:len(self.parameter)],
                              strategies_wizard.get_parameter_value_at_lit_passive_block()]
             self.verify("The selected parameter is displayed on the main creating page", expected_result, actual_result)
 

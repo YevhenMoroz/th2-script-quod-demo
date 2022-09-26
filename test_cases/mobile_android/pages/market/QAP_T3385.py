@@ -57,17 +57,17 @@ class QAP_T3385(CommonTestCase):
 
         # Step 3
         market_page.add_new_instrument(instrument=self.instrument_1)
-        self.verify("Step 3 - Watchlist 1 is selected", "true", market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_name("Watchlist 1"), "selected"))
-        self.verify(f"Step 3 - {self.instrument_1} is displayed", True, market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+        self.verify("Step 3 - Watchlist 1 is selected", "true", market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_xpath("Watchlist 1"), "selected"))
+        self.verify(f"Step 3 - {self.instrument_1} is displayed", True, market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         # endregion
 
         # Step 4
         market_page.delete_instrument_from_watchlist(instrument=self.instrument_1)
         self.verify("Step 4 - Watchlist 1 is selected", "true",
-                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_name("Watchlist 1"),
+                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_xpath("Watchlist 1"),
                                                                   "selected"))
         self.verify(f"Step 4 - {self.instrument_1} is NOT displayed", False,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         self.verify("Step 4 - No watchlists for Watchlist 1", True,
                     market_page.get_element_exists_by_xpath(MarketConstants.NO_WATCHLISTS))
         # endregion
@@ -77,5 +77,5 @@ class QAP_T3385(CommonTestCase):
         self.verify("Postconditions - Watchlists sub-menu is opened", None, market_watchlists_page.wait_element_presence(MarketWatchlistsConstants.MARKET_WATCHLISTS_TITLE))
         market_watchlists_page.delete_watchlist("Watchlist 1")
         self.verify('''Postconditions - "Watchlist1" is deleted''', False,
-                    market_watchlists_page.get_watchlist_exist("Watchlist Test"))
+                    market_watchlists_page.get_watchlist_exist("Watchlist 1"))
         # endregion

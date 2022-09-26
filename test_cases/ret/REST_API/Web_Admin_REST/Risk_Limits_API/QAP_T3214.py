@@ -2,7 +2,6 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_cases.wrapper.ret_wrappers import verifier
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.web_admin_api.Risk_Limits_API.RestApiRiskLimitDimensions import \

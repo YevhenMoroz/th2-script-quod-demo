@@ -72,3 +72,6 @@ class AllocationMatchingProfilePage(CommonPage):
 
     def set_side(self, value):
         self.set_text_by_xpath(AllocationMatchingProfileConstants.MAIN_PAGE_SIDE_FILTER_XPATH, value)
+
+    def is_searched_entity_found_by_name(self, name):
+        return self.is_element_present(AllocationMatchingProfileConstants.DISPLAYED_ENTITY_XPATH.format(name))

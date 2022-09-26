@@ -213,6 +213,8 @@ class PartyID(Enum):
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
     party_id_5 = "12345678"
+    party_id_6 = "18831"
+    party_id_7 = "10000"
 
 
 class PartyIDSource(Enum):

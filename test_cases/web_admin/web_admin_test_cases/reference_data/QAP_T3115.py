@@ -70,7 +70,7 @@ class QAP_T3115(CommonTestCase):
             page.click_on_more_actions()
             page.click_on_edit()
 
-            self.verify("Open and Close time has been save", [self.open_time, self.close_time],
+            self.verify("Open and Close time has been save", [self.open_time[0], self.close_time[0]],
                         [features_tab.get_open_time(), features_tab.get_close_time()])
 
             features_tab.set_open_time(self.open_time[1])

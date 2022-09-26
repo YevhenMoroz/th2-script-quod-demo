@@ -201,10 +201,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(FeesConstants.FEES_PAGE_TITLE_XPATH)
 
-    def open_fix_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.FIX_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_allocation_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfileConstants.FIX_MATCHING_PROFILE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfileConstants.ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH)
 
     def open_settlement_model_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODEL_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,

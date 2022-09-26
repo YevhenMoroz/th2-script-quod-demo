@@ -29,7 +29,7 @@ class QAP_T3816(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_fix_matching_profile_page()
+        side_menu.open_allocation_matching_profile_page()
         page = AllocationMatchingProfilePage(self.web_driver_container)
         page.click_on_new()
         wizard = AllocationMatchingProfileWizard(self.web_driver_container)

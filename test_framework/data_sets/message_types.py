@@ -57,6 +57,9 @@ class TradingRestApiMessageType(Enum):
     OrderModificationRequest = "OrderModificationRequest"
     OrderModificationReply = "OrderModificationReply"
     OrderModificationReject = "OrderModificationReject"
+    OrderCancelRequest = "OrderCancelRequest"
+    OrderCancelReply = "OrderCancelReply"
+    OrderCancelReject = "OrderCancelReject"
     MarketDataRequest = "MarketDataRequest"
     MarketDataReply = "MarketDataReply"
     MarketQuoteRequest = "MarketQuoteRequest"
@@ -97,3 +100,4 @@ class ReadLogMessageType(Enum):
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
+    CDOrdNotif = "Order_CDOrdNotif"

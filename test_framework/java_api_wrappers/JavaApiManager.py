@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
@@ -133,6 +134,8 @@ class JavaApiManager:
                 response_fix_message = ForceAllocInstructionStatusRequest()
             elif message_type == ORSMessageType.ConfirmationReport.value:
                 response_fix_message = ConfirmationReport()
+            elif message_type == CSMessageType.CDOrdNotif.value:
+                response_fix_message = CDOrdNotif()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         return response_messages

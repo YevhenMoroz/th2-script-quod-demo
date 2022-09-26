@@ -89,7 +89,7 @@ class QAP_T3799(CommonTestCase):
             expected_result = [self.instr_symbol, self.maturity_month_year, self.strike_price, self.call_put]
             actual_result = [values_tab.get_instr_symbol(),
                              values_tab.get_maturity_month_year(),
-                             values_tab.get_strike_price(),
+                             values_tab.get_strike_price()[:len(self.strike_price)],
                              values_tab.get_call_put()]
 
             self.verify("Entered data saved correct", expected_result, actual_result)

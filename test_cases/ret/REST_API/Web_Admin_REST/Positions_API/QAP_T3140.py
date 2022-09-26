@@ -5,6 +5,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.utils.RetFormulasManager import RetFormulasManager
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.web_admin_api.Positions_API.RestApiSecurityPositionMessages import \
@@ -68,10 +69,10 @@ class QAP_T3140(TestCase):
         modified_position = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request_with_parameters(self.security_account_position_message),
             filter_dict={'instrID': self.tested_instrument_id})
-        self.wa_api_manager.data_validation(self.test_id,
-                                            event_name="Check that initialQty equal 10000.0",
-                                            expected_result="10000.0",
-                                            actual_result=modified_position[0]['initialQty'])
+        data_validation(self.test_id,
+                        event_name="Check that initialQty equal 10000.0",
+                        expected_result="10000.0",
+                        actual_result=modified_position[0]['initialQty'])
         # endregion
 
         # region Pre-Condition, calculate Posit Qty value
@@ -94,10 +95,10 @@ class QAP_T3140(TestCase):
         security_position_fields_after_collateral_increase = security_position_after_collateral_increase[0].keys()
         if 'collateralQty' in security_position_fields_after_collateral_increase:
             self.increased_collateral_qty = float(security_position_after_collateral_increase[0]['collateralQty'])
-            self.wa_api_manager.data_validation(self.test_id,
-                                                event_name="Check that 'CollateralQty' field was increased",
-                                                expected_result=float(self.current_collateral_qty) + float(self.tested_collateral_qty),
-                                                actual_result=self.increased_collateral_qty)
+            data_validation(self.test_id,
+                            event_name="Check that 'CollateralQty' field was increased",
+                            expected_result=float(self.current_collateral_qty) + float(self.tested_collateral_qty),
+                            actual_result=self.increased_collateral_qty)
         else:
             bca.create_event('CollateralQty is not present', status='FAILED', parent_id=self.test_id)
 
@@ -114,11 +115,11 @@ class QAP_T3140(TestCase):
 
         security_position_fields_after_collateral_decrease = security_position_after_collateral_decrease[0].keys()
         if 'collateralQty' in security_position_fields_after_collateral_decrease:
-            self.wa_api_manager.data_validation(self.test_id,
-                                                event_name="Check that 'CollateralQty' field was decreased",
-                                                expected_result=self.increased_collateral_qty - float(
-                                                    self.tested_collateral_qty),
-                                                actual_result=float(security_position_after_collateral_decrease[0]['collateralQty']))
+            data_validation(self.test_id,
+                            event_name="Check that 'CollateralQty' field was decreased",
+                            expected_result=self.increased_collateral_qty - float(
+                                self.tested_collateral_qty),
+                            actual_result=float(security_position_after_collateral_decrease[0]['collateralQty']))
         else:
             bca.create_event('CollateralQty is not present', status='FAILED', parent_id=self.test_id)
         # endregion

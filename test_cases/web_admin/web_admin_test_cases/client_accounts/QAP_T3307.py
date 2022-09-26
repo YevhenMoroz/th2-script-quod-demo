@@ -29,7 +29,7 @@ class QAP_T3307(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
-        self.desks = 'DESK C'
+        self.desks = 'Quod Desk'
         self.user_manager = '12'
 
     def precondition(self):
