@@ -671,6 +671,52 @@ def wrap_filter(content, message_type=None, key_fields=None):
         return list_filter
 
 
+def wrap_filter(content, message_type=None, key_fields=None, ignore_fields=None,
+                fail_unexpected: int = FIELDS_AND_MESSAGES):
+    if ignore_fields is None:
+        ignore_fields = ["header", "trailer"]
+    if key_fields is None:
+        key_fields = []
+    if isinstance(content, dict):
+        fields = dict()
+        for tag, value in content.items():
+            if value == "*":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("NOT_EMPTY"))
+            elif value == "#":
+                fields[tag] = ValueFilter(operation=FilterOperation.Value("EMPTY"))
+            else:
+                if isinstance(value, str):
+                    fields[tag] = ValueFilter(simple_filter=value)
+                elif isinstance(value, (int, float, Decimal)):
+                    fields[tag] = ValueFilter(simple_filter=str(value))
+                elif isinstance(value, dict):
+                    fields[tag] = ValueFilter(message_filter=wrap_filter(content=value, key_fields=key_fields))
+                elif isinstance(value, list):
+                    fields[tag] = ValueFilter(list_filter=wrap_filter(content=value, key_fields=key_fields))
+                if tag in key_fields:
+                    fields[tag].key = True
+        msg_filter = MessageFilter(fields=fields)
+        if message_type is not None:
+            msg_filter.messageType = message_type
+            for field in ignore_fields:
+                msg_filter.comparison_settings.ignore_fields.append(field)
+            msg_filter.comparison_settings.fail_unexpected = fail_unexpected
+        return msg_filter
+    elif isinstance(content, list):
+        values = []
+        for element in content:
+            if isinstance(element, str):
+                values.append(ValueFilter(simple_filter=element))
+            elif isinstance(element, (int, float, Decimal)):
+                values.append(ValueFilter(simple_filter=str(element)))
+            elif isinstance(element, dict):
+                values.append(ValueFilter(message_filter=wrap_filter(content=element, key_fields=key_fields)))
+            elif isinstance(element, list):
+                values.append(ValueFilter(list_filter=wrap_filter(content=element, key_fields=key_fields)))
+        list_filter = ListValueFilter(values=values)
+        return list_filter
+
+
 def get_message_by_field_and_value(content, field: str, value: str, matched_list=None) -> list:
     if matched_list is None:
         matched_list = []

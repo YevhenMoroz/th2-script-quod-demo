@@ -9,13 +9,13 @@ from datetime import datetime
 
 class TestCase:
     def __init__(self, report_id):
-        self.case_id = bca.create_event('test', report_id)
+        self.case_id = bca.create_event('Example REST NewOrderSingle', report_id)
         self.api = Stubs.act_rest
 
     def test_nos_method(self):
         nos_params = {
             'ClOrdID': bca.client_orderid(9),
-            'Side': 'Buy',
+            'Side': 'Sell',
             'OrdType': 'Limit',
             'Price': 5,
             'Currency': 'EUR',

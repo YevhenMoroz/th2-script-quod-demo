@@ -186,7 +186,7 @@ def execute(report_id):
             bca.create_check_rule(
                 "SATS Log Qty Msg Received",
                 bca.filter_to_grpc("Csv_Message", sats_qty_logs_params, keys=["OrderID"]),
-                checkpoint2, 'log305-sats-qty', case_id
+                checkpoint2, 'log305-sats-amend', case_id
             )
         )
         # print(bca.filter_to_grpc("Csv_Header/Csv_Message", sats_qty_logs_params))

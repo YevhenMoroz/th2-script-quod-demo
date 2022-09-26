@@ -1,12 +1,13 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
+
 
 class QAP_T3503(TestCase):
     def __init__(self, report_id, data_set: BaseDataSet, environment):
@@ -15,12 +16,11 @@ class QAP_T3503(TestCase):
         self.http = self.environment.get_list_trading_rest_api_environment()[0].session_alias_http
         self.web_socket = self.environment.get_list_trading_rest_api_environment()[0].session_alias_web_socket
         self.trd_api_manager = TradingRestApiManager(session_alias_http=self.http,
-                                                session_alias_web_socket=self.web_socket,
-                                                case_id=self.test_id)
+                                                     session_alias_web_socket=self.web_socket,
+                                                     case_id=self.test_id)
         self.nos_message = ApiMessageNewOrderSingle(data_set=self.data_set)
         self.tested_client = 'Tony'
-        self.exception_error = f"11620 unknown client {self.tested_client} / 11505 Runtime error (no VAccountGroup with keys [" \
-                               "undefined] in cache or database)"
+        self.exception_error = f"11620 unknown client {self.tested_client} / 11826 Waiting for Account Group determination"
         self.tested_instrument = self.data_set.get_trading_api_instrument_by_name("instrument_2")
 
     @try_except(test_id=os.path.basename(__file__)[:-3])
@@ -36,15 +36,12 @@ class QAP_T3503(TestCase):
         response = self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
         parsed_response = self.trd_api_manager.parse_response_details(response)
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check FreeNotes with error message",
-                     expected_value=self.exception_error,
-                     actual_value=parsed_response['FreeNotes'])
+            data_validation(test_id=self.test_id,
+                            event_name="Check FreeNotes with error message",
+                            expected_result=self.exception_error,
+                            actual_result=parsed_response['FreeNotes'])
         except:
             bca.create_event(f'Fail test event. Response is empty',
                              status='FAILED',
                              parent_id=self.test_id)
         # endregion
-
-
-
