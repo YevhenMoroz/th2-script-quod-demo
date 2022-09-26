@@ -273,10 +273,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             Instrument='*',
-            SecondaryOrderID='*',
-            LastMkt='*',
-            Text='*',
-            HandlInst='*'
+            HandlInst='*',
+            ExecRestatementReason='*',
         )
         super().change_parameters(temp)
         return self
@@ -872,6 +870,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         if new_order_single.is_parameter_exist('ExpireTime'):
             temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
+        if new_order_single.is_parameter_exist('NoParty'):
+            temp.update(NoParty='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
