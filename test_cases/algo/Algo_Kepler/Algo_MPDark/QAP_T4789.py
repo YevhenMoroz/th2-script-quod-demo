@@ -1,5 +1,7 @@
 import os
 import time
+from copy import deepcopy
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.algo_formulas_manager import AlgoFormulasManager
@@ -43,6 +45,7 @@ class QAP_T4789(TestCase):
         self.weight_bats = 4
         self.weight_chix = 6
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats)
+        self.qty_chix_child2, self.qty_bats_child2 = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty_after_trade, None, self.weight_chix, self.weight_bats)
 
 
         # endregion
@@ -122,7 +125,8 @@ class QAP_T4789(TestCase):
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty,  Price=self.price))
-        self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
+        response = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)[0]
+        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=15)).isoformat()
 
         time.sleep(15)
         # endregion
@@ -131,7 +135,6 @@ class QAP_T4789(TestCase):
         self.fix_verifier_sell.check_fix_message(self.MP_Dark_order, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
-        # er_pending_new_MP_Dark_order_params.remove_parameter('NoStrategyParameters')
         er_pending_new_MP_Dark_order_params.add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
@@ -222,7 +225,6 @@ class QAP_T4789(TestCase):
         case_id_5 = bca.create_event("MO order on chixlis", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_5)
 
-        #TODO not correct message handle, PCON-3465 raised
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
         self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
@@ -240,6 +242,20 @@ class QAP_T4789(TestCase):
 
         # endregion
         time.sleep(3)
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("2st dark child sended", self.test_id))
+
+        # region check that second RFQ send to CHIX LIS UK
+        self.dma_bats_order2 = deepcopy(self.dma_bats_order)
+        self.dma_bats_order2.change_parameters(dict(OrderQty=self.qty_bats_child2, TransactTime="<" + expectedtime))
+        self.fix_verifier_buy.check_fix_message(self.dma_bats_order2, key_parameters=self.key_params_with_ex_destination, message_name='2nd Buy side NewOrderSingle dark child on bats_dark')
+        # endregion
+
+        # region check that second RFQ send to TURQUOISE LIS
+        self.dma_chix_order2 = deepcopy(self.dma_chix_order)
+        self.dma_chix_order2.change_parameters(dict(OrderQty=self.qty_chix_child2, TransactTime="<" + expectedtime))
+        self.fix_verifier_buy.check_fix_message(self.dma_chix_order2, key_parameters=self.key_params_with_ex_destination, message_name='2nd Buy side NewOrderSingle dark child on chix delta')
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
