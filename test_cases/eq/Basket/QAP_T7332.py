@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -73,6 +74,6 @@ class QAP_T7332(TestCase):
         filter_list = [OrderBookColumns.order_id.value, orders_id[0]]
         self.order_book.set_filter(filter_list)
         result = self.order_book.add_to_basket([1], basket_name, True)
-        self.order_book.compare_values({'Footer Value': f'Error - [QUOD-11505] Runtime error (account group {second_client} of order {orders_id[0]} is different from {first_client} of the OrderList {basket_id})'},
-                                       result, 'Comparing error message')
+        self.order_book.compare_values({'Footer Value': 'Error - [QUOD-11505]'},
+                                       result, 'Comparing error message', VerificationMethod.CONTAINS)
         # endregion

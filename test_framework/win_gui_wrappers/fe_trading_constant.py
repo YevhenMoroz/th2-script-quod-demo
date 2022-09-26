@@ -285,6 +285,7 @@ class BasketBookColumns(Enum):
     """Basket sts"""
     exec_sts = "Executing"
     all_done = 'AllDone'
+    canceling = "Cancelling"
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""

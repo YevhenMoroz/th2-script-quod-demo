@@ -79,6 +79,7 @@ class TradingRestApiMessageType(Enum):
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
+    NewOrderReply = 'Gateway_NewOrderReply'
 
 
 class ResAPIMessageType(Enum):
