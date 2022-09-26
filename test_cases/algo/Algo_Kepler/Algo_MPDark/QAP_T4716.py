@@ -194,6 +194,8 @@ class QAP_T4716(TestCase):
         self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.nos_chixlis_order, nos_trql_rfq], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
+        time.sleep(6)
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         rule_manager = RuleManager()
