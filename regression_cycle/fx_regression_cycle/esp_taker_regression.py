@@ -1,7 +1,7 @@
 from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from test_cases.fx.fx_taker_esp import QAP_T3097, QAP_T2987, QAP_T2743, \
-    QAP_T2711, QAP_T2958, QAP_T2826,  QAP_T3112, QAP_T3106, QAP_T3094, \
-    QAP_T2704, QAP_T2702, QAP_T2701, QAP_T2680, QAP_T2756, QAP_T2766, QAP_T2643, QAP_T2642, QAP_T2640, \
+    QAP_T2711, QAP_T2958, QAP_T2826, QAP_T3112, QAP_T3106, QAP_T3094, \
+    QAP_T2704, QAP_T2702, QAP_T2701, QAP_T2680, QAP_T2756, QAP_T2766, \
     QAP_T2685
 from stubs import Stubs
 import logging
@@ -12,6 +12,9 @@ from test_cases.fx.fx_taker_esp.QAP_T2493 import QAP_T2493
 from test_cases.fx.fx_taker_esp.QAP_T2532 import QAP_T2532
 from test_cases.fx.fx_taker_esp.QAP_T2533 import QAP_T2533
 from test_cases.fx.fx_taker_esp.QAP_T2624 import QAP_T2624
+from test_cases.fx.fx_taker_esp.QAP_T2640 import QAP_T2640
+from test_cases.fx.fx_taker_esp.QAP_T2642 import QAP_T2642
+from test_cases.fx.fx_taker_esp.QAP_T2643 import QAP_T2643
 from test_cases.fx.fx_taker_esp.QAP_T2723 import QAP_T2723
 from test_cases.fx.fx_taker_esp.QAP_T2724 import QAP_T2724
 from test_cases.fx.fx_taker_esp.QAP_T2725 import QAP_T2725
@@ -38,7 +41,6 @@ from test_cases.fx.fx_taker_esp.QAP_T2533 import QAP_T2533
 from test_cases.fx.fx_taker_esp.QAP_T2555 import QAP_T2555
 from test_cases.fx.fx_taker_esp.QAP_T2576 import QAP_T2576
 from test_cases.fx.fx_taker_esp.QAP_T2577 import QAP_T2577
-from test_cases.fx.fx_taker_esp.QAP_T2609 import QAP_T2609
 from test_cases.fx.fx_taker_esp.QAP_T2626 import QAP_T2626
 from test_cases.fx.fx_taker_esp.QAP_T2640 import QAP_T2640
 from test_cases.fx.fx_taker_esp.QAP_T2642 import QAP_T2642
@@ -78,7 +80,6 @@ def run_full_amount(report_id, session_id):
 def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"FX_Taker_ESP" if version is None else f"FX_Taker_ESP | {version}", parent_id)
     session_id = set_session_id(target_server_win="quod_11q")
-    data_set = FxDataSet()
     configuration = ComponentConfiguration("ESP_Taker")
     window_name = "Quod Financial - Quod site 314"
     Stubs.frontend_is_open = True
@@ -128,41 +129,41 @@ def test_run(parent_id=None, version=None):
 
         QAP_T2576(report_id, data_set, environment).execute()
         QAP_T2577(report_id, data_set, environment).execute()
-        QAP_T2609(report_id, data_set, environment).execute()
+        # QAP_T2609(report_id, data_set, environment).execute()
         QAP_T3090(report_id, data_set, environment).execute()
         QAP_T3093(report_id, data_set, environment).execute()
         # endregion
 
         # region FIX test
-        QAP_T2380(report_id, data_set, environment).execute()
-        QAP_T2429(report_id, data_set, environment).execute()
-        QAP_T2441(report_id, data_set, environment).execute()
-        QAP_T2490(report_id, data_set, environment).execute()
-        QAP_T2491(report_id, data_set, environment).execute()
-        QAP_T2493(report_id, data_set, environment).execute()
-        QAP_T2494(report_id, data_set, environment).execute()
-        QAP_T2523(report_id, data_set, environment).execute()
-        QAP_T2532(report_id, data_set, environment).execute()
-        QAP_T2533(report_id, data_set, environment).execute()
-        QAP_T2555(report_id, data_set, environment).execute()
-        QAP_T2626(report_id, data_set, environment).execute()
-        QAP_T2675(report_id, data_set, environment).execute()
-        QAP_T2676(report_id, data_set, environment).execute()
-        QAP_T2723(report_id, data_set, environment).execute()
-        QAP_T2724(report_id, data_set, environment).execute()
-        QAP_T2725(report_id, data_set, environment).execute()
-        QAP_T3092(report_id, data_set, environment).execute()
-        QAP_T3093(report_id, data_set, environment).execute()
-        QAP_T3100(report_id, data_set, environment).execute()
-        QAP_T3937(report_id, data_set, environment).execute()
-        QAP_T8648(report_id, data_set, environment).execute()
-        QAP_T8667(report_id, data_set, environment).execute()
+        QAP_T2380(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2429(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2441(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2490(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2491(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2493(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2494(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2523(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2532(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2533(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2555(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2626(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2675(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2676(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2723(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2724(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T2725(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T3092(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T3093(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T3100(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T3937(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T8648(report_id=report_id, data_set=data_set, environment=environment).execute()
+        QAP_T8667(report_id=report_id, data_set=data_set, environment=environment).execute()
 
-        stop_fxfh()
-        QAP_T2643(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2642(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2640(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        start_fxfh()
+        # # stop_fxfh()
+        # QAP_T2643(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2642(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2640(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # # start_fxfh()
         # endregion
         # run_full_amount(report_id, session_id)
     except Exception:
