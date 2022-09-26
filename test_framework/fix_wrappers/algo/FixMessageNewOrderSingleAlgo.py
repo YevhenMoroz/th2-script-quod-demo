@@ -1026,3 +1026,55 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL1",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'AlgoCst01': 'TestINITIATOR-UTI',
+            'NoParty': [
+                {
+                    'PartyID': 'TestINITIATOR-UTI',
+                    'PartyIDSource': 'D',
+                    'PartyRole': '55'
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Kepler_DMA_child_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL1",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdCO': 'OD_5fgfDXg-00',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'IClOrdIdTO': '19864'
+        }
+        super().change_parameters(base_parameters)
+        return self
