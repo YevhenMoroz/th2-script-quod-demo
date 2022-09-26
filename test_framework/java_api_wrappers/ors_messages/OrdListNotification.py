@@ -2,13 +2,13 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
-class AllocationReport(JavaApiMessage):
+class OrdListNotification(JavaApiMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessageType.AllocationReport.value)
+        super().__init__(message_type=ORSMessageType.OrdListNotification.value)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
         base_parameters = {
-            "AllocationReportBlock": {}}
+            "OrdListNotificationBlock": {}}
         super().change_parameters(base_parameters)

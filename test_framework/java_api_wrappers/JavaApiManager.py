@@ -10,6 +10,8 @@ from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import Con
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
+from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
+from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
@@ -84,15 +86,20 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ORSMessageType.Order_BlockUnallocateRequest.value:
+        elif message.get_message_type() == ORSMessageType.BlockUnallocateRequest.value:
             response = self.act.submitOrderBlockUnallocateRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.NewOrderList.value:
+            response = self.act.submitNewOrderListRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
         else:
             response = None
-            print(response)
         return self.parse_response(response)
 
     def parse_response(self, response: ActJavaSubmitMessageResponses) -> list:
@@ -145,6 +152,10 @@ class JavaApiManager:
                 response_fix_message = CDOrdNotif()
             elif message_type == ORSMessageType.TradeEntryNotif.value:
                 response_fix_message = Order_TradeEntryNotif()
+            elif message_type == ORSMessageType.NewOrderListReply.value:
+                response_fix_message = NewOrderListReply()
+            elif message_type == ORSMessageType.OrdListNotification.value:
+                response_fix_message = OrdListNotification()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         return response_messages
