@@ -67,6 +67,8 @@ class QAP_T7159(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
         new_order_single = trade_rule = order_id = cancel_rule = None
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('regulatory')
         commission_profile = self.data_set.get_comm_profile_by_name('bas_amt')
@@ -174,4 +176,5 @@ class QAP_T7159(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         os.remove("temp.xml")

@@ -38,10 +38,14 @@ class OrderSubmitOMS(OrderSubmit):
             }
         }
 
-    def set_default_care_limit(self, recipient, role="HSD", desk="1"):
-        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
-                                                   'RecipientRoleID': role,
-                                                   'RecipientDeskID': desk}}
+    def set_default_care_limit(self, recipient=None, desk=None, role=None):
+        params = {'CDOrdAssignInstructionsBlock': {}}
+        if recipient:
+            params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
+        if desk:
+            params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
+        if role:
+            params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
@@ -57,10 +61,14 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
-    def set_default_care_market(self, recipient, role="HSD", desk="1"):
-        params = {'CDOrdAssignInstructionsBlock': {'RecipientUserID': recipient,
-                                                   'RecipientRoleID': role,
-                                                   'RecipientDeskID': desk}}
+    def set_default_care_market(self, recipient=None, desk=None, role=None):
+        params = {'CDOrdAssignInstructionsBlock': {}}
+        if recipient:
+            params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
+        if desk:
+            params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
+        if role:
+            params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Care'})
         self.add_tag(params)

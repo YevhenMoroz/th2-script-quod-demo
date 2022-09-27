@@ -105,17 +105,12 @@ class QAP_T4939(TestCase):
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.DMA_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
-
-        er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(er_pending_new_DMA_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
-
-        er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_new)
-        self.fix_verifier_sell.check_fix_message(er_new_DMA_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check fill DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Fill DMA order", self.test_id))
         er_fill_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_fill)
+        er_fill_DMA_order_params.add_tag(dict(misc5='#'))
         self.fix_verifier_buy.check_fix_message(er_fill_DMA_order_params, key_parameters=self.key_params_ER_fill, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
         # endregion
 

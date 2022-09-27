@@ -33,7 +33,7 @@ class QAP_T6958(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
-        self.qty = '7129'
+        self.qty = '100'
         self.price = '10'
         self.client = self.data_set.get_client('client_pt_1')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')

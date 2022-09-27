@@ -24,7 +24,7 @@ timeouts = True
 class QAP_T7422(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
@@ -91,7 +91,6 @@ class QAP_T7422(TestCase):
         # endregion
 
         # region match
-        time.sleep(10)
         self.trade_book.manual_match(self.qty, [MatchWindowsColumns.order_id.value, care_order_id],
                                      [TradeBookColumns.exec_id.value, exec_id])
         # endregion

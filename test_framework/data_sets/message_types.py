@@ -38,6 +38,17 @@ class ORSMessageType(Enum):
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
     AllocationInstruction = 'Order_AllocationInstruction'
+    OrdUpdate = 'Order_OrdUpdate'
+    AllocationReport = 'Order_AllocationReport'
+    Confirmation = 'Order_Confirmation'
+    ConfirmationReport = 'Order_ConfirmationReport'
+    ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
+    ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
+    CDNotifDealer = 'Order_CDNotifDealer'
+    TradeEntryNotif = 'Order_TradeEntryNotif'
+    Order_BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
+    Order_BookingCancelRequest = 'Order_BookingCancelRequest'
+    NewOrderList = 'Order_NewOrderList'
 
 
 class TradingRestApiMessageType(Enum):
@@ -50,6 +61,10 @@ class TradingRestApiMessageType(Enum):
     OrderModificationRequest = "OrderModificationRequest"
     OrderModificationReply = "OrderModificationReply"
     OrderModificationReject = "OrderModificationReject"
+    OrderModificationReject = "OrderModificationReject"
+    OrderCancelRequest = "OrderCancelRequest"
+    OrderCancelReply = "OrderCancelReply"
+    OrderCancelReject = "OrderCancelReject"
     MarketDataRequest = "MarketDataRequest"
     MarketDataReply = "MarketDataReply"
     MarketQuoteRequest = "MarketQuoteRequest"
@@ -69,6 +84,7 @@ class TradingRestApiMessageType(Enum):
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
+    NewOrderReply = 'Gateway_NewOrderReply'
 
 
 class ResAPIMessageType(Enum):
@@ -84,3 +100,10 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+
+class ReadLogMessageType(Enum):
+    Csv_Message = "Csv_Message"
+
+class CSMessageType(Enum):
+    CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
+    CDOrdNotif = "Order_CDOrdNotif"

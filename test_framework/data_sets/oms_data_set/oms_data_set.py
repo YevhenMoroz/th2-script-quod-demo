@@ -6,8 +6,9 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSCommissionAndFeeBasis, OMSBasketTemplates, OMSGiveUpBrokers, OMSClientDesks, OMSBookingTicketFeeType, \
     OMSNetGrossInd, OMSStatus, OMSMatchStatus, OMSExecutionPolicy, OMSTimeInForce, OMSOrdType, OMSCapacity, \
     OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
-    OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, OMSClientListIDForCommission, \
-    OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID
+    OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, \
+    OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID, OMSISINSecurityAltIDs, \
+    OMSSecurityIDSourceForListings, OMS_SymbolForListingsFromWebAdmin, OMSTickSizeProfile, OmsJavaApiInstruments
 
 
 class OmsDataSet(BaseDataSet):
@@ -62,7 +63,11 @@ class OmsDataSet(BaseDataSet):
     all_venue_sec_account_names_of_acc = OMSCommonVenueSecAccountNamesOfAcc
     clearing_account_type = OMSClearingAccountTypes
     account_id_source = VenueAccountIDSource
-    client_list = OMSClientListIDForCommission
     venue_list = OMSVenueListForCommissionAndFees
     oms_route_id = OmsRouteID
+    isin_security_alt_ids = OMSISINSecurityAltIDs
+    security_id_source = OMSSecurityIDSourceForListings
+    symbols = OMS_SymbolForListingsFromWebAdmin
+    tick_size_profile = OMSTickSizeProfile
+    java_api_instruments = OmsJavaApiInstruments
 

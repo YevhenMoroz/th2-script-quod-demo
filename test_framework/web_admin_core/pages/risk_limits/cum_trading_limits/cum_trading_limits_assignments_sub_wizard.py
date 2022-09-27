@@ -11,5 +11,8 @@ class CumTradingLimitsAssignmentsSubWizard(CommonPage):
     def set_institution(self, value):
         self.set_combobox_value(CumTradingLimitsConstants.INSTITUTION, value)
 
+    def clear_institution_field(self):
+        self.set_text_by_xpath(CumTradingLimitsConstants.INSTITUTION, "")
+
     def get_institution(self):
         return self.get_text_by_xpath(CumTradingLimitsConstants.INSTITUTION)

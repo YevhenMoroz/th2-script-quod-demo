@@ -1,6 +1,9 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4158 import QAP_T4158
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4360 import QAP_T4360
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4738 import QAP_T4738
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4872 import QAP_T4872
@@ -21,7 +24,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"LitDark" if version is None else f"LitDark | {version}", parent_id)
+    report_id = bca.create_event(f"Iceberg" if version is None else f"Iceberg for th2 integration (cloned) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
@@ -37,6 +40,12 @@ def test_run(parent_id=None, version=None):
         QAP_T4811(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4810(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
+
+        QAP_T4738(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4158(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4360(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

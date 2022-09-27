@@ -14,7 +14,8 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
 class QAP_T4997(TestCase):
@@ -40,10 +41,13 @@ class QAP_T4997(TestCase):
         self.price_ask_qdl1 = 40
         self.price_ask_qdl2 = 50
         self.price_bid = 30
+        self.party_id = constants.PartyID.party_id_2.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_1.value
+        self.party_role = constants.PartyRole.party_role_3.value
 
         self.no_party = [
-            {'PartyID': 'TestClientID', 'PartyIDSource': 'D',
-             'PartyRole': '3'}
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
            ]
         # endregion
 
@@ -83,8 +87,11 @@ class QAP_T4997(TestCase):
 
         # region Read log verifier params
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_party_info_v2.value
-        self.read_log_verifier = ReadLogVerifier(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = data_set.get_verifier_key_parameters_by_name("key_params_read_log_check_party_info")
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.misc_number = constants.MiscNumber.ordr_misc_8.value
         # endregion
 
         self.rule_list = []
@@ -129,14 +136,11 @@ class QAP_T4997(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        execution_report = {
-            "PartyID": "TestClientID",
-            "MiscNumber": "OrdrMisc8",
-            "OrdrMisc": "TestClientID",
-            "ClOrdID": self.ClOrdId
-        }
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
+        compare_message.change_parameters(dict(PartyID=self.party_id, MiscNumber=self.misc_number, OrdrMisc=self.party_id, ClOrdID=self.ClOrdId))
+
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(execution_report)
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Sell side
@@ -177,7 +181,7 @@ class QAP_T4997(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Child DMA order")
         # endregion
 
-        # region Check Fill algo order
+        # region Check Cancel algo order
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion

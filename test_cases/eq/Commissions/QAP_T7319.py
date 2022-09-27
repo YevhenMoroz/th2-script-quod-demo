@@ -38,19 +38,19 @@ class QAP_T7319(TestCase):
         self.qty_to_second_split = "400"
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.price = "10"
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.fix_message.change_parameters(
             {"Account": self.client,
              "ExDestination": self.mic,
              "Currency": self.cur, "Price": self.price, 'OrderQtyData': {'OrderQty': self.qty}})
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.client_inbox = OMSClientInbox(self.case_id, self.session_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.case_id, self.session_id)
-        self.child_book = OMSChildOrderBook(self.case_id, self.session_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.child_book = OMSChildOrderBook(self.test_id, self.session_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_qty")
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
@@ -70,21 +70,22 @@ class QAP_T7319(TestCase):
         # region send order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameter("OrderID")
-        self.client_inbox.accept_order()
+        filter_dict = {OrderBookColumns.order_id.value: order_id}
+        self.client_inbox.accept_order(filter=filter_dict)
         # endregion
         # region first split order
         self.order_ticket.set_order_details(qty=self.qty_to_first_split, recipient=self.username, partial_desk=True)
         self.order_ticket.child_care(filter_list=[OrderBookColumns.order_id.value, order_id])
         child_order_id1 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                            {OrderBookColumns.order_id.value: order_id})[0]["ID"]
+            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
+                                                {OrderBookColumns.order_id.value: order_id})[0]["ID"]
         # endregion
         # region second split order
         self.order_ticket.set_order_details(qty=self.qty_to_second_split, recipient=self.username, partial_desk=True)
         self.order_ticket.child_care(filter_list=[OrderBookColumns.order_id.value, order_id])
         child_order_id2 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                            {OrderBookColumns.order_id.value: order_id})[0]["ID"]
+            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
+                                                {OrderBookColumns.order_id.value: order_id})[0]["ID"]
         # endregion
         # region manual executions
         self.child_book.manual_execution(contra_firm=self.contra_firm,

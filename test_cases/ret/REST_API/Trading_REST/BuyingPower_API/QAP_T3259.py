@@ -1,10 +1,10 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
@@ -70,10 +70,10 @@ class QAP_T3259(TestCase):
             response=self.wa_api_manager.send_get_request_with_parameters(self.security_account_position_message),
             filter_dict={'instrID': self.tested_instrument_id})
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check that initialQty equal 10.0",
-                     expected_value="10.0",
-                     actual_value=modified_position[0]['initialQty'])
+            data_validation(test_id=self.test_id,
+                            event_name="Check that initialQty equal 10.0",
+                            expected_result="10.0",
+                            actual_result=modified_position[0]['initialQty'])
         except:
             bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
         # endregion
@@ -108,10 +108,10 @@ class QAP_T3259(TestCase):
             filter_dict={'instrID': self.tested_instrument_id})
 
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check that reservedQty was increased by 10",
-                     expected_value=float(modified_position[0]['reservedQty']) + 10,
-                     actual_value=float(new_reserved_qty[0]['reservedQty']))
+            data_validation(test_id=self.test_id,
+                            event_name="Check that reservedQty was increased by 10",
+                            expected_result=float(modified_position[0]['reservedQty']) + 10,
+                            actual_result=float(new_reserved_qty[0]['reservedQty']))
         except:
             bca.create_event(f'Response is empty', status='FAILED', parent_id=self.test_id)
         # endregion

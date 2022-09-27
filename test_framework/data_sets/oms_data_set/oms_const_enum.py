@@ -8,7 +8,7 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='DREAMNEX'
+        SecurityDesc='VETOQUINOL'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
@@ -40,12 +40,26 @@ class OmsFixInstruments(Enum):
     )
 
 
+class OmsJavaApiInstruments(Enum):
+    instrument_1 = dict(
+        InstrSymbol="FR0010436584_EUR",
+        SecurityID="FR0010436584",
+        SecurityIDSource="ISI",
+        InstrType="Equity",
+        SecurityExchange="XPAR"
+    )
+
+
 class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
+    instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
+    instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
 
 
 class OmsListingId(Enum):
     listing_1 = "1200"
+    listing_2 = '9500000049'
+    listing_3 = "704"
 
 
 class OmsVenues(Enum):
@@ -58,6 +72,7 @@ class OmsLookupForVenues(Enum):
     """USED FOR CREATING ORDER VIA FE"""
     lookup_1 = 'VETO'
     lookup_2 = 'DNX'
+    lookup_for_listing_eurex_web_admin = 'EUR[EUREX]'
 
 
 class OmsClients(Enum):
@@ -113,6 +128,7 @@ class OmsVenueClientNames(Enum):
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
+    client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""
@@ -185,7 +201,7 @@ class OmsRecipients(Enum):
     recipient_desk_2 = ""
     recipient_desk_3 = ""
 
-    recipient_user_1 = ""
+    recipient_user_1 = "JavaApiUser"
     recipient_user_2 = ""
     recipient_user_3 = ""
 
@@ -407,6 +423,7 @@ class OMSWashBookRule(Enum):
     RuleForTest = 200004
     name_washbook_rule = 'washbook1'
 
+
 class VenueAccountIDSource(Enum):
     oth = 'OTH'
 
@@ -453,9 +470,21 @@ class OMSClearingAccountTypes(Enum):
     institutional = 'INS'
 
 
-class OMSClientListIDForCommission(Enum):
-    client_list_comm = 400006
-
-
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+
+
+class OMSISINSecurityAltIDs(Enum):
+    isin_security_alt_id_isi_3 = 'IS0000000001'
+
+
+class OMSSecurityIDSourceForListings(Enum):
+    security_id_source = "ISI"
+
+
+class OMS_SymbolForListingsFromWebAdmin(Enum):
+    symbol_1 = "EUR"
+
+
+class OMSTickSizeProfile(Enum):
+    tick_size_profile_1 = 3

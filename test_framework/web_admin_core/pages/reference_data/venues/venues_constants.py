@@ -14,12 +14,13 @@ class VenuesConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Venues"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     NOT_FOUND_OPTION_IN_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option'
     DISPLAYED_VENUE_XPATH = "//*[text()='{}']"
+    FOOTER_ERROR_XPATH = '//nb-card-footer//*[@outline="danger"]/div/span'
 
     # --Main page--
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -257,7 +258,7 @@ class VenuesConstants:
     FEATURES_TAB_QUOTE_RESPONCE_LEVEL_XPATH = '//*[@id="quoteResponseLevel"]'
     FEATURES_TAB_MULTILEG_REPORT_TYPE_XPATH = '//*[@id="multilegReportType"]'
     FEATURES_TAB_MIN_RESIDENT_TIME_XPATH = '//*[@formcontrolname="minResidentTime"]'
-    FEATURES_TAB_OPEN_TIME_XPATH = '//*[@id="openTime_ext"]'
+    FEATURES_TAB_OPEN_TIME_XPATH = '//*[@id="openTime"]'
     FEATURES_TAB_HOLD_FIX_SELL_CHECKBOX_XPATH = '//*[@formcontrolname="holdFIXShortSell"]//input'
     FEATURES_TAB_TIME_ZONE_XPATH = '//*[@id="timeZone"]'
     FEATURES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultAlgoPolicy"]'
@@ -266,7 +267,7 @@ class VenuesConstants:
     FEATURES_TAB_GTD_HOLIDAY_CHECK_CHECKBOX_XPATH = '//*[@formcontrolname="GTDHolidayCheck"]//input'
     FEATURES_TAB_INSTR_CREATION_POLICY_XPATH = '//*[@id="instrCreationPolicy"]'
     FEATURES_TAB_DISABLE_SELL_PRICE_FALL_XPATH = '//*[@formcontrolname="disableShortSellPrcFallPct"]'
-    FEATURES_TAB_CLOSE_TIME_XPATH = '//*[@id="closeTime_ext"]'
+    FEATURES_TAB_CLOSE_TIME_XPATH = '//*[@id="closeTime"]'
     FEATURES_TAB_REGULATED_SELL_CHECKBOX_XPATH = '//*[@formcontrolname="regulatedShortSell"]//input'
     FEATURES_TAB_VALIDATE_VENUE_ACT_GRP_NAME_CHECKBOX_XPATH = '//*[@formcontrolname="validateVenueActGrpName"]//input'
     FEATURES_TAB_SUPPORT_TRADING_PHASE_CHECKBOX_XPATH = '//*[@formcontrolname="supportTradingPhase"]//input'

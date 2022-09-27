@@ -8,10 +8,29 @@ class ClientTiersSchedulesSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def click_on_enable_schedule_checkbox(self):
-        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_ENABLE_SCHEDULE_CHECKBOX_XPATH).click()
+    def click_on_plus_button_at_schedule_name(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_PLUS_BUTTON).click()
 
-    # region schedules
+    def click_on_checkmark_button_at_schedule_name(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_CHECKMARK_XPATH).click()
+
+    def click_on_close_button_at_schedule_name(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_CANCEL_XPATH).click()
+
+    def click_on_edit_button_at_schedule_name(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_EDIT_XPATH).click()
+
+    def click_on_delete_button_at_schedule_name(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_DELETE_XPATH).click()
+
+    def set_schedule_name(self, name):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_XPATH, name)
+
+    def set_schedule_name_filter(self, name):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_FILTER_XPATH, name)
+
+    def is_schedule_name_entity_found_by_name(self, name):
+        return self.is_element_present(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_SEARCHED_ENTITY_XPATH.format(name))
 
     def click_on_plus_button_at_schedules(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH).click()

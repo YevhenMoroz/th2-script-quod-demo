@@ -33,7 +33,7 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4944 import QAP_T4944
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4958 import QAP_T4958
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4963 import QAP_T4963
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4964 import QAP_T4964
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4965 import QAP_T4965
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8704 import QAP_T8704
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4966 import QAP_T4966
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4967 import QAP_T4967
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4970 import QAP_T4970
@@ -58,6 +58,8 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4996 import QAP_T4996
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4997 import QAP_T4997
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4998 import QAP_T4998
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4999 import QAP_T4999
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8641 import QAP_T8641
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -66,7 +68,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"Sorping" if version is None else f"Sorping | {version}", parent_id)
+    report_id = bca.create_event(f"Sorping" if version is None else f"SORPING for th2 integration (cloned) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region SORPING
@@ -92,7 +94,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4958(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4963(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4964(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4965(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8704(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4970(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -126,6 +128,7 @@ def test_run(parent_id=None, version=None):
         QAP_T5074(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8641(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

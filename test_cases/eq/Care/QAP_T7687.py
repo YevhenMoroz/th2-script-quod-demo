@@ -5,8 +5,9 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import try_except
+
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -21,9 +22,9 @@ timeouts = True
 class QAP_T7687(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, dataset):
-        super().__init__(report_id, session_id, dataset)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
         self.base_window = BaseMainWindow(self.test_id, self.session_id)

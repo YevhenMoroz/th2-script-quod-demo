@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7383(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -38,7 +39,7 @@ class QAP_T7383(TestCase):
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
         self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.change_params = {'Account': self.client, "Currency": self.cur,"ExDestination": self.mic}
+        self.change_params = {'Account': self.client, "Currency": self.cur, "ExDestination": self.mic}
         self.fix_message.change_parameters(self.change_params)
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
@@ -62,11 +63,13 @@ class QAP_T7383(TestCase):
                                                                          comm_profile=self.comm_profile).send_post_request()
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                             self.client_for_rule, self.mic,
-                                                                                             int(self.price))
+                                                                                                  self.client_for_rule,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       self.client_for_rule, self.mic, int(self.price),
-                                                                                       int(self.qty), 2)
+                                                                                            self.client_for_rule,
+                                                                                            self.mic, int(self.price),
+                                                                                            int(self.qty), 2)
 
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
@@ -105,4 +108,3 @@ class QAP_T7383(TestCase):
         self.mid_office.compare_values({MiddleOfficeColumns.client_comm.value: ''}, total_comm,
                                        "Check Total Comm")
         # endregion
-

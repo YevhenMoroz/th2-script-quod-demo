@@ -49,6 +49,15 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_eliminate_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
+        elif side is GatewaySide.RBSell:
+            if status is Status.Pending:
+                self.__set_pending_new_rb_sell(new_order_single)
+            elif status is Status.New:
+                self.__set_new_rb_sell(new_order_single)
+            elif status is Status.Cancel:
+                self.__set_cancel_rb_sell(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
         return self
 
     def set_params_from_order_cancel_replace(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest, side: GatewaySide, status: Status):
@@ -264,17 +273,15 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             Instrument='*',
-            SecondaryOrderID='*',
-            LastMkt='*',
-            Text='*',
-            HandlInst='*'
+            HandlInst='*',
+            ExecRestatementReason='*',
         )
         super().change_parameters(temp)
         return self
 
     def __set_pending_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) in ['2', '4', 'D']:
+        if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
@@ -301,7 +308,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) in ['2', '4', 'D']:
+        if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
@@ -468,9 +475,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.get_parameter('TargetStrategy') != '1008' and new_order_single.get_parameter('TargetStrategy') != '1011':
-            temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
-        if new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
+        if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010'] and new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(
                 IClOrdIdAO='*',
                 ShortCode='*'
@@ -479,7 +484,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             if new_order_single.is_parameter_exist('MinQty'):
                 temp.update(
                     LastExecutionPolicy='*',
-                    LastMkt='*',
                     TargetStrategy='1008',
                     ExDestination='*',
                     SecondaryAlgoPolicyID='*',
@@ -490,28 +494,19 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     ReplyReceivedTime='*',
                     LastExecutionPolicy='*',
                     TradeReportingIndicator='*',
-                    LastMkt='*',
                     ExDestination='*'
                 )
-        if new_order_single.get_parameter('TargetStrategy') == '1011':
+        if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010']:
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 LastExecutionPolicy='*',
                 ExDestination='*',
-                LastMkt='*',
                 ChildOrderID='*'
             )
         if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty='*')
-        if new_order_single.is_parameter_exist('ClientAlgoPolicyID') and new_order_single.get_parameter('ClientAlgoPolicyID') == 'QA_SORPING':
-            temp.update(
-                IClOrdIdAO='*',
-                SecondaryAlgoPolicyID='*',
-                LastExecutionPolicy='*',
-                ShortCode='*',
-            )
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
         temp.update(
@@ -533,6 +528,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
+            LastMkt='*',
             TradeDate='*',
             ExecType='F',
             LeavesQty='*',
@@ -546,7 +542,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument='*',
             SecondaryExecID='*'
         )
-        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010']:
             [temp.pop(key, None) for key in ['SecAltIDGrp', 'SecondaryClOrdID']]
         super().change_parameters(temp)
         return self
@@ -596,9 +592,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"),
-                        LastPx=new_order_single.get_parameter('Price'))
+        if new_order_single.is_parameter_exist('Price'):
+            temp.update(
+                Price=new_order_single.get_parameter("Price"),
+                LastPx=new_order_single.get_parameter('Price')
+            )
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             CumQty=new_order_single.get_parameter('OrderQty'),
@@ -872,6 +870,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         if new_order_single.is_parameter_exist('ExpireTime'):
             temp.update(ExpireTime=new_order_single.get_parameter('ExpireTime'))
+        if new_order_single.is_parameter_exist('NoParty'):
+            temp.update(NoParty='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -1091,9 +1091,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             )
         temp.update(
             Account=new_order_single.get_parameter('Account'),
-            AvgPx=0,
+            AvgPx='*',
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
-            CumQty=0,
+            CumQty='*',
             Currency=new_order_single.get_parameter('Currency'),
             ExecID='*',
             HandlInst=new_order_single.get_parameter('HandlInst'),
@@ -1113,7 +1113,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
             TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
             QtyType='*',
-            CxlQty=new_order_single.get_parameter('OrderQty'),
+            CxlQty='*',
             Instrument='*',
         )
         super().change_parameters(temp)
@@ -1416,5 +1416,112 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         }
         if nos_rfq.is_parameter_exist('Price'):
             temp.update(Price=nos_rfq.get_parameter('Price'))
+        super().change_parameters(temp)
+        return self
+
+    def __set_pending_new_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst=new_order_single.get_parameter("HandlInst"),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
+            ExecType="A",
+            OrdStatus="A",
+            TransactTime='*',
+            AvgPx='0',
+            CumQty='0',
+            ExecID='*',
+            LastPx='0',
+            LastQty='0',
+            OrderCapacity='A',
+            QtyType='0',
+            OrderID='*',
+            SettlDate='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_new_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst=new_order_single.get_parameter("HandlInst"),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
+            ExecType="0",
+            OrdStatus="0",
+            TransactTime='*',
+            AvgPx='0',
+            CumQty='0',
+            ExecID='*',
+            LastPx='0',
+            LastQty='0',
+            OrderCapacity='A',
+            QtyType='0',
+            OrderID='*',
+            SettlDate='*',
+            LeavesQty=new_order_single.get_parameter("OrderQty"),
+            ExecRestatementReason=4,
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
+            QtyType='*',
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
+        )
         super().change_parameters(temp)
         return self

@@ -50,7 +50,7 @@ class QAP_T7253(TestCase):
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
+        self.local_path = os.path.abspath("th2-script-quod-demo\\test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         # endregion
 
