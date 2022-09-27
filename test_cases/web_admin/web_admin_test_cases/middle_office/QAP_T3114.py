@@ -56,7 +56,7 @@ class QAP_T3114(CommonTestCase):
             expected_data = [self.name, self.avg_price_precision, self.tolerance_currency, self.net_tolerance_currency,
                              "True"]
             actual_data = [wizard.get_name(), wizard.get_avg_price_precision(), wizard.get_tolerance_currency(),
-                           wizard.get_net_tolerance_currency(), wizard.is_client_commission_selected()]
+                           wizard.get_net_tolerance_currency(), str(wizard.is_client_commission_selected())]
 
             self.verify("New Allocation matching profile created and contains saved data", expected_data, actual_data)
 

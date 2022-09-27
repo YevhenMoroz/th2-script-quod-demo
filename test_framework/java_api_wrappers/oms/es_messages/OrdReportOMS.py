@@ -42,7 +42,7 @@ class OrdReportOMS(OrdReport):
     def set_default_open(self, ord_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('OrdReportBlock',
-                                        {"LastVenueOrdID": ord_id, "Price": "20", 'ClOrdID': ord_id})
+                                        {"LastVenueOrdID": ord_id, 'ClOrdID': ord_id})
 
     def set_default_eliminated(self, ord_id, price):
         self.change_parameters(self.base_parameters)

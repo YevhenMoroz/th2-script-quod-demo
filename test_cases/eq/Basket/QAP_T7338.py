@@ -37,11 +37,8 @@ class QAP_T7338(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         name_of_bag = 'QAP_T7338'
-        qty = '4651'
         nol = FixMessageNewOrderListOMS(self.data_set)
         nol.base_parameters['ListOrdGrp']['NoOrders'][1]['Side'] = '1'
-        nol.base_parameters["ListOrdGrp"]['NoOrders'][0]["OrderQtyData"]["OrderQty"] = qty
-        nol.base_parameters["ListOrdGrp"]['NoOrders'][1]["OrderQtyData"]["OrderQty"] = qty
         nol.set_default_order_list()
         self.fix_manager.send_message_fix_standard(nol)
         nol_id = nol.get_parameter("ListID")
@@ -49,8 +46,7 @@ class QAP_T7338(TestCase):
 
         # region accept co orders
         qty = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["OrderQtyData"]["OrderQty"]
-        summary_qty = str(int(int(qty) * 2))
-        qty_verifying = summary_qty[0] + ',' + summary_qty[1:4]
+        qty_verifying = str(int(int(qty) * 2))
         cl_ord_id1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["ClOrdID"]
         cl_ord_id2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["ClOrdID"]
         price = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["Price"]
@@ -94,10 +90,10 @@ class QAP_T7338(TestCase):
         expected_values_bag = dict()
         order_bag_id = None
         if return_order_bag_id:
-            order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.pop(OrderBagColumn.id.value)
             bag_column_extraction.remove(OrderBagColumn.id.value)
         for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({'order_bag.' + bag_column_extraction[count]: expected_values[count]})
+            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
         self.bag_order_book.compare_values(expected_values_bag,
                                            fields, f'Compare values from bag_book after {action}')
         if return_order_bag_id:

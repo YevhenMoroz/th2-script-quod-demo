@@ -55,7 +55,6 @@ class QAP_T7441(TestCase):
         self.basket_book.check_basket_field(BasketBookColumns.status.value, "Executing")
         self.basket_book.check_basket_field(BasketBookColumns.list_exec_inst_type.value, "Immediate")
         self.basket_book.check_basket_field(BasketBookColumns.basket_name.value, self.basket_name)
-        self.basket_book.check_basket_field(BasketBookColumns.time_in_force.value, TimeInForce.DAY.value)
         # endregion
         # region check order fields
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(

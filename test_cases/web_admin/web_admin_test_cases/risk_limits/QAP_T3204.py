@@ -55,6 +55,7 @@ from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_
 from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_assignment_tab import \
     OrderVelocityLimitsAssignmentsSubWizardPage
 
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -118,8 +119,10 @@ class QAP_T3204(CommonTestCase):
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
 
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
+        wizard.click_on_revert_changes()
         wizard.click_on_close()
-        wizard.click_on_ok_button()
 
         risk_limit_dimension_page.set_name_filter(self.name)
         time.sleep(1)
@@ -162,9 +165,10 @@ class QAP_T3204(CommonTestCase):
         trading_limits_page.click_on_edit()
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
-
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
+        wizard.click_on_revert_changes()
         wizard.click_on_close()
-        wizard.click_on_ok_button()
 
         trading_limits_page.set_description(self.name)
         time.sleep(1)
@@ -207,6 +211,8 @@ class QAP_T3204(CommonTestCase):
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
 
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         wizard.click_on_revert_changes()
         wizard.click_on_close()
 
@@ -250,6 +256,8 @@ class QAP_T3204(CommonTestCase):
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
 
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         wizard.click_on_revert_changes()
         wizard.click_on_close()
 
@@ -294,6 +302,8 @@ class QAP_T3204(CommonTestCase):
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
 
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         wizard.click_on_revert_changes()
         wizard.click_on_close()
 
@@ -339,6 +349,8 @@ class QAP_T3204(CommonTestCase):
 
         self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
 
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         wizard.click_on_revert_changes()
         wizard.click_on_close()
 
@@ -359,7 +371,9 @@ class QAP_T3204(CommonTestCase):
             self.trading_limits_page()
             self.cum_trading_limits()
             self.position_limits()
+            time.sleep(2)
             self.price_tolerance_control()
+            time.sleep(1)
             self.order_velocity_limits()
 
         except Exception:

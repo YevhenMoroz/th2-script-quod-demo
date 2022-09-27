@@ -125,7 +125,10 @@ class BaseDataSet:
     core_spot_price_strategy = None
     party_role = None
     counterpart_id = None
+    cl_list_id = None
     pre_filter = None
+    reference_price = None
+    java_api_instruments = None
     # endregion
 
     # region fields added by Web Trading team
@@ -841,4 +844,23 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
+    def get_cl_list_id(self, name: str):
+        if hasattr(self.cl_list_id, name):
+            return getattr(self.cl_list_id, name).value
+        return ValueError(f"{self.cl_list_id} not found!")
+
+    def get_ref_price(self, name: str):
+        if hasattr(self.reference_price, name):
+            return getattr(self.reference_price, name).value
+        return ValueError(f"{self.reference_price} not found!")
+
+    def get_venue_list(self, name: str):
+        if hasattr(self.venue_list, name):
+            return getattr(self.venue_list, name).value
+        return ValueError(f"{self.venue_list} not found!")
+
+    def get_java_api_instrument(self, name: str):
+        if hasattr(self.java_api_instruments, name):
+            return getattr(self.java_api_instruments, name).value
+        return ValueError(f"{self.java_api_instruments} not found!")
     # endregion
