@@ -27,6 +27,8 @@ class ClientsConstants:
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
