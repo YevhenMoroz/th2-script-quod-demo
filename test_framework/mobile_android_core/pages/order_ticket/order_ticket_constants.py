@@ -3,7 +3,7 @@ class OrderTicketConstants:
 
     # region OrderTicket label
     ARROW_BACK = '//android.widget.Button[1]'
-    # endregion
+    ORDER_TICKET_TITLE = '//android.view.View[contains(@content-desc, "Order Ticket")]'
 
     # region Side
     SIDE_BUY = '//android.view.View[@content-desc="Buy"]'

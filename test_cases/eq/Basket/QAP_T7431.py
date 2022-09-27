@@ -26,7 +26,7 @@ timeouts = True
 class QAP_T7431(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
@@ -38,7 +38,7 @@ class QAP_T7431(TestCase):
         self.price = '10'
         self.fix_message = FixMessageNewOrderListOMS(self.data_set, parameters={
             'BidType': "1",
-            'TotNoOrders': '2',
+            'TotNoOrders': '3',
             'ListID': basic_custom_actions.client_orderid(10),
             'ListOrdGrp': {'NoOrders': [{
                 "Account": data_set.get_client_by_name("client_pt_1"),
@@ -99,11 +99,11 @@ class QAP_T7431(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.fix_manager.send_message_fix_standard(self.fix_message)
         qty = self.fix_message.get_parameters()['ListOrdGrp']['NoOrders'][2]['OrderQtyData']['OrderQty']
         rule_manager = RuleManager(Simulators.equity)
         rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env.buy_side, self.client_for_rule,
                                                                   self.exec_destination, price=1000)
-        time.sleep(10)
         for i in range(3):
             self.client_inbox.accept_order(self.lookup, qty, self.price)
         cl_ord_id_first = self.fix_message.get_parameters()['ListOrdGrp']['NoOrders'][0]['ClOrdID']
@@ -113,7 +113,7 @@ class QAP_T7431(TestCase):
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_third])
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value, row_number=1)
         # region wave basket first time
-        self.oms_basket_book.wave_basket('70', route=self.data_set.get_route('route_2'), removed_orders_filter=[order_id],
+        self.oms_basket_book.wave_basket('70', route=self.data_set.get_route('route_2'), removed_orders=[order_id],
                                          basket_filter={BasketBookColumns.client_basket_id.value: client_basket_id})
         # endregion
 
@@ -128,16 +128,16 @@ class QAP_T7431(TestCase):
                                                                {OrderBookColumns.cl_ord_id.value: cl_ord_id_second})
 
         self.oms_basket_book.compare_values(
-            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.qty.value: str(int(0.7 * int(qty)))},
+            {OrderBookColumns.qty.value: str(int(0.7 * int(qty)))},
             first_dma_order[0], 'Compare second child order after first wave for first order')
         self.oms_basket_book.compare_values(
-            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.qty.value: str(int(0.7 * int(qty)))},
+            {OrderBookColumns.qty.value: str(int(0.7 * int(qty)))},
             second_dma_order[0],
             'Compare second child order after first wave for second order')
         # endregion
 
         # region wave basket second time
-        self.oms_basket_book.wave_basket('100', route=self.data_set.get_route('route_1'), removed_orders_filter=[order_id],
+        self.oms_basket_book.wave_basket('100', route=self.data_set.get_route('route_1'), removed_orders=[order_id],
                                          basket_filter={BasketBookColumns.client_basket_id.value: client_basket_id})
         # endregion
 
@@ -155,23 +155,9 @@ class QAP_T7431(TestCase):
                 OrderBookColumns.cl_ord_id.value: cl_ord_id_second})
 
         self.oms_basket_book.compare_values(
-            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.qty.value: str(int(0.3 * int(qty)))},
+            {OrderBookColumns.qty.value: str(int(0.3 * int(qty)))},
             first_dma_order[0], 'Compare second child order after second wave for first order')
         self.oms_basket_book.compare_values(
-            {OrderBookColumns.sts.value: 'Open', OrderBookColumns.qty.value: str(int(0.3 * int(qty)))},
+            {OrderBookColumns.qty.value: str(int(0.3 * int(qty)))},
             second_dma_order[0], 'Compare second child order after second wave for second order')
-
-        # endregion
-
-        # region verify, that at third order unmatched_qty = order qty
-        unmatched_qty_of_third_order = self.oms_basket_book.get_basket_sub_lvl_value(3,
-
-                                                                                     OrderBookColumns.unmatched_qty.value,
-                                                                                     BasketSecondTabName.orders.value,
-                                                                                     {
-                                                                                         BasketBookColumns.client_basket_id.value:
-                                                                                             client_basket_id}
-                                                                                     )
-        self.oms_basket_book.compare_values({'3': qty}, unmatched_qty_of_third_order[2],
-                                            'Check unmatched qty of 3 order')
         # endregion

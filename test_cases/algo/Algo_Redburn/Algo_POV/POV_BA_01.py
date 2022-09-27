@@ -24,7 +24,7 @@ def execute(report_id):
             'Side': 1,
             'OrderQty': 10000000,
             'TimeInForce': 0,
-            'Price': 117,
+            'Price': 130,
             'OrdType': 2,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
@@ -35,7 +35,8 @@ def execute(report_id):
             'Text': 'POV_BA_01',
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10',
-                'AllowedVenues': 'XLON'
+                # 'AllowedVenues': 'XLON',
+                'ForbiddenVenues': 'TRQX/CBOEEU/AQUIS'
             }
         }
 

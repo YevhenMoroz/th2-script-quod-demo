@@ -25,7 +25,7 @@ class QAP_T7627(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
@@ -40,7 +40,7 @@ class QAP_T7627(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '1442'
-        qty_for_verifying_order = qty[0] + ',' + qty[1:3]
+        qty_for_verifying_order = qty[0] + ',' + qty[1:4]
         new_qty_of_order = '1'
         qty_of_bag = str(int(int(qty) * 2))
         new_qty_of_bag_for_verifying = qty[0]+','+qty[1:3]+'3'
@@ -96,7 +96,8 @@ class QAP_T7627(TestCase):
     def __verifying_values(self, sub_filter_list, filter_list, expected_result):
         fields = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1', [OrderBagColumn.ord_bag_name.value,
                                                                                      OrderBagColumn.unmatched_qty.value,
-                                                                                     OrderBagColumn.leaves_qty.value],
+                                                                                     OrderBagColumn.leaves_qty.value,
+                                                                                     OrderBagColumn.order_bag_qty.value],
                                                                                [OrderBookColumns.qty.value],
                                                                                sub_filter_list,
                                                                                filter_list,

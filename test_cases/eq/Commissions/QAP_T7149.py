@@ -36,20 +36,20 @@ class QAP_T7149(TestCase):
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.cur = self.data_set.get_currency_by_name('currency_3')
-        self.case_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.qty = self.fix_message.get_parameter("OrderQtyData")['OrderQty']
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.price = self.fix_message.get_parameter("Price")
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.case_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.case_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.comm = self.data_set.get_commission_by_name("commission1")
         self.comm_profile = self.data_set.get_comm_profile_by_name("abs_amt_2")
@@ -96,20 +96,22 @@ class QAP_T7149(TestCase):
         conf_report.change_parameters(
             {"AllocQty": self.qty, "Account": self.client, "AllocAccount": self.client_acc, "AvgPx": "*",
              "Currency": "*", "tag5120": "*",
-             "CommissionData": comm_data_1, 'NoOrders':[{'ClOrdID': self.cl_order_id,"OrderID":self.order_id}]})
+             "CommissionData": comm_data_1, 'NoOrders': [{'ClOrdID': self.cl_order_id, "OrderID": self.order_id}]})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ["OrderID"])
         # endregion
         # region amend allocation
-        self.mid_office.set_modify_ticket_details(is_alloc_amend=True, comm_rate=self.comm_rate, toggle_manual=True, remove_comm=True, comm_basis=self.comm_basis)
+        self.mid_office.set_modify_ticket_details(is_alloc_amend=True, comm_rate=self.comm_rate, toggle_manual=True,
+                                                  remove_comm=True, comm_basis=self.comm_basis)
         self.mid_office.amend_allocate([OrderBookColumns.order_id.value, self.order_id])
         # endregion
         # region check amended allocation commission
-        comm_data_2 = {"CommissionType":'3', "Commission": self.comm_rate,
+        comm_data_2 = {"CommissionType": '3', "Commission": self.comm_rate,
                        "CommCurrency": self.com_cur}
         conf_report2 = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_replace(self.fix_message)
         conf_report2.change_parameters(
             {"AllocQty": self.qty, "Account": self.client, "AllocAccount": self.client_acc, "AvgPx": "*",
-             "Currency": "*", "tag5120": "*","CommissionData": comm_data_2, 'NoOrders':[{'ClOrdID': self.cl_order_id,"OrderID":self.order_id}]})
+             "Currency": "*", "tag5120": "*", "CommissionData": comm_data_2,
+             'NoOrders': [{'ClOrdID': self.cl_order_id, "OrderID": self.order_id}]})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report2, ["OrderID", "ConfirmTransType"])
         # endregion
 

@@ -6,7 +6,11 @@ from custom import basic_custom_actions as bca
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.data_sets.environment_type import EnvironmentType
-from test_framework.example_of_test_cases.QAP_4612_example import QAP_4612_example
+from test_cases.algo.Algo_Iceberg.QAP_T4917 import QAP_T4917
+from test_cases.algo.Algo_Iceberg.QAP_T4918 import QAP_T4918
+from test_cases.algo.Algo_Iceberg.QAP_T4919 import QAP_T4919
+from test_cases.algo.Algo_Iceberg.QAP_T4925 import QAP_T4925
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 timeouts = False
@@ -22,14 +26,12 @@ def test_run(parent_id=None, version=None):
 
 
     try:
-        report_id = bca.create_event(f"Iceberg" if version is None else f"Iceberg | {version}", parent_id)
+        report_id = bca.create_event(f"Algo_Iceberg" if version is None else f"Algo_Iceberg (cloned) | {version}", parent_id)
         configuration = ComponentConfiguration("Iceberg")
-        QAP_4612_example(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        # QAP_T4917.execute(report_id=report_id)
-        # QAP_T4918.execute(report_id=report_id)
-        # QAP_T4919.execute(report_id=report_id)
-        # QAP_T4925.execute(report_id=report_id)
+        QAP_T4917(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4918(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4919(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4925(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 
