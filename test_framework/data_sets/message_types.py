@@ -61,7 +61,6 @@ class TradingRestApiMessageType(Enum):
     OrderModificationRequest = "OrderModificationRequest"
     OrderModificationReply = "OrderModificationReply"
     OrderModificationReject = "OrderModificationReject"
-    OrderModificationReject = "OrderModificationReject"
     OrderCancelRequest = "OrderCancelRequest"
     OrderCancelReply = "OrderCancelReply"
     OrderCancelReject = "OrderCancelReject"
