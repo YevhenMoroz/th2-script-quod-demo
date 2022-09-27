@@ -49,8 +49,8 @@ class BaseWindow:
                     # old regular value (\w+=[\w\d/.]+)
                     split_values1 = re.findall('([\w%.]+=[\w\d/%,.]+)', split_values1)
                     split_values1 = split_values1.__str__()
-                    split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '')
-                    split_normal_dictionary = dict(item.split("=") for item in split_values1.split(', '))
+                    split_values1 = split_values1.replace('[', '').replace(']', '').replace("'", '').replace(",", '')
+                    split_normal_dictionary = dict(item.split("=") for item in split_values1.split(' '))
                     normal_split_values_arr.append(split_normal_dictionary)
             return normal_split_values_arr
 

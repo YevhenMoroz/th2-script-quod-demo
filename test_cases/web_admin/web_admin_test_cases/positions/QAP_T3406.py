@@ -6,6 +6,7 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -16,7 +17,7 @@ class QAP_T3406(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.test_data = {"zones_user": {"login": "adm_inst", "password": "adm_inst"},
+        self.test_data = {"zones_user": {"login": "adm_zone", "password": "adm_zone"},
                           "locations_user": {"login": "adm_loca", "password": "adm_loca"},
                           "desks_user": {"login": "adm_desk", "password": "adm_desk"}}
 
@@ -35,10 +36,10 @@ class QAP_T3406(CommonTestCase):
                         side_menu.is_washbook_page_tab_displayed())
             self.verify("WashBookRule page is not displayed for zones user", False,
                         side_menu.is_washbook_rule_page_tab_displayed())
-
-            self.web_driver_container.stop_driver()
-            time.sleep(2)
-            self.web_driver_container.start_driver()
+            common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_user_icon()
+            common_act.click_on_logout()
+            common_act.refresh_page(True)
             time.sleep(2)
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.test_data["locations_user"]["login"],
@@ -48,10 +49,9 @@ class QAP_T3406(CommonTestCase):
                         side_menu.is_washbook_page_tab_displayed())
             self.verify("WashBookRule page is not displayed for locations user", False,
                         side_menu.is_washbook_rule_page_tab_displayed())
-
-            self.web_driver_container.stop_driver()
-            time.sleep(2)
-            self.web_driver_container.start_driver()
+            common_act.click_on_user_icon()
+            common_act.click_on_logout()
+            common_act.refresh_page(True)
             time.sleep(2)
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.test_data["desks_user"]["login"],

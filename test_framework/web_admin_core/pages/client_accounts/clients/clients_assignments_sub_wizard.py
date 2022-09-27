@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -12,6 +13,11 @@ class ClientsAssignmentsSubWizard(CommonPage):
 
     def get_user_manager(self):
         return self.get_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH)
+
+    def get_all_user_manager_from_drop_menu(self):
+        self.set_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
 
     def is_user_manager_field_displayed_and_has_correct_name(self):
         return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH)
