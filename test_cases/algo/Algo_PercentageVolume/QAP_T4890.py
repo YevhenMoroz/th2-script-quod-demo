@@ -23,7 +23,7 @@ timeouts = True
 qty = 1000
 start_ltq = 200
 oo_qty = 60  #open order
-percentage = 30
+percentage = 0.3
 ioc_qty = 40
 ltq_child_qty = math.ceil((percentage * start_ltq) / (100 - percentage))
 md_child_qty = math.ceil((percentage * oo_qty) / (100 - percentage))
@@ -68,7 +68,8 @@ def rule_creation():
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
     nos_trade_by_qty_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price, price, 86, oo_qty, 0)
     nos_ioc_ltq_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, False, 40, price)
-    return [nos_rule, nos_trade_by_qty_rule, ocr_rule, nos_ioc_ltq_rule]
+    nos_trade = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, 1, 1, 26, 26, 0)
+    return [nos_rule, nos_trade_by_qty_rule, ocr_rule, nos_ioc_ltq_rule, nos_trade]
 
 
 def rule_destroyer(list_rules):
@@ -79,12 +80,12 @@ def rule_destroyer(list_rules):
 
 
 def send_market_data(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
+    # MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    #     symbol='symbol',
+    #     connection_id=ConnectionID(session_alias=connectivity_fh)
+    # )).MDRefID
     md_params = {
-        'MDReqID': MDRefID,
+        'MDReqID': '1015_161',
         'NoMDEntries': market_data
     }
 
@@ -97,12 +98,12 @@ def send_market_data(symbol: str, case_id :str, market_data ):
 
 
 def send_market_dataT(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
-            connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
+    # MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
+    #         symbol=symbol,
+    #         connection_id=ConnectionID(session_alias=connectivity_fh)
+    # )).MDRefID
     md_params = {
-        'MDReqID': MDRefID,
+        'MDReqID': "1015_161",
         'NoMDEntriesIR': market_data
     }
 
@@ -129,9 +130,11 @@ def execute(report_id):
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
                 'MDEntryPx': '1',
-                'MDEntrySize': start_ltq,
+                'MDEntrySize': 0,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                'TradingSessionSubID': '3',
+                'SecurityTradingStatus': '3',
             }
         ]
         send_market_dataT(s_par, case_id_0, market_data2)
@@ -171,7 +174,7 @@ def execute(report_id):
                 'NoStrategyParameters': [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
+                    'StrategyParameterType': '6',
                     'StrategyParameterValue': percentage
                 },
                 {
@@ -193,7 +196,9 @@ def execute(report_id):
                 'MDEntryPx': '1',
                 'MDEntrySize': oo_qty,
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                'TradingSessionSubID': '3',
+                'SecurityTradingStatus': '3',
             }
         ]
         send_market_dataT(s_par, case_id_1, market_data4)
@@ -201,34 +206,18 @@ def execute(report_id):
         market_data5 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '52',   
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '60',
                 'MDEntryPositionNo': '1'
             }
         ]
         send_market_data(s_par, case_id_1, market_data5)
-
-        market_data15 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '52',   
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_1, market_data15)
         #Check that FIXQUODSELL5 receive 35=D
         nos_1 = dict(
             fix_message_new_order_single.get_parameters(),
@@ -392,8 +381,8 @@ def execute(report_id):
         fix_modify_message.change_parameter('NoStrategyParameters', [
                 {
                     'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '11',
-                    'StrategyParameterValue': '30'
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '0.3'
                 },
                 {
                     'StrategyParameterName': 'Aggressivity',
@@ -410,9 +399,11 @@ def execute(report_id):
                 'MDUpdateAction': '0',
                 'MDEntryType': '2',
                 'MDEntryPx': '1',
-                'MDEntrySize': oo_qty,
+                'MDEntrySize': '60',
                 'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
+                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                'TradingSessionSubID': '3',
+                'SecurityTradingStatus': '3',
             }
         ]
         send_market_dataT(s_par, case_id_3, market_data6)
@@ -420,14 +411,14 @@ def execute(report_id):
         market_data7 = [
             {
                 'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '26',
+                'MDEntryPx': '0',
+                'MDEntrySize': '0',
                 'MDEntryPositionNo': '1'
             },
             {
                 'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
+                'MDEntryPx': '1',
+                'MDEntrySize': '60',
                 'MDEntryPositionNo': '1'
             }
         ]

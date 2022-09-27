@@ -42,7 +42,7 @@ class QAP_T4261(TestCase):
         self.md_entry_px_incr_r = 1
         self.md_entry_size_incr_r = 360 # for partially fill
         self.md_entry_size_incr_r_new = 317 # child with qty 136 is created
-        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r)
+        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r, self.qty)
         self.last_order_qty = self.qty - self.child_qty
         # endregion
 
