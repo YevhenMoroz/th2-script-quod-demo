@@ -59,6 +59,7 @@ class FrontEnd(Enum):
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
+    DESKS_ID_317 = [""]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values
@@ -87,7 +88,12 @@ class DirectionEnum(Enum):
 class GatewaySide(Enum):
     Sell = "Sell"
     Buy = "Buy"
+    RBSell = "RBSell"
 
+class Aggressivity(Enum):
+    Passive = '1'
+    Neutral = '2'
+    Aggressive = '3'
 
 class MessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -208,6 +214,8 @@ class PartyID(Enum):
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
     party_id_5 = "12345678"
+    party_id_6 = "18831"
+    party_id_7 = "10000"
 
 
 class PartyIDSource(Enum):

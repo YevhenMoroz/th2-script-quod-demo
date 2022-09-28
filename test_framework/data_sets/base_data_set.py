@@ -63,6 +63,7 @@ class BaseDataSet:
     venue_list = None
     isin_security_alt_ids = None
     security_id_source = None
+    hierarchical_levels = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -287,11 +288,6 @@ class BaseDataSet:
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
 
-    def get_settl_currency_by_name(self, name: str):
-        if hasattr(self.settl_currency, name):
-            return getattr(self.settl_currency, name).value
-        raise ValueError(f"{self.settl_currency} not found!")
-
     def get_venue_client_names_by_name(self, name: str):
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
@@ -480,11 +476,6 @@ class BaseDataSet:
         if self.commission:
             return self.commission
 
-    def get_washbook_rule_pair_by_name(self, name: str):
-        if hasattr(self.washbook_rules, name):
-            return getattr(self.washbook_rules, name)
-        raise ValueError(f"{self.washbook_rules} not found!")
-
     def get_pset(self, name: str):
         """
         @param name: name_of_pset
@@ -533,21 +524,6 @@ class BaseDataSet:
         if hasattr(self.scenario, name):
             return getattr(self.scenario, name).value
         raise ValueError(f"{self.scenario} not found!")
-
-    def get_contra_firm(self, name: str):
-        if hasattr(self.contra_firm, name):
-            return getattr(self.contra_firm, name).value
-        raise ValueError(f"{self.contra_firm} not found!")
-
-    def get_isin_security_alt_id_by_name(self, name: str):
-        if hasattr(self.isin_security_alt_ids,name):
-            return getattr(self.isin_security_alt_ids, name).value
-        raise ValueError(f"{self.isin_security_alt_ids} not found")
-
-    def get_security_id_source_by_name_for_listing_on_web_admin(self, name: str):
-        if hasattr(self.security_id_source,name):
-            return getattr(self.security_id_source, name).value
-        raise ValueError(f"{self.security_id_source} not found")
 
     # region WebAdmin getters
 
@@ -835,7 +811,6 @@ class BaseDataSet:
         if hasattr(self.pre_filter, name):
             return getattr(self.pre_filter, name).value
         return ValueError(f"{self.pre_filter,} not found!")
-
     # endregion
 
     # region WebTrading getters

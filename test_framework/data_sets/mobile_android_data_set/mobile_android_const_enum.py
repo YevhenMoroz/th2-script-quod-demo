@@ -3,18 +3,31 @@ from enum import Enum
 
 class MobileUsers(Enum):
     user_1 = "automation_mobile1"
-    user_2 = ""
-    user_3 = "quodsup"
+    user_2 = "automation_mobile2"
+    user_3 = "automation_mobile3"
     user_4 = "QA4"
     user_5 = "QA5"
 
 
 class MobilePasswords(Enum):
     password_1 = "QuodNumber1="
-    password_2 = ""
-    password_3 = "quodsup"
+    password_2 = "QuodNumber2="
+    password_3 = "QuodNumber3="
     password_4 = "QA4"
     password_5 = "QA5"
+
+class UserPersonalDetails(Enum):
+    user_1 = {
+        "FirstName":"FName",
+        "LastName":"LName",
+        "DateOfBirth":"2001-03-02",
+        "Address":"Highway",
+        "Country":"Ukraine",
+        "PreferredCommunicationMethod":"Email",
+        "E-mail":"mail@quodfinancial.com",
+        "Mobile":"123456789",
+        "PasswordExpiration":"2027-11-03",
+    }
 
 class MobileClients(Enum):
     client1_1 = "mobile_auto1_client1"

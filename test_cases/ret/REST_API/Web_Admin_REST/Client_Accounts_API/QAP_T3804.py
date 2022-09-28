@@ -2,6 +2,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.web_admin_api.Client_Accounts_API.RestApiClientMessages import \
@@ -26,17 +27,17 @@ class QAP_T3804(TestCase):
         tested_client = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request(self.api_client_message),
             filter_dict={'clientAccountGroupID': self.client})
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name=f"Check that '{self.client}' is present",
-                                            expected_result="true",
-                                            actual_result=tested_client[0]["alive"])
+        data_validation(test_id=self.test_id,
+                        event_name=f"Check that '{self.client}' is present",
+                        expected_result="true",
+                        actual_result=tested_client[0]["alive"])
         self.api_client_message.modify_client(tested_client[0])
         self.api_client_message.remove_parameter(parameter_name="discloseExec")
         error_response = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.api_client_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name=f"Check that '{self.client}' was not modified without required "
-                                                       "field - 'Disclose Exec'",
-                                            expected_result=self.error_message,
-                                            actual_result=error_response)
+        data_validation(test_id=self.test_id,
+                        event_name=f"Check that '{self.client}' was not modified without required "
+                                   "field - 'Disclose Exec'",
+                        expected_result=self.error_message,
+                        actual_result=error_response)
         # endregion
