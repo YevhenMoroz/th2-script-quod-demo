@@ -1,5 +1,5 @@
 <regression>
-    <target_server_win></target_server_win>
+    <target_server_win>skomanov</target_server_win>
     <name>Regression</name>
     <version>5.1.156.169</version>
     <product_lines>
@@ -351,9 +351,9 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="oms" run="False">
+        <product_line name="oms" run="True">
             <components>
-            <component name="AcceptanceList" run="True">
+            <component name="AcceptanceList" run="False">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
