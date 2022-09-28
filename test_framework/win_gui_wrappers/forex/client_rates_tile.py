@@ -225,4 +225,11 @@ class ClientRatesTile(ClientPricingTile):
         self.compare_values(expected_value=expected_color, actual_value=str(color["PRICING_BUTTON"]),
                             event_name="Check color of button", value_name="Color")
         self.clear_details([self.extract_color_request])
+
+    def check_color_of_executable_button(self, x: int = 0, y: int = 90, expected_color: str = None):
+        self.extract_color_request.get_executable_btn_pixel_color(x, y)
+        color = call(self.cp_service.getCPRatesTileColors, self.extract_color_request.build())
+        self.compare_values(expected_value=expected_color, actual_value=str(color["PRICING_BUTTON"]),
+                            event_name="Check color of button", value_name="Color")
+        self.clear_details([self.extract_color_request])
     # endregion

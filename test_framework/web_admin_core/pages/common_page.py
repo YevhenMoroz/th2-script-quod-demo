@@ -84,7 +84,7 @@ class CommonPage:
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
-            element.click()
+            #element.click()
             element.send_keys(Keys.CONTROL, "A")
             element.send_keys(Keys.CONTROL, "C")
             value_from_element = pyperclip.paste()

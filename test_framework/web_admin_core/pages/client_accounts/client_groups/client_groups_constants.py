@@ -18,6 +18,8 @@ class ClientGroupsConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
+    DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     #   Main page
 
@@ -52,8 +54,9 @@ class ClientGroupsConstants:
     VALUES_TAB_PRICE_PRECISION_XPATH = '//*[@formcontrolname="pxPrecision"]'
 
     #   Dimensions tab
+    DIMENSIONS_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH = '//*[@id="defaultAlgoType"]'
     DIMENSIONS_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultAlgoPolicy"]'
-    DIMENSIONS_TAB_DEFAULT_SOR_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultSORAlgoPolicy"]'
+    DIMENSIONS_TAB_DEFAULT_CHILD_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultSORAlgoPolicy"]'
     DIMENSIONS_TAB_CUSTOM_VALIDATION_RULES_XPATH = '//*[@id="validParamGroup"]'
     DIMENSIONS_TAB_CUSTOM_VALIDATION_RULES_MANAGE_BUTTON_XPATH = '//*[@class="col-sm"]//button'
 
