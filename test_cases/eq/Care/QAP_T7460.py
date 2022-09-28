@@ -27,8 +27,7 @@ class QAP_T7460(TestCase):
     def run_pre_conditions_and_steps(self):
 
         # region Precondition
-        order_1 = self.submit_request.set_default_care_limit(self.data_set.get_recipient_by_name("recipient_user_1"),
-                                                             "1", "Trader")
+        order_1 = self.submit_request.set_default_care_limit(self.data_set.get_recipient_by_name("recipient_user_1"), "1")
         response1 = self.java_api_manager.send_message_and_receive_response(order_1)
 
         ord_id_1 = self.get_response_value(response1, ORSMessageType.OrdReply.value, "OrdReplyBlock", "OrdID")
