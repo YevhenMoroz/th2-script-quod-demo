@@ -170,6 +170,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
+    iceberg = 'ICEBERG'
 
 
 class OrderType(Enum):
