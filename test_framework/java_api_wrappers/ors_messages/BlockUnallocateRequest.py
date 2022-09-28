@@ -17,3 +17,4 @@ class BlockUnallocateRequest(JavaApiMessage):
             }
         }
         super().change_parameters(base_parameters)
+        return self
