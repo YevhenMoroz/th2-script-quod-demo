@@ -2,15 +2,17 @@ from datetime import datetime
 
 from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
+from test_framework.data_sets.message_types import ESMessageType
+from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
-class OrderSubmitOMS(OrderSubmit):
-    def __init__(self, data_set: BaseDataSet, parameters: dict = None):
-        super().__init__()
-        self.change_parameters(parameters)
-        self.data_set = data_set
-        self.base_parameters = {
+class NewOrderReply(JavaApiMessage):
+    def __init__(self, parameters: dict = None):
+        super().__init__(message_type=ESMessageType.NewOrderReply.value)
+        super().change_parameters(parameters)
+
+    def set_default(self, data_set: BaseDataSet):
+        base_parameters = {
             'SEND_SUBJECT': 'QUOD.ES.BUYGTW.REPLY',
             'REPLY_SUBJECT': 'QUOD.BUYGTW.ES.REPLY',
             "Header": {
@@ -37,4 +39,5 @@ class OrderSubmitOMS(OrderSubmit):
                 "VenueAccount": {"VenueActGrpName": data_set.get_venue_client_account("client_1_venue_1")},
             }
         }
+        super().change_parameters(base_parameters)
 

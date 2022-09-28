@@ -51,6 +51,8 @@ class ORSMessageType(Enum):
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
+    PositionReport = 'Order_PositionReport'
+    ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
 
 
 class TradingRestApiMessageType(Enum):
@@ -62,7 +64,6 @@ class TradingRestApiMessageType(Enum):
     NewOrderSingleSimulateReply = "NewOrderSingleSimulateReply"
     OrderModificationRequest = "OrderModificationRequest"
     OrderModificationReply = "OrderModificationReply"
-    OrderModificationReject = "OrderModificationReject"
     OrderModificationReject = "OrderModificationReject"
     OrderCancelRequest = "OrderCancelRequest"
     OrderCancelReply = "OrderCancelReply"
