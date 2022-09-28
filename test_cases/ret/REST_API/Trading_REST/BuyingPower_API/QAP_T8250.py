@@ -48,6 +48,16 @@ class QAP_T8250(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Pre-Condition, create new order with side=Buy
         self.nos_message.set_default_request()
+        self.nos_message.change_parameter(parameter_name='ClientAccountGroupID', new_parameter_value=self.client)
+        self.nos_message.change_parameter(parameter_name='ClientCashAccountID', new_parameter_value=self.cash_account)
+        self.nos_message.change_parameter_in_component(component_name='PreTradeAllocations',
+                                                       fields={'AllocClientAccountID': self.security_account})
+        self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
+        self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
+        # endregion
+
+        # region Pre-Condition, create new order with side=Sell
+        self.nos_message.set_default_request()
         self.nos_message.change_parameter(parameter_name='Side', new_parameter_value='Sell')
         self.nos_message.change_parameter(parameter_name='ClientAccountGroupID', new_parameter_value=self.client)
         self.nos_message.change_parameter(parameter_name='ClientCashAccountID', new_parameter_value=self.cash_account)
@@ -63,14 +73,12 @@ class QAP_T8250(TestCase):
         print(nos_response)
         # endregion
 
-        # region Pre-Condition, check that new position is created
+        # region Pre-Condition, set new InitialQty value for created position and check result
         self.security_position_message.find_positions(security_account_name=self.security_account)
         new_position = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request_with_parameters(self.security_position_message),
             filter_dict={'instrID': self.instrument_id})
-        # endregion
 
-        # region Pre-Condition, set new InitialQty value for created position and check result
         try:
             new_position[0].update({'initialQty': 100})
             new_position[0].update({'cumBuyQty': 0})

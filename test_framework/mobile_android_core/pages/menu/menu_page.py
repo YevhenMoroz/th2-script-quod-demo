@@ -67,11 +67,20 @@ class MenuPage(CommonPage):
 
     # region Preferences
     def set_default_client(self, name):
-        self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).click()
-        self.find_by_xpath(f'//android.view.View[@content-desc="{name}"]').click()
+        self.click_default_client_dropdown()
+        self.click_default_client_selection(name)
 
     def get_default_client(self):
         return self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).get_attribute('content-desc')
+
+    def click_default_client_dropdown(self):
+        self.find_by_xpath(MenuConstants.DEFAULT_CLIENT_DROP_DOWN_LIST).click()
+
+    def click_default_client_selection(self, name):
+        self.find_by_xpath(f'//android.view.View[@content-desc="{name}"]').click()
+
+    def get_default_client_selection_xpath(self, name):
+        return MenuConstants.DEFAULT_CLIENT_SELECTION_START + name + MenuConstants.DEFAULT_CLIENT_SELECTION_END
 
      #TODO: need to create one constant for that, currently incorrect xpath
     def click_on_go_back_button(self):

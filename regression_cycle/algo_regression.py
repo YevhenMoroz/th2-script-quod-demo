@@ -37,11 +37,11 @@ def test_run(parent_id=None):
             pass
         if eval(root.find(".//component[@name='Web_admin']").attrib["run"]):
             pass
-        if eval(root.find(".//component[@name='Mp_dark_dark_phase']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_dark_phase_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='Mp_dark_LIS_and_dark_phase']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='Mp_dark_other']").attrib["run"]):
+        if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
             kepler_sors_mpdark_other_regression.test_run(parent_id=report_id)
         if eval(root.find(".//component[@name='Synth_min_qty']").attrib["run"]):
             kepler_sors_synthminqty_regression.test_run(report_id, version)

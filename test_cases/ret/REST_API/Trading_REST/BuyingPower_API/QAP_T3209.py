@@ -87,6 +87,9 @@ class QAP_T3209(TestCase):
         noss_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
 
+        print(cash_positions[0])
+        print(modified_security_position[0])
+
         buying_power = self.buying_power_manager.calc_buying_power(test_id=self.test_id,
                                                                    response_wa_cash_account=cash_positions[0],
                                                                    response_wa_security_account=
