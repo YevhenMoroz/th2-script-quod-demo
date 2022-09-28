@@ -545,7 +545,7 @@ class RuleManager:
                                                                        account=account,
                                                                        exdestination=exdestination,
                                                                        price=price,
-                                                                       cumQtyBeforeReplace=cumQtyBeforeReplace,
+                                                                       CumQtyBeforeReplace=cumQtyBeforeReplace,
                                                                        tradedQty=tradedQty
                                                               ))
 if __name__ == '__main__':
