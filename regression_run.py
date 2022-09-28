@@ -1,6 +1,7 @@
 from xml.etree import ElementTree
 from custom import basic_custom_actions as bca
-from regression_cycle import algo_regression, retail_regression, web_admin_regression, web_trading_regression
+# from regression_cycle import algo_regression, retail_regression, web_admin_regression, web_trading_regression
+from regression_cycle import oms_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from datetime import datetime

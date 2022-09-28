@@ -50,8 +50,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('Bag ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"Bag Analysis" if version is None else f"Bag Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Bag")
     fe_env = configuration.environment.get_list_fe_environment()[0]

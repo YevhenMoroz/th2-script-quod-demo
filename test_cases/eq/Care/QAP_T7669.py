@@ -40,8 +40,8 @@ class QAP_T7669(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()
