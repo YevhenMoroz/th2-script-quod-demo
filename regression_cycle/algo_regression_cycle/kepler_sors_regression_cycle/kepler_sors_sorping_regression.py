@@ -29,7 +29,6 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4963 import QAP_T4963
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4964 import QAP_T4964
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4966 import QAP_T4966
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4967 import QAP_T4967
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4969 import QAP_T4969
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4970 import QAP_T4970
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4971 import QAP_T4971
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4972 import QAP_T4972
@@ -106,7 +105,6 @@ def test_run(parent_id=None, version=None):
         QAP_T4964(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4969(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4970(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4971(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4972(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
