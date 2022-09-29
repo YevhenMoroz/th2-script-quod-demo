@@ -116,6 +116,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderModificationRequest.value:
+            response = self.act.submitOrderModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -183,6 +189,8 @@ class JavaApiManager:
             elif message_type == ESMessageType.OrdReport.value:
                 response_fix_message = OrdReport()
             elif message_type == ORSMessageType.ManualOrderCrossReply.value:
+                response_fix_message = ManualOrderCrossReply()
+            elif message_type == ORSMessageType.OrderModificationReply.value:
                 response_fix_message = ManualOrderCrossReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)

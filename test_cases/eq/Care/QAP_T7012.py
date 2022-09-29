@@ -33,7 +33,7 @@ class QAP_T7012(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         order_submit = self.submit_request.set_default_care_limit(
-            self.data_set.get_recipient_by_name("recipient_user_1"), "10")
+            self.data_set.get_recipient_by_name("recipient_user_1"), "1")
         self.java_api_manager.send_message_and_receive_response(order_submit)
         res = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value)
         ord_id = res.get_parameter("OrdReplyBlock")["OrdID"]
