@@ -45,17 +45,17 @@ class QAP_T2477(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        eva_rule = self.rm.add_External_Fill("fix-buy-extern-314-stand")
+        # region Precondition
+        eva_rule = self.rm.add_External_Reject("fix-buy-extern-314-stand")
         self.rule_list = [eva_rule]
-        self.rm.add_External_Reject("fix-buy-extern-314-stand")
         self.sleep(3)
-        # region 2
+        # region 3
         self.new_order_single.set_default_mo()
         self.new_order_single.change_parameters(
             {"Account": self.aspect_db, "ExDestination": "BNP-SW"})
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         # endregion
-        # region 3
+        # region 4-5
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.reject)
         self.execution_report.remove_fields_from_component("Instrument",
                                                            ["SecurityType", "Product", "SecurityExchange"])
