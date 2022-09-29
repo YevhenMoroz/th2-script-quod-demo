@@ -42,6 +42,7 @@ class QAP_T4803(TestCase):
         self.delay_for_1st_trade = 1900
         self.iceberg_display_qty = 250
         self.cumQtyForReplaceRule = 500
+        self.partial_fill_ord_status = constants.OrdStatus.PartiallyFilled.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
         # endregion
 
@@ -174,12 +175,10 @@ class QAP_T4803(TestCase):
         self.fix_verifier_buy.check_fix_message(er_replaced_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Replace Child DMA 1 order')
         # endregion
 
-        # TODO Edit ER replace for parent (OrdStatus=1)
-
         # region Check replace parent order
         self.fix_verifier_sell.set_case_id(bca.create_event("Check replace parent order", self.test_id))
         er_replaced_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        # er_replaced_SORPING_order_params.change_parameters(dict(OrdStatus=))
+        er_replaced_SORPING_order_params.change_parameters(dict(OrdStatus=self.partial_fill_ord_status))
         self.fix_verifier_sell.check_fix_message(er_replaced_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
