@@ -1,15 +1,21 @@
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
-from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
+from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
+from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
+from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
+from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
+from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
@@ -21,6 +27,8 @@ class JavaApiManager:
         self.act = Stubs.act_java_api
         self.__session_alias = session_alias
         self.__case_id = case_id
+        self.verifier = Verifier(self.__case_id)
+        self.response = None
 
     def send_message(self, message: JavaApiMessage) -> None:
         self.act.sendMessage(
@@ -84,15 +92,32 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ORSMessageType.Order_BlockUnallocateRequest.value:
+        elif message.get_message_type() == ORSMessageType.BlockUnallocateRequest.value:
             response = self.act.submitOrderBlockUnallocateRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.BookingCancelRequest.value:
+            response = self.act.submitOrderBookingCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.NewOrderList.value:
+            response = self.act.submitNewOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.ManualOrderCrossRequest.value:
+            response = self.act.submitManualOrderCrossRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
         else:
             response = None
-            print(response)
         return self.parse_response(response)
 
     def parse_response(self, response: ActJavaSubmitMessageResponses) -> list:
@@ -145,8 +170,23 @@ class JavaApiManager:
                 response_fix_message = CDOrdNotif()
             elif message_type == ORSMessageType.TradeEntryNotif.value:
                 response_fix_message = Order_TradeEntryNotif()
+            elif message_type == ORSMessageType.NewOrderListReply.value:
+                response_fix_message = NewOrderListReply()
+            elif message_type == ORSMessageType.OrdListNotification.value:
+                response_fix_message = OrdListNotification()
+            elif message_type == ORSMessageType.PositionReport.value:
+                response_fix_message = OrdListNotification()
+            elif message_type == ESMessageType.NewOrderReply.value:
+                response_fix_message = NewOrderReply()
+            elif message_type == ESMessageType.ExecutionReport.value:
+                response_fix_message = ExecutionReport()
+            elif message_type == ESMessageType.OrdReport.value:
+                response_fix_message = OrdReport()
+            elif message_type == ORSMessageType.ManualOrderCrossReply.value:
+                response_fix_message = ManualOrderCrossReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
+        self.response = response_messages
         return response_messages
 
     def get_case_id(self):
@@ -160,3 +200,22 @@ class JavaApiManager:
 
     def set_session_alias(self, session_alias):
         self.__session_alias = session_alias
+
+    def compare_values(self, expected_values: dict, actual_values: dict, event_name: str,
+                       verification_method: VerificationMethod = VerificationMethod.EQUALS):
+        self.verifier.set_event_name(event_name)
+        try:
+            for k, v in expected_values.items():
+                self.verifier.compare_values("Compare: " + k, v, actual_values[k],
+                                             verification_method)
+        except KeyError:
+            print("Element: " + k + " not found")
+        self.verifier.verify()
+        self.verifier = Verifier(self.__case_id)
+
+    def get_last_message(self, message_type) -> JavaApiMessage:
+        self.response.reverse()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                return res
+        raise IOError(f"{message_type} not found")

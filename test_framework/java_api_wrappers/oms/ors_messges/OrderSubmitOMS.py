@@ -38,7 +38,7 @@ class OrderSubmitOMS(OrderSubmit):
             }
         }
 
-    def set_default_care_limit(self, recipient=None, desk=None, role=None, algo_twap=False):
+    def set_default_care_limit(self, recipient=None, desk=None, role=None, external_algo_twap=False):
         params = {'CDOrdAssignInstructionsBlock': {}}
         if recipient:
             params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
@@ -63,7 +63,7 @@ class OrderSubmitOMS(OrderSubmit):
                            "VenueScenarioID": "TWAP",
                            "VenueScenarioVersionID": "9682",
                            "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
-        if algo_twap is not False:
+        if external_algo_twap:
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
@@ -100,6 +100,15 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
-                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care', 'ClOrdID': parent_id, "ParentOrdrList": parent_params})
+                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
+                                         'ClOrdID':  basic_custom_actions.client_orderid(9), "ParentOrdrList": parent_params})
         self.add_tag(params)
+        return self
+
+    def set_default_child_dma(self, parent_id: str = None):
+        self.change_parameters(self.base_parameters)
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
+                                         'ClOrdID': basic_custom_actions.client_orderid(9)})
         return self
