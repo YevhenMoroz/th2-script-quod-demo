@@ -37,6 +37,7 @@ class FxMarketIDs(Enum):
     market_4 = "JPM-SW"
     market_5 = "DB-SW"
     market_9 = "D3"
+    market_10 = "BNP-SW"
 
 
 class FxClients(Enum):
