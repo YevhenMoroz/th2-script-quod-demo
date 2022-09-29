@@ -4,6 +4,7 @@ from enum import Enum
 class FIXMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     ExecutionReport = "ExecutionReport"
+    ExternalExecutionReport = "ExternalExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
     MarketDataRequest = "MarketDataRequest"

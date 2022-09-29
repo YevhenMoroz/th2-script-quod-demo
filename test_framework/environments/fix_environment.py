@@ -9,7 +9,8 @@ class FixEnvironment(BaseEnvironment):
     def __init__(self, environment_type: str = None, sell_side: str = None, sell_side2: str = None,
                  buy_side: str = None, buy_side2: str = None, feed_handler: str = None, drop_copy: str = None,
                  sell_side_rfq: str = None, sell_side_esp: str = None, buy_side_esp: str = None,
-                 feed_handler2: str = None, sell_side_cnx: str = None, buy_side_md: str = None):
+                 feed_handler2: str = None, sell_side_cnx: str = None, buy_side_md: str = None,
+                 external_validation: str = None):
         self.environment_type = environment_type
         self.sell_side = sell_side
         self.sell_side2 = sell_side2
@@ -23,6 +24,7 @@ class FixEnvironment(BaseEnvironment):
         self.feed_handler2 = feed_handler2
         self.sell_side_cnx = sell_side_cnx
         self.buy_side_md = buy_side_md
+        self.external_validation = external_validation
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -59,7 +61,8 @@ class FixEnvironment(BaseEnvironment):
                     feed_handler2=Connectivity.Luna_314_Feed_Handler_Q.value,
                     drop_copy=Connectivity.Luna_314_dc.value,
                     buy_side_md=Connectivity.Luna_314_bs_md.value,
-                    sell_side_cnx=Connectivity.Luna_314_cnx.value
+                    sell_side_cnx=Connectivity.Luna_314_cnx.value,
+                    external_validation=Connectivity.Luna_314_ev.value
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod314_luna_standard.value: site_environment})
