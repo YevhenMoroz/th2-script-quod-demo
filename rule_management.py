@@ -30,7 +30,7 @@ from th2_grpc_sim import sim_pb2_grpc as core_test
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
+               "default_rules": [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
 
 
@@ -116,6 +116,11 @@ class RuleManager:
     # --- ADD RULE SECTION ---
     # Add rule on <session>
     # Example: session = 'fix-fh-fx-paris'
+
+    def add_MDRule(self, session: str):
+        return self.sim.createQuodDefMDRRule2(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
     def add_NewOrdSingleExecutionReportTrade(self, session: str, account: str, venue: str, price: float,
                                              traded_qty: int,
                                              delay: int):
@@ -541,9 +546,9 @@ class RuleManager:
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
-    # rule_manager.remove_rule_by_id(33)
-    rule_manager.print_active_rules()
     # print("_________________________")
     # rule_manager_eq.print_active_rules()
+    Stubs.factory.close()
