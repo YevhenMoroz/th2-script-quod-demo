@@ -28,6 +28,7 @@ class JavaApiManager:
         self.__session_alias = session_alias
         self.__case_id = case_id
         self.verifier = Verifier(self.__case_id)
+        self.response = None
 
     def send_message(self, message: JavaApiMessage) -> None:
         self.act.sendMessage(
@@ -185,6 +186,7 @@ class JavaApiManager:
                 response_fix_message = ManualOrderCrossReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
+        self.response = response_messages
         return response_messages
 
     def get_case_id(self):
@@ -210,3 +212,10 @@ class JavaApiManager:
             print("Element: " + k + " not found")
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
+
+    def get_last_message(self, message_type) -> JavaApiMessage:
+        self.response.reverse()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                return res
+        raise IOError(f"{message_type} not found")
