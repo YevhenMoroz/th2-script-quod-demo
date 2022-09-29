@@ -17,7 +17,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted, \
+    TemplateOrderCancelReplaceExecutionReportWithTrade
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -543,7 +544,15 @@ class RuleManager:
                                                                avgPrice=avgPrice,
                                                                delay=delay))
 
-
+    def add_OrderCancelReplaceRequestExecutionReportWithTrade(self, session: str, account: str, exdestination: str, price: float, cumQtyBeforeReplace: int, tradedQty: int):
+        return self.sim.createOrderCancelReplaceExecutionReportWithTrade(
+            request=TemplateOrderCancelReplaceExecutionReportWithTrade(connection_id=ConnectionID(session_alias=session),
+                                                                       account=account,
+                                                                       exdestination=exdestination,
+                                                                       price=price,
+                                                                       CumQtyBeforeReplace=cumQtyBeforeReplace,
+                                                                       tradedQty=tradedQty
+                                                              ))
 if __name__ == '__main__':
     rule_manager = RuleManager()
     rule_manager.print_active_rules()
