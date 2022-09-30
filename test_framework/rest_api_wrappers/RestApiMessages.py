@@ -69,13 +69,12 @@ class RestApiMessages:
         Will implement OR logic, e.g. it will update value if any of the conditions is TRUE
         """
         for item in self.parameters[component_name]:
-            if key_in_component in item.keys():
-                if condition is None:
-                    item.update({key_in_component: new_value})
-                else:
-                    for key in condition.keys():
-                        if item[key] == condition[key]:
-                            item.update({key_in_component: new_value})
+            if condition is None:
+                item.update({key_in_component: new_value})
+            else:
+                for key in condition.keys():
+                    if item[key] == condition[key]:
+                        item.update({key_in_component: new_value})
         return self
 
     def remove_value_from_component(self, component_name, condition_dict: dict):

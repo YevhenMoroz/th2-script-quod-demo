@@ -1,199 +1,174 @@
-import logging
-import time
 from datetime import datetime
 from pathlib import Path
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
-from win_gui_modules.order_book_wrappers import FXOrdersDetails, ExtractionDetail, FXOrderInfo, ExtractionAction
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
+    RestApiClientTierInstrSymbolMessages
 
-timestamp = str(datetime.now().timestamp())
-timestamp = timestamp.split(".", 1)
-timestamp = timestamp[0]
 
-
-def set_price_slippage(service, case_id, status, pip):
-    modify_params = {
-        "instrSymbol": "EUR/GBP",
-        "quoteTTL": 120,
-        "clientTierID": 2400009,
-        "alive": "true",
-        "clientTierInstrSymbolQty": [
+class QAP_T2844(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
+        self.fx_fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
+        self.rest_env = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.execution_report_fill = FixMessageExecutionReportPrevQuotedFX()
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.clint_tier_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
+        self.instrument = {
+            "Symbol": self.gbp_usd,
+            "SecurityType": self.security_type
+        }
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.status = Status.Reject
+        self.md_req_id = "GBP/USD:SPO:REG:HSBC"
+        self.offer_px_1 = 1.18155
+        self.offer_px_2 = 1.18165
+        self.no_md_entries_spot_1 = [
             {
-                "upperQty": 1000000,
-                "indiceUpperQty": 1,
-                "publishPrices": "true"
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18145,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
             },
             {
-                "upperQty": 5000000,
-                "indiceUpperQty": 2,
-                "publishPrices": "true"
-            }
-        ],
-        "clientTierInstrSymbolTenor": [
+                "MDEntryType": "1",
+                "MDEntryPx": self.offer_px_1,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
+            }]
+        self.no_md_entries_spot_2 = [
             {
-                "tenor": "SPO",
-                "minSpread": "0",
-                "maxSpread": "300.5",
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "priceSlippageRange": pip,
-                "validatePriceSlippage": status,
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 1
-                    },
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 2
-                    }
-                ]
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18145,
+                "MDEntrySize": 2000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
             },
             {
-                "tenor": "WK1",
-                "minSpread": "0",
-                "maxSpread": "250",
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "priceSlippageRange": 1,
-                "validatePriceSlippage": "true",
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 2
-                    },
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 1
-                    }
-                ]
-            }
-        ],
-        "clientTierInstrSymbolVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ],
-        "clientTierInstrSymbolActGrp": [
-            {
-                "accountGroupID": "Iridium1"
-            }
-        ],
-        "clientTierInstrSymbolFwdVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ]
-    }
-    service.sendMessage(
-        request=SubmitMessageRequest(
-            message=bca.wrap_message(modify_params, 'ModifyClientTierInstrSymbol', 'rest_wa314luna'),
-            parent_event_id=case_id))
+                "MDEntryType": "1",
+                "MDEntryPx": self.offer_px_2,
+                "MDEntrySize": 2000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
+            }]
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Send MD
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot_1)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
+        # endregion
+        # region Step 1
+        self.rest_massage.find_all_client_tier_instrument()
+        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        params_eur_usd = self.rest_manager. \
+            parse_response_details(params_eur_usd,
+                                   {"clientTierID": self.clint_tier_id, "instrSymbol": self.gbp_usd})
+        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
+            .set_params(params_eur_usd). \
+            update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "true",
+                                      {"tenor": "SPO"})
+        self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "priceSlippageRange", "1",
+                                                    {"tenor": "SPO"})
+        self.rest_manager.send_post_request(self.rest_massage)
+        # endregion
+        # region Step 2
+        self.quote_request.set_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           Account=self.account,
+                                                           Instrument=self.instrument,
+                                                           Currency=self.currency)
+        response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        range_above = str(round(float(self.offer_px_2) + 0.0001, 5))
+        range_bellow = str(round(float(self.offer_px_2) - 0.0001, 5))
+        price_above = str(float(self.offer_px_2) + 0.0003)
+        # endregion
+        #
+        # region Step 3
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot_2)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
+        # endregion
+        # region Step 4
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.new_order_single.change_parameter("Price", price_above)
+        self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
+                                                               text=f"invalid price")
+        self.fix_verifier_sell.check_fix_message(self.execution_report)
+        # endregion
+        # region Step 5
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
+                                                               text=f"order price is not ranging in [{range_bellow}, "
+                                                                    f"{range_above}]")
+        self.fix_verifier_dc.check_fix_message(self.execution_report)
+        # endregion
+        # region Step 6
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.new_order_single.change_parameter("Price", self.offer_px_2)
+        self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
+        self.execution_report_fill.set_params_from_new_order_single(self.new_order_single)
+        self.fix_verifier_sell.check_fix_message(self.execution_report_fill)
 
-def check_order_book(base_request, act_ob, case_id, qty, status, notes):
-    ob = FXOrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(extraction_id)
-    ob.set_filter(["Qty", qty])
-    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
-    ob_notes = ExtractionDetail("orderBook.notes", "FreeNotes")
-    ob.add_single_order_info(
-        FXOrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_sts,
-                                                                                 ob_notes])))
+        # endregion
 
-    response = call(act_ob.getOrdersDetails, ob.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("Sts", status, response[ob_sts.name])
-    verifier.compare_values("FreeNotes", notes, response[ob_notes.name])
-    verifier.verify()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "false",
+                                                    {"tenor": "SPO"})
+        self.rest_manager.send_post_request(self.rest_massage)
 
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-
-    api_service = Stubs.api_service
-    ob_service = Stubs.win_act_order_book_fx
-    case_base_request = get_base_request(session_id, case_id)
-
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    symbol = "EUR/GBP"
-    security_type_spo = "FXSPOT"
-    settle_date = spo()
-    settle_type = "0"
-    currency = "EUR"
-    settle_currency = "GBP"
-    side = "1"
-    qty = "1000000"
-
-    try:
-        # Step 1
-        set_price_slippage(api_service, case_id, "true", 2)
-        # Step 2
-        time.sleep(3)
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                   securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                   currency=currency, side=side, securityid=symbol, settlcurrency=settle_currency,
-                                   account=account)
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote()
-        rfq.verify_quote_pending()
-        price = rfq.extract_filed("OfferPx")
-        range_above = str(round(float(price) + 0.0002, 5))
-        range_bellow = str(round(float(price) - 0.0002, 5))
-        price_above = str(round(float(price) + 0.001, 5))
-        rfq.send_new_order_single(price_above)
-        text = f"order price is not ranging in [{range_bellow}, {range_above}]"
-        rfq.verify_order_rejected(text=text)
-        check_order_book(case_base_request, ob_service, case_id, qty, "Rejected", text)
-        # Step 3
-        rfq.send_new_order_single(price)
-        rfq.verify_order_pending().verify_order_filled()
-        check_order_book(case_base_request, ob_service, case_id, qty, "Terminated", "")
-        # Step 4
-        set_price_slippage(api_service, case_id, "false", 2)
-        time.sleep(3)
-        # Step 5
-        new_params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                       securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                       currency=currency, side=side, securityid=symbol, settlcurrency=settle_currency,
-                                       account=account)
-        new_rfq = FixClientSellRfq(new_params)
-        new_rfq.send_request_for_quote()
-        new_rfq.verify_quote_pending()
-        new_price = new_rfq.extract_filed("OfferPx")
-        new_price_bellow = str(round(float(new_price) - 0.0001, 5))
-
-        new_rfq.send_new_order_single(new_price_bellow)
-        text = f"order price ({new_price_bellow}) lower than offer ({new_price})"
-        new_rfq.verify_order_rejected(text=text)
-        check_order_book(case_base_request, ob_service, case_id, qty, "Rejected", text)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
