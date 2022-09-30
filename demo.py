@@ -88,8 +88,8 @@ def test_run():
         # region __DMA__ block
         # QAP_T3343(report_id, configuration_trading_api_dma.data_set,
         #                     configuration_trading_api_dma.environment).execute()
-        # QAP_T3520(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
+        QAP_T3520(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
         # QAP_T3521(report_id, configuration_trading_api_dma.data_set,
         #                     configuration_trading_api_dma.environment).execute()
         # endregion
@@ -97,8 +97,8 @@ def test_run():
         # region Trading API __RiskLimit__ block
         # QAP_T3141(report_id, configuration_trading_api_risk_limit.data_set,
         #           configuration_trading_api_risk_limit.environment).execute()
-        QAP_T3505(report_id, configuration_trading_api_risk_limit.data_set,
-                  configuration_trading_api_risk_limit.environment).execute()
+        # QAP_T3505(report_id, configuration_trading_api_risk_limit.data_set,
+        #           configuration_trading_api_risk_limit.environment).execute()
         # QAP_T3506(report_id, configuration_trading_api_risk_limit.data_set,
         #           configuration_trading_api_risk_limit.environment).execute()
         # endregion
