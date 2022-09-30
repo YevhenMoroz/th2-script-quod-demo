@@ -179,7 +179,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
-    iceberg = 'ICEBERG'
+    qa_iceberg = 'QA_Auto_ICEBERG'
 
 
 class OrderType(Enum):
@@ -226,6 +226,9 @@ class PartyID(Enum):
     party_id_5 = "12345678"
     party_id_6 = "18831"
     party_id_7 = "10000"
+    party_id_8 = "TestClientID"
+    party_id_9 = "TestTraderID"
+    party_id_10 = "TestTraderName"
 
 
 class PartyIDSource(Enum):
@@ -235,6 +238,7 @@ class PartyIDSource(Enum):
 
 class PartyRole(Enum):
     party_role_3 = "3"
+    party_role_11 = "11"
     party_role_12 = "12"
     party_role_24 = "24"
     party_role_58 = "58"
