@@ -8,10 +8,10 @@ class MobileDataSet(BaseDataSet):
     """
     user = MobileUsers
     password = MobilePasswords
-    client = MobileClient
+    user_personal_details = UserPersonalDetails
+    clients = MobileClients
     accounts = MobileAccount
-    cash_account = MobileCashAccount
+    cash_accounts = MobileCashAccounts
     instrument = MobileInstrument
     order_type = MobileOrderType
     time_in_force = MobileTimeInForce
-    # index = MobileIndex

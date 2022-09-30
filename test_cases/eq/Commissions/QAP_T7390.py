@@ -33,14 +33,14 @@ class QAP_T7390(TestCase):
         self.price = "4232"
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.case_id = create_event(self.__class__.__name__, self.report_id)
-        self.middle_office = OMSMiddleOffice(self.case_id, self.session_id)
+        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.trades = OMSTradesBook(self.case_id, self.session_id)
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.case_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.case_id)
-        self.order_book = OMSOrderBook(self.case_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.case_id, self.session_id)
+        self.trades = OMSTradesBook(self.test_id, self.session_id)
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -48,15 +48,17 @@ class QAP_T7390(TestCase):
         self.rest_commission_sender.set_modify_fees_message(recalculate=True).change_message_params(
             {"venueID": self.data_set.get_venue_by_name("venue_2")}).send_post_request()
         self.__send_fix_orders()
+
         self.cl_inbox.accept_order(filter={ClientInboxColumns.order_id.value: self.order_id})
         self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: self.order_id})
-        self.order_book.complete_order()
+        filter_list = [OrderBookColumns.order_id.value, self.order_id]
+        self.order_book.complete_order(filter_list=filter_list)
         self.__verify_fees_of_executions()
         self.middle_office.set_modify_ticket_details(remove_fee=True)
-        self.middle_office.book_order()
+        self.middle_office.book_order(filter=filter_list)
         self.__verify_fees_in_middle_office()
-        self.middle_office.approve_block()
-        self.middle_office.allocate_block()
+        self.middle_office.approve_block(filter_list=filter_list)
+        self.middle_office.allocate_block(filter=filter_list)
         self.__verify_fees_in_allocation_ticket()
 
     def __send_fix_orders(self):
@@ -80,5 +82,5 @@ class QAP_T7390(TestCase):
 
     def __verify_fees_in_allocation_ticket(self):
         fees = self.middle_office.extract_allocate_value(AllocationsColumns.total_fees.value)
-        self.middle_office.compare_values({AllocationsColumns.total_fees.value: "1.123"}, fees,
+        self.middle_office.compare_values({AllocationsColumns.total_fees.value: "0.01"}, fees,
                                           event_name='Check values')

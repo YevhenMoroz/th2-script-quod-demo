@@ -4,6 +4,7 @@ class ExecutionStrategiesConstants:
     # --MAIN MENU--
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     OK_BUTTON_XPATH="//*[text()='Ok']"
+    DISPLAYED_EXECUTION_STRATEGY_XPATH = '//*[text()="{}"]'
     # --more actions
     MORE_ACTIONS_BUTTON_XPATH = "//nb-icon[@title='More Actions']"
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
@@ -11,7 +12,7 @@ class ExecutionStrategiesConstants:
     DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     # --------------filters
-    NEW_BUTTON_AT_MAIN_MENU_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_AT_MAIN_MENU_XPATH = '//*[normalize-space()="Execution Strategies"]//..//..//*[normalize-space()="New"]'
     REFRESH_PAGE_AT_MAIN_MENU_XPATH = '//*[@data-name="refresh"]'
     SAVE_CHANGE_CRITERIA_AT_MAIN_MENU_XPATH = "//*[text()='Change criteria']"
     CHANGE_CRITERIA_AT_MAIN_MENU_XPATH = '//*[@data-name="settings"]'

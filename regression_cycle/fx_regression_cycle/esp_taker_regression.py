@@ -30,8 +30,8 @@ def run_full_amount(report_id, session_id):
     QAP_T2756.execute(report_id, session_id)
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('ESP Taker regression', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_Taker_ESP" if version is None else f"FX_Taker_ESP | {version}", parent_id)
     session_id = set_session_id(target_server_win="quod_11q")
     data_set = FxDataSet()
     configuration = ComponentConfiguration("ESP_Taker")

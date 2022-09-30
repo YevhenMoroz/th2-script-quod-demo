@@ -1,83 +1,89 @@
 import logging
 import time
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7247"
-    qty = "5000"
-    client = "MOClient"
-    price = 5
-    side = 2
-    tif = 1
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    buy_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity()
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, client + "_PARIS", "XPAR", True, int(qty),
-                                                        price)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, side, client, 1, qty, tif)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
+@try_except(test_id=Path(__file__).name[:-3])
+class QAP_T7247(TestCase):
 
-    params = {
-        'OrderQtyData': '*',
-        'ExecType': 'F',
-        'OrdStatus': '2',
-        'Side': side,
-        'TimeInForce': tif,
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': response.response_messages_list[0].fields['OrderID'].simple_value,
-        'TransactTime': '*',
-        'ExpireDate': '*',
-        'AvgPx': '*',
-        'Account': '*',
-        'Currency': '*',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'Instrument': '*',
-        'QuodTradeQualifier': '*',
-        'BookID': '*',
-        'SettlDate': '*',
-        'LastExecutionPolicy': '*',
-        'TradeDate': '*',
-        'SecondaryOrderID': '*',
-        'LastMkt': '*',
-        'Text': '*',
-        'SettlType': '*',
-        'ExecBroker': '*',
-        'SecondaryExecID': '*',
-        'ExDestination': '*',
-        'NoMiscFees': [
-            {
-                'MiscFeeAmt': '*',
-                'MiscFeeCurr': '*',
-                'MiscFeeType': '*'
-            }
-        ],
-        'GrossTradeAmt': '*',
-        'CommissionData': '*'
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_bo_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, message_name='Check params')
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.bs_connectivity = self.fix_env.buy_side
+        self.ss_connectivity = self.fix_env.sell_side
+        self.dc_connectivity = self.fix_env.drop_copy
+        self.client = self.data_set.get_client_by_name("client_com_1")
+        self.cur = self.data_set.get_currency_by_name('currency_3')
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
+        self.mic = self.data_set.get_mic_by_name("mic_2")
+        self.qty = self.fix_message.get_parameter("OrderQtyData")['OrderQty']
+        self.price = self.fix_message.get_parameter("Price")
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.comm_profile = self.data_set.get_comm_profile_by_name("abs_amt_2")
+        self.com_cur = self.data_set.get_currency_by_name('currency_2')
+        self.venue = self.data_set.get_venue_by_name("venue_2")
+        self.fee = self.data_set.get_fee_by_name("fee1")
+        self.fee_type = self.data_set.get_misc_fee_type_by_name("other")
+        self.intr_type = self.data_set.get_instr_type_name('equity')
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee,
+                                                            comm_profile=self.comm_profile,
+                                                            fee_type=self.fee_type).change_message_params(
+            {'venueID': self.venue, "instrType": self.intr_type,
+             "orderCommissionProfileID": self.comm_profile}).send_post_request()
+        # endregion
+        # region send order
+        self.__send_fix_orders()
+        # endregion
+        # region Check ExecutionReports
+        self.exec_report.set_default_filled(self.fix_message)
+        no_misc = {'NoMiscFees': [{'MiscFeeAmt': '0.00001', 'MiscFeeCurr': self.com_cur, 'MiscFeeType': '7'}]}
+        self.exec_report.change_parameters(
+            {'Currency': self.cur, 'SecondaryOrderID': '*', "NoMiscFees": no_misc, 'Text': '*', 'LastMkt': self.mic,
+             "CommissionData": "*", "ExecBroker": "*", "tag5120": "*", "NoParty": "*", "QuodTradeQualifier": "*",
+             'BookID': "*", "OrderID": self.order_id})
+        self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report)
+        # endregion
+
+    def __send_fix_orders(self):
+        try:
+            nos_rule = self.rule_manager. \
+                add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(self.bs_connectivity,
+                                                                         self.client_for_rule,
+                                                                         self.mic,
+                                                                         float(self.price), float(self.price),
+                                                                         int(self.qty), int(self.qty), 1)
+            self.fix_message.change_parameters(
+                {"Account": self.client,
+                 "ExDestination": self.mic,
+                 "Currency": self.cur})
+            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            self.order_id = self.response[0].get_parameter("OrderID")
+        finally:
+            time.sleep(2)
+            self.rule_manager.remove_rule(nos_rule)

@@ -13,7 +13,7 @@ from win_gui_modules.order_book_wrappers import OrdersDetails, OrderInfo, Cancel
     SecondLevelExtractionDetails, SplitBookingDetails, ManualCrossDetails, TransferOrderDetails, \
     TransferPoolDetailsCLass, InternalTransferActionDetails, MassManualExecutionDetails, \
     UnmatchAndTransferDetails, SubLvlInfo, GetSubLvlDetails, MassExecSummaryDetails, QuickButtonCreationDetails, \
-    ActionsHotKeysDetails
+    ActionsHotKeysDetails, ForceCancelOrderDetails
 from win_gui_modules.order_ticket_wrappers import NewOrderDetails
 
 
@@ -43,12 +43,13 @@ class OMSOrderBook(BaseOrderBook):
         self.second_level_tab_details = SecondLevelTabDetails()
         self.second_level_extraction_details = SecondLevelExtractionDetails()
         self.mass_exec_summary_average_price_detail = MassExecSummaryAveragePriceDetails(self.base_request)
+        self.mass_exec_summary_detail = MassExecSummaryDetails(self.base_request)
         self.extraction_error_message_details = ExtractDirectsValuesRequest.DirectsExtractedValue()
         self.extract_direct_values = ExtractDirectsValuesRequest()
         self.hot_keys_details = ActionsHotKeysDetails(self.base_request)
         self.extraction_from_second_level_tabs_call = Stubs.win_act_order_book.extractionFromSecondLevelTabs
         self.mass_exec_summary_average_price_call = Stubs.win_act_order_book.massExecSummaryAtAveragePrice
-        self.mass_execution_summary_call = Stubs.win_act_order_book.massExecSummary
+        self.mass_exec_summary_call = Stubs.win_act_order_book.massExecSummary
         self.extract_booking_block_values_call = Stubs.win_act_order_book.extractBookingBlockValues
         self.direct_moc_request_correct_call = Stubs.win_act_order_book.orderBookDirectMoc
         self.direct_child_care_call = Stubs.win_act_order_book.orderBookDirectChildCare
@@ -105,4 +106,8 @@ class OMSOrderBook(BaseOrderBook):
         self.edit_quick_button_call = Stubs.win_act_order_book.editSplitShortcutCreationButton
         self.click_quick_button_call = Stubs.win_act_order_book.clickSplitShortcutCreationButton
         self.hot_keys_action_call = Stubs.win_act_order_book.selectedRowInOrderBook
+        self.force_cancel_order_call = Stubs.win_act_order_book.forceCancelOrder
+        self.force_cancel_order_details = ForceCancelOrderDetails(self.base_request)
+        self.mark_reviewed_call = Stubs.win_act_order_book.markReviewed
+        self.mark_unreviewed_call = Stubs.win_act_order_book.markUnreviewed
         # endregion

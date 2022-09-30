@@ -32,9 +32,7 @@ class QAP_T3837(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_settlement_model_page()
-        time.sleep(2)
         page = SettlementModelPage(self.web_driver_container)
         page.click_on_new()
 
@@ -46,25 +44,10 @@ class QAP_T3837(CommonTestCase):
             values_sub_wizard = SettlementModelValuesSubWizard(self.web_driver_container)
             wizard = SettlementModelWizard(self.web_driver_container)
             values_sub_wizard.set_name(self.name)
-            time.sleep(1)
             wizard.click_on_save_changes()
-            time.sleep(2)
-            self.verify("Is description and settl location fields required", exception_message,
+            self.verify("Entity with only name not save", exception_message,
                         wizard.get_incorrect_or_missing_values_exception())
-            time.sleep(2)
-            values_sub_wizard.set_description(self.description)
-            time.sleep(1)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            self.verify("Is Name and settl location fields required", exception_message,
-                        wizard.get_incorrect_or_missing_values_exception())
-            time.sleep(2)
-            values_sub_wizard.set_settl_location(self.settl_location)
-            time.sleep(1)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            self.verify("Is Name and description fields required", exception_message,
-                        wizard.get_incorrect_or_missing_values_exception())
+
             self.verify("Is name field mandatory (using check in DOM)", True,
                         values_sub_wizard.is_name_field_required())
             self.verify("Is description field mandatory (using check in DOM)", True,

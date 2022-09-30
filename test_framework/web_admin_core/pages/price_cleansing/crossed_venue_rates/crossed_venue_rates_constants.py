@@ -19,6 +19,7 @@ class CrossedVenueRatesConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    SEARCHED_ENTITY = '//*[text()="{}"]'
 
     # Main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
