@@ -152,7 +152,7 @@ class QAP_T4999(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
         self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo()
-        self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(AlgoCst01=self.party_id))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_pending)
