@@ -101,6 +101,9 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+class QSMessageType(Enum):
+    QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
 
