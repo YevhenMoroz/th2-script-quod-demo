@@ -14,7 +14,6 @@ from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX imp
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
-
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -83,7 +82,7 @@ class QAP_T2844(TestCase):
             {
                 "MDEntryType": "0",
                 "MDEntryPx": 1.18145,
-                "MDEntrySize": 1000000,
+                "MDEntrySize": 2000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
@@ -93,7 +92,7 @@ class QAP_T2844(TestCase):
             {
                 "MDEntryType": "1",
                 "MDEntryPx": self.offer_px_2,
-                "MDEntrySize": 1000000,
+                "MDEntrySize": 2000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
@@ -110,17 +109,18 @@ class QAP_T2844(TestCase):
         self.sleep(2)
         # endregion
         # region Step 1
-        # self.rest_massage.find_all_client_tier_instrument()
-        # params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
-        # params_eur_usd = self.rest_manager. \
-        #     parse_response_details(params_eur_usd,
-        #                            {"clientTierID": self.clint_tier_id, "instrSymbol": self.gbp_usd})
-        # self.rest_massage.clear_message_params().modify_client_tier_instrument() \
-        #     .set_params(params_eur_usd). \
-        #     update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "true",
-        #                               {"tenor": "SPO"})
-        # self.rest_massage.add_value_to_component("clientTierInstrSymbolTenor", ["priceSlippageRange", "1"])
-        # self.rest_manager.send_post_request(self.rest_massage)
+        self.rest_massage.find_all_client_tier_instrument()
+        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        params_eur_usd = self.rest_manager. \
+            parse_response_details(params_eur_usd,
+                                   {"clientTierID": self.clint_tier_id, "instrSymbol": self.gbp_usd})
+        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
+            .set_params(params_eur_usd). \
+            update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "true",
+                                      {"tenor": "SPO"})
+        self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "priceSlippageRange", "1",
+                                                    {"tenor": "SPO"})
+        self.rest_manager.send_post_request(self.rest_massage)
         # endregion
         # region Step 2
         self.quote_request.set_rfq_params()
@@ -165,17 +165,10 @@ class QAP_T2844(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # self.rest_massage.find_all_client_tier_instrument()
-        # params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
-        # params_eur_usd = self.rest_manager. \
-        #     parse_response_details(params_eur_usd,
-        #                            {"clientTierID": self.clint_tier_id, "instrSymbol": self.eur_usd})
-        # self.rest_massage.clear_message_params().modify_client_tier_instrument() \
-        #     .set_params(params_eur_usd). \
-        #     update_value_in_component("clientTierInstrSymbolTenorQty", "validatePriceSlippage", "true",
-        #                               {"tenor": "SPO"}) \
-        #     .update_value_in_component("clientTierInstrSymbolTenorQty", "priceSlippageRange", "1", {"tenor": "SPO"})
-        # self.rest_manager.send_post_request(self.rest_massage)
+        self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "false",
+                                                    {"tenor": "SPO"})
+        self.rest_manager.send_post_request(self.rest_massage)
+
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
