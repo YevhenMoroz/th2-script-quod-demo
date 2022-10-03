@@ -95,7 +95,7 @@ class QAP_T4912(TestCase):
         self.rule_list = [ocr_rule, nos_dma_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today()
         # start_time = now.strftime("%Y%m%d-%H:%M:%S")
         start_time = now.strftime("%Y-%b-%d %H:%M:%S")
         end_time_init = (now + timedelta(minutes=9)).strftime("%Y-%b-%d %H:%M:%S")

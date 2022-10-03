@@ -17,7 +17,9 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
+    TemplateExternalExecutionReport
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -43,6 +45,10 @@ class RuleManager:
         self.core = sim.value["core"]
 
     # Console output list of IDs active rules
+    # def wait_till_rule_is_up(self):
+    #
+    # def wait_till_rule_is_down(self):
+
     def print_active_rules(self):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
@@ -197,7 +203,8 @@ class RuleManager:
                                                cancel=cancel,
                                                delay=delay))
 
-    def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int, delay: int = 0):
+    def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int,
+                                      delay: int = 0):
         return self.sim.createOrderCancelRequestWithQty(
             request=TemplateOrderCancelRequestWithQty(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
@@ -252,6 +259,21 @@ class RuleManager:
                                                                     ConnectionID(session_alias=session), min=1,
                                                                     max=2, interval=30))
 
+    def add_External_Cancel(self, session: str):
+        return self.sim.createExternalExecutionReportResponseCancelled(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
+
+    def add_External_Fill(self, session: str):
+        return self.sim.createExternalExecutionReportResponseFilled(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
+
+    def add_External_Reject(self, session: str):
+        return self.sim.createExternalExecutionReportResponseRejected(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
+
     def add_SingleExec(self, party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str,
                        mask_as_connectivity: str):
         return self.sim.createQuodSingleExecRule(
@@ -281,7 +303,8 @@ class RuleManager:
                                                        trade=trade,
                                                        price=price))
 
-    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float, delay: int = 0):
+    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float,
+                             delay: int = 0):
         return self.sim.createNewOrdSingleIOC(
             request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
                                             account=account,
@@ -517,7 +540,8 @@ class RuleManager:
 
         # ------------------------
 
-    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int, reply_delay: int = 0):
+    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int,
+                                      reply_delay: int = 0):
         return self.sim.createNewOrdSingleRQFRejected(
             request=TemplateNewOrdSingleRQFRejected(
                 connection_id=ConnectionID(session_alias=session),

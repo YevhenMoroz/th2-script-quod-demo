@@ -81,3 +81,6 @@ class ClientGroupsPage(CommonPage):
 
     def get_rounding_direction(self):
         return self.find_by_xpath(ClientGroupsConstants.MAIN_PAGE_ROUNDING_DIRECTION_XPATH).text
+
+    def is_searched_client_group_found_by_name(self, name):
+        return self.is_element_present(ClientGroupsConstants.DISPLAYED_ENTITY_XPATH.format(name))

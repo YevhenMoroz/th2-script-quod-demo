@@ -31,6 +31,7 @@ class Connectivity(Enum):
     Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
     Luna_314_ja = "314_java_api"
+    Luna_314_ev = "fix-buy-extern-314-stand"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -170,6 +171,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
+    iceberg = 'ICEBERG'
 
 
 class OrderType(Enum):

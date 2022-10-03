@@ -4,6 +4,7 @@ from enum import Enum
 class FIXMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     ExecutionReport = "ExecutionReport"
+    ExternalExecutionReport = "ExternalExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
     MarketDataRequest = "MarketDataRequest"
@@ -99,6 +100,9 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+
+class QSMessageType(Enum):
+    QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
 
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
