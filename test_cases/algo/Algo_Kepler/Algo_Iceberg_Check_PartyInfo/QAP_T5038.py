@@ -34,7 +34,6 @@ class QAP_T5038(TestCase):
         self.qty = 500
         self.price = 10
         self.display_qty = 250
-        self.dark_price = 30
         self.traded_qty = 0
         self.qty_for_md = 1000
         self.price_ask = 44
@@ -176,7 +175,7 @@ class QAP_T5038(TestCase):
         # endregion
 
         # region Check 1st child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
         self.dma_1_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_LitDark_Iceberg_params_with_PartyInfo()
         self.dma_1_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
