@@ -268,7 +268,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
     log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
-    log_319_check_the_lis_amount = "log319-check-the-lis=amount"
+    log_319_check_the_lis_amount = "log319-check-the-lis-amount"
     log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
 
 
