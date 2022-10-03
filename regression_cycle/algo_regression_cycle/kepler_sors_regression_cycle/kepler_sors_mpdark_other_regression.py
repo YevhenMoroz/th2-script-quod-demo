@@ -1,6 +1,10 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4158 import QAP_T4158
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4360 import QAP_T4360
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4429 import QAP_T4429
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4431 import QAP_T4431
 
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4522 import QAP_T4522
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4707 import QAP_T4707
@@ -90,6 +94,10 @@ def test_run(parent_id=None, version=None):
     try:
         configuration = ComponentConfiguration("Mp_dark")
         # region MP Dark (other)
+        QAP_T4158(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4360(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4429(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4431(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4521(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4522(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4578(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -117,7 +125,6 @@ def test_run(parent_id=None, version=None):
         QAP_T4738(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4739(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4358(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
