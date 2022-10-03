@@ -1,5 +1,6 @@
 import getpass
 import logging
+import os
 import random
 import string
 from pathlib import Path
@@ -22,8 +23,7 @@ class QAP_T7078(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.username = getpass.getuser()
-        self.path_xlsx = "C:\\Users\\" + self.username + '\\PycharmProjects\\th2-script-quod-demo\\test_cases\\eq\\Basket' \
-                                          '\\Basket_import_files\\BasketTemplate_withHeader_diff_currency.xlsx'
+        self.path_xlsx = os.path.abspath("Basket_import_files\BasketTemplate_withHeader_diff_currency.xlsx")
         self.client = self.data_set.get_client_by_name('client_pos_1')
         self.template = "TemplateWithCurrencyAndVanue"
         self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
@@ -42,9 +42,9 @@ class QAP_T7078(TestCase):
         # endregion
         # region Check Basket book
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
-            {OrderBookColumns.currency.value: self.data_set.get_currency_by_name("usd")})
+            {OrderBookColumns.currency.value: "USD"})
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
-            {OrderBookColumns.currency.value: self.data_set.get_currency_by_name("uah")})
+            {OrderBookColumns.currency.value: "UAH"})
         # endregion
 
 

@@ -56,13 +56,11 @@ class QAP_T7324(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        time.sleep(10)
         self.ssh_client.send_command("qrestart all")
         time.sleep(100)
         # endregion
 
         # region create CO  order (precondition)
-        print(self.java_api_connectivity)
         self.fix_message.set_default_care_limit()
         self.fix_message.change_parameters(
             {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
@@ -77,7 +75,8 @@ class QAP_T7324(TestCase):
         self.trade_entry_message.set_default_trade(order_id)
         self.trade_entry_message.update_fields_in_component('TradeEntryRequestBlock',
                                                             {'ExecQty': self.qty, 'ExecPrice': self.price,
-                                                             'ReportVenueID': self.data_set.get_venue_by_name('venue_2'),
+                                                             'ReportVenueID': self.data_set.get_venue_by_name(
+                                                                 'venue_2'),
                                                              'TradePublishIndicator': 'PTR',
                                                              'TargetAPA': 'LUK',
                                                              'AssistedReportAPA': 'NAS',
@@ -91,13 +90,12 @@ class QAP_T7324(TestCase):
         execution_report.remove_parameter('SecondaryOrderID')
         execution_report.remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
-            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '6'})
+            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '6', 'TradePublishIndicator': '*'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
 
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        time.sleep(5)
         self.ssh_client.send_command("qrestart all")
         time.sleep(100)

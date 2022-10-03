@@ -7,11 +7,14 @@ class OrderTicketPage(CommonPage):
     def __init__(self, driver: AppiumDriver):
         super().__init__(driver)
 
+    def click_back_button(self):
+        self.find_by_xpath(OrderTicketConstants.ARROW_BACK).click()
+
     def click_on_buy_side(self):
-        self.find_by_xpath(OrderTicketConstants.BUY_SIDE)
+        self.find_by_xpath(OrderTicketConstants.BUY_SIDE).click()
 
     def click_on_sell_side(self):
-        self.find_by_xpath(OrderTicketConstants.SELL_SIDE)
+        self.find_by_xpath(OrderTicketConstants.SELL_SIDE).click()
 
     def click_on_instrument(self, instrument):
         pass

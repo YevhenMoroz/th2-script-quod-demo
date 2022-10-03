@@ -57,7 +57,6 @@ class QAP_T7170(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        time.sleep(5)
         self.ssh_client.send_command("qrestart all")
         time.sleep(110)
         # endregion
@@ -95,7 +94,7 @@ class QAP_T7170(TestCase):
         execution_report.set_default_filled(self.fix_message)
         execution_report.remove_parameter('SecondaryOrderID').remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
-            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0', 'TradePublishIndicator': '*'})
+            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         execution_report.change_parameters({'ClOrdID': client_order_id_2})
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
@@ -104,6 +103,5 @@ class QAP_T7170(TestCase):
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        time.sleep(5)
         self.ssh_client.send_command("qrestart all")
         time.sleep(110)

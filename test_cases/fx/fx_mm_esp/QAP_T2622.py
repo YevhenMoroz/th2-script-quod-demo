@@ -17,6 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
 
 
 class QAP_T2622(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -34,7 +35,7 @@ class QAP_T2622(TestCase):
                 'Symbol': self.data_set.get_symbol_by_name('symbol_1'),
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
-            'SettlType': self.data_set.get_settle_type_by_name('fx_spot'), }]
+            'SettlType': self.data_set.get_settle_type_by_name('spot'), }]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
 
     @try_except(test_id=Path(__file__).name[:-3])

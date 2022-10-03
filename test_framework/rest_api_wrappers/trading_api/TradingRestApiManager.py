@@ -43,11 +43,11 @@ class TradingRestApiManager:
             parent_event_id=self.case_id,
             description=f"Send http request and get two responses: http and web_socket",
             expected_messages=[
-                ExpectedMessage(
-                    message_type=trd_api_message.get_response_type_http(),
-                    key_fields=trd_api_message.key_fields_http_response,
-                    connection_id=ConnectionID(session_alias=self.session_alias_http)
-                ),
+                # ExpectedMessage(
+                #     message_type=trd_api_message.get_response_type_http(),
+                #     key_fields=trd_api_message.key_fields_http_response,
+                #     connection_id=ConnectionID(session_alias=self.session_alias_http)
+                # ),
 
                 ExpectedMessage(
                     message_type=trd_api_message.get_message_type_web_socket(),

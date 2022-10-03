@@ -26,8 +26,8 @@ class RetTradingApiInstruments(Enum):
         SecurityExchange="XNSE"
     )
     instrument_4 = dict(
-        InstrSymbol="SBIN-EQ[NSE]",
-        SecurityID="3045",
+        InstrSymbol="VALECHAENG-EQ[NSE]",
+        SecurityID="13555",
         SecurityIDSource="ExchSymb",
         InstrType="Equity",
         SecurityExchange="XNSE"
@@ -49,6 +49,8 @@ class RetInstrumentID(Enum):
     instrument_id_2 = "ePKRr68Nr7pDFdVkx6amaQ"
     # SBIN-EQ[NSE]
     instrument_id_3 = "0ihdikxdDxvmz9PFjLsDRw"
+    # VALECHAENG-EQ[NSE]
+    instrument_id_4 = "gVZuHbpY32wstjJNQ18MvA"
 
 
 class RetCurrency(Enum):
@@ -73,6 +75,7 @@ class RetClients(Enum):
     client_4 = "api_client_rin_desk"
     client_5 = "api_client_test_desk"
     client_6 = "api_client_gross"
+    client_7 = "client_test_limit"
 
 
 class RetAccounts(Enum):
@@ -82,12 +85,14 @@ class RetAccounts(Enum):
     account_4 = "api_account_rin_desk"
     account_5 = "api_account_test_desk"
     account_6 = "api_account_gross"
+    account_7 = "account_test_limit"
 
 
 class RetCashAccounts(Enum):
     cash_account_1 = "api_cash_account_INR"
     cash_account_2 = "api_cash_account_SAR"
     cash_account_3 = "api_cash_account_gross_INR"
+    cash_account_4 = "cash_account_test_limit_INR"
 
 
 class RetCashAccountCounters(Enum):
@@ -148,7 +153,6 @@ class RetCashTransferTypes(Enum):
         cash_loan_withdrawal="CLW",
         collateral_limit="COL",
         deposit="DEP",
-        end_of_day="EOD",
         reserved_limit="RES",
         temporary_cash="TCD",
         temporary_cash_withdrawal="TCW",
@@ -156,6 +160,24 @@ class RetCashTransferTypes(Enum):
     )
 
 
-class DirectionEnum(Enum):
-    FromQuod = "FIRST"
-    ToQuod = "SECOND"
+class RetHierarchicalLevels(Enum):
+    hierarchical_level_1 = dict(
+        institutionID={'institutionID': 1},
+        zoneID={'zoneID': 1},
+        locationID={'location': 1},
+        deskID={'deskUserRole': [{'deskID': 1}]}
+    )
+    hierarchical_level_2 = dict(
+        institutionID={'institutionID': 3},
+        zoneID={'zoneID': 6},
+        locationID={'location': 6},
+        deskID={'deskUserRole': [{'deskID': 5}]}
+    )
+
+
+class RetFee:
+    fees_1 = 5
+
+
+class RetCommission:
+    commission_1 = 3

@@ -1,5 +1,6 @@
 properties([
     parameters([
+        string(defaultValue: 'schema_quod', description: 'enter branch name which exists in th2-script-quod-demo repository', name: 'BranchName'),
         string(name: 'Name', defaultValue: 'Regression', description: ''),
         string(name: 'Version', defaultValue: '', description: 'e.g. 5.1.159.170'),
         separator(name: 'separator-323aceab-1ada-40c5-b7de-fd214cf067e0', sectionHeader: 'Choose mode'), 
@@ -1419,6 +1420,7 @@ pipeline {
                 sh '''
                     echo "Run test script stage"
                     export PATH=$PATH:$WORKSPACE/.local/bin/ && \\
+                    export PYTHONPATH=/release/jenkins-loki/workspace/qa-tests.pipeline/ && \\
                     export HOME=$WORKSPACE && \\
                     cat /var/th2/config/log_config.conf && \\
                     pip install psycopg2-binary --user && \\

@@ -47,9 +47,9 @@ currency = 'EUR'
 s_par = '1015'
 
 case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-ganymede"
-connectivity_fh = 'fix-feed-handler-316-ganymede'
+connectivity_buy_side = "fix-buy-side-310-columbia"
+connectivity_sell_side = "fix-sell-side-310-columbia"
+connectivity_fh = 'fix-feed-handler-310-columbia'
 
 instrument = {
             'Symbol': 'FR0010263202_EUR',

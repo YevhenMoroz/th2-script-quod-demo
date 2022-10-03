@@ -1,6 +1,7 @@
 import os
 import time
 from copy import deepcopy
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -142,7 +143,8 @@ class QAP_T4785(TestCase):
 
         self.MP_Dark_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.MP_Dark_order)
         self.MP_Dark_order_replace_params.change_parameters(dict(OrderQty=self.inc_qty))
-        self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order_replace_params, case_id_3)
+        response = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order_replace_params, case_id_3)[0]
+        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=1)).isoformat()
 
         time.sleep(1)
 
@@ -176,14 +178,14 @@ class QAP_T4785(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("2st RFQ sended", self.test_id))
 
         # region check that second RFQ send to CHIX LIS UK
-        nos_chixlis_rfq2 = nos_chixlis_rfq.change_parameter("OrderQty", self.inc_qty)
+        nos_chixlis_rfq2 = deepcopy(nos_chixlis_rfq)
+        nos_chixlis_rfq2.change_parameters(dict(OrderQty=self.inc_qty, TransactTime="<" + expectedtime))
         self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
         # endregion
 
         # region check that second RFQ send to TURQUOISE LIS
-        # nos_trql_rfq2 = nos_trql_rfq.change_parameter("OrderQty", self.inc_qty)
         nos_trql_rfq2 = deepcopy(nos_trql_rfq)
-        nos_trql_rfq2.change_parameter("OrderQty", self.inc_qty)
+        nos_trql_rfq2.change_parameters(dict(OrderQty=self.inc_qty, TransactTime="<" + expectedtime))
         self.fix_verifier_buy.check_fix_message(nos_trql_rfq2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
 
@@ -215,7 +217,6 @@ class QAP_T4785(TestCase):
         # region MO on Venue ChixLis
         self.fix_verifier_buy.set_case_id(bca.create_event("MO order on chixlis", self.test_id))
 
-        # TODO not correct message handle, PCON-3465 raised
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params().change_parameter("OrderQty", self.inc_qty)
         self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 

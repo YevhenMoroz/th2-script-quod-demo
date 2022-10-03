@@ -8,6 +8,7 @@ class MobileDataSet(BaseDataSet):
     """
     user = MobileUsers
     password = MobilePasswords
+    user_personal_details = UserPersonalDetails
     clients = MobileClients
     accounts = MobileAccount
     cash_accounts = MobileCashAccounts

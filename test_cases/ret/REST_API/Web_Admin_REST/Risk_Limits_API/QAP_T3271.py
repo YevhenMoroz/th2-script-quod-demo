@@ -2,7 +2,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_cases.wrapper.ret_wrappers import verifier
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.web_admin_api.Risk_Limits_API.RestApiRiskLimitDimensions import \
@@ -53,10 +53,10 @@ class QAP_T3271(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_1)
         error_response_step_1 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Client + Account",
-                                            expected_result=self.error_message_client_account,
-                                            actual_result=error_response_step_1)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Client + Account",
+                        expected_result=self.error_message_client_account,
+                        actual_result=error_response_step_1)
         # endregion, step 1
 
         # region step 2, create Risk limit Dimension rule without impossible combinations: Account and Client List
@@ -74,10 +74,10 @@ class QAP_T3271(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_2)
         error_response_step_2 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Account + Client List",
-                                            expected_result=self.error_message_account_client_list,
-                                            actual_result=error_response_step_2)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Account + Client List",
+                        expected_result=self.error_message_account_client_list,
+                        actual_result=error_response_step_2)
         # endregion, step 2
 
         # region step 3, create Risk limit Dimension rule without impossible combinations: Client and Client List
@@ -95,10 +95,10 @@ class QAP_T3271(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_3)
         error_response_step_3 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Client + Client List",
-                                            expected_result=self.error_message_client_client_list,
-                                            actual_result=error_response_step_3)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Client + Client List",
+                        expected_result=self.error_message_client_client_list,
+                        actual_result=error_response_step_3)
         # endregion, step 3
 
         # region step 4, create Risk limit Dimension rule without impossible combinations: User and Desk
@@ -120,10 +120,10 @@ class QAP_T3271(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_4)
         error_response_step_4 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: User + Desk",
-                                            expected_result=self.error_message_user_desk,
-                                            actual_result=error_response_step_4)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: User + Desk",
+                        expected_result=self.error_message_user_desk,
+                        actual_result=error_response_step_4)
         # endregion, step 4
 
 

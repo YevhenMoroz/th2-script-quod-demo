@@ -174,4 +174,5 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.remove_rules(rules_list)
+        rule_manager = RuleManager()
+        rule_manager.remove_rules(rules_list)

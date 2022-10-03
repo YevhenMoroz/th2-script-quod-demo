@@ -11,6 +11,10 @@ class ClientsPage(CommonPage):
 
     def click_on_enable_disable(self):
         self.find_by_xpath(ClientsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_XPATH).click()
+        self.find_by_xpath(ClientsConstants.OK_BUTTON_XPATH).click()
+
+    def is_client_enable(self):
+        return self.is_toggle_button_enabled(ClientsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_XPATH)
 
     def click_on_more_actions(self):
         self.find_by_xpath(ClientsConstants.MORE_ACTIONS_XPATH).click()

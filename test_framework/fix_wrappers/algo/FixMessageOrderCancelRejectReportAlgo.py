@@ -15,6 +15,8 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
         if side is GatewaySide.Buy:
             if status is Status.Reject:
                 self.__set_reject_buy(new_order_single)
+            elif status is Status.New:
+                self.__set_new_buy(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         elif side is GatewaySide.Sell:
@@ -34,6 +36,21 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
             OrdStatus='8',
             CxlRejResponseTo='1',
             Text='cancel reject',
+            TransactTime='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            OrderID='*',
+            ClOrdID='*',
+            OrigClOrdID='*',
+            OrdStatus='0',
+            CxlRejResponseTo='2',
+            Text='Modify rejection',
             TransactTime='*'
         )
         super().change_parameters(temp)

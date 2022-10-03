@@ -147,3 +147,12 @@ class ClientsValuesSubWizard(CommonPage):
 
     def click_on_manage_external_allocation_matching_service(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH).click()
+
+    def set_default_account(self, name):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH, name)
+
+    def get_default_account(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH)
+
+    def clear_default_account(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH, "")

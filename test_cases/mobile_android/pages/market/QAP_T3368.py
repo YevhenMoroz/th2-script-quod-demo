@@ -51,7 +51,7 @@ class QAP_T3368(CommonTestCase):
         main_page.click_on_market()
         self.verify("Step 1 - Market menu is opened", None, main_page.wait_element_presence(MarketConstants.MARKET_TITLE))
         self.verify("Step 1 - Watchlist 1 is selected", "true",
-                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_name("Watchlist 1"),
+                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_xpath("Watchlist 1"),
                                                                   "selected"))
         self.verify("Step 1 - No watchlists for Watchlist 1", True,
                     market_page.get_element_exists_by_xpath(MarketConstants.NO_WATCHLISTS))
@@ -60,21 +60,21 @@ class QAP_T3368(CommonTestCase):
         # Step 2
         market_page.add_new_instrument(instrument=self.instrument_1)
         self.verify("Step 2 - Watchlist 1 is selected", "true",
-                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_name("Watchlist 1"),
+                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_xpath("Watchlist 1"),
                                                                   "selected"))
         self.verify(f"Step 2 - {self.instrument_1} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         # endregion
 
         # Step 3
         market_page.add_new_instrument(instrument=self.instrument_2)
         self.verify("Step 3 - Watchlist 1 is selected", "true",
-                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_name("Watchlist 1"),
+                    market_page.get_attribute_of_element_by_xpath(market_page.get_watchlist_xpath("Watchlist 1"),
                                                                   "selected"))
         self.verify(f"Step 3 - {self.instrument_1} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         self.verify(f"Step 3 - {self.instrument_2} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_2)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_2)))
         self.verify(f"Step 3 - {self.instrument_1} is upper of {self.instrument_2}", f"{self.instrument_1} is upper",
                     market_page.compare_instruments(self.instrument_1, self.instrument_2))
         # endregion
@@ -82,9 +82,9 @@ class QAP_T3368(CommonTestCase):
         # Step 4
         market_page.reorder_instrument(self.instrument_1,1)
         self.verify(f"Step 4 - {self.instrument_2} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_2)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_2)))
         self.verify(f"Step 4 - {self.instrument_1} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         self.verify(f"Step 4 - {self.instrument_2} is upper of {self.instrument_1}", f"{self.instrument_2} is upper",
                     market_page.compare_instruments(self.instrument_2, self.instrument_1))
         # endregion
@@ -92,9 +92,9 @@ class QAP_T3368(CommonTestCase):
         # Step 5
         market_page.delete_instrument_from_watchlist(None, self.instrument_2)
         self.verify(f"Step 5 - {self.instrument_2} is deleted", False,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_2)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_2)))
         self.verify(f"Step 5 - {self.instrument_1} is displayed", True,
-                    market_page.get_element_exists_by_xpath(market_page.get_instrument_name(self.instrument_1)))
+                    market_page.get_element_exists_by_xpath(market_page.get_instrument_xpath(self.instrument_1)))
         # endregion
 
         # region - postconditions

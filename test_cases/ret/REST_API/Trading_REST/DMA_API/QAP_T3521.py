@@ -1,6 +1,6 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
@@ -37,8 +37,8 @@ class QAP_T3521(TestCase):
         parsed_response = self.trd_api_manager.parse_response_details(response)
         free_notes = parsed_response['FreeNotes'].split(';')[2:4]
 
-        verifier(case_id=self.test_id,
-                 event_name="Check FreeNotes content",
-                 expected_value=self.tested_free_notes,
-                 actual_value=" ".join(free_notes))
+        data_validation(test_id=self.test_id,
+                        event_name="Check FreeNotes content",
+                        expected_result=self.tested_free_notes,
+                        actual_result=" ".join(free_notes))
         # endregion

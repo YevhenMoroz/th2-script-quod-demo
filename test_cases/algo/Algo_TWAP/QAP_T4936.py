@@ -32,7 +32,7 @@ class QAP_T4936(TestCase):
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
+        now = datetime.today()
         start_time = now.strftime("%Y%m%d-%H:%M:%S")
         end_time = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
 

@@ -87,7 +87,7 @@ class QAP_T7637(TestCase):
                                                                           OrderBagColumn.leaves_qty.value
                                                                           ], filter=filter_list)
         expected_values = {OrderBagColumn.order_bag_qty.value: qty_of_bag_for_verifying,
-                           OrderBagColumn.ord_bag_name.value: qty_of_bag_for_verifying,
+                           OrderBagColumn.ord_bag_name.value: name_of_bag,
                            OrderBagColumn.unmatched_qty.value: qty_of_bag_for_verifying,
                            OrderBagColumn.leaves_qty.value: qty_of_bag_for_verifying,
                            }

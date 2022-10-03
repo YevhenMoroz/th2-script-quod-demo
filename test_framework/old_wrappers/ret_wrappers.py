@@ -18,8 +18,7 @@ from win_gui_modules.wash_book_positions_wrappers import GetWashBookDetailsReque
     ExtractionWashBookPositionsFieldsDetails, WashPositionsInfo, ExtractionWashBookPositionsAction
 from win_gui_modules.wrappers import direct_order_request, reject_order_request, \
     direct_loc_request_correct, direct_moc_request_correct, direct_poc_request_correct
-from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails, \
-    ForceCancelOrderDetails
+from win_gui_modules.order_book_wrappers import OrdersDetails, ModifyOrderDetails, CancelOrderDetails
 from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo, BaseOrdersDetails
 from win_gui_modules.wrappers import set_base, accept_order_request
 
@@ -233,19 +232,6 @@ def cancel_order(request, order_id=None, is_child=bool):
         cancel_order_details.add_sub_order_info(sub_lv1_1_info)
 
     call(Stubs.win_act_order_book.cancelOrder, cancel_order_details.build())
-
-
-def force_cancel_order(request, order_id=None, is_child=bool):
-    cancel_order_details = ForceCancelOrderDetails()
-    cancel_order_details.set_default_params(request)
-    if order_id:
-        cancel_order_details.set_filter(["Order ID", order_id])
-    if is_child:
-        sub_lv1_1_info = OrdersDetails()
-        sub_lv1_1_info.set_default_params(request)
-        cancel_order_details.add_sub_order_info(sub_lv1_1_info)
-
-    call(Stubs.win_act_order_book.forceCancelOrder, cancel_order_details.build())
 
 
 def mark_reviewed(base_request, order_id=None):

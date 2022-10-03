@@ -1,4 +1,7 @@
 class MarketConstants:
+
+    MENU_BUTTON = '//android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.view.View'
+
     MARKET_TITLE = '(//*[@content-desc = "Market"])[1]'
     MARKET_PLUS_BUTTON_X = 315
     MARKET_PLUS_BUTTON_Y = 135

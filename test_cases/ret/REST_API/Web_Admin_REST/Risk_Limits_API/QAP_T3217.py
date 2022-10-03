@@ -1,5 +1,6 @@
 import os
 
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
@@ -48,10 +49,10 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_1)
         error_response_step_1 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Listing + ListingGroup",
-                                            expected_result=self.error_message_listing_listing_group,
-                                            actual_result=error_response_step_1)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Listing + ListingGroup",
+                        expected_result=self.error_message_listing_listing_group,
+                        actual_result=error_response_step_1)
         # endregion, step 1
 
         # region step 2, create Risk limit Dimension rule without impossible combination Venue + SubVenue
@@ -65,10 +66,10 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_2)
         error_response_step_2 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Venue + SubVenue",
-                                            expected_result=self.error_message_venue_sub_venue,
-                                            actual_result=error_response_step_2)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Venue + SubVenue",
+                        expected_result=self.error_message_venue_sub_venue,
+                        actual_result=error_response_step_2)
         # endregion, step 2
 
         # region step 3, create Risk limit Dimension rule without impossible combination Listing + Venue
@@ -82,10 +83,10 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_3)
         error_response_step_3 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Listing + Venue",
-                                            expected_result=self.error_message_listing_venue,
-                                            actual_result=error_response_step_3)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Listing + Venue",
+                        expected_result=self.error_message_listing_venue,
+                        actual_result=error_response_step_3)
         # endregion, step 3
 
         # region step 4, create Risk limit Dimension rule without impossible combination Listing + SubVenue
@@ -99,10 +100,10 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_4)
         error_response_step_4 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: Listing + SubVenue",
-                                            expected_result=self.error_message_listing_sub_venue,
-                                            actual_result=error_response_step_4)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: Listing + SubVenue",
+                        expected_result=self.error_message_listing_sub_venue,
+                        actual_result=error_response_step_4)
         # endregion, step 4
 
         # region step 5, create Risk limit Dimension rule without impossible combination Listing Group + Venue
@@ -116,10 +117,10 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_5)
         error_response_step_5 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: ListingGroup + Venue",
-                                            expected_result=self.error_message_listing_group_venue,
-                                            actual_result=error_response_step_5)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: ListingGroup + Venue",
+                        expected_result=self.error_message_listing_group_venue,
+                        actual_result=error_response_step_5)
         # endregion, step 5
 
         # region step 6, create Risk limit Dimension rule without impossible combination Listing Group + Sub Venue
@@ -133,8 +134,8 @@ class QAP_T3217(TestCase):
         self.risk_limit_dimension_message.create_risk_limit_dimension(custom_params=parameters_step_6)
         error_response_step_6 = self.wa_api_manager.parse_response_error_message_details(
             response=self.wa_api_manager.send_multiple_request(self.risk_limit_dimension_message))
-        self.wa_api_manager.data_validation(test_id=self.test_id,
-                                            event_name="Impossible combinations: ListingGroup + SubVenue",
-                                            expected_result=self.error_message_listing_group_sub_venue,
-                                            actual_result=error_response_step_6)
+        data_validation(test_id=self.test_id,
+                        event_name="Impossible combinations: ListingGroup + SubVenue",
+                        expected_result=self.error_message_listing_group_sub_venue,
+                        actual_result=error_response_step_6)
         # endregion, step 6

@@ -57,7 +57,6 @@ class QAP_T7171(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        time.sleep(5)
         self.ssh_client.send_command("qrestart all")
         time.sleep(110)
         # endregion
@@ -107,7 +106,6 @@ class QAP_T7171(TestCase):
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        time.sleep(5)
         self.ssh_client.send_command("qrestart all")
         time.sleep(110)
 

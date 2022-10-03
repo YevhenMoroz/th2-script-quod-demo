@@ -88,8 +88,8 @@ class QAP_T7015(TestCase):
         # region Set-up parameters and check Allocation Report
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
-            {'RootCommTypeClCommBasis': '*', 'NoRootMiscFeesList': '*', 'tag5120': '*', 'RootOrClientCommission': '*',
-             'RootOrClientCommissionCurrency': '*', 'RootSettlCurrAmt': '*'})
+            {'tag5120': '*', 'RootSettlCurrAmt': '*'})
+        self.allocation_message.remove_parameters(["Account"])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
                                                             ['AllocType', 'Account', 'NoOrders'])
         # endregion
@@ -102,24 +102,23 @@ class QAP_T7015(TestCase):
         self.middle_office.allocate_block()
         # endregion
 
-        # region Set-up parameters and check Allocation Report after Allocate
-        pre_alloc_grp: dict = {
-            'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty}]}}
-        self.fix_message.change_parameters(pre_alloc_grp)
-        self.allocation_message.set_default_preliminary(self.fix_message)
-        self.allocation_message.change_parameters({'NoAllocs': '*'})
-        self.allocation_message.remove_parameters(
-            ['RootCommTypeClCommBasis', 'NoRootMiscFeesList', 'RootOrClientCommission',
-             'RootOrClientCommissionCurrency'])
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
-                                                            ['AllocType', 'NoOrders', 'Account'])
-        # endregion
+        # # region Set-up parameters and check Allocation Report after Allocate
+        # pre_alloc_grp: dict = {
+        #     'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty}]}}
+        # self.fix_message.change_parameters(pre_alloc_grp)
+        # self.allocation_message.set_default_preliminary(self.fix_message)
+        # self.allocation_message.change_parameters({'NoAllocs': '*'})
+        # self.allocation_message.remove_parameters(
+        #     ['RootCommTypeClCommBasis', 'NoRootMiscFeesList', 'RootOrClientCommission',
+        #      'RootOrClientCommissionCurrency'])
+        # self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
+        #                                                     ['AllocType', 'NoOrders', 'Account'])
+        # # endregion
 
         # region Check Confirmation Report
         self.confirmation_message.set_default_confirmation_new(self.fix_message)
         self.confirmation_message.change_parameters(
-            {'Account': self.client, 'AllocInstructionMiscBlock2': '*', 'tag5120': '*', 'NoMiscFees': '*',
-             'CommissionData': '*', 'AllocAccount': self.alloc_account})
+            {'tag5120': '*', 'AllocAccount': self.alloc_account})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
                                                             ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
         # endregion
