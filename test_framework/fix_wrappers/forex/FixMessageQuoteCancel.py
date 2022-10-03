@@ -29,3 +29,13 @@ class FixMessageQuoteCancelFX(FixMessage):
         )
         super().change_parameters(temp)
         return self
+
+    def set_params_for_receive_synergy(self, quote_request: FixMessageQuoteRequestFX):
+        temp = dict(
+            QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+            QuoteID="*",
+            QuoteCancelType="5",
+            VenueType=quote_request.get_parameter("VenueType"),
+        )
+        super().change_parameters(temp)
+        return self

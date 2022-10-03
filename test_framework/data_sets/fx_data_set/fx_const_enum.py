@@ -19,6 +19,7 @@ class FxVenues(Enum):
     venue_6 = "BARX"
     venue_7 = "EBS"
     venue_8 = "GS"
+    venue_9 = "D3"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -35,6 +36,7 @@ class FxMarketIDs(Enum):
     market_3 = "MS-SW"
     market_4 = "JPM-SW"
     market_5 = "DB-SW"
+    market_9 = "D3"
 
 
 class FxClients(Enum):
@@ -111,14 +113,15 @@ class FxClientTiers(Enum):
 
 
 class FxClientTiersID(Enum):
-    client_tier_id_1 = "2200009"  # For ESP_MM testing
-    client_tier_id_2 = "2600011"  # For MM_RFQ testing - Explicitly Request Swap Points
-    client_tier_id_3 = "2400009"  # For MM_RFQ testing
-    client_tier_id_4 = "2000010"  # For ESP_MM testing
-    client_tier_id_5 = "2000011"  # For ESP_MM testing
-    client_tier_id_6 = "2600010"  # For AutoHedger testing
-    client_tier_id_7 = "2600009"  # For MM_Positions testing
-    client_tier_id_8 = "2600012"  # For AutoHedger testing
+    client_tier_id_1 = "2200009"   # For ESP_MM testing
+    client_tier_id_2 = "2600011"   # For MM_RFQ testing - Explicitly Request Swap Points
+    client_tier_id_3 = "2400009"   # For MM_RFQ testing
+    client_tier_id_4 = "2000010"   # For ESP_MM testing
+    client_tier_id_5 = "2000011"   # For ESP_MM testing
+    client_tier_id_6 = "2600010"   # For AutoHedger testing
+    client_tier_id_7 = "2600009"   # For MM_Positions testing
+    client_tier_id_8 = "2600012"   # For AutoHedger testing
+    client_tier_id_11 = "1200005"  # For Margin Format testing
 
 
 class FxSecurityTypes(Enum):
@@ -127,6 +130,7 @@ class FxSecurityTypes(Enum):
     fx_swap = "FXSWAP"
     fx_ndf = "FXNDF"
     fx_nds = "FXNDS"
+    fx_mleg = "MLEG"
 
 
 class FxInstrTypeWA(Enum):
@@ -203,6 +207,9 @@ class FxSymbols(Enum):
     symbol_19 = "ZAR/MXN"
     symbol_20 = "USD/ZAR"
     symbol_21 = "EUR/MXN"
+    symbol_22 = "THB/TWD"
+    symbol_23 = "USD/THB"
+    symbol_24 = "USD/TWD"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

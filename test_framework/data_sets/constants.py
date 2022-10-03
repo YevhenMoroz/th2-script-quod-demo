@@ -124,6 +124,15 @@ class Status(Enum):
     Eliminate = "Eliminate"
 
 
+class OrdStatus(Enum):
+    PendingNew = "A"
+    New = "0"
+    PartiallyFilled = "1"
+    Fill = "2"
+    CanceledOrEliminated = "4"
+    Rejected = "8"
+
+
 class Reference(Enum):
     LastTradePrice = 'LTP'
     Primary = 'PRM'
@@ -170,6 +179,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
+    iceberg = 'ICEBERG'
 
 
 class OrderType(Enum):

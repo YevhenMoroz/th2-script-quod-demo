@@ -75,7 +75,7 @@ class AccountsDimensionsSubWizard(CommonPage):
         self.set_text_by_xpath(AccountsConstants.DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_INPUT_XPATH, value)
 
     def get_venue_client_account_name(self):
-        return self.is_checkbox_selected(AccountsConstants.DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_INPUT_XPATH)
+        return self.get_text_by_xpath(AccountsConstants.DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_INPUT_XPATH)
 
     def click_on_checkmark_button(self):
         self.find_by_xpath(AccountsConstants.DIMENSIONS_CREATE_ENTITY_BUTTON_XPATH).click()

@@ -26,6 +26,8 @@ class FixMessageExecutionReportTakerMO(FixMessageExecutionReport):
                 self.__set_partial_fill_sell(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_sell(new_order_single)
+            elif status is Status.Reject:
+                self.__set_reject_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -254,6 +256,46 @@ class FixMessageExecutionReportTakerMO(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            CumQty="0",
+            Currency=new_order_single.get_parameter("Currency"),
+            HandlInst="1",
+            LastQty="0",
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            OrdType=new_order_single.get_parameter("OrdType"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            OrdRejReason="99",
+            Price="*",
+            Account="*",
+            OrdStatus="8",
+            TransactTime="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            SettlDate="*",
+            ExecType="8",
+            LeavesQty="0",
+            Text="*",
+            QtyType="0",
+            Instrument=new_order_single.get_parameter("Instrument"),
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+        instrument = dict(
+            SecurityType=new_order_single.get_parameter("Instrument")["SecurityType"],
+            Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
+            SecurityIDSource="8",
+            Product="4",
+            SecurityExchange="*",
+        )
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+
     # endregion
     # region BUY SIDE
     # TODO: doublecheck
@@ -404,6 +446,7 @@ class FixMessageExecutionReportTakerMO(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
         return self
+
     # endregion
 
     def add_party_role(self):

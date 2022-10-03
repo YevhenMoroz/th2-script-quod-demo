@@ -29,6 +29,7 @@ class DesksConstants:
     LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[@id="location"]'
     ASSIGNMENTS_TAB_LOCATION_LINK_XPATH = '//*[normalize-space(text())="{}"]'
     ASSIGNMENTS_TAB_USER_LINK_XPATH = '//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_USERS_XPATH = '//*[@class="linked-entities-label"][normalize-space()="Users"]//..//a'
 
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     REVERT_CHANGES_BUTTON_XPATH = "//*[text()='Revert Changes']"

@@ -131,6 +131,7 @@ class QAP_T2490(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id_barx, self.fx_fh_connectivity, "FX")
