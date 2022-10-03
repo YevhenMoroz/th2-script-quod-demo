@@ -51,6 +51,13 @@ class RuleManager:
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1][2:]}')
 
+    def remove_rules_by_alias(self, alias: str):
+        active_rules = dict()
+        for rule in self.core.getRulesInfo(request=Empty()).info:
+            active_rules[rule.id.id] = [rule.class_name, rule.alias]
+            if rule.alias[2:] == alias and rule.id.id not in self.default_rules_id:
+                self.core.removeRule(RuleID(id=rule.id.id))
+
     # --- REMOVE RULES SECTION ---
 
     # Remove all rules except defaults
