@@ -15,7 +15,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_T5038(TestCase):
+class QAP_T5012(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -40,31 +40,25 @@ class QAP_T5038(TestCase):
         self.delay = 0
         self.party_id_1 = constants.PartyID.party_id_8.value
         self.party_id_2 = constants.PartyID.party_id_9.value
-        self.party_id_3 = constants.PartyID.party_id_10.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
         self.party_role_1 = constants.PartyRole.party_role_3.value
         self.party_role_2 = constants.PartyRole.party_role_11.value
-        self.party_role_3 = constants.PartyRole.party_role_12.value
 
         self.no_party = [
             {'PartyID': self.party_id_1, 'PartyIDSource': self.party_id_source,
              'PartyRole': self.party_role_1},
             {'PartyID': self.party_id_2, 'PartyIDSource': self.party_id_source,
              'PartyRole': self.party_role_2},
-            {'PartyID': self.party_id_3, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_3}
-           ]
+        ]
 
         self.no_party_for_report = [
             {'PartyID': self.party_id_1, 'PartyIDSource': self.party_id_source,
              'PartyRole': self.party_role_1},
             {'PartyID': self.party_id_2, 'PartyIDSource': self.party_id_source,
              'PartyRole': self.party_role_2},
-            {'PartyID': self.party_id_3, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_3},
             {'PartyID': '*', 'PartyIDSource': '*',
              'PartyRole': '*'}
-           ]
+        ]
         # endregion
 
         # region Gateway Side
@@ -122,25 +116,25 @@ class QAP_T5038(TestCase):
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_xpar)
-        
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_bats = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_bats, self.fix_env1.feed_handler)
         market_data_snap_shot_bats.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_bats.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_bats)
-        
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_janestreet = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_janestreet, self.fix_env1.feed_handler)
         market_data_snap_shot_janestreet.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_janestreet.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_janestreet)
-        
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_chix = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_chix, self.fix_env1.feed_handler)
         market_data_snap_shot_chix.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_chix.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_chix)
-        
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
@@ -216,7 +210,7 @@ class QAP_T5038(TestCase):
         er_fill_Iceberg_order_params.remove_parameter('NoParty').add_fields_into_repeating_group('NoParty', self.no_party_for_report)
         self.fix_verifier_sell.check_fix_message(er_fill_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
-        
+
         time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])

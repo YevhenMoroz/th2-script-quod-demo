@@ -185,12 +185,11 @@ class QAP_T4803(TestCase):
         # region Check fill parent order
         self.fix_verifier_sell.set_case_id(bca.create_event("Check fill parent order", self.test_id))
         er_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_fill)
-        er_fill_SORPING_order_params.change_parameters(dict(CumQty=self.inc_qty, LastQty=self.qty_for_md)).add_tag(dict(SettlType='B'))
+        er_fill_SORPING_order_params.change_parameters(dict(CumQty=self.inc_qty, LastQty=self.qty_for_md))
         self.fix_verifier_sell.check_fix_message(er_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Fill')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
