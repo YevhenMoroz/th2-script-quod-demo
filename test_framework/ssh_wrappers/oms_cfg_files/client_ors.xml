@@ -261,8 +261,10 @@ Copyright Quod Financial
 			<FIXReportOrdrParties>true</FIXReportOrdrParties>
 			<EnrichFIXExecReportParties>true</EnrichFIXExecReportParties>
 		</BackToFront>
+		<counterpartEnrichment>
+            <ManualOrderCross>true</ManualOrderCross>
+        </counterpartEnrichment>
 		<acceptFreeAllocAccountID>false</acceptFreeAllocAccountID>
-
 	</ors>
 
 </quod>
