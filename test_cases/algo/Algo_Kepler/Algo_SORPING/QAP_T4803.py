@@ -191,6 +191,5 @@ class QAP_T4803(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
