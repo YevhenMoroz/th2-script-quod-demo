@@ -29,3 +29,15 @@ class FixMessageQuoteRequestRejectFX(FixMessageQuoteRequestReject):
         }
         super().change_parameters(quote_reject_params)
         return self
+
+    def set_quote_reject_params_synergy(self, quote_request: FixMessageQuoteRequestFX, text: str = None):
+        quote_reject_params = {
+            "QuoteReqID": quote_request.get_parameter("QuoteReqID"),
+            "QuoteRequestRejectReason": "3",
+            "VenueType": quote_request.get_parameter("VenueType"),
+            # "NoRelatedSymbols": quote_request.get_parameter("NoRelatedSymbols"),
+            "Text": text if text is not None else "*",
+
+        }
+        super().change_parameters(quote_reject_params)
+        return self

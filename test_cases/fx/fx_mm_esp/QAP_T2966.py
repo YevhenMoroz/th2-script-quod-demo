@@ -1,129 +1,97 @@
-import time
 from pathlib import Path
-
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
 from custom import basic_custom_actions as bca
-import logging
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
-from datetime import datetime
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-client = 'Palladium1'
-account = 'Palladium1_1'
-side = '1'
-orderqty = '1000000'
-orderqty2 = '2000000'
-ordtype = '2'
-timeinforce = '4'
-currency1 = 'USD'
-currency2 = 'EUR'
-settlcurrency = 'CAD'
-settltype = 'W1'
-symbol1 = 'USD/CAD'
-symbol2 = 'EUR/CAD'
-securitytype_spo = 'FXSPOT'
-securitytype_fwd = 'FXFWD'
-securityidsource = '8'
-securityid1 = 'USD/CAD'
-securityid2 = 'EUR/CAD'
-bands = [1000000, 2000000, 3000000]
-bands_not_published = [2000000, 3000000]
-md = None
-settldate1 = (tm(datetime.utcnow().isoformat()) + bd(n=6)).date().strftime('%Y%m%d %H:%M:%S')
-settldate1_spo = (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d %H:%M:%S')
-settldate2 = (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d %H:%M:%S')
-settldate2_spo = (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d %H:%M:%S')
-
-defaultmdsymbol_spo_1 = 'USD/CAD:SPO:REG:HSBC'
-defaultmdsymbol_spo_2 = 'EUR/CAD:SPO:REG:HSBC'
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.win_gui_wrappers.fe_trading_constant import PricingButtonColor
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
+class QAP_T2966(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = self.eur_usd + "-Spot"
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.execution_report_2 = FixMessageExecutionReportFX()
+        self.sliver = self.data_set.get_client_by_name("client_mm_1")
+        self.security_type_spot = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type_spot = self.data_set.get_settle_type_by_name('spot')
+        self.bands_eur_usd = ["*", '*', '*']
+        self.qty_5m = "5000000"
+        self.instrument = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols = [{
+            'Instrument': self.instrument,
+            'SettlType': self.settle_type_spot}]
+        self.sts_filled = Status.Fill
+        self.sts_reject = Status.Reject
 
-        params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                     timeinforce=timeinforce, currency=currency2,
-                                     settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
-                                     symbol=symbol2, securitytype=securitytype_fwd,
-                                     securityid=securityid2, account=account)
-        params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
-        md2 = FixClientSellEsp(params_2)
-        try:
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.eur_usd, client_tier=self.client)
 
-            # Precondition
-            params_usd_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate1_spo,
-                                               symbol=symbol1, securitytype=securitytype_spo)
-            params_eur_cad = CaseParamsSellEsp(client, case_id, settltype=settltype, settldate=settldate2_spo,
-                                               symbol=symbol2, securitytype=securitytype_spo)
-            FixClientSellEsp(params_usd_cad). \
-                send_md_request(). \
-                send_md_unsubscribe()
-            FixClientSellEsp(params_eur_cad). \
-                send_md_request(). \
-                send_md_unsubscribe()
-            FixClientBuy(
-                CaseParamsBuy(case_id, defaultmdsymbol_spo_1, symbol1, securitytype_spo)). \
-                send_market_data_spot()
-            FixClientBuy(
-                CaseParamsBuy(case_id, defaultmdsymbol_spo_2, symbol2, securitytype_spo)). \
-                send_market_data_spot()
+        self.rates_tile.press_executable()
 
-            # Steps 1-3
-            params_1 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                         timeinforce=timeinforce, currency=currency1,
-                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate1,
-                                         symbol=symbol1, securitytype=securitytype_fwd,
-                                         securityid=securityid1)
-            params_1.prepare_md_for_verification(bands, published=False)
-            md1 = FixClientSellEsp(params_1). \
-                send_md_request(). \
-                verify_md_pending()
-            price1 = md1.extract_filed('Price')
-            text = 'not tradeable'
-            md1.send_new_order_single(price1). \
-                verify_order_pending(). \
-                verify_order_rejected(text). \
-                send_md_unsubscribe()
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not tradeable")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
 
-            # Step 4-5
-            params_2 = CaseParamsSellEsp(client, case_id, side=side, orderqty=orderqty, ordtype=ordtype,
-                                         timeinforce=timeinforce, currency=currency2,
-                                         settlcurrency=settlcurrency, settltype=settltype, settldate=settldate2,
-                                         symbol=symbol2, securitytype=securitytype_fwd,
-                                         securityid=securityid2, account=account)
-            params_2.prepare_md_for_verification(bands, published=False, which_bands_not_pb=bands_not_published)
-            md2 = FixClientSellEsp(params_2)
-            price2 = md2.send_md_request(). \
-                verify_md_pending(). \
-                extract_filed('Price')
-            md2.send_new_order_single(price2). \
-                verify_order_pending(). \
-                verify_order_filled_fwd()
+        self.rates_tile.press_executable()
+        self.rates_tile.select_rows([2, 3])
+        self.rates_tile.press_executable()
 
-            # Step 6
-            text = 'not enough quantity in book'
-            params_2.orderqty = orderqty2
-            params_2.set_new_order_single_params()
-            md2.send_new_order_single(price2). \
-                verify_order_pending(). \
-                verify_order_rejected(text)
-        except Exception as e:
-            logging.error('Error execution', exc_info=True)
-            bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-        finally:
-            try:
-                md2.send_md_unsubscribe()
-            except:
-                bca.create_event('Unsubscribe failed', status='FAILED', parent_id=case_id)
-    except Exception:
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report_2.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report_2, direction=DirectionEnum.FromQuod)
+
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default().change_parameters({"OrderQty": self.qty_5m})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not enough quantity in book")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+
+        self.rates_tile.press_executable()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)

@@ -27,7 +27,7 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
 
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
-            Account="*",
+            # Account="*",
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty=new_order_single.get_parameter("OrderQty"),
             Currency=new_order_single.get_parameter("Currency"),

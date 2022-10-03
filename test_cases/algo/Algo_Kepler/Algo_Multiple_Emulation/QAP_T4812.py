@@ -6,6 +6,7 @@ from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
@@ -43,6 +44,8 @@ class QAP_T4812(TestCase):
         self.price_ask = 44
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
+        self.px_for_incr = 0
+        self.qty_for_incr = 0
         self.side = constants.OrderSide.Buy.value
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_3.value
@@ -102,6 +105,10 @@ class QAP_T4812(TestCase):
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         time.sleep(3)
         # endregion

@@ -303,6 +303,11 @@ class GetCPRTPColors:
         element = cp_operations_pb2.GetCPRTPColors.Elements(type = cp_operations_pb2.GetCPRTPColors.ExtractableElements.PRICING_BUTTON,x = x, y = y)
         self.request.elements.append(element)
 
+    def get_executable_btn_pixel_color(self, x: int, y: int):
+        element = cp_operations_pb2.GetCPRTPColors.Elements(
+            type=cp_operations_pb2.GetCPRTPColors.ExtractableElements.EXECUTABLE_BUTTON, x=x, y=y)
+        self.request.elements.append(element)
+        # TODO add executable button's color extraction
     def build(self):
         return self.request
 

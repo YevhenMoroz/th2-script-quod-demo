@@ -99,13 +99,14 @@ class QAP_T2491(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Fill)
         self.execution_report.change_parameters({"Account": "*",
                                                  "LastQty": "1000000",
-                                                 "AvgPx": "1.18075",
-                                                 "LastMkt": "CITI-ID",
+                                                 "AvgPx": "1.18148",
+                                                 "LastMkt": "BARX",
                                                  "CumQty": "1000000"
                                                  })
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id_barx, self.fx_fh_connectivity, "FX")

@@ -46,8 +46,8 @@ class QAP_T7461(TestCase):
         # endregion
         # region create second CO order
         self.fix_message.change_parameter("Side", "2")
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id2 = response[0].get_parameters()['OrderID']
         # endregion
         # region accept second CO order
         self.client_inbox.accept_order()

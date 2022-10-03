@@ -42,10 +42,11 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def test_run(parent_id= None):
-    report_id = bca.create_event('Commissions ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
-    seconds, nanos = timestamps()  # Store case start time
+def test_run(parent_id= None, version=None):
+    # Store case start time
+    seconds, nanos = timestamps()
     configuration = ComponentConfiguration("Commissions")
+    report_id = bca.create_event(f"Commissions Analysis" if version is None else f"Commissions Analysis | {version}", parent_id)
     data_set = configuration.data_set
     fe_env = configuration.environment.get_list_fe_environment()[0]
     session_id = set_session_id(fe_env.target_server_win)

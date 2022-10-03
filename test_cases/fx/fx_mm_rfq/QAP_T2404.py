@@ -92,6 +92,7 @@ class QAP_T2404(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.modify_client_tier.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_client_tier)

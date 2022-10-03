@@ -58,11 +58,10 @@ class QAP_T6980(TestCase):
         self.fee_type1 = self.data_set.get_misc_fee_type_by_name('stamp')
         self.fee_type2 = self.data_set.get_misc_fee_type_by_name('levy')
         self.fee_type3 = self.data_set.get_misc_fee_type_by_name('per_transac')
-        self.params = {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
+        self.params = {"Account": self.client,
                        'DisplayInstruction': {'DisplayQty': self.qty_to_display},
                        'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.client_acc,
-                                                     'AllocQty': self.qty}]}
-                       }
+                                                     'AllocQty': self.qty}]}}
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
