@@ -2,10 +2,10 @@ from datetime import datetime
 
 from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
+from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 
 
-class NewOrderReplyOMS(OrderSubmit):
+class NewOrderReplyOMS(NewOrderReply):
     def __init__(self, data_set: BaseDataSet, parameters: dict = None):
         super().__init__()
         self.change_parameters(parameters)

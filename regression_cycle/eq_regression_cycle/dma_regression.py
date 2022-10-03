@@ -22,8 +22,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('DMA ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"DMA Analysis" if version is None else f"DMA Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("DMA")
     fe_env = configuration.environment.get_list_fe_environment()[0]

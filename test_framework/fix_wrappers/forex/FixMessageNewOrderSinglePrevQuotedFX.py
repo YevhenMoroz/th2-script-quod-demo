@@ -163,3 +163,40 @@ class FixMessageNewOrderSinglePrevQuotedFX(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_synergy(self, quote_request: FixMessageQuoteRequestFX, quote: FixMessageQuoteFX,
+                                     price: str = None,
+                                     side: str = None) -> FixMessageNewOrderSingle:
+        quote_price = None
+        if "Side" in quote_request.get_parameter("NoRelatedSym")[0]:
+            if quote.get_parameter("Side") == "1":
+                quote_price = quote.get_parameter("OfferPx")
+            else:
+                quote_price = quote.get_parameter("BidPx")
+
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(9),
+            "SecondaryClOrdID": bca.client_orderid(9),
+            "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSym")[0] else
+            quote_request.get_parameter("NoRelatedSym")[0]["Side"],
+            "OrderQty": quote_request.get_parameter("NoRelatedSym")[0]["OrderQty"],
+            "TimeInForce": "3",
+            "OrdType": "D",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Price": quote_price if quote_price is not None else price,
+            "Currency": quote_request.get_parameter("NoRelatedSym")[0]["Currency"],
+            "Instrument": quote_request.get_parameter("NoRelatedSym")[0]["Instrument"],
+            "SettlDate": quote_request.get_parameter("NoRelatedSym")[0]["SettlDate"],
+            "NoPartyIDs": quote_request.get_parameter("NoRelatedSym")[0]["NoPartyIDs"],
+            "QuoteID": quote.get_parameter("QuoteID"),
+            "VenueType": quote.get_parameter("VenueType")
+        }
+        instrument = dict(
+            SecurityType="FOR",
+            Symbol=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Symbol"],
+            Product="4",
+        )
+        super().change_parameters(base_parameters)
+        super().update_fields_in_component("Instrument", instrument)
+        return self
+

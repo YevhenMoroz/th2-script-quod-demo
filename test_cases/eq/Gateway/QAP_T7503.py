@@ -19,7 +19,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatu
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
-from test_framework.java_api_wrappers.ors_messages.Order_BlockUnallocateRequest import Order_BlockUnallocateRequest
+from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
 from test_framework.win_gui_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
@@ -52,7 +52,7 @@ class QAP_T7503(TestCase):
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
-        self.unallocate_request = Order_BlockUnallocateRequest()
+        self.unallocate_request = BlockUnallocateRequest()
         self.qty = '300'
         self.result = None
         self.price = '10'

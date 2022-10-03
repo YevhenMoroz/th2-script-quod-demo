@@ -50,7 +50,7 @@ class QAP_T7034(TestCase):
         # region create order
         self.commission_sender.clear_fees()
         self.commission_sender.set_modify_fees_message().change_message_params(
-            {'commExecScope': self.data_set.get_fee_exec_scope_by_name("on_calc"),
+            {'commExecScope': self.data_set.get_fee_exec_scope_by_name("on_calculated"),
              "venueID": self.data_set.get_venue_by_name("venue_2"), "execCommissionProfileID": "1",
              "orderCommissionProfileID": "1"}).send_post_request()
         order_id = None

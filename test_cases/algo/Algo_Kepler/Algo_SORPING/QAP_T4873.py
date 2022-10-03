@@ -37,7 +37,7 @@ class QAP_T4873(TestCase):
         # region order parameters
         self.qty = 1000
         self.price = 3.9
-        self.price_ask = 40
+        self.price_ask = 4
         self.price_bid = 1
         self.qty_bid = self.qty_ask = 1000000
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
