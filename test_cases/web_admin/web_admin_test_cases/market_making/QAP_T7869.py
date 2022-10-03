@@ -1,15 +1,13 @@
 import sys
-import time
 import traceback
-import string
-import random
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_page \
-    import ClientGroupsPage
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_wizard import ClientGroupsWizard
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_values_sub_wizard \
-    import ClientGroupsValuesSubWizard
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page \
+    import ClientTierInstrumentsPage
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
+    ClientTierInstrumentValuesSubWizard
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_wizard import \
+    ClientTierInstrumentWizard
 
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -17,42 +15,41 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T4023(CommonTestCase):
+class QAP_T7869(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = 'QAP_T4023'
-        self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.core_spot_price_strategy = 'Direct'
+        self.tod_end_time = "15:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        side_menu = SideMenu(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        side_menu.open_client_groups_page()
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_client_tier_page()
 
     def test_context(self):
-        main_page = ClientGroupsPage(self.web_driver_container)
-        wizard = ClientGroupsWizard(self.web_driver_container)
-        values_tab = ClientGroupsValuesSubWizard(self.web_driver_container)
-
         try:
+            instrument_page = ClientTierInstrumentsPage(self.web_driver_container)
+            wizard = ClientTierInstrumentWizard(self.web_driver_container)
+            values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+
             self.precondition()
 
-            main_page.click_on_new()
-            values_tab.set_name(self.name)
-            values_tab.set_description(self.description)
+            instrument_page.click_on_new()
+            self.verify("'Symbol' field contains '*' symbol", True,
+                        values_tab.is_symbol_filed_contains_asterisk_symbol())
+
+            values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
+            values_tab.set_tod_end_time(self.tod_end_time)
             wizard.click_on_save_changes()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Client Group created and displayed", True,
-                        main_page.is_searched_client_group_found_by_name(self.name))
+            self.verify("Error message appears in footer", True,
+                        wizard.is_incorrect_or_missing_value_massage_displayed())
 
-            main_page.click_on_more_actions()
-            main_page.click_on_delete(True)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

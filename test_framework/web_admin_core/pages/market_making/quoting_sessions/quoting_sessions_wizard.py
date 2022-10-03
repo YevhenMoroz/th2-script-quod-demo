@@ -24,3 +24,6 @@ class QuotingSessionsWizard(CommonPage):
         self.find_by_xpath(QuotingSessionsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_warning_in_footer_displayed(self):
+        return self.is_element_present(QuotingSessionsConstants.FOOTER_WARNING_XPATH)
