@@ -53,6 +53,8 @@ class ORSMessageType(Enum):
     OrdListNotification = 'Order_OrdListNotification'
     PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
+    AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    OrderReply = 'Order_OrdReply'
 
 
 class TradingRestApiMessageType(Enum):
