@@ -48,6 +48,13 @@ class OmsJavaApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XPAR"
     )
+    instrument_3 = dict(
+        InstrSymbol='ISI3',
+        SecurityID='ISI3',
+        SecurityIDSource='ISI',
+        InstrType='Equity',
+        SecurityExchange='XEUR'
+    )
 
 
 class OmsInstrumentId(Enum):
