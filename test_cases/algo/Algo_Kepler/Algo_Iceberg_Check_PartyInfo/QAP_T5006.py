@@ -181,19 +181,19 @@ class QAP_T5006(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
-        compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_1, PartyID=self.party_id_1, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_1_map, ClOrdID=self.ClOrdId))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
+        compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID=self.party_id_1, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_1_map))
 
-        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
-        compare_message_2.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_2, PartyID=self.party_id_2, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_2_map, ClOrdID=self.ClOrdId))
-
-        compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_party_info()
-        compare_message_3.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_3, PartyID=self.party_id_3, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_3_map, ClOrdID=self.ClOrdId))
+        # compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
+        # compare_message_2.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_2, PartyID=self.party_id_2, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_2_map, ClOrdID=self.ClOrdId))
+        #
+        # compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
+        # compare_message_3.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_3, PartyID=self.party_id_3, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_3_map, ClOrdID=self.ClOrdId))
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message_1, key_parameters=self.key_params_read_log)
-        self.read_log_verifier.check_read_log_message(compare_message_2, key_parameters=self.key_params_read_log)
-        self.read_log_verifier.check_read_log_message(compare_message_3, key_parameters=self.key_params_read_log)
+        # self.read_log_verifier.check_read_log_message(compare_message_2, key_parameters=self.key_params_read_log)
+        # self.read_log_verifier.check_read_log_message(compare_message_3, key_parameters=self.key_params_read_log)
         # endregion
 
         # region Check Sell side and PartyInfo in ERs PendingNew -> New
