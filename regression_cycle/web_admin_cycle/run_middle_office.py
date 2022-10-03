@@ -37,6 +37,8 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3845 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3847 import QAP_T3847
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3856 import QAP_T3856
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3905 import QAP_T3905
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8321 import QAP_T8321
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8502 import QAP_T8502
 
 
 class RunMiddleOffice:
@@ -112,6 +114,10 @@ class RunMiddleOffice:
             QAP_T3856(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3905(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8321(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8502(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

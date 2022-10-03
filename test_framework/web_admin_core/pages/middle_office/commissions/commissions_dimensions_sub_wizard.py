@@ -96,31 +96,6 @@ class CommissionsDimensionsSubWizard(CommonPage):
     def get_client_list(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH)
 
-    def set_commission_amount_type(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH, value)
-
-    def get_commission_amount_type(self):
-        return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH)
-
-    def get_all_commission_amount_type_from_drop_menu(self):
-        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH).click()
-        time.sleep(1)
-        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
-
-    def set_commission_profile(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH, value)
-
-    def get_commission_profile(self):
-        return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH)
-
-    def get_all_commission_profile_from_drop_menu(self):
-        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH).click()
-        time.sleep(1)
-        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
-
-    def click_on_manage_commission_profile(self):
-        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH).click()
-
     def clear_client_list_field(self):
         self.set_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH, "")
 

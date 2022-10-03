@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
     ExecutionStrategiesConstants
@@ -23,6 +24,11 @@ class ExecutionStrategiesWizard(CommonPage):
 
     def get_strategy_type(self):
         return self.get_text_by_xpath(ExecutionStrategiesConstants.STRATEGY_TYPE_AT_VALUES_TAB_XPATH)
+
+    def get_all_strategy_type_from_drop_menu(self):
+        self.set_text_by_xpath(ExecutionStrategiesConstants.STRATEGY_TYPE_AT_VALUES_TAB_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(ExecutionStrategiesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_description(self, value):
         self.set_text_by_xpath(ExecutionStrategiesConstants.DESCRIPTION_AT_VALUES_TAB_XPATH, value)
