@@ -18,6 +18,16 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             "ClientTierID": "2800013",
             "Tenor": "SPO"}
 
+    def set_empty_params(self):
+        self.params_for_request = {
+            "SEND_SUBJECT": "QUOD.PRICING.2.FE",
+            "REPLY_SUBJECT": "QUOD.FE.PRICING.2",
+            "QuoteAdjustmentRequestBlock": {"QuoteAdjustmentEntryList": []
+                                            },
+            "InstrSymbol": "EUR/USD",
+            "ClientTierID": "2800013",
+            "Tenor": "SPO"}
+
     def set_defaults(self):
         self.params_for_request = {
             "SEND_SUBJECT": "QUOD.PRICING.2.FE",
@@ -41,13 +51,26 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
 
         super().change_parameters(self.params_for_request)
 
-    def set_specific_bands_and_margins(self, bands: str, bid_margins: str = "0.1",
+    def set_specific_bands_and_margins(self, bands: int, bid_margins: str = "0.1",
                                        offer_margins: str = "0.1"):
         for band in range(int(bands)):
             band += 1
             self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"].append(
                 {"BidMargin": str(bid_margins), "OfferMargin": str(offer_margins), "MDQuoteType": "TRD",
                  "IndiceUpperQty": band})
+
+    def update_margins_by_index(self, index: int, bid_margin: str, offer_margin: str):
+        self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"]["QuoteAdjustmentEntryBlock"][
+            index - 1].update(
+            {"BidMargin": bid_margin, "OfferMargin": offer_margin, "MDQuoteType": "TRD",
+             "IndiceUpperQty": index})
+
+    def disable_pricing_by_index(self, index: int):
+        self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"][
+            "QuoteAdjustmentEntryBlock"][index - 1].update(
+            {"QuoteConditionList": {"QuoteConditionBlock":
+                [{"QuoteConditionEnum": "Closed"}]
+            }})
 
     def update_instrument(self, instrument: str):
         self.params_for_request["QuoteAdjustmentRequestBlock"].update({"InstrSymbol": instrument})
