@@ -13,6 +13,7 @@ class BaseDataSet:
     cash_account_counters = None
     washbook_accounts = None
     washbook_rules = None
+    counterpart_id_fix = None
     recipients = None
     web_admin_rest_api_users = None
     risk_limit_dimensions = None
@@ -292,6 +293,11 @@ class BaseDataSet:
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
         raise ValueError(f"{self.venue_client_names} not found!")
+
+    def get_counterpart_id_fix(self, name: str):
+        if hasattr(self.counterpart_id_fix, name):
+            return getattr(self.counterpart_id_fix, name).value
+        raise ValueError(f"{self.counterpart_id_fix} not found!")
 
     # region FX getters
     def get_symbol_by_name(self, name: str):
@@ -811,6 +817,7 @@ class BaseDataSet:
         if hasattr(self.pre_filter, name):
             return getattr(self.pre_filter, name).value
         return ValueError(f"{self.pre_filter,} not found!")
+
     # endregion
 
     # region WebTrading getters
