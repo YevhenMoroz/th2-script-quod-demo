@@ -14,26 +14,27 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             "REPLY_SUBJECT": "QUOD.FE.PRICING.2",
             "QuoteAdjustmentRequestBlock": {"QuoteAdjustmentEntryList": []
                                             },
-            "InstrSymbol": "EUR/PHP",
+            "InstrSymbol": "EUR/USD",
             "ClientTierID": "2800013",
             "Tenor": "SPO"}
 
-    def set_default_params(self):
+    def set_defaults(self):
         self.params_for_request = {
             "SEND_SUBJECT": "QUOD.PRICING.2.FE",
             "REPLY_SUBJECT": "QUOD.FE.PRICING.2",
-            "QuoteAdjustmentRequestBlock": {"QuoteAdjustmentEntryList": {
-                "QuoteAdjustmentEntryBlock":
-                    [{"BidMargin": "-0.1", "OfferMargin": "0.1", "MDQuoteType": "TRD",
-                      "IndiceUpperQty": "1"},
+            "QuoteAdjustmentRequestBlock": {
+                "QuoteAdjustmentEntryList": {
+                    "QuoteAdjustmentEntryBlock":
+                        [{"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "TRD",
+                          "IndiceUpperQty": "1"},
 
-                     {"BidMargin": "-0.1", "OfferMargin": "0.1", "MDQuoteType": "TRD",
-                      "IndiceUpperQty": "2"},
+                         {"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "TRD",
+                          "IndiceUpperQty": "2"},
 
-                     {"BidMargin": "-0.1", "OfferMargin": "0.1", "MDQuoteType": "TRD",
-                      "IndiceUpperQty": "3"}
+                         {"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "TRD",
+                          "IndiceUpperQty": "3"}
 
-                     ]},
+                         ]},
                 "InstrSymbol": "GBP/USD",
                 "ClientTierID": "2800013",
                 "Tenor": "SPO"}}
@@ -47,6 +48,15 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"].append(
                 {"BidMargin": str(bid_margins), "OfferMargin": str(offer_margins), "MDQuoteType": "TRD",
                  "IndiceUpperQty": band})
+
+    def update_instrument(self, instrument: str):
+        self.params_for_request["QuoteAdjustmentRequestBlock"].update({"InstrSymbol": instrument})
+
+    def update_client_tier(self, clienttier: str):
+        self.params_for_request["QuoteAdjustmentRequestBlock"].update({"ClientTierID": clienttier})
+
+    def update_tenor(self, tenor: str):
+        self.params_for_request["QuoteAdjustmentRequestBlock"].update({"Tenor": tenor})
 
     def change_subject(self, subject):
         self.change_parameter("SEND_SUBJECT", f"QUOD.{subject}.FE")
