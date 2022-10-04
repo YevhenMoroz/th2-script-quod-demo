@@ -98,9 +98,11 @@ class ReadLogMessageAlgo(ReadLogMessage):
     def set_compare_message_for_check_party_info_more_than_one_group(self) -> ReadLogMessage:
         base_parameters = {
             "CountOfGroups": "3",
+            # "GroupNumber": "1",
             "PartyID": "TestClientID",
             "PartyIDSource": "D",
             "PartyRole": "3",
+            # "ClOrdID": "*"
         }
         super().change_parameters(base_parameters)
         return self
