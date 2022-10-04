@@ -220,7 +220,7 @@ class Venues(Enum):
 
 class PartyID(Enum):
     party_id_1 = "TestCLIENTACCOUNT"
-    party_id_2 = "TestClientID"
+    party_id_2 = "TestClientAccount"
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
     party_id_5 = "12345678"
@@ -229,6 +229,7 @@ class PartyID(Enum):
     party_id_8 = "TestClientID"
     party_id_9 = "TestTraderID"
     party_id_10 = "TestTraderName"
+
 
 
 class PartyIDSource(Enum):
