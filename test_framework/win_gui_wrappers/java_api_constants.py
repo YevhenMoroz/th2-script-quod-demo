@@ -45,3 +45,15 @@ class CommissionBasisConst(Enum):
 
 class CommissionAmountTypeConst(Enum):
     CommissionAmountType_BRK = 'BRK'
+
+
+class QtyPercentageProfile(Enum):
+    RemainingQty = "REM"
+    InitialQty = "INI"
+    TargetBasketQty = "TAB"
+
+
+class JavaApiFields(Enum):
+    TransExecStatus = 'TransExecStatus'
+    TransStatus = 'TransStatus'
+
