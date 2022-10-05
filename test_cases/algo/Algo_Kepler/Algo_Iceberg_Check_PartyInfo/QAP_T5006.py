@@ -107,16 +107,14 @@ class QAP_T5006(TestCase):
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log319_check_party_info_more_than_one_group.value
-        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
-        self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_party_info_more_than_one_group")
+        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log319_check_party_info_for_three_groups_sell_side.value
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log319_check_party_info_for_three_groups_buy_side.value
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
         # endregion
 
         # region Compare message parameters
         self.count_of_groups = 3
-        self.group_1 = 1
-        self.group_2 = 2
-        self.group_3 = 3
         self.party_id_source_map = "Proprietary"
         self.party_role_1_map = "ClientID"
         self.party_role_2_map = "OrderOriginator"
@@ -178,27 +176,20 @@ class QAP_T5006(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
         # endregion
 
-        # TODO Set up read log part
         # region Check Read log
         time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
-        compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID=self.party_id_1, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_1_map))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_three_groups_sell_side()
+        compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID1=self.party_id_1, PartyIDSource1=self.party_id_source_map, PartyRole1=self.party_role_1_map, PartyID2=self.party_id_2, PartyIDSource2=self.party_id_source_map, PartyRole2=self.party_role_2_map, PartyID3=self.party_id_3, PartyIDSource3=self.party_id_source_map, PartyRole3=self.party_role_3_map, ClOrdID=self.ClOrdId))
 
-        # compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
-        # compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_1, PartyID=self.party_id_1, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_1_map, ClOrdID=self.ClOrdId))
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_three_groups_buy_side()
+        compare_message_2.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID1=self.party_id_1, PartyIDSource1=self.party_id_source_map, PartyRole1=self.party_role_1_map, PartyID2=self.party_id_3, PartyIDSource2=self.party_id_source_map, PartyRole2=self.party_role_3_map, PartyID3=self.party_id_2, PartyIDSource3=self.party_id_source_map, PartyRole3=self.party_role_2_map))
 
-        # compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
-        # compare_message_2.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_2, PartyID=self.party_id_2, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_2_map, ClOrdID=self.ClOrdId))
-        #
-        # compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_more_than_one_group()
-        # compare_message_3.change_parameters(dict(CountOfGroups=self.count_of_groups, GroupNumber=self.group_3, PartyID=self.party_id_3, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_3_map, ClOrdID=self.ClOrdId))
+        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
 
-        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(compare_message_1)
-        # self.read_log_verifier.check_read_log_message(compare_message_1, key_parameters=self.key_params_read_log)
-        # self.read_log_verifier.check_read_log_message(compare_message_2, key_parameters=self.key_params_read_log)
-        # self.read_log_verifier.check_read_log_message(compare_message_3, key_parameters=self.key_params_read_log)
+        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog: Buy-side", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
         # endregion
 
         # region Check Sell side and PartyInfo in ERs PendingNew -> New
