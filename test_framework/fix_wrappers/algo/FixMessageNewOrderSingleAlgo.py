@@ -1161,3 +1161,48 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_Iceberg_Kepler_Custom_Tags(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Account': "KEPLER",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "0",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1004',
+            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
+            'ExDestination': 'XPAR',
+            "DisplayInstruction": {
+                'DisplayQty': '500'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_Iceberg_Kepler_Custom_Tags(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
