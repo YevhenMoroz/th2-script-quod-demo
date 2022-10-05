@@ -285,6 +285,11 @@ class BaseDataSet:
             return getattr(self.currency, name).value
         raise ValueError(f"{self.currency} not found!")
 
+    def get_settl_currency_by_name(self, name: str):
+        if hasattr(self.settl_currency, name):
+            return getattr(self.settl_currency, name).value
+        raise ValueError(f"{self.settl_currency} not found!")
+
     def get_venue_client_names_by_name(self, name: str):
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
