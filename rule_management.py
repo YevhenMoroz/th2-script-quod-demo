@@ -568,7 +568,7 @@ class RuleManager:
                                                                        tradedQty=tradedQty
                                                               ))
 if __name__ == '__main__':
-    rule_manager = RuleManager(Simulators.algo)
+    rule_manager = RuleManager()
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
