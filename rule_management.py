@@ -18,7 +18,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
     TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted, \
-    TemplateOrderCancelReplaceExecutionReportWithTrade
+    TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -209,6 +209,13 @@ class RuleManager:
                                                venue=venue,
                                                cancel=cancel,
                                                delay=delay))
+
+    def add_OrderCancelRequestTradeCancel(self, session: str, account: str, exdestination: str, price: float):
+        return self.sim.createTemplateOrderCancelRequestTradeCancel(
+            request=TemplateOrderCancelRequestTradeCancel(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               exdestination=exdestination,
+                                               price=price))
 
     def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int, delay: int = 0):
         return self.sim.createOrderCancelRequestWithQty(
@@ -561,7 +568,7 @@ class RuleManager:
                                                                        tradedQty=tradedQty
                                                               ))
 if __name__ == '__main__':
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
