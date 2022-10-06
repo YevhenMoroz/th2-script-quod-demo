@@ -5,6 +5,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -13,12 +14,11 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets import constants
 from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T5006(TestCase):
+class QAP_T5016(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -34,36 +34,24 @@ class QAP_T5006(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 500
-        self.price = 10
-        self.display_qty = 250
+        self.qty = 400
+        self.price = 20
+        self.display_qty = 50
         self.qty_for_md = 1000
         self.price_ask = 44
         self.price_bid = 30
-        self.party_id_1 = constants.PartyID.party_id_8.value
-        self.party_id_2 = constants.PartyID.party_id_9.value
-        self.party_id_3 = constants.PartyID.party_id_10.value
+        self.party_id = constants.PartyID.party_id_9.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
-        self.party_role_1 = constants.PartyRole.party_role_3.value
-        self.party_role_2 = constants.PartyRole.party_role_11.value
-        self.party_role_3 = constants.PartyRole.party_role_12.value
+        self.party_role = constants.PartyRole.party_role_11.value
 
         self.no_party = [
-            {'PartyID': self.party_id_1, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_1},
-            {'PartyID': self.party_id_2, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_2},
-            {'PartyID': self.party_id_3, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_3}
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
         ]
 
         self.no_party_for_report = [
-            {'PartyID': self.party_id_1, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_1},
-            {'PartyID': self.party_id_2, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_2},
-            {'PartyID': self.party_id_3, 'PartyIDSource': self.party_id_source,
-             'PartyRole': self.party_role_3},
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role},
             {'PartyID': '*', 'PartyIDSource': '*',
              'PartyRole': '*'}
         ]
@@ -107,18 +95,13 @@ class QAP_T5006(TestCase):
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log319_check_party_info_for_three_groups_sell_side.value
-        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
-        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log319_check_party_info_for_three_groups_buy_side.value
-        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log319_check_party_info_for_the_one_group_sell_side.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
 
         # region Compare message parameters
-        self.count_of_groups = 3
         self.party_id_source_map = "Proprietary"
-        self.party_role_1_map = "ClientID"
-        self.party_role_2_map = "OrderOriginator"
-        self.party_role_3_map = "ExecutingTrader"
+        self.party_role_map = "OrderOriginator"
         # endregion
 
         self.rule_list = []
@@ -168,10 +151,10 @@ class QAP_T5006(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_LitDark_Iceberg_params_with_PartyInfo()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_Custom_Tags()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.ClOrdId = self.Iceberg_order.get_parameter('ClOrdID')
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).update_repeating_group('NoParty', self.no_party)
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_fields_into_repeating_group('NoParty', self.no_party)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
         # endregion
@@ -179,17 +162,11 @@ class QAP_T5006(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_three_groups_sell_side()
-        compare_message_1.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID1=self.party_id_1, PartyIDSource1=self.party_id_source_map, PartyRole1=self.party_role_1_map, PartyID2=self.party_id_2, PartyIDSource2=self.party_id_source_map, PartyRole2=self.party_role_2_map, PartyID3=self.party_id_3, PartyIDSource3=self.party_id_source_map, PartyRole3=self.party_role_3_map, ClOrdID=self.ClOrdId))
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_sell_side()
+        compare_message.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map, ClOrdID=self.ClOrdId))
 
-        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_three_groups_buy_side()
-        compare_message_2.change_parameters(dict(CountOfGroups=self.count_of_groups, PartyID1=self.party_id_1, PartyIDSource1=self.party_id_source_map, PartyRole1=self.party_role_1_map, PartyID2=self.party_id_3, PartyIDSource2=self.party_id_source_map, PartyRole2=self.party_role_3_map, PartyID3=self.party_id_2, PartyIDSource3=self.party_id_source_map, PartyRole3=self.party_role_2_map))
-
-        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))
-        self.read_log_verifier_1.check_read_log_message(compare_message_1)
-
-        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog: Buy-side", self.test_id))
-        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
         # region Check Sell side and PartyInfo in ERs PendingNew -> New
@@ -205,10 +182,10 @@ class QAP_T5006(TestCase):
         # endregion
 
         # region Check 1st child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_LitDark_Iceberg_params_with_PartyInfo()
-        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
+        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_Custom_Tags()
+        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_pending)
@@ -238,6 +215,6 @@ class QAP_T5006(TestCase):
         er_cancel_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-        
+
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)

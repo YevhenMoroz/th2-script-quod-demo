@@ -41,7 +41,7 @@ class QAP_T4997(TestCase):
         self.price_ask_qdl1 = 40
         self.price_ask_qdl2 = 50
         self.price_bid = 30
-        self.party_id = constants.PartyID.party_id_2.value
+        self.party_id = constants.PartyID.party_id_8.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
         self.party_role = constants.PartyRole.party_role_3.value
 

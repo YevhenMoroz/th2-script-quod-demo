@@ -102,7 +102,59 @@ class ReadLogMessageAlgo(ReadLogMessage):
             "PartyID": "TestClientID",
             "PartyIDSource": "D",
             "PartyRole": "3",
-            "ClOrdID": "*",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_three_groups_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfGroups": "3",
+            "PartyID1": "1",
+            "PartyIDSource1": "TestClientID",
+            "PartyRole1": "D",
+            "PartyID2": "TestTraderID",
+            "PartyIDSource2": "Proprietary",
+            "PartyRole2": "OrderOriginator",
+            "PartyID3": "TestTraderName",
+            "PartyIDSource3": "OrderOriginator",
+            "PartyRole3": "ExecutingTrader",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_three_groups_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfGroups": "3",
+            "PartyID1": "1",
+            "PartyIDSource1": "TestClientID",
+            "PartyRole1": "D",
+            "PartyID2": "TestTraderID",
+            "PartyIDSource2": "Proprietary",
+            "PartyRole2": "OrderOriginator",
+            "PartyID3": "TestTraderName",
+            "PartyIDSource3": "OrderOriginator",
+            "PartyRole3": "ExecutingTrader"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_the_one_group_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "PartyID": "TestClientID",
+            "PartyIDSource": "D",
+            "PartyRole": "3",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_the_one_group_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "PartyID": "TestClientID",
+            "PartyIDSource": "D",
+            "PartyRole": "3",
         }
         super().change_parameters(base_parameters)
         return self

@@ -177,6 +177,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_6 = "QA_Auto_SORPING_6"
     qa_sorping_7 = "QA_Auto_SORPING_7"
     qa_sorping_8 = "QA_Auto_SORPING_8"
+    qa_sorping_9 = "QA_Auto_SORPING_9"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
     qa_iceberg = 'QA_Auto_ICEBERG'
@@ -220,7 +221,7 @@ class Venues(Enum):
 
 class PartyID(Enum):
     party_id_1 = "TestCLIENTACCOUNT"
-    party_id_2 = "TestClientID"
+    party_id_2 = "TestClientAccount"
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
     party_id_5 = "12345678"
@@ -229,6 +230,7 @@ class PartyID(Enum):
     party_id_8 = "TestClientID"
     party_id_9 = "TestTraderID"
     party_id_10 = "TestTraderName"
+
 
 
 class PartyIDSource(Enum):
@@ -268,8 +270,12 @@ class ReadLogVerifiers(Enum):
     log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
     log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
-    log_319_check_the_lis_amount = "log319-check-the-lis=amount"
+    log_319_check_the_lis_amount = "log319-check-the-lis-amount"
     log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
+    log319_check_party_info_for_three_groups_sell_side = "log319-check-party-info-for-three-groups-sell-side"
+    log319_check_party_info_for_three_groups_buy_side = "log319-check-party-info-for-three-groups-buy-side"
+    log319_check_party_info_for_the_one_group_sell_side = "log319-check-party-info-for-the-one-group-sell-side"
+    log319_check_party_info_for_the_one_group_buy_side = "log319-check-party-info-for-the-one-group-buy-side"
 
 
 class WebAdminURL(Enum):
