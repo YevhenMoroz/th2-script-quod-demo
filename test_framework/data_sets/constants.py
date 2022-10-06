@@ -276,6 +276,9 @@ class ReadLogVerifiers(Enum):
     log319_check_party_info_for_three_groups_buy_side = "log319-check-party-info-for-three-groups-buy-side"
     log319_check_party_info_for_the_one_group_sell_side = "log319-check-party-info-for-the-one-group-sell-side"
     log319_check_party_info_for_the_one_group_buy_side = "log319-check-party-info-for-the-one-group-buy-side"
+    log319_check_tag_5047 = "log319-check-tag-5047"
+    log319_check_tag_5048 = "log319-check-tag-5048"
+    log319_check_tag_1 = "log319-check-tag-1"
 
 
 class WebAdminURL(Enum):
