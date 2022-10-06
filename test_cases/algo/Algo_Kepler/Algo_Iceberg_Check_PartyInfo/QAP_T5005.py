@@ -163,19 +163,19 @@ class QAP_T5005(TestCase):
         # endregion
 
         # region Check Read log
-        # time.sleep(70)
-        #
-        # compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_sell_side()
-        # compare_message_1.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map, ClOrdID=self.ClOrdId))
-        #
-        # compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_buy_side()
-        # compare_message_2.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map))
-        #
-        # self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))
-        # self.read_log_verifier_1.check_read_log_message(compare_message_1)
-        #
-        # self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog: Buy-side", self.test_id))
-        # self.read_log_verifier_2.check_read_log_message(compare_message_1)
+        time.sleep(70)
+
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_sell_side()
+        compare_message_1.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map, ClOrdID=self.ClOrdId))
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_buy_side()
+        compare_message_2.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
+
+        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog: Buy-side", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
         # endregion
 
         # region Check Sell side and PartyInfo in ERs PendingNew -> New
@@ -194,7 +194,7 @@ class QAP_T5005(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_LitDark_Iceberg_params_with_PartyInfo()
-        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
+        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party).add_tag(dict(AlgoCst03=self.party_id))
         self.fix_verifier_buy.check_fix_message(self.dma_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_pending)
