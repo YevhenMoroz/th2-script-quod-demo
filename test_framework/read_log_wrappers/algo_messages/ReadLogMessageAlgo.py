@@ -159,3 +159,27 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_tag_5047(self) -> ReadLogMessage:
+        base_parameters = {
+            "AlgoPolicyName": "testTag5047",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tag_5048(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "ClientAlgoPolicyID": "QA_Auto_ICEBERG"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tag_1(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "ClientAccountGroupID": "KEPLER"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
