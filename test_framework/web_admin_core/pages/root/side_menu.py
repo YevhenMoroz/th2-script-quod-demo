@@ -367,6 +367,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(TradingLimitsConstants.TRADING_LIMITS_PAGE_TITLE_XPATH)
 
+    def open_buying_power_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.BUYING_POWER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(TradingLimitsConstants.TRADING_LIMITS_PAGE_TITLE_XPATH)
+
     def open_institutions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTITUTIONS_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)

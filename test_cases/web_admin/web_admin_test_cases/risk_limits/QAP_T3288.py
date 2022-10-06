@@ -1,90 +1,71 @@
+import random
+import string
 import sys
 import time
 import traceback
-import random
-import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.main_page import MainPage
-from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.wizards \
-    import MainWizard, ValuesTab, DimensionsTab
+from test_framework.web_admin_core.pages.risk_limits.buying_power.main_page import MainPage
+from test_framework.web_admin_core.pages.risk_limits.buying_power.wizards import ValuesTab, SecurityValuesTab, MainWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T3339(CommonTestCase):
+class QAP_T3288(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.position_limits = list
-        self.desk = "DESK A"
-        self.account_dimensions = "Clients"
-        self.client = "CLIENT1"
-        self.user_dimension = "Desks"
+        self.test_data = ["LastTradedPrice", "ClosingPrice", "MidPrice", "BidPrice"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
-        side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_risk_limit_dimension_page()
-        time.sleep(2)
-
-    def post_conditions(self):
-        main_page = MainPage(self.web_driver_container)
-        main_page.set_name_filter(self.name)
-        time.sleep(1)
-        main_page.click_on_more_actions()
-        main_page.click_on_delete(True)
 
     def test_context(self):
         try:
             self.precondition()
 
+            side_menu = SideMenu(self.web_driver_container)
+            side_menu.open_buying_power_page()
             main_page = MainPage(self.web_driver_container)
             main_page.click_on_new_button()
-            time.sleep(2)
             values_tab = ValuesTab(self.web_driver_container)
             values_tab.set_name(self.name)
-            time.sleep(1)
-            self.position_limits = values_tab.get_all_position_limits_from_drop_menu()
-            values_tab.set_cum_trading_limits([random.choice(self.position_limits)])
+            security_values_tab = SecurityValuesTab(self.web_driver_container)
+            reference_value_entities = security_values_tab.get_all_reference_value_from_drop_menu()
+            actual_result = ''
+            for i in reference_value_entities:
+                if i in self.test_data:
+                    actual_result = True
+                else:
+                    actual_result = f"Wrong value {i}"
+                    break
 
-            dimensions_tab = DimensionsTab(self.web_driver_container)
-            dimensions_tab.set_accounts_dimension(self.account_dimensions)
-            time.sleep(1)
-            dimensions_tab.set_clients([self.client])
-            time.sleep(1)
-            dimensions_tab.set_users_dimension(self.user_dimension)
-            time.sleep(1)
-            dimensions_tab.set_desks([self.desk])
+            self.verify("Reference Value contains test data", True, actual_result)
 
+            security_values_tab.set_reference_value(self.test_data[0])
             wizard = MainWizard(self.web_driver_container)
             wizard.click_on_save_changes()
-            time.sleep(2)
+
             main_page.set_name_filter(self.name)
             time.sleep(1)
-            self.verify("New entity has been create", True, main_page.is_searched_entity_found(self.name))
-
             main_page.click_on_more_actions()
-            time.sleep(1)
             main_page.click_on_edit()
-            time.sleep(2)
 
-            self.verify("Diemensions tab has no Position Limits field", False,
-                        values_tab.is_position_limit_field_displayed())
+            security_values_tab.clear_reference_value()
+            wizard.click_on_save_changes()
 
-            wizard.click_on_close()
-            time.sleep(2)
-
-            self.post_conditions()
+            main_page.set_name_filter(self.name)
+            time.sleep(1)
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
+            self.verify("Reference Value field empty", True, security_values_tab.is_reference_value_field_empty())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

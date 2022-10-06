@@ -7,7 +7,7 @@ import string
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.main_page import MainPage
-from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.wizard \
+from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.wizards \
     import MainWizard, ValuesTab, DimensionsTab, AssignmentsTab
 
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_page import TradingLimitsPage

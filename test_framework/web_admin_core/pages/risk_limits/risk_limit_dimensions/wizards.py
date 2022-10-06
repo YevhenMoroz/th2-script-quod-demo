@@ -66,7 +66,7 @@ class ValuesTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.ValuesTab.CUM_TRADING_LIMITS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def set_position_limits(self, values: list):
         self.set_checkbox_list(Constants.Wizard.ValuesTab.POSITION_LIMITS, values)
@@ -78,7 +78,7 @@ class ValuesTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.ValuesTab.POSITION_LIMITS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def is_position_limit_field_displayed(self):
         return self.is_element_present(Constants.Wizard.DimensionsTab.POSITION_LIMITS)
@@ -93,7 +93,7 @@ class ValuesTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.ValuesTab.BUYING_POWERS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
 
 class DimensionsTab(CommonPage):
@@ -116,7 +116,7 @@ class DimensionsTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.ACCOUNTS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def is_accounts_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.ACCOUNTS)
@@ -131,7 +131,7 @@ class DimensionsTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.CLIENTS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def is_clients_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.CLIENTS)
@@ -146,7 +146,7 @@ class DimensionsTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.CLIENT_LIST).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_client_list_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.CLIENT_LIST)
@@ -170,7 +170,7 @@ class DimensionsTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.DESKS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def is_desks_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.DESKS)
@@ -185,7 +185,7 @@ class DimensionsTab(CommonPage):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.USERS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
     def is_user_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.USERS)
@@ -199,7 +199,7 @@ class DimensionsTab(CommonPage):
     def get_all_reference_data_dimension_from_drop_menu(self):
         self.find_by_xpath(Constants.Wizard.DimensionsTab.REFERENCE_DATA_DIMENSIONS).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_reference_data_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.REFERENCE_DATA_DIMENSIONS)
@@ -213,7 +213,7 @@ class DimensionsTab(CommonPage):
     def get_all_venues_from_drop_menu(self):
         self.find_by_xpath(Constants.Wizard.DimensionsTab.VENUES).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_venue_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.VENUES)
@@ -227,7 +227,7 @@ class DimensionsTab(CommonPage):
     def get_all_sub_venues_from_drop_menu(self):
         self.find_by_xpath(Constants.Wizard.DimensionsTab.SUB_VENUE).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_sub_venue_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.SUB_VENUE)
@@ -241,7 +241,7 @@ class DimensionsTab(CommonPage):
     def get_all_listing_group_from_drop_menu(self):
         self.find_by_xpath(Constants.Wizard.DimensionsTab.LISTING_GROUP).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_listing_group_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.LISTING_GROUP)
@@ -312,7 +312,7 @@ class DimensionsTab(CommonPage):
     def get_all_position_type_from_drop_menu(self):
         self.find_by_xpath(Constants.Wizard.DimensionsTab.POSITION_TYPE).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
 
     def is_position_type_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.POSITION_TYPE)
