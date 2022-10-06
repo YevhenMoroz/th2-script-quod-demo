@@ -205,8 +205,8 @@ class QAP_T8790(TestCase):
         market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
     #     # region Cancel Algo Order
     #     case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
     #     self.fix_verifier_sell.set_case_id(case_id_2)
@@ -224,6 +224,7 @@ class QAP_T8790(TestCase):
     #     self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
     #     # endregion
     #
+        time.sleep(120)
         rule_manager = RuleManager()
         rule_manager.remove_rules(self.rule_list)
         rule_manager.remove_rule(self.ocr_1_rule)
