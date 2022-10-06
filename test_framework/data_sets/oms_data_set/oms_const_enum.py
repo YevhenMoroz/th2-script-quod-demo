@@ -508,3 +508,6 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_regulatory_body_venue_paris = {'PartyRole': "34",
                                                   'PartyID': "RegulatoryBody - Venue(Paris)",
                                                   'PartyIDSource': "C"}
+    counterpart_id_settlement_location = {'PartyRole': '10',
+                                          'PartyID': "CREST",
+                                          'PartyIDSource': "D"}

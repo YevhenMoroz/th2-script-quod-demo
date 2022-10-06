@@ -56,4 +56,4 @@ class QtyPercentageProfile(Enum):
 class JavaApiFields(Enum):
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
-
+    ExecutionReportBlock = 'ExecutionReportBlock'

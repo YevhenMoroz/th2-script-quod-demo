@@ -14,7 +14,6 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -94,7 +93,7 @@ class QAP_T7170(TestCase):
         list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc']
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         execution_report.change_parameters({'ClOrdID': client_order_id_2})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report,ignored_fields=list_of_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
     @try_except
