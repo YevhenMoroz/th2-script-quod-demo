@@ -125,7 +125,7 @@ class QAP_T4587(TestCase):
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty,  Price=self.price))
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
-        time.sleep(15)
+        time.sleep(20)
         # endregion
 
         # region Check Sell side
