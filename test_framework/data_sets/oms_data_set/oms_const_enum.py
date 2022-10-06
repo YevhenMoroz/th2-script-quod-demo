@@ -511,3 +511,8 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_settlement_location = {'PartyRole': '10',
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
+
+
+class OMSCounterPartyIDs_JavaAPI(Enum):
+    counterpart_executing_firm = {'PartyRole': 'ExecutingFirm', 'CounterpartID': '200002'}
+    counterpart_contra_firm = {'PartyRole': 'ContraFirm', 'CounterpartID': '200003'}
