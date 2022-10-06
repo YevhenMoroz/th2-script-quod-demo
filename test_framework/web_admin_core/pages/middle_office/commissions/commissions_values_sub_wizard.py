@@ -35,7 +35,7 @@ class CommissionsValuesSubWizard(CommonPage):
     def get_all_commission_amount_type_from_drop_menu(self):
         self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_commission_profile(self, value):
         self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH, value)
@@ -46,7 +46,7 @@ class CommissionsValuesSubWizard(CommonPage):
     def get_all_commission_profile_from_drop_menu(self):
         self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
 
     def click_on_manage_commission_profile(self):
         self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH).click()

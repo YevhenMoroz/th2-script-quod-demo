@@ -39,7 +39,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_venue_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_VENUE_XPATH).click()
         time.sleep(2)
-        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_venue_list(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_VENUE_LIST_XPATH, value)
@@ -56,7 +56,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_venue_list_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_VENUE_LIST_XPATH).click()
         time.sleep(2)
-        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_instrument_list(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_INSTRUMENT_LIST_XPATH, value)
@@ -67,7 +67,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_instrument_list_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_INSTRUMENT_LIST_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_instrument_group(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH, value)
@@ -84,7 +84,7 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_route_from_drop_menu(self):
         self.find_by_xpath(FeesConstants.DIMENSIONS_TAB_ROUTE_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
 
     def set_client_list(self, value):
         self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH, value)
@@ -95,4 +95,4 @@ class FeesDimensionsSubWizard(CommonPage):
     def get_all_client_list_from_drop_menu(self):
         self.set_text_by_xpath(FeesConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH)

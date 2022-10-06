@@ -19,7 +19,7 @@ class ClientGroupsDimensionsSubWizard(CommonPage):
     def get_all_default_execution_strategy_type_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.DIMENSIONS_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_default_execution_strategy(self, value):
         self.set_combobox_value(ClientGroupsConstants.DIMENSIONS_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH, value)
@@ -30,7 +30,7 @@ class ClientGroupsDimensionsSubWizard(CommonPage):
     def get_all_default_execution_strategy_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.DIMENSIONS_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_default_sor_execution_strategy(self, value):
         self.set_combobox_value(ClientGroupsConstants.DIMENSIONS_TAB_DEFAULT_CHILD_EXECUTION_STRATEGY_XPATH, value)

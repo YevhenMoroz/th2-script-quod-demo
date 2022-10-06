@@ -17,7 +17,7 @@ class ClientsAssignmentsSubWizard(CommonPage):
     def get_all_user_manager_from_drop_menu(self):
         self.set_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
 
     def is_user_manager_field_displayed_and_has_correct_name(self):
         return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH)

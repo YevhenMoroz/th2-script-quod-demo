@@ -21,7 +21,7 @@ class FeesValuesSubWizard(CommonPage):
     def get_all_misc_fee_type_from_drop_menu(self):
         self.set_text_by_xpath(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(FeesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(FeesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_charge_type(self, value):
         self.set_combobox_value(FeesConstants.VALUES_TAB_CHARGE_TYPE_XPATH, value)
