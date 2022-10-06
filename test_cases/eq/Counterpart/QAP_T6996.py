@@ -53,7 +53,7 @@ class QAP_T6996(TestCase):
         # region Declaration
         qty = '1000'
         price = '10'
-        client = self.data_set.get_client_by_name('client_pt_1')
+        client = self.data_set.get_client_by_name('client_counterpart_1')
         self.fix_message.set_default_dma_limit()
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
         self.fix_message.change_parameter('Account', client)
@@ -71,7 +71,7 @@ class QAP_T6996(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(40)
         # endregion
 
         # region precondition and step 1
@@ -85,9 +85,13 @@ class QAP_T6996(TestCase):
         fix_execution_report.set_default_new(self.fix_message)
         fix_execution_report.remove_parameter("Parties").add_tag({'QuodTradeQualifier': '*'})
         fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
-        fix_execution_report.add_tag({"NoParty": {'NoParty': [
+        no_party = {"NoParty": {'NoParty': [
             {'PartyRole': "*",
              'PartyID': "*",
+             'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyRoleQualifier': '*',
              'PartyIDSource': "*"},
             {'PartyRole': "*",
              'PartyID': "*",
@@ -95,12 +99,17 @@ class QAP_T6996(TestCase):
             {'PartyRole': "*",
              'PartyID': "*",
              'PartyIDSource': "*"},
-            counterpart_settl_location]}})
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"},
+            counterpart_settl_location]}}
+        fix_execution_report.add_tag(no_party)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report)
         self.trade_entry_message.set_default_trade(order_id_care, exec_price=price, exec_qty=qty)
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
         result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value)
-        actually_result = result.get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.TransExecStatus.value]
+        actually_result = result.get_parameters()[JavaApiFields.ExecutionReportBlock.value][
+            JavaApiFields.TransExecStatus.value]
         self.order_book.compare_values(
             {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value},
             {OrderBookColumns.exec_sts.value: actually_result},
@@ -114,24 +123,10 @@ class QAP_T6996(TestCase):
             remove_parameter('TradeReportingIndicator').add_tag({'VenueType': '0'}).remove_parameter('SecondaryExecID') \
             .remove_parameter('SecondaryOrderID').add_tag({'LastMkt': '*'}).change_parameter('VenueType', 'O')
         fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
-        fix_execution_report.add_tag({"NoParty": {'NoParty': [
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            counterpart_settl_location]}})
-        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report)
+
+        fix_execution_report.add_tag(no_party)
+        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc']
+        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
         # endregion
 
@@ -141,5 +136,5 @@ class QAP_T6996(TestCase):
         self.rest_api_manager.send_post_request(self.api_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(40)
         os.remove("temp.xml")
