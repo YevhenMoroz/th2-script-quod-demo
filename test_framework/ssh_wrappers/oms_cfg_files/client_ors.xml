@@ -233,6 +233,7 @@ Copyright Quod Financial
      </FIXNotif2>
 	</AddFIXNotif>
 		<FrontToBack>
+			<setSettlementModel>false</setSettlementModel>
 		<acceptMultipleVenueAccountGroups>true</acceptMultipleVenueAccountGroups>
 			<GatingRules>
 				<enabled>true</enabled>
