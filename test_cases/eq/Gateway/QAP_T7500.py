@@ -229,8 +229,9 @@ class QAP_T7500(TestCase):
              'AllocAccount': sec_acc_2,
              'AllocPrice': '*'
              }]
+        list_of_ignored_fields = ['AllocSettlCurrAmt', 'SettlCurrAmt']
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report)
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region step 10
@@ -246,7 +247,8 @@ class QAP_T7500(TestCase):
         change_parameters['AllocAccount'] = sec_acc_1
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                         ['AllocAccount', 'ConfirmTransType', 'NoOrders'])
+                                                         ['AllocAccount', 'ConfirmTransType', 'NoOrders'],
+                                                         ignored_fields=list_of_ignored_fields)
         # endregion
 
     def return_result(self, responses, message_type):

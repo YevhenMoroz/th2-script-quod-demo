@@ -233,6 +233,7 @@ Copyright Quod Financial
      </FIXNotif2>
 	</AddFIXNotif>
 		<FrontToBack>
+			<setSettlementModel>false</setSettlementModel>
 		<acceptMultipleVenueAccountGroups>true</acceptMultipleVenueAccountGroups>
 			<GatingRules>
 				<enabled>true</enabled>
@@ -261,8 +262,10 @@ Copyright Quod Financial
 			<FIXReportOrdrParties>true</FIXReportOrdrParties>
 			<EnrichFIXExecReportParties>true</EnrichFIXExecReportParties>
 		</BackToFront>
+		<counterpartEnrichment>
+            <ManualOrderCross>true</ManualOrderCross>
+        </counterpartEnrichment>
 		<acceptFreeAllocAccountID>false</acceptFreeAllocAccountID>
-
 	</ors>
 
 </quod>

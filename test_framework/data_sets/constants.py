@@ -59,7 +59,7 @@ class FrontEnd(Enum):
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
-    DESKS_ID_317 = [""]
+    DESKS_ID_317 = [9, 10]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values

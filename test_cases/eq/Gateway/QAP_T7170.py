@@ -14,7 +14,6 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -37,7 +36,7 @@ class QAP_T7170(TestCase):
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.client = self.data_set.get_client('client_pt_1')
+        self.client = self.data_set.get_client('client_co_1')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -57,8 +56,8 @@ class QAP_T7170(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(110)
+        self.ssh_client.send_command("qrestart ESBUYTH2TEST ORS CS")
+        time.sleep(70)
         # endregion
 
         # region create CO  order (precondition)
@@ -74,11 +73,6 @@ class QAP_T7170(TestCase):
         order_id_2 = response[0].get_parameters()['OrderID']
         client_order_id_2 = response[0].get_parameters()['ClOrdID']
 
-        # region accept CO orders (step 1)
-        self.client_inbox.accept_order(filter={OrderBookColumns.order_id.value: order_id})
-        self.client_inbox.accept_order(filter={OrderBookColumns.order_id.value: order_id_2})
-        # endregion
-
         # region trade via mass manual execution CO orders (step 2)
         self.trade_entry_message.set_default_trade(order_id)
         self.trade_entry_message.update_fields_in_component('TradeEntryRequestBlock',
@@ -86,6 +80,7 @@ class QAP_T7170(TestCase):
         self.java_api_manager.send_message(self.trade_entry_message)
         self.trade_entry_message.set_default_trade(order_id_2)
         self.java_api_manager.send_message(self.trade_entry_message)
+        time.sleep(5)
         # endregion
 
         # region check fix message
@@ -95,13 +90,14 @@ class QAP_T7170(TestCase):
         execution_report.remove_parameter('SecondaryOrderID').remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
             {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0'})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc']
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         execution_report.change_parameters({'ClOrdID': client_order_id_2})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(110)
+        self.ssh_client.send_command("qrestart ESBUYTH2TEST ORS CS")
+        time.sleep(70)
