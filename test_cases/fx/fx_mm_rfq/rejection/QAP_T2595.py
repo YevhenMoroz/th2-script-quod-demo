@@ -46,7 +46,6 @@ class QAP_T2595(TestCase):
                                                                               Instrument=self.eur_gbp_swap)
         self.quote_request.update_near_leg(leg_symbol=self.eur_gbp, leg_qty=self.qty_40m)
         self.quote_request.update_far_leg(leg_symbol=self.eur_gbp, leg_qty=self.qty_40m)
-        self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
         response = self.fix_manager.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
         # endregion
 
