@@ -88,8 +88,8 @@ def test_run():
         # region __DMA__ block
         # QAP_T3343(report_id, configuration_trading_api_dma.data_set,
         #                     configuration_trading_api_dma.environment).execute()
-        QAP_T3520(report_id, configuration_trading_api_dma.data_set,
-                  configuration_trading_api_dma.environment).execute()
+        # QAP_T3520(report_id, configuration_trading_api_dma.data_set,
+        #           configuration_trading_api_dma.environment).execute()
         # QAP_T3521(report_id, configuration_trading_api_dma.data_set,
         #                     configuration_trading_api_dma.environment).execute()
         # endregion
@@ -130,8 +130,8 @@ def test_run():
         # endregion
 
         # region Admin API __RiskLimit__ block
-        # RiskLimitDimensionDeleter(report_id, configuration_admin_api_risk_limits.data_set,
-        #                           configuration_admin_api_risk_limits.environment).execute()
+        RiskLimitDimensionDeleter(report_id, configuration_admin_api_risk_limits.data_set,
+                                  configuration_admin_api_risk_limits.environment).execute()
         # QAP_T3128(report_id, configuration_admin_api_risk_limits.data_set,
         #           configuration_admin_api_risk_limits.environment).execute()
         # QAP_T3203(report_id, configuration_admin_api_risk_limits.data_set,

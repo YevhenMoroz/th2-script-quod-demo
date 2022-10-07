@@ -22,16 +22,16 @@ def test_run(parent_id=None):
     try:
         QAP_T3520(report_id, configuration_trading_api_dma.data_set,
                   configuration_trading_api_dma.environment).execute()
-        # QAP_T3521(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
-        # QAP_T3343(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
-        # QAP_T3503(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
-        # QAP_T3504(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
-        # QAP_T3606(report_id, configuration_trading_api_dma.data_set,
-        #           configuration_trading_api_dma.environment).execute()
+        QAP_T3521(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
+        QAP_T3343(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
+        QAP_T3503(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
+        QAP_T3504(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
+        QAP_T3606(report_id, configuration_trading_api_dma.data_set,
+                  configuration_trading_api_dma.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 

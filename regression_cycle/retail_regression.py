@@ -21,16 +21,16 @@ def test_run(parent_id=None):
         # region __TradingRestApi__ block
         if eval(root.find(".//component[@name='Trading_REST_API_Dma']").attrib["run"]):
             trading_rest_api_dma.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='Trading_REST_API_MarketData']").attrib["run"]):
-        #     trading_rest_api_market_data.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='Trading_REST_API_Positions']").attrib["run"]):
-        #     pass
-        # if eval(root.find(".//component[@name='Trading_REST_API_RiskLimits']").attrib["run"]):
-        #     trading_rest_api_risk_limits.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='Trading_REST_API_BuyingPower']").attrib["run"]):
-        #     trading_rest_api_buying_power.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='Trading_REST_API_Others']").attrib["run"]):
-        #     trading_rest_api_others.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='Trading_REST_API_MarketData']").attrib["run"]):
+            trading_rest_api_market_data.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='Trading_REST_API_Positions']").attrib["run"]):
+            pass
+        if eval(root.find(".//component[@name='Trading_REST_API_RiskLimits']").attrib["run"]):
+            trading_rest_api_risk_limits.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='Trading_REST_API_BuyingPower']").attrib["run"]):
+            trading_rest_api_buying_power.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='Trading_REST_API_Others']").attrib["run"]):
+            trading_rest_api_others.test_run(cycle_report_rest_api)
         # # endregion
         #
         # # region __WebAdminRestApi__ block
