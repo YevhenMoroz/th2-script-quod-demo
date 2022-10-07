@@ -47,7 +47,7 @@ class QAP_T8788(TestCase):
         self.qty_for_incr = 0
         self.delay_for_trade = 1900
         self.delay_for_modify = 5000
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
         self.sell = constants.OrderSide.Sell.value
         # endregion
 
@@ -64,7 +64,7 @@ class QAP_T8788(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_15")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
         # endregion
 
         # region Direction
@@ -73,15 +73,13 @@ class QAP_T8788(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_quodlit8 = self.data_set.get_mic_by_name("mic_24")
-        self.ex_destination_quodlit9 = self.data_set.get_mic_by_name("mic_25")
-        self.ex_destination_quoddkp1 = self.data_set.get_mic_by_name("mic_14")
-        self.ex_destination_quoddkp2 = self.data_set.get_mic_by_name("mic_15")
+        self.ex_destination_quodlit8 = self.data_set.get_mic_by_name("mic_10")
+        self.ex_destination_quodlit9 = self.data_set.get_mic_by_name("mic_11")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl8 = self.data_set.get_listing_id_by_name("listing_17")
-        self.listing_id_qdl9 = self.data_set.get_listing_id_by_name("listing_18")
-        self.listing_id_qdl10 = self.data_set.get_listing_id_by_name("listing_19")
+        self.listing_id_qdl8 = self.data_set.get_listing_id_by_name("listing_4")
+        self.listing_id_qdl9 = self.data_set.get_listing_id_by_name("listing_5")
+        self.listing_id_qdl10 = self.data_set.get_listing_id_by_name("listing_16")
         # endregion
 
         # region Key parameters
@@ -97,13 +95,11 @@ class QAP_T8788(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager()
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, self.price)
-        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, self.price, self.price, self.qty, self.traded_qty, self.delay_for_trade)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, False)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, self.price)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, True)
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, self.price)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, self.price, self.price, self.qty, self.traded_qty, self.delay_for_trade)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, False)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, True)
-        self.rule_list = [nos_1_rule, nos_trade_rule, ocrr_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
+        self.rule_list = [nos_1_rule, nos_trade_rule, ocrr_rule, ocr_2_rule]
         # endregion
 
         # region Send_MarkerData
@@ -176,6 +172,8 @@ class QAP_T8788(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
+        # TODO Need to rewrite
+
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
@@ -191,12 +189,6 @@ class QAP_T8788(TestCase):
         er_new_dma_qdl9_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit9))
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl9_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
-
-        time.sleep(121)
-
-        market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
