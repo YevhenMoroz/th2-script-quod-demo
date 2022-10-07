@@ -61,6 +61,8 @@ class JavaApiFields(Enum):
     CounterpartBlock = "CounterpartBlock"
     PartyRole = "PartyRole"
     OrderNotificationBlock = "OrdNotificationBlock"
+    OrdID = 'OrdID'
+    ExecID = 'ExecID'
 
 
 class JavaApiPartyRoleConstants(Enum):

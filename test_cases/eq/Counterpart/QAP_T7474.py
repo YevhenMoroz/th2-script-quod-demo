@@ -1,5 +1,7 @@
 import logging
 import time
+from copy import deepcopy
+
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -35,16 +37,15 @@ class QAP_T7474(TestCase):
                               'PreAllocGrp': {
                                   'NoAllocs': [{
                                       'AllocAccount': self.client_acc,
-                                      'AllocQty': "200"}]} }
+                                      'AllocQty': "200"}]}}
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.qty = "200"
-        self.fix_message.change_parameter('OrderQtyData',{'OrderQty':self.qty})
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
         self.price = self.fix_message.get_parameter("Price")
         self.fix_message.change_parameters(self.change_params)
         self.rule_manager = RuleManager(Simulators.equity)
         self.mic = self.data_set.get_mic_by_name("mic_1")
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -69,67 +70,39 @@ class QAP_T7474(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
+        list_of_ignored_fields = ['NoMiscFees', 'Account', 'CommissionData', 'MiscFeesGrp', 'ReplyReceivedTime','SecurityDesc']
+        list_of_counterparts = [
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+        ]
+        list_of_counterparts_confirmation = deepcopy(list_of_counterparts)
         parties = {
-            'NoPartyIDs': [
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "34",
-                 'PartyID': "RegulatoryBody - Venue(Paris)",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "36",
-                 "PartyRoleQualifier": "1011",
-                 'PartyID': "gtwquod4",
-                 'PartyIDSource': "D"},
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
-            ]
+            'NoPartyIDs': list_of_counterparts
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
-            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account": self.client_acc})
+            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*",
+             "Account": self.client_acc})
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
+        list_of_counterparts.append(self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'))
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
-
+        counterpart_settlement_location = self.data_set.get_counterpart_id_fix('counterpart_id_settlement_location')
+        list_of_counterparts.append(counterpart_settlement_location)
+        list_of_counterparts_confirmation.append(counterpart_settlement_location)
         no_party1 = {
-            'NoParty': [
-                {'PartyRole': "10",
-                 'PartyID': "EURO_CLEAR",
-                 'PartyIDSource': "D"},
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "34",
-                 'PartyID': "RegulatoryBody - Venue(Paris)",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
-            ]
+            'NoParty': list_of_counterparts_confirmation
         }
         no_party2 = {
-            'NoParty': [
-                {'PartyRole': "10",
-                 'PartyID': "EURO_CLEAR",
-                 'PartyIDSource': "D"},
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "34",
-                 'PartyID': "RegulatoryBody - Venue(Paris)",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
-            ]
+            'NoParty': list_of_counterparts
         }
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message).change_parameters(
@@ -140,6 +113,6 @@ class QAP_T7474(TestCase):
         alloc_report.change_parameter('NoAllocs', "*")
         # endregion
         # region Check Book & Allocation
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
-        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_of_ignored_fields)
+        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=list_of_ignored_fields)
         # endregion
