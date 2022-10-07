@@ -33,7 +33,7 @@ class QAP_T5057(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 4000
+        self.qty = 400
         self.price = 20
         self.display_qty = 50
         self.dec_display_qty = -10
