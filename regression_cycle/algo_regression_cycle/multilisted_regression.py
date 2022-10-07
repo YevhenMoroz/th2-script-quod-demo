@@ -81,7 +81,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
 
-    report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted (cloned) | {version}", parent_id)
+    report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted | {version}", parent_id)
     try:
         configuration = ComponentConfiguration("Multilisted")
         QAP_T8142(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
