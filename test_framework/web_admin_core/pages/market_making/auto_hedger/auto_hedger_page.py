@@ -70,6 +70,9 @@ class AutoHedgerPage(CommonPage):
         self.find_by_xpath(AutoHedgerConstants.OK_BUTTON_XPATH).click()
         time.sleep(1)
 
+    def is_auto_hedger_found_by_name(self, value):
+        return self.is_element_present(AutoHedgerConstants.DISPLAYED_ENTITY_XPATH.format(value))
+
 
 
 

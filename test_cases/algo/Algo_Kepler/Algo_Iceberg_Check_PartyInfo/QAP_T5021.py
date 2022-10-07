@@ -34,7 +34,6 @@ class QAP_T5021(TestCase):
         self.qty = 600
         self.price = 20
         self.display_qty = 300
-        self.traded_qty = 0
         self.qty_for_md = 1000
         self.price_ask = 44
         self.price_bid = 30
