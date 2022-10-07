@@ -37,7 +37,7 @@ class QAP_T4766(TestCase):
         # region order parameters
         # weights CHIXDELTA=4/BATSDARK=3/ITG=4
         self.qty = 10000
-        self.minQty = 5000
+        self.minQty = 7000
         self.weight_chix = 4
         self.weight_bats = 3
         self.weight_itg = 4
