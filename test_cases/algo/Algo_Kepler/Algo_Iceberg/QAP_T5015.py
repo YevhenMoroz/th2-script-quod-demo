@@ -18,7 +18,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T5024(TestCase):
+class QAP_T5015(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -40,7 +40,21 @@ class QAP_T5024(TestCase):
         self.qty_for_md = 1000
         self.price_ask = 44
         self.price_bid = 30
-        self.algo_order_strategy = "testTag5047"
+        self.party_id = constants.PartyID.party_id_10.value
+        self.party_id_source = constants.PartyIDSource.party_id_source_1.value
+        self.party_role = constants.PartyRole.party_role_12.value
+
+        self.no_party = [
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role}
+        ]
+
+        self.no_party_for_report = [
+            {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
+             'PartyRole': self.party_role},
+            {'PartyID': '*', 'PartyIDSource': '*',
+             'PartyRole': '*'}
+        ]
         # endregion
 
         # region Gateway Side
@@ -79,10 +93,15 @@ class QAP_T5024(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
-        
+
         # region Read log verifier params
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log319_check_tag_5047.value
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log319_check_party_info_for_the_one_group_sell_side.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.party_id_source_map = "Proprietary"
+        self.party_role_map = "ExecutingTrader"
         # endregion
 
         self.rule_list = []
@@ -132,10 +151,10 @@ class QAP_T5024(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_Custom_Tags()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.ClOrdId = self.Iceberg_order.get_parameter('ClOrdID')
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(AlgoOrderStrategy=self.algo_order_strategy))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_fields_into_repeating_group('NoParty', self.no_party)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
         # endregion
@@ -143,8 +162,8 @@ class QAP_T5024(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_tag_5047()
-        compare_message.change_parameters(dict(AlgoPolicyName=self.algo_order_strategy, ClOrdID=self.ClOrdId))
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_party_info_for_the_one_group_sell_side()
+        compare_message.change_parameters(dict(PartyID=self.party_id, PartyIDSource=self.party_id_source_map, PartyRole=self.party_role_map, ClOrdID=self.ClOrdId))
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message)
@@ -154,17 +173,19 @@ class QAP_T5024(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Iceberg_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_pending)
+        er_pending_new_Iceberg_order_params.remove_parameter('NoParty').add_fields_into_repeating_group('NoParty', self.no_party_for_report)
         self.fix_verifier_sell.check_fix_message(er_pending_new_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_new)
+        er_new_Iceberg_order_params.remove_parameter('NoParty').add_fields_into_repeating_group('NoParty', self.no_party_for_report)
         self.fix_verifier_sell.check_fix_message(er_new_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_Custom_Tags()
-        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler()
+        self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_pending)
