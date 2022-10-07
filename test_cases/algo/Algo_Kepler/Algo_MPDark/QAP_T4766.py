@@ -37,7 +37,7 @@ class QAP_T4766(TestCase):
         # region order parameters
         # weights CHIXDELTA=4/BATSDARK=3/ITG=4
         self.qty = 10000
-        self.minQty = 7000
+        self.minQty = 5000
         self.weight_chix = 4
         self.weight_bats = 3
         self.weight_itg = 4
@@ -91,7 +91,7 @@ class QAP_T4766(TestCase):
     def run_pre_conditions_and_steps(self):
         # region modify strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=4, BATSDARK=3, ITG=4)))
+        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark3", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=4, BATSDARK=3, ITG=4)))
         # endregion
 
         # region Rule creation
@@ -164,7 +164,7 @@ class QAP_T4766(TestCase):
 
         # region Revert modifying strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=6, BATSDARK=3, ITG=1)))
+        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark3", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=6, BATSDARK=3, ITG=1)))
         # endregion
 
         rule_manager = RuleManager()
