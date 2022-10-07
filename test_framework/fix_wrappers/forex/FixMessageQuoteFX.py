@@ -15,6 +15,7 @@ class FixMessageQuoteFX(FixMessage):
             QuoteID="*",
             QuoteMsgID="*",
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+            Account=quote_request.get_parameter("NoRelatedSymbols")[0]["Account"],
             OfferPx="*",
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             ValidUntilTime="*",
@@ -220,6 +221,7 @@ class FixMessageQuoteFX(FixMessage):
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityIDSource="*",
                      )
                      ),
@@ -237,6 +239,7 @@ class FixMessageQuoteFX(FixMessage):
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                          LegSecurityExchange="*",
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityIDSource="*",
                      )
                      )
