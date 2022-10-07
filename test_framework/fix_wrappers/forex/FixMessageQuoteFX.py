@@ -190,6 +190,7 @@ class FixMessageQuoteFX(FixMessage):
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
             OfferPx="*",
             Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            Account=quote_request.get_parameter("NoRelatedSymbols")[0]["Account"],
             ValidUntilTime="*",
             OfferSpotRate="*",
             BidSpotRate="*",
@@ -300,6 +301,7 @@ class FixMessageQuoteFX(FixMessage):
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
                      )
@@ -317,6 +319,7 @@ class FixMessageQuoteFX(FixMessage):
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
                      )
@@ -395,6 +398,7 @@ class FixMessageQuoteFX(FixMessage):
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
                      )
@@ -412,6 +416,7 @@ class FixMessageQuoteFX(FixMessage):
                          LegSymbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                              "Symbol"],
                          LegSecurityID=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+                         LegCurrency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
                          LegSecurityExchange="*",
                          LegSecurityIDSource="*",
                      )
