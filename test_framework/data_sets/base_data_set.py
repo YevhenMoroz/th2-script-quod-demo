@@ -195,6 +195,10 @@ class BaseDataSet:
         if self.cash_transfer_types:
             return self.cash_account_counters.__members__
 
+    def get_hierarchical_level(self):
+        if self.hierarchical_levels:
+            return self.hierarchical_levels.__members__
+
     def get_trading_api_instrument_by_name(self, name: str):
         if hasattr(self.trading_api_instruments, name):
             return getattr(self.trading_api_instruments, name).value
@@ -294,6 +298,11 @@ class BaseDataSet:
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
         raise ValueError(f"{self.venue_client_names} not found!")
+
+    def get_hierarchical_level_by_name(self, name: str):
+        if hasattr(self.hierarchical_levels, name):
+            return getattr(self.hierarchical_levels, name).value
+        raise ValueError(f"{self.hierarchical_levels} not found!")
 
     # region FX getters
     def get_symbol_by_name(self, name: str):
