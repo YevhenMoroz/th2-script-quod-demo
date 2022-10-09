@@ -55,7 +55,7 @@ class QAP_T7324(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        self.ssh_client.send_command("qrestart ORS ESBUYTH2TEST CS")
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
         time.sleep(60)
         # endregion
 
@@ -77,7 +77,7 @@ class QAP_T7324(TestCase):
                                                              'AssistedReportAPA': 'NAS',
                                                              'OnExchangeRequested': 'ONR'})
         self.java_api_manager.send_message(self.trade_entry_message)
-        time.sleep(5)
+        time.sleep(13)
         # endregion
 
         # region check fix message
@@ -94,6 +94,5 @@ class QAP_T7324(TestCase):
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        self.ssh_client.send_command("qrestart ORS ESBUYTH2TEST CS")
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
         time.sleep(60)
-        pass
