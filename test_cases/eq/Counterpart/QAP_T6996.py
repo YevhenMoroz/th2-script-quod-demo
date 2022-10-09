@@ -29,7 +29,7 @@ class QAP_T6996(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.rest_api_conn = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
@@ -45,7 +45,7 @@ class QAP_T6996(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.api_message = RestApiSettlementModelMessages(self.data_set)
-        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
+        self.local_path = os.path.abspath("../../test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -66,9 +66,9 @@ class QAP_T6996(TestCase):
         # region set up configuration on ORS(precondition)
         tree = ET.parse(self.local_path)
         quod = tree.getroot()
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         quod.find("ors/FrontToBack/setSettlementModel").text = "true"
         tree.write("temp.xml")
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
         time.sleep(40)
@@ -125,7 +125,7 @@ class QAP_T6996(TestCase):
         fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
 
         fix_execution_report.add_tag(no_party)
-        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc']
+        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier']
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
         # endregion

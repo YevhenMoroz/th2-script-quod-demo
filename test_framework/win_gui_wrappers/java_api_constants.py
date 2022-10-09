@@ -63,6 +63,8 @@ class JavaApiFields(Enum):
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     ExecID = 'ExecID'
+    AllocationReportBlock = 'AllocationReportBlock'
+    ClientAllocID = 'ClientAllocID'
 
 
 class JavaApiPartyRoleConstants(Enum):
