@@ -65,6 +65,8 @@ class JavaApiFields(Enum):
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
     ClientAllocID = 'ClientAllocID'
+    PostTradeStatus = 'PostTradeStatus'
+    OrdUpdateBlock = 'OrdUpdateBlock'
 
 
 class JavaApiPartyRoleConstants(Enum):
