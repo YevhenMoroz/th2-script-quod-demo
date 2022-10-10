@@ -52,6 +52,7 @@ class QAP_T3322(CommonTestCase):
             time.sleep(1)
             main_page.click_on_more_actions()
             main_page.click_on_delete(True)
+            time.sleep(1)
 
     def test_context(self):
         try:

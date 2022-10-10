@@ -71,3 +71,15 @@ class ClientListWizard(CommonPage):
 
     def is_client_list_wizard_opened(self):
         return self.is_element_present(ClientListConstants.WIZARD_TITLE_CLIENT_LIST_XPATH)
+
+    def click_at_client_link(self):
+        self.find_by_xpath(ClientListConstants.WIZARD_CLIENT_LINK_NAME_XPATH).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(ClientListConstants.NO_BUTTON_XPATH).click()
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(ClientListConstants.OK_BUTTON_XPATH).click()
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(ClientListConstants.CANCEL_BUTTON_XPATH).click()

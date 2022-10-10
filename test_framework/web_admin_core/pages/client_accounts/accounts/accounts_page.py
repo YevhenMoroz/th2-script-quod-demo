@@ -10,10 +10,7 @@ class AccountsPage(CommonPage):
         super().__init__(web_driver_container)
 
     def click_new_button(self):
-        new_button = self.find_by_xpath(AccountsConstants.NEW_BUTTON_XPATH)
-        new_button.click()
-
-        time.sleep(2)
+        self.find_by_xpath(AccountsConstants.NEW_BUTTON_XPATH).click()
 
     def click_on_load_button(self):
         load_button = self.find_by_xpath(AccountsConstants.LOAD_BUTTON)
@@ -43,12 +40,12 @@ class AccountsPage(CommonPage):
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
-    def toggle_entity_toggle_button(self):
+    def click_on_enable_disable_button(self):
         self.find_by_xpath(AccountsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_GRID_XPATH).click()
         self.find_by_xpath(AccountsConstants.CONFIRM_ACTION_BUTTON_XPATH).click()
         time.sleep(2)
 
-    def is_entity_toggle_button_enabled(self):
+    def is_account_enabled(self):
         return self.is_toggle_button_enabled(AccountsConstants.ENABLE_DISABLE_TOGGLE_BUTTON_GRID_XPATH)
 
     def get_popup_text(self):

@@ -225,7 +225,7 @@ class QAP_T7499(TestCase):
         }]
         allocation_report.change_parameters({'AllocType': 2, 'NoAllocs': no_alloc_list})
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
-                                                         key_parameters=['ClOrdID', 'AllocType', 'NoAllocs'],
+                                                         key_parameters=['NoOrders', 'AllocType'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 

@@ -161,13 +161,13 @@ class UsersConstants:
     VENUE_TRADER_GROUP_ID_FILTER_AT_TRADER_GROUPS_SUB_WIZARD = '//*[@class="form-control ng-untouched ng-pristine ng-valid"]//*[@placeholder="Filter"]'
 
     # Roustes
-    PLUS_BUTTON_AT_ROUTES_SUB_WIZARD = '//*[text()=" Routes "]/ancestor::*[@class="expanded"]//*[@class="nb-plus"]'
-    CHECKMARK_AT_ROUTES_SUB_WIZARD = '//*[text()=" Routes "]/ancestor::*[@class="expanded"]//*[@class="nb-checkmark"]'
-    CANCEL_AT_ROUTES_SUB_WIZARD = '//*[text()=" Routes "]/ancestor::*[@class="expanded"]//*[@class="nb-close"]'
-    EDIT_AT_ROUTES_SUB_WIZARD = '//*[text()=" Routes "]/ancestor::*[@class="expanded"]//*[@class="nb-edit"]'
-    DELETE_AT_ROUTES_WIZARD = '//*[text()=" Routes "]/ancestor::*[@class="expanded"]//*[@class="nb-trash"]'
+    PLUS_BUTTON_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@nbtooltip="Add"]'
+    CHECKMARK_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="checkmark"]'
+    CANCEL_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="close"]'
+    EDIT_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="edit"]'
+    DELETE_AT_ROUTES_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="trash-2"]'
 
     ROUTE_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route *"]'
     ROUTE_USER_NAME_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route User Name *"]'
-    ROUTE_FILTER_AT_ROUTES_SUB_WIZARD = '//*[@class="ng2-smart-th route ng-star-inserted"]//*[@placeholder="Filter"]'
-    ROUTE_USER_NAME_FILTER_AT_ROUTES_SUB_WIZARD = '//*[@class="ng2-smart-th routeUserName ng-star-inserted"]//*[@placeholder="Filter"]'
+    ROUTE_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[1]'
+    ROUTE_USER_NAME_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[2]'

@@ -8,6 +8,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_description_sub_wizard import \
     SubVenuesDescriptionSubWizard
+
 from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_page import SubVenuesPage
 from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_wizard import SubVenuesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -26,37 +27,29 @@ class QAP_T3874(CommonTestCase):
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.feed_source = self.data_set.get_feed_source("feed_source_5")
 
-
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_subvenues_page()
-        time.sleep(2)
         page = SubVenuesPage(self.web_driver_container)
         page.click_on_new()
-        time.sleep(2)
         description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
         description_sub_wizard.set_name(self.name)
-        time.sleep(2)
         description_sub_wizard.set_venue(self.venue)
-        time.sleep(2)
         wizard = SubVenuesWizard(self.web_driver_container)
         wizard.click_on_save_changes()
-        time.sleep(2)
         page.set_name_filter(self.name)
-        time.sleep(2)
+        time.sleep(1)
         page.click_on_more_actions()
-        time.sleep(2)
         page.click_on_edit()
-        time.sleep(2)
-
 
     def test_context(self):
         description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
         try:
             self.precondition()
+
+            description_sub_wizard.set_market_data_source(self.feed_source)
             try:
                 self.verify("Feed Source contains value", self.feed_source, description_sub_wizard.get_feed_source())
             except Exception as e:

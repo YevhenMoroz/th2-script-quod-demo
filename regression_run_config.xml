@@ -1,7 +1,7 @@
 <regression>
-    <target_server_win>skomanov</target_server_win>
-    <name>Regression</name>
-    <version>5.1.156.169</version>
+    <target_server_win></target_server_win>
+    <name>Regression 176v</name>
+    <version>5.1.163.176</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -25,7 +25,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -33,7 +33,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -61,7 +61,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark" run="False">
+                <component name="Lit_dark" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -136,7 +136,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="PreOpen_Auction" run="False">
+                <component name="PreOpen_Auction" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -332,6 +332,23 @@
                         </java_api_environments>
                     </environments>
                 </component>
+                <component name="Price_Cleansing" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod314_luna_fe</fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
+                    </environments>
+                </component>
                 <component name="FX_Smoke_list" run="True">
                     <data_set>FxDataSet</data_set>
                     <environments>
@@ -351,9 +368,9 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="oms" run="True">
+        <product_line name="oms" run="False">
             <components>
-            <component name="AcceptanceList" run="False">
+            <component name="AcceptanceList" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -585,7 +602,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="True">
+        <product_line name="retail" run="False">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>

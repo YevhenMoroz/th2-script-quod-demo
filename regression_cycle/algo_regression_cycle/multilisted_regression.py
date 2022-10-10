@@ -20,16 +20,16 @@ from test_cases.algo.Algo_Multilisted.QAP_T4102 import  QAP_T4102
 from test_cases.algo.Algo_Multilisted.QAP_T4084 import QAP_T4084
 # from test_cases.algo.Algo_Multilisted import  QAP_T4148
 from test_cases.algo.Algo_Multilisted import  QAP_T4093
-from test_cases.algo.Algo_Multilisted.QAP_T4095 import  QAP_T4095
-from test_cases.algo.Algo_Multilisted.QAP_T4139 import  QAP_T4139
-from test_cases.algo.Algo_Multilisted.QAP_T4114 import  QAP_T4114
-from test_cases.algo.Algo_Multilisted.QAP_T4136 import  QAP_T4136
-from test_cases.algo.Algo_Multilisted.QAP_T4131 import  QAP_T4131
-from test_cases.algo.Algo_Multilisted.QAP_T4132 import  QAP_T4132
-from test_cases.algo.Algo_Multilisted.QAP_T4135 import  QAP_T4135
-from test_cases.algo.Algo_Multilisted import  QAP_T4085
+from test_cases.algo.Algo_Multilisted.QAP_T4095 import QAP_T4095
+from test_cases.algo.Algo_Multilisted.QAP_T4139 import QAP_T4139
+from test_cases.algo.Algo_Multilisted.QAP_T4114 import QAP_T4114
+from test_cases.algo.Algo_Multilisted.QAP_T4136 import QAP_T4136
+from test_cases.algo.Algo_Multilisted.QAP_T4131 import QAP_T4131
+from test_cases.algo.Algo_Multilisted.QAP_T4132 import QAP_T4132
+from test_cases.algo.Algo_Multilisted.QAP_T4135 import QAP_T4135
+from test_cases.algo.Algo_Multilisted.QAP_T4085 import QAP_T4085
 # from test_cases.algo.Algo_Multilisted.QAP_T4142 import  QAP_T4142
-from test_cases.algo.Algo_Multilisted import  QAP_T4086
+from test_cases.algo.Algo_Multilisted.QAP_T4086 import QAP_T4086
 # from test_cases.algo.Algo_Multilisted.QAP_T4143 import  QAP_T4143
 from test_cases.algo.Algo_Multilisted import QAP_T4088
 # from test_cases.algo.Algo_Multilisted import QAP_T4145
@@ -37,7 +37,7 @@ from test_cases.algo.Algo_Multilisted.QAP_T4089 import QAP_T4089
 # from test_cases.algo.Algo_Multilisted.QAP_T4146 import QAP_T4146
 from test_cases.algo.Algo_Multilisted.QAP_T4090 import QAP_T4090
 # from test_cases.algo.Algo_Multilisted.QAP_T4147 import QAP_T4147
-from test_cases.algo.Algo_Multilisted import QAP_T4087
+from test_cases.algo.Algo_Multilisted.QAP_T4087 import QAP_T4087
 # from test_cases.algo.Algo_Multilisted.QAP_T4144 import QAP_T4144
 from test_cases.algo.Algo_Multilisted.QAP_T4120 import QAP_T4120
 from test_cases.algo.Algo_Multilisted.QAP_T4115 import QAP_T4115
@@ -56,7 +56,7 @@ from test_cases.algo.Algo_Multilisted.QAP_T4099 import QAP_T4099
 from test_cases.algo.Algo_Multilisted.QAP_T4098 import QAP_T4098
 from test_cases.algo.Algo_Multilisted.QAP_T4097 import QAP_T4097
 from test_cases.algo.Algo_Multilisted.QAP_T4096 import QAP_T4096
-from test_cases.algo.Algo_Multilisted import QAP_T4091
+from test_cases.algo.Algo_Multilisted.QAP_T4091 import QAP_T4091
 # from test_cases.algo.Algo_Multilisted.QAP_T4140 import QAP_T4140
 from test_cases.algo.Algo_Multilisted.QAP_T4110 import QAP_T4110
 from test_cases.algo.Algo_Multilisted.QAP_T4111 import QAP_T4111
@@ -100,11 +100,11 @@ def test_run(parent_id=None, version=None):
         QAP_T4131(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4132(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4135(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4085.execute(report_id)
-        QAP_T4086.execute(report_id)
+        QAP_T4085(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4086(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4089(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4090(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4087.execute(report_id)
+        QAP_T4087(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4116(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -120,7 +120,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4098(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4097(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4096(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4091.execute(report_id)
+        QAP_T4091(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4110(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4111(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4127(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

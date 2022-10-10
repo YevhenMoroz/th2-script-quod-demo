@@ -26,7 +26,7 @@ class QAP_T3290(CommonTestCase):
         self.order_scope = 'DoneForDay'
         self.exec_scope = 'AllExec'
         self.order_fee_profile = 'UK stamp'
-        self.misc_fee_type = 'Agent'
+        self.misc_fee_type = 'Levy'
         self.exec_fee_profile = 'UK stamp'
         self.instr_list = ''
         self.venue = 'BATS'
