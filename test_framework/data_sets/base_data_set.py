@@ -19,6 +19,7 @@ class BaseDataSet:
     risk_limit_dimensions = None
     cash_transfer_types = None
     listing_id = None
+    counterpart_id_java_api = None
     mic = None  # Market Identifier Code
     currency = None
     settl_currency = None
@@ -298,6 +299,11 @@ class BaseDataSet:
         if hasattr(self.counterpart_id_fix, name):
             return getattr(self.counterpart_id_fix, name).value
         raise ValueError(f"{self.counterpart_id_fix} not found!")
+
+    def get_counterpart_id_java_api(self, name: str):
+        if hasattr(self.counterpart_id_java_api, name):
+            return getattr(self.counterpart_id_java_api, name).value
+        raise ValueError(f"{self.counterpart_id_java_api} not found!")
 
     # region FX getters
     def get_symbol_by_name(self, name: str):

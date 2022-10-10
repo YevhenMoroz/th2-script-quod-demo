@@ -60,7 +60,7 @@ class QAP_T7173(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up commission and fees
         fee = '0.01'
-        commission = '150'
+        commission = '1.5'
         fee_rate = '0.01'
         commission_rate = '0.5'
         self.rest_api_manager.clear_fees()

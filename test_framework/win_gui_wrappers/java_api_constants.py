@@ -57,3 +57,18 @@ class JavaApiFields(Enum):
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
     ExecutionReportBlock = 'ExecutionReportBlock'
+    CounterpartList = "CounterpartList"
+    CounterpartBlock = "CounterpartBlock"
+    PartyRole = "PartyRole"
+    OrderNotificationBlock = "OrdNotificationBlock"
+    OrdID = 'OrdID'
+    ExecID = 'ExecID'
+    AllocationReportBlock = 'AllocationReportBlock'
+    ClientAllocID = 'ClientAllocID'
+    PostTradeStatus = 'PostTradeStatus'
+    OrdUpdateBlock = 'OrdUpdateBlock'
+
+
+class JavaApiPartyRoleConstants(Enum):
+    PartyRole_EXF = 'EXF'
+    PartyRole_CNF = 'CNF'
