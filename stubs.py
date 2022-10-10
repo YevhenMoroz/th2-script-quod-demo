@@ -57,6 +57,7 @@ class Stubs:
     simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)
     core_equity = sim_pb2_grpc.SimStub(grpc.insecure_channel("10.0.22.22:32700"))
+    core_algo = sim_pb2_grpc.SimStub(grpc.insecure_channel("10.0.22.22:32650"))
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)
     win_act_order_book_fx = factory.grpc_router.get_service(OrderBookFXServiceService)
