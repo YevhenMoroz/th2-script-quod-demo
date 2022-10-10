@@ -17,7 +17,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
-class QAP_T8708(TestCase):
+
+class QAP_T8712(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -81,11 +82,14 @@ class QAP_T8708(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # TODO Need rewrite
         # region Rule creation
-        rule_manager = RuleManager()
-        nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.reason)
-        self.rule_list = [nos_reject_rule]
-        # endregion
+        # rule_manager = RuleManager()
+        # # nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.reason)
+        # # self.rule_list = [nos_reject_rule]
+        # # endregion
+        #
+        # self.ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
@@ -137,9 +141,6 @@ class QAP_T8708(TestCase):
 
         time.sleep(5)
 
-        rule_manager.remove_rules(self.rule_list)
-        self.nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-
         # region Check that algo was paused
         # TODO add checking in logs
         # endregion
@@ -153,34 +154,55 @@ class QAP_T8708(TestCase):
         self.dma_2_order.change_parameters(dict(OrderQty=self.display_qty, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
-        er_pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(er_pending_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
-
-        er_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(er_new_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
-
+        er_reject_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_reject)
+        self.fix_verifier_buy.check_fix_message(er_reject_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 2 order')
         # endregion
-        
+
+        time.sleep(5)
+
+        # region Check that algo was paused
+        # TODO add checking in logs
+        # endregion
+
+        time.sleep(55)
+
+        # rule_manager.remove_rules(self.rule_list)
+        # self.nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+
+        # region Check new child DMA order
+        self.fix_verifier_buy.set_case_id(bca.create_event("New child DMA order", self.test_id))
+
+        self.dma_3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_3_order.change_parameters(dict(OrderQty=self.display_qty, Price=self.price, Instrument='*'))
+        self.fix_verifier_buy.check_fix_message(self.dma_3_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 3 order')
+
+        er_pending_dma_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(er_pending_dma_3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 3 order')
+
+        er_new_dma_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_3_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3 order')
+        # endregion
+
         time.sleep(10)
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_3)
-        cancel_request_iceberg_order = FixMessageOrderCancelRequest(self.iceberg_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_iceberg_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
-        # endregion
-
-        # region check cancel first dma child order
-        cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_2_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
-        # endregion
-
-        rule_manager = RuleManager()
-        rule_manager.remove_rule(self.nos_rule)
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     # region Cancel Algo Order
+    #     case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+    #     self.fix_verifier_sell.set_case_id(case_id_3)
+    #     cancel_request_iceberg_order = FixMessageOrderCancelRequest(self.iceberg_order)
+    #
+    #     self.fix_manager_sell.send_message_and_receive_response(cancel_request_iceberg_order, case_id_3)
+    #     self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+    #
+    #     cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
+    #     self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
+    #     # endregion
+    #
+    #     # region check cancel first dma child order
+    #     cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
+    #     self.fix_verifier_buy.check_fix_message(cancel_dma_2_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
+    #     # endregion
+    #
+    #     rule_manager = RuleManager()
+    #     rule_manager.remove_rule(self.nos_rule)

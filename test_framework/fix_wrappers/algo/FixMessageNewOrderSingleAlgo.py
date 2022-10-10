@@ -1162,7 +1162,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Iceberg_Kepler_Custom_Tags(self):
+    def set_Iceberg_Kepler(self):
         base_parameters = {
             'ClOrdID': '*',
             'HandlInst': "2",
@@ -1187,7 +1187,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_Iceberg_Kepler_Custom_Tags(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_Iceberg_Kepler(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
             'ClOrdID': '*',

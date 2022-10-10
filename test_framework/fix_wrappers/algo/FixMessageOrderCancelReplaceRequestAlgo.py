@@ -47,6 +47,10 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
                 IClOrdIdAO='OD_5fgfDXg-00',
                 ShortCode='17536'
             )
+        if new_order_single.is_parameter_exist('IClOrdIdAO'):
+            temp.update(IClOrdIdAO='OD_5fgfDXg-00',)
+        if new_order_single.is_parameter_exist('ShortCode'):
+            temp.update(ShortCode='17536')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') != '1004':
