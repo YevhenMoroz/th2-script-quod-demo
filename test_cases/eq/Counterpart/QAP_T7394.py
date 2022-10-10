@@ -54,7 +54,6 @@ class QAP_T7394(TestCase):
             'NoPartyIDs': [
                 self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
             ]
@@ -102,7 +101,6 @@ class QAP_T7394(TestCase):
         counterparts = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.CounterpartList.value][
             JavaApiFields.CounterpartBlock.value]
-        print(counterparts)
         contra_firm = self.find_counterpart(JavaApiPartyRoleConstants.PartyRole_CNF.value, counterparts)
         excuting_firm = self.find_counterpart(JavaApiPartyRoleConstants.PartyRole_EXF.value, counterparts)
         self.order_book.compare_values({'ContraFirm': contra_firm,
