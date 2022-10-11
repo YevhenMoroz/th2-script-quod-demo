@@ -34,7 +34,7 @@ class ClientTiersInstrumentInternalClientsSubWizard(CommonPage):
                                value)
 
     def get_client(self):
-        return self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH).text
+        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH)
 
     def get_all_internal_client_from_drop_menu(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH).click()

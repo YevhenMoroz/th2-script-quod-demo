@@ -26,7 +26,7 @@ class QAP_T3868(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter_at_dark_block = "Dark Resident Time"
+        self.parameter_at_dark_block = "DarkResidentTime"
         self.value = "120"
 
     def precondition(self):
@@ -36,14 +36,13 @@ class QAP_T3868(CommonTestCase):
         login_page.click_login_button()
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_execution_strategies_page()
+        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
         side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        time.sleep(1)
+        time.sleep(2)
         strategies_wizard.set_name(self.name)
-        time.sleep(1)
         strategies_wizard.set_user(self.user)
         strategies_wizard.set_strategy_type(self.strategy_type)
         strategies_wizard.click_on_dark_block()

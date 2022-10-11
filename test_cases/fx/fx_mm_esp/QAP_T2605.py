@@ -1,230 +1,184 @@
-import time
-
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsBuy import CaseParamsBuy
-from test_cases.fx.fx_wrapper.CaseParamsSellEsp import CaseParamsSellEsp
-from test_cases.fx.fx_wrapper.FixClientBuy import FixClientBuy
-from test_cases.fx.fx_wrapper.FixClientSellEsp import FixClientSellEsp
-import logging
 from datetime import datetime
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
-from stubs import Stubs
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails, ModifyRatesTileRequest as ModifyMM
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest as ModifyESP, ContextActionRatesTile, \
-    ExtractRatesTileDataRequest, ActionsRatesTile
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, DeselectRowsRequest
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.forex.RestApiClientTierMessages import RestApiClientTierMessages
 
-api = Stubs.api_service
 
-md_entry = [
+class QAP_T2605(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.modify_client_tier = RestApiClientTierMessages()
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.rest_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
+        self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.ss_connectivity = self.fix_env.sell_side_esp
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.msg_prams_client = None
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.book_type_tiered = "1"
+        self.client_id_silver = self.data_set.get_client_tier_id_by_name("client_tier_id_1")
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.instrument_spot = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.instrument_spot,
+            'SettlType': self.settle_type_spot}]
+        self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
+        self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
+        self.no_md_entries = [
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.19500,
+                    "MDEntryPx": 1.1815,
                     "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.19500,
+                    "MDEntryPx": 1.18151,
                     "MDEntrySize": 1000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 },
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.19450,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19600,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19400,
-                    "MDEntrySize": 12000000,
+                    "MDEntryPx": 1.1813,
+                    "MDEntrySize": 5000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.19700,
-                    "MDEntrySize": 12000000,
+                    "MDEntryPx": 1.18165,
+                    "MDEntrySize": 5000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 2,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 },
                 {
                     "MDEntryType": "0",
-                    "MDEntryPx": 1.19350,
-                    "MDEntrySize": 13000000,
+                    "MDEntryPx": 1.181,
+                    "MDEntrySize": 10000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 },
                 {
                     "MDEntryType": "1",
-                    "MDEntryPx": 1.19800,
-                    "MDEntrySize": 13000000,
+                    "MDEntryPx": 1.18186,
+                    "MDEntrySize": 10000000,
+                    "MDQuoteType": 1,
                     "MDEntryPositionNo": 3,
-                    'SettlDate': tsd.spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+                    "SettlDate": self.settle_date_spot,
+                    "MDEntryDate": self.md_entry_date,
+                    "MDEntryTime": self.md_entry_time
                 }
             ]
+        self.md_eur_usd_spo = "EUR/USD:SPO:REG:HSBC"
+        self.md_entry_px_0 = "1.1815"
+        self.md_entry_px_1 = "1.18151"
+        self.md_entry_px_2 = "1.1813"
+        self.md_entry_px_3 = "1.18165"
+        self.md_entry_px_4 = "1.181"
+        self.md_entry_px_5 = "1.18186"
 
-def_md_symbol_eur_gbp = "EUR/GBP:SPO:REG:HSBC"
-symbol_eur_gbp = "EUR/GBP"
-core_spot_strategy_vwap = 'VWP'
-core_spot_strategy_direct = 'DIR'
-from_currency = 'EUR'
-to_currency = 'GBP'
-tenor = 'Spot'
-instrument = 'EUR/GBP-Spot'
-client_tier = 'Palladium2'
-venue = 'HSBC'
-rows_default = 3
-rows_with_new_md = 4
-ask_pts_exp = 700
-bid_pts_exp = 400
-unconfigured_ask_pts_exp = 800
-unconfigured_bid_pts_exp = 350
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.modify_client_tier.find_all_client_tier()
+        self.msg_prams_client = self.rest_manager.send_get_request(self.modify_client_tier)
+        self.msg_prams_client = self.rest_manager.parse_response_details(self.msg_prams_client,
+                                                                         {"clientTierID": self.client_id_silver})
+        self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams_client) \
+            .change_params({'pricingMethod': "DIR"})
+        self.rest_manager.send_post_request(self.modify_client_tier)
+        # endregion
+        # region Step 2, 4
+        self.fix_md.set_market_data().update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        # endregion
+        # region Step 3
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.md_entry_px_0)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.md_entry_px_1)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=self.md_entry_px_2)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=self.md_entry_px_3)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=self.md_entry_px_4)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=self.md_entry_px_5)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
+        # region Step 5
+        self.md_request.set_md_req_parameters_maker().change_parameters(
+            {"SenderSubID": self.silver, "BookType": self.book_type_tiered})
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
 
-def set_core_strategy_for_tier(case_id, core_strategy):
-    modify_params = {
-        "alive": "true",
-        "clientTierID": 2000011,
-        "clientTierName": "Palladium2",
-        "enableSchedule": "false",
-        "pricingMethod": core_strategy
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(message=bca.message_to_grpc('ModifyClientTier', modify_params, 'rest_wa314luna'),
-                                     parent_event_id=case_id))
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
+        "SettlType", "MDEntryPx", "MDEntryTime",
+        "MDQuoteType", "MDOriginType", "MDEntryID",
+        "MDEntrySize","QuoteEntryID", "MDEntryDate"))
+        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
+        "SettlType", "MDEntryPx", "MDEntryTime",
+        "MDQuoteType", "MDOriginType", "MDEntryID",
+        "MDEntrySize", "QuoteEntryID", "MDEntryDate"))
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
 
-def modify_cp_rates_tile(base_request, service, instr, client):
-    modify_request = ModifyMM(details=base_request)
-    modify_request.set_client_tier(client)
-    modify_request.set_instrument(instr)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def modify_agg_rates_tile(base_request, service, from_c, to_c, ten):
-    modify_request = ModifyESP(details=base_request)
-    modify_request.set_instrument(from_c, to_c, ten)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def open_direct_venue(base_request, service, ven):
-    modify_request = ModifyESP(details=base_request)
-    venue_filter = ContextActionRatesTile.create_venue_filter(ven)
-    add_dve_action = ContextActionRatesTile.open_direct_venue_panel()
-    modify_request.add_context_actions([venue_filter, add_dve_action])
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def add_venue_rows(base_request, service, ven):
-    modify_request = ModifyESP(details=base_request)
-    add_row = ActionsRatesTile().click_to_direct_venue_add_raw(ven)
-    modify_request.add_actions([add_row, add_row, add_row, add_row, add_row])
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def extract_pts_and_band(base_request, service, rows: int):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_row_number(rows)
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("bidBase", "Base"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("bidPx", "Px"))
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("askPx", "Px"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-    deselect_rows_request = DeselectRowsRequest(details=base_request)
-    call(service.deselectRows, deselect_rows_request.build())
-    return [response['askPx'], response['bidPx'], response['bidBase']]
-
-
-def check_pts_default(case_id, ask_exp, bid_exp, ask_act, bid_act, base):
-    verifier = Verifier(case_id)
-    verifier.set_event_name('Checking pts')
-    verifier.compare_values('ask', str(int(ask_exp)+int(float(base)*10)), ask_act)
-    verifier.compare_values('bid', str(int(bid_exp)-int(float(base)*10)), bid_act)
-    verifier.verify()
-
-
-def check_pts_with_new_md(case_id, ask_exp, bid_exp, ask_act, bid_act, base):
-    verifier = Verifier(case_id)
-    verifier.set_event_name('Checking pts with new band')
-    verifier.compare_values('ask', str(ask_exp), str(ask_act))
-    verifier.compare_values('bid', str(bid_exp), str(bid_act))
-    verifier.compare_values('Base', '', base)
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    #
-    # TODO: Add extraction from Taker ESP tile
-    #
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    cp_service = Stubs.win_act_cp_service
-    ar_service = Stubs.win_act_aggregated_rates_service
-    try:
-        call(cp_service.createRatesTile, base_details.build())
-        call(ar_service.createRatesTile, base_details.build())
-
-        set_core_strategy_for_tier(case_id, core_spot_strategy_direct)
-        modify_cp_rates_tile(base_details, cp_service, instrument, client_tier)
-        modify_agg_rates_tile(base_details, ar_service, from_currency, to_currency, tenor)
-        open_direct_venue(base_details, ar_service, venue)
-        add_venue_rows(base_details, ar_service, venue)
-
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-            md_entry[:6])).send_market_data_spot()
-        result = extract_pts_and_band(base_details, cp_service, rows_default)
-        check_pts_default(case_id, ask_pts_exp, bid_pts_exp, result[0], result[1], result[2])
-
-        FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-            md_entry)).send_market_data_spot()
-        result = extract_pts_and_band(base_details, cp_service, rows_with_new_md)
-        check_pts_with_new_md(case_id, unconfigured_ask_pts_exp, unconfigured_bid_pts_exp, result[0], result[1], result[2])
-
-    except Exception as ex:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-            call(ar_service.closeRatesTile, base_details.build())
-            # Set default parameters
-            set_core_strategy_for_tier(case_id, core_spot_strategy_vwap)
-            FixClientBuy(CaseParamsBuy(case_id, def_md_symbol_eur_gbp, symbol_eur_gbp).prepare_custom_md_spot(
-                md_entry[:6])).send_market_data_spot()
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        # region Step 6
+        self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams_client) \
+            .change_params({'pricingMethod': "VWP"})
+        self.rest_manager.send_post_request(self.modify_client_tier)
+        # endregion
+        self.fix_md.set_market_data().update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)

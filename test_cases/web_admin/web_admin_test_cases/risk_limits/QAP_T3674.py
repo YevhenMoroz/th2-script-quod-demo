@@ -11,8 +11,6 @@ from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trad
     import CumTradingLimitsPage
 from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_wizard \
     import CumTradingLimitsWizard
-from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_dimensions_sub_wizard \
-    import CumTradingLimitsDimensionsSubWizard
 from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_values_sub_wizard \
     import CumTradingLimitsValuesSubWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -48,8 +46,6 @@ class QAP_T3674(CommonTestCase):
         value_tab.set_external_id(self.external_id)
         value_tab.set_max_amount(self.max_amount)
         value_tab.set_currency(self.currency)
-        dimensions_tab = CumTradingLimitsDimensionsSubWizard(self.web_driver_container)
-        dimensions_tab.set_user(self.user)
         wizard = CumTradingLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         time.sleep(2)
@@ -66,6 +62,7 @@ class QAP_T3674(CommonTestCase):
                         main_page.is_searched_cum_trading_limits_found(self.description))
 
             common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_info_error_message_pop_up()
             common_act.click_on_user_icon()
             time.sleep(1)
             common_act.click_on_logout()

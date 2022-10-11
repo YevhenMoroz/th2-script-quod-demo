@@ -77,7 +77,6 @@ class QAP_T3414(CommonTestCase):
                         values_tab.get_buying_powers())
 
             wizard.click_on_close()
-            wizard.click_on_ok_button()
             time.sleep(2)
 
             self.post_conditions()

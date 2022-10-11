@@ -28,23 +28,21 @@ class QAP_T3964(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
         client_tiers_main_page.click_on_new()
-        time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
-        time.sleep(1)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
-        time.sleep(2)
 
     def test_context(self):
         try:
@@ -53,14 +51,15 @@ class QAP_T3964(CommonTestCase):
 
             try:
                 client_tiers_main_page.set_name(self.name)
+                time.sleep(1)
                 self.verify("Is client tier created correctly? ", True, True)
             except Exception as e:
                 self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
-            time.sleep(2)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
             client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
             client_tier_instrument_main_page.click_on_new()
+            client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
+            client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
             client_tier_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
             client_tier_instrument_wizard.click_on_save_changes()
             self.verify("Message appears: The instr symbol is required", True,

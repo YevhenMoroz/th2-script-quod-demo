@@ -79,10 +79,9 @@ class QAP_T3339(CommonTestCase):
             time.sleep(2)
 
             self.verify("Diemensions tab has no Position Limits field", False,
-                        dimensions_tab.is_position_limit_field_displayed())
+                        values_tab.is_position_limit_field_displayed())
 
             wizard.click_on_close()
-            wizard.click_on_ok_button()
             time.sleep(2)
 
             self.post_conditions()

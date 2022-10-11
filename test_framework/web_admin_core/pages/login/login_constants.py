@@ -10,3 +10,4 @@ class LoginConstants:
     EMAIL_INPUT_XPATH = '//input[@id="input-emailUser"]'
     RESET_PASSWORD_BUTTON_XPATH = '//button[normalize-space()="Reset Password"]'
     CHANGE_PASSWORD_INFO_MESSAGE_XPATH = '//span[@class="title subtitle"]'
+    LOGIN_PAGE_TITLE_TEXT_XPATH = '//h2'

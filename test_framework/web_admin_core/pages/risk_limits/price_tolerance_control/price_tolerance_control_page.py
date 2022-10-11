@@ -92,3 +92,6 @@ class PriceToleranceLimitPage(CommonPage):
 
     def get_listing_group(self):
         return self.find_by_xpath(PriceToleranceControlConstants.MAIN_PAGE_LISTING_GROUP_XPATH).text
+
+    def is_searched_entity_found_by_name(self, value):
+        return self.is_element_present(PriceToleranceControlConstants.SEARCHED_VALUE_XPATH.format(value))

@@ -28,7 +28,7 @@ class QAP_T3863(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter_at_dark_block = "Dark Broker Strategies"
+        self.parameter_at_dark_block = "DarkBrokerStrategies"
         self.first_strategy = "TestSuperStrategy1"
         self.first_value = "2"
         self.second_strategy = "test1582"
@@ -56,10 +56,12 @@ class QAP_T3863(CommonTestCase):
         dark_block.click_on_plus_button()
         dark_block.set_parameter(self.parameter_at_dark_block)
         dark_block.click_on_plus_at_actions_sub_wizard()
+        time.sleep(1)
         dark_block.set_strategy_at_actions_sub_wizard(self.first_strategy)
         dark_block.set_value_at_actions_sub_wizard(self.first_value)
         dark_block.click_on_checkmark_at_actions_sub_wizard()
         dark_block.click_on_plus_at_actions_sub_wizard()
+        time.sleep(1)
         dark_block.set_strategy_at_actions_sub_wizard(self.second_strategy)
         dark_block.set_value_at_actions_sub_wizard(self.second_value)
         dark_block.click_on_checkmark_at_actions_sub_wizard()
@@ -77,7 +79,7 @@ class QAP_T3863(CommonTestCase):
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
-            lit_general.set_parameter("Broker Strategy")
+            lit_general.set_parameter("BrokerStrategy")
             lit_general.set_value_by_dropdown_list_at_sub_wizard("TestSuperStrategy1")
             lit_general.click_on_checkmark_button()
             expected_parameter_at_lit_general_block = "TestSuperStrategy1"

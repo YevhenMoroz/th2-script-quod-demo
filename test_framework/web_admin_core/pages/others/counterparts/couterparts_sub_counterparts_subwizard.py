@@ -44,3 +44,15 @@ class CounterpartsSubCounterpartsSubWizard(CommonPage):
 
     def get_party_sub_id_type_value_at_sub_counterparts_tab(self):
         return self.find_by_xpath(CounterpartsConstants.PARTY_SUB_ID_VALUE_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH).text
+
+    def is_name_field_required(self):
+        return self.is_field_required(CounterpartsConstants.NAME_AT_SUB_COUNTERPARTS_TAB_XPATH)
+
+    def is_party_id_field_required(self):
+        return self.is_field_required(CounterpartsConstants.PARTY_ID_AT_SUB_COUNTERPARTS_TAB_XPATH)
+
+    def is_ext_id_client_field_required(self):
+        return self.is_field_required(CounterpartsConstants.EXT_ID_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH)
+
+    def is_party_sub_id_type_field_required(self):
+        return self.is_field_required(CounterpartsConstants.PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH)

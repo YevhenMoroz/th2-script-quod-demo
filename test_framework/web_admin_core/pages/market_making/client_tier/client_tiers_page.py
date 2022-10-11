@@ -66,3 +66,9 @@ class ClientTiersPage(CommonPage):
 
     def click_on_refresh_page(self):
         self.find_by_xpath(ClientTierConstants.REFRESH_PAGE_BUTTON_XPATH).click()
+
+    def is_searched_client_tiers_found(self, name):
+        return self.is_element_present(ClientTierConstants.DISPLAYED_ENTITY_XPATH.format(name))
+
+    def select_client_tier_by_name(self, name):
+        self.find_by_xpath(ClientTierConstants.DISPLAYED_ENTITY_XPATH.format(name)).click()

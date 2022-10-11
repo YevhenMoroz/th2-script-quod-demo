@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixM
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
     ExecSts, TradeBookColumns, SecondLevelTabs, Basis, FeeTypeForMiscFeeTab, MiddleOfficeColumns, \
     AllocationsColumns
@@ -25,7 +27,7 @@ from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffic
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
-
+import xml.etree.ElementTree as ET
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -59,11 +61,18 @@ class QAP_T6993(TestCase):
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.rule_manager = RuleManager(Simulators.equity)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_backend.xml")
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        self.rest_commission_sender.clear_commissions()
         new_order_single = trade_rule = order_id = None
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
@@ -78,6 +87,18 @@ class QAP_T6993(TestCase):
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
         allocation_qty = str(int(int(self.qty) / 2))
+        # endregion
+
+        # region set up configuration on BackEnd(precondition)
+        tree = ET.parse(self.local_path)
+        element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
+        quod = tree.getroot()
+        quod.append(element)
+        tree.write("temp.xml")
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         # endregion
 
         # region create DMA  partially and fully filled  (step 1 and step 2)
@@ -255,7 +276,6 @@ class QAP_T6993(TestCase):
         confirmation_report.change_parameters({'AllocQty': allocation_qty,
                                                'AllocAccount': account_2})
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'OrdStatus', 'AllocAccount'])
-        self.rest_commission_sender.clear_fees()
         # endregion
 
     def __check_expected_result_from_order_book(self, filter_list, expected_result, dict_of_extraction, message):
@@ -278,3 +298,11 @@ class QAP_T6993(TestCase):
             print(actual_result)
             self.order_book.compare_values(expected_result[list_of_column.index(value)], actual_result,
                                            message)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
+        os.remove("temp.xml")

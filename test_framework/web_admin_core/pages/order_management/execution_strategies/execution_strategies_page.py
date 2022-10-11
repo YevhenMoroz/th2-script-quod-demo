@@ -58,6 +58,9 @@ class ExecutionStrategiesPage(CommonPage):
     def get_name_value(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.NAME_VALUE_AT_MAIN_MENU_XPATH).text
 
+    def is_searched_execution_strategy_found(self, value):
+        return self.is_element_present(ExecutionStrategiesConstants.DISPLAYED_EXECUTION_STRATEGY_XPATH.format(value))
+
     def set_description_at_filter_field(self, value):
         self.set_text_by_xpath(ExecutionStrategiesConstants.DESCRIPTION_FILTER_AT_MAIN_MENU_XPATH, value)
 

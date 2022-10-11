@@ -2,6 +2,7 @@ import os
 
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 from test_framework.rest_api_wrappers.web_admin_api.WebAdminRestApiManager import WebAdminRestApiManager
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.web_admin_api.Positions_API.RestApiCashAccountMessages import \
@@ -30,8 +31,9 @@ class QAP_T3353(TestCase):
                                                                    transfer_amount=-10)
             error_response = self.wa_api_manager.parse_response_error_message_details(
                 response=self.wa_api_manager.send_multiple_request(self.cash_account_message))
-            self.wa_api_manager.data_validation(self.test_id, event_name="Cash Transfer with negative value and "
+            data_validation(self.test_id,
+                            event_name="Cash Transfer with negative value and "
                                                                          f"transfer type '{value}'",
-                                                expected_result=self.error_message,
-                                                actual_result=error_response)
+                            expected_result=self.error_message,
+                            actual_result=error_response)
         # endregion

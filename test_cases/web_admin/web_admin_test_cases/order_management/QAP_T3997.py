@@ -28,7 +28,7 @@ class QAP_T3997(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.first_parameter = "Allowed Aggressive Venues"
+        self.first_parameter = "AllowedAggressiveVenues"
         self.first_venue = self.data_set.get_venue_by_name("venue_9")
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -67,7 +67,6 @@ class QAP_T3997(CommonTestCase):
         time.sleep(2)
         strategies_wizard.click_on_save_changes()
         time.sleep(2)
-        main_menu.set_enabled_at_filter_field("true")
         main_menu.set_name_at_filter_field(self.name)
         time.sleep(2)
         main_menu.click_on_more_actions()
@@ -112,9 +111,7 @@ class QAP_T3997(CommonTestCase):
             main_menu.click_on_more_actions()
             self.verify("Data in pdf after edited", True,
                         main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            time.sleep(2)
-            main_menu.click_on_enable_disable_button()
-            main_menu.click_on_ok_button()
+
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

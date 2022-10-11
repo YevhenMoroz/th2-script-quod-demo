@@ -2,6 +2,7 @@ class ListingsConstants:
     LISTINGS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Listings ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
+    DOWNLOAD_PDF_AT_WIZARD_XPATH = '//*[@data-name="download"]'
     SAVE_CHANGES_BUTTON_XPATH = "//*[contains(text(), 'Save Changes')]"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"

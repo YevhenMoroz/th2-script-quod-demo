@@ -27,7 +27,7 @@ class QAP_T7647(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
@@ -134,10 +134,10 @@ class QAP_T7647(TestCase):
         expected_values_bag = dict()
         order_bag_id = None
         if return_order_bag_id:
-            order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.pop(OrderBagColumn.id.value)
             bag_column_extraction.remove(OrderBagColumn.id.value)
         for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({'order_bag.' + bag_column_extraction[count]: expected_values[count]})
+            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
         self.bag_order_book.compare_values(expected_values_bag,
                                            fields, f'Compare values from bag_book after{action}')
         if return_order_bag_id:

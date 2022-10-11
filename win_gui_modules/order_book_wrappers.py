@@ -625,6 +625,44 @@ class ExecutionsDetails:
     def set_settlement_date_offset(self, offset: int):
         self.request.settlementDateOffset = offset
 
+    def set_source_account(self, source_account: str):
+        self.request.sourceAccount = source_account
+
+
+class OtherTabDetails:
+    def __init__(self, request: order_book_pb2.ManualExecutionDetails.OtherTabDetails):
+        self._request = request
+
+    def set_trade_type(self, trade_type: str):
+        self._request.tradeType = trade_type
+
+    def set_net_gross_ind(self, net_gross_ind: str):
+        self._request.netGrossInd = net_gross_ind
+
+    def set_sec_last_mkt(self, sec_last_mkt: str):
+        self._request.secLastMkt = sec_last_mkt
+
+    def set_settlement_type(self, set_settlement_type: str):
+        self._request.settlementType = set_settlement_type
+
+    def set_settl_currency(self, settl_currency: str):
+        self._request.settlCurrency = settl_currency
+
+    def set_exchange_rate(self, exchange_rate: str):
+        self._request.exchangeRate = exchange_rate
+
+    def set_exchange_rate_cacl(self, exchange_rate_cacl):
+        self._request.exchangeRateCacl = exchange_rate_cacl
+
+    def set_agent_fees(self, agent_fees: str):
+        self._request.agentFees = agent_fees
+
+    def set_market_fees(self, market_fees: str):
+        self._request.marketFees = market_fees
+
+    def set_route_fees(self, route_fees: str):
+        self._request.routeFees = route_fees
+
 
 class MenuItemDetails:
     def __init__(self, base_request: EmptyRequest = None):
@@ -669,6 +707,10 @@ class ManualExecutingDetails:
         var = self._request.executionDetails.add()
         return ExecutionsDetails(var)
 
+    def add_other_details(self) -> OtherTabDetails:
+        var = self._request.othertabDetails.add()
+        return OtherTabDetails(var)
+
     def set_error_expected(self, error_expected: bool):
         self._request.errorExpected = error_expected
 
@@ -699,9 +741,9 @@ class CompleteOrdersDetails:
 
 # Use for ReOrder Action and ReOrder Leaves Action
 class BaseOrdersDetails:
-    def __init__(self, base: EmptyRequest = None):
-        if base is not None:
-            self._request = order_book_pb2.BaseOrdersDetails(base=base)
+    def __init__(self, base_request: EmptyRequest = None):
+        if base_request is not None:
+            self._request = order_book_pb2.BaseOrdersDetails(base=base_request)
         else:
             self._request = order_book_pb2.BaseOrdersDetails()
 

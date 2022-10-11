@@ -26,7 +26,7 @@ timeouts = True
 class QAP_T7637(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
@@ -87,7 +87,7 @@ class QAP_T7637(TestCase):
                                                                           OrderBagColumn.leaves_qty.value
                                                                           ], filter=filter_list)
         expected_values = {OrderBagColumn.order_bag_qty.value: qty_of_bag_for_verifying,
-                           OrderBagColumn.ord_bag_name.value: qty_of_bag_for_verifying,
+                           OrderBagColumn.ord_bag_name.value: name_of_bag,
                            OrderBagColumn.unmatched_qty.value: qty_of_bag_for_verifying,
                            OrderBagColumn.leaves_qty.value: qty_of_bag_for_verifying,
                            }

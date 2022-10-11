@@ -1,13 +1,14 @@
 from datetime import datetime
 
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers.FixMessageMarketDataRequest import FixMessageMarketDataRequest
 from custom import basic_custom_actions as bca
 
 
 class FixMessageMarketDataRequestFX(FixMessageMarketDataRequest):
 
-    def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
+    def __init__(self, parameters: dict = None, data_set: BaseDataSet = FxDataSet()):
         super().__init__(data_set=data_set)
         super().change_parameters(parameters)
 

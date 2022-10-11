@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_mpdark_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression
+from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression, kepler_sors_mpdark_other_regression, kepler_sors_multiple_emulation_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -17,17 +17,22 @@ def test_run():
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
+        version = root.find(".//version").text
 
-        if eval(root.find(".//component[@name='sors_iceberg']").attrib["run"]):
-            kepler_sors_iceberg_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='mp_dark']").attrib["run"]):
-            kepler_sors_mpdark_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='sorping']").attrib["run"]):
-            kepler_sors_sorping_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='synth_min_qty']").attrib["run"]):
-            kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
-        if eval(root.find(".//component[@name='multiple_emulation']").attrib["run"]):
-            kepler_sors_synthminqty_regression.test_run(parent_id=report_id)
+        # if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
+        kepler_sors_iceberg_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_sors_mpdark_dark_phase_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_sors_mpdark_other_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
+        kepler_sors_sorping_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Synth_min_qty']").attrib["run"]):
+        kepler_sors_synthminqty_regression.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Multiple_emulation']").attrib["run"]):
+        kepler_sors_multiple_emulation_regression.test_run(parent_id=report_id, version=version)
 
     except Exception:
         logging.error("Error execution", exc_info=True)

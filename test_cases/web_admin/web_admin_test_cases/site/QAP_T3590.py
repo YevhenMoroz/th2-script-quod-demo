@@ -51,7 +51,6 @@ class QAP_T3590(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
 
     def test_context(self):
         try:
@@ -59,24 +58,19 @@ class QAP_T3590(CommonTestCase):
 
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_institutions_page()
-            time.sleep(2)
             institution_page = InstitutionsPage(self.web_driver_container)
             self.verify("Displayed only one Institution", 1, institution_page.count_displayed_institutions())
         ###
             institution_page.click_on_more_actions()
-            time.sleep(1)
             institution_page.click_on_edit()
-            time.sleep(2)
             institution_values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
             institution_values_tab.set_ctm_bic(self.new_ctm_bic)
             institution_wizard = InstitutionsWizard(self.web_driver_container)
             institution_wizard.click_on_save_changes()
-            time.sleep(2)
             self.verify("Institutions saved with new CTM BIC", True,
                         institution_page.is_searched_institution_found(self.new_ctm_bic))
         ###
             side_menu.open_zones_page()
-            time.sleep(2)
             zone_page = ZonesPage(self.web_driver_container)
             all_displayed_institutions_of_zones = zone_page.get_list_of_all_institutions()
             actual_result = ''
@@ -87,7 +81,6 @@ class QAP_T3590(CommonTestCase):
                 else:
                     actual_result = True
             self.verify(f"Only Zones with {self.institution_name} institution are displayed", True, actual_result)
-            time.sleep(2)
             zone_page.click_on_new()
             zone_values_tab = ZonesValuesSubWizard(self.web_driver_container)
             zone_values_tab.set_name(self.zone_name)
@@ -104,14 +97,11 @@ class QAP_T3590(CommonTestCase):
             zone_assignment_tab.set_institution(self.institution_name)
             zone_wizard = ZonesWizard(self.web_driver_container)
             zone_wizard.click_on_save_changes()
-            time.sleep(2)
             zone_page.set_name(self.zone_name)
             time.sleep(1)
             self.verify("New Zone is created and displayed", True, zone_page.is_searched_zone_found(self.zone_name))
             zone_page.click_on_more_actions()
-            time.sleep(1)
             zone_page.click_on_edit()
-            time.sleep(2)
             actual_result = ''
             for i in displayed_institutions_in_wizard:
                 if i != self.institution_name:
@@ -121,11 +111,9 @@ class QAP_T3590(CommonTestCase):
                     actual_result = True
             self.verify(f"Only {self.institution_name} institution are displayed at edit wizard", True, actual_result)
             zone_wizard.click_on_save_changes()
-            time.sleep(2)
             displayed_zones_at_zones_page = zone_page.get_list_of_all_zones()
         ###
             side_menu.open_locations_page()
-            time.sleep(2)
             location_page = LocationsPage(self.web_driver_container)
             displayed_zones_at_location_page = location_page.get_list_of_all_zones()
             actual_result = ''
@@ -138,7 +126,6 @@ class QAP_T3590(CommonTestCase):
             self.verify(f"Locations page displays only Location with Zones from {self.institution_name} institution",
                         True, actual_result)
             location_page.click_on_new()
-            time.sleep(2)
             location_values_tab = LocationsValuesSubWizard(self.web_driver_container)
             location_values_tab.set_name(self.location_name)
             location_assignment_tab = LocationsAssignmentsSubWizard(self.web_driver_container)
@@ -148,30 +135,25 @@ class QAP_T3590(CommonTestCase):
             location_assignment_tab.set_zone(self.zone_name)
             location_wizard = LocationsWizard(self.web_driver_container)
             location_wizard.click_on_save_changes()
-            time.sleep(2)
             location_page.set_name(self.location_name)
             time.sleep(1)
             self.verify("New Location create and displayed at main page", True,
                         location_page.is_searched_location_found(self.location_name))
             location_page.click_on_more_actions()
-            time.sleep(1)
             location_page.click_on_edit()
-            time.sleep(2)
             displayed_zones_in_edit_wizard = location_assignment_tab.get_all_zones_from_drop_menu()
             self.verify("Zones field dropdown displays only Zones the current User has access to",
                         displayed_zones_at_zones_page, displayed_zones_in_edit_wizard)
             location_assignment_tab.set_zone(self.zone_name)
             location_wizard.click_on_save_changes()
-            time.sleep(2)
-            displayed_zones_at_location_page = location_page.get_list_of_all_zones()
+            displayed_locations_at_location_page = location_page.get_list_of_all_locations_name()
         ###
             side_menu.open_desks_page()
-            time.sleep(2)
             desk_page = DesksPage(self.web_driver_container)
             displayed_locations_at_desk_page = desk_page.get_list_of_all_locations()
             actual_result = ''
             for i in displayed_locations_at_desk_page:
-                if i in displayed_zones_at_location_page:
+                if i in displayed_locations_at_location_page:
                     actual_result = True
                 else:
                     actual_result = False
@@ -179,29 +161,25 @@ class QAP_T3590(CommonTestCase):
             self.verify(f"Desks page displays only Desk with Locations from {self.institution_name} institution",
                         True, actual_result)
             desk_page.click_on_new()
-            time.sleep(2)
             desk_values_tab = DesksValuesSubWizard(self.web_driver_container)
             desk_values_tab.set_name(self.desk_name)
             desk_values_tab.set_desk_mode(self.desk_mode)
             desk_assignments_tab = DesksAssignmentsSubWizard(self.web_driver_container)
             displayed_locations_in_create_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_zones_at_location_page, displayed_locations_in_create_wizard)
+                        displayed_locations_at_location_page, displayed_locations_in_create_wizard)
             desk_assignments_tab.set_location_at_description_tab(self.location_name)
             desk_wizard = DesksWizard(self.web_driver_container)
             desk_wizard.click_on_save_changes()
-            time.sleep(2)
             desk_page.set_name_filter(self.desk_name)
             time.sleep(1)
             self.verify("New Desk create and displayed at main page", True,
                         desk_page.is_searched_desk_found(self.desk_name))
             desk_page.click_on_more_actions()
-            time.sleep(1)
             desk_page.click_on_edit()
-            time.sleep(2)
             displayed_locations_in_edit_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_zones_at_location_page, displayed_locations_in_edit_wizard)
+                        displayed_locations_at_location_page, displayed_locations_in_edit_wizard)
             desk_assignments_tab.set_location_at_description_tab(self.location_name)
             desk_wizard.click_on_save_changes()
 

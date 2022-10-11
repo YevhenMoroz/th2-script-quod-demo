@@ -20,18 +20,18 @@ class QAP_T7448(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
-        self.template_name = "Test Template".join(random.choices(string.ascii_letters + string.digits, k=5))
-        self.exec_pol = "Care"
+        self.template_name = "Test Template"+"".join(random.choices(string.ascii_letters + string.digits, k=5))
         self.descr = "This is a test template"
         self.symbol = "ISIN"
-        self.client = self.data_set.get_client_by_name('client_pos_1')
+        self.client = self.data_set.get_client_by_name('client_co_1')
+        self.instrument = self.data_set.get_fix_instrument_by_name('instrument_1')["Symbol"]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create basket via template csv
-        templ = {'Symbol': ['Symbol', 'FR0004186856'], 'Quantity': ['Quantity', '0'], 'Price': ['Price', '0'],
-                 'Account': ['Account', 'CLIENT_FIX_CARE_SA1'], 'Side': ['Side', 'Buy'],
+        templ = {'Symbol': ['Symbol', self.instrument], 'Quantity': ['Quantity', '0'], 'Price': ['Price', '0'],
+                 'Account': ['Account', self.client], 'Side': ['Side', 'Buy'],
                  'OrdType': ['OrdType', 'Limit'],
                  'StopPrice': ['StopPrice', '0'], 'Capacity': ['Capacity', 'Agency']}
         self.basket_book.add_basket_template(templ_name=self.template_name, descrip=self.descr, client=self.client,
@@ -40,11 +40,9 @@ class QAP_T7448(TestCase):
         res1 = self.basket_book.get_basket_template_details(
             {BasketBookColumns.template_name_field.value: self.template_name},
             [BasketBookColumns.template_name_field.value])
-        print(res1)
         self.basket_book.compare_values({BasketBookColumns.template_name_field.value: self.template_name}, res1,
                                         "Check created template")
         # endregion
         # region remove template
         self.basket_book.remove_basket_template({BasketBookColumns.template_name_field.value: self.template_name})
         # endregion
-

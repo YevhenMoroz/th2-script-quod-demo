@@ -56,12 +56,9 @@ class QAP_T2646(TestCase):
                                                                                         self.ex_bid_small)
         bid_large = extracted_values[self.ex_bid_large.value]
         bid_small = extracted_values[self.ex_bid_small.value]
-        print(bid_large, bid_small)
         expected_bid_qty = str(round(float(bid_large+bid_small)*(float(self.near_qty)/1000000), 2))+"M USD"
-        print(expected_bid_qty)
         extracted_near_leg_quantity = self.dealer_intervention.extract_qty_from_di_panel(self.near_leg_quantity)
         near_qty = extracted_near_leg_quantity[self.near_leg_quantity.value]
-        print(near_qty)
         self.dealer_intervention.compare_values(expected_value=expected_bid_qty, actual_value=near_qty,
                                                 event_name="Compare DI bid near qty value")
         self.dealer_intervention.close_window()

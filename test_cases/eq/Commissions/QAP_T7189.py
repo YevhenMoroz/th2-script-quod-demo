@@ -117,3 +117,7 @@ class QAP_T7189(TestCase):
             print(actual_result)
             self.order_book.compare_values(expected_result[list_of_column.index(value)], actual_result,
                                            f"Comparing {value} after trade")
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()

@@ -1,113 +1,60 @@
-import logging
+import random
 import time
 from pathlib import Path
-from random import randint
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest, \
-    ModificationRequest
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
+from test_framework.win_gui_wrappers.fe_trading_constant import RFQPanelQty
 
 
-def check_dealer_intervention(base_request, service, case_id, qty):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_list(["Qty", qty])
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_id = bca.client_orderid(8)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
+class QAP_T2863(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.near_leg_quantity = RFQPanelQty.opposite_near_bid_qty_value_label
+        self.qty = str(random.randint(54000000, 55000000))
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_spot
+        }
 
-    response = call(service.getUnassignedRFQDetails, extraction_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check quote request in DI")
-    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
-
-
-def assign_firs_request(base_request, service):
-    base_data = BaseTableDataRequest(base=base_request)
-    call(service.assignToMe, base_data.build())
-
-
-def estimate_first_request(base_request, service):
-    base_data = BaseTableDataRequest(base=base_request)
-    call(service.estimate, base_data.build())
-
-
-def set_ttl_and_send_quote(base_request, service, ttl):
-    modify_request = ModificationRequest(base=base_request)
-    modify_request.set_quote_ttl(ttl)
-    modify_request.send()
-    call(service.modifyAssignedRFQ, modify_request.build())
-
-
-def verify_assigned_grid_row(base_request, service, case_id, exp_status, exp_quote_status, qty):
-    base_data = BaseTableDataRequest(base=base_request)
-    extraction_id = bca.client_orderid(8)
-    base_data.set_filter_list(["Qty", qty])
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
-                                               ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
-
-    response = call(service.getAssignedRFQDetails, extraction_request.build())
-
-    ver = Verifier(case_id)
-    ver.set_event_name("Check Assigned Grid")
-    ver.compare_values('Status', exp_status, response["dealerIntervention.Status"])
-    ver.compare_values('QuoteStatus', exp_quote_status, response["dealerIntervention.QuoteStatus"])
-    ver.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    dealer_service = Stubs.win_act_dealer_intervention_service
-
-    set_base(session_id, case_id)
-
-    case_base_request = get_base_request(session_id, case_id)
-
-    client_tier = "Iridium1"
-    symbol = "GBP/USD"
-    security_type_spo = "FXSPOT"
-    settle_date = spo()
-    settle_type = 0
-    currency = "GBP"
-    ttl = "20"
-    qty = str(randint(17000000, 20000000))
-
-    try:
-        # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty, symbol=symbol,
-                                   securitytype=security_type_spo, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_no_reply()
-        check_dealer_intervention(case_base_request, dealer_service, case_id, qty)
-        assign_firs_request(case_base_request, dealer_service)
-        estimate_first_request(case_base_request, dealer_service)
-        # Step 2
-        set_ttl_and_send_quote(case_base_request, dealer_service, ttl)
-        verify_assigned_grid_row(case_base_request, dealer_service, case_id,
-                                 "New", "Accepted", qty)
-        time.sleep(10)
-        verify_assigned_grid_row(case_base_request, dealer_service, case_id,
-                                 "Terminated", "Expired", qty)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(dealer_service.closeWindow, case_base_request)
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 1
+        self.quote_request.set_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           OrderQty=self.qty, Account=self.account,
+                                                           Currency=self.currency, Instrument=self.instrument)
+        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        # endregion
+        # region step 2-3
+        self.dealer_intervention.set_list_filter(["Qty", self.qty])
+        self.dealer_intervention.assign_quote(row_number=1)
+        time.sleep(5)
+        self.dealer_intervention.estimate_quote()
+        time.sleep(5)
+        # endregion
+        # region step 4
+        self.dealer_intervention.set_price_and_ttl(ttl="20")
+        self.dealer_intervention.send_quote()
+        self.dealer_intervention.check_assigned_fields({"Status": "New", "QuoteStatus": "Accepted"})
+        time.sleep(20)
+        self.dealer_intervention.check_assigned_fields({"Status": "Terminated", "QuoteStatus": "Expired"})
+        self.dealer_intervention.close_window()
+        # endregion

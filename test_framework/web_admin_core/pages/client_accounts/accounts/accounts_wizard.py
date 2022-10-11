@@ -13,7 +13,9 @@ class AccountsWizard(CommonPage):
         self.set_text_by_xpath(AccountsConstants.WIZARD_ID_INPUT_XPATH, value)
 
     def get_id(self):
-        return self.get_text_by_xpath(AccountsConstants.WIZARD_ID_INPUT_XPATH)
+        account_id = self.find_by_xpath(AccountsConstants.WIZARD_ID_EDITOR_XPATH).text
+        account_id = account_id.strip().split(" ")
+        return account_id[-1]
 
     def set_ext_id_client(self, value: str):
         self.set_text_by_xpath(AccountsConstants.WIZARD_EXT_ID_CLIENT_INPUT_XPATH, value)
@@ -27,13 +29,13 @@ class AccountsWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH)
 
-    def set_description(self, value: str):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
-
     def get_all_clients_from_drop_menu(self):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, "")
+        self.set_text_by_xpath(AccountsConstants.WIZARD_CLIENT_COMBOBOX_XPATH, "")
         time.sleep(1)
         return self._get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
+
+    def set_description(self, value: str):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
 
     def get_description(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH)

@@ -1,124 +1,55 @@
-import logging
-from datetime import datetime
 from pathlib import Path
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from custom import basic_custom_actions as bca
-from stubs import Stubs
-from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, PriceNaming, RatesColumnNames
 from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.wrappers import set_base
-
-timestamp = str(datetime.now().timestamp())
-timestamp = timestamp.split(".", 1)
-timestamp = timestamp[0]
 
 
-def set_spread_and_margin(service, case_id, min_spread, max_spread):
-    modify_params = {
-        "instrSymbol": "GBP/USD",
-        "quoteTTL": 120,
-        "clientTierID": 2200009,
-        "alive": "true",
-        "clientTierInstrSymbolQty": [
-            {
-                "upperQty": 1000000,
-                "indiceUpperQty": 1,
-                "publishPrices": "true"
-            }
-        ],
-        "clientTierInstrSymbolTenor": [
-            {
-                "tenor": "SPO",
-                "minSpread": min_spread,
-                "maxSpread": max_spread,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "validatePriceSlippage": "false",
-                "priceSlippageRange": 0,
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "defaultOfferMargin": 3,
-                        "defaultBidMargin": 2,
-                        "indiceUpperQty": 1
-                    }
-                ]
-            },
-            {
-                "tenor": "WK1",
-                "minSpread": 0.1,
-                "maxSpread": 0.2,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "validatePriceSlippage": "false",
-                "priceSlippageRange": 0,
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "defaultOfferMargin": 1.2,
-                        "defaultBidMargin": 1,
-                        "indiceUpperQty": 1
-                    }
-                ]
-            }
-        ],
-        "clientTierInstrSymbolVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ],
-        "clientTierInstrSymbolActGrp": [
-            {
-                "accountGroupID": "Silver1"
-            }
-        ],
-        "clientTierInstrSymbolFwdVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ]
-    }
-    service.sendMessage(
-        request=SubmitMessageRequest(
-            message=bca.wrap_message(modify_params, 'ModifyClientTierInstrSymbol', 'rest_wa314luna'),
-            parent_event_id=case_id))
+class QAP_T2943(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.silver = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.gbp_usd_spot = self.gbp_usd + "-Spot"
+        self.ask_base = RatesColumnNames.ask_base
+        self.bid_base = RatesColumnNames.bid_base
+        self.spread = PriceNaming.spread
+        self.expected_bid_base = "1.1"
+        self.expected_ask_base = "1.2"
+        self.expected_spread = "2.1"
+        self.bid_base_event = "bid_base_validation"
+        self.ask_base_event = "ask_base_validation"
+        self.spread_validation = "spread_validation"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region step 2
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.gbp_usd_spot, client_tier=self.silver)
+        self.rates_tile.press_use_default()
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.ask_base)
+        actual_bid_base = row_values[str(self.bid_base)]
+        actual_ask_base = row_values[str(self.ask_base)]
+        self.rates_tile.compare_values(self.expected_bid_base, actual_bid_base,
+                                       event_name=self.bid_base_event)
+        self.rates_tile.compare_values(self.expected_ask_base, actual_ask_base,
+                                       event_name=self.ask_base_event)
 
-    set_base(session_id, case_id)
+        tob_values = self.rates_tile.extract_prices_from_tile(self.spread)
+        actual_spread = tob_values[self.spread.value]
+        self.rates_tile.compare_values(self.expected_spread, actual_spread,
+                                       event_name=self.spread_validation)
+        # endregion
 
-    api_service = Stubs.api_service
-    client_tier = "Silver"
-    instrument = "GBP/USD-SPOT"
-    min_spread = "0"
-    max_spread = "2.0"
-    pn = PriceNaming
-    rates_tile = None
-    try:
-        # Step 1
-        set_spread_and_margin(api_service, case_id, min_spread, max_spread)
-        # Step 2
-        rates_tile = ClientRatesTile(case_id, session_id)
-        rates_tile.modify_client_tile(instrument=instrument, client_tier=client_tier)
-        spread = rates_tile.extract_prices_from_tile(pn.spread)
-        rates_tile.compare_values(expected_value=max_spread, actual_value=spread[pn.spread.value],
-                                  event_name="Check spread", value_name="Spread")
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            rates_tile.close_tile()
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()

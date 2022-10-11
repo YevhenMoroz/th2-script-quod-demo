@@ -14,7 +14,7 @@ class PositionsLimitsConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -66,6 +66,9 @@ class PositionsLimitsConstants:
     DIMENSIONS_TAB_WILD_CARD_INSTRUMENT_CHECKBOX_XPATH = '//*[text()="Wild Card Instrument"]/preceding-sibling::span'
     DIMENSIONS_TAB_WILD_CARD_INSTR_GROUP_CHECKBOX_XPATH = '//*[text()="Wild Card Instr Group"]/preceding-sibling::span'
     DIMENSIONS_TAB_WILD_CARD_INSTR_TYPE_XPATH = '//*[text()="Wild Card Instr Type"]/preceding-sibling::span'
+
+    # Assignments tab
+    ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
 
 
 

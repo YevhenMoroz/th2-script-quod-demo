@@ -24,7 +24,7 @@ class QAP_T3913(CommonTestCase):
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
-        self.default_route = self.data_set.get_default_route("default_route_1")
+        self.default_route = "Credit Suisse"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

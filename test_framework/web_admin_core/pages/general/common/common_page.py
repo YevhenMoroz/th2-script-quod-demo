@@ -58,16 +58,13 @@ class CommonPage(CommonPage):
         self.find_by_xpath(CommonConstants.REFRESH_PAGE_XPATH).click()
 
     def is_user_name_icon_displayed(self):
-        return "logged-in-user ng-star-inserted" == self.find_by_xpath(CommonConstants.USER_NAME_XPATH).get_attribute(
-            "class")
+        return self.is_element_present(CommonConstants.USER_NAME_XPATH)
 
     def is_help_icon_displayed(self):
-        return "icon-container ng-star-inserted" == self.find_by_xpath(CommonConstants.HELP_ICON_XPATH).get_attribute(
-            "class")
+        return self.is_element_present(CommonConstants.HELP_ICON_XPATH)
 
     def is_send_feedback_icon_displayed(self):
-        return "Send Feedback to Quod Financial" == self.find_by_xpath(
-            CommonConstants.SEND_FEEDBACK_BUTTON_XPATH).get_attribute("nbtooltip")
+        return self.is_element_present(CommonConstants.SEND_FEEDBACK_BUTTON_XPATH)
 
     def is_send_button_at_feedback_area_disabled_enabled(self):
         return self.find_by_xpath(CommonConstants.SEND_FEEDBACK_SEND_BUTTON_XPATH).is_enabled()
@@ -76,8 +73,7 @@ class CommonPage(CommonPage):
         return self.is_element_present(CommonConstants.HEADER_XPATH)
 
     def is_user_icon_displayed(self):
-        return "control-item icon-btn context-menu-host" == self.find_by_xpath(
-            CommonConstants.USER_ICON_AT_RIGHT_CORNER).get_attribute("class")
+        return self.is_element_present(CommonConstants.USER_ICON_AT_RIGHT_CORNER)
 
     def click_on_full_screen_button(self):
         self.find_by_xpath(CommonConstants.FULL_SCREEN_BUTTON_XPATH).click()

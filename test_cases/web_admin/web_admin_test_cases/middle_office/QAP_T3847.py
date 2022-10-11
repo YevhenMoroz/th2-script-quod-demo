@@ -50,9 +50,9 @@ class QAP_T3847(CommonTestCase):
         commission_wizard_value_tab.set_description(self.description)
         commission_wizard_value_tab.click_on_re_calculate_for_allocations()
         time.sleep(2)
-        self.venue_list = random.choice(commission_wizard_value_tab.get_all_venue_list_from_drop_menu())
-        commission_wizard_value_tab.set_venue_list(self.venue_list)
         commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        self.venue_list = random.choice(commission_wizard_dimensions_tab.get_all_venue_list_from_drop_menu())
+        commission_wizard_dimensions_tab.set_venue_list(self.venue_list)
         self.instr_type = random.choice(commission_wizard_dimensions_tab.get_all_instr_types_from_drop_menu())
         commission_wizard_dimensions_tab.set_instr_type(self.instr_type)
         self.side = random.choice(commission_wizard_dimensions_tab.get_all_side_from_drop_menu())
@@ -98,7 +98,7 @@ class QAP_T3847(CommonTestCase):
             excepted_result = [commission_wizard_value_tab.get_name(),
                                commission_wizard_value_tab.get_description(),
                                commission_wizard_value_tab.is_re_calculate_for_allocations_selected(),
-                               commission_wizard_value_tab.get_venue_list(),
+                               commission_wizard_dimensions_tab.get_venue_list(),
                                commission_wizard_dimensions_tab.get_instr_type(),
                                commission_wizard_dimensions_tab.get_side(),
                                commission_wizard_dimensions_tab.get_client(),

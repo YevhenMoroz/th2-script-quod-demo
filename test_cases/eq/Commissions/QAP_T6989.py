@@ -1,6 +1,7 @@
 import logging
+import os
+import time
 from pathlib import Path
-
 from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom import basic_custom_actions as bca
@@ -12,10 +13,12 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
     FixMessageAllocationInstructionReportOMS
+import xml.etree.ElementTree as ET
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
     ExecSts, TradeBookColumns, SecondLevelTabs, Basis, FeeTypeForMiscFeeTab, MiddleOfficeColumns, \
     AllocationsColumns, DoneForDays
@@ -57,11 +60,19 @@ class QAP_T6989(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_backend.xml")
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
         fee = self.data_set.get_fee_by_name('fee3')
@@ -74,6 +85,18 @@ class QAP_T6989(TestCase):
         self.rest_commission_sender.change_message_params(
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
+        # endregion
+
+        # region set up configuration on BackEnd(precondition)
+        tree = ET.parse(self.local_path)
+        element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
+        quod = tree.getroot()
+        quod.append(element)
+        tree.write("temp.xml")
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         # endregion
 
         # region create CO  and partially fill it step 1
@@ -132,9 +155,10 @@ class QAP_T6989(TestCase):
         avg_px = str(round(int(self.price) / 100, 1))
         exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
                                                       [TradeBookColumns.exec_id.value], [3], filter_dict)[0]
-        expected_result = [{'1': FeeTypeForMiscFeeTab.agent.value}, {'1': rate},
-                           {'1': Basis.absolute.value},
-                           {'1': amount}]
+        expected_result = [{TradeBookColumns.fee_type.value + '1': FeeTypeForMiscFeeTab.agent.value},
+                           {TradeBookColumns.rate.value + '1': rate},
+                           {TradeBookColumns.basis.value + '1': Basis.absolute.value},
+                           {TradeBookColumns.amount.value + '1': amount}]
         message = message.replace('3', '4')
         self.__compare_values_of_fees(exec_id, expected_result, list_of_column, message)
         # endregion
@@ -145,7 +169,7 @@ class QAP_T6989(TestCase):
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
         execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*','CommissionData': '*',
+                                            'Currency': self.currency, 'NoParty': '*', 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
                                             'NoMiscFees': [{
                                                 'MiscFeeAmt': amount,
@@ -173,6 +197,7 @@ class QAP_T6989(TestCase):
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'AvgPx': avg_px, 'Currency': self.currency_post_trade,
                                              'tag5120': "*", 'RootSettlCurrAmt': '*'})
+        allocation_report.remove_parameter('Account')
         self.fix_verifier.check_fix_message_fix_standard(allocation_report)
         # endregion
 
@@ -228,7 +253,7 @@ class QAP_T6989(TestCase):
                 [AllocationsColumns.sts.value, AllocationsColumns.match_status.value,
                  AllocationsColumns.total_fees.value],
                 filter_dict_block=filter_dict,
-                clear_filter_from_block=True, allocate_number=index+1)
+                clear_filter_from_block=True, allocate_number=index + 1)
             self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
                                                AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value,
                                                AllocationsColumns.total_fees.value: ''},
@@ -252,6 +277,7 @@ class QAP_T6989(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(allocation_report)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         confirmation_report.set_default_confirmation_new(self.fix_message)
+        confirmation_report.remove_parameter('Account')
         confirmation_report.change_parameters({'AvgPx': avg_px, 'Account': '*', 'Currency': self.currency_post_trade,
                                                'tag5120': '*'})
         confirmation_report.change_parameters({'AllocQty': allocation_qty,
@@ -260,7 +286,6 @@ class QAP_T6989(TestCase):
         confirmation_report.change_parameters({'AllocQty': allocation_qty,
                                                'AllocAccount': account_2})
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'OrdStatus', 'AllocAccount'])
-        self.rest_commission_sender.clear_fees()
         # endregion
 
     def __check_expected_result_from_order_book(self, filter_list, expected_result, dict_of_extraction, message):
@@ -283,3 +308,11 @@ class QAP_T6989(TestCase):
             print(actual_result)
             self.order_book.compare_values(expected_result[list_of_column.index(value)], actual_result,
                                            message)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
+        os.remove("temp.xml")

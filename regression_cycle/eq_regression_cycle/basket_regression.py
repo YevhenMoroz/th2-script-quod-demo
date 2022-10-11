@@ -58,8 +58,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('BasketTrading', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"Basket Analysis" if version is None else f"Basket Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("BasketTrading")
     data_set = configuration.data_set
@@ -67,7 +67,7 @@ def test_run(parent_id=None):
     session_id = set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("layouts")
+    layout_path = os.path.abspath("regression_cycle\eq_regression_cycle/layouts")
     layout_name = "basket_templates_v172_layout.xml"
     try:
         base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
@@ -149,7 +149,6 @@ def test_run(parent_id=None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Basket regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
 

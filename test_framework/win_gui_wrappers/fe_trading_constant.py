@@ -25,7 +25,7 @@ class OrderBookColumns(Enum):
     far_leg_qty = "FarLegQty"
     qty = "Qty"
     exec_pcy = "ExecPcy"
-    display_qty = "DisplayQty"
+    display_qty = "DisplQty"
     unmatched_qty = "UnmatchedQty"
     limit_price = "Limit Price"
     leaves_qty = "LeavesQty"
@@ -46,6 +46,8 @@ class OrderBookColumns(Enum):
     client_venue_account = "Client Venue Account"
     account_id = 'Account ID'
     done_for_day = 'DoneForDay'
+    cl_acc_gr_id = 'Client Account Group ID'
+    singl_alloc_cl_acc_id = 'Single Alloc Client Account ID'
     tenor = "Tenor"
     near_leg = 'Near Leg Tenor'
     far_leg = 'Far Leg Tenor'
@@ -53,10 +55,13 @@ class OrderBookColumns(Enum):
     net_amount = 'NetAmount'
     net_price = 'NetPrice'
     exec_inst = 'ExecInst'
+    manual_day_cum_amt = 'ManualDayCumAmt'
+    manual_day_cum_qty = 'ManualDayCumQty'
     # region Executions
     exec_price = 'ExecPrice'
     exec_id = 'ExecID'
     last_market = 'LastMkt'
+    post_trade_status_exec = 'PostTradeExecStatus'
     post_trade_status = 'PostTradeStatus'
     disclose_exec = "DiscloseExec"
     disclosed_exec = "DisclosedExec"
@@ -91,6 +96,9 @@ class OrderBookColumns(Enum):
     exec_firm_value = "ExecutingFirm"
     exec_type = "ExecType"
     nin = "NIN"
+    custodian = "Custodian"
+    reviewed = "Reviewed"
+    recipient = "Recpt"
     # endregion
 
 
@@ -193,10 +201,23 @@ class TradeBookColumns(Enum):
     unmatched_qty = 'UnmatchedQty'
     """Mics Fees tab"""
     misc_tab = "Misc Fees"
+    fee_rate = "Rate"
+    fee_amount = "Amount"
+    fee_type = "FeeType"
+    fee_basis = "Basis"
+    fee_currency = "Currency"
     rate = "Rate"
     basis = "Basis"
     amount = "Amount"
-    fee_type = "FeeType"
+    """Client Commissions tab"""
+    amount_type = "AmountType"
+
+    """Client Commissions tab"""
+    cl_comm_tab = "Client Commissions"
+    comm_cur = "Currency"
+    comm_amount = "Amount"
+    comm_basis = "Basis"
+    comm_rate = "Rate"
 
 
 class QuoteRequestBookColumns(Enum):
@@ -264,6 +285,7 @@ class BasketBookColumns(Enum):
     """Basket sts"""
     exec_sts = "Executing"
     all_done = 'AllDone'
+    canceling = "Cancelling"
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""
@@ -381,6 +403,8 @@ class MiddleOfficeColumns(Enum):
     exchange_rate = 'ExchangeRate'
     settl_curr_fx_rate_calc = 'SettlCurrFxRateCalc'
     net_amt = 'Net Amt'
+    gross_amt = 'Gross Amt'
+    net_price = 'Net Price'
     """MiddleOfficeSTS"""
     appr_pending_sts = "ApprovalPending"
     accepted_sts = "Accepted"
@@ -422,6 +446,7 @@ class SecondLevelTabs(Enum):
     slicing_orders = 'Slicing Orders'
     order_bag_waves = 'Order Bag Waves'
     algo_parameters_external = "Algo Parameters External"
+    algo_parameters = "Algo Parameters"
     pre_trade_alloc_tab = "Pre Trade Allocations"
     counterpart_list = "Counterpart List"
     commissions = "Client Commissions"
@@ -437,6 +462,7 @@ class PostTradeStatuses(Enum):
     ready_to_book = "ReadyToBook"
     booked = "Booked"
     ready_to_book_from_second_level_tab_of_bag = "RDY"
+    not_allocable = "NotAllocable"
 
 
 class AlgoParametersExternal(Enum):
@@ -545,6 +571,8 @@ class ChildOrderBookColumns(Enum):
     """Executions"""
     exec_tab = "Executions"
     percent = '%'
+    exec_fee_agent = 'FeeAgent'
+    exec_fees = "Exec Fees"
 
 
 class OrderBookColumnName(Enum):
@@ -558,6 +586,8 @@ class MenuItemFromOrderBook(Enum):
     bag_by_avg_px_priority = 'Bag By Avg Px Priority'
     group_into_a_bag_for_grouping = 'Group into a bag for grouping'
     add_to_basket = 'Add to Basket'
+    split = "Split"
+    split_limit = "Split Limit"
 
 
 class ClientInboxColumns(Enum):
@@ -633,10 +663,36 @@ class ReferencePrice(Enum):
     open = "Open"
 
 
+class ConfirmationServices(Enum):
+    manual = "Manual"
+
+
+class ExchangeRateCalc(Enum):
+    multiple = 'Multiple'
+    divide = "Divide"
+
+
 class Basis(Enum):
     per_unit = 'PerUnit'
     absolute = "Absolute"
+    percentage = "Percentage"
+    percent = "Percent"
 
 
 class FeeTypeForMiscFeeTab(Enum):
     agent = "Agent"
+    stamp = "Stamp"
+    exch_fees = "ExchFees"
+
+
+class CommissionType(Enum):
+    agent = "Agent"
+
+
+class CommissionBasis(Enum):
+    persentage = "Percentage"
+
+
+class OMSFeeType(Enum):
+    value_added_tax = "ValueAddedTax"
+

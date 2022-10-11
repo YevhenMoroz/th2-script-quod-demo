@@ -23,7 +23,9 @@ class FixMessageQuoteFX(FixMessage):
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
                             Product="4"),
-            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
+            SettlDate=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"]
+            if "SettlDate" in quote_request.get_parameter("NoRelatedSymbols")[0]
+            else "*",
             SettlType=quote_request.get_parameter("NoRelatedSymbols")[0]["SettlType"],
             Currency=quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
             QuoteType=quote_request.get_parameter("NoRelatedSymbols")[0]["QuoteType"]
@@ -72,6 +74,30 @@ class FixMessageQuoteFX(FixMessage):
             self.add_tag({"BidSpotRate": "*"})
             self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
             self.add_tag({"BidPx": "*"})
+        return self
+
+    def set_params_for_quote_ccy2(self, quote_request: FixMessageQuoteRequestFX):
+        self.prepare_params_for_quote(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidPx": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
+            self.add_tag({"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"OfferPx": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"Side": "1"})
+            self.add_tag({"BidSpotRate": "*"})
+            self.add_tag({"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"]})
+            self.add_tag({"BidPx": "*"})
+            self.remove_parameter("OfferSpotRate")
+            self.remove_parameter("OfferSize")
+            self.remove_parameter("OfferPx")
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"Side": "2"})
+            self.add_tag({"OfferPx": "*"})
+            self.add_tag({"OfferSize": "*"})
+            self.add_tag({"OfferSpotRate": "*"})
         return self
 
     def set_params_for_quote_ndf(self, quote_request: FixMessageQuoteRequestFX):
@@ -143,6 +169,17 @@ class FixMessageQuoteFX(FixMessage):
             self.add_tag({"OfferForwardPoints": "*"})
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.add_tag({"BidForwardPoints": "*"})
+        return self
+
+    def set_params_for_quote_fwd_ccy2(self, quote_request: FixMessageQuoteRequestFX):
+        self.set_params_for_quote_ccy2(quote_request)
+        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
+            self.add_tag({"BidForwardPoints": "*"})
+            self.add_tag({"OfferForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
+            self.add_tag({"BidForwardPoints": "*"})
+        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
+            self.add_tag({"OfferForwardPoints": "*"})
         return self
 
     def prepare_params_for_swap(self, quote_request: FixMessageQuoteRequestFX):

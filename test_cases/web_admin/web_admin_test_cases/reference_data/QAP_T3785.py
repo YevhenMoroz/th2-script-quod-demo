@@ -38,16 +38,13 @@ class QAP_T3785(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_venues_page()
-        time.sleep(2)
         venues_page = VenuesPage(self.web_driver_container)
         venues_page.set_name_filter(self.test_data["name"])
         time.sleep(1)
         if not venues_page.is_searched_venue_found(self.test_data["name"]):
             venues_page.click_on_new()
-            time.sleep(2)
             venues_values_wizard = VenuesValuesSubWizard(self.web_driver_container)
             venues_values_wizard.set_name(self.test_data["name"])
             venues_values_wizard.set_id(self.test_data["venue"]["id"])
@@ -55,16 +52,13 @@ class QAP_T3785(CommonTestCase):
             venues_values_wizard.set_client_venue_id(self.test_data["venue"]["client_venue_id"])
             venues_wizard = VenuesWizard(self.web_driver_container)
             venues_wizard.click_on_save_changes()
-            time.sleep(2)
 
         side_menu.open_subvenues_page()
-        time.sleep(2)
         subvenue_page = SubVenuesPage(self.web_driver_container)
         subvenue_page.set_name_filter(self.test_data["name"])
         time.sleep(1)
         if not subvenue_page.is_searched_subvenue_found(self.test_data["name"]):
             subvenue_page.click_on_new()
-            time.sleep(2)
             subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
             subvenue_description_wizard.set_name(self.test_data["name"])
             subvenue_description_wizard.set_venue(self.test_data["subvenue"]["venue"])
@@ -78,14 +72,11 @@ class QAP_T3785(CommonTestCase):
 
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_venues_page()
-            time.sleep(2)
             venues_page = VenuesPage(self.web_driver_container)
             venues_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
             venues_page.click_on_more_actions()
-            time.sleep(1)
             venues_page.click_on_edit()
-            time.sleep(2)
             venues_values_wizard = VenuesValuesSubWizard(self.web_driver_container)
             venue_all_position_flattening_period = venues_values_wizard.get_all_position_flattening_period_drop_menu()
             venues_values_wizard.set_position_flattening_period(
@@ -94,30 +85,22 @@ class QAP_T3785(CommonTestCase):
                 .split(",")]
             venues_wizard = VenuesWizard(self.web_driver_container)
             venues_wizard.click_on_save_changes()
-            time.sleep(2)
             venues_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
             venues_page.click_on_more_actions()
-            time.sleep(1)
             venues_page.click_on_edit()
-            time.sleep(2)
             venues_values_after_save = [str(i).strip() for i in venues_values_wizard.get_position_flattening_period()
                 .split(",")]
             self.verify("Venues Position Flattering Period field contains correct date",
                         sorted(venues_values_before_save), sorted(venues_values_after_save))
             venues_wizard.click_on_close()
-            time.sleep(1)
-            venues_wizard.click_on_ok_button()
 
             side_menu.open_subvenues_page()
-            time.sleep(2)
             subvenue_page = SubVenuesPage(self.web_driver_container)
             subvenue_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
             subvenue_page.click_on_more_actions()
-            time.sleep(1)
             subvenue_page.click_on_edit()
-            time.sleep(2)
             subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
             subvenue_venue_all_position_flattening_period = subvenue_description_wizard.get_all_position_flattening_period_drop_menu()
             subvenue_description_wizard.set_position_flattening_period(
@@ -126,13 +109,10 @@ class QAP_T3785(CommonTestCase):
             subvenue_values_before_save = [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
             subvenue_wizard = SubVenuesWizard(self.web_driver_container)
             subvenue_wizard.click_on_save_changes()
-            time.sleep(2)
             subvenue_page.set_name_filter(self.test_data["name"])
             time.sleep(1)
             subvenue_page.click_on_more_actions()
-            time.sleep(1)
             subvenue_page.click_on_edit()
-            time.sleep(2)
             subvenue_values_after_save = [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
             self.verify("SubVenues Position Flattering Period field contains correct date",
                         sorted(subvenue_values_before_save), sorted(subvenue_values_after_save))

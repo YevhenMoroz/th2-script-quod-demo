@@ -114,6 +114,54 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_15 = dict(
+        Symbol='QUODTESTQA03',
+        SecurityID='TESTQA03',
+        SecurityIDSource='8',
+        SecurityExchange='QDL8',
+        SecurityType='CS'
+    )
+
+    instrument_16 = dict(
+        Symbol='QUODTESTQA04',
+        SecurityID='TESTQA04',
+        SecurityIDSource='8',
+        SecurityExchange='QDL8',
+        SecurityType='CS'
+    )
+
+    instrument_17 = dict(
+        Symbol='QUODTESTQA05',
+        SecurityID='TESTQA05',
+        SecurityIDSource='8',
+        SecurityExchange='QDL11',
+        SecurityType='CS'
+    )
+
+    instrument_18 = dict(
+        Symbol='FR0000121329',
+        SecurityID='FR0000121329',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_19 = dict(
+        Symbol='IE00B5BMR087',
+        SecurityID='IE00B5BMR087',
+        SecurityIDSource='4',
+        SecurityExchange='XAMS',
+        SecurityType='CS'
+    )
+
+    instrument_20 = dict(
+        Symbol='SE0006288015',
+        SecurityID='SE0006288015',
+        SecurityIDSource='4',
+        SecurityExchange='XSTO',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -141,6 +189,10 @@ class AlgoAccounts(Enum):
     account_8 = "CHIXDELTA_KEPLER"
     account_9 = "KEPLER"
     account_10 = "TQDARK_KEPLER"
+    account_11 = "TRQX_KEPLER"
+    account_12 = "BATS_KEPLER"
+    account_13 = "CHIX_KEPLER"
+    account_14 = "XAMS_KEPLER"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -158,6 +210,7 @@ class AlgoRecipients(Enum):
     recipient_user_2 = ""
     recipient_user_3 = ""
 
+
 class AlgoMic(Enum):
     mic_1 = "XPAR"
     mic_2 = "TRQX"
@@ -171,7 +224,7 @@ class AlgoMic(Enum):
     mic_10 = "QDL1" # QUODLIT1
     mic_11 = "QDL2" # QUODLIT2
     mic_12 = "LISX" # CHIX LIS UK
-    mic_13 = "TRQL" # URQUOISE LIS
+    mic_13 = "TRQL" # TURQUOISE LIS
     mic_14 = "QDD1" # QUODDKP1
     mic_15 = "QDD2" # QUODDKP2
     mic_16 = "QDL4"  # QUODLIT4
@@ -182,7 +235,14 @@ class AlgoMic(Enum):
     mic_21 = "CHIXLIS"  # CHIXLIS
     mic_22 = "JSSI"  # JANESTREET
     mic_23 = "CCEU"  # CITADEL
-
+    mic_24 = "QDL8"  # QUODLIT8
+    mic_25 = "QDL9"  # QUODLIT9
+    mic_26 = "QDL10"  # QUODLIT10
+    mic_27 = "BATE"  # BATS UK
+    mic_28 = "QDL11"  # QUODLIT11
+    mic_29 = "QDL12"  # QUODLIT12
+    mic_30 = "CHIX"   # CHIX
+    mic_31 = "XAMS"   # Euronext Amsterdam
 
 
 class AlgoListingId(Enum):
@@ -202,6 +262,27 @@ class AlgoListingId(Enum):
     listing_14 = "181116477" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
+    listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
+    listing_18 = "825020508"  # QUODLIT9 for QUODTESTQA03
+    listing_19 = "825020509"  # QUODLIT10 for QUODTESTQA03
+    listing_20 = "925020507"  # QUODLIT8 for QUODTESTQA04
+    listing_21 = "925020508"  # QUODLIT9 for QUODTESTQA04
+    listing_22 = "925020509"  # QUODLIT10 for QUODTESTQA04
+    listing_23 = "897587663"  # TRQX for FR0000133308
+    listing_24 = "1803699"    # Euronext Paris for FR0000133308
+    listing_25 = "1872430"    # BATS UK for FR0000133308
+    listing_26 = "768319009"    # CHIX UK for FR0000133308
+    listing_27 = "1225020507"    # QUODLIT11 for QUODTESTQA05
+    listing_28 = "1225020508"    # QUODLIT12 for QUODTESTQA05
+    listing_29 = "1803729"       # Euronext Paris for FR0000121329
+    listing_30 = "1325020507"    # Euronext Amsterdam for IE00B5BMR087
+    listing_31 = "1863318"       # CHIX for IE00B5BMR087
+    listing_32 = "1874187"       # BATS for FR0010411884
+    listing_33 = "1863556"       # CHIX for FR0010411884
+    listing_34 = "125911519"       # JANESTREET for FR0010411884
+    listing_35 = "1803739"       # Euronext Paris for FR0000121220
+    listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
+
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -209,6 +290,8 @@ class AlgoCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "SEK"
+
 
 class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
@@ -224,9 +307,20 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_cancel_reject_parent = ['ClOrdID', 'OrdStatus']
     verifier_key_parameters_NOS_parent = ['ClOrdID']
     verifier_key_parameters_ER_Partially_Fill_Parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'LeavesQty']
-    verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType"]
-    verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType']
+    verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType", "ExDestination"]
+    verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
+    key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
+    key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
+    key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
+    key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
+    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
+    key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
+    key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
+    key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
+
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -237,3 +331,31 @@ class AlgoPreFilter(Enum):
         'header': {
             'MsgType': ('D', "EQUAL")
         }}
+
+    pre_filer_equal_ER_canceled = {
+                'header': {
+                    'MsgType': ('8', "EQUAL")
+                },
+                'ExecType': ('4', "EQUAL")
+                }
+    pre_filer_equal_order_cancel_reject = {
+                'header': {
+                    'MsgType': ('9', "EQUAL")
+                }
+                }
+
+    pre_filer_equal_ER_fill = {
+        'header': {
+            'MsgType': ('8', "EQUAL")
+        },
+        'ExecType': ('F', "EQUAL")
+    }
+
+    pre_filter_primary_listing_id = {
+        'PrimaryListingID': ('*', "EQUAL")
+    }
+
+    pre_filter_primary_status_of_transaction= {
+        'NewStatus': ('*', "EQUAL")
+    }
+

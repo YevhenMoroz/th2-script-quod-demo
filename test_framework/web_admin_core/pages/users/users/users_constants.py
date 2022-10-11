@@ -23,6 +23,7 @@ class UsersConstants:
     ALL_DISPLAYED_USERS_XPATH = '//*[@ref="eCenterContainer"]//div[@role="row"]'
     NOT_FOUND_OPTION_XPATH = '//*[normalize-space(text())="Not found"]'
     WARNING_MESSAGE = '//*[@outline="danger"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -65,7 +66,7 @@ class UsersConstants:
 
     # Wizard
     SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON = "//*[text()='First Login']"
+    REVERT_CHANGES_BUTTON = '//button[normalize-space()="Revert Changes"]'
     ERROR_MESSAGE_IN_FOOTER = "//*[@outline='danger']"
     CONFIRM_POP_UP = '(//nb-card)[2]'
 

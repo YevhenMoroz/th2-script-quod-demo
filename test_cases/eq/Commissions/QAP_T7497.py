@@ -55,7 +55,7 @@ class QAP_T7497(TestCase):
             "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
             {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
              'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2"),
-             "Currency": self.data_set.get_currency_by_name("currency_2")})
+             "Currency": self.data_set.get_currency_by_name("currency_3")})
         self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
 
     def __verify_commissions(self):

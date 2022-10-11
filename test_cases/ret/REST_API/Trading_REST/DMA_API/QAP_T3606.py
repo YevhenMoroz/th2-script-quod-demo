@@ -1,13 +1,13 @@
 import os
 
-from test_framework.old_wrappers.ret_wrappers import verifier
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.trading_api.TradingRestApiManager import TradingRestApiManager
 from test_framework.rest_api_wrappers.trading_api.ApiMessageNewOrderSingle import ApiMessageNewOrderSingle
-from test_framework.rest_api_wrappers.trading_api.ApiMessageOrderModificationRequest import ApiMessageOrderModifiction
+from test_framework.rest_api_wrappers.trading_api.ApiMessageOrderModificationRequest import ApiMessageOrderModification
+from test_framework.rest_api_wrappers.utils.verifier import data_validation
 
 
 class QAP_T3606(TestCase):
@@ -17,8 +17,8 @@ class QAP_T3606(TestCase):
         self.http = self.environment.get_list_trading_rest_api_environment()[0].session_alias_http
         self.web_socket = self.environment.get_list_trading_rest_api_environment()[0].session_alias_web_socket
         self.trd_api_manager = TradingRestApiManager(session_alias_http=self.http,
-                                                session_alias_web_socket=self.web_socket,
-                                                case_id=self.test_id)
+                                                     session_alias_web_socket=self.web_socket,
+                                                     case_id=self.test_id)
         self.nos_message = ApiMessageNewOrderSingle(data_set=self.data_set)
         self.tested_instrument = self.data_set.get_trading_api_instrument_by_name("instrument_2")
 
@@ -33,10 +33,10 @@ class QAP_T3606(TestCase):
         parsed_response = self.trd_api_manager.parse_response_details(response)
 
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check PosValidity field",
-                     expected_value="Delivery",
-                     actual_value=parsed_response["PosValidity"])
+            data_validation(test_id=self.test_id,
+                            event_name="Check PosValidity field",
+                            expected_result="Delivery",
+                            actual_result=parsed_response["PosValidity"])
         except:
             bca.create_event(f'Fail test event. Response is empty',
                              status='FAILED',
@@ -55,17 +55,17 @@ class QAP_T3606(TestCase):
             'SettlCurrency': parsed_response['SettlCurrency'],
             'PosValidity': 'TP2'
         }
-        modification_message = ApiMessageOrderModifiction(parameters=modification_parameters)
-        modification_response = self.trd_api_manager.send_http_request_and_receive_websocket_response(modification_message)
+        modification_message = ApiMessageOrderModification(parameters=modification_parameters, data_set=self.data_set)
+        modification_response = self.trd_api_manager.send_http_request_and_receive_websocket_response(
+            modification_message)
         parsed_modification_response = self.trd_api_manager.parse_response_details(modification_response)
 
         try:
-            verifier(case_id=self.test_id,
-                     event_name="Check PosValidity field after sending Modification request",
-                     expected_value="TPlus2",
-                     actual_value=parsed_modification_response["PosValidity"])
+            data_validation(test_id=self.test_id,
+                            event_name="Check PosValidity field after sending Modification request",
+                            expected_result="TPlus2",
+                            actual_result=parsed_modification_response["PosValidity"])
         except:
             bca.create_event(f'Fail test event. Response is empty',
                              status='FAILED',
                              parent_id=self.test_id)
-

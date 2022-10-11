@@ -94,5 +94,5 @@ class TradingLimitsPage(CommonPage):
     def get_max_soft_amt(self):
         return self.find_by_xpath(TradingLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH).text
 
-    def is_searched_route_found(self, value):
+    def is_searched_entity_found_by_description(self, value):
         return self.is_element_present(TradingLimitsConstants.DISPLAYED_ROUTE_XPATH.format(value))

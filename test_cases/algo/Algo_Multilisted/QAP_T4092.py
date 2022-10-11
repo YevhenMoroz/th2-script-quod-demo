@@ -82,14 +82,12 @@ class QAP_T4092(TestCase):
 
         pending_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(pending_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
-
-        new_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check Reject
         self.fix_verifier_sell.set_case_id(bca.create_event("Reject Algo Order", self.test_id))
         reject_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_reject)
+        reject_multilisted_order.change_parameters(dict(Text="unknown venue `TRQX_er'", Account=self.client, NoStrategyParameters='*', SettlDate='*', Currency='*', HandlInst='*', LastQty=0, LastPx=0, OrderCapacity='*', QtyType='*', ExecRestatementReason='*', TargetStrategy='*', Instrument='*'))
         self.fix_verifier_sell.check_fix_message(reject_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Reject')
         # endregion
 

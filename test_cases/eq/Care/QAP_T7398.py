@@ -57,17 +57,17 @@ class QAP_T7398(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message_1)
-        order_id_1 = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        self.fix_manager.send_message_fix_standard(self.fix_message_2)
-        order_id_2 = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_1)
+        order_id_1 = response[0].get_parameter("OrderID")
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_2)
+        order_id_2 = response[0].get_parameter("OrderID")
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()
         self.client_inbox.accept_order()
         # endregion
         # region set up disclose flag
-        self.order_book.set_disclose_flag_via_order_book('manual', [1,2])
+        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]]).set_disclose_flag_via_order_book('manual', [1,2])
         # region split first order
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
@@ -99,14 +99,14 @@ class QAP_T7398(TestCase):
             self.rule_manager.remove_rule(trade_rule)
 
         # region mass execution
+        self.order_book.complete_order(2, [OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]])
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id[:-1]]).mass_execution_summary_at_average_price(2)
         # endregion
         # verify tags by minifix gtw
         self.exec_report.set_default_calculated(self.fix_message_1)
-        self.exec_report.change_parameters({"AvgPx": self.price1})
+        self.exec_report.change_parameters({"AvgPx": self.price1, "Account": self.account1, "Side":"2", "VenueType":"*"})
         self.fix_verifier.check_fix_message(self.exec_report)
         self.exec_report.set_default_calculated(self.fix_message_2)
-        self.exec_report.change_parameters({"AvgPx": self.price2})
-        self.exec_report.remove_parameter("VenueType")
+        self.exec_report.change_parameters({"AvgPx": self.price2, "Account": self.account2, "Side":"1", "VenueType":"*"})
         self.fix_verifier.check_fix_message(self.exec_report)
         # endregion

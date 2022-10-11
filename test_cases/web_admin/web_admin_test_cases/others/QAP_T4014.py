@@ -51,7 +51,7 @@ class QAP_T4014(CommonTestCase):
             counterparts_main_menu.click_on_more_actions()
             time.sleep(1)
             counterparts_main_menu.click_on_delete_and_confirmation(True)
-            time.sleep(1)
+            time.sleep(2)
             self.verify("Counterparts deleted", "False",
                         counterparts_main_menu.is_counterpart_present_by_name(self.name))
 

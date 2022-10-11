@@ -39,8 +39,6 @@ class QAP_T3774(CommonTestCase):
             try:
                 main_menu.click_on_enabled_filter()
                 time.sleep(2)
-                main_menu.set_enabled_at_filter_field("true")
-                time.sleep(2)
                 main_menu.click_on_more_actions()
                 self.verify("Default strategy is enabled and has checkmark in main page", True, True)
             except Exception:

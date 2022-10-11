@@ -394,7 +394,7 @@ class BaseDealerIntervention(BaseWindow):
                 RFQPanelPtsAndPx.ask_near_price_value_label.value)
         if RFQPanelPtsAndPx.ask_far_price_value_label in args:
             self.rfq_extraction_request.extract_ask_far_price_value_label(
-                RFQPanelPtsAndPx.bid_far_price_value_label.value)
+                RFQPanelPtsAndPx.ask_far_price_value_label.value)
         response = call(self.getRFQDetail_call, self.rfq_extraction_request.build())
         self.clear_details([self.rfq_extraction_request])
         self.set_default_params()

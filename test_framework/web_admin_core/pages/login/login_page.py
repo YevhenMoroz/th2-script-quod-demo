@@ -61,3 +61,8 @@ class LoginPage(CommonPage):
 
     def get_change_password_info_message(self):
         return self.find_by_xpath(LoginConstants.CHANGE_PASSWORD_INFO_MESSAGE_XPATH).text
+
+    def get_title_text_of_login_page(self):
+        elements_with_text = self.find_elements_by_xpath(LoginConstants.LOGIN_PAGE_TITLE_TEXT_XPATH)
+        full_text = ' '.join([elements_with_text[i].text for i in range(len(elements_with_text))])
+        return full_text

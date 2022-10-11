@@ -25,7 +25,7 @@ class QAP_T2968(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
         self.fx_fh_connectivity = SessionAliasFX().fx_fh_connectivity
-        self.fix_subscribe = FixMessageMarketDataRequestFX()
+        self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
@@ -53,7 +53,6 @@ class QAP_T2968(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
-        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -73,7 +72,6 @@ class QAP_T2968(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
-        self.fix_md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

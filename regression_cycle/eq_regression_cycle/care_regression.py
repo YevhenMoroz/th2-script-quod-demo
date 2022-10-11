@@ -84,8 +84,8 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def test_run(parent_id= None):
-    report_id = bca.create_event('Care ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+def test_run(parent_id= None, version=None):
+    report_id = bca.create_event(f"Care Analysis" if version is None else f"Care Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Care")
     fe_env = configuration.environment.get_list_fe_environment()[0]
@@ -93,7 +93,7 @@ def test_run(parent_id= None):
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
-    layout_path = os.path.abspath("layouts")
+    layout_path = os.path.abspath("regression_cycle\eq_regression_cycle/layouts")
     layout_name = "all_columns_layout.xml"
     try:
         base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
@@ -252,7 +252,6 @@ def test_run(parent_id= None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Care regression was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
 

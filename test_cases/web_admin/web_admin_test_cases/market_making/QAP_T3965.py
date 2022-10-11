@@ -5,6 +5,8 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard \
+    import ClientTiersValuesSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -18,6 +20,7 @@ class QAP_T3965(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -27,6 +30,8 @@ class QAP_T3965(CommonTestCase):
         side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
         client_tiers_main_page.click_on_new()
+        client_tiers_values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tiers_values_tab.set_tod_end_time(self.tod_end_time)
         time.sleep(2)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()

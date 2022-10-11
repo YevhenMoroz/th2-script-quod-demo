@@ -87,6 +87,15 @@ class RestApiMessages:
                 if self.parameters[component_name][i][key] == value:
                     self.parameters[component_name][i] = None
                     break
+        return self
+
+    def remove_field_from_component(self, component_name, field_name):
+        """
+        Method for removing fields from components
+        """
+        for i in self.parameters[component_name]:
+            if field_name in i.keys():
+                i.pop(field_name)
 
     def clear_component(self, component_name):
         """

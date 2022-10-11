@@ -1,7 +1,7 @@
 from enum import Enum
 
 from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
-    broken_w1w2, spo_ndf
+    broken_w1w2, broken_w2w3, spo_ndf
 
 
 class FxInstruments(Enum):
@@ -68,6 +68,7 @@ class FxClients(Enum):
     client_mm_8 = "Aurum1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
+    client_mm_11 = "Platinum1"  # For Margin Format testing
 
 
 class FxAccounts(Enum):
@@ -176,6 +177,7 @@ class FxSettleDates(Enum):
     broken_1 = broken_1()
     broken_2 = broken_2()
     broken_w1w2 = broken_w1w2()
+    broken_w2w3 = broken_w2w3()
     # TODO add more settle dates
 
 
@@ -195,6 +197,12 @@ class FxSymbols(Enum):
     symbol_13 = "EUR/CAD"
     symbol_14 = "NOK/SEK"
     symbol_15 = "USD/NOK"
+    symbol_16 = "AUD/USD"
+    symbol_17 = "EUR/AUD"
+    symbol_18 = "AUD/GBP"
+    symbol_19 = "ZAR/MXN"
+    symbol_20 = "USD/ZAR"
+    symbol_21 = "EUR/MXN"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
@@ -221,6 +229,7 @@ class FxCurrencies(Enum):
     currency_aud = "AUD"
     currency_sek = "SEK"
     currency_jpy = "JPY"
+    currency_nok = "NOK"
 
 
 class FxRecipients(Enum):

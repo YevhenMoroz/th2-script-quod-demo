@@ -1,190 +1,93 @@
-import logging
-from datetime import datetime
 from pathlib import Path
-from time import sleep
-
-from custom.verifier import Verifier, VerificationMethod
-from stubs import Stubs
 from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers import DataSet
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
-from test_framework.win_gui_wrappers import fe_trading_constant
-from test_framework.win_gui_wrappers.fe_trading_constant import PriceNaming
-from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from win_gui_modules.client_pricing_wrappers import BaseTileDetails
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import get_base_request, call
-
-api = Stubs.api_service
-ob_act = Stubs.win_act_order_book
-cp_service = Stubs.win_act_cp_service
-pos_service = Stubs.act_fx_dealing_positions
-client = 'Silver1'
-client_tier = 'Silver'
-account = 'Silver1_1'
-instrument = 'USD/DKK-1W'
-status_true = 'true'
-status_false = 'false'
-timestamp = str(datetime.now().timestamp())
-timestamp = timestamp.split(".", 1)
-timestamp = timestamp[0]
-case_venue = "MS"
-case_session_alias = 'rest_wa314luna'
-
-modify_params = {
-    "instrSymbol": "USD/DKK",
-    "quoteTTL": 120,
-    "clientTierID": 2200009,
-    "alive": "true",
-    "clientTierInstrSymbolQty": [
-        {
-            "upperQty": 1000000,
-            "indiceUpperQty": 1,
-            "publishPrices": "true"
-        },
-        {
-            "upperQty": 2000000,
-            "indiceUpperQty": 2,
-            "publishPrices": "true"
-        },
-        {
-            "upperQty": 3000000,
-            "indiceUpperQty": 3,
-            "publishPrices": "true"
-        }
-    ],
-    "clientTierInstrSymbolTenor": [
-        {
-            "tenor": "SPO",
-            "minSpread": "0",
-            "maxSpread": "300",
-            "marginPriceType": "PIP",
-            "lastUpdateTime": timestamp,
-            "MDQuoteType": "TRD",
-            "activeQuote": "true",
-            "clientTierInstrSymbolTenorQty": [
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 1
-                },
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 2
-                },
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 3
-                }
-            ]
-        },
-        {
-            "tenor": "WK1",
-            "minSpread": "0",
-            "maxSpread": "300",
-            "marginPriceType": "PIP",
-            "lastUpdateTime": timestamp,
-            "MDQuoteType": "TRD",
-            "activeQuote": "true",
-            "clientTierInstrSymbolTenorQty": [
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 1
-                },
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 2
-                },
-                {
-                    "MDQuoteType": "TRD",
-                    "activeQuote": "true",
-                    "indiceUpperQty": 3
-                }
-            ]
-        }
-    ],
-    "clientTierInstrSymbolVenue": [
-        {
-            "venueID": case_venue,
-            'excludeWhenUnhealthy': 'false',
-            'criticalVenue': 'false'
-        }
-    ],
-    "clientTierInstrSymbolActGrp": [
-        {
-            "accountGroupID": "Silver1"
-        }
-    ],
-    "clientTierInstrSymbolFwdVenue": [
-        {
-            "venueID": case_venue,
-            'excludeWhenUnhealthy': status_false,
-        }
-    ]
-}
-
-def check_prices(case_id, name, bid_act, ask_act, bid_exp, ask_exp):
-    verifier = Verifier(case_id)
-    verifier.set_event_name(name)
-    verifier.compare_values("Bid price", bid_exp, bid_act, VerificationMethod.NOT_EQUALS)
-    verifier.compare_values("Ask price", ask_exp, ask_act, VerificationMethod.NOT_EQUALS)
-    verifier.verify()
+from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
+    RestApiClientTierInstrSymbolMessages
 
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    modify_venue_message = RestApiMessages()
-    modify_instrument_message = RestApiMessages()
-    rest_manager = RestApiManager(case_session_alias, case_id)
-    try:
-        # Precondition
-        modify_venue_message.modify_venue_status_metric(case_venue)
-        modify_instrument_message.modify_client_tier_instrument(modify_params)
+class QAP_T2650(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.ss_connectivity = self.fix_env.sell_side_esp
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.web_adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.rest_manager = RestApiManager(self.web_adm_env.session_alias_wa, self.test_id)
+        self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
+        self.gbp_aud = self.data_set.get_symbol_by_name('symbol_9')
+        self.security_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        self.client_tier_palladium1 = self.data_set.get_client_tier_id_by_name("client_tier_id_4")
+        self.client_palladium1 = self.data_set.get_client_by_name("client_mm_4")
+        self.settle_type_1w = self.data_set.get_settle_type_by_name("wk1")
+        self.instrument_fwd = {
+            'Symbol': self.gbp_aud,
+            'SecurityType': self.security_type_fwd,
+            'Product': '4', }
+        self.no_related_symbols_1w = [{
+            'Instrument': self.instrument_fwd,
+            'SettlType': self.settle_type_1w}]
 
-        rest_manager.send_post_request(modify_venue_message)
-        rest_manager.send_post_request(modify_instrument_message)
-        sleep(10)
-        # Step 1
-        rates_tile = ClientRatesTile(case_id, session_id)
-        rates_tile.modify_client_tile(instrument, client_tier)
-        prices_init = rates_tile.extract_prices_from_tile(PriceNaming.ask_pips, PriceNaming.bid_pips)
-        check_prices(case_id, 'Checking that prices not null',
-                     prices_init[PriceNaming.ask_pips.value],
-                     prices_init[PriceNaming.bid_pips.value], '', '')
-        # Step 2
-        modify_venue_message.modify_venue_status_metric(case_venue, status_true)
-        modify_params["clientTierInstrSymbolFwdVenue"][0]['excludeWhenUnhealthy'] = status_true
-        modify_instrument_message.modify_client_tier_instrument(modify_params)
-        rest_manager.send_post_request(modify_venue_message)
-        rest_manager.send_post_request(modify_instrument_message)
-        sleep(10)
-        prices_new = rates_tile.extract_prices_from_tile(PriceNaming.ask_pips, PriceNaming.bid_pips)
-        check_prices(case_id, 'Checking that prices now null',
-                     prices_new[PriceNaming.ask_pips.value],
-                     prices_new[PriceNaming.bid_pips.value],
-                     prices_init[PriceNaming.ask_pips.value],
-                     prices_init[PriceNaming.bid_pips.value])
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tiles
-            call(cp_service.closeRatesTile, base_details.build())
-            # Set settings back
-            modify_venue_message.modify_venue_status_metric(case_venue)
-            modify_params["clientTierInstrSymbolFwdVenue"][0]['excludeWhenUnhealthy'] = status_false
-            modify_instrument_message.modify_client_tier_instrument(modify_params)
-            rest_manager.send_post_request(modify_venue_message)
-            rest_manager.send_post_request(modify_instrument_message)
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 3
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_1w)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
+        # region Step 4-5
+        self.rest_massage.find_all_client_tier_instrument()
+        params_gbp_aud = self.rest_manager.send_get_request(self.rest_massage)
+        params_gbp_aud = self.rest_manager. \
+            parse_response_details(params_gbp_aud,
+                                   {'clientTierID': self.client_tier_palladium1, 'instrSymbol': self.gbp_aud})
 
+        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
+            .set_params(params_gbp_aud). \
+            update_value_in_component('clientTierInstrSymbolFwdVenue', 'excludeWhenUnhealthy',
+                                      'true', {'venueID': 'BARX'})
+        self.rest_manager.send_post_request(self.rest_massage)
+        # endregion
+        # region Step 6
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_1w)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigClientVenueID", "OrigMDTime"])
+        self.md_snapshot.remove_values_in_repeating_group_by_index('NoMDEntries', 0,
+                                                                   ("MDEntryPx", "MDEntryForwardPoints",
+                                                                    "MDEntrySize", "MDEntrySpotRate"))
+        self.md_snapshot.remove_values_in_repeating_group_by_index('NoMDEntries', 1,
+                                                                   ("MDEntryPx", "MDEntryForwardPoints",
+                                                                    "MDEntrySize", "MDEntrySpotRate"))
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region Step 5
+        self.rest_massage.modify_client_tier_instrument(). \
+            update_value_in_component('clientTierInstrSymbolFwdVenue', 'excludeWhenUnhealthy',
+                                      'false', {'venueID': 'BARX'})
+        self.rest_manager.send_post_request(self.rest_massage)
+        # endregion

@@ -1,9 +1,6 @@
 import logging
-from datetime import datetime
-from stubs import Stubs
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -36,8 +33,8 @@ class QAP_T7682(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region Create Market CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         # endregion
         # region Accept CO order
         self.client_inbox.accept_order()

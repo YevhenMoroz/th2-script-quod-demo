@@ -17,7 +17,10 @@ class UsersWizard(CommonPage):
         self.find_by_xpath(UsersConstants.SAVE_CHANGES_BUTTON).click()
 
     def click_on_clear_changes(self):
-        self.find_by_xpath(UsersConstants.CLEAR_CHANGES_BUTTON).click()
+        self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).click()
+
+    def is_revert_changes_button_enabled(self):
+        return self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).is_enabled()
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()

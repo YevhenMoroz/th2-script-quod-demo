@@ -25,6 +25,7 @@ class QAP_T3962(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -37,6 +38,7 @@ class QAP_T3962(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)

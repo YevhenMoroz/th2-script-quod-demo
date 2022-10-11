@@ -16,6 +16,7 @@ timeouts = True
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7342(TestCase):
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -30,7 +31,7 @@ class QAP_T7342(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
+        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region check fields

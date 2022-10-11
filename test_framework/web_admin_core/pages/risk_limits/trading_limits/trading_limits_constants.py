@@ -61,6 +61,9 @@ class TradingLimitsConstants:
     DIMENSIONS_TAB_EXECUTION_POLICY_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="executionPolicy"]'
     DIMENSIONS_TAB_PHASE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="standardTradingPhase"]'
 
+    # Assignments tab
+    ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
+
 
 
 

@@ -5,6 +5,7 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from custom import basic_custom_actions
 from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
+from test_framework.fix_wrappers.FixMessageBusinessMessageRejectReport import FixMessageBusinessMessageRejectReport
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageListStatus import FixMessageListStatus
 from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import FixMessageMarketDataIncrementalRefresh
@@ -191,6 +192,8 @@ class FixManager:
                 response_fix_message = FixMessageQuoteRequestRejectFX()
             elif message_type == FIXMessageType.OrderCancelReject.value:
                 response_fix_message = FixMessageOrderCancelRejectReport()
+            elif message_type == FIXMessageType.BusinessMessageReject.value:
+                response_fix_message = FixMessageBusinessMessageRejectReport()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)

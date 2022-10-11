@@ -41,6 +41,9 @@ class BaseMiddleOffice(BaseWindow):
         self.only_set_details_in_booking_ticket_call = None
         self.only_extraction_from_booking_ticket_call = None
         self.only_closing_booking_ticket_call = None
+        self.internal_extraction_details = None
+        self.extract_allocation_sub_lvl_data_details = None
+        self.extract_value_from_second_level_of_allocation = None
 
     # endregion
     # region Common func
@@ -138,7 +141,8 @@ class BaseMiddleOffice(BaseWindow):
                                                     block_panels_extraction: list = None,
                                                     block_filter_dict: dict = None, alloc_filter_dict: dict = None):
         self.allocation_ticket_extraction_details = AllocationBlockExtractionDetails(self.base_request)
-        self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
+        if block_filter_dict is not None:
+            self.allocation_ticket_extraction_details.set_filter_middle_office_grid(block_filter_dict)
         self.allocation_ticket_extraction_details.set_filter_allocations_grid(alloc_filter_dict)
         self.allocation_ticket_extraction_details.set_panels(panels_extraction)
         self.allocation_ticket_extraction_details.set_block_panels(block_panels_extraction)
@@ -399,3 +403,19 @@ class BaseMiddleOffice(BaseWindow):
 
     def only_close_booking_ticket(self):
         call(self.only_closing_booking_ticket_call, self.booking_ticket_closing_and_opening_details.build())
+
+    def set_extract_sub_lvl_fields(self, column_names: list, tab_name, row_count: int):
+        self.internal_extraction_details.set_default_params(self.base_request)
+        self.internal_extraction_details.set_column_names(column_names)
+        self.internal_extraction_details.set_tab_name(tab_name)
+        self.internal_extraction_details.set_row_number(row_count)
+
+    def extract_allocation_sub_lvl(self, block_filter: dict, allocation_filter: dict):
+        self.extract_allocation_sub_lvl_data_details.set_internal_extraction_details(
+            self.internal_extraction_details.build())
+        self.extract_allocation_sub_lvl_data_details.set_allocation_filter(allocation_filter)
+        self.extract_allocation_sub_lvl_data_details.set_block_filter(block_filter)
+        result = call(self.extract_value_from_second_level_of_allocation,
+                      self.extract_allocation_sub_lvl_data_details.build())
+        self.clear_details([self.internal_extraction_details, self.extract_allocation_sub_lvl_data_details])
+        return result

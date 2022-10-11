@@ -28,7 +28,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.ceil(remaining_ord_qty / remaining_waves)
+        return math.floor(remaining_ord_qty / remaining_waves)
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
@@ -42,7 +42,10 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_pov_child_qty(per_vol: float, market_vol: int, ord_qty: int) -> int:
-        return max(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
+        if (per_vol > 0 and per_vol < 1):
+            return min(math.ceil((market_vol * per_vol) / (1 - per_vol)), ord_qty)
+        else:
+            return min(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
 
     @staticmethod
     def get_twap_nav_child_qty(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
@@ -140,6 +143,15 @@ class AlgoFormulasManager:
         return final_string
 
     @staticmethod
+    def create_string_for_strategy_venues(*venue: str) -> str:
+        final_string = str()
+        for idx, v in enumerate(venue):
+            final_string += v
+            if len(venue) - 1 != idx:
+                final_string += "/"
+        return final_string
+
+    @staticmethod
     def make_expire_date_next_sunday(day: int) -> int:
         days = [0, 1, 2, 3, 4, 5, 6]
         shift = 6
@@ -151,10 +163,23 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def get_pov_child_qty_on_ltq(volume: float, ltq: int) -> int:
-        return int((ltq * volume) / (1 - volume))
+    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:
+        if (percentage_vol > 0 and percentage_vol < 1):
+            return min(math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol)), ord_qty)
+        # elif (percentage_vol == 100 or percentage_vol == 1):
+        #     return min(math.ceil(last_traded_volume * percentage_vol), ord_qty)
+        else:
+            return min(math.ceil((last_traded_volume * percentage_vol) / (100 - percentage_vol)), ord_qty)
 
+    @staticmethod
+    def get_lis_amount_for_order(qty: int, price: float) -> float:
+        return qty * price
 
+    @staticmethod
+    def convert_pre_trade_lis_amount_for_another_currency(pre_trade_lis_amount: float, rate: float) -> float:
+        return pre_trade_lis_amount * rate
 
-
+    @staticmethod
+    def get_pov_child_qty_for_worse_price_behavior(min_part: float, max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
+        return min(math.ceil(((total_traded_volume * ((min_part + max_part) / 2)) / 100) - executed_qty), ord_qty)
 

@@ -103,6 +103,9 @@ class QAP_T4076(TestCase):
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.synthMinQty_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        er_pending_new_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
         # endregion
         
         # region Check reject algo order

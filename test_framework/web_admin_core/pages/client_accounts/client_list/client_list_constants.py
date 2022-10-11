@@ -7,7 +7,7 @@ class ClientListConstants:
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
-    REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
+    REVERT_CHANGES_XPATH = "//*[normalize-space()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
     CLONE_XPATH = "//*[@data-name = 'copy']"
@@ -17,7 +17,7 @@ class ClientListConstants:
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
-    DISPLAYED_CLIENT_LIST_XPATH = '//*[text()={}]'
+    DISPLAYED_CLIENT_LIST_XPATH = '//*[text()="{}"]'
 
     # Main page
 

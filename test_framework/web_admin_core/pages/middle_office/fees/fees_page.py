@@ -56,3 +56,6 @@ class FeesPage(CommonPage):
 
     def set_exec_scope(self, value):
         self.set_text_by_xpath(FeesConstants.MAIN_PAGE_EXEC_COMMISSION_PROFILE_FILTER_XPATH, value)
+
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(FeesConstants.DISPLAYED_ENTITY_XPATH.format(value))

@@ -15,12 +15,15 @@ class ListingsWizard(CommonPage):
     def click_on_save_changes(self):
         self.find_by_xpath(ListingsConstants.SAVE_CHANGES_BUTTON_XPATH).click()
 
+    def is_save_button_enabled(self):
+        return self.find_by_xpath(ListingsConstants.SAVE_CHANGES_BUTTON_XPATH).is_enabled()
+
     def click_on_revert_changes(self):
         self.find_by_xpath(ListingsConstants.REVERT_CHANGES_XPATH).click()
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(ListingsConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(ListingsConstants.DOWNLOAD_PDF_AT_WIZARD_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
@@ -32,6 +35,9 @@ class ListingsWizard(CommonPage):
 
     def get_error_message_inside_listing_wizard(self):
         return self.find_by_xpath(ListingsConstants.ERROR_MESSAGE_WIZARD_XPATH).text
+
+    def is_error_message_displayed(self):
+        return self.is_element_present(ListingsConstants.ERROR_MESSAGE_WIZARD_XPATH)
 
     def is_request_failed_message_displayed(self):
         return self.find_by_xpath(ListingsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()

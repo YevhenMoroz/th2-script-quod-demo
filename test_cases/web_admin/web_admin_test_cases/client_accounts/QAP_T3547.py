@@ -30,16 +30,13 @@ class QAP_T3547(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_list_page()
-        time.sleep(2)
         client_list_page = ClientListPage(self.web_driver_container)
         client_list_page.set_name(self.first_client_list_name)
         time.sleep(1)
         if not client_list_page.is_client_list_found(self.first_client_list_name):
             client_list_page.click_on_new()
-            time.sleep(2)
             wizard = ClientListWizard(self.web_driver_container)
             wizard.set_client_list_name(self.first_client_list_name)
             wizard.set_client_list_description(self.client_list_description)
@@ -52,9 +49,10 @@ class QAP_T3547(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
 
+        client_list_page.set_name(self.second_client_list_name)
+        time.sleep(1)
         if not client_list_page.is_client_list_found(self.second_client_list_name):
             client_list_page.click_on_new()
-            time.sleep(2)
             wizard = ClientListWizard(self.web_driver_container)
             wizard.set_client_list_name(self.second_client_list_name)
             wizard.set_client_list_description(self.client_list_description)
@@ -65,10 +63,8 @@ class QAP_T3547(CommonTestCase):
             wizard.set_client(self.clients[1])
             wizard.click_on_checkmark()
             wizard.click_on_save_changes()
-            time.sleep(2)
 
         side_menu.open_clients_page()
-        time.sleep(2)
 
     def test_context(self):
 
@@ -79,35 +75,27 @@ class QAP_T3547(CommonTestCase):
             client_page.set_name(self.clients[0])
             time.sleep(1)
             client_page.click_on_more_actions()
-            time.sleep(1)
             client_page.click_on_edit()
-            time.sleep(2)
             client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
             assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
             actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
             self.verify("All assigned Client List displayed", True, actual_result)
 
             client_assignments_tab.click_on_client_list_link(self.second_client_list_name)
-            time.sleep(2)
             client_list_wizard = ClientListWizard(self.web_driver_container)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
-
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_clients_page()
-            time.sleep(2)
             client_page.set_name(self.clients[1])
             time.sleep(1)
             client_page.click_on_more_actions()
-            time.sleep(1)
             client_page.click_on_edit()
-            time.sleep(2)
             client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
             assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
             actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
             self.verify("All assigned Client List displayed", True, actual_result)
 
             client_assignments_tab.click_on_client_list_link(self.first_client_list_name)
-            time.sleep(2)
             client_list_wizard = ClientListWizard(self.web_driver_container)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
 

@@ -2,8 +2,9 @@ from pathlib import Path
 
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.base_data_set import BaseDataSet, DirectionEnum, Status
 from custom import basic_custom_actions as bca
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -52,9 +53,7 @@ class QAP_T2891(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "MDTime"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # endregion
 
         # region step 2
@@ -66,7 +65,7 @@ class QAP_T2891(TestCase):
 
         # region step 3-5
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill)
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -26,3 +26,6 @@ class ClientTierInstrumentValuesSubWizard(CommonPage):
 
     def get_core_spot_price_strategy(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH)
+
+    def set_tod_end_time(self, value):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_TOD_END_TIME, value)

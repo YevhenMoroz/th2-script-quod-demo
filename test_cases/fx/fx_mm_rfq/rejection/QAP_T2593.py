@@ -33,6 +33,7 @@ class QAP_T2593(TestCase):
             "Symbol": self.symbol,
             "SecurityType": self.security_type_fwd
         }
+        self.text = "failed to get forward points through RFQ"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -40,12 +41,13 @@ class QAP_T2593(TestCase):
         self.quote_request.set_rfq_params_fwd()
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument,
-                                                           SettlDate=self.settle_date, SettlType=self.settle_type,)
+                                                           SettlDate=self.settle_date, SettlType=self.settle_type, )
         self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region Step 2
         self.sleep(7)
-        self.quote_reject.set_quote_reject_params(self.quote_request)
+
+        self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
         self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
         self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion

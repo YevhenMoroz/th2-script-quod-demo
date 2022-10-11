@@ -38,6 +38,7 @@ class QAP_T3651(CommonTestCase):
             assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
             assignments_tab.set_institution(self.institution)
             assignments_tab.click_on_institution_field()
+            time.sleep(1)
 
             self.verify("Is \"Not found\" option displayed?", True, assignments_tab.is_not_found_option_displayed())
 

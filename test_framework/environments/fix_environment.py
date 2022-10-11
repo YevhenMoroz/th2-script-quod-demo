@@ -74,7 +74,7 @@ class FixEnvironment(BaseEnvironment):
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod317_ganymede_standard_test.value: site_environment})
-                return FixEnvironment.environment_instances[EnvironmentType.quod317_ganymede_standard_test.value]
+            return FixEnvironment.environment_instances[EnvironmentType.quod317_ganymede_standard_test.value]
         elif env.value == EnvironmentType.quod310_columbia_standard.value:
             if EnvironmentType.quod310_columbia_standard.value not in FixEnvironment.environment_instances.keys():
                 site_environment = FixEnvironment(
@@ -85,7 +85,7 @@ class FixEnvironment(BaseEnvironment):
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod310_columbia_standard.value: site_environment})
-                return FixEnvironment.environment_instances[EnvironmentType.quod310_columbia_standard.value]
+            return FixEnvironment.environment_instances[EnvironmentType.quod310_columbia_standard.value]
         elif env.value == EnvironmentType.quod319_kuiper_kepler.value:
             if EnvironmentType.quod319_kuiper_kepler.value not in FixEnvironment.environment_instances.keys():
                 site_environment = FixEnvironment(
@@ -96,7 +96,7 @@ class FixEnvironment(BaseEnvironment):
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod319_kuiper_kepler.value: site_environment})
-                return FixEnvironment.environment_instances[EnvironmentType.quod319_kuiper_kepler.value]
+            return FixEnvironment.environment_instances[EnvironmentType.quod319_kuiper_kepler.value]
         else:
             raise Exception('No such environment')
 

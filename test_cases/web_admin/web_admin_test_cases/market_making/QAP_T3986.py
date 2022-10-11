@@ -32,6 +32,7 @@ class QAP_T3986(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.core_spot_price_strategy = "Direct"
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -44,6 +45,7 @@ class QAP_T3986(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
@@ -69,6 +71,7 @@ class QAP_T3986(CommonTestCase):
                 self.web_driver_container)
             client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
             client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+            client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
             time.sleep(1)
             client_tier_instrument_tiered_quantities_sub_wizard.click_on_plus()
             client_tier_instrument_tiered_quantities_sub_wizard.set_quantity(1000000)

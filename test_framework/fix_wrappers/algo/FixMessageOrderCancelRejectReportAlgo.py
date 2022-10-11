@@ -15,6 +15,8 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
         if side is GatewaySide.Buy:
             if status is Status.Reject:
                 self.__set_reject_buy(new_order_single)
+            elif status is Status.New:
+                self.__set_new_buy(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         elif side is GatewaySide.Sell:
@@ -39,9 +41,24 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
         super().change_parameters(temp)
         return self
 
+    def __set_new_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            OrderID='*',
+            ClOrdID='*',
+            OrigClOrdID='*',
+            OrdStatus='0',
+            CxlRejResponseTo='2',
+            Text='Modify rejection',
+            TransactTime='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('TargetStrategy') == '1010' or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')) or (new_order_single.get_parameter('TargetStrategy') == '1011' and new_order_single.is_parameter_exist('ClientAlgoPolicyID')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
             )

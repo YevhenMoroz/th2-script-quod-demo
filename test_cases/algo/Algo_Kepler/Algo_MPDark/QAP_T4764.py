@@ -160,7 +160,7 @@ class QAP_T4764(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         # region check eliminate third dma child order
-        er_eliminate_dma_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_eliminate)
+        er_eliminate_dma_itg_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_itg_order)
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_itg_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order")
         # endregion
 

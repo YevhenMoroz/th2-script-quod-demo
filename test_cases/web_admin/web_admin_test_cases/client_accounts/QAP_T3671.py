@@ -30,7 +30,7 @@ class QAP_T3671(CommonTestCase):
         self.client = 'CLIENT1'
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.position_source = 'External'
-        self.clearing_account_type = 'Firm'
+        self.clearing_account_type = 'Institutional'
         self.client_id_source = 'BIC'
         self.client_matching_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.bo_field_1 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -47,8 +47,8 @@ class QAP_T3671(CommonTestCase):
         self.venue_client_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = 'Direct'
-        self.default_route = 'Direct'
+        self.route = 'Credit Suisse'
+        self.default_route = 'Credit Suisse'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -72,7 +72,6 @@ class QAP_T3671(CommonTestCase):
             values_tab.set_client(self.client)
             values_tab.set_description(self.description)
             values_tab.set_position_source(self.position_source)
-            values_tab.set_clearing_account_type(self.clearing_account_type)
             values_tab.set_client_id_source(self.client_id_source)
             values_tab.toggle_trade_confirm_eligibility()
             values_tab.set_client_matching_id(self.client_matching_id)
@@ -87,7 +86,7 @@ class QAP_T3671(CommonTestCase):
             dimensions_tab.click_on_plus()
             dimensions_tab.set_venue_account(self.venue_account)
             dimensions_tab.set_venue(self.venue)
-            dimensions_tab.set_account_id_source(self.client_id_source)
+            dimensions_tab.set_account_id_source(self.account_id_source)
             dimensions_tab.set_default_route(self.dimensions_default_route)
             dimensions_tab.set_stamp_exempt()
             dimensions_tab.set_levy_exempt()
@@ -102,6 +101,7 @@ class QAP_T3671(CommonTestCase):
             routes_tab.click_on_checkmark_button()
             routes_tab.set_default_route(self.default_route)
             wizard = AccountsWizard(self.web_driver_container)
+            time.sleep(2)
 
             actual_result = [self.id, self.ext_id_client, self.client, self.description, self.position_source,
                              self.clearing_account_type, self.client_id_source, self.client_matching_id, self.bo_field_1,
@@ -109,7 +109,8 @@ class QAP_T3671(CommonTestCase):
                              self.venue_account, self.venue, self.account_id_source, self.dimensions_default_route,
                              self.venue_client_account_name, self.route_account_name, self.route, self.default_route,
                              'true', 'false']
-            self.verify("Is PDF file contains data?", True, wizard.is_pdf_contains_value(actual_result))
+            self.verify("Is PDF file contains data?", True,
+                        wizard.click_download_pdf_entity_button_and_check_pdf(actual_result))
             wizard.click_save_button()
             time.sleep(2)
             main_page.set_id(self.id)

@@ -29,7 +29,7 @@ class QAP_T3679(CommonTestCase):
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.desks = [self.data_set.get_desk("desk_1"), self.data_set.get_desk("desk_3")]
         self.email = self.data_set.get_email("email_1")
-        self.password_expiration = datetime.strftime(datetime.now() - timedelta(1), '%d/%m/%Y')
+        self.password_expiration = datetime.strftime(datetime.now() - timedelta(1), '%m/%d/%Y')
         self.new_password = 'Qwerty123!@'
 
     def precondition(self):
@@ -89,12 +89,14 @@ class QAP_T3679(CommonTestCase):
             self.precondition()
 
             common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_info_error_message_pop_up()
             common_page.click_on_user_icon()
             time.sleep(1)
             common_page.click_on_logout()
             time.sleep(2)
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.user_id, self.new_password)
+            time.sleep(2)
 
             self.verify("Change password page is open", True, login_page.is_change_password_page_opened())
 

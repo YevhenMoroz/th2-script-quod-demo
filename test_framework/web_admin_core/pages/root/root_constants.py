@@ -9,6 +9,7 @@ class RootConstants:
     SYSTEM_COMMANDS_ITEM_XPATH = "//span[text()='System Commands']"
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
+    SITE_TAB_XPATH = '//*[@title="Site"]'
     SITE_COLLAPSE_XPATH = '//*[@title="Site"]//..//ul'
     INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"
     ZONES_ITEM_XPATH = "//span[text()='Zones']"
@@ -48,7 +49,7 @@ class RootConstants:
     FEES_ITEM_XPATH = "//span[text()='Fees']"
     COMMISSIONS_ITEM_XPATH = "//span[text()='Commissions']"
     SETTLEMENT_MODEL_ITEM_XPATH = "//span[text()='Settlement Model']"
-    FIX_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='FIX Matching Profile']"
+    ALLOCATION_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='Allocation Matching Profile']"
 
     FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='Market Making']"
     QUOTING_SESSIONS_ITEM_XPATH = "//span[text()='Quoting Sessions']"

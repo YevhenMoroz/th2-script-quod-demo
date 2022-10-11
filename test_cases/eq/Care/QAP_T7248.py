@@ -27,8 +27,8 @@ bs_connectivity = SessionAliasOMS().bs_connectivity
 
 class QAP_T7248(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, data_set):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)

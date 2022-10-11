@@ -28,7 +28,7 @@ class QAP_T3864(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter_at_dark_block = "Dark Opening Broker Strategy"
+        self.parameter_at_dark_block = "DarkOpeningBrokerStrategy"
         self.value_at_dark_parameter = "TestSuperStrategy1"
 
     def precondition(self):
@@ -67,7 +67,7 @@ class QAP_T3864(CommonTestCase):
             strategies_wizard.click_on_lit_general()
             lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             lit_general.click_on_plus_button()
-            lit_general.set_parameter("Broker Strategy")
+            lit_general.set_parameter("BrokerStrategy")
             lit_general.set_value_by_dropdown_list_at_sub_wizard("test1582")
             lit_general.click_on_checkmark_button()
             expected_parameter_at_lit_general_block = "test1582"

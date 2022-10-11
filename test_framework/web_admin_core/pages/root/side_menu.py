@@ -31,8 +31,8 @@ from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_c
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
-from test_framework.web_admin_core.pages.middle_office.fix_matching_profile.fix_matching_profile_constants import \
-    FixMatchingProfileConstants
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_constants import \
+    AllocationMatchingProfileConstants
 from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_constants import \
     SettlementModelConstants
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
@@ -201,10 +201,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(FeesConstants.FEES_PAGE_TITLE_XPATH)
 
-    def open_fix_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.FIX_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_allocation_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(FixMatchingProfileConstants.FIX_MATCHING_PROFILE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfileConstants.ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH)
 
     def open_settlement_model_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODEL_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
@@ -424,7 +424,7 @@ class SideMenu(CommonPage):
                 break
 
     def is_site_page_tab_displayed(self):
-        return self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).is_displayed()
+        return self.is_element_present(RootConstants.SITE_TAB_XPATH)
 
     def is_institutions_page_tab_displayed(self):
         if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
@@ -447,12 +447,12 @@ class SideMenu(CommonPage):
         return self.is_element_present(RootConstants.DESKS_ITEM_XPATH)
 
     def is_washbook_page_tab_displayed(self):
-        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
-            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
-        return self.find_by_xpath(RootConstants.WASHBOOK_ITEM_XPATH).is_displayed()
+        self.find_by_css_selector(RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR).click()
+        time.sleep(1)
+        return self.is_element_present(RootConstants.WASHBOOK_ITEM_XPATH)
 
     def is_washbook_rule_page_tab_displayed(self):
-        if 'expanded' not in self.find_by_xpath(RootConstants.SITE_COLLAPSE_XPATH).get_attribute('class'):
-            self.find_by_css_selector(RootConstants.SITE_TOGGLE_CSS_SELECTOR).click()
-        return self.find_by_xpath(RootConstants.WASHBOOK_RULES_ITEM_XPATH).is_displayed()
+        self.find_by_css_selector(RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR).click()
+        time.sleep(1)
+        return self.is_element_present(RootConstants.WASHBOOK_RULES_ITEM_XPATH)
 

@@ -1,3 +1,4 @@
+from selenium.webdriver.common.action_chains import ActionChains
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -9,8 +10,16 @@ class ClientTiersInstrumentTieredQuantitiesSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def click_on_plus(self):
-        self.find_by_xpath(
-            ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_PLUS_BUTTON_XPATH).click()
+        """
+        ActionChains helps to avoid falling test when adding several quantities at once.
+        (The usual "click" method fails because after adding the first entry, the cursor remains on the "edit" button
+        and the pop-up of edit btn covers half of the "+" button)
+        """
+        element = self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_PLUS_BUTTON_XPATH)
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.move_to_element(element)
+        action.click()
+        action.perform()
 
     def click_on_checkmark(self):
         self.find_by_xpath(
@@ -28,7 +37,7 @@ class ClientTiersInstrumentTieredQuantitiesSubWizard(CommonPage):
         self.find_by_xpath(
             ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_DELETE_BUTTON_XPATH).click()
 
-    def set_quantity(self, value: int):
+    def set_quantity(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH,
                                str(value))
 
@@ -38,3 +47,6 @@ class ClientTiersInstrumentTieredQuantitiesSubWizard(CommonPage):
     def set_quantity_filter(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH,
                                value)
+
+    def is_warning_displayed(self):
+        return self.is_element_present(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_WARNING_XPATH)

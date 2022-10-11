@@ -14,6 +14,7 @@ class TradeEntryOMS(TradeEntryRequest):
         self.data_set = data_set
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'TradeEntryRequestBlock': {
                 'OrdID': "*",
                 'ExecPrice': "10.000000000",

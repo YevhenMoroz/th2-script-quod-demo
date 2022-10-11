@@ -25,7 +25,7 @@ class QAP_T7681(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.lookup = "VETO"
+        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.qty = '100'
         self.qty2 = '240'
         self.price = '10'
@@ -39,8 +39,8 @@ class QAP_T7681(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region send Fix Message
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         # endregion
         # region Accept CO order
         self.client_inbox.accept_order()

@@ -3,7 +3,7 @@ class CounterpartsConstants:
     COUNTERPARTS_PAGE_TITLE_XPATH = "//*[text()='Counterparts']"
     NAME_FILTER_XPATH = '//input[@class="ag-floating-filter-input"]'
     NAME_VALUE_XPATH = '//div[@col-id="counterpartName"]//*[@ref="eValue"]'
-    NEW_BUTTON_XPATH = '//button[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Counterparts"]//..//button[normalize-space()="New"]'
     REFRESH_BUTTON_XPATH = '//*[@data-name="refresh"]'
     MORE_ACTIONS_XPATH = '//*[@data-name="more-vertical"]'
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
@@ -28,6 +28,7 @@ class CounterpartsConstants:
     CLEAR_CHANGES_XPATH = '//button[text()="Clear Changes"]'
     DOWNLOAD_PDF_XPATH = '//*[@data-name="download"]'
     DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = '//*[@data-name="download"]'
+    FOOTER_WARNING_XPATH = '//nb-card-footer//*[@status="danger"]//following-sibling::span'
 
     # ----------SUB_COUNTERPARTS_TAB----------
     PLUS_AT_SUB_COUNTERPARTS_TAB_XPATH = '//nb-accordion//nb-accordion-item[2]//*[@data-name="plus"]'

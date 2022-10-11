@@ -160,7 +160,7 @@ class DimensionsTab(CommonPage):
     def is_users_dimension_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.USER_DIMENSIONS)
 
-    def set_desks(self, value: list):
+    def set_desks(self, value):
         self.set_checkbox_list(Constants.Wizard.DimensionsTab.DESKS, value)
 
     def get_desks(self):
@@ -360,6 +360,9 @@ class DimensionsTab(CommonPage):
 class AssignmentsTab(CommonPage):
     def set_institution(self, value):
         self.set_combobox_value(Constants.Wizard.AssignmentsTab.INSTITUTION, value)
+
+    def clear_institution_field(self):
+        self.set_text_by_xpath(Constants.Wizard.AssignmentsTab.INSTITUTION, "")
 
     def get_institution(self):
         return self.get_text_by_xpath(Constants.Wizard.AssignmentsTab.INSTITUTION)

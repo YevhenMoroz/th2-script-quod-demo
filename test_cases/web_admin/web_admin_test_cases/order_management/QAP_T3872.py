@@ -26,7 +26,7 @@ class QAP_T3872(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter_at_dark_block = "Dark Opening Broker Strategy"
+        self.parameter_at_dark_block = "DarkOpeningBrokerStrategy"
         self.value = "TestSuperStrategy1"
 
     def precondition(self):
@@ -72,7 +72,6 @@ class QAP_T3872(CommonTestCase):
             self.verify("After saved at Dark block", expected_parameter_and_value_at_dark_block,
                         actual_parameter_and_value_at_dark_block)
             strategies_wizard.click_on_save_changes()
-            main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.name)
             time.sleep(2)
             main_menu.click_on_enable_disable_button()

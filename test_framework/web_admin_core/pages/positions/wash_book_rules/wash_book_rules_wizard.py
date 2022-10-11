@@ -60,7 +60,7 @@ class WashBookRulesWizard(CommonPage):
         return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH)
     
     def get_all_account_from_drop_menu(self):
-        self.find_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH).click()
+        self.set_text_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH, "")
         time.sleep(1)
         return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
@@ -76,8 +76,21 @@ class WashBookRulesWizard(CommonPage):
     def get_user(self):
         return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_USER_XPATH)
 
+    def get_all_users_from_drop_menu(self):
+        self.set_text_by_xpath(WashBookRulesConstants.WIZARD_USER_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
+
     def set_desk(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_DESK_XPATH, value)
+
+    def get_desk(self):
+        return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_DESK_XPATH)
+
+    def get_all_desk_from_drop_menu(self):
+        self.set_text_by_xpath(WashBookRulesConstants.WIZARD_DESK_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_institution(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH, value)
@@ -86,12 +99,12 @@ class WashBookRulesWizard(CommonPage):
         return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH)
 
     def get_all_institutions_from_drop_menu(self):
-        self.set_combobox_value(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH, "")
+        self.set_text_by_xpath(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH, "")
         time.sleep(1)
         return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
-    def get_desk(self):
-        return self.get_text_by_xpath(WashBookRulesConstants.WIZARD_DESK_XPATH)
+    def click_at_institution_link_by_name(self, name):
+        self.find_by_xpath(WashBookRulesConstants.INSTITUTION_LINK_NAME_AT_ASSIGNMENTS_TAB.format(name)).click()
 
     def is_name_field_enabled(self):
         return self.is_field_enabled(WashBookRulesConstants.WIZARD_NAME_XPATH)

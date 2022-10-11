@@ -228,6 +228,22 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.BusinessMessageReject.value:
+            if key_parameters is None:
+                key_parameters = ['RefMsgType']
+
+            if message_name is None:
+                message_name = "Check BusinessMessageReject"
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    message_name,
+                    basic_custom_actions.filter_to_grpc("BusinessMessageReject", fix_message.get_parameters(), key_parameters, ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
         # TODO add exeption into else
@@ -268,7 +284,7 @@ class FixVerifier:
         )
 
     def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None,
-                                       direction: DirectionEnum = DirectionEnum.FromQuod):
+                                       direction: DirectionEnum = DirectionEnum.FromQuod, ignored_fields: list = None):
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -277,7 +293,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check NewOrderSingle",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderSingle.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -291,7 +307,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ExecutionReport",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ExecutionReport.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -306,7 +322,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -321,7 +337,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ListStatus.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -336,7 +352,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check Confirmation",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.Confirmation.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -351,7 +367,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check OrderCancelReject",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.OrderCancelReject.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -366,7 +382,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.AllocationInstruction.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

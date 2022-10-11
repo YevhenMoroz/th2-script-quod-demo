@@ -6,10 +6,10 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.middle_office.fix_matching_profile.fix_matching_profile_page import \
-    FixMatchingProfilePage
-from test_framework.web_admin_core.pages.middle_office.fix_matching_profile.fix_matching_profile_wizard import \
-    FixMatchingProfileWizard
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_page import \
+    AllocationMatchingProfilePage
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_wizard import \
+    AllocationMatchingProfileWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -29,35 +29,27 @@ class QAP_T3815(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
-        side_menu.open_fix_matching_profile_page()
-        time.sleep(2)
+        side_menu.open_allocation_matching_profile_page()
 
     def test_context(self):
 
         try:
             self.precondition()
-            page = FixMatchingProfilePage(self.web_driver_container)
-            wizard = FixMatchingProfileWizard(self.web_driver_container)
+            page = AllocationMatchingProfilePage(self.web_driver_container)
+            wizard = AllocationMatchingProfileWizard(self.web_driver_container)
             page.click_on_more_actions()
-            time.sleep(2)
             page.click_on_edit()
-            time.sleep(2)
-            wizard.set_fix_matching_profile_name(self.fix_matching_profile_name)
-            time.sleep(2)
+            wizard.set_name(self.fix_matching_profile_name)
             wizard.set_avg_price_precision(self.avg_price_precision)
             expected_data = [self.fix_matching_profile_name,
                              self.avg_price_precision]
-            actual_data = [wizard.get_fix_matching_profile_name(),
+            actual_data = [wizard.get_name(),
                            wizard.get_avg_price_precision()]
             wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_fix_matching_profile_name(self.fix_matching_profile_name)
-            time.sleep(2)
+            page.set_name(self.fix_matching_profile_name)
+            time.sleep(1)
             page.click_on_more_actions()
-            time.sleep(2)
             page.click_on_edit()
-            time.sleep(2)
             self.verify("Is new fix matching profile contains valid values", expected_data, actual_data)
 
         except Exception:

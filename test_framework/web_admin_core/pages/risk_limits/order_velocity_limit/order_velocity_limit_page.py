@@ -92,3 +92,6 @@ class OrderVelocityLimitPage(CommonPage):
 
     def get_max_quantity(self):
         return self.find_by_xpath(OrderVelocityLimitConstants.MAIN_PAGE_MAX_QUANTITY_XPATH).text
+
+    def is_searched_entity_found_by_name(self, value):
+        return self.is_element_present(OrderVelocityLimitConstants.SEARCHED_VALUE_XPATH.format(value))

@@ -35,12 +35,14 @@ class QAP_T3960(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        print(self.name)
         self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.tenor_1 = self.data_set.get_tenor_by_name("tenor_1")
         self.tenor_2 = self.data_set.get_tenor_by_name("tenor_2")
         self.sweepable_quantities = [111111, 2222222, 33333333]
         self.base_margin_quantity = 4444444
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -53,6 +55,7 @@ class QAP_T3960(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
@@ -75,6 +78,7 @@ class QAP_T3960(CommonTestCase):
         client_tier_instrument_main_page.click_on_new()
         time.sleep(2)
         client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         client_tier_instrument_sweepable_quantities.click_on_plus()
         client_tier_instrument_sweepable_quantities.set_quantity(self.sweepable_quantities[0])
         client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
@@ -89,6 +93,7 @@ class QAP_T3960(CommonTestCase):
         client_tier_instrument_sweepable_quantities.set_quantity(self.sweepable_quantities[2])
         client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
         time.sleep(1)
+        client_tier_instrument_sweepable_quantities.click_on_checkmark()
 
         client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
         client_tier_instrument_tenors_sub_wizard.click_on_plus()
@@ -105,6 +110,7 @@ class QAP_T3960(CommonTestCase):
         client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor_2)
         time.sleep(1)
         client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.set_quantity_at_base_margin_tab(self.base_margin_quantity)
         client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
         client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
         time.sleep(2)

@@ -44,7 +44,7 @@ class QAP_T7287(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # region suspend order
-        self.order_book.suspend_order(filter_list={OrderBookColumns.cl_ord_id.value: self.cl_ord_id})
+        self.order_book.suspend_order(filter_dict={OrderBookColumns.cl_ord_id.value: self.cl_ord_id})
         self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id]).check_order_fields_list(
             {OrderBookColumns.suspend.value: Suspended.yes.value})
         fix_message_cancel = FixMessageOrderCancelRequestOMS().set_default(self.fix_message)

@@ -55,7 +55,8 @@ class QAP_T3675(CommonTestCase):
             time.sleep(2)
             main_page.set_description(self.description)
             time.sleep(1)
-            self.verify("Route has been delete", False, main_page.is_searched_route_found(self.description))
+            self.verify("Route has been delete", False,
+                        main_page.is_searched_entity_found_by_description(self.description))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

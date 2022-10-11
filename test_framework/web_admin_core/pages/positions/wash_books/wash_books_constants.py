@@ -2,7 +2,7 @@ class WashBookConstants:
     WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Wash Books ']"
 
     # region ~~~MAIN PAGE~~~
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Wash Books"]//..//*[text()="New"]'
     EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"
@@ -47,6 +47,8 @@ class WashBookConstants:
     # region ~~~WIZARD~~~
     SAVE_CHANGES_AT_WIZARD = '//*[text()="Save Changes"]'
     CLEAR_CHANGES_AT_WIZARD = '//*[text()="Clear Changes"]'
+    NO_BUTTON_AT_WIZARD = '//button[normalize-space()="No"]'
+
     # -VALUES-
     ID_AT_VALUES_TAB = '//*[text()="ID *"]/preceding-sibling::input'
     EXT_ID_CLIENT_AT_VALUES_TAB = '//*[text()="Ext ID Client *"]/preceding-sibling::input'
@@ -59,6 +61,7 @@ class WashBookConstants:
 
     # ---ASSIGNMENTS TAB---
     INSTITUTION_AT_ASSIGNMENT_TAB = '//*[@id="institution"]'
+    INSTITUTION_LINK_NAME_AT_ASSIGNMENTS_TAB = '//a[normalize-space()="{}"]'
 
     # -DIMENSIONS TAB-
     PLUS_AT_DIMENSIONS_TAB = '//*[@class="wash-book-security-account-detail-settings"]//nb-accordion-item[2]//*[@class="nb-plus"]'

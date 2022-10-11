@@ -1,4 +1,6 @@
 import json
+import time
+
 from stubs import ROOT_DIR
 from appium import webdriver
 from appium.webdriver.appium_service import AppiumService

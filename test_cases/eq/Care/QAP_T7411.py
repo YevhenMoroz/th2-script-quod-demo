@@ -40,7 +40,6 @@ class QAP_T7411(TestCase):
         # region Declaration
         # region create CO order
         self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()

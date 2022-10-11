@@ -1,34 +1,33 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
+class QAP_T2614(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote = FixMessageQuoteFX()
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
 
-    qty_1 = random_qty(1, 3, 7)
-    client_tier = "Iridium1"
-    symbol = "GBP/USD"
-    security_type_spo = "FXSPOT"
-    settle_type_spo = "0"
-    currency = "GBP"
-
-    side = "1"
-    try:
-        params_spot = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1, symbol=symbol,
-                                        securitytype=security_type_spo,
-                                        settltype=settle_type_spo,
-                                        currency=currency, side=side,
-                                        account=client_tier)
-
-        rfq = FixClientSellRfq(params_spot)
-        rfq.send_request_for_quote()
-        rfq.verify_quote_pending()
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_rfq_params_fwd().remove_fields_in_repeating_group("NoRelatedSymbols", ["SettlDate"])
+        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        # endregion
+        # region Step 2
+        self.quote.set_params_for_quote_fwd(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        # endregion

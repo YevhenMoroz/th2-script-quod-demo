@@ -38,7 +38,7 @@ class QAP_T7381(TestCase):
         self.client_inbox.accept_order()
         # endregion
         # region suspend order
-        self.order_book.suspend_order(filter_list={OrderBookColumns.order_id.value: order_id})
+        self.order_book.suspend_order(filter_dict={OrderBookColumns.order_id.value: order_id})
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
             {OrderBookColumns.suspend.value: Suspended.yes.value})
         # endregion

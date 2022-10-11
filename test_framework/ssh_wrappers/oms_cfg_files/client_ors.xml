@@ -39,7 +39,9 @@ Copyright Quod Financial
 					<policy>D</policy>
 				 </policies-->
                 <type>
-					<AllocationReport>true</AllocationReport>
+					 <AllocationReportCalculated>true</AllocationReportCalculated>
+                    <AllocationReportPreliminary>true</AllocationReportPreliminary>
+                    <AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 					<Confirmation>true</Confirmation>
 					<Trade>true</Trade>
                     <New>true</New>
@@ -71,7 +73,9 @@ Copyright Quod Financial
                     <if empty, no filter is applied on venues -->
                 </venues>
                 <type><!-- message type (request or ExecType) -->
-					<AllocationReport>true</AllocationReport>
+					<AllocationReportCalculated>true</AllocationReportCalculated>
+                    <AllocationReportPreliminary>true</AllocationReportPreliminary>
+                    <AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 					<Confirmation>true</Confirmation>
 					<Trade>true</Trade>
 					<New>true</New>
@@ -109,7 +113,9 @@ Copyright Quod Financial
 			</policies-->
 			<type>
 
-				<AllocationReport>true</AllocationReport>
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
                 <Confirmation>true</Confirmation>
 				<Trade>true</Trade>
 				<New>true</New>
@@ -135,7 +141,9 @@ Copyright Quod Financial
 			<venues>
 			</venues>
 			<type>
-				<AllocationReport>true</AllocationReport>
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 				<Confirmation>true</Confirmation>
 				<Trade>true</Trade>
 				<New>true</New>
@@ -172,7 +180,9 @@ Copyright Quod Financial
 				<policy>D</policy>
 			</policies-->
 			<type>
-				<AllocationReport>true</AllocationReport>
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
                 <Confirmation>true</Confirmation>
 				<Trade>true</Trade>
 				<New>true</New>
@@ -195,7 +205,9 @@ Copyright Quod Financial
 			<venues>
 			</venues>
 			<type>
-				<AllocationReport>true</AllocationReport>
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 				<Confirmation>true</Confirmation>
 				<Trade>true</Trade>
 				<Cancelled>true</Cancelled>

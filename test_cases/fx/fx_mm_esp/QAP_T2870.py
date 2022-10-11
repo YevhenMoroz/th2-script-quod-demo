@@ -1,170 +1,125 @@
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, PlaceRatesTileOrderRequest, \
-    SelectRowsRequest, DeselectRowsRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
-from win_gui_modules.utils import call, get_base_request, set_session_id, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.win_gui_wrappers.fe_trading_constant import PricingButtonColor
+from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_T2870(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
+        self.client = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.instrument = self.eur_usd + "-Spot"
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.execution_report_2 = FixMessageExecutionReportFX()
+        self.sliver = self.data_set.get_client_by_name("client_mm_1")
+        self.security_type_spot = self.data_set.get_security_type_by_name('fx_spot')
+        self.settle_type_spot = self.data_set.get_settle_type_by_name('spot')
+        self.bands_eur_usd = ["*", '*', '*']
+        self.qty_5m = "5000000"
+        self.instrument = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols = [{
+            'Instrument': self.instrument,
+            'SettlType': self.settle_type_spot}]
+        self.sts_filled = Status.Fill
+        self.sts_reject = Status.Reject
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.rates_tile.crete_tile()
+        self.rates_tile.modify_client_tile(instrument=self.eur_usd, client_tier=self.client)
+        self.rates_tile.press_executable()
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not tradeable")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
 
+        self.rates_tile.press_executable()
+        self.rates_tile.press_pricing()
 
-def select_rows(base_request, cp_service, row_numbers):
-    request = SelectRowsRequest(base_request)
-    request.set_row_numbers(row_numbers)
-    call(cp_service.selectRows, request.build())
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not active")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
 
+        self.rates_tile.press_pricing()
+        self.rates_tile.select_rows([2, 3])
+        self.rates_tile.press_executable()
 
-def deselect_rows(base_request, cp_service):
-    request = DeselectRowsRequest(base_request)
-    call(cp_service.deselectRows, request.build())
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report_2.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report_2, direction=DirectionEnum.FromQuod)
 
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default().change_parameters({"OrderQty": self.qty_5m})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not enough quantity in book")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
 
-def press_pricing(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_pricing()
-    call(service.modifyRatesTile, modify_request.build())
+        self.rates_tile.press_executable()
+        self.rates_tile.press_pricing()
 
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report_2.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report_2, direction=DirectionEnum.FromQuod)
 
-def press_executable(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_executable()
-    call(service.modifyRatesTile, modify_request.build())
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.new_order_single.set_default().change_parameters({"OrderQty": self.qty_5m})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_reject)
+        self.execution_report.change_parameter("Text", "not enough quantity in book")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.rates_tile.press_pricing()
+        # endregion
 
-
-def use_default(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_use_defaults()
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def place_order(base_request, service, client, slippage, qty):
-    place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_slippage(slippage)
-    place_request.set_client(client)
-    place_request.set_quantity(qty)
-    place_request.buy()
-    call(service.placeRatesTileOrder, place_request.build())
-
-
-def check_order_book(base_request, act_ob, instr_type, case_id, qty, owner, client, free_notes, status):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(extraction_id)
-    ob.set_filter(["Owner", owner, "Client ID", client])
-    ob_instr_type = ExtractionDetail("orderBook.instrtype", "InstrType")
-    ob_sts = ExtractionDetail("orderBook.execsts", "Sts")
-    ob_qty = ExtractionDetail("orderBook.qty", "Qty")
-    ob_free_notes = ExtractionDetail("orderbook.freenotes", "FreeNotes")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_instr_type,
-                                                                                 ob_sts,
-                                                                                 ob_qty,
-                                                                                 ob_free_notes])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("InstrType", instr_type, response[ob_instr_type.name])
-    verifier.compare_values("Sts", status, response[ob_sts.name])
-    verifier.compare_values("Qty", qty, response[ob_qty.name].replace(',', ''))
-    verifier.compare_values("Free notes", free_notes, response[ob_free_notes.name])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-    ob_service = Stubs.win_act_order_book
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "EUR/USD-SPOT"
-    client_tier = "Silver"
-    client = "Silver1"
-    slippage = "10"
-    instrument_type = "Spot"
-    qty_1m = "1000000"
-    qty_2m = "2000000"
-    owner = Stubs.custom_config['qf_trading_fe_user']
-    empty_free_notes = ""
-    pricing_off = "not active"
-    executable_off = "not tradeable"
-    notes = "not enough quantity in book"
-    sts_rej = "Rejected"
-    sts_term = "Terminated"
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        # Step 2
-        press_executable(base_details, cp_service)
-        # Step 3
-        place_order(base_details, cp_service, client, slippage, qty_1m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_1m, owner, client, executable_off, sts_rej)
-        # Step 4
-        press_executable(base_details, cp_service)
-        press_pricing(base_details, cp_service)
-        # Step 5
-        place_order(base_details, cp_service, client, slippage, qty_1m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_1m, owner, client, pricing_off, sts_rej)
-        # Step 6
-        press_pricing(base_details, cp_service)
-        select_rows(base_details, cp_service, [2, 3])
-        press_executable(base_details, cp_service)
-        # Step 7
-        place_order(base_details, cp_service, client, slippage, qty_1m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_1m, owner, client, empty_free_notes, sts_term)
-        place_order(base_details, cp_service, client, slippage, qty_2m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_2m, owner, client, notes, sts_rej)
-        # Step 8
-        press_pricing(base_details, cp_service)
-        press_executable(base_details, cp_service)
-        # Step 9
-        place_order(base_details, cp_service, client, slippage, qty_1m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_1m, owner, client, empty_free_notes, sts_term)
-        place_order(base_details, cp_service, client, slippage, qty_2m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_2m, owner, client, notes, sts_rej)
-        # Step 10
-        press_pricing(base_details, cp_service)
-        place_order(base_details, cp_service, client, slippage, qty_2m)
-        check_order_book(case_base_request, ob_service, instrument_type, case_id,
-                         qty_2m, owner, client, empty_free_notes, sts_term)
-
-        use_default(base_details, cp_service)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rates_tile.close_tile()
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)

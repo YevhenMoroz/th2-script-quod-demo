@@ -49,6 +49,7 @@ class QAP_T3984(CommonTestCase):
         self.position = 100
         self.bid_margin = 10
         self.offer_margin = 20
+        self.tod_end_time = "01:00:00"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -61,6 +62,7 @@ class QAP_T3984(CommonTestCase):
         time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
         client_tiers_values_sub_wizard.set_name(self.name)
+        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
         time.sleep(1)
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
@@ -84,6 +86,7 @@ class QAP_T3984(CommonTestCase):
             time.sleep(2)
             client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
             client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+            client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
             time.sleep(1)
             client_tier_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
             time.sleep(1)

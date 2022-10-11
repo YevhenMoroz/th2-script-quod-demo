@@ -11,33 +11,44 @@ class ClientTierConstants:
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DISPLAYED_ENTITY_XPATH = '//*[@class="ct-grid"]//div[@col-id="clientTierName"]//span[text()="{}"]'
     # region ~~~~~~~Client Tiers Block~~~~~~~
     # main page
     CLIENT_TIER_MORE_ACTIONS_XPATH = "//*[@class='ct-grid']//*[@data-name='more-vertical']"
     MAIN_PAGE_CLIENT_TIER_EDIT_XPATH = "//*[@class='cdk-overlay-container']//*[@data-name='edit']"
-    MAIN_PAGE_CLIENT_TIER_CLONE_XPATH = "//*[@class='ct-grid']//*[@data-name='copy']"
-    MAIN_PAGE_CLIENT_TIER_DELETE_XPATH = "//*[@class='ct-grid']//*[@data-name='trash-2']"
+    MAIN_PAGE_CLIENT_TIER_CLONE_XPATH = "//*[@data-name='copy']"
+    MAIN_PAGE_CLIENT_TIER_DELETE_XPATH = "//*[@data-name='trash-2']"
     MAIN_PAGE_CLIENT_TIER_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_CSV_XPATH = "//*[@class='ct-grid']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_PDF_XPATH ="//*[@class='cdk-overlay-container']//*[@data-name='download']"
-    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = "//*[@class='ct-grid']//*[text()='New']"
+    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[text()="New"]'
     MAIN_PAGE_CLIENT_TIER_NAME_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
     MAIN_PAGE_CLIENT_TIER_GLOBAL_FILTER_XPATH = '//*[text()="Client Tiers"]/following-sibling::div/input[@placeholder="Filter"]'
     # region wizard
     # values tab
-    CLIENT_TIER_VALUES_TAB_NAME_XPATH = "//*[text()='Name *']/preceding-sibling::input"
-    CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = "//*[text()='Core Spot Price Strategy']/preceding-sibling::input"
+    CLIENT_TIER_VALUES_TAB_NAME_XPATH = '//*[@id="clientTierName"]'
+    CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = '//*[@id="pricingMethod"]'
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH = "//*[@class='option-list']//span"
+    CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
+    CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[normalize-space()="Schedule"]//following::button[normalize-space()="Manage"]'
     # schedules
-    CLIENT_TIER_SCHEDULES_TAB_ENABLE_SCHEDULE_CHECKBOX_XPATH = "//*[text()='Enable Schedule']/preceding-sibling::span"
     # schedules schedules
-    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH = "//*[@class='schedule']//*[@data-name='plus']"
-    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH = "//*[@class='schedule']//*[@data-name='checkmark']"
-    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH = "//*[@class='schedule']//*[@data-name='close']"
-    CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[@class="schedule"]//*[@data-name="edit"]'
-    CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[@class="schedule"]//*[@data-name="trash-2"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_XPATH = '//*[@placeholder="Schedule Name *"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_FILTER_XPATH = '//*[normalize-space()="Schedule Name"]//*[@placeholder="Filter"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_PLUS_BUTTON = '//*[normalize-space()="Schedule Name"]//*//*[@data-name="plus"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_CHECKMARK_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_CANCEL_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="close"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_DELETE_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="trash-2"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_EDIT_XPATH = '//*[normalize-space()="Schedule Name"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_SCHEDULES_NAME_TAB_SEARCHED_ENTITY_XPATH = '//*[normalize-space()="Schedule Name"]//..//span[normalize-space()="{}"]'
+
+    CLIENT_TIER_SCHEDULES_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="plus"]'
+    CLIENT_TIER_SCHEDULES_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_SCHEDULES_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="close"]'
+    CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="trash-2"]'
 
     CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = "//*[@class='schedule']//*[@placeholder='Day *']"
     CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
@@ -89,7 +100,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Spot Venues "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Spot Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH = "//*[@placeholder ='Venue *']"
+    CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_XPATH = '//*[normalize-space()="Spot Venues"]//..//*[@placeholder ="Venue *"]'
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_VENUE_FILTER_XPATH = "//*[@class='ng2-smart-th venue ng-star-inserted']//input"
 
     CLIENT_TIER_INSTRUMENTS_SPOT_VENUES_TAB_CRITICAL_VENUE_CHECKBOX_XPATH = "//*[@class='ui-table-scrollable-body ng-star-inserted']//td[3]//span"
@@ -108,7 +119,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Forward Venues "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Forward Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_VENUE_XPATH = '//*[@placeholder ="Venue *"]'
+    CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_VENUE_XPATH = '//*[normalize-space()="Forward Venues"]//..//*[@placeholder ="Venue *"]'
     CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_VENUE_FILTER_XPATH = "//*[text()=' Forward Venues ']/parent::nb-accordion-item//*[@class='ng2-smart-th venue ng-star-inserted']//input"
     CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_EXCLUDE_WHEN_UNHEALTHY_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[3]/nb-accordion-item-body/div/div/ng2-smart-table/table/thead/tr[3]/td[3]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
     CLIENT_TIER_INSTRUMENTS_FORWARD_VENUES_TAB_EXCLUDE_WHEN_UNHEALTHY_FILTER_XPATH = "//*[text()=' Forward Venues ']/parent::nb-accordion-item//*[@class='excludeWhenUnhealthy ng2-smart-th ng-star-inserted']//input"
@@ -120,7 +131,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" External Clients "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" External Clients "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[@placeholder ="Client *"]'
+    CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[normalize-space()="External Clients"]//..//*[@placeholder ="Client *"]'
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH = '//*[text()=" External Clients "]/parent::nb-accordion-item//tbody//span'
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = "//*[text()=' External Clients ']/parent::nb-accordion-item//thead//tr[2]//th[2]//input"
 
@@ -132,7 +143,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//tbody//span'
-    CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[@placeholder ="Client *"]'
+    CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[normalize-space()="Internal Clients"]//..//*[@placeholder ="Client *"]'
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = "//*[text()=' Internal Clients ']/parent::nb-accordion-item//thead//tr[2]//th[2]//input"
 
     # sweepable quantities
@@ -141,9 +152,9 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//*[@data-name="close"]'
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
-    CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_DELETE_BY_VALUE_BUTTON_XPATH = '//*[normalize-space(text()="Sweepable Quantities")]/parent::nb-accordion-item//span[normalize-space(text()="{}")]/ancestor::tr//*[@data-name="trash-2"]'
+    CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_DELETE_BY_VALUE_BUTTON_XPATH = '//*[normalize-space(text()="Sweepable Quantities")]/parent::nb-accordion-item//span[normalize-space(text())="{}"]/ancestor::tr//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_QUANTITY_XPATH = '//*[@placeholder ="Quantity *"]'
+    CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_QUANTITY_XPATH = '//*[normalize-space()="Sweepable Quantities"]//..//*[@placeholder ="Quantity *"]'
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//thead//tr[2]//th[2]//input'
 
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_PUBLISHED_XPATH = "//*[text()=' Sweepable Quantities ']/parent::nb-accordion-item//*[@class='custom-checkbox']"
@@ -156,9 +167,9 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH = '//*[@placeholder ="Quantity *"]'
-    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[text()=" Tiered Quantities "]/parent::nb-accordion-item//*[@class="ng2-smart-th upperQty ng-star-inserted"]//input'
-
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_XPATH = '//*[normalize-space()="Tiered Quantities"]//..//*[@placeholder ="Quantity *"]'
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_QUANTITY_FILTER_XPATH = '//*[normalize-space()="Tiered Quantities"]//..//*[@placeholder="Filter"]'
+    CLIENT_TIER_INSTRUMENTS_TIERED_QUANTITIES_TAB_WARNING_XPATH = '//*[normalize-space()="Tiered Quantities"]//..//*[@class="max-sweep-qty-warning"]'
     # tenors tab
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="plus"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
@@ -166,7 +177,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="edit"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CREATED_TENOR_ENTITY_XPATH = '//*[text()=" Tenors "]/parent::nb-accordion-item//*[@class="tenor-table-body"]//td//span[text()="{}"]'
+    CLIENT_TIER_INSTRUMENTS_TENORS_TAB_CREATED_TENOR_ENTITY_XPATH = '//*[normalize-space()="Tenors"]//..//*[@class="tenor-table-body"]//td//span[normalize-space()="{}"]'
 
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_XPATH = '//*[@placeholder ="Tenor *"]'
     CLIENT_TIER_INSTRUMENTS_TENORS_TAB_TENOR_FILTER_XPATH = '//*[@class ="tenor-table-body"]//input'
@@ -187,13 +198,16 @@ class ClientTierConstants:
 
     # base margins sub tab
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EDIT_BUTTON_XPATH = "//*[text()=' Base Margins ']/parent::nb-accordion-item//*[@data-name='edit']"
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EDIT_BUTTON_BY_VALUE_XPATH = '//*[normalize-space()="Base Margins"]//..//*[normalize-space()="{}"]//..//*[@nbtooltip="Edit"]'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_DELETE_BUTTON_BY_VALUE_XPATH = '//*[normalize-space()="Base Margins"]//..//*[normalize-space()="{}"]//..//*[@data-name="trash-2"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_CHECKMARK_BUTTON_XPATH = "//*[text()=' Base Margins ']//parent::nb-accordion-item//*[@data-name='checkmark']"
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_CLOSE_BUTTON_XPATH = "//*[text()=' Base Margins ']//parent::nb-accordion-item//*[@data-name='close']"
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_XPATH = '//*[@placeholder="Quantity *"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_XPATH = '//*[@placeholder ="Bid Margin"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_XPATH = '//*[@placeholder ="Offer Margin"]'
-    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[5]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
-    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-client-tier/ngx-ctis-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[8]/nb-accordion-item-body/div/div/ngx-ctis-tenor-form/div/div[2]/div/div[2]/ng2-smart-table/table/tbody/tr[2]/td[6]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/input'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_EXECUTABLE_CHECKBOX_XPATH = '(//*[normalize-space()="Base Margins"]//..//*[*[@nbtooltip="Save"]]//..//..//nb-checkbox)[1]'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PRICING_CHECKBOX_XPATH = '(//*[normalize-space()="Base Margins"]//..//*[*[@nbtooltip="Save"]]//..//..//nb-checkbox)[2]'
+    CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PUBLISH_PRICES_CHECKBOX_XPATH = '(//*[normalize-space()="Base Margins"]//..//*[*[@nbtooltip="Save"]]//..//..//nb-checkbox)[3]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_FILTER_XPATH = '//*[text()=" Base Margins "]/parent::nb-accordion-item//thead//tr[2]//th[2]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_FILTER_XPATH = '//*[@class= "defaultBidMargin ng2-smart-th ng-star-inserted"]//input'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_OFFER_MARGIN_FILTER_XPATH = '//*[@class= "defaultOfferMargin ng2-smart-th ng-star-inserted"]//input'
@@ -202,12 +216,20 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Base Margins "]/parent::nb-accordion-item//*[@data-name="plus"]'
     CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_TABLE_ROW_XPATH = '//*[text()=" Base Margins "]//parent::nb-accordion-item//div[@class="ui-table-scrollable-view"]/div[2]//td[2]//span'
 
+    # tenor - tired quantity
+    TIRED_QUANTITY_PLUS_BUTTON_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@nbtooltip="Add"]'
+    TIRED_QUANTITY_CHECKMARK_BUTTON_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@data-name="checkmark"]'
+    TIRED_QUANTITY_CANCEL_BUTTON_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@data-name="close"]'
+    TIRED_QUANTITY_EDIT_BUTTON_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@data-name="edit"]'
+    TIRED_QUANTITY_DELETE_BUTTON_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@data-name="trash-2"]'
+    TIRED_QUANTITY_QUANTITY_INPUT_AT_TENOR = '//*[normalize-space()="Tenors"]//..//*[normalize-space()="Tiered Quantities"]//..//*[@placeholder="Quantity *"]'
+
     # position levels sub tab
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Position Levels "]/parent::nb-accordion-item//*[@data-name="plus"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Position Levels "]/parent::nb-accordion-item//*[@data-name="checkmark"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Position Levels "]/parent::nb-accordion-item//*[@data-name="close"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Position Levels "]/parent::nb-accordion-item//*[@data-name="edit"]'
-    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Position Levels "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Position Levels"]//..//*[@nbtooltip="Add"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Position Levels"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Position Levels"]//..//*[@data-name="close"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Position Levels"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Position Levels"]//..//*[@data-name="trash-2"]'
 
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_XPATH = '//*[@placeholder ="Position (EUR) *"]'
     CLIENT_TIER_INSTRUMENTS_POSITION_LEVELS_TAB_POSITION_FILTER_XPATH = '//*[@class="tenors-table-wrapper"]//*[@class="ng2-smart-th sysCurrPositQty ng-star-inserted"]//input'

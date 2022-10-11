@@ -88,6 +88,9 @@ class QAP_T4980(TestCase):
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_ER_canceled")
+        self.pre_filter['ExDestination'] = (self.ex_destination_par, "EQUAL")
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -198,8 +201,8 @@ class QAP_T4980(TestCase):
         time.sleep(2)
 
         # region check cancel dma child order
-        er_cancel_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_xpar_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        self.er_cancel_dma_1_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_xpar_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(self.er_cancel_dma_1_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
         # region Check new Lit child DMA order
@@ -229,9 +232,14 @@ class QAP_T4980(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel new dma child order
-        er_cancel_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_xpar_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
+        self.er_cancel_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_xpar_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(self.er_cancel_dma_2_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
         # endregion
+
+        time.sleep(10)
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 DMA orders on qdl6 was canceled", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.er_cancel_dma_1_xpar_order, self.er_cancel_dma_2_xpar_order], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

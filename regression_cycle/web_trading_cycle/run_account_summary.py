@@ -23,7 +23,7 @@ class RunAccountSummary:
                 configuration.environment.get_list_web_trading_environment()[0].site_url)
 
             end_time = time.monotonic()
-            print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+            print("Run Account Summary ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

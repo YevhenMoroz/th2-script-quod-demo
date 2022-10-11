@@ -2,8 +2,8 @@
 class OrderTicketConstants:
 
     # region OrderTicket label
-    ARROW_BACK = '//android.view.View[@content-desc="Order Ticket Security Account Cash Account Quantity Price Order Type Time In Force"]/android.widget.Button[1]'
-    # endregion
+    ARROW_BACK = '//android.widget.Button[1]'
+    ORDER_TICKET_TITLE = '//android.view.View[contains(@content-desc, "Order Ticket")]'
 
     # region Side
     SIDE_BUY = '//android.view.View[@content-desc="Buy"]'
@@ -11,11 +11,11 @@ class OrderTicketConstants:
     # endregion
 
     # region Instrument
-    INSTRUMENT_SEARCH_BUTTON = '//android.view.View[@content-desc="Instrument not selected, use search to find it."]'
+    INSTRUMENT_SEARCH_BUTTON = ''
     INSTRUMENT_SELECTED = ''
-    INSTRUMENT_EDIT_ARROW_BACK = '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View'
-    INSTRUMENT_EDIT_TEXT = '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.EditText'
-    INSTRUMENT_EDIT_SYMBOL = '//android.view.View[@content-desc="TCS-IQ[NSE] TCS-IQ"]' # ?
+    INSTRUMENT_EDIT_ARROW_BACK = ''
+    INSTRUMENT_EDIT_TEXT = ''
+    INSTRUMENT_EDIT_SYMBOL = ''
     # endregion
 
     # region Security Account

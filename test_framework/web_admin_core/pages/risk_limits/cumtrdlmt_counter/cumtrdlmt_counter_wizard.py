@@ -41,6 +41,11 @@ class CumTrdLmtCounterWizard(CommonPage):
     def get_cum_trading_limit(self):
         return self.get_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_TRADING_LIMIT_XPATH)
 
+    def get_all_cum_trading_limit_from_drop_menu(self):
+        self.set_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_TRADING_LIMIT_XPATH, "")
+        time.sleep(1)
+        return self._get_all_items_from_drop_down(CumTrdLmtCounterConstants.DROP_DOWN_MENU)
+
     def set_cum_buy_ord_qty(self, value):
         self.set_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_BUY_ORD_QTY_XPATH, value)
 
@@ -76,3 +81,9 @@ class CumTrdLmtCounterWizard(CommonPage):
 
     def get_sell_ord_amt(self):
         return self.get_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_SELL_ORD_AMT_XPATH)
+
+    def set_cum_leaves_ord_amt(self, value):
+        self.set_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_LEAVES_ORD_AMT_XPATH, value)
+
+    def get_cum_leaves_ord_amt(self):
+        return self.get_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_LEAVES_ORD_AMT_XPATH)

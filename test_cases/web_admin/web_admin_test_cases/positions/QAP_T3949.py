@@ -55,8 +55,6 @@ class QAP_T3949(CommonTestCase):
         time.sleep(1)
         wash_book_main_menu.set_id_filter(self.id)
         time.sleep(1)
-        wash_book_main_menu.set_enabled_filter("true")
-        time.sleep(1)
         wash_book_main_menu.click_on_more_actions()
 
     def test_context(self):
@@ -66,7 +64,7 @@ class QAP_T3949(CommonTestCase):
             expected_pdf_content = ["ID: {}".format(wash_book_main_menu.get_id_at_main_page()),
                                     "Ext ID Client: {}".format(wash_book_main_menu.get_ext_id_client_at_main_page()),
                                     "Client ID Source: BIC",
-                                    "Clearing Account Type: Firm"]
+                                    "Clearing Account Type: Institution"]
 
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         wash_book_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))

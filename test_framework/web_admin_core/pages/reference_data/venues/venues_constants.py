@@ -14,12 +14,13 @@ class VenuesConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Venues"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     NOT_FOUND_OPTION_IN_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option'
     DISPLAYED_VENUE_XPATH = "//*[text()='{}']"
+    FOOTER_ERROR_XPATH = '//nb-card-footer//*[@outline="danger"]/div/span'
 
     # --Main page--
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -197,9 +198,9 @@ class VenuesConstants:
 
     ROUTING_PARAM_GROUPS_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
     ROUTING_PARAM_GROUPS_TAB_NAME_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[1]'
-    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH = '//*[text()="Positive Routes *"]'
+    ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_XPATH = '//*[text()="Positive Routes *" or @class="select-button bottom"]'
     ROUTING_PARAM_GROUPS_TAB_POSITIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[2]'
-    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *"]'
+    ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_XPATH = '//*[text()="Negative Routes *" or @class="select-button bottom"]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_ROUTES_FILTER_XPATH = '(//*[normalize-space(text()) = "Routing Param Groups"]//following::tr[2]//*[@placeholder="Filter"])[3]'
     ROUTING_PARAM_GROUPS_TAB_NEGATIVE_AND_POSITIVE_ROUTES_LIST_XPATH = "//*[@class='cdk-overlay-pane']//*[text()='{}']"
     CREATED_NAME_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[normalize-space(text()) = "Routing Param Groups"]//following::td[2]//span'
@@ -221,23 +222,23 @@ class VenuesConstants:
     CREATED_VALUE_ROUTING_PARAM_GROUPS_TAB_XPATH = '//*[contains(text(), "Parameters")]//following::td[3]//span'
 
     # --Spport feed types tab--
-    SUPPORT_FEED_TYPES_TAB_STATUS_CHECKBOX_XPATH = '//*[@formcontrolname="supportStatus"]//input'
-    SUPPORT_FEED_TYPES_TAB_QUOTE_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuote"]//input'
-    SUPPORT_FEED_TYPES_TAB_QUOTE_BOOK_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuoteBook"]//input'
-    SUPPORT_FEED_TYPES_TAB_TICKERS_CHECKBOX_XPATH = '//*[@formcontrolname="supportTickers"]//input'
-    SUPPORT_FEED_TYPES_TAB_MARKET_TIME_CHECKBOX_XPATH = '//*[@formcontrolname="supportMarketTime"]//input'
-    SUPPORT_FEED_TYPES_TAB_DISCRETION_INST_CHECKBOX_XPATH = '//*[@formcontrolname="supportDiscretionInst"]//input'
-    SUPPORT_FEED_TYPES_TAB_BROKER_QUEUE_CHECKBOX_XPATH = '//*[@formcontrolname="supportBrokerQueue"]//input'
-    SUPPORT_FEED_TYPES_TAB_MARKET_DEPTH_CHECKBOX_XPATH = '//*[@formcontrolname="supportMarketDepth"]//input'
-    SUPPORT_FEED_TYPES_TAB_MOVERS_CHECKBOX_XPATH = '//*[@formcontrolname="supportMovers"]//input'
-    SUPPORT_FEED_TYPES_TAB_NEWS_CHECKBOX_XPATH = '//*[@formcontrolname="supportNews"]//input'
-    SUPPORT_FEED_TYPES_TAB_TERM_QUOTE_REQUEST_CHECKBOX_XPATH = '//*[@formcontrolname="supportTermQuoteRequest"]//input'
-    SUPPORT_FEED_TYPES_TAB_QUOTE_CANCEL_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuoteCancel"]//input'
-    SUPPORT_FEED_TYPES_TAB_INTRADAY_CHECKBOX_XPATH = '//*[@formcontrolname="supportIntradayData"]//input'
-    SUPPORT_FEED_TYPES_TAB_ORDER_BOOK_CHECKBOX_XPATH = '//*[@formcontrolname="supportOrderBook"]//input'
-    SUPPORT_FEED_TYPES_TAB_TIMES_AND_SALES_CHECKBOX_XPATH = '//*[@formcontrolname="supportTimesAndSales"]//input'
-    SUPPORT_FEED_TYPES_TAB_TRADE_CHECKBOX_XPATH = '//*[@formcontrolname="supportTrade"]//input'
-    SUPPORT_FEED_TYPES_TAB_SIZED_MD_REQUEST_CHECKBOX_XPATH = '//*[@formcontrolname="supportSizedMDRequest"]//input'
+    SUPPORT_FEED_TYPES_TAB_STATUS_CHECKBOX_XPATH = '//*[@formcontrolname="supportStatus"]//span'
+    SUPPORT_FEED_TYPES_TAB_QUOTE_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuote"]//span'
+    SUPPORT_FEED_TYPES_TAB_QUOTE_BOOK_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuoteBook"]//span'
+    SUPPORT_FEED_TYPES_TAB_TICKERS_CHECKBOX_XPATH = '//*[@formcontrolname="supportTickers"]//span'
+    SUPPORT_FEED_TYPES_TAB_MARKET_TIME_CHECKBOX_XPATH = '//*[@formcontrolname="supportMarketTime"]//span'
+    SUPPORT_FEED_TYPES_TAB_DISCRETION_INST_CHECKBOX_XPATH = '//*[@formcontrolname="supportDiscretionInst"]//span'
+    SUPPORT_FEED_TYPES_TAB_BROKER_QUEUE_CHECKBOX_XPATH = '//*[@formcontrolname="supportBrokerQueue"]//span'
+    SUPPORT_FEED_TYPES_TAB_MARKET_DEPTH_CHECKBOX_XPATH = '//*[@formcontrolname="supportMarketDepth"]//span'
+    SUPPORT_FEED_TYPES_TAB_MOVERS_CHECKBOX_XPATH = '//*[@formcontrolname="supportMovers"]//span'
+    SUPPORT_FEED_TYPES_TAB_NEWS_CHECKBOX_XPATH = '//*[@formcontrolname="supportNews"]//span'
+    SUPPORT_FEED_TYPES_TAB_TERM_QUOTE_REQUEST_CHECKBOX_XPATH = '//*[@formcontrolname="supportTermQuoteRequest"]//span'
+    SUPPORT_FEED_TYPES_TAB_QUOTE_CANCEL_CHECKBOX_XPATH = '//*[@formcontrolname="supportQuoteCancel"]//span'
+    SUPPORT_FEED_TYPES_TAB_INTRADAY_CHECKBOX_XPATH = '//*[@formcontrolname="supportIntradayData"]//span'
+    SUPPORT_FEED_TYPES_TAB_ORDER_BOOK_CHECKBOX_XPATH = '//*[@formcontrolname="supportOrderBook"]//span'
+    SUPPORT_FEED_TYPES_TAB_TIMES_AND_SALES_CHECKBOX_XPATH = '//*[@formcontrolname="supportTimesAndSales"]//span'
+    SUPPORT_FEED_TYPES_TAB_TRADE_CHECKBOX_XPATH = '//*[@formcontrolname="supportTrade"]//span'
+    SUPPORT_FEED_TYPES_TAB_SIZED_MD_REQUEST_CHECKBOX_XPATH = '//*[@formcontrolname="supportSizedMDRequest"]//span'
 
     # --Market data tab--
     MARKET_DATA_TAB_DEFAULT_MD_SYMBOL_XPATH = '//*[@formcontrolname="defaultMDSymbol"]'
@@ -257,7 +258,7 @@ class VenuesConstants:
     FEATURES_TAB_QUOTE_RESPONCE_LEVEL_XPATH = '//*[@id="quoteResponseLevel"]'
     FEATURES_TAB_MULTILEG_REPORT_TYPE_XPATH = '//*[@id="multilegReportType"]'
     FEATURES_TAB_MIN_RESIDENT_TIME_XPATH = '//*[@formcontrolname="minResidentTime"]'
-    FEATURES_TAB_OPEN_TIME_XPATH = '//*[@id="openTime_ext"]'
+    FEATURES_TAB_OPEN_TIME_XPATH = '//*[@id="openTime"]'
     FEATURES_TAB_HOLD_FIX_SELL_CHECKBOX_XPATH = '//*[@formcontrolname="holdFIXShortSell"]//input'
     FEATURES_TAB_TIME_ZONE_XPATH = '//*[@id="timeZone"]'
     FEATURES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultAlgoPolicy"]'
@@ -266,7 +267,7 @@ class VenuesConstants:
     FEATURES_TAB_GTD_HOLIDAY_CHECK_CHECKBOX_XPATH = '//*[@formcontrolname="GTDHolidayCheck"]//input'
     FEATURES_TAB_INSTR_CREATION_POLICY_XPATH = '//*[@id="instrCreationPolicy"]'
     FEATURES_TAB_DISABLE_SELL_PRICE_FALL_XPATH = '//*[@formcontrolname="disableShortSellPrcFallPct"]'
-    FEATURES_TAB_CLOSE_TIME_XPATH = '//*[@id="closeTime_ext"]'
+    FEATURES_TAB_CLOSE_TIME_XPATH = '//*[@id="closeTime"]'
     FEATURES_TAB_REGULATED_SELL_CHECKBOX_XPATH = '//*[@formcontrolname="regulatedShortSell"]//input'
     FEATURES_TAB_VALIDATE_VENUE_ACT_GRP_NAME_CHECKBOX_XPATH = '//*[@formcontrolname="validateVenueActGrpName"]//input'
     FEATURES_TAB_SUPPORT_TRADING_PHASE_CHECKBOX_XPATH = '//*[@formcontrolname="supportTradingPhase"]//input'

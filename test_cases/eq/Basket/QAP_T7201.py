@@ -1,5 +1,7 @@
 import logging
 import os
+import random
+import string
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -20,7 +22,7 @@ class QAP_T7201(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
         self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
@@ -29,7 +31,7 @@ class QAP_T7201(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Declaration
-        template_name = "testTemplate"
+        template_name = "testTemplate"+"".join(random.choices(string.ascii_letters + string.digits, k=5))
         client = self.data_set.get_client('client_co_1')
         account_id = self.data_set.get_account_by_name('client_co_1_acc_1')
         tif = self.data_set.get_time_in_force('time_in_force_1')
@@ -45,16 +47,13 @@ class QAP_T7201(TestCase):
                                              data_row='1', delimiter=';', spreadsheet_tab="Sheet1", tif=tif,
                                              templ=templ)
         # # endregion
-        path_xlsx = os.path.abspath("test_cases\eq\Basket\Basket_import_files\BasketTemplate_withoutHeader_Mapping2"
+        path_xlsx = os.path.abspath("Basket_import_files\BasketTemplate_withoutHeader_Mapping2"
                                     ".xlsx")
         # region create basket
         self.basket_book.create_basket_via_import(basket_name, template_name, path_xlsx, is_csv=False, client=client)
         # endregion
 
         # region step 3
-        """
-        @Need to add columns
-        """
         expected_results = [{'1': client, '2': client}, {'1': 'Buy', '2': 'Sell'}, {'1': order_type, '2': order_type},
                             {'1': account_id, '2': account_id}, {'1': capacity, '2': capacity}, {'1': '10', '2': '5'}]
         list_of_columns = [OrderBookColumns.client_name.value, OrderBookColumns.side.value,

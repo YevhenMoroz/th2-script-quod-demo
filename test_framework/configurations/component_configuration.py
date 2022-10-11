@@ -28,5 +28,5 @@ class ComponentConfiguration:
         self.run = eval(root.find(f".//component[@name='{component_name}']").attrib["run"])
         self.data_set = eval(root.find(f".//component[@name='{component_name}']/data_set").text)()
 
-        component_environment = root.find(f".//component[@name='{self.name}']/environments").getchildren()
+        component_environment = list(root.find(f".//component[@name='{self.name}']/environments"))
         self.environment = FullEnvironment(component_environment)

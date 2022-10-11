@@ -15,7 +15,7 @@ class CrossedVenueRatesDimensionsSubWizard(CommonPage):
         return self.get_text_by_xpath(CrossedVenueRatesConstants.DIMENSIONS_TAB_VENUE_XPATH)
 
     def set_listing(self, value):
-        self.set_text_by_xpath(CrossedVenueRatesConstants.DIMENSIONS_TAB_LISTING_XPATH, value)
+        self.set_combobox_value(CrossedVenueRatesConstants.DIMENSIONS_TAB_LISTING_XPATH, value)
 
     def get_listing(self):
         return self.get_text_by_xpath(CrossedVenueRatesConstants.DIMENSIONS_TAB_LISTING_XPATH)

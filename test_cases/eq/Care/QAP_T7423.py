@@ -7,7 +7,8 @@ from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, SecondLevelTabs
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, SecondLevelTabs, \
+    TradeBookColumns, MatchWindowsColumns, ExecType
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
@@ -16,6 +17,7 @@ from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7423(TestCase):
@@ -43,14 +45,12 @@ class QAP_T7423(TestCase):
         self.rule_manager = RuleManager(Simulators.equity)
         self.trade_book = OMSTradesBook(self.test_id, self.session_id)
 
-
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message_care)
-        order_id_care = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_care)
+        order_id_care = response[0].get_parameters()['OrderID']
         # endregion
         # region accept CO order
         self.client_inbox.accept_order()
@@ -67,33 +67,42 @@ class QAP_T7423(TestCase):
                                                                                             float(self.price),
                                                                                             int(self.qty),
                                                                                             delay=0)
-            self.fix_manager.send_message_fix_standard(self.fix_message_dma)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_dma)
+            order_id_dma = response[0].get_parameters()['OrderID']
         except Exception:
             logger.error("Error execution", exc_info=True)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        order_id_dma = self.order_book.extract_field(OrderBookColumns.order_id.value)
         exec_order_dma_id = self.order_book.set_filter(
             [OrderBookColumns.order_id.value, order_id_dma]).extract_2lvl_fields(
-            SecondLevelTabs.executions.value, ["ExecID"], [1])
-        ex_type_dma = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_dma]).extract_2lvl_fields(SecondLevelTabs.executions.value, ["ExecType"], [1])
+            SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [1])
+        ex_type_dma = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_dma]).extract_2lvl_fields(
+            SecondLevelTabs.executions.value, [OrderBookColumns.exec_type.value], [1])
         print(ex_type_dma)
-        self.order_book.compare_values({"ExecType": "Trade"}, ex_type_dma[0] , "Check execution")
+        self.order_book.compare_values({OrderBookColumns.exec_type.value: ExecType.trade.value}, ex_type_dma[0],
+                                       "Check execution")
         # endregion
         # region manual match execution
-        self.trade_book.manual_match(self.qty_match, order_filter_list=["OrderId", order_id_care], trades_filter_list=["ExecID", exec_order_dma_id[0]['ExecID']])
+        self.trade_book.manual_match(self.qty_match,
+                                     order_filter_list=[MatchWindowsColumns.order_id.value, order_id_care],
+                                     trades_filter_list=[TradeBookColumns.exec_id.value,
+                                                         exec_order_dma_id[0][OrderBookColumns.exec_id.value]])
         # exec_order_care_id = self.order_book.set_filter(
         #     [OrderBookColumns.order_id.value, order_id_care]).extract_2lvl_fields(
         #     SecondLevelTabs.executions.value, ["ExecID"], [1])
         # endregion
         # region check unmatch qty
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_care]).check_order_fields_list(
-            {OrderBookColumns.unmatched_qty.value: self.qty_match, OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+            {OrderBookColumns.unmatched_qty.value: self.qty_match,
+             OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
         # endregion
         # region second manual match execution
-        self.trade_book.manual_match(self.qty_match, order_filter_list=["OrderId", order_id_care], trades_filter_list=["ExecID", exec_order_dma_id[0]['ExecID']])
+        self.trade_book.manual_match(self.qty_match,
+                                     order_filter_list=[MatchWindowsColumns.order_id.value, order_id_care],
+                                     trades_filter_list=[TradeBookColumns.exec_id.value,
+                                                         exec_order_dma_id[0][OrderBookColumns.exec_id.value]])
         # endregion
         # region check unmatch qty and exec sts
         self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_care]).check_order_fields_list(
@@ -103,12 +112,14 @@ class QAP_T7423(TestCase):
         #     {"ExecType": "Trade",
         #      OrderBookColumns.exec_sts.value: ExecSts.filled.value})
         ex_type_care = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_care]).extract_2lvl_fields(
-            SecondLevelTabs.executions.value, ["ExecType"], [1])
+            SecondLevelTabs.executions.value, [OrderBookColumns.exec_type.value], [1])
         print(ex_type_care)
-        self.order_book.compare_values({"ExecType": "Trade"}, ex_type_care[0], "Check execution")
-        exec_sts_care = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id_care]).extract_2lvl_fields(
+        self.order_book.compare_values({OrderBookColumns.exec_type.value: ExecType.trade.value}, ex_type_care[0],
+                                       "Check execution")
+        exec_sts_care = self.order_book.set_filter(
+            [OrderBookColumns.order_id.value, order_id_care]).extract_2lvl_fields(
             SecondLevelTabs.executions.value, [OrderBookColumns.exec_sts.value], [1])
         print(exec_sts_care)
-        self.order_book.compare_values({"ExecType": "Trade"}, exec_sts_care[0], "Check execution")
+        self.order_book.compare_values({OrderBookColumns.exec_type.value: ExecType.trade.value}, exec_sts_care[0],
+                                       "Check execution")
         # endregion
-

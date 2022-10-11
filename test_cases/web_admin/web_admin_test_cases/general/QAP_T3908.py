@@ -13,7 +13,7 @@ class QAP_T3908(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Findex.action&permissionViolation=true#all-udates"
+        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates"
 
     def test_context(self):
 

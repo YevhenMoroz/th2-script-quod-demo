@@ -52,8 +52,8 @@ class QAP_T7299(TestCase):
         self.rest_commission_sender.send_default_fee()
         # endregion
         # region send order
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         self.client_inbox.accept_order()
         # endregion
         # region exec order
@@ -62,13 +62,18 @@ class QAP_T7299(TestCase):
         # endregion
         # region complete and book order
         self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
-        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.rate.value], [SecondLevelTabs.executions.value,
-                                                                                      TradeBookColumns.misc_tab.value],
+        rate = self.order_book.extract_sub_lvl_fields([TradeBookColumns.fee_rate.value],
+                                                      [TradeBookColumns.misc_tab.value],
                                                       {OrderBookColumns.order_id.value: order_id})
-        self.order_book.compare_values({TradeBookColumns.rate.value: "1"}, rate, "Compare Rate")
+        self.order_book.compare_values({TradeBookColumns.fee_rate.value: "1"}, rate, "Compare Rate")
 
         self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
         total_fee = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value,
                                                         [MiddleOfficeColumns.order_id.value, order_id])
         self.mid_office.compare_values({MiddleOfficeColumns.total_fees.value: "1"}, total_fee, "Compare total fee")
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_fees()
+

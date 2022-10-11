@@ -1,7 +1,11 @@
-from test_cases.fx.fx_taker_esp import QAP_T3097, QAP_T2987, QAP_T2654, QAP_T3092, QAP_T2743, QAP_T2725, QAP_T3093, QAP_T2711, \
-    QAP_T3087, QAP_T2724, QAP_T2958, QAP_T2723, QAP_T3001, QAP_T2540, QAP_T3091, QAP_T2832, QAP_T2826, QAP_T2524, QAP_T2525, QAP_T2521, \
-    QAP_T3112, QAP_T3106, QAP_T3100, QAP_T3094, QAP_T3090, QAP_T3083, QAP_T2992, QAP_T2704, QAP_T2702, QAP_T2701, QAP_T2680, QAP_T2607, \
-    QAP_T2591, QAP_T2756, QAP_T2766, QAP_T2643, QAP_T2642, QAP_T2640, QAP_T2493, QAP_T2491, QAP_T2490, QAP_T2489, QAP_T2488
+from test_cases.fx.fx_taker_esp import QAP_T3097, QAP_T2987, QAP_T2654, QAP_T3092, QAP_T2743, QAP_T2725, QAP_T3093, \
+    QAP_T2711, \
+    QAP_T3087, QAP_T2724, QAP_T2958, QAP_T2723, QAP_T3001, QAP_T2540, QAP_T3091, QAP_T2832, QAP_T2826, QAP_T2524, \
+    QAP_T2525, QAP_T2521, \
+    QAP_T3112, QAP_T3106, QAP_T3100, QAP_T3094, QAP_T3090, QAP_T3083, QAP_T2992, QAP_T2704, QAP_T2702, QAP_T2701, \
+    QAP_T2680, QAP_T2607, \
+    QAP_T2591, QAP_T2756, QAP_T2766, QAP_T2643, QAP_T2642, QAP_T2640, QAP_T2493, QAP_T2491, QAP_T2490, QAP_T2489, \
+    QAP_T2488, QAP_T2685
 from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from stubs import Stubs
 import logging
@@ -26,8 +30,8 @@ def run_full_amount(report_id, session_id):
     QAP_T2756.execute(report_id, session_id)
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('ESP Taker regression', parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"FX_Taker_ESP" if version is None else f"FX_Taker_ESP | {version}", parent_id)
     session_id = set_session_id(target_server_win="quod_11q")
     data_set = FxDataSet()
     configuration = ComponentConfiguration("ESP_Taker")
@@ -39,6 +43,7 @@ def test_run(parent_id=None):
             prepare_fe_2(report_id, session_id)
         else:
             get_opened_fe(report_id, session_id, window_name)
+        QAP_T2685.execute(report_id, session_id)
         QAP_T3112.execute(report_id, session_id)
         QAP_T3106.execute(report_id, session_id)
         QAP_T3100.execute(report_id, session_id)

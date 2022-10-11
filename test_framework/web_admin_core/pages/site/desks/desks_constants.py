@@ -9,7 +9,7 @@ class DesksConstants:
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
-    NO_BUTTON_XPATH = '//*[text()="No"]'
+    NO_BUTTON_XPATH = '//*[normalize-space()="No"]'
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     ENABLE_DISABLE_BUTTON_XPATH = '//div[contains(@class, "toggle")]'
     DISPLAYED_DESK_XPATH = '//*[text()="{}"]'

@@ -1,6 +1,8 @@
 import sys
 import time
 import traceback
+import string
+import random
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -21,10 +23,10 @@ class QAP_T3923(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
-        self.parameter = "Spray Modify"
+        self.parameter = "SprayModify"
         self.first_value = "Single"
         self.second_value = "Spray"
 
@@ -40,11 +42,8 @@ class QAP_T3923(CommonTestCase):
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-        time.sleep(1)
         strategies_wizard.set_name(self.name)
-        time.sleep(1)
         strategies_wizard.set_strategy_type(self.strategy_type)
-        time.sleep(1)
         strategies_wizard.set_user(self.user)
         strategies_wizard.click_on_lit_general()
         general_at_lit_block = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
@@ -53,9 +52,7 @@ class QAP_T3923(CommonTestCase):
         general_at_lit_block.set_value_by_dropdown_list_at_sub_wizard(self.first_value)
         general_at_lit_block.click_on_checkmark_button()
         general_at_lit_block.click_on_edit_button()
-        time.sleep(2)
         general_at_lit_block.set_value_by_dropdown_list_at_sub_wizard(self.second_value)
-        time.sleep(2)
         general_at_lit_block.set_visible_checkbox()
         general_at_lit_block.click_on_checkmark_button()
         general_at_lit_block.click_on_go_back_button()
@@ -71,11 +68,9 @@ class QAP_T3923(CommonTestCase):
                 strategies_wizard.get_parameter_value_at_lit_general_block()]
             self.verify("After saved at Lit General block", expected_parameter_and_value_at_lit_general_block,
                         actual_parameter_and_value_at_lit_general_block)
-            time.sleep(2)
             strategies_wizard.click_on_save_changes()
-            main_menu.set_enabled_at_filter_field("true")
             main_menu.set_name_at_filter_field(self.name)
-            time.sleep(2)
+            time.sleep(1)
             main_menu.click_on_enable_disable_button()
             main_menu.click_on_ok_button()
         except Exception:

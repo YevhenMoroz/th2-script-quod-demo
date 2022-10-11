@@ -1,192 +1,97 @@
-import locale
-import logging
-import random
-import time
-from datetime import datetime
-from decimal import Decimal
-
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
-
-from custom.tenor_settlement_date import wk1, spo
-from stubs import Stubs
-from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, ExecSts
-from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
-from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from test_framework.fix_wrappers.DataSet import DirectionEnum
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
-from win_gui_modules.client_pricing_wrappers import PlaceRateTileTableOrderRequest, PlaceRatesTileOrderRequest, \
-    RatesTileTableOrdSide
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.utils import call, get_base_request
-
-alias_fh = "fix-fh-314-luna"
-
-symbol = 'EUR/USD'
-security_type = 'FXF'
-tenor = 'WK1'
-tenor_fe = '1W'
-tenor_fe_spo = 'Spot'
-venue = 'HSBC'
-
-BUY = RatesTileTableOrdSide.BUY
-instrument = f'{symbol}-{tenor_fe}'
-instrument_spot = f'{symbol}-{tenor_fe_spo}'
-client_tier = 'Silver'
-default_md_symbol_fwd_hsbc = f'{symbol}:{security_type}:{tenor}:{venue}'
-md_instrument = {
-    'Instrument': {
-        'Symbol': symbol,
-        'SecurityType': 'FXFWD'
-    }
-}
-locale.setlocale(locale.LC_ALL, 'en_us')
-qty=str(random.randint(1000000,2000000))
-qty_ob = '{0:n}'.format(Decimal(int(qty)))
-no_md_entries_fwd_hsbc = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.18039,
-                    "MDEntrySize": 1000000,
-                    "MDEntrySpotRate": 1.18038,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18051,
-                    "MDEntrySize": 1000000,
-                    "MDEntrySpotRate": 1.18052,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 1,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.18031,
-                    "MDEntrySize": 5000000,
-                    "MDEntrySpotRate": 1.18032,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 2,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18067,
-                    "MDEntrySize": 5000000,
-                    "MDEntrySpotRate": 1.18068,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 2,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.18029,
-                    "MDEntrySize": 9000000,
-                    "MDEntrySpotRate": 1.18040,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 3,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18087,
-                    "MDEntrySize": 9000000,
-                    "MDEntrySpotRate": 1.18088,
-                    "MDEntryForwardPoints": 0.0002,
-                    "MDEntryPositionNo": 3,
-                    "MDQuoteType": 0,
-                    'SettlDate': wk1(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                }
-            ]
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
-def open_ot_by_doubleclick_row(btd, cp_service, _row, _side):
-    request = PlaceRateTileTableOrderRequest(btd, _row, _side)
-    call(cp_service.placeRateTileTableOrder, request.build())
+class QAP_T2460(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.execution_report_doubler = FixMessageExecutionReportFX()
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.security_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        self.settle_date_1w = self.data_set.get_settle_date_by_name('wk1')
+        self.settle_type_1w = self.data_set.get_settle_type_by_name('wk1')
+        self.bands_eur_usd = ["1000000", '5000000', '10000000']
+        self.instrument = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_fwd,
+            'Product': '4', }
+        self.no_related_symbols = [{
+            'Instrument': self.instrument,
+            'SettlType': self.settle_type_1w}]
+        self.sts_filled = Status.Fill
+        self.sts_rejected = Status.Reject
+        self.md_req_id = 'EUR/USD:SPO:REG:HSBC'
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.fix_md.set_market_data(). \
+            update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0'). \
+            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
+        self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
+        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD IND")
+        self.sleep(10)
+        # endregion
 
-def place_order(base_request, service):
-    place_request = PlaceRatesTileOrderRequest(details=base_request)
-    place_request.set_client(client_tier+"1")
-    place_request.set_quantity(qty)
-    call(service.placeRatesTileOrder, place_request.build())
+        # region Step 2
+        self.md_request.set_md_req_parameters_maker()
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
+        self.sleep(4)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
+        # endregion
 
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    fix_manager_fh = FixManager(alias_fh, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-    base_tile_data = BaseTileData(base=case_base_request)
-    base_details = BaseTileDetails(base=case_base_request)
-    ob_act = Stubs.win_act_order_book
-    cp_service = Stubs.win_act_cp_service
-    ob_names = OrderBookColumns
-    sts_names = ExecSts
-    try:
-        # Send market data to the HSBC venue USD/PHP FWD non executable
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data().\
-            update_repeating_group('NoMDEntries', no_md_entries_fwd_hsbc). \
-            change_parameters(md_instrument). \
-            update_MDReqID(default_md_symbol_fwd_hsbc, alias_fh, 'FX')
+        # region Step 3
+        self.new_order_single.set_default().change_parameters(
+            {"Instrument": self.instrument,
+             "SettlDate": self.settle_date_1w,
+             "SettlType": self.settle_type_1w,
+             "TimeInForce": "3"})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_rejected)
+        self.execution_report.change_parameter("Text", "not tradeable")
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
 
-        #
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD Non Executable")
-        time.sleep(5)
-        #
-        rates_tile = ClientRatesTile(case_id, session_id)
-        rates_tile.modify_client_tile(instrument=instrument, client_tier=client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, 2, BUY)
-        place_order(base_details, cp_service)
+        # region Step 4
+        self.new_order_single.set_default()
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report_doubler.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        # endregion
 
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.qty.value: qty_ob,
-            ob_names.sts.value: sts_names.rejected.value,
-            ob_names.free_notes.value: 'not tradeable'},
-            event_name=f'Checking that order rejected on {symbol}-{tenor_fe}')
-
-        rates_tile = ClientRatesTile(case_id, session_id)
-        rates_tile.modify_client_tile(instrument=instrument_spot, client_tier=client_tier)
-        open_ot_by_doubleclick_row(base_tile_data, cp_service, 2, BUY)
-        place_order(base_details, cp_service)
-
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.qty.value: qty_ob,
-            ob_names.sts.value: sts_names.terminated.value},
-            event_name=f'Checking that order not rejected on {symbol}-{tenor_fe_spo}')
-
-        # Changing MD to executable
-        for i in no_md_entries_fwd_hsbc:
-            i["MDQuoteType"] = 1
-
-        # Send market data to the HSBC venue USD/PHP FWD executable
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
-            .update_repeating_group('NoMDEntries', no_md_entries_fwd_hsbc). \
-            update_MDReqID(default_md_symbol_fwd_hsbc, alias_fh, 'FX')
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD Executable")
-        time.sleep(5)
-        rates_tile.close_tile()
-    except Exception:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region Step 5
+        self.fix_md.set_market_data(). \
+            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
+        self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
+        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")
+        # endregion

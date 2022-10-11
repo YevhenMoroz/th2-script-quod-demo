@@ -30,3 +30,6 @@ class VenuesWizard(CommonPage):
 
     def click_on_ok_button(self):
         self.find_by_xpath(VenuesConstants.OK_BUTTON_XPATH).click()
+
+    def get_footer_error_text(self):
+        return self.find_by_xpath(VenuesConstants.FOOTER_ERROR_XPATH).text

@@ -1,134 +1,63 @@
-import logging
+import time
 from pathlib import Path
-
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
-from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, \
-    ESPTileOrderSide, ContextActionRatesTile
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail, OrdersDetails, OrderInfo, ExtractionAction
-from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-
-from win_gui_modules.utils import call, set_session_id, get_base_request, prepare_fe_2, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+from test_framework.core.test_case import TestCase
+from test_framework.data_sets.base_data_set import BaseDataSet
+from custom import basic_custom_actions as bca
+from test_framework.data_sets.constants import Status
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
 
-def modify_rates_tile(base_request, service, from_c, to_c, tenor, venue):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(from_c, to_c, tenor)
-    venue_filter = ContextActionRatesTile.create_venue_filter(venue)
-    modify_request.add_context_action(venue_filter)
-    call(service.modifyRatesTile, modify_request.build())
+class QAP_T2723(TestCase):
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager_gtw = FixManager(self.fix_env.buy_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.buy_side_esp, self.test_id)
+        self.execution_report = FixMessageExecutionReportAlgoFX()
+        self.new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set)
+        self.market_id = self.data_set.get_market_id_by_name("market_1")
+        self.status = Status.Reject
+        self.account = self.data_set.get_client_by_name("client_1")
+        self.instrument = dict(
+            Symbol=self.data_set.get_symbol_by_name('symbol_1'),
+            SecurityType=self.data_set.get_security_type_by_name('fx_spot'),
+            SecurityExchange=self.data_set.get_market_id_by_name("market_1")
+        )
+        self.nostratparams = [{
+            'StrategyParameterName': 'AllowedVenues',
+            'StrategyParameterType': '14',
+            'StrategyParameterValue': 'CITI'
+        }]
+        self.qty = "5000000"
+        self.stop_px = "1.1"
 
-
-def place_order(base_request, service):
-    esp_request = PlaceESPOrder(details=base_request)
-    esp_request.set_action(ESPTileOrderSide.BUY)
-    esp_request.top_of_book()
-    call(service.placeESPOrder, esp_request.build())
-
-
-def check_stop_price_in_ord_t(base_request, service, case_id):
-    extract_value = ExtractFxOrderTicketValuesRequest(base_request)
-    extract_value.get_stop_price("orderTicket.StopPrice")
-    response = call(service.extractFxOrderTicketValues, extract_value.build())
-    extracted_stop_price = response["orderTicket.StopPrice"]
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check stop price in order ticket")
-    verifier.compare_values("Stop price", "", extracted_stop_price)
-    verifier.verify()
-
-
-def send_order(base_request, service, order_type, tif, stop_price):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_order_type(order_type)
-    order_ticket.set_tif(tif)
-    order_ticket.set_stop_price(stop_price)
-    order_ticket.set_slippage("0")
-    order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
-def check_order_book(base_request, act_ob, case_id, owner, stop_price):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(extraction_id)
-    ob.set_filter(["Owner", owner])
-    ob_order_type = ExtractionDetail("orderBook.orderType", "OrdType")
-    ob_exec_policy = ExtractionDetail("orderBook.execPolicy", "ExecPcy")
-    ob_stop_price = ExtractionDetail("orderBook.stopPrice", "StpPx")
-    ob_free_notes = ExtractionDetail("orderBook.freeNotes", "FreeNotes")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_order_type,
-                                                                                 ob_exec_policy,
-                                                                                 ob_stop_price,
-                                                                                 ob_free_notes])))
-
-    response = call(act_ob.getOrdersDetails, ob.request())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("OrderType", "StopLimit", response[ob_order_type.name])
-    verifier.compare_values("Exec Policy", "Synth (Quod Synthetic OrdType)", response[ob_exec_policy.name])
-    verifier.compare_values("Stop Price", stop_price, response[ob_stop_price.name])
-    verifier.compare_values("Free notes", "market data unavailable", response[ob_free_notes.name])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    ar_service = Stubs.win_act_aggregated_rates_service
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-    ob_service = Stubs.win_act_order_book
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_esp_details = BaseTileDetails(base=case_base_request)
-    base_tile_data = BaseTileData(base=case_base_request)
-
-    from_curr = "EUR"
-    to_curr = "USD"
-    tenor = "Spot"
-    ord_type = "Limit"
-    tif = "Day"
-    stop_price = "1.1"
-    venue = "JPM"
-    owner = Stubs.custom_config['qf_trading_fe_user']
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor, venue)
-        place_order(base_esp_details, ar_service)
-        # Step 2
-        check_stop_price_in_ord_t(base_tile_data, order_ticket_service, case_id)
-        send_order(case_base_request, order_ticket_service, ord_type, tif, stop_price)
-        # Step 3
-        check_order_book(case_base_request, ob_service, case_id, owner, stop_price)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRatesTile, base_esp_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.new_order_sor.set_default_SOR().change_parameters({"Instrument": self.instrument, "TimeInForce": "1",
+                                                                "OrdType": "4", "OrderQty": self.qty,
+                                                                "TargetStrategy": "1001", "Account": self.account,
+                                                                "NoStrategyParameters": self.nostratparams})
+        self.new_order_sor.add_tag({"StopPx": self.stop_px})
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_sor)
+        # endregion
+        # region Step 2-3
+        self.execution_report.set_params_from_new_order_single(self.new_order_sor, status=self.status)
+        self.execution_report.change_parameter("Text", "market data unavailable")
+        self.execution_report.change_parameters({"Account": self.account,
+                                                 "StopPx": self.stop_px,
+                                                 "Instrument": self.instrument,
+                                                 "LastMkt": "*",
+                                                 "ExecRestatementReason": "*",
+                                                 "SettlType": "*",
+                                                 "SettlCurrency": "USD"})
+        self.execution_report.remove_parameters(["OrderCapacity"])
+        time.sleep(5)
+        self.fix_verifier.check_fix_message(self.execution_report)
+        # endregion

@@ -83,3 +83,6 @@ class AccountsPage(CommonPage):
 
     def is_searched_account_found(self, value):
         return self.is_element_present(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value))
+
+    def get_client_matching_id(self):
+        return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLIENT_MATCHING_ID_XPATH).text

@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -98,9 +99,11 @@ class QAP_T4792(TestCase):
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
-        self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
+        response = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)[0]
+        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=4)).isoformat()
 
-        time.sleep(3)
+
+        time.sleep(5)
         # endregion
 
         # region Check Sell side
@@ -159,7 +162,6 @@ class QAP_T4792(TestCase):
         case_id_5 = bca.create_event("MO order on chixlis", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_5)
 
-        #TODO not correct message handle, PCON-3465 raised
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
         self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
@@ -182,12 +184,12 @@ class QAP_T4792(TestCase):
 
         self.fix_verifier_buy.set_case_id(bca.create_event("New RFQ on LIS venues", self.test_id))
         # region check that second RFQ send to CHIX LIS UK
-        nos_chixlis_rfq_2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty_after_trade, ExDestination=self.ex_destination_chixlis, Instrument='*'))
+        nos_chixlis_rfq_2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty_after_trade, ExDestination=self.ex_destination_chixlis, Instrument='*', TransactTime="<" + expectedtime))
         self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq_2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
         # endregion
 
         # region check that second RFQ send to TURQUOISE LIS
-        nos_trql_rfq_2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty_after_trade, ExDestination=self.ex_destination_trql, Instrument='*'))
+        nos_trql_rfq_2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty_after_trade, ExDestination=self.ex_destination_trql, Instrument='*', TransactTime="<" + expectedtime))
         self.fix_verifier_buy.check_fix_message(nos_trql_rfq_2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
 

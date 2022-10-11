@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -84,6 +85,8 @@ class QAP_T4875(TestCase):
         self.key_params_NOS_child_with_minqty = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child_with_minqty")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
+
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_ER_canceled")
 
         self.rule_list = []
 
@@ -169,8 +172,8 @@ class QAP_T4875(TestCase):
         time.sleep(2)
 
         # region check cancel first dma child order
-        er_cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        self.er_cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(self.er_cancel_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
         # region Check new child DMA order
@@ -199,8 +202,13 @@ class QAP_T4875(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_STL_GTD_Iceberg_MinQty_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel second dma child order
-        er_cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
+        self.er_cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(self.er_cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
+
+        time.sleep(10)
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 DMA orders on qdl6 was canceled", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.er_cancel_dma_1_order, self.er_cancel_dma_2_order], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
 
         er_cancel_SORPING_STL_GTD_Iceberg_MinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_STL_GTD_Iceberg_MinQty_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_STL_GTD_Iceberg_MinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

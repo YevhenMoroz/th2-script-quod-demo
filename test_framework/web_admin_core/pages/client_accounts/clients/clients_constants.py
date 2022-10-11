@@ -15,7 +15,7 @@ class ClientsConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Clients"]//..//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -26,7 +26,7 @@ class ClientsConstants:
     LOAD_BUTTON = "//button[contains(@class, 'lookup-btn')]"
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
-
+    FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -61,14 +61,17 @@ class ClientsConstants:
     VALUES_TAB_SHORT_SELL_ACCOUNT_CHECKBOX_XPATH = '//*[text()="Short Sell Account"]/preceding-sibling::span'
     VALUES_TAB_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
     VALUES_TAB_PRICE_PRECISION_XPATH = '//*[@formcontrolname="pxPrecision"]'
+    VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="confirmationService"]'
+    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="extConfirmationService"]'
+    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
     ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][text()="User Manager"]'
-    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="accountMgrDesk"]'
-    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="accountMgrDesk"][text()="Desk"]'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
+    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
-    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//*[normalize-space(text())="{}"]'
+    ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//*[normalize-space()="Assignments"]//..//*[@class="linked-entities-wrapper"]//*[normalize-space()="{}"]'
     ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'
 
     # External sources tab
@@ -157,7 +160,7 @@ class ClientsConstants:
     VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     VENUES_TAB_VENUE_XPATH = '//*[@placeholder="Venue *"]'
-    VENUES_TAB_VENUE_FILTER_XPATH = '//*[@class="ng2-smart-th venue ng-star-inserted"]//input'
+    VENUES_TAB_VENUE_FILTER_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//tr[2]//th[2]//input'
     VENUES_TAB_VENUE_CLIENT_NAME_XPATH = '//*[@placeholder="Venue Client Name *"]'
     VENUES_TAB_VENUE_CLIENT_NAME_FILTER_XPATH = '//nb-accordion-item//*[text()=" Venues "]/following-sibling::nb-accordion-item-body//thead//tr[2]//th[2]//input'
     VENUES_TAB_VENUE_CLIENT_ACCOUNT_GROUP_NAME_XPATH = '//*[@placeholder="Venue Client AccountGroup Name"]'
@@ -172,9 +175,9 @@ class ClientsConstants:
     VENUES_TAB_MAX_COMMISSION_VALUE_FILTER_XPATH = '//*[@class="maxCommissionValue ng2-smart-th ng-star-inserted"]//input'
     VENUES_TAB_PRICE_PRECISION_XPATH = '//*[@placeholder="Max Commission Value"]'
     VENUES_TAB_PRICE_PRECISION_FILTER_XPATH = '//*[@class="ng2-smart-th pxPrecision ng-star-inserted"]//input'
-    VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[10]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
-    VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[11]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
-    VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-components/account-group-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[7]/nb-accordion-item-body/div/div/div/ng2-smart-table/table/thead/tr[3]/td[12]/ng2-smart-table-cell/table-cell-edit-mode/div/table-cell-custom-editor/checkbox-custom-editor/form/nb-checkbox/label/span[1]'
+    VENUES_TAB_STAMP_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[10]//nb-checkbox'
+    VENUES_TAB_LEVY_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[11]//nb-checkbox'
+    VENUES_TAB_PER_TRANSAC_FEE_EXEMPTION_CHECKBOX_XPATH = '//nb-accordion-item-header[normalize-space()="Venues"]//..//p-table//td[12]//nb-checkbox'
     VENUES_TAB_SAVED_VENUE_XPATH = "//nb-accordion-item//*[text()=' Venues ']/following-sibling::nb-accordion-item-body//tbody//td[2]"
 
     # Routes tab
@@ -204,3 +207,15 @@ class ClientsConstants:
     TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
     TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[@placeholder="Recipient Types"]'
     TRADE_CONFIRM_RECIPIENT_TYPES_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
+
+    class ExternalAllocationMatchingService:
+        PLUS_BUTTON = '//*[@nbtooltip="Add"]'
+        SAVE_CHECKMARK = '//*[@data-name="checkmark"]'
+        CANCEL_CHECKMARK = '//*[@nbtooltip="Cancel"]'
+        EDIT_BUTTON = '//*[@data-name="edit"]'
+        DELETE_BUTTON = '//*[@data-name="trash-2"]'
+        NAME_FILTER = '(//input[@placeholder="Filter"])[1]'
+        GATEWAY_INSTANCE_FILTER = '(//input[@placeholder="Filter"])[2]'
+        NAME = '//input[@placeholder="Name *"]'
+        GATEWAY_INSTANCE = '//input[@placeholder="Gateway Instance *"]'
+        UNSOLICITED_CHECKBOX = '//nb-checkbox//span[@class="custom-checkbox"]'

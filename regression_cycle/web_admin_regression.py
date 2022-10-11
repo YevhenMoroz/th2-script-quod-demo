@@ -12,6 +12,7 @@ from regression_cycle.web_admin_cycle.run_order_management import RunOrderManage
 from regression_cycle.web_admin_cycle.run_positions import RunPositions
 from regression_cycle.web_admin_cycle.run_reference_data import ReferenceData
 from regression_cycle.web_admin_cycle.run_risk_limits import RunRiskLimits
+from regression_cycle.web_admin_cycle.run_price_cleansing import RunPriceCleansing
 from regression_cycle.web_admin_cycle.run_site import RunSite
 from regression_cycle.web_admin_cycle.run_users import RunUsers
 from regression_cycle.web_admin_cycle.run_other import RunOthers
@@ -24,7 +25,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Web Admin regression_cycle', parent_id)
+    report_id = bca.create_event('WebAdmin | 5.1.161.174', parent_id)
     tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
     root = tree.getroot()
     try:
@@ -45,6 +46,8 @@ def test_run(parent_id=None):
             RunMiddleOffice(report_id).execute()
         if eval(root.find(".//component[@name='WA_Market_Making']").attrib["run"]):
             RunMarketMaking(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Price_Cleansing']").attrib["run"]):
+            RunPriceCleansing(report_id).execute()
         if eval(root.find(".//component[@name='WA_Risk_Limits']").attrib["run"]):
             RunRiskLimits(report_id).execute()
         if eval(root.find(".//component[@name='WA_Positions']").attrib["run"]):

@@ -80,9 +80,9 @@ class QAP_T7421(TestCase):
                                                                                              int("50"),
                                                                                              delay=0)
 
-            self.fix_manager.send_message_fix_standard(self.fix_message_dma)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_dma)
+            dma_order_id = response[0].get_parameters()['OrderID']
             self.rule_manager.remove_rules([nos_rule, trade_rule1, trade_rule2])
-            dma_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
             print(dma_order_id)
         except Exception as e:
             logger.error(f'{e}')
@@ -95,9 +95,9 @@ class QAP_T7421(TestCase):
             {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
         # endregion
         # region create and accept CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message_care)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_care)
+        care_order_id = response[0].get_parameters()['OrderID']
         self.client_inbox.accept_order()
-        care_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # endregion
         # region extract execution from DMA order
         exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,

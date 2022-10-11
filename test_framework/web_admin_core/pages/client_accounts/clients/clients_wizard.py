@@ -32,3 +32,6 @@ class ClientsWizard(CommonPage):
 
     def is_request_failed_message_displayed(self):
         return self.find_by_xpath(ClientsConstants.REQUEST_FAILED_MESSAGE_XPATH).is_displayed()
+
+    def is_footer_warning_displayed(self):
+        return self.find_by_xpath(ClientsConstants.FOOTER_WARNING_XPATH).is_displayed()

@@ -11,7 +11,10 @@ class AccountsConstants:
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
+    MAIN_PAGE_CLIENT_MATCHING_ID_XPATH = '(//*[@col-id="clientMatchingID"])[2]//*[@class="ag-group-value"]'
+
     WIZARD_ID_INPUT_XPATH = "//input[@id='accountID']"
+    WIZARD_ID_EDITOR_XPATH = '//*[@class="breadcrumbs entity-title"]'
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"
     WIZARD_CLIENT_COMBOBOX_XPATH = "//input[@id='accountGroup']"
     WIZARD_DESCRIPTION_INPUT_XPATH = "//input[@id='accountDesc']"
@@ -61,8 +64,8 @@ class AccountsConstants:
     DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//td[8]//nb-checkbox"
     DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_INPUT_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Venue Client Account Name']"
 
-    ROUTES_ROUTE_ACCOUNT_NAME_FILTER_XPATH = "//nb-accordion/nb-accordion-item[3]//th[contains(@class, 'routeSecActName')]//input"
-    ROUTES_ROUTE_FILTER_XPATH = "//nb-accordion/nb-accordion-item[3]//th[contains(@class, ' route ')]//input"
+    ROUTES_ROUTE_ACCOUNT_NAME_FILTER_XPATH = '//*[normalize-space()="Routes"]//parent::nb-accordion-item//tr[2]//th[2]//input'
+    ROUTES_ROUTE_FILTER_XPATH = '//*[normalize-space()="Routes"]//parent::nb-accordion-item//tr[2]//th[3]//input'
     ROUTES_ROUTE_ACCOUNT_NAME_INPUT_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route Account Name *']"
     ROUTES_ROUTE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route *']"
     ROUTES_DEFAULT_ROUTE_XPATH = '//*[@id="defaultRoute"]'
@@ -71,7 +74,7 @@ class AccountsConstants:
     ROUTES_EDIT_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='edit']"
     ROUTES_DELETE_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='trash-2']"
     ROUTES_CREATE_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='checkmark']"
-    ROUTES_DISCARD_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='cancel']"
+    ROUTES_DISCARD_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='close']"
 
     ID_INPUT_GRID_FILTER_XPATH = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
     ID_VALUE_GRID_XPATH = "//div[contains(@class, 'ag-row-first')]//div[@col-id='accountID']//span[contains(@class, 'ag-group-value')]"

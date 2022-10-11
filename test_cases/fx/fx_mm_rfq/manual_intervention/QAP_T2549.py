@@ -33,9 +33,9 @@ class QAP_T2549(TestCase):
         self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_2")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
-        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.settle_type_wk3 = self.data_set.get_settle_type_by_name("wk3")
         self.settle_date_wk3 = self.data_set.get_settle_date_by_name("wk3")
 

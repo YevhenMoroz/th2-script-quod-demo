@@ -16,7 +16,7 @@ class QAP_T3918(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Findex.action&permissionViolation=true#all-udates"
+        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates#ordermanagement-ordermgmtrules"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

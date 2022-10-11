@@ -37,12 +37,11 @@ class QAP_T3889(CommonTestCase):
         self.party_role = self.data_set.get_party_role("party_role_1")
         self.ext_id_client_at_party_role = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.party_role_qualifier = "Bank"
-        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.venue = "AMSTERDAM"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        login_page.click_login_button()
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_counterparts_page()

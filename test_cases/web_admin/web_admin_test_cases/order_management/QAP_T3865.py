@@ -26,7 +26,7 @@ class QAP_T3865(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
-        self.parameter = "Visibility for MULT"
+        self.parameter = "Visibility"
         self.value = "30"
 
     def precondition(self):

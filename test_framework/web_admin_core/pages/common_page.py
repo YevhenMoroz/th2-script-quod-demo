@@ -14,10 +14,39 @@ from test_framework.web_admin_core.utils.web_driver_utils import delete_all_file
     find_files_by_extension
 from selenium.common.exceptions import NoSuchElementException
 
+
+def waiting_until_page_requests_to_be_load(function):
+    """
+    The method will check if all requests for the page have loaded within 1 minute, otherwise we get an exception
+    """
+    def wrapper(*args):
+        self = args[0]
+        if self.is_element_present(CommonConstants.USER_ICON) or self.is_element_present(CommonConstants.HELP_ICON):
+            a = 0
+            while True:
+                if "done" not in self.web_driver.find_element_by_xpath(CommonConstants.PAGE_BODY).get_attribute(
+                                    'class'):
+                    a += 1
+                    time.sleep(0.25)
+                elif a == 240: raise TimeoutError
+                else: return function(*args)
+        elif not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+            a = 0
+            while True:
+                if not self.is_element_present(CommonConstants.NGX_APP_LOADED):
+                    a += 1
+                    time.sleep(0.25)
+                elif a == 240: raise TimeoutError
+                else: return function(*args)
+        else: return function(*args)
+    return wrapper
+
+
 class CommonPage:
     def __init__(self, web_driver_container: WebDriverContainer):
         self.web_driver_container = web_driver_container
         self.web_driver_wait = web_driver_container.get_wait_driver()
+        self.web_driver = web_driver_container.get_driver()
 
     def find_by_css_selector(self, css_selector: str):
         return self.find_by(By.CSS_SELECTOR, css_selector)
@@ -25,6 +54,7 @@ class CommonPage:
     def find_by_xpath(self, xpath: str):
         return self.find_by(By.XPATH, xpath)
 
+    @waiting_until_page_requests_to_be_load
     def find_by(self, location_strategy: By, locator: str):
         return self.web_driver_wait.until(
             expected_conditions.visibility_of_element_located((location_strategy, locator)))
@@ -32,6 +62,7 @@ class CommonPage:
     def find_elements_by_xpath(self, xpath: str):
         return self.find_elements_by(By.XPATH, xpath)
 
+    @waiting_until_page_requests_to_be_load
     def find_elements_by(self, location_strategy: By, locator: str):
         return self.web_driver_wait.until(
             expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
@@ -39,6 +70,17 @@ class CommonPage:
     def get_text_by_xpath(self, xpath: str):
         if "button" in xpath:
             return self.find_by_xpath(xpath).text
+        elif self.find_by_xpath(xpath).get_attribute("disabled"):
+            element = self.find_by_xpath(xpath)
+            action = ActionChains(self.web_driver_container.get_driver())
+            action.double_click(element)
+            action.click()
+            action.key_down(Keys.CONTROL)
+            action.send_keys("C")
+            action.key_up(Keys.CONTROL)
+            action.perform()
+            value_from_element = pyperclip.paste()
+            return value_from_element
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
@@ -58,7 +100,7 @@ class CommonPage:
 
         text_field.send_keys(value)
 
-    def set_checkbox_list(self, xpath: str, values: list):
+    def set_checkbox_list(self, xpath: str, values: str or list or int):
         """
         Method was created for setting checkbox list,
         concatenates the xpath to the checkbox through its values
@@ -66,6 +108,8 @@ class CommonPage:
         if not self.is_element_present(CommonConstants.COMBOBOX_DROP_DOWN_XPATH):
             self.find_by_xpath(xpath).click()
         time.sleep(1)
+        if type(values) != list:
+            values = values.split(",")
         [self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(i)).click() for i in values]
         self.find_by_xpath(xpath).click()
 
@@ -88,6 +132,9 @@ class CommonPage:
         self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
+        if "custom-checkbox" not in self.find_by_xpath(checkbox_xpath).get_attribute("class"):
+            return True if "checked" in self.find_by_xpath(checkbox_xpath+'//span[contains(@class, "custom-checkbox")]')\
+                .get_attribute("class") else False
         return True if "checked" in self.find_by_xpath(checkbox_xpath).get_attribute("class") else False
 
     def toggle_checkbox(self, checkbox_xpath: str):
@@ -142,12 +189,12 @@ class CommonPage:
         '''
         Method was created for searching elements in DOM for #shadow-root tags
         '''
-        search_button = self.web_driver_container.get_driver().execute_script(css_path)
+        search_button = self.web_driver.execute_script(css_path)
         return search_button
 
     def is_element_present(self, xpath):
         try:
-            self.web_driver_container.get_driver().find_element_by_xpath(xpath)
+            self.web_driver.find_element_by_xpath(xpath)
         except NoSuchElementException:
             return False
         return True
@@ -162,13 +209,13 @@ class CommonPage:
         scr_elem = self.find_by_xpath(CommonConstants.HORIZONTAL_SCROLL_ELEMENT_XPATH)
         elem_size = scr_elem.size['width']
 
-        action = ActionChains(self.web_driver_container.get_driver())
+        action = ActionChains(self.web_driver)
         action.move_to_element_with_offset(scr_elem, 5, 5)
         action.click()
         time.sleep(2)
 
         c = 50
-        while elem_size/2 > c:
+        while elem_size / 1.5 > c:
             action.drag_and_drop_by_offset(scr_elem, c, 0)
             c += 100
             action.perform()
@@ -209,4 +256,3 @@ class CommonPage:
         items = self.find_elements_by_xpath(xpath)
         items_list = [_.text.strip() for _ in items]
         return items_list
-

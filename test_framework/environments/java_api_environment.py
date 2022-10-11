@@ -21,6 +21,15 @@ class JavaApiEnvironment(BaseEnvironment):
                 JavaApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod317_java_api.value: java_api_environment})
             return JavaApiEnvironment.environment_instances[EnvironmentType.quod317_java_api.value]
+        elif env.value == EnvironmentType.quod314_java_api.value:
+            if EnvironmentType.quod314_java_api.value not in JavaApiEnvironment.environment_instances.keys():
+                java_api_environment = JavaApiEnvironment(
+                    environment_type=EnvironmentType.quod314_java_api.value,
+                    java_api_conn=Connectivity.Luna_314_ja.value
+                )
+                JavaApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod314_java_api.value: java_api_environment})
+            return JavaApiEnvironment.environment_instances[EnvironmentType.quod314_java_api.value]
         else:
             raise Exception('Environment not found')
 
