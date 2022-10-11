@@ -1,5 +1,5 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from custom import basic_custom_actions as bca
 
@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 class FixMessageQuoteRequestFX(FixMessage):
 
     def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
-        super().__init__(message_type=MessageType.QuoteRequest.value, data_set=data_set)
+        super().__init__(message_type=FIXMessageType.QuoteRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
     def set_rfq_params(self):
