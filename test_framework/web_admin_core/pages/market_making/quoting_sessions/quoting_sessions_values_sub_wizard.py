@@ -18,6 +18,9 @@ class QuotingSessionsValuesSubWizard(CommonPage):
     def set_concurrently_active_quotes_age(self, value):
         self.set_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH, value)
 
+    def is_concurrently_active_quotes_age_required(self):
+        return self.is_field_required(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH)
+
     def get_concurrently_active_quotes(self):
         return self.get_text_by_xpath(QuotingSessionsConstants.VALUES_TAB_CONCURRENTLY_ACTIVE_QUOTES_AGE_XPATH)
 

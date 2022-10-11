@@ -33,7 +33,7 @@ class FixVerifier:
             if message_name is None:
                 message_name = "Check NewOrderSingle"
 
-            if fix_message.is_parameter_exist('TransactTime'):
+            if fix_message.is_parameter_exist('TransactTime') and fix_message.get_parameter('TransactTime')[0] not in ('!', '%', '<', '>', '%'):
                 fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(

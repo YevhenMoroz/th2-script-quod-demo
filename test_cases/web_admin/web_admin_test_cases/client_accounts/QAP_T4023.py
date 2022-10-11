@@ -24,7 +24,7 @@ class QAP_T4023(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = 'QAP_T4021'
+        self.name = 'QAP_T4023'
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -48,7 +48,7 @@ class QAP_T4023(CommonTestCase):
 
             main_page.set_name(self.name)
             time.sleep(1)
-            self.verify("Client Group deleted and not displayed", False,
+            self.verify("Client Group created and displayed", True,
                         main_page.is_searched_client_group_found_by_name(self.name))
 
             main_page.click_on_more_actions()

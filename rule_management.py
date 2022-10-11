@@ -17,8 +17,15 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted, \
-    TemplateOrderCancelReplaceExecutionReportWithTrade
+    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
+    TemplateNewOrdSingleMarketPreviouslyQuoted, \
+    TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
+    TemplateExternalExecutionReport
+
+TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
+    TemplateExternalExecutionReport
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -31,7 +38,7 @@ from th2_grpc_sim import sim_pb2_grpc as core_test
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
 
 
@@ -50,6 +57,13 @@ class RuleManager:
             active_rules[rule.id.id] = [rule.class_name, rule.alias]
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1][2:]}')
+
+    def remove_rules_by_alias(self, alias: str):
+        active_rules = dict()
+        for rule in self.core.getRulesInfo(request=Empty()).info:
+            active_rules[rule.id.id] = [rule.class_name, rule.alias]
+            if rule.alias[2:] == alias and rule.id.id not in self.default_rules_id:
+                self.core.removeRule(RuleID(id=rule.id.id))
 
     # --- REMOVE RULES SECTION ---
 
@@ -203,7 +217,15 @@ class RuleManager:
                                                cancel=cancel,
                                                delay=delay))
 
-    def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int, delay: int = 0):
+    def add_OrderCancelRequestTradeCancel(self, session: str, account: str, exdestination: str, price: float):
+        return self.sim.createTemplateOrderCancelRequestTradeCancel(
+            request=TemplateOrderCancelRequestTradeCancel(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               exdestination=exdestination,
+                                               price=price))
+
+    def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int,
+                                      delay: int = 0):
         return self.sim.createOrderCancelRequestWithQty(
             request=TemplateOrderCancelRequestWithQty(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
@@ -257,6 +279,21 @@ class RuleManager:
                                                TemplateMDAnswerRule(connection_id=
                                                                     ConnectionID(session_alias=session), min=1,
                                                                     max=2, interval=30))
+
+    def add_External_Cancel(self, session: str):
+        return self.sim.createExternalExecutionReportResponseCancelled(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
+
+    def add_External_Fill(self, session: str):
+        return self.sim.createExternalExecutionReportResponseFilled(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
+
+    def add_External_Reject(self, session: str):
+        return self.sim.createExternalExecutionReportResponseRejected(request=
+                                               TemplateExternalExecutionReport(connection_id=
+                                                                        ConnectionID(session_alias=session)))
 
     def add_SingleExec(self, party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str,
                        mask_as_connectivity: str):

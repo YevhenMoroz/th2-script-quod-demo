@@ -48,6 +48,7 @@ class QAP_T4960(TestCase):
         self.delay = 0
         self.tif_iok = constants.TimeInForce.ImmediateOrCancel.value
         self.sell = constants.OrderSide.Sell.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_4.value
         # endregion
 
         # region Gateway Side
@@ -134,7 +135,7 @@ class QAP_T4960(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Side=self.sell))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Side=self.sell, ClientAlgoPolicyID=self.algopolicy))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
