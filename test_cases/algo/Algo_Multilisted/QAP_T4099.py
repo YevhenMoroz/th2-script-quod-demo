@@ -86,6 +86,8 @@ class QAP_T4099(TestCase):
         self.rule_list = [nos_fok_rule]
         # endregion
 
+        time.sleep(3)
+
         case_id_0 = bca.create_event("Send Market Data", self.test_id)
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(case_id_0)
@@ -114,7 +116,6 @@ class QAP_T4099(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
-        time.sleep(3)
         # endregion
 
         # region Check Sell side
@@ -145,11 +146,12 @@ class QAP_T4099(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Eliminate child Order", self.test_id))
         # Eliminate Order
         eliminate_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_eliminate)
-        eliminate_dma_order.remove_parameters(['LastPx', 'LastQty', 'OrderCapacity', 'Account', 'Price', 'Currency', 'Instrument']).add_tag(dict(OrdType='*', Text='*'))
+        eliminate_dma_order.add_tag(dict(OrdType='*', Text='*')) # .remove_parameters(['OrderCapacity', 'Account', 'Price', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(eliminate_dma_order, key_parameters=self.key_params_eliminate, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate')
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Eliminate Algo Order", self.test_id))
         eliminate_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        eliminate_multilisted_order.add_tag(dict(Text='*', LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminate')
         # endregion
 

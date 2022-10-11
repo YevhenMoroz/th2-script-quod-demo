@@ -18,7 +18,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T5015(TestCase):
+class QAP_T5018(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -40,9 +40,9 @@ class QAP_T5015(TestCase):
         self.qty_for_md = 1000
         self.price_ask = 44
         self.price_bid = 30
-        self.party_id = constants.PartyID.party_id_10.value
+        self.party_id = constants.PartyID.party_id_8.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
-        self.party_role = constants.PartyRole.party_role_12.value
+        self.party_role = constants.PartyRole.party_role_3.value
 
         self.no_party = [
             {'PartyID': self.party_id, 'PartyIDSource': self.party_id_source,
@@ -101,7 +101,7 @@ class QAP_T5015(TestCase):
 
         # region Compare message parameters
         self.party_id_source_map = "Proprietary"
-        self.party_role_map = "ExecutingTrader"
+        self.party_role_map = "ClientID"
         # endregion
 
         self.rule_list = []
@@ -151,7 +151,7 @@ class QAP_T5015(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_Custom_Tags()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.ClOrdId = self.Iceberg_order.get_parameter('ClOrdID')
         self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_fields_into_repeating_group('NoParty', self.no_party)
@@ -184,7 +184,7 @@ class QAP_T5015(TestCase):
         # region Check 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_Custom_Tags()
+        self.dma_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler()
         self.dma_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -209,7 +209,7 @@ class QAP_T5015(TestCase):
 
         # region check cancel Iceberg child order
         er_cancel_dma_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child Iceberg order")
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Iceberg child order")
         # endregion
 
         er_cancel_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_cancel)

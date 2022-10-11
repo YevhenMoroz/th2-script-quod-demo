@@ -34,6 +34,7 @@ from th2_grpc_act_java_api_quod.act_service import ActService
 from th2_grpc_sim_fix_quod.template_simulator_service_service import TemplateSimulatorServiceService
 from th2_grpc_sim_fix_quod.template_simulator_service_test_service import TemplateSimulatorServiceTestService
 from th2_grpc_sim_fix_quod.template_simulator_service_equity_service import TemplateSimulatorServiceEquityService
+from th2_grpc_sim_fix_quod.template_simulator_service_algo_service import TemplateSimulatorServiceAlgoService
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -52,10 +53,12 @@ class Stubs:
     event_store = factory.event_batch_router
     verifier = factory.grpc_router.get_service(Check1Service)
     simulator = factory.grpc_router.get_service(TemplateSimulatorServiceService)
+    simulator_algo = factory.grpc_router.get_service(TemplateSimulatorServiceAlgoService)
     simulator_equity = factory.grpc_router.get_service(TemplateSimulatorServiceEquityService)
     test_sim = factory.grpc_router.get_service(TemplateSimulatorServiceTestService)
     simulator_http = factory.grpc_router.get_service(SimTemplateService)
     core = factory.grpc_router.get_service(SimService)
+    core_algo = sim_pb2_grpc.SimStub(grpc.insecure_channel("10.0.22.22:32650"))
     core_equity = sim_pb2_grpc.SimStub(grpc.insecure_channel("10.0.22.22:32700"))
     win_act = factory.grpc_router.get_service(ActUIWinService)
     win_act_order_book = factory.grpc_router.get_service(OrderBookServiceService)

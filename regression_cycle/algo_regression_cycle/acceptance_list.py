@@ -9,7 +9,7 @@ from test_cases.algo.Algo_TWAP.QAP_T4935 import QAP_T4935
 from test_cases.algo.Algo_TWAP.QAP_T4988 import QAP_T4988
 from test_cases.algo.Algo_TWAP.QAP_T4884 import QAP_T4884
 from test_cases.algo.Algo_TWAP.QAP_T4887 import QAP_T4887
-from test_cases.algo.Algo_PercentageVolume import QAP_T4879
+from test_cases.algo.Algo_PercentageVolume.QAP_T4879 import QAP_T4879
 from test_cases.algo.Algo_PercentageVolume import QAP_T4950
 # from test_cases.algo.Algo_PercentageVolume.QAP_T5083 import QAP_T5083 # not automated yet
 # from test_cases.algo.Algo_PercentageVolume.QAP_T5085 import QAP_T5085 # not automated yet
@@ -39,7 +39,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     pc_name = get_pc_name()  # getting PC name
-    full_ver = '5.1.163.176' # site version
+    full_ver = '5.1.165.178' # site version
     ver = full_ver[-3:]
     report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver, report_id_main)
@@ -55,7 +55,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4884(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4887(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # POV
-        QAP_T4879.execute(report_id)
+        QAP_T4879(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_T5113.execute(report_id, session_id) # session ID error (line 44)
         # Multilisted
         QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
