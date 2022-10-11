@@ -124,6 +124,7 @@ class OmsVenueClientNames(Enum):
     client_pt_3_venue_1 = "MOClient3_PARIS"
     client_pt_3_venue_2 = "MOClient3_EUREX"
     client_pt_4_venue_1 = "MOClient4_PARIS"
+    client_pt_4_venue_2 = "MOClient4_EUREX"
     client_pt_5_venue_1 = "MOClient5_PARIS"
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"

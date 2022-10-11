@@ -51,9 +51,9 @@ class QAP_T7420(TestCase):
     def run_pre_conditions_and_steps(self):
         # endregion
         # region create CO
-        self.fix_manager.send_message_fix_standard(self.fix_message_care)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_care)
+        care_order_id = response[0].get_parameters()['OrderID']
         self.client_inbox.accept_order()
-        care_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         # region create  DMA order
         try:
 
@@ -67,7 +67,8 @@ class QAP_T7420(TestCase):
                                                                                             float(self.price),
                                                                                             int(self.qty),
                                                                                             delay=0)
-            self.fix_manager.send_message_fix_standard(self.fix_message_dma)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_dma)
+            dma_order_id = response[0].get_parameters()['OrderID']
         except Exception as e:
             logger.error(f'{e}')
 
@@ -75,7 +76,6 @@ class QAP_T7420(TestCase):
             time.sleep(5)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        dma_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
         exec_order_dma_id = self.order_book.set_filter(
             [OrderBookColumns.order_id.value, dma_order_id]).extract_2lvl_fields(
             SecondLevelTabs.executions.value, ["ExecID"], [1])

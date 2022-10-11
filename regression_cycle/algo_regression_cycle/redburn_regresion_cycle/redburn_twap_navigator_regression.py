@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"TWAP - Navigator", parent_id)
+    report_id = bca.create_event(f"TWAP - Navigator | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue

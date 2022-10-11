@@ -38,7 +38,7 @@ class QAP_T5071(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
-        self.clientAlgoPolicyID = constants.ClientAlgoPolicy.iceberg.value
+        self.clientAlgoPolicyID = constants.ClientAlgoPolicy.qa_iceberg.value
         # endregion
 
         # region Gateway Side
