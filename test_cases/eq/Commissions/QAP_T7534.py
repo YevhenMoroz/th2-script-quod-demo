@@ -8,10 +8,10 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,17 +32,23 @@ class QAP_T7534(TestCase):
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.trades = OMSTradesBook(self.test_id, self.session_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.send_default_fee()
         self.__send_fix_order()
-        self.__verify_commissions()
+        ignor_list = ['Account', 'ReplyReceivedTime', 'SettlCurrency', 'Currency', 'LastMkt', 'Text', 'CommissionData']
+        self.exec_report.set_default_filled(self.new_order_single)
+        self.exec_report.change_parameters({'MiscFeesGrp': {'NoMiscFees': [
+            {"MiscFeeAmt": '0.01', "MiscFeeCurr": self.data_set.get_currency_by_name("currency_2"),
+             'MiscFeeType': '4'}]}})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignor_list)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __send_fix_order(self):
@@ -53,20 +59,13 @@ class QAP_T7534(TestCase):
                 self.data_set.get_mic_by_name("mic_2"), float(self.price), float(self.price), int(self.qty),
                 int(self.qty), 1)
 
-            new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
+            self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
                 "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
                  'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")
-                 ,"Currency": self.data_set.get_currency_by_name("currency_3")})
+                    , "Currency": self.data_set.get_currency_by_name("currency_3")})
 
-            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
+            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __verify_commissions(self):
-        order_id = self.response[0].get_parameter("OrderID")
-        self.trades.set_filter([TradeBookColumns.order_id.value, order_id, TradeBookColumns.exec_type.value, "Trade"])
-        fees = {TradeBookColumns.exec_fees.value: self.trades.extract_field(TradeBookColumns.exec_fees.value)}
-        self.trades.compare_values({TradeBookColumns.exec_fees.value: "0.01"}, fees, event_name='Check values')
