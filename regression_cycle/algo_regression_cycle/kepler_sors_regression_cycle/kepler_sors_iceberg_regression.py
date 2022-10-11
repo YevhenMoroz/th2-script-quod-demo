@@ -6,16 +6,16 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4360 import QAP_T4360
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4738 import QAP_T4738
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4872 import QAP_T4872
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4871 import QAP_T4871
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4870 import QAP_T4870
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4869 import QAP_T4869
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4868 import QAP_T4868
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4867 import QAP_T4867
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4866 import QAP_T4866
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4821 import QAP_T4821
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4811 import QAP_T4811
-from test_cases.algo.Algo_Kepler.Algo_Iceberg_Route_Venue.QAP_T4810 import QAP_T4810
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4872 import QAP_T4872
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4871 import QAP_T4871
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4870 import QAP_T4870
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4869 import QAP_T4869
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4868 import QAP_T4868
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4867 import QAP_T4867
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4866 import QAP_T4866
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4821 import QAP_T4821
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4811 import QAP_T4811
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4810 import QAP_T4810
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)

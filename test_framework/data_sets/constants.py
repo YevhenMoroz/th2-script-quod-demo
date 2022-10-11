@@ -31,6 +31,7 @@ class Connectivity(Enum):
     Luna_314_cnx = 'fix-sell-rfq-m-314-cnx'
     Luna_314_wa = "rest_wa314luna"
     Luna_314_ja = "314_java_api"
+    Luna_314_ev = "fix-buy-extern-314-stand"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -59,7 +60,7 @@ class FrontEnd(Enum):
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
-    DESKS_ID_317 = [""]
+    DESKS_ID_317 = [9, 10]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values
@@ -79,6 +80,14 @@ class FrontEnd(Enum):
     TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
     # endregion
 
+    # region quod310
+    USERS_310 = ["HD5"]
+    PASSWORDS_310 = ["HD5"]
+    FOLDER_310 = ""
+    DESKS_310 = ["Q"]
+    MAIN_WIN_NAME_310 = "Quod Financial - Quod site"
+    LOGIN_WIN_NAME_310 = "Login to Quod Financial (Quod site)"
+    # endregion
 
 class DirectionEnum(Enum):
     FromQuod = "FIRST"
@@ -177,9 +186,10 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_6 = "QA_Auto_SORPING_6"
     qa_sorping_7 = "QA_Auto_SORPING_7"
     qa_sorping_8 = "QA_Auto_SORPING_8"
+    qa_sorping_9 = "QA_Auto_SORPING_9"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
-    iceberg = 'ICEBERG'
+    qa_iceberg = 'QA_Auto_ICEBERG'
 
 
 class OrderType(Enum):
@@ -220,12 +230,16 @@ class Venues(Enum):
 
 class PartyID(Enum):
     party_id_1 = "TestCLIENTACCOUNT"
-    party_id_2 = "TestClientID"
+    party_id_2 = "TestClientAccount"
     party_id_3 = "TestEXTERNAL-UTI"
     party_id_4 = "TestINITIATOR-UTI"
     party_id_5 = "12345678"
     party_id_6 = "18831"
     party_id_7 = "10000"
+    party_id_8 = "TestClientID"
+    party_id_9 = "TestTraderID"
+    party_id_10 = "TestTraderName"
+
 
 
 class PartyIDSource(Enum):
@@ -235,6 +249,7 @@ class PartyIDSource(Enum):
 
 class PartyRole(Enum):
     party_role_3 = "3"
+    party_role_11 = "11"
     party_role_12 = "12"
     party_role_24 = "24"
     party_role_58 = "58"
@@ -264,7 +279,15 @@ class ReadLogVerifiers(Enum):
     log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
     log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
-    log_319_check_the_lis_amount = "log319-check-the-lis=amount"
+    log_319_check_the_lis_amount = "log319-check-the-lis-amount"
+    log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
+    log319_check_party_info_for_three_groups_sell_side = "log319-check-party-info-for-three-groups-sell-side"
+    log319_check_party_info_for_three_groups_buy_side = "log319-check-party-info-for-three-groups-buy-side"
+    log319_check_party_info_for_the_one_group_sell_side = "log319-check-party-info-for-the-one-group-sell-side"
+    log319_check_party_info_for_the_one_group_buy_side = "log319-check-party-info-for-the-one-group-buy-side"
+    log319_check_tag_5047 = "log319-check-tag-5047"
+    log319_check_tag_5048 = "log319-check-tag-5048"
+    log319_check_tag_1 = "log319-check-tag-1"
 
 
 class WebAdminURL(Enum):

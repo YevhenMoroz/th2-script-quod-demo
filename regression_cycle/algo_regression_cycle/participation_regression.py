@@ -29,7 +29,7 @@ password = Stubs.custom_config['qf_trading_fe_password']
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"POV" if version is None else f"POV (cloned) | {version}", parent_id)
+    report_id = bca.create_event(f"POV" if version is None else f"POV | {version}", parent_id)
     try:
         # session_id = set_session_id()
         # if not Stubs.frontend_is_open:

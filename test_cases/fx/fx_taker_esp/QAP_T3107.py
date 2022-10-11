@@ -94,11 +94,14 @@ class QAP_T3107(TestCase):
         self.new_order_single.set_default_SOR().update_repeating_group("NoStrategyParameters",
                                                                        self.no_strategy_parameters)
         self.new_order_single.change_parameters({'TimeInForce': '3'})
-        self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        response = self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        account = response[0].get_parameters()
+        print(account)
+
 
         self.sleep(5)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Fill)
-        self.execution_report.change_parameters({"Account": "*",
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, response=response[0])
+        self.execution_report.change_parameters({
                                                  "LastQty": "1000000",
                                                  "AvgPx": "1.18158",
                                                  "LastMkt": "CITI-ID",

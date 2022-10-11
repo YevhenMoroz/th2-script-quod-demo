@@ -140,9 +140,11 @@ class QAP_T4126(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params,message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_pending)
+        pending_dma_1_order_params.remove_parameter('ExpireDate')
         self.fix_verifier_buy.check_fix_message(pending_dma_1_order_params, key_parameters=self.key_params,direction=self.ToQuod,message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_pending)
+        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_new)
+        new_dma_1_order_params.remove_parameter('ExpireDate')
         self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params,direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
@@ -152,12 +154,13 @@ class QAP_T4126(TestCase):
 
         # region Check child Eliminate
         eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy,self.status_eliminate)
-        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
+        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*'))#.remove_parameters([ 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod, "Buy side ExecReport Eliminate child order")
         # endregion
 
         # region check parent Eliminate
         eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        eliminate_multilisting_order.add_tag(dict(Text='*', LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, key_parameters=self.key_params, message_name="Sell side ExecReport Eliminate")
         # endregion
 
