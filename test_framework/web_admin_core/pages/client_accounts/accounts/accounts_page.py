@@ -18,7 +18,6 @@ class AccountsPage(CommonPage):
 
     def filter_grid(self, id_value: str):
         self.set_text_by_xpath(AccountsConstants.ID_INPUT_GRID_FILTER_XPATH, id_value)
-        time.sleep(2)
 
     def get_id_grid_value(self):
         return self.find_by_xpath(AccountsConstants.ID_VALUE_GRID_XPATH).text
@@ -28,11 +27,9 @@ class AccountsPage(CommonPage):
 
     def click_edit_entity_button(self):
         self.find_by_xpath(AccountsConstants.EDIT_ENTITY_BUTTON_GRID_XPATH).click()
-        time.sleep(2)
 
     def click_clone_entity_button(self):
         self.find_by_xpath(AccountsConstants.CLONE_ENTITY_BUTTON_GRID_XPATH).click()
-        time.sleep(2)
 
     def click_download_pdf_entity_button_and_check_pdf(self, value: str):
         self.clear_download_directory()
@@ -74,9 +71,7 @@ class AccountsPage(CommonPage):
 
     def load_account_from_global_filter(self, user_id):
         self.set_account_for_load(user_id)
-        time.sleep(2)
         self.click_on_load_button()
-        time.sleep(2)
 
     def is_searched_account_found(self, value):
         return self.is_element_present(AccountsConstants.DISPLAYED_ACCOUNT_XPATH.format(value))

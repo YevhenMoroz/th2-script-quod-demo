@@ -320,6 +320,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
+    key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
 
 
 class AlgoPreFilter(Enum):

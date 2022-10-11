@@ -19,6 +19,12 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
     TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
+    TemplateNewOrdSingleMarketPreviouslyQuoted, \
+    TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
+    TemplateExternalExecutionReport
+
+TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport
 
 from th2_grpc_sim.sim_pb2 import RuleID
@@ -45,16 +51,19 @@ class RuleManager:
         self.core = sim.value["core"]
 
     # Console output list of IDs active rules
-    # def wait_till_rule_is_up(self):
-    #
-    # def wait_till_rule_is_down(self):
-
     def print_active_rules(self):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
             active_rules[rule.id.id] = [rule.class_name, rule.alias]
         for key, value in active_rules.items():
             print(f'{key} -> {value[0].split(".")[6]} -> {value[1][2:]}')
+
+    def remove_rules_by_alias(self, alias: str):
+        active_rules = dict()
+        for rule in self.core.getRulesInfo(request=Empty()).info:
+            active_rules[rule.id.id] = [rule.class_name, rule.alias]
+            if rule.alias[2:] == alias and rule.id.id not in self.default_rules_id:
+                self.core.removeRule(RuleID(id=rule.id.id))
 
     # --- REMOVE RULES SECTION ---
 
@@ -122,6 +131,11 @@ class RuleManager:
     # --- ADD RULE SECTION ---
     # Add rule on <session>
     # Example: session = 'fix-fh-fx-paris'
+
+    def add_MDRule(self, session: str):
+        return self.sim.createQuodDefMDRRule2(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
     def add_NewOrdSingleExecutionReportTrade(self, session: str, account: str, venue: str, price: float,
                                              traded_qty: int,
                                              delay: int):
@@ -202,6 +216,13 @@ class RuleManager:
                                                venue=venue,
                                                cancel=cancel,
                                                delay=delay))
+
+    def add_OrderCancelRequestTradeCancel(self, session: str, account: str, exdestination: str, price: float):
+        return self.sim.createTemplateOrderCancelRequestTradeCancel(
+            request=TemplateOrderCancelRequestTradeCancel(connection_id=ConnectionID(session_alias=session),
+                                               account=account,
+                                               exdestination=exdestination,
+                                               price=price))
 
     def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int,
                                       delay: int = 0):
@@ -303,8 +324,7 @@ class RuleManager:
                                                        trade=trade,
                                                        price=price))
 
-    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float,
-                             delay: int = 0):
+    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleIOC(
             request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
                                             account=account,
@@ -540,8 +560,7 @@ class RuleManager:
 
         # ------------------------
 
-    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int,
-                                      reply_delay: int = 0):
+    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int, reply_delay: int = 0):
         return self.sim.createNewOrdSingleRQFRejected(
             request=TemplateNewOrdSingleRQFRejected(
                 connection_id=ConnectionID(session_alias=session),
@@ -562,12 +581,20 @@ class RuleManager:
                                                                avgPrice=avgPrice,
                                                                delay=delay))
 
-
+    def add_OrderCancelReplaceRequestExecutionReportWithTrade(self, session: str, account: str, exdestination: str, price: float, cumQtyBeforeReplace: int, tradedQty: int):
+        return self.sim.createOrderCancelReplaceExecutionReportWithTrade(
+            request=TemplateOrderCancelReplaceExecutionReportWithTrade(connection_id=ConnectionID(session_alias=session),
+                                                                       account=account,
+                                                                       exdestination=exdestination,
+                                                                       price=price,
+                                                                       CumQtyBeforeReplace=cumQtyBeforeReplace,
+                                                                       tradedQty=tradedQty
+                                                              ))
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
-    # rule_manager.remove_rule_by_id(33)
-    rule_manager.print_active_rules()
     # print("_________________________")
     # rule_manager_eq.print_active_rules()
+    Stubs.factory.close()

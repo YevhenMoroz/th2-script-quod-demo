@@ -35,3 +35,12 @@ class ClientTiersValuesSubWizard(CommonPage):
 
     def click_on_manage_button_for_schedules(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON).click()
+
+    def select_schedule_checkbox(self):
+        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX).click()
+
+    def set_schedule(self, value):
+        self.set_combobox_value(ClientTierConstants.CLIENT_TIER_VALUES_TAB_SCHEDULES, value)
+
+    def get_schedule(self):
+        return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_SCHEDULES)

@@ -38,7 +38,7 @@ class OrderSubmitOMS(OrderSubmit):
             }
         }
 
-    def set_default_care_limit(self, recipient=None, desk=None, role=None):
+    def set_default_care_limit(self, recipient=None, desk=None, role=None, external_algo_twap=False):
         params = {'CDOrdAssignInstructionsBlock': {}}
         if recipient:
             params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
@@ -50,6 +50,21 @@ class OrderSubmitOMS(OrderSubmit):
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
         self.add_tag(params)
+        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                               "ScenarioID": "101",
+                                               "AlgoPolicyID": "1000131"},
+                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                           {"ExternalAlgoParameterBlock": [
+                               {'AlgoParameterName': "StrategyTag",
+                                "AlgoParamString": "TWAP",
+                                'VenueScenarioParameterID': "7505"}]},
+                           'ScenarioID': "101",
+                           "ScenarioIdentifier": "8031",
+                           "VenueScenarioID": "TWAP",
+                           "VenueScenarioVersionID": "9682",
+                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
+        if external_algo_twap:
+            self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
     def set_default_dma_limit(self):
@@ -72,4 +87,28 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Care'})
         self.add_tag(params)
+        return self
+
+    def set_default_child_care(self, recipient=None, desk=None, role=None, parent_id: str = None):
+        params = {'CDOrdAssignInstructionsBlock': {}}
+        if recipient:
+            params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
+        if desk:
+            params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
+        if role:
+            params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
+        self.change_parameters(self.base_parameters)
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
+                                         'ClOrdID':  basic_custom_actions.client_orderid(9), "ParentOrdrList": parent_params})
+        self.add_tag(params)
+        return self
+
+    def set_default_child_dma(self, parent_id: str = None):
+        self.change_parameters(self.base_parameters)
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
+                                         'ClOrdID': basic_custom_actions.client_orderid(9)})
         return self
