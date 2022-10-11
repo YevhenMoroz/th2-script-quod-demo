@@ -33,7 +33,7 @@ class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
                "default_rules": [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
-    algo = {"core": Stubs.core_algo, "sim": Stubs.simulator, "default_rules": [1, 2, 3]}
+    algo = {"core": Stubs.core_algo, "sim": Stubs.simulator_algo, "default_rules": [1, 2, 3]}
 
 
 class RuleManager:
