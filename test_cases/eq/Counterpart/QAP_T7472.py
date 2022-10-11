@@ -93,7 +93,7 @@ class QAP_T7472(TestCase):
         # endregion
         # region check alloc instr report
         parties = {
-            'NoParty': [self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+            'NoParty': [self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
                         self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
                         self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
                         self.data_set.get_counterpart_id_fix('counterpart_id_euro_clear')
@@ -106,6 +106,13 @@ class QAP_T7472(TestCase):
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=alloc_list_ignor)
         # endregion
         # region Set-up parameters Confirmation report
+        parties = {
+            'NoParty': [self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+                        self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+                        self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+                        self.data_set.get_counterpart_id_fix('counterpart_id_euro_clear')
+                        ]
+        }
         conf_list_ignor = ['AvgPx', 'Currency', 'tag5120', 'RootOrClientCommission', 'RootOrClientCommissionCurrency',
                            'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'NoMiscFees', 'CommissionData']
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
