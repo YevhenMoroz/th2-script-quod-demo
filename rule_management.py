@@ -17,9 +17,13 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, TemplateNewOrdSingleMarketPreviouslyQuoted, \
-    TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel
     TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
+    TemplateNewOrdSingleMarketPreviouslyQuoted, \
+    TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
+    TemplateExternalExecutionReport
+
+TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport
 
