@@ -53,7 +53,7 @@ class QAP_T4324(TestCase):
         self.qty_nav = AlgoFormulasManager.get_twap_nav_child_qty(self.qty, self.waves, self.ats)
         self.navigator_limit_price_reference = DataSet.Reference.Limit.value
         self.price = 29.995
-        self.price_nav = 30
+        self.price_nav = 25
         self.ex_destination_1 = "XPAR"
         self.client = "CLIENT2"
         self.account = 'XPAR_CLIENT2'
