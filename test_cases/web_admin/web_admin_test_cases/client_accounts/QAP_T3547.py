@@ -83,9 +83,12 @@ class QAP_T3547(CommonTestCase):
 
             client_assignments_tab.click_on_client_list_link(self.second_client_list_name)
             client_list_wizard = ClientListWizard(self.web_driver_container)
+            time.sleep(2)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
             side_menu = SideMenu(self.web_driver_container)
+            client_list_wizard.click_on_revert_changes()
             side_menu.open_clients_page()
+            time.sleep(1)
             client_page.set_name(self.clients[1])
             time.sleep(1)
             client_page.click_on_more_actions()
@@ -97,6 +100,7 @@ class QAP_T3547(CommonTestCase):
 
             client_assignments_tab.click_on_client_list_link(self.first_client_list_name)
             client_list_wizard = ClientListWizard(self.web_driver_container)
+            time.sleep(2)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
 
         except Exception:

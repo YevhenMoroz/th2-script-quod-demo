@@ -38,7 +38,9 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3713 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3714 import QAP_T3714
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3724 import QAP_T3724
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3733 import QAP_T3733
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3753 import QAP_T3753
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3762 import QAP_T3762
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3770 import QAP_T3770
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3805 import QAP_T3805
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3810 import QAP_T3810
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3811 import QAP_T3811
@@ -80,7 +82,7 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8329 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8357 import QAP_T8357
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8423 import QAP_T8423
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8433 import QAP_T8433
-from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8503 import QAP_T8503
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8508 import QAP_T8508
 
 
 class RunClientsAccounts:
@@ -160,7 +162,11 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T3733(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3753(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3762(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3770(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3805(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
@@ -244,7 +250,7 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T8433(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T8503(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            QAP_T8508(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

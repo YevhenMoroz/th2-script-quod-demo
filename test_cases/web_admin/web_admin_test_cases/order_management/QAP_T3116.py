@@ -56,18 +56,18 @@ class QAP_T3116(CommonTestCase):
             passive_at_lit_block.click_on_plus_button()
             passive_at_lit_block.set_parameter(self.parameter_at_passive_lit_block[0])
             passive_at_lit_block.set_value_by_dropdown_list_at_sub_wizard(self.post_mode)
-            passive_at_lit_block.click_on_checkmark_at_actions_sub_wizard()
+            passive_at_lit_block.click_on_checkmark_button()
 
             passive_at_lit_block.click_on_plus_button()
             passive_at_lit_block.set_parameter(self.parameter_at_passive_lit_block[1])
             passive_at_lit_block.click_on_plus_at_actions_sub_wizard()
             passive_at_lit_block.set_value_at_actions_sub_wizard(self.venue[0])
             passive_at_lit_block.set_value(self.value[0])
-            passive_at_lit_block.click_on_delete_at_actions_sub_wizard()
+            passive_at_lit_block.click_on_checkmark_at_actions_sub_wizard()
             passive_at_lit_block.click_on_plus_at_actions_sub_wizard()
             passive_at_lit_block.set_value_at_actions_sub_wizard(self.venue[1])
             passive_at_lit_block.set_value(self.value[1])
-            passive_at_lit_block.click_on_delete_at_actions_sub_wizard()
+            passive_at_lit_block.click_on_checkmark_at_actions_sub_wizard()
             passive_at_lit_block.click_on_checkmark_button()
             passive_at_lit_block.click_on_go_back_button()
 
@@ -75,7 +75,7 @@ class QAP_T3116(CommonTestCase):
             main_page.set_name_at_filter_field(self.name)
             time.sleep(1)
 
-            self.verify("New Execution Strategie is saved", True, main_page.is_searched_execution_strategy_found(self.name))
+            self.verify("New Execution Strategy is saved", True, main_page.is_searched_execution_strategy_found(self.name))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

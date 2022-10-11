@@ -9,7 +9,7 @@ class ClientsAssignmentsSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_user_manager(self, value):
-        self.set_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH, value)
+        self.set_combobox_value(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH, value)
 
     def get_user_manager(self):
         return self.get_text_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_USER_MANAGER_XPATH)
