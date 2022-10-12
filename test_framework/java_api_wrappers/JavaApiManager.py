@@ -1,3 +1,5 @@
+import logging
+
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
@@ -32,6 +34,7 @@ class JavaApiManager:
         self.response = None
 
     def send_message(self, message: JavaApiMessage) -> None:
+        logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         self.act.sendMessage(
             request=ActJavaSubmitMessageRequest(
                 message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -39,6 +42,7 @@ class JavaApiManager:
                 parent_event_id=self.get_case_id()))
 
     def send_message_and_receive_response(self, message: JavaApiMessage):
+        logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
                 request=ActJavaSubmitMessageRequest(
