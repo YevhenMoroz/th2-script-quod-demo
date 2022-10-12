@@ -1253,15 +1253,9 @@ pipeline {
     }
     triggers {
         parameterizedCron(
-        /*
-        '''
-        38 13 * * * %RunTestScript=true;TestScriptPath=test_cases/Test_run.py
-        5 14 * * * %Regression=true;algo=true;fx=false;oms=false;retail=false;web_admin=false;Twap=false;Vwap=false;Participation=false;Iceberg=true;Multilisted=false;Peg=false;Stop=false;Lit_dark=false;Block=false;Gating_rules=false;Web_admin=false;Mp_dark=false;Synth_min_qty=false;Lit_dark_iceberg=false;Sorping=false;Multiple_emulation=false;PreOpen_Auction=false;Expity_Auction=false;PreClose_Auction=false;Scaling=false;POV_Scaling=false;Pair_trading=false;
-        ''')
-        */
         '''
         40 13 * * * %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
-        '''
+        ''')
     }
 
     stages {
