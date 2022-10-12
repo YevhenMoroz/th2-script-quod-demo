@@ -74,6 +74,10 @@ class QAP_T2916(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step Precondition
+        #  subscribing to marketdata in order to be able to set new marketdata for the instrument:
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.platinum)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md.set_market_data().update_MDReqID(self.md_eur_gbp_spo, self.fx_fh_connectivity, "FX")
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
         self.fix_manager_fh_314.send_message(self.fix_md)
@@ -82,7 +86,7 @@ class QAP_T2916(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.platinum)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
