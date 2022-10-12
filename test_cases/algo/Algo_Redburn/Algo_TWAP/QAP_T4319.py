@@ -54,15 +54,14 @@ class QAP_T4319(TestCase):
         self.navigator_limit_price_reference = DataSet.Reference.Limit.value
         self.price = 29.995
         self.price_nav = 25
-        self.ex_destination_1 = "XPAR"
-        self.client = "CLIENT2"
-        self.account = 'XPAR_CLIENT2'
-        self.currency = 'EUR'
-        self.s_par = '555'
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.s_par = self.data_set.get_listing_id_by_name('listing_36')
 
         # Key parameters
-        self.key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-        self.key_params = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_2')
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -114,7 +113,7 @@ class QAP_T4319(TestCase):
                                                        LastQty=0, SettlDate="*", Currency="EUR", HandlInst=2, NoParty="*", LastPx=0, OrderCapacity="A",
                                                        SecAltIDGrp="*", QtyType=0, ExecRestatementReason=4, TargetStrategy="*", Instrument="*"))
         reject_moc_order_params.remove_parameter("ExDestination")
-        self.fix_verifier_sell.check_fix_message(reject_moc_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecRepor          t Reject')
+        self.fix_verifier_sell.check_fix_message(reject_moc_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Reject')
 
         # endregion
 
