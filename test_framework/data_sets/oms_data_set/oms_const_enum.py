@@ -504,6 +504,7 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_custodian_user = {'PartyRole': '28', 'PartyID': 'CustodianUser', 'PartyRoleQualifier': '24',
                                      'PartyIDSource': 'C'}
     counter_part_id_contra_firm = {'PartyRole': "17", 'PartyID': 'ContraFirm', 'PartyIDSource': "C"}
+    counter_part_id_contra_firm_2 = {'PartyRole': "17", 'PartyID': 'ContraFirm2', 'PartyIDSource': "C"}
     counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
                                                      'PartyIDSource': "C"}
