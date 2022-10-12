@@ -1254,7 +1254,7 @@ pipeline {
     triggers {
         parameterizedCron(
         '''
-        40 13 * * * %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
+        45 08 * * * %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
         ''')
     }
 
