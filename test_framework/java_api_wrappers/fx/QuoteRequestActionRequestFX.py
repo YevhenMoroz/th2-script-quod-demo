@@ -12,17 +12,16 @@ class QuoteRequestActionRequestFX(JavaApiMessage):
         super().change_parameters(parameters)
         self.action_id = bca.client_orderid(10)
 
-    def set_default_params(self, quote_request):
-        quote_request_id = quote_request[0].get_parameter("QuoteRequestNotifBlock")["QuoteRequestID"]
+    def set_default_params(self, quote_req_id):
         params_for_request = {
             "SEND_SUBJECT": "QUOD.ORS.FE",
             "REPLY_SUBJECT": "QUOD.FE.ORS",
             "QuoteRequestActionRequestBlock": {
-                "QuoteRequestID": quote_request_id,
+                "QuoteRequestID": str(quote_req_id),
                 "QuoteReqAction": None,
                 "AssigneeUserID": "ostronov",
                 "AssigneeRoleID": "HSD",
-                "ActionID": f"{quote_request_id}{self.action_id}"
+                "ActionID": f"{quote_req_id}{self.action_id}"
             }
         }
         super().change_parameters(params_for_request)
