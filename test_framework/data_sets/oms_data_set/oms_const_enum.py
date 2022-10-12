@@ -109,6 +109,7 @@ class OmsClients(Enum):
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
+    client_counterpart_3 = "CLIENT_COUNTERPART_3"
 
 
 class OmsVenueClientNames(Enum):
@@ -142,6 +143,7 @@ class OmsVenueClientNames(Enum):
     client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
     client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
+    client_counterpart_3_venue_1 = "CLIENT_COUNTERPART_3_PARIS"
 
 
 class OmsAccounts(Enum):
@@ -183,6 +185,7 @@ class OmsAccounts(Enum):
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
+    client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
 
 
 class AlgoParametersExternal(Enum):
