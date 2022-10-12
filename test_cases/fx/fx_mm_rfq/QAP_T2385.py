@@ -83,6 +83,7 @@ class QAP_T2385(TestCase):
         self.fix_verifier.check_fix_message(self.quote)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.quote_cancel.set_params_for_cancel(self.quote_request)
         self.fix_manager.send_message(self.quote_cancel)

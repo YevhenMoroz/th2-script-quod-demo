@@ -58,16 +58,13 @@ class QAP_T3635(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.test_data['adm_user']['login'], self.test_data['adm_user']['password'])
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_clients_page()
-        time.sleep(2)
         client_page = ClientsPage(self.web_driver_container)
         client_page.set_name(self.test_data['client']['name'])
-        time.sleep(2)
+        time.sleep(1)
         if not client_page.is_searched_client_found(self.test_data['client']['name']):
             client_page.click_on_new()
-            time.sleep(2)
             client_values_tab = ClientsValuesSubWizard(self.web_driver_container)
             client_values_tab.set_id(self.test_data['client']['id'])
             client_values_tab.set_name(self.test_data['client']['name'])
@@ -78,31 +75,26 @@ class QAP_T3635(CommonTestCase):
             client_assignments_tab.set_user_manager(self.test_data['client']['user_manager'])
             client_wizard = ClientsWizard(self.web_driver_container)
             client_wizard.click_on_save_changes()
-            time.sleep(2)
 
         side_menu.open_accounts_page()
-        time.sleep(2)
         account_page = AccountsPage(self.web_driver_container)
         account_page.set_id(self.test_data['account']['id'])
-        time.sleep(2)
+        time.sleep(1)
         if not account_page.is_searched_account_found(self.test_data['account']['id']):
             account_page.click_new_button()
-            time.sleep(2)
             account_values_tab = AccountsWizard(self.web_driver_container)
             account_values_tab.set_id(self.test_data['account']['id'])
             account_values_tab.set_ext_id_client(self.test_data['account']['ext_id_client'])
             account_values_tab.set_client(self.test_data['account']['client'])
-            # account_values_tab.set_clearing_account_type(self.test_data['account']['clearing_account_type'])
             account_values_tab.set_client_id_source(self.test_data['account']['client_id_source'])
             account_values_tab.click_save_button()
-            time.sleep(2)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         common_act.click_on_user_icon()
         time.sleep(1)
         common_act.click_on_logout()
-        time.sleep(2)
+        common_act.refresh_page(True)
 
     def test_context(self):
         try:
@@ -110,13 +102,11 @@ class QAP_T3635(CommonTestCase):
 
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.test_data['desk_user']['login'], self.test_data['desk_user']['password'])
-            time.sleep(2)
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_accounts_page()
-            time.sleep(2)
             account_page = AccountsPage(self.web_driver_container)
             account_page.set_id(self.test_data['account']['id'])
-            time.sleep(2)
+            time.sleep(1)
 
             self.verify("Account w/o access to Client is not display", False,
                         account_page.is_searched_account_found(self.test_data['account']['id']))

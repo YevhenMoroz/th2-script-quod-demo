@@ -1,9 +1,8 @@
-from test_cases.fx.fx_taker_rfq import QAP_T3072, QAP_T3062, QAP_T7973, QAP_T3033, QAP_T3032, QAP_T3023, QAP_T3020, QAP_T3014, \
-    QAP_T3008, QAP_T2961, QAP_T2825, QAP_T2744, QAP_T2612, QAP_T2746, \
-    QAP_T2708
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
+from test_cases.fx.fx_taker_rfq.QAP_T2599 import QAP_T2599
+from test_cases.fx.fx_taker_rfq.QAP_T2708 import QAP_T2708
 from test_cases.fx.fx_taker_rfq.QAP_T2941 import QAP_T2941
 from test_cases.fx.fx_taker_rfq.QAP_T2802 import QAP_T2802
 from test_cases.fx.fx_taker_rfq.QAP_T2770 import QAP_T2770
@@ -95,7 +94,7 @@ def test_run(parent_id=None, version=None):
         QAP_T3075(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3074(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3073(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3072.execute(report_id, session_id)
+        # QAP_T3072.execute(report_id, session_id)
         QAP_T3071(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3070(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3069(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
@@ -104,7 +103,7 @@ def test_run(parent_id=None, version=None):
         QAP_T3065(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3064(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3063(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3062.execute(report_id, session_id)
+        # QAP_T3062.execute(report_id, session_id)
         QAP_T3061(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3060(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3059(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
@@ -127,25 +126,24 @@ def test_run(parent_id=None, version=None):
         QAP_T3040(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3039(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3038(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T7973.execute(report_id, session_id)
         QAP_T3037(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3036(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3035(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3034(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3033.execute(report_id, session_id)
-        QAP_T3032.execute(report_id, session_id)
+        # QAP_T3033.execute(report_id, session_id)
+        # QAP_T3032.execute(report_id, session_id)
         QAP_T3028(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3027(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3026(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3025(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3023.execute(report_id, session_id)
-        QAP_T3020.execute(report_id, session_id)
+        # QAP_T3023.execute(report_id, session_id)
+        # QAP_T3020.execute(report_id, session_id)
         QAP_T3015(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3014.execute(report_id, session_id)
+        # QAP_T3014.execute(report_id, session_id)
         QAP_T3013(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3012(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3009(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T3008.execute(report_id, session_id)
+        # QAP_T3008.execute(report_id, session_id)
         QAP_T3003(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T3002(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2998(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
@@ -155,21 +153,23 @@ def test_run(parent_id=None, version=None):
         QAP_T2993(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2989(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2988(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T2961.execute(report_id, session_id)
+        # QAP_T2961.execute(report_id, session_id)
         QAP_T2941(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T2825.execute(report_id, session_id)
+        # QAP_T2825.execute(report_id, session_id)
         QAP_T2802(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2770(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2769(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2762(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2748(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         QAP_T2747(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
-        QAP_T2746.execute(report_id, session_id)
+        # QAP_T2746.execute(report_id, session_id)
         QAP_T2415(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_T2744.execute(report_id, session_id)
-        # QAP_T2708.execute(report_id, session_id)
+        QAP_T2708(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
+        QAP_T2599(report_id=report_id, session_id=session_id, data_set=configuration.data_set).execute()
         # QAP_T2612.execute(report_id, session_id)
         # QAP_T3014.execute(report_id, session_id)
+        # QAP_T2717.execute(report_id, session_id)
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:

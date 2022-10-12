@@ -44,7 +44,7 @@ class JavaApiManager:
                                                          message.get_parameters(), self.get_session_alias()),
                 parent_event_id=self.get_case_id()))
 
-    def send_message_and_receive_response(self, message: JavaApiMessage):
+    def send_message_and_receive_response(self, message: JavaApiMessage, filter_map: dict = None):
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
                 request=ActJavaSubmitMessageRequest(
@@ -123,6 +123,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.UnMatchRequest.value:
+            response = self.act.submitUnmatchAndTransferRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(), message.get_parameters(),
+                                                             self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.OrderModificationRequest.value:
             response = self.act.submitOrderModificationRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -179,30 +185,34 @@ class JavaApiManager:
         response_messages = list()
         for message in response.response_message:
             fields = dict()
-            for field in message.fields:
-                # Field
-                if message.fields[field].simple_value != "":
-                    fields.update({field: message.fields[field].simple_value})
-                else:
-                    component_fields = dict()
-                    # Component
-                    for component_field in message.fields[field].message_value.fields:
-                        if message.fields[field].message_value.fields[component_field].simple_value != "":
-                            component_fields.update({component_field: message.fields[field].message_value.fields[
-                                component_field].simple_value})
-                            fields.update({field: component_fields})
-                        else:
-                            # Repeating Group
-                            repeating_group_list = list()
-                            for repeating_group in message.fields[field].message_value.fields[
-                                component_field].list_value.values:
-                                repeating_group_list_field = dict()
-                                for repeating_group_field in repeating_group.message_value.fields:
-                                    repeating_group_list_field.update({repeating_group_field:
-                                                                           repeating_group.message_value.fields[
-                                                                               repeating_group_field].simple_value})
-                                repeating_group_list.append(repeating_group_list_field)
-                            fields.update({field: {component_field: repeating_group_list}})
+            for main_field in message.fields:
+                fields_content = dict()
+                for field in message.fields[main_field].message_value.fields:
+                    # Field
+                    if message.fields[main_field].message_value.fields[field].simple_value != "":
+                        fields_content.update(
+                            {field: message.fields[main_field].message_value.fields[field].simple_value})
+                    else:
+                        component_fields = dict()
+                        # Component
+                        for component_field in message.fields[main_field].message_value.fields[
+                            field].message_value.fields:
+                            if message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value != "":
+                                component_fields.update({component_field: message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value})
+                                fields_content.update({field: component_fields})
+                            else:
+                                # Repeating Group
+                                repeating_group_list = list()
+                                for repeating_group in \
+                                message.fields[main_field].message_value.fields[field].message_value.fields[component_field].list_value.values:
+                                    repeating_group_list_field = dict()
+                                    for repeating_group_field in repeating_group.message_value.fields:
+                                        repeating_group_list_field.update({repeating_group_field:
+                                                                               repeating_group.message_value.fields[
+                                                                                   repeating_group_field].simple_value})
+                                    repeating_group_list.append(repeating_group_list_field)
+                                fields_content.update({field: {component_field: repeating_group_list}})
+                fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
             if message_type == ORSMessageType.OrdReply.value:

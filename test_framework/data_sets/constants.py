@@ -59,7 +59,7 @@ class FrontEnd(Enum):
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
-    DESKS_ID_317 = [""]
+    DESKS_ID_317 = [9, 10]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values
@@ -124,6 +124,15 @@ class Status(Enum):
     Eliminate = "Eliminate"
 
 
+class OrdStatus(Enum):
+    PendingNew = "A"
+    New = "0"
+    PartiallyFilled = "1"
+    Fill = "2"
+    CanceledOrEliminated = "4"
+    Rejected = "8"
+
+
 class Reference(Enum):
     LastTradePrice = 'LTP'
     Primary = 'PRM'
@@ -170,6 +179,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
+    iceberg = 'ICEBERG'
 
 
 class OrderType(Enum):

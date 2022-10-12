@@ -1,5 +1,3 @@
-import random
-import string
 import sys
 import time
 import traceback
@@ -24,7 +22,7 @@ class QAP_T3859(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.name = 'QAP_T3859'
         self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.day = "Monday"
         self.from_time = "00:00:00"
@@ -35,18 +33,25 @@ class QAP_T3859(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-        client_tiers_main_page.click_on_new()
-        time.sleep(2)
         client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
-        client_tiers_values_sub_wizard.set_name(self.name)
-        client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
         time.sleep(1)
-        client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        if not client_tiers_main_page.is_searched_client_tiers_found(self.name):
+            client_tiers_main_page.click_on_new()
+            client_tiers_values_sub_wizard.set_name(self.name)
+            client_tiers_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+            client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+            client_tiers_wizard.click_on_save_changes()
+
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.click_on_more_actions()
+        client_tiers_main_page.click_on_edit()
+
         client_tiers_values_sub_wizard.click_on_manage_button_for_schedules()
-        time.sleep(1)
         client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
         client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedule_name()
         client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
@@ -56,43 +61,52 @@ class QAP_T3859(CommonTestCase):
         client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
         client_tiers_schedules_sub_wizard.set_schedule_name(self.name)
         client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedule_name()
-        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_close_wizard()
         client_tiers_wizard.click_on_save_changes()
-        time.sleep(2)
         client_tiers_main_page.set_name(self.name)
-        time.sleep(2)
+        time.sleep(1)
         client_tiers_main_page.click_on_more_actions()
-        time.sleep(2)
         client_tiers_main_page.click_on_edit()
-        time.sleep(3)
-        client_tiers_schedules_sub_wizard.click_on_delete_button_at_schedules()
+        client_tiers_values_sub_wizard.click_on_manage_button_for_schedules()
 
     def test_context(self):
         try:
-            self.precondition()
             client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
             client_tiers_schedules_sub_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
             client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tiers_main_page.click_on_edit()
-            time.sleep(2)
+            client_tiers_values_sub_wizard = ClientTiersValuesSubWizard(self.web_driver_container)
 
-            try:
-                client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
-                client_tiers_schedules_sub_wizard.set_day(self.day)
-                client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
-                client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
-                client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
-                client_tiers_wizard.click_on_save_changes()
-                self.verify("recreated entity saved correctly.", True, True)
-            except Exception as e:
-                self.verify("recreated entity doesn't saved correctly.ERROR !!!", True, e.__class__.__name__)
+            self.precondition()
+            client_tiers_schedules_sub_wizard.set_schedule_name_filter(self.name)
+            time.sleep(1)
+            client_tiers_schedules_sub_wizard.click_on_delete_button_at_schedule_name()
+            client_tiers_schedules_sub_wizard.set_schedule_name_filter(self.name)
+            time.sleep(1)
+            self.verify("Schedule has been delete", False,
+                        client_tiers_schedules_sub_wizard.is_schedule_name_entity_found_by_name(self.name))
+            client_tiers_wizard.click_on_close_wizard()
+            client_tiers_wizard.click_on_save_changes()
+            client_tiers_main_page.set_name(self.name)
+            time.sleep(1)
+            client_tiers_main_page.click_on_more_actions()
+            client_tiers_main_page.click_on_edit()
+
+            client_tiers_values_sub_wizard.click_on_manage_button_for_schedules()
+            client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedule_name()
+            client_tiers_schedules_sub_wizard.click_on_plus_button_at_schedules()
+            client_tiers_schedules_sub_wizard.set_day(self.day)
+            client_tiers_schedules_sub_wizard.set_from_time(self.from_time)
+            client_tiers_schedules_sub_wizard.set_to_time(self.to_time)
+            client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedules()
+            client_tiers_schedules_sub_wizard.set_schedule_name(self.name)
+            client_tiers_schedules_sub_wizard.click_on_checkmark_button_at_schedule_name()
+            client_tiers_wizard.click_on_close_wizard()
+
+            client_tiers_values_sub_wizard.click_on_manage_button_for_schedules()
+            client_tiers_schedules_sub_wizard.set_schedule_name_filter(self.name)
+            time.sleep(1)
+            self.verify("Schedule has been delete", True,
+                        client_tiers_schedules_sub_wizard.is_schedule_name_entity_found_by_name(self.name))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
