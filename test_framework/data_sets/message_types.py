@@ -113,6 +113,7 @@ class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
     Quote = "Order_Quote"
 
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
 
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"

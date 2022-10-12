@@ -13,6 +13,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 
+
 class QAP_T2768(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
@@ -44,77 +45,83 @@ class QAP_T2768(TestCase):
             'SettlType': self.settle_type_1m}]
         self.md_eur_usd_spo = "EUR/USD:SPO:REG:HSBC"
         self.no_md_entries_spo = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19597,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19609,
-                    "MDEntrySize": 2000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19594,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19612,
-                    "MDEntrySize": 6000000,
-                    "MDEntryPositionNo": 2,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19591,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 12000000,
-                    "MDEntryPositionNo": 3,
-                    'SettlDate': self.settle_date_spot,
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19597,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19609,
+                "MDEntrySize": 2000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19594,
+                "MDEntrySize": 6000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19612,
+                "MDEntrySize": 6000000,
+                "MDEntryPositionNo": 2,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19591,
+                "MDEntrySize": 12000000,
+                "MDEntryPositionNo": 3,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19615,
+                "MDEntrySize": 12000000,
+                "MDEntryPositionNo": 3,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+        ]
         self.md_eur_usd_fwd = "EUR/USD:FXF:MO1:HSBC"
         self.no_md_entries_fwd = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.19585,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDEntryForwardPoints": '0.0000001',
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.19615,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    "MDEntryForwardPoints": '0.0000001',
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-            ]
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.19585,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0000001',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.19615,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDEntryForwardPoints": '0.0000001',
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+        ]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Precondition
+        #  !subscribing to MD in order to modify it!
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium2)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        # endregion
         # region Step 2
         self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spo)
         self.fix_md.update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
@@ -130,12 +137,18 @@ class QAP_T2768(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryForwardPoints=self.bid_fwd_pts)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryForwardPoints=self.offer_fwd_pts)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryForwardPoints=self.bid_fwd_pts)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryForwardPoints=self.offer_fwd_pts)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryForwardPoints=self.bid_fwd_pts)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryForwardPoints=self.offer_fwd_pts)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryForwardPoints=self.bid_fwd_pts,
+                                                         SettlDate="*")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryForwardPoints=self.offer_fwd_pts,
+                                                         SettlDate="*")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryForwardPoints=self.bid_fwd_pts,
+                                                         SettlDate="*")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryForwardPoints=self.offer_fwd_pts,
+                                                         SettlDate="*")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryForwardPoints=self.bid_fwd_pts,
+                                                         SettlDate="*")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryForwardPoints=self.offer_fwd_pts,
+                                                         SettlDate="*")
         self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, key_parameters=["MDReqID"])
         # endregion

@@ -71,12 +71,20 @@ def wk3():
     return (tm(datetime.utcnow().isoformat()) + bd(n=17)).date().strftime('%Y%m%d')
 
 
+def wk3_ndf():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=16)).date().strftime('%Y%m%d')
+
+
 def wk3_ndf_maturity():
     return (tm(datetime.utcnow().isoformat()) + bd(n=16)).date().strftime('%Y%m%d')
 
 
 def m1():
     return (tm(datetime.utcnow().isoformat()) + bd(n=25)).date().strftime('%Y%m%d')
+
+
+def m1_ndf():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=24)).date().strftime('%Y%m%d')
 
 
 def m2():
