@@ -21,15 +21,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-# connectivity
-case_name = os.path.basename(__file__)
-instrument = DataSet.Instrument.BUI
-FromQuod = DataSet.DirectionEnum.FromQuod
-ToQuod = DataSet.DirectionEnum.ToQuod
-connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
-connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
-connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
-
 
 class QAP_T4319(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -76,13 +67,18 @@ class QAP_T4319(TestCase):
         self.status_reject = Status.Reject
         # endregion
 
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
+
         self.text_reject_navigator_limit_price = DataSet.FreeNotesReject.MissNavigatorLimitPrice.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, connectivity_fh)
+        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         self.fix_manager_feed_handler.send_message(market_data_snapshot)
 
         time.sleep(3)
@@ -102,7 +98,7 @@ class QAP_T4319(TestCase):
         time.sleep(3)
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, self.gateway_side_sell, self.status_pending).remove_parameter("Account").add_tag(dict(NoStrategyParameters="*", NoParty="*", SecAltIDGrp="*"))
         self.fix_verifier_sell.check_fix_message(pending_twap_nav_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew Parent')
