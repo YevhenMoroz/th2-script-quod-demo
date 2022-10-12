@@ -54,6 +54,9 @@ class ORSMessageType(Enum):
     OrdListNotification = 'Order_OrdListNotification'
     PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
+    QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
+    QuoteRequest = "Fix_QuoteRequest"
+    QuoteRequestNotif = "Order_QuoteRequestNotif"
 
 
 class TradingRestApiMessageType(Enum):
@@ -105,11 +108,15 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    Quote = "Order_Quote"
+
 
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
+
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
