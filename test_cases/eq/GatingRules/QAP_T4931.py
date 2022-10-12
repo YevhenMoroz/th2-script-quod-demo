@@ -18,7 +18,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T4930(TestCase):
+class QAP_T4931(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -34,10 +34,13 @@ class QAP_T4930(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Create order
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "1200"})
+        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
         modify_rule_message.set_default_param()
+        param = modify_rule_message.get_parameter("gatingRuleCondition")
+        param[0]["holdOrder"] = "true"
+        modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(modify_rule_message)
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
@@ -49,8 +52,8 @@ class QAP_T4930(TestCase):
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
 
-        act_res = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            "OrdReplyBlock"]
-        self.ja_manager.compare_values({"GatingRuleCondName": "Default Result", "ExecType": "OPN"}, act_res,
+        act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            "OrdNotificationBlock"]
+        self.ja_manager.compare_values({"GatingRuleCondName": "Cond1", "OrdStatus": "HLD"}, act_res,
                                        "check GatingRuleCondName")
         # endregion
