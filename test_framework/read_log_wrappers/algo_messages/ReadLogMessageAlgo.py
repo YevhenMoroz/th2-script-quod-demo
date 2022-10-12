@@ -95,3 +95,91 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_party_info_more_than_one_group(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfGroups": "3",
+            "GroupNumber": "1",
+            "PartyID": "TestClientID",
+            "PartyIDSource": "D",
+            "PartyRole": "3",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_three_groups_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfGroups": "3",
+            "PartyID1": "1",
+            "PartyIDSource1": "TestClientID",
+            "PartyRole1": "D",
+            "PartyID2": "TestTraderID",
+            "PartyIDSource2": "Proprietary",
+            "PartyRole2": "OrderOriginator",
+            "PartyID3": "TestTraderName",
+            "PartyIDSource3": "OrderOriginator",
+            "PartyRole3": "ExecutingTrader",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_three_groups_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfGroups": "3",
+            "PartyID1": "1",
+            "PartyIDSource1": "TestClientID",
+            "PartyRole1": "D",
+            "PartyID2": "TestTraderID",
+            "PartyIDSource2": "Proprietary",
+            "PartyRole2": "OrderOriginator",
+            "PartyID3": "TestTraderName",
+            "PartyIDSource3": "OrderOriginator",
+            "PartyRole3": "ExecutingTrader"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_the_one_group_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "PartyID": "TestClientID",
+            "PartyIDSource": "D",
+            "PartyRole": "3",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_for_the_one_group_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "PartyID": "TestClientID",
+            "PartyIDSource": "D",
+            "PartyRole": "3",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tag_5047(self) -> ReadLogMessage:
+        base_parameters = {
+            "AlgoPolicyName": "testTag5047",
+            "ClOrdID": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tag_5048(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "ClientAlgoPolicyID": "QA_Auto_ICEBERG"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_tag_1(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "ClientAccountGroupID": "KEPLER"
+        }
+        super().change_parameters(base_parameters)
+        return self
+

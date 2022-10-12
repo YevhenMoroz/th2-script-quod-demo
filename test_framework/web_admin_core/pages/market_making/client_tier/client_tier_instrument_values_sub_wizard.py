@@ -14,6 +14,10 @@ class ClientTierInstrumentValuesSubWizard(CommonPage):
     def get_symbol(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH)
 
+    def is_symbol_filed_contains_asterisk_symbol(self):
+        label = self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_LABEL_XPATH).text
+        return True if '*' in label else False
+
     def set_rfq_response_stream_ttl(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH,
                                value)

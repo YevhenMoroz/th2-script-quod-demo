@@ -1,5 +1,5 @@
-from test_cases.fx.fx_mm_rfq import QAP_T2845, QAP_T2843, QAP_T2629, \
-    QAP_T2931, QAP_T2846, QAP_T2844, QAP_T2819, QAP_T2818, QAP_T2817, QAP_T2816, QAP_T2815, \
+from test_cases.fx.fx_mm_rfq import  QAP_T2843, QAP_T2629, \
+    QAP_T2931, QAP_T2846, QAP_T2819, QAP_T2818, QAP_T2817, QAP_T2816, QAP_T2815, \
     QAP_T2814, QAP_T2740, QAP_T2732, QAP_T2731, QAP_2992, QAP_T2715, QAP_T2714, QAP_4748, QAP_T2865
 from test_cases.fx.fx_mm_rfq.QAP_T2392 import QAP_T2392
 from test_cases.fx.fx_mm_rfq.QAP_T2393 import QAP_T2393
@@ -30,6 +30,8 @@ from test_cases.fx.fx_mm_rfq.QAP_T2721 import QAP_T2721
 from test_cases.fx.fx_mm_rfq.QAP_T2739 import QAP_T2739
 from test_cases.fx.fx_mm_rfq.QAP_T2741 import QAP_T2741
 from test_cases.fx.fx_mm_rfq.QAP_T2842 import QAP_T2842
+from test_cases.fx.fx_mm_rfq.QAP_T2844 import QAP_T2844
+from test_cases.fx.fx_mm_rfq.QAP_T2845 import QAP_T2845
 from test_cases.fx.fx_mm_rfq.QAP_T2861 import QAP_T2861
 from test_cases.fx.fx_mm_rfq.QAP_T2863 import QAP_T2863
 from test_cases.fx.fx_mm_rfq.QAP_T2869 import QAP_T2869
@@ -184,14 +186,14 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region Manual Intervention
-        # update_settings_and_restart_qs("Manual Intervention")
-        QAP_T2442(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2549(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2550(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2564(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2582(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2592(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2597(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # # update_settings_and_restart_qs("Manual Intervention")
+        # QAP_T2442(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2549(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2550(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2564(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2582(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2592(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2597(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # endregion
 
         # region Interpolation
@@ -264,8 +266,9 @@ def test_run(parent_id=None, version=None):
         QAP_T2419(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2443(report_id, session_id, configuration.data_set, configuration.environment).execute()
         QAP_T2931.execute(report_id, case_params, session_id)
+        QAP_T2844(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2845(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2846.execute(report_id, session_id)
-        QAP_T2844.execute(report_id, session_id)
         QAP_T2819.execute(report_id, session_id)
         QAP_T2818.execute(report_id, session_id)
         QAP_T2817.execute(report_id, session_id)
@@ -344,7 +347,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8419(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7967(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2519(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2454(session_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2454(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region Synergy
 

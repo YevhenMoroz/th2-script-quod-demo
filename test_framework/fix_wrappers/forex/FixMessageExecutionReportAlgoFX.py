@@ -14,7 +14,8 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
 
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
                                          side: GatewaySide = GatewaySide.Sell,
-                                         status: Status = Status.Fill):
+                                         status: Status = Status.Fill,
+                                         response=None):
         if side is GatewaySide.Buy:
             if status is Status.Pending:
                 self.__set_pending_new_buy(new_order_single)
@@ -34,7 +35,7 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             elif status is Status.New:
                 self.__set_new_sell(new_order_single)
             elif status is Status.Fill:
-                self.__set_fill_sell(new_order_single)
+                self.__set_fill_sell(new_order_single, response)
             elif status is Status.PartialFill:
                 self.__set_partial_fill_sell(new_order_single)
             elif status is Status.Cancel:
@@ -131,9 +132,8 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         return self
 
     # CHECKED
-    def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None, response=None):
         temp = dict(
-            Account="*",
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
             CumQty=new_order_single.get_parameter('OrderQty'),
             Currency=new_order_single.get_parameter('Currency'),
@@ -184,6 +184,9 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
+        if response is not None:
+            if "Account" in response.get_parameters():
+                self.add_tag({"Account": "*"})
         return self
 
     # TODO: doublecheck
@@ -522,4 +525,3 @@ class FixMessageExecutionReportAlgoFX(FixMessageExecutionReport):
         )
         super().update_fields_in_component("Instrument", instrument)
         return self
-

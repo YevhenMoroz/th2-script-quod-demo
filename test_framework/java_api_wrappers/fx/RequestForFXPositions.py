@@ -12,12 +12,11 @@ class RequestForFXPositions(JavaApiMessage):
 
     def set_default_params(self):
         params_for_request = {
-            "SEND_SUBJECT": "QUOD.CLIENT1_1.POSIT",
+            "SEND_SUBJECT": "QUOD.PKS.FE",
             "REPLY_SUBJECT": "QUOD.POSIT.CLIENT1_1",
             "RequestForFXPositionsBlock": {
                 "PosReqType": "Positions",
-                # "AccountID": self.get_data_set().get_client_by_name("client_mm_1"),
-                "AccountID": "CLIENT1",
+                "AccountID": self.get_data_set().get_account_by_name("client_mm_1"),
                 "Currency": self.get_data_set().get_currency_by_name("currency_usd"),
                 "SubscriptionRequestType": "Subscribe",
             }

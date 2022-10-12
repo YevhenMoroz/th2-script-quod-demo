@@ -14,17 +14,17 @@ class OrderModificationRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.OrderModificationRequest.value)
         super().change_parameters(parameters)
 
-    def set_param(self, data_set: BaseDataSet, order_id, price, new_qty, client) -> None:
+    def set_default(self, data_set: BaseDataSet, order_id):
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderModificationRequestBlock': {
                 'OrdID': order_id,
                 'OrdType': OrderType.limit.value,
-                'Price': price,
+                'Price': "20",
                 'TimeInForce': 'DAY',
                 'PositionEffect': 'O',
-                'OrdQty': new_qty,
+                'OrdQty': "100",
                 'OrdCapacity': 'A',
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'MaxPriceLevels': '1',
@@ -32,10 +32,10 @@ class OrderModificationRequest(JavaApiMessage):
                 'SettlCurrency': data_set.get_currency_by_name('currency_1'),
                 'CancelChildren': 'N',
                 'ModifyChildren': 'N',
-                'RouteID': 1,
+                'RouteID': data_set.get_route_id_by_name("route_1"),
                 'ExecutionPolicy': 'C',
-                'AccountGroupID': client,
-                'WashBookAccountID': data_set.get_washbook_account_by_name('washbook_account_3')
+                'AccountGroupID': data_set.get_client_by_name("client_1"),
             }
         }
         super().change_parameters(base_parameters)
+        return self

@@ -19,7 +19,14 @@ from test_framework.java_api_wrappers.ors_messages.OrdListNotification import Or
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
-from test_framework.java_api_wrappers.ors_messages.Order_TradeEntryNotif import Order_TradeEntryNotif
+from test_framework.java_api_wrappers.ors_messages.OrderBagCancelReply import OrderBagCancelReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagCreationReply import OrderBagCreationReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagModificationReply import OrderBagModificationReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import OrderBagNotification
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 
 
 class JavaApiManager:
@@ -37,7 +44,7 @@ class JavaApiManager:
                                                          message.get_parameters(), self.get_session_alias()),
                 parent_event_id=self.get_case_id()))
 
-    def send_message_and_receive_response(self, message: JavaApiMessage, filter_map: dict = None):
+    def send_message_and_receive_response(self, message: JavaApiMessage):
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
                 request=ActJavaSubmitMessageRequest(
@@ -110,6 +117,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveCreationRequest.value:
+            response = self.act.submitOrderListWaveCreationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.ManualOrderCrossRequest.value:
             response = self.act.submitManualOrderCrossRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -121,6 +134,54 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(), message.get_parameters(),
                                                              self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderModificationRequest.value:
+            response = self.act.submitOrderModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagCreationRequest.value:
+            response = self.act.submitOrderBagCreationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagModificationRequest.value:
+            response = self.act.submitOrderBagModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagCancelRequest.value:
+            response = self.act.submitOrderBagCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagWaveRequest.value:
+            response = self.act.submitOrderBagWaveRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagWaveModificationRequest.value:
+            response = self.act.submitOrderBagWaveModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagWaveCancelRequest.value:
+            response = self.act.submitOrderBagWaveCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderBagDissociateRequest.value:
+            response = self.act.submitOrderBagDissociateRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
         else:
             response = None
@@ -194,6 +255,22 @@ class JavaApiManager:
                 response_fix_message = OrdReport()
             elif message_type == ORSMessageType.ManualOrderCrossReply.value:
                 response_fix_message = ManualOrderCrossReply()
+            elif message_type == ORSMessageType.OrderModificationReply.value:
+                response_fix_message = ManualOrderCrossReply()
+            elif message_type == ORSMessageType.OrderBagCreationReply.value:
+                response_fix_message = OrderBagCreationReply()
+            elif message_type == ORSMessageType.OrderBagNotification.value:
+                response_fix_message = OrderBagNotification()
+            elif message_type == ORSMessageType.OrderBagModificationReply.value:
+                response_fix_message = OrderBagModificationReply()
+            elif message_type == ORSMessageType.OrderBagCancelReply.value:
+                response_fix_message = OrderBagCancelReply()
+            elif message_type == ORSMessageType.OrderBagWaveNotification.value:
+                response_fix_message = OrderBagWaveNotification()
+            elif message_type == ORSMessageType.OrderBagWaveModificationReply.value:
+                response_fix_message = OrderBagWaveModificationReply()
+            elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
+                response_fix_message = OrderBagWaveCancelReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
@@ -223,9 +300,12 @@ class JavaApiManager:
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
-    def get_last_message(self, message_type) -> JavaApiMessage:
+    def get_last_message(self, message_type, filter_value=None) -> JavaApiMessage:
         self.response.reverse()
         for res in self.response:
             if res.get_message_type() == message_type:
+                if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
                 return res
         raise IOError(f"{message_type} not found")
