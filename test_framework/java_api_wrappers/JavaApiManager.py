@@ -44,7 +44,7 @@ class JavaApiManager:
                                                          message.get_parameters(), self.get_session_alias()),
                 parent_event_id=self.get_case_id()))
 
-    def send_message_and_receive_response(self, message: JavaApiMessage, filter_map: dict = None):
+    def send_message_and_receive_response(self, message: JavaApiMessage):
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
                 request=ActJavaSubmitMessageRequest(
@@ -113,6 +113,12 @@ class JavaApiManager:
                     parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.NewOrderList.value:
             response = self.act.submitNewOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveCreationRequest.value:
+            response = self.act.submitOrderListWaveCreationRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
@@ -294,9 +300,12 @@ class JavaApiManager:
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
-    def get_last_message(self, message_type) -> JavaApiMessage:
+    def get_last_message(self, message_type, filter_value=None) -> JavaApiMessage:
         self.response.reverse()
         for res in self.response:
             if res.get_message_type() == message_type:
+                if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
                 return res
         raise IOError(f"{message_type} not found")
