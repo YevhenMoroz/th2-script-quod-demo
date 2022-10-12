@@ -226,6 +226,7 @@ class FxSymbols(Enum):
     symbol_synth_3 = "EUR/CHF"  # cross thought USD
     symbol_synth_4 = "GBP/NOK"  # cross thought USD
     symbol_synth_5 = "GBP/CAD"  # cross thought USD
+    symbol_synth_6 = "USD/CHF"  # mystery symbol
 
     symbol_ndf_synth_1 = "SGD/RUB"  # cross thought USD
 
