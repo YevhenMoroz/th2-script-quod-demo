@@ -14,7 +14,8 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 
-#percentage of price
+
+# percentage of price
 class QAP_T2916(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
@@ -31,8 +32,8 @@ class QAP_T2916(TestCase):
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.platinum = self.data_set.get_client_by_name("client_mm_11")
-        self.eur_gbp = self.data_set.get_symbol_by_name('symbol_3')
-        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.eur_gbp = self.data_set.get_symbol_by_name('symbol_ndf_1')
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spo_ndf")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.instrument_spot = {
@@ -42,34 +43,34 @@ class QAP_T2916(TestCase):
         self.no_related_symbols_spot = [{
             'Instrument': self.instrument_spot,
             'SettlType': self.settle_type_spot}]
-        self.md_eur_gbp_spo = "EUR/GBP:SPO:REG:HSBC"
+        self.md_eur_gbp_spo = "EUR/CAD:SPO:REG:HSBC"
         self.md_entry_px_0 = 1.1815
         self.md_entry_px_1 = 1.18151
-        self.mm_md_entry_px_0 = 1.18537
-        self.mm_md_entry_px_1 = 1.19536
+        self.mm_md_entry_px_0 = 1.1854
+        self.mm_md_entry_px_1 = 1.19539
         self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
         self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
         self.no_md_entries = [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": 1.1815,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryDate": self.md_entry_date,
-                    "MDEntryTime": self.md_entry_time
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": 1.18151,
-                    "MDEntrySize": 1000000,
-                    "MDQuoteType": 1,
-                    "MDEntryPositionNo": 1,
-                    "SettlDate": self.settle_date_spot,
-                    "MDEntryDate": self.md_entry_date,
-                    "MDEntryTime": self.md_entry_time
-                }]
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1815,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": self.md_entry_date,
+                "MDEntryTime": self.md_entry_time
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": self.settle_date_spot,
+                "MDEntryDate": self.md_entry_date,
+                "MDEntryTime": self.md_entry_time
+            }]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -86,9 +87,11 @@ class QAP_T2916(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.platinum)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0,
+                                                         SettlDate=self.settle_date_spot)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1,
+                                                         SettlDate=self.settle_date_spot)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion
