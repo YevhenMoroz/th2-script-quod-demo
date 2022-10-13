@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
@@ -14,6 +15,8 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
 class QAP_T2460(TestCase):
@@ -26,6 +29,9 @@ class QAP_T2460(TestCase):
         self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.manual_settings_request = QuoteManualSettingsRequestFX(data_set=self.data_set)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
@@ -50,12 +56,10 @@ class QAP_T2460(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.fix_md.set_market_data(). \
-            update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0'). \
-            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
-        self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
-        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD IND")
-        self.sleep(10)
+        self.manual_settings_request.set_defaults()
+        self.manual_settings_request.turn_executable_off()
+        self.java_manager.send_message(self.manual_settings_request)
+        time.sleep(1)
         # endregion
 
         # region Step 2
@@ -74,24 +78,25 @@ class QAP_T2460(TestCase):
              "SettlDate": self.settle_date_1w,
              "SettlType": self.settle_type_1w,
              "TimeInForce": "3"})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_rejected)
+
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_rejected,
+                                                               response=response[-1])
         self.execution_report.change_parameter("Text", "not tradeable")
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
         # region Step 4
         self.new_order_single.set_default()
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
-        self.execution_report_doubler.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report_doubler.set_params_from_new_order_single(self.new_order_single, self.sts_filled,
+                                                                       response=response[-1])
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Step 5
-        self.fix_md.set_market_data(). \
-            update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
-        self.fix_md.update_MDReqID(self.md_req_id, self.fix_env.feed_handler, "FX")
-        self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")
+        self.manual_settings_request.set_defaults()
+        self.java_manager.send_message(self.manual_settings_request)
         # endregion
