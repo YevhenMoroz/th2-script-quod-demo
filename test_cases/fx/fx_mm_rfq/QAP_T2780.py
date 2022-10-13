@@ -1,16 +1,12 @@
-import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets import constants
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
@@ -19,9 +15,6 @@ from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessag
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns, Status
-from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
 
 class QAP_T2780(TestCase):
@@ -40,6 +33,7 @@ class QAP_T2780(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.action_request = QuoteRequestActionRequestFX()
+        self.quote = FixMessageQuoteFX()
         self.java_quote = OrderQuoteFX()
         self.instrument_spot = {
             "Symbol": self.symbol,
@@ -57,7 +51,7 @@ class QAP_T2780(TestCase):
                                                            Currency=self.currency, Instrument=self.instrument_spot,
                                                            OrderQty=self.qty, Side="2")
         response = self.fix_manager_gtw.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
-        quote = FixMessageQuoteFX().set_params_for_dealer(self.quote_request)
+        self.quote.set_params_for_dealer(self.quote_request)
         self.sleep(2)
         req_id = check_quote_request_id(self.quote_request)
         # endregion
@@ -72,7 +66,7 @@ class QAP_T2780(TestCase):
         self.java_api_manager.send_message(self.java_quote)
         self.quote_response = next(response)
         quote_from_di = self.fix_manager_gtw.parse_response(self.quote_response)[0]
-        self.fix_verifier.check_fix_message(fix_message=quote)
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
         # region Step 3
         new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_for_dealer(self.quote_request,
