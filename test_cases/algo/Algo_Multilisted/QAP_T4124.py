@@ -94,7 +94,7 @@ class QAP_T4124(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_0)
 
-        time.sleep(3)
+        time.sleep(4)
         # endregion
 
         # region Check Sell side
@@ -146,6 +146,7 @@ class QAP_T4124(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_4)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+        time.sleep(3)
 
         # region check cancel first dma child order
         cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
