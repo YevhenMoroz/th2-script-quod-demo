@@ -1,7 +1,6 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8718 import QAP_T8718
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 
@@ -17,7 +16,6 @@ def test_run(parent_id=None, version=None):
     try:
         # region Iceberg: Route/Venue
         configuration = ComponentConfiguration("Participation")
-        # QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         pass
 
     except Exception:

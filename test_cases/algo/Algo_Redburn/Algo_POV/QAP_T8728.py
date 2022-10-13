@@ -19,7 +19,7 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
-class QAP_T8718(TestCase):
+class QAP_T8728(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
