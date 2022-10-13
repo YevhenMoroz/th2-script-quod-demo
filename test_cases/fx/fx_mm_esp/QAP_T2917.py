@@ -29,8 +29,8 @@ class QAP_T2917(TestCase):
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.platinum = self.data_set.get_client_by_name("client_mm_11")
-        self.eur_jpy = self.data_set.get_symbol_by_name('symbol_4')
-        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.eur_jpy = self.data_set.get_symbol_by_name('symbol_12')
+        self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.eur_jpy_spot = {
@@ -40,7 +40,7 @@ class QAP_T2917(TestCase):
         self.no_related_symbols_spot = [{
             'Instrument': self.eur_jpy_spot,
             'SettlType': self.settle_type_spot}]
-        self.md_eur_jpy_spo = "EUR/JPY:SPO:REG:HSBC"
+        self.md_eur_jpy_spo = "USD/CAD:SPO:REG:HSBC"
         self.md_entry_px_0 = 1.1815
         self.md_entry_px_1 = 1.18151
         self.mm_md_entry_px_0 = self.md_entry_px_0 - 0.00001
@@ -54,7 +54,7 @@ class QAP_T2917(TestCase):
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_date_spot,
+                "SettlDate": self.settle_date_tom,
                 "MDEntryDate": self.md_entry_date,
                 "MDEntryTime": self.md_entry_time
             },
@@ -64,7 +64,7 @@ class QAP_T2917(TestCase):
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_date_spot,
+                "SettlDate": self.settle_date_tom,
                 "MDEntryDate": self.md_entry_date,
                 "MDEntryTime": self.md_entry_time
             }]
@@ -85,8 +85,10 @@ class QAP_T2917(TestCase):
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.mm_md_entry_px_0,
+                                                         SettlDate=self.settle_date_tom)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.mm_md_entry_px_1,
+                                                         SettlDate=self.settle_date_tom)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion
