@@ -91,7 +91,7 @@ class QAP_T4885(TestCase):
         self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
         # endregion
 
-        now = datetime.today()
+        now = datetime.utcnow()
         start_time = now.strftime("%Y%m%d-%H:%M:%S")
         end_time = (now + timedelta(minutes=2)).strftime("%Y%m%d-%H:%M:%S")
 
