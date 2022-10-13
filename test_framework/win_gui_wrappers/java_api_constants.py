@@ -11,6 +11,13 @@ class OrderReplyConst(Enum):
     PostTradeStatus_BKD = 'BKD'
     DoneForDay_YES = "Y"
     TransStatus_OPN = 'OPN'
+    DiscloseExec_R = 'R'
+    DiscloseExec_M = 'M'
+
+
+class ExecutionPolicyConst(Enum):
+    DMA = 'D'
+    CARE = 'C'
 
 
 class SubmitRequestConst(Enum):
@@ -47,6 +54,11 @@ class CommissionAmountTypeConst(Enum):
     CommissionAmountType_BRK = 'BRK'
 
 
+class OrdListNotificationConst(Enum):
+    ListOrderStatus_EXE = 'EXE'
+    OrderListWaveStatus_TER = 'TER'
+
+
 class QtyPercentageProfile(Enum):
     RemainingQty = "REM"
     InitialQty = "INI"
@@ -67,6 +79,23 @@ class JavaApiFields(Enum):
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
+    ExecutionPolicy = 'ExecutionPolicy'
+    """List Wave"""
+    OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
+    OrderNotificationElements = "OrdNotificationElements"
+    OrderListWaveStatus = 'OrderListWaveStatus'
+    PercentQtyToRelease = 'PercentQtyToRelease'
+    RouteID = 'RouteID'
+    """External Algo"""
+    ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
+    ExternalAlgoParameterListBlock = 'ExternalAlgoParameterListBlock'
+    ExternalAlgoParameterBlock = 'ExternalAlgoParameterBlock'
+    AlgoParamString = 'AlgoParamString'
+    AlgoParameterName = 'AlgoParameterName'
+    VenueScenarioParameterID = 'VenueScenarioParameterID'
+    ScenarioID = 'ScenarioID'
+    ExternalAlgo = 'ExternalAlgo'
+
 
 
 class JavaApiPartyRoleConstants(Enum):
