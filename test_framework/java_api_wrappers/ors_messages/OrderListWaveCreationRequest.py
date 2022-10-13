@@ -14,8 +14,8 @@ class OrderListWaveCreationRequest(JavaApiMessage):
         for ord_id in ord_id_list:
             id_list.append({'ParentOrdID': ord_id})
         base_parameters = {
-
             'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderListWaveCreationRequestBlock': {
                 'ParentOrdrList': {'ParentOrdrBlock': id_list},
                 'OrderListID': list_id,
