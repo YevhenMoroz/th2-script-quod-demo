@@ -98,7 +98,7 @@ class QAP_T4123(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_0)
 
-        time.sleep(3)
+        time.sleep(4)
         # endregion
 
         # region Check Sell side
@@ -152,6 +152,7 @@ class QAP_T4123(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_4)
         cancel_request_multilisting_order = FixMessageOrderCancelRequest(self.multilisting_order)
 
+        time.sleep(3)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_4)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
