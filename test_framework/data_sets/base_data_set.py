@@ -25,6 +25,7 @@ class BaseDataSet:
     symbols = None
     security_types = None
     settle_types = None
+    settle_types_ja = None
     settle_dates = None
     routes = None
     route_id = None
@@ -93,6 +94,7 @@ class BaseDataSet:
     symbol = None
     instr_type = None
     fx_istr_type_wa = None
+    fx_istr_type_ja = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -279,6 +281,13 @@ class BaseDataSet:
             return getattr(self.fx_istr_type_wa, name).value
         return ValueError(f"{self.fx_istr_type_wa} not found!")
 
+
+    def get_fx_instr_type_ja(self, name: str):
+        if hasattr(self.fx_istr_type_ja, name):
+            return getattr(self.fx_istr_type_ja, name).value
+        return ValueError(f"{self.fx_istr_type_ja} not found!")
+
+
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
             return getattr(self.mic, name).value
@@ -321,6 +330,15 @@ class BaseDataSet:
         if hasattr(self.settle_types, name):
             return getattr(self.settle_types, name).value
         raise ValueError(f"{self.settle_types} not found!")
+
+    def get_settle_type_ja_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypesJavaAPi
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.settle_types_ja, name):
+            return getattr(self.settle_types_ja, name).value
+        raise ValueError(f"{self.settle_types_ja} not found!")
 
     def get_settle_date_by_name(self, name: str):
         """
