@@ -39,12 +39,20 @@ def spo_ndf():
     return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
 
 
+def spo_ndf_java_api():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y-%m-%dT%H:%M:%S')
+
+
 def sn():
     return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y%m%d')
 
 
 def wk1():
     return (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y%m%d')
+
+
+def wk1_java_api():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=7)).date().strftime('%Y-%m-%dT%H:%M:%S')
 
 
 def wk1_ndf():
@@ -57,6 +65,10 @@ def wk1_ndf_maturity():
 
 def wk2():
     return (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y%m%d')
+
+
+def wk2_java_api():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=12)).date().strftime('%Y-%m-%dT%H:%M:%S')
 
 
 def wk2_ndf():

@@ -25,12 +25,12 @@ class FixQuoteRequestFX(JavaApiMessage):
                         "InstrumentBlock": {
                             "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
                             "ProductType": "CURRENCY",
-                            "InstrType": "FXSpot",
+                            "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_spot"),
                             "Tenor": self.get_data_set().get_tenor_by_name("tenor_spot")
                         },
                         "QuoteType": "Tradeable",
                         "Side": "Buy",
-                        "SettlType": "Regular",
+                        "SettlType": self.get_data_set().get_fx_instr_type_ja("spot"),
                         "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                         "OrdType": "PreviouslyQuoted",
@@ -44,4 +44,41 @@ class FixQuoteRequestFX(JavaApiMessage):
             }
         }
         super().change_parameters(quote_request_params)
+        return self
+
+    def set_rfq_params_fwd(self):
+        quote_request_params = {
+            "SEND_SUBJECT": "QUOD.ORS.FIX",
+            "REPLY_SUBJECT": "QUOD.FIX_REPLY.gtwquod9",
+            "QuoteRequestBlock": {
+                "ClientQuoteReqID": bca.client_orderid(9),
+                "QuoteReqList": {
+                    "QuoteReqBlock": [{
+                        "InstrumentBlock": {
+                            "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                            "ProductType": "CURRENCY",
+                            "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_fwd"),
+                            "Tenor": self.get_data_set().get_tenor_java_api_by_name("tenor_1w")
+                        },
+                        "QuoteType": "Tradeable",
+                        "Side": "Buy",
+                        "SettlType": self.get_data_set().get_settle_type_ja_by_name("wk1"),
+                        "SettlDate": self.get_data_set().get_settle_date_by_name("wk1_java_api"),
+                        "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
+                        "OrdType": "PreviouslyQuoted",
+                        "OrdQty": "1000000",
+                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
+                        "QuotingSessionID": "10",
+                        "LiveQuoteID": bca.client_orderid(9),
+                    }]
+                }
+
+            }
+        }
+        super().change_parameters(quote_request_params)
+        return self
+
+    def change_client(self, client):
+        params = self.get_parameters()
+        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
         return self
