@@ -112,6 +112,7 @@ class PKSMessageType(Enum):
 
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
     Quote = "Order_Quote"
 
 
