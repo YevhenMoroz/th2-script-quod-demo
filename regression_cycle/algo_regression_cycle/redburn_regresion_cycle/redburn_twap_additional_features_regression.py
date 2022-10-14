@@ -21,9 +21,9 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfiguration("Scaling")
         # QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        QAP_T4332.execute(report_id)
-        QAP_T4286.execute(report_id)
-        QAP_T4335.execute(report_id)
+        # QAP_T4332.execute(report_id)
+        # QAP_T4286.execute(report_id)
+        # QAP_T4335.execute(report_id)
 
         # region Needs Refactoring
         # QAP_T4692.execute(report_id)

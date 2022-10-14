@@ -18,9 +18,9 @@ def test_run(parent_id=None, version=None):
         # region Iceberg: Route/Venue
         configuration = ComponentConfiguration("POV_Scaling")
 
-        QAP_T4287.execute(report_id)
-        QAP_T4288.execute(report_id)
-        QAP_T4289.execute(report_id)
+        # QAP_T4287.execute(report_id)
+        # QAP_T4288.execute(report_id)
+        # QAP_T4289.execute(report_id)
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

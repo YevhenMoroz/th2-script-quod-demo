@@ -27,8 +27,8 @@ def test_run(parent_id=None, version=None):
         QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        QAP_T4333.execute(report_id)
-        QAP_T4330.execute(report_id)
+        # QAP_T4333.execute(report_id)
+        # QAP_T4330.execute(report_id)
 
         # region Needs Refactoring
         # QAP_T4569.execute(report_id)

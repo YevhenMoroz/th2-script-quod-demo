@@ -33,7 +33,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4323(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4324(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        QAP_T4303.execute(report_id)
+        # QAP_T4303.execute(report_id)
 
         # region Needs Refactoring
         # QAP_T4378.execute(report_id)

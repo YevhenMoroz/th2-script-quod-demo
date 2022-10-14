@@ -19,7 +19,7 @@ def test_run(parent_id=None, version=None):
         # configuration = ComponentConfiguration("Participation")
         configuration = ComponentConfiguration("Scaling")
 
-        QAP_T4313.execute(report_id)
+        # QAP_T4313.execute(report_id)
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
