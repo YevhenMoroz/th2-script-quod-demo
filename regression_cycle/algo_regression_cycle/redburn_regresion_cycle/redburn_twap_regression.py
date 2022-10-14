@@ -1,7 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4286
+from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4286, QAP_T4303, QAP_T4335
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -19,6 +19,8 @@ def test_run(parent_id=None, version=None):
         # QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         QAP_T4286.execute(report_id)
+        QAP_T4303.execute(report_id)
+        QAP_T4335.execute(report_id)
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
