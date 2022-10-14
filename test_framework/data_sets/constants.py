@@ -214,6 +214,9 @@ class TargetStrategy(Enum):
     SynthBlock = '1019'
 
 
+class Custom(Enum):
+    Passive = 'Passive'
+
 class OrderSide(Enum):
     Buy = 1
     Sell = 2
