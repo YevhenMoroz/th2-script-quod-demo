@@ -38,6 +38,7 @@ class BaseDataSet:
     client_tiers_id = None
     days_of_week = None
     tenors = None
+    tenors_java_api = None
     auto_hedgers = None
     auto_hedgers_id = None
     algo_policies = None
@@ -375,6 +376,15 @@ class BaseDataSet:
         if hasattr(self.tenors, name):
             return getattr(self.tenors, name).value
         raise ValueError(f"{self.tenors} not found!")
+
+    def get_tenor_java_api_by_name(self, name: str):
+        """
+        get tenor by name from FxTenors
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors_java_api, name):
+            return getattr(self.tenors_java_api, name).value
+        raise ValueError(f"{self.tenors_java_api} not found!")
 
     def get_auto_hedger_by_name(self, name: str):
         """

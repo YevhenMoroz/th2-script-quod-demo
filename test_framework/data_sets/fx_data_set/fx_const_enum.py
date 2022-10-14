@@ -114,14 +114,14 @@ class FxClientTiers(Enum):
 
 
 class FxClientTiersID(Enum):
-    client_tier_id_1 = "2200009"   # For ESP_MM testing
-    client_tier_id_2 = "2600011"   # For MM_RFQ testing - Explicitly Request Swap Points
-    client_tier_id_3 = "2400009"   # For MM_RFQ testing
-    client_tier_id_4 = "2000010"   # For ESP_MM testing
-    client_tier_id_5 = "2000011"   # For ESP_MM testing
-    client_tier_id_6 = "2600010"   # For AutoHedger testing
-    client_tier_id_7 = "2600009"   # For MM_Positions testing
-    client_tier_id_8 = "2600012"   # For AutoHedger testing
+    client_tier_id_1 = "2200009"  # For ESP_MM testing Silver
+    client_tier_id_2 = "2600011"  # For MM_RFQ testing - Explicitly Request Swap Points Argentina1
+    client_tier_id_3 = "2400009"  # For MM_RFQ testing Iridium1
+    client_tier_id_4 = "2000010"  # For ESP_MM testing
+    client_tier_id_5 = "2000011"  # For ESP_MM testing
+    client_tier_id_6 = "2600010"  # For AutoHedger testing
+    client_tier_id_7 = "2600009"  # For MM_Positions testing
+    client_tier_id_8 = "2600012"  # For AutoHedger testing
     client_tier_id_11 = "1200005"  # For Margin Format testing
 
 
@@ -165,6 +165,21 @@ class FxTenors(Enum):
     tenor_2m = "2M"
     tenor_1y = "1Y"
     tenor_2y = "2Y"
+    tenor_sn = "SN"
+    tenor_mar_imm = "Mar IMM"
+
+
+class FxTenorsJavaApi(Enum):
+    tenor_spot = "SPO"
+    tenor_tod = "CAS"
+    tenor_tom = "TOM"
+    tenor_1w = "WK1"
+    tenor_2w = "WK2"
+    tenor_3w = "WK3"
+    tenor_1m = "MO1"
+    tenor_2m = "MO2"
+    tenor_1y = "YR1"
+    tenor_2y = "YR2"
     tenor_sn = "SN"
     tenor_mar_imm = "Mar IMM"
 
