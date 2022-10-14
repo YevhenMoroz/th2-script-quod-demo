@@ -10,7 +10,7 @@ from th2_grpc_common.common_pb2 import ConnectionID, Direction
 from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -59,7 +59,7 @@ instrument = {
         }
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, qty, wld_price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
     return [nos_ioc_rule, ocr_rule]
@@ -67,7 +67,7 @@ def rule_creation():
 
 def rule_destroyer(list_rules):
     if list_rules != None:
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         for rule in list_rules:
             rule_manager.remove_rule(rule)
 

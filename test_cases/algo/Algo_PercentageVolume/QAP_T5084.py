@@ -12,7 +12,7 @@ from custom.basic_custom_actions import timestamps, create_event, message_to_grp
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from custom.verifier import Verifier
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -49,14 +49,14 @@ connectivity_fh = 'fix-fh-310-columbia'
 report_id = None   
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination, price)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination, True)
     ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
     return [nos_rule, ocr_rule, ocrr_rule]
 
 def rule_destroyer(list_rules):
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     for rule in list_rules:
         rule_manager.remove_rule(rule)
 
