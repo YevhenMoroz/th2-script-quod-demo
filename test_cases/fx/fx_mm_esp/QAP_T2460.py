@@ -56,8 +56,8 @@ class QAP_T2460(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.manual_settings_request.set_defaults()
-        self.manual_settings_request.turn_executable_off()
+        self.manual_settings_request.set_default_params()
+        self.manual_settings_request.set_pricing_off()
         self.java_manager.send_message(self.manual_settings_request)
         time.sleep(1)
         # endregion
@@ -97,6 +97,6 @@ class QAP_T2460(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Step 5
-        self.manual_settings_request.set_defaults()
+        self.manual_settings_request.set_default_params()
         self.java_manager.send_message(self.manual_settings_request)
         # endregion
