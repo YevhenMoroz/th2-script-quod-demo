@@ -20,7 +20,9 @@ def test_run(parent_id=None, version=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
-        configuration = ComponentConfiguration("Participation")
+        # configuration = ComponentConfiguration("Participation")
+        configuration = ComponentConfiguration("Scaling")
+
         QAP_T8716(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
