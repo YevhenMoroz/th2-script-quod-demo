@@ -22,15 +22,18 @@ def test_run(parent_id=None, version=None):
 
         QAP_T4331.execute(report_id)
         QAP_T4334.execute(report_id)
-        QAP_T4563.execute(report_id)
-        QAP_T4583.execute(report_id)
-        QAP_T4584.execute(report_id)
-        QAP_T4601.execute(report_id)
-        QAP_T4611.execute(report_id)
-        QAP_T4612.execute(report_id)
-        QAP_T4613.execute(report_id)
-        QAP_T4615.execute(report_id)
-        QAP_T4616.execute(report_id)
+
+        # region Needs Refactoring
+        # QAP_T4563.execute(report_id)
+        # QAP_T4583.execute(report_id)
+        # QAP_T4584.execute(report_id)
+        # QAP_T4601.execute(report_id)
+        # QAP_T4611.execute(report_id)
+        # QAP_T4612.execute(report_id)
+        # QAP_T4613.execute(report_id)
+        # QAP_T4615.execute(report_id)
+        # QAP_T4616.execute(report_id)
+        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
