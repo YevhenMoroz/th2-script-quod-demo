@@ -27,6 +27,7 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             "InstrSymbol": "EUR/USD",
             "ClientTierID": "2800013",
             "Tenor": "SPO"}
+        return self
 
     def set_defaults(self):
         self.params_for_request = {
@@ -50,6 +51,7 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
                 "Tenor": "SPO"}}
 
         super().change_parameters(self.params_for_request)
+        return self
 
     def set_specific_bands_and_margins(self, bands: int, bid_margins: str = "0.1",
                                        offer_margins: str = "0.1"):
@@ -58,12 +60,14 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"].append(
                 {"BidMargin": str(bid_margins), "OfferMargin": str(offer_margins), "MDQuoteType": "TRD",
                  "IndiceUpperQty": band})
+        return self
 
     def update_margins_by_index(self, index: int, bid_margin: str, offer_margin: str):
         self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"]["QuoteAdjustmentEntryBlock"][
             index - 1].update(
             {"BidMargin": bid_margin, "OfferMargin": offer_margin, "MDQuoteType": "TRD",
              "IndiceUpperQty": index})
+        return self
 
     def disable_pricing_by_index(self, index: int):
         self.params_for_request["QuoteAdjustmentRequestBlock"]["QuoteAdjustmentEntryList"][
@@ -71,16 +75,21 @@ class QuoteAdjustmentRequestFX(JavaApiMessage):
             {"QuoteConditionList": {"QuoteConditionBlock":
                 [{"QuoteConditionEnum": "Closed"}]
             }})
+        return self
 
     def update_instrument(self, instrument: str):
         self.params_for_request["QuoteAdjustmentRequestBlock"].update({"InstrSymbol": instrument})
+        return self
 
     def update_client_tier(self, clienttier: str):
         self.params_for_request["QuoteAdjustmentRequestBlock"].update({"ClientTierID": clienttier})
+        return self
 
     def update_tenor(self, tenor: str):
         self.params_for_request["QuoteAdjustmentRequestBlock"].update({"Tenor": tenor})
+        return self
 
     def change_subject(self, subject):
         self.change_parameter("SEND_SUBJECT", f"QUOD.{subject}.FE")
         self.change_parameter("REPLY_SUBJECT", f"QUOD.FE.{subject}")
+        return self
