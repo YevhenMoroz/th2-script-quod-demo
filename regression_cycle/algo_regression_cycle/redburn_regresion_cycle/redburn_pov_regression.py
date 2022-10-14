@@ -17,7 +17,7 @@ def test_run(parent_id=None, version=None):
     try:
         # region Iceberg: Route/Venue
         configuration = ComponentConfiguration("Participation")
-        QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         pass
 
