@@ -169,17 +169,17 @@ class QAP_T8716(TestCase):
         # region Check passive child order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Passive child order - 1", self.test_id))
 
-        passive_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        passive_child_order_1.change_parameters(dict(OrderQty=self.qty_passive_child_1, Price=self.price_bid_1, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(passive_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
+        self.passive_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.passive_child_order_1.change_parameters(dict(OrderQty=self.qty_passive_child_1, Price=self.price_bid_1, Instrument='*'))
+        self.fix_verifier_buy.check_fix_message(self.passive_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
 
-        pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_pending)
+        pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
 
-        new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_pending)
+        new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  Passive Child 1')
 
-        partial_fill_passive_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_partial_fill)
+        partial_fill_passive_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_partial_fill)
         partial_fill_passive_child_order_1.change_parameters(dict(CumQty=self.executed_passive_child_qty))
         self.fix_verifier_buy.check_fix_message(partial_fill_passive_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill Passive Child 1")
         # endregion
@@ -260,6 +260,10 @@ class QAP_T8716(TestCase):
         cancel_request_pov_order = FixMessageOrderCancelRequest(self.pov_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("Cancel passive child order - 1", self.test_id))
+        cancel_passive_child_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_passive_child_order, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel')
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
