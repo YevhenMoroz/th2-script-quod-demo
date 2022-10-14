@@ -14,7 +14,7 @@ from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
 from th2_grpc_common.common_pb2 import ConnectionID
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from custom.verifier import Verifier
 from th2_grpc_act_gui_quod.act_ui_win_pb2 import VerificationDetails
 
@@ -48,14 +48,14 @@ connectivity_sell_side = "fix-ss-310-columbia-standart"
 connectivity_fh = 'fix-fh-310-columbia'
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
     return [nos_rule, ocrr_rule,ocr_rule]
 
 def rule_destroyer(list_rules):
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     for rule in list_rules:
         rule_manager.remove_rule(rule)
 

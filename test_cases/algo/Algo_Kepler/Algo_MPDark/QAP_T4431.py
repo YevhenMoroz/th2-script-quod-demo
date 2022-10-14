@@ -5,7 +5,7 @@ from pathlib import Path
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -107,7 +107,7 @@ class QAP_T4431(TestCase):
         # endregion
 
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rfq_1_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay_for_rfq)
         rfq_2_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay_for_rfq)
         nos_1_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price, self.price, self.qty_chix_child, self.traded_qty_for_1st_child, self.delay_for_partial_fill_and_fill)
@@ -212,5 +212,5 @@ class QAP_T4431(TestCase):
         self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "LISResidentTime", "45000")
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

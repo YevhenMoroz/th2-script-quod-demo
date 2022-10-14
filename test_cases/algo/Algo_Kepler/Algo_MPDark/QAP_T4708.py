@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -86,7 +86,7 @@ class QAP_T4708(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rfq_1_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
@@ -186,5 +186,5 @@ class QAP_T4708(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

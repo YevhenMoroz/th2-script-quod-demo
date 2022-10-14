@@ -3,7 +3,7 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -52,7 +52,7 @@ connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
 connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
 
 def rules_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_nav)
     nos_trade_rule1 = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(connectivity_buy_side, account, ex_destination_1, price_nav, price_nav, qty, qty, 0)
 
@@ -125,5 +125,5 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(rules_list)

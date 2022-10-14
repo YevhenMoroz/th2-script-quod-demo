@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -95,7 +95,7 @@ class QAP_T4741(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
         rfq_rule2 = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty_after_trade, self.qty_after_trade, self.new_reply, self.restated_reply, 5000)
         rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
@@ -272,5 +272,5 @@ class QAP_T4741(TestCase):
         self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark", "LISResidentTime", "45000")
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

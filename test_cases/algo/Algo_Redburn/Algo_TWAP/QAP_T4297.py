@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
+from rule_management import RuleManager, Simulators, Simulators
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
