@@ -38,7 +38,7 @@ class QAP_T2459(TestCase):
                 'SecurityType': self.security_type_spot,
                 'Product': '4', },
             'SettlType': self.settle_type_spot, }]
-        self.bands_nok_sek = ["1000000", '3000000']
+        self.bands_nok_sek = []
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
                 'Symbol': self.eur_usd,
@@ -72,7 +72,12 @@ class QAP_T2459(TestCase):
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_nok_sek)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        # region adapting for flexible market data
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands_nok_sek.append("*")
+        # endregion
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,

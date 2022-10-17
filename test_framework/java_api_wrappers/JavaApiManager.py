@@ -1,3 +1,5 @@
+import logging
+
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
@@ -7,6 +9,8 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
+from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
+from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
@@ -39,6 +43,7 @@ class JavaApiManager:
         self.response = None
 
     def send_message(self, message: JavaApiMessage) -> None:
+        logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         self.act.sendMessage(
             request=ActJavaSubmitMessageRequest(
                 message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -46,6 +51,7 @@ class JavaApiManager:
                 parent_event_id=self.get_case_id()))
 
     def send_message_and_receive_response(self, message: JavaApiMessage):
+        logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
                 request=ActJavaSubmitMessageRequest(
@@ -184,6 +190,18 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.QuoteRequest.value:
+            response = self.act.submitFixQuoteRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.QuoteRequestActionRequest.value:
+            response = self.act.submitQuoteRequestActionRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -274,6 +292,11 @@ class JavaApiManager:
                 response_fix_message = OrderBagWaveModificationReply()
             elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
                 response_fix_message = OrderBagWaveCancelReply()
+            elif message_type == ORSMessageType.QuoteRequestNotif.value:
+                response_fix_message = QuoteRequestNotifFX()
+            elif message_type == ORSMessageType.QuoteRequestActionReply.value:
+                response_fix_message = QuoteRequestActionReplyFX()
+
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
