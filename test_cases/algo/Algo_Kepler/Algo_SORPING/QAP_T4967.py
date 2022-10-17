@@ -36,7 +36,7 @@ class QAP_T4967(TestCase):
         self.qty = 1500
         self.min_qty = 700
         self.display_qty = 750
-        self.price = 45
+        self.price = 35
         self.dark_price = 30
         self.traded_qty = 0
         self.qty_for_md = 10000
@@ -57,7 +57,6 @@ class QAP_T4967(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminate = Status.Eliminate
-        self.status_fill = Status.Fill
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -189,6 +188,8 @@ class QAP_T4967(TestCase):
         er_new_dma_qdl6_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit6))
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl6_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
+
+        time.sleep(5)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
