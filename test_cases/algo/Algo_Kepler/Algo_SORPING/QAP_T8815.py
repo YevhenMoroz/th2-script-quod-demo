@@ -172,6 +172,8 @@ class QAP_T8815(TestCase):
         er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+
+        time.sleep(3)
         
         # region check reject cancel dma child order
         er_reject_cancel_dma_qdl11_order = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_qdl11_order, self.gateway_side_buy, self.status_reject)
