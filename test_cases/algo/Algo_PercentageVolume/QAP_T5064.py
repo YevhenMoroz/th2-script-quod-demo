@@ -7,7 +7,7 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -78,7 +78,7 @@ class QAP_T5064(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [ocr_rule]
         # endregion
@@ -139,4 +139,4 @@ class QAP_T5064(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
 
-        RuleManager().remove_rules(self.rule_list)
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)
