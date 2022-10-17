@@ -176,9 +176,11 @@ class QAP_T4969(TestCase):
 
         time.sleep(60)
 
+        # region Set up PCL phase
         market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
+        # endregion
 
         time.sleep(3)
 
@@ -220,6 +222,14 @@ class QAP_T4969(TestCase):
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        # endregion
+
+        time.sleep(5)
+
+        # region Set up Open phase
+        market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)
