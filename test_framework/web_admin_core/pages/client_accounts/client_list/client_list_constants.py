@@ -1,5 +1,5 @@
 class ClientListConstants:
-    CLIENT_LIST_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Client List ']"
+    CLIENT_LIST_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Client Lists']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
@@ -14,7 +14,7 @@ class ClientListConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[normalize-space()="Client List"]//..//*[normalize-space()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Client Lists"]//..//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -40,7 +40,7 @@ class ClientListConstants:
     WIZARD_CLIENT_XPATH = '//*[@placeholder="Client *"]'
     WIZARD_DISPLAYED_CLIENTS_AT_TABLE = '//tbody//div//span'
     WIZARD_WARNING_MESSAGE_TEXT_XPATH = '//nb-alert//span'
-    WIZARD_TITLE_CLIENT_LIST_XPATH = '//nb-card-header//span[text()="Client List"]'
+    WIZARD_TITLE_CLIENT_LIST_XPATH = '//nb-card-header//span[text()="Client Lists"]'
     WIZARD_CLIENT_LINK_NAME_XPATH = '//*[normalize-space()="Client"]//..//a'
 
 

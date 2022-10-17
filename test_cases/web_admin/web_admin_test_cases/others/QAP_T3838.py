@@ -30,21 +30,17 @@ class QAP_T3838(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        # time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_routes_page()
-        # time.sleep(2)
         routes_page = RoutesPage(self.web_driver_container)
         routes_page.set_name_at_filter(self.name)
         time.sleep(1)
         if not routes_page.is_searched_route_found(self.name):
             routes_page.click_on_new_button()
-            # time.sleep(2)
             values_sub_wizard = RoutesWizard(self.web_driver_container)
             values_sub_wizard.set_name_at_values_tab(self.name)
             wizard = RoutesWizard(self.web_driver_container)
             wizard.click_on_save_changes()
-            # time.sleep(2)
 
     def test_context(self):
         try:
@@ -52,11 +48,9 @@ class QAP_T3838(CommonTestCase):
 
             routes_page = RoutesPage(self.web_driver_container)
             routes_page.set_name_at_filter(self.name)
-            # time.sleep(1)
+            time.sleep(1)
             routes_page.click_on_more_actions()
-            # time.sleep(1)
             routes_page.click_on_edit_at_more_actions()
-            # time.sleep(12)
             routes_venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
             routes_venues_sub_wizard.click_on_plus_at_venues_tab()
             routes_venues_sub_wizard.set_venue_at_venues_tab(self.venue)
@@ -69,18 +63,14 @@ class QAP_T3838(CommonTestCase):
             routes_venues_sub_wizard.click_on_check_mark_at_venues_tab()
             wizard = RoutesWizard(self.web_driver_container)
             wizard.click_on_save_changes()
-            # time.sleep(2)
 
             routes_page.set_name_at_filter(self.name)
             time.sleep(1)
             routes_page.click_on_more_actions()
-            time.sleep(1)
             routes_page.click_on_edit_at_more_actions()
-            # time.sleep(2)
             routes_venues_sub_wizard.set_venue_filter_at_venues_tab(self.venue)
             time.sleep(1)
             routes_venues_sub_wizard.click_on_edit_at_venues_tab()
-            # time.sleep(1)
 
             expected_result = ["True", self.max_ord_amt, self.max_ord_amt_currency, self.currency_different_than,
                                self.max_ord_qty, self.display_qty_max_pct_of_ord_qty]
@@ -95,7 +85,6 @@ class QAP_T3838(CommonTestCase):
             self.verify("Parameters are restored", expected_result, actual_result)
 
             routes_venues_sub_wizard.click_on_check_mark_at_venues_tab()
-            # time.sleep(1)
             routes_venues_sub_wizard.click_on_delete_at_venues_tab()
             wizard.click_on_save_changes()
 

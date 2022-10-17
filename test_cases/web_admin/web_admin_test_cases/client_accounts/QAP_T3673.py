@@ -22,10 +22,8 @@ class QAP_T3673(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_accounts_page()
-        time.sleep(2)
+        side_menu.open_clients_page()
 
     def test_context(self):
 
@@ -34,7 +32,6 @@ class QAP_T3673(CommonTestCase):
 
             main_page = ClientsPage(self.web_driver_container)
             main_page.click_on_new()
-            time.sleep(2)
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(1)
