@@ -9,6 +9,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
+from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
@@ -127,6 +128,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.QuoteRequestActionRequest.value:
+            response = self.act.submitQuoteRequestActionRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -135,30 +142,34 @@ class JavaApiManager:
         response_messages = list()
         for message in response.response_message:
             fields = dict()
-            for field in message.fields:
-                # Field
-                if message.fields[field].simple_value != "":
-                    fields.update({field: message.fields[field].simple_value})
-                else:
-                    component_fields = dict()
-                    # Component
-                    for component_field in message.fields[field].message_value.fields:
-                        if message.fields[field].message_value.fields[component_field].simple_value != "":
-                            component_fields.update({component_field: message.fields[field].message_value.fields[
-                                component_field].simple_value})
-                            fields.update({field: component_fields})
-                        else:
-                            # Repeating Group
-                            repeating_group_list = list()
-                            for repeating_group in message.fields[field].message_value.fields[
-                                component_field].list_value.values:
-                                repeating_group_list_field = dict()
-                                for repeating_group_field in repeating_group.message_value.fields:
-                                    repeating_group_list_field.update({repeating_group_field:
-                                                                           repeating_group.message_value.fields[
-                                                                               repeating_group_field].simple_value})
-                                repeating_group_list.append(repeating_group_list_field)
-                            fields.update({field: {component_field: repeating_group_list}})
+            for main_field in message.fields:
+                fields_content = dict()
+                for field in message.fields[main_field].message_value.fields:
+                    # Field
+                    if message.fields[main_field].message_value.fields[field].simple_value != "":
+                        fields_content.update(
+                            {field: message.fields[main_field].message_value.fields[field].simple_value})
+                    else:
+                        component_fields = dict()
+                        # Component
+                        for component_field in message.fields[main_field].message_value.fields[
+                            field].message_value.fields:
+                            if message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value != "":
+                                component_fields.update({component_field: message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value})
+                                fields_content.update({field: component_fields})
+                            else:
+                                # Repeating Group
+                                repeating_group_list = list()
+                                for repeating_group in \
+                                message.fields[main_field].message_value.fields[field].message_value.fields[component_field].list_value.values:
+                                    repeating_group_list_field = dict()
+                                    for repeating_group_field in repeating_group.message_value.fields:
+                                        repeating_group_list_field.update({repeating_group_field:
+                                                                               repeating_group.message_value.fields[
+                                                                                   repeating_group_field].simple_value})
+                                    repeating_group_list.append(repeating_group_list_field)
+                                fields_content.update({field: {component_field: repeating_group_list}})
+                fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
             if message_type == ORSMessageType.OrdReply.value:
@@ -197,6 +208,9 @@ class JavaApiManager:
                 response_fix_message = ManualOrderCrossReply()
             elif message_type == ORSMessageType.QuoteRequestNotif.value:
                 response_fix_message = QuoteRequestNotifFX()
+            elif message_type == ORSMessageType.QuoteRequestActionReply.value:
+                response_fix_message = QuoteRequestActionReplyFX()
+
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

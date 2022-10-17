@@ -57,6 +57,7 @@ class ORSMessageType(Enum):
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
+    QuoteRequestActionReply = "Order_QuoteRequestActionReply"
 
 
 class TradingRestApiMessageType(Enum):
@@ -111,6 +112,7 @@ class PKSMessageType(Enum):
 
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
     Quote = "Order_Quote"
 
     QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"

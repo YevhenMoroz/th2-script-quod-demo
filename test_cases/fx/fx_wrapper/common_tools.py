@@ -117,6 +117,35 @@ def update_quod_settings(setting_value: str):
             print("PostgreSQL connection is closed")
 
 
+def check_quote_request_id(quote_request):
+    """
+    Get QuoteRequestId from DB using quote_req_id from fix request
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        quote_req_id = quote_request.get_parameter("QuoteReqID")
+        query = f"SELECT quoterequestid  FROM quoterequest WHERE clientquotereqid ='{quote_req_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
                       minutes_to_time=None, day: str = None):
     schedule_dict = {

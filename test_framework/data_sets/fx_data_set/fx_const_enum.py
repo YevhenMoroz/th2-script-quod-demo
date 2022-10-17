@@ -1,7 +1,7 @@
 from enum import Enum
 
 from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
-    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api
+    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api
 
 
 class FxInstruments(Enum):
@@ -115,14 +115,14 @@ class FxClientTiers(Enum):
 
 
 class FxClientTiersID(Enum):
-    client_tier_id_1 = "2200009"   # For ESP_MM testing
-    client_tier_id_2 = "2600011"   # For MM_RFQ testing - Explicitly Request Swap Points
-    client_tier_id_3 = "2400009"   # For MM_RFQ testing
-    client_tier_id_4 = "2000010"   # For ESP_MM testing
-    client_tier_id_5 = "2000011"   # For ESP_MM testing
-    client_tier_id_6 = "2600010"   # For AutoHedger testing
-    client_tier_id_7 = "2600009"   # For MM_Positions testing
-    client_tier_id_8 = "2600012"   # For AutoHedger testing
+    client_tier_id_1 = "2200009"  # For ESP_MM testing Silver
+    client_tier_id_2 = "2600011"  # For MM_RFQ testing - Explicitly Request Swap Points Argentina1
+    client_tier_id_3 = "2400009"  # For MM_RFQ testing Iridium1
+    client_tier_id_4 = "2000010"  # For ESP_MM testing
+    client_tier_id_5 = "2000011"  # For ESP_MM testing
+    client_tier_id_6 = "2600010"  # For AutoHedger testing
+    client_tier_id_7 = "2600009"  # For MM_Positions testing
+    client_tier_id_8 = "2600012"  # For AutoHedger testing
     client_tier_id_11 = "1200005"  # For Margin Format testing
 
 
@@ -143,6 +143,14 @@ class FxInstrTypeWA(Enum):
     fx_nds = "NDS"
 
 
+class FxInstrTypeJavaAPi(Enum):
+    fx_spot = "FXSpot"
+    fx_fwd = "FXForward"
+    fx_swap = "FXSwap"
+    fx_ndf = "FXNDF"
+    fx_nds = "FXNDS"
+
+
 class FxSettleTypes(Enum):
     today = "1"
     tomorrow = "2"
@@ -153,6 +161,17 @@ class FxSettleTypes(Enum):
     m1 = "M1"
     broken = "B"
     # TODO add more settle types
+
+
+class FxSettleTypesJavaAPi(Enum):
+    today = "Cash"
+    tomorrow = "NextDay"
+    spot = "Regular"
+    wk1 = "W1"
+    wk2 = "W2"
+    wk3 = "W3"
+    m1 = "M1"
+    broken = "BrokenDate"
 
 
 class FxTenors(Enum):
@@ -170,13 +189,30 @@ class FxTenors(Enum):
     tenor_mar_imm = "Mar IMM"
 
 
+class FxTenorsJavaApi(Enum):
+    tenor_spot = "SPO"
+    tenor_tod = "CAS"
+    tenor_tom = "TOM"
+    tenor_1w = "WK1"
+    tenor_2w = "WK2"
+    tenor_3w = "WK3"
+    tenor_1m = "MO1"
+    tenor_2m = "MO2"
+    tenor_1y = "YR1"
+    tenor_2y = "YR2"
+    tenor_sn = "SN"
+    tenor_mar_imm = "Mar IMM"
+
+
 class FxSettleDates(Enum):
     today = today()
     tomorrow = tom()
     spot = spo()
     spot_java_api = spo_java_api()
+    wk1_java_api = wk1_java_api()
     wk1 = wk1()
     wk2 = wk2()
+    wk_java_api = wk2_java_api()
     wk3 = wk3()
     spo_ndf = spo_ndf()
     wk1_ndf = wk1_ndf()
