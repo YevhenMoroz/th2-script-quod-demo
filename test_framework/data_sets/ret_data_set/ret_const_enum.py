@@ -170,7 +170,7 @@ class RetHierarchicalLevels(Enum):
     hierarchical_level_2 = dict(
         institutionID={'institutionID': 3},
         zoneID={'zoneID': 6},
-        locationID={'location': 6},
+        locationID={'locationID': 6},
         deskID={'deskUserRole': [{'deskID': 5}]}
     )
 

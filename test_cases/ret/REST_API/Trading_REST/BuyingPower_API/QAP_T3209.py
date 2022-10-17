@@ -40,42 +40,17 @@ class QAP_T3209(TestCase):
     def run_pre_conditions_and_steps(self):
 
         # region Pre-Condition, create new order with side=Buy
-        self.nos_message.set_default_request()
-        self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
-        self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
+        # self.nos_message.set_default_request()
+        # self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
+        # self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
         # endregion
 
         # region Pre-Condition, get new security position
         self.security_account_position_message.find_positions(
             security_account_name=self.nos_message.default_account_nos)
-        new_position = self.wa_api_manager.parse_response_details(
+        security_position = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request_with_parameters(self.security_account_position_message),
             filter_dict={'instrID': self.instrument_id})
-        print(new_position)
-        # endregion
-
-        # region Pre-Condition, set new InitialQty and ReservedQty value for created position and check result
-        try:
-            new_position[0].update({'initialQty': 10000})
-            new_position[0].update({'reservedQty': 20})
-            self.security_account_position_message.modify_security_positions(params=new_position[0])
-        except(KeyError, TypeError, IndexError):
-            bca.create_event(f'Response is empty new position was not created', status='FAILED', parent_id=self.test_id)
-        self.wa_api_manager.send_post_request(self.security_account_position_message)
-
-        self.security_account_position_message.find_positions(self.nos_message.default_account_nos)
-        modified_security_position = self.wa_api_manager.parse_response_details(
-            response=self.wa_api_manager.send_get_request_with_parameters(self.security_account_position_message),
-            filter_dict={'instrID': self.instrument_id})
-
-        data_validation(test_id=self.test_id,
-                        event_name="Check that initialQty equal 10000.0",
-                        expected_result="10000.0",
-                        actual_result=modified_security_position[0]['initialQty'])
-        data_validation(test_id=self.test_id,
-                        event_name="Check that reservedQty equal 20.0",
-                        expected_result="20.0",
-                        actual_result=modified_security_position[0]['reservedQty'])
         # endregion
 
         # region, send requests: findCashAccountCounters, submitNewOrderSingleSimulate and check correct calculation
@@ -87,13 +62,10 @@ class QAP_T3209(TestCase):
         noss_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
 
-        print(cash_positions[0])
-        print(modified_security_position[0])
-
         buying_power = self.buying_power_manager.calc_buying_power(test_id=self.test_id,
                                                                    response_wa_cash_account=cash_positions[0],
                                                                    response_wa_security_account=
-                                                                   modified_security_position[0])
+                                                                   security_position)
 
         data_validation(test_id=self.test_id,
                         event_name="Check that 'BuyingPower' value is calculated correctly",
