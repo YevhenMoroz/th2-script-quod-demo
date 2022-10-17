@@ -203,6 +203,10 @@ class FixMessageQuoteRequestFX(FixMessage):
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"] = leg_qty
         return self
 
+    def remove_side_from_legs(self):
+        self.get_parameter(["NoRelatedSymbols"][0]["NoLegs"][0]).remove({"LegSide": "2"})
+        self.get_parameter(["NoRelatedSymbols"][0]["NoLegs"][1]).remove({"LegSide": "2"})
+
     def set_deposit_and_loan_param(self):
         quote_request_params = {
             "QuoteReqID": bca.client_orderid(9),
