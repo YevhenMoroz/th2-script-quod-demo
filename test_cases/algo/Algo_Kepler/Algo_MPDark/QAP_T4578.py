@@ -25,12 +25,14 @@ class QAP_T4578(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
         self.fix_env1 = self.environment.get_list_fix_environment()[0]
+        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
 
         # region th2 components
         self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa)
         # endregion
 
         # region order parameters
@@ -49,11 +51,6 @@ class QAP_T4578(TestCase):
         self.delay_for_cancel = 7000
         self.status = 1
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_4.value
-        # endregion
-
-        # region DarkPoolWeights modification
-        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
-        rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=2, BATSDARK=2, CBOEEUDARK=2, ITG=2)))
         # endregion
 
         # region Gateway Side
@@ -101,6 +98,11 @@ class QAP_T4578(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region DarkPoolWeights modification
+        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
+        rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=2, BATSDARK=2, CBOEEUDARK=2, ITG=2)))
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
