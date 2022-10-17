@@ -1254,7 +1254,7 @@ pipeline {
     triggers {
         parameterizedCron(
         '''
-        15 12 * * * %RunTestScript=true
+        50 12 * * * %RunTestScript=true;BranchName=algo
         ''')
     }
 
