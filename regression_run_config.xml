@@ -17,7 +17,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -143,7 +143,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -151,7 +151,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -159,7 +159,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -167,7 +167,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -175,7 +175,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>

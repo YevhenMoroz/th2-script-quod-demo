@@ -29,6 +29,9 @@ class ExecutionStrategiesDarkSubWizard(CommonPage):
     def set_parameter(self, value):
         self.set_combobox_value(ExecutionStrategiesConstants.PARAMETER_FIELD_AT_PARAMETERS_SUB_WIZARD, value)
 
+    def set_parameter_filter(self, value):
+        self.set_text_by_xpath(ExecutionStrategiesConstants.PARAMETER_FILTER_AT_PARAMETERS_SUB_WIZARD, value)
+
     # checkboxes
     def set_visible_checkbox(self):
         self.find_by_xpath(ExecutionStrategiesConstants.VISIBLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD).click()

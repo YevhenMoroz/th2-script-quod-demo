@@ -18,8 +18,8 @@ def test_run(parent_id=None, version=None):
         # region Iceberg: Route/Venue
         configuration = ComponentConfiguration("PreClose_Auction")
 
-        QAP_T4308.execute(report_id)
-        QAP_T4311.execute(report_id)
+        # QAP_T4308.execute(report_id)
+        # QAP_T4311.execute(report_id)
 
 
     except Exception:

@@ -10,7 +10,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 

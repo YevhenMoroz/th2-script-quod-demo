@@ -11,7 +11,7 @@ from custom.basic_custom_actions import timestamps, create_event, message_to_grp
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from custom.verifier import Verifier
 
 logger = getLogger(__name__)
@@ -48,13 +48,13 @@ def create_order(base_request):
     call(order_ticket_service.placeOrder, new_order_details.build())
 
 def rule_creation(limit, client, ex_destination):
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-" + ex_destination.lower(), ex_destination + "_" + client, ex_destination, limit)
     ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-'+ ex_destination.lower(), ex_destination + '_' + client, ex_destination, True)
     return [nos_rule, ocr_rule]
 
 def rule_destroyer(list_rules):
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     for rule in list_rules:
         rule_manager.remove_rule(rule)
 

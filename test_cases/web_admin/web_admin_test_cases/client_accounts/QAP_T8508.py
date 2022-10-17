@@ -16,14 +16,14 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T8503(CommonTestCase):
+class QAP_T8508(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = 'QAP_T8503'
+        self.name = 'QAP_T8508'
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -39,6 +39,7 @@ class QAP_T8503(CommonTestCase):
         page.set_name(self.name)
         time.sleep(1)
         if not page.is_searched_client_found(self.name):
+            page.click_on_new()
             values_tab = ClientsValuesSubWizard(self.web_driver_container)
             values_tab.set_id(self.id)
             values_tab.set_name(self.name)
@@ -56,13 +57,12 @@ class QAP_T8503(CommonTestCase):
         try:
             self.precondition()
 
-            page = ClientsPage(self.web_driver_container)
-            page.click_on_new()
             values_tab = ClientsValuesSubWizard(self.web_driver_container)
             values_tab.set_order_attribute(self.order_attributes[0])
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
 
+            page = ClientsPage(self.web_driver_container)
             page.set_name(self.name)
             time.sleep(1)
             page.click_on_more_actions()
@@ -74,6 +74,7 @@ class QAP_T8503(CommonTestCase):
             values_tab.set_order_attribute(self.order_attributes[1])
             wizard.click_on_save_changes()
 
+            page = ClientsPage(self.web_driver_container)
             page.set_name(self.name)
             time.sleep(1)
             page.click_on_more_actions()

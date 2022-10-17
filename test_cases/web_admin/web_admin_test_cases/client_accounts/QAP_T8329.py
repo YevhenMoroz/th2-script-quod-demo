@@ -54,9 +54,12 @@ class QAP_T8329(CommonTestCase):
 
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
+            time.sleep(1)
 
             common_act = CommonPage(self.web_driver_container)
-            self.verify("Client is not save, error appears", True, common_act.is_error_message_displayed())
+            get_error_text = common_act.get_error_pop_up_text()
+
+            self.verify("Client is not save, error appears", True, "Request fails" in get_error_text)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
