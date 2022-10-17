@@ -67,6 +67,17 @@ class FixEnvironment(BaseEnvironment):
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod314_luna_standard.value: site_environment})
             return FixEnvironment.environment_instances[EnvironmentType.quod314_luna_standard.value]
+        elif env.value == EnvironmentType.quod309_kratos_standard.value:
+            if EnvironmentType.quod309_kratos_standard.value not in FixEnvironment.environment_instances.keys():
+                site_environment = FixEnvironment(
+                    environment_type=EnvironmentType.quod309_kratos_standard.value,
+                    sell_side_esp=Connectivity.Kratos_309_ss_esp.value,
+                    sell_side_rfq=Connectivity.Kratos_309_ss_rfq.value,
+                    feed_handler=Connectivity.Kratos_309_Feed_Handler.value,
+                )
+                FixEnvironment.environment_instances.update(
+                    {EnvironmentType.quod309_kratos_standard.value: site_environment})
+            return FixEnvironment.environment_instances[EnvironmentType.quod309_kratos_standard.value]
         elif env.value == EnvironmentType.quod317_ganymede_standard_test.value:
             if EnvironmentType.quod317_ganymede_standard_test.value not in FixEnvironment.environment_instances.keys():
                 site_environment = FixEnvironment(

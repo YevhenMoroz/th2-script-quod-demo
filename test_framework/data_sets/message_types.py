@@ -69,6 +69,10 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
+    QuoteRequest = "Fix_QuoteRequest"
+    QuoteRequestNotif = "Order_QuoteRequestNotif"
+    QuoteRequestActionReply = "Order_QuoteRequestActionReply"
 
 
 class TradingRestApiMessageType(Enum):
@@ -120,11 +124,16 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
+    Quote = "Order_Quote"
+
 
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
+
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"

@@ -59,11 +59,12 @@ class QAP_T2897(TestCase):
         self.new_order_single.set_default().change_parameters(
             {"Account": self.silver, "Instrument": self.instrument,
              "SettlDate": self.settle_date_1w, "SettlType": self.settle_type_1w, "TimeInForce": "3"})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
         # region step 3-4
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill).add_tag(
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill,
+                                                               response=response[-1]).add_tag(
             {'LastMkt': '*'})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

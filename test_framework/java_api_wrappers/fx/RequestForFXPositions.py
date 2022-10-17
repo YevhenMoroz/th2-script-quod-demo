@@ -22,6 +22,7 @@ class RequestForFXPositions(JavaApiMessage):
             }
         }
         super().change_parameters(params_for_request)
+        return self
 
     def change_subject(self, subject):
         self.change_parameter("SEND_SUBJECT", f"QUOD.{subject}.POSIT")
