@@ -39,7 +39,7 @@ class ClientTiersInstrumentInternalClientsSubWizard(CommonPage):
     def get_all_internal_client_from_drop_menu(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientTierConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientTierConstants.DROP_DOWN_MENU_XPATH)
 
     def is_warning_icon_displayed(self):
         return self.is_element_present(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_WARNING_ICON)

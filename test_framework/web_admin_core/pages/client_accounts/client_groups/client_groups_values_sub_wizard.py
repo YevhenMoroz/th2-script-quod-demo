@@ -36,7 +36,7 @@ class ClientGroupsValuesSubWizard(CommonPage):
     def get_all_confirmation_service_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_block_approval(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
@@ -47,7 +47,7 @@ class ClientGroupsValuesSubWizard(CommonPage):
     def get_all_block_approval_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_user_manager(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH, value)
@@ -58,7 +58,7 @@ class ClientGroupsValuesSubWizard(CommonPage):
     def get_all_user_manager_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_booking_inst(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_BOOKING_INST_XPATH, value)

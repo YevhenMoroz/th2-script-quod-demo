@@ -40,7 +40,7 @@ class QAP_T3407(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.client_name = self.data_set.get_client("client_6")
+        self.client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

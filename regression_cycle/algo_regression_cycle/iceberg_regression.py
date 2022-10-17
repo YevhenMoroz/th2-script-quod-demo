@@ -26,7 +26,7 @@ def test_run(parent_id=None, version=None):
 
 
     try:
-        report_id = bca.create_event(f"Algo_Iceberg" if version is None else f"Algo_Iceberg (cloned) | {version}", parent_id)
+        report_id = bca.create_event(f"Algo_Iceberg" if version is None else f"Algo_Iceberg | {version}", parent_id)
         configuration = ComponentConfiguration("Iceberg")
         QAP_T4917(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4918(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

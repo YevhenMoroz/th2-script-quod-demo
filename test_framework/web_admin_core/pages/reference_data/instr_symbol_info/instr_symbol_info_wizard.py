@@ -39,7 +39,7 @@ class InstrSymbolInfoWizard(CommonPage):
         self.find_by_xpath(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH).click()
         self.set_text_by_xpath(InstrSymbolInfoConstants.WIZARD_INSTR_SYMBOL_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(InstrSymbolInfoConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(InstrSymbolInfoConstants.DROP_DOWN_MENU_XPATH)
 
     def set_cum_trading_limit_percentage(self, value):
         self.set_text_by_xpath(InstrSymbolInfoConstants.WIZARD_CUM_TRADING_LIMIT_PERCENTAGE_XPATH, value)

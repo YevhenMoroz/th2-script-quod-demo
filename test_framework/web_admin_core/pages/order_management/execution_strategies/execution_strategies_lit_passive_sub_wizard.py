@@ -31,6 +31,12 @@ class ExecutionStrategiesLitPassiveSubWizard(CommonPage):
     def get_parameter(self):
         self.get_text_by_xpath(ExecutionStrategiesConstants.PARAMETER_FIELD_AT_PARAMETERS_SUB_WIZARD)
 
+    def set_value_at_actions_sub_wizard(self, value):
+        self.set_text_by_xpath(ExecutionStrategiesConstants.VALUE_FIELD_AT_ACTIONS_SUB_WIZARD, value)
+
+    def get_value_at_actions_sub_wizard(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.VALUE_FIELD_AT_ACTIONS_SUB_WIZARD)
+
     # checkboxes
     def set_visible_checkbox(self):
         self.find_by_xpath(ExecutionStrategiesConstants.VISIBLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD).click()
