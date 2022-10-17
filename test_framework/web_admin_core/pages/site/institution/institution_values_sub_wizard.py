@@ -47,7 +47,7 @@ class InstitutionsValuesSubWizard(CommonPage):
     def get_all_client_time_zone_from_drop_menu(self):
         self.set_text_by_xpath(InstitutionsConstants.VALUES_TAB_CLIENT_TIME_ZONE_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(InstitutionsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(InstitutionsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_position_flattening_period(self, value):
         """

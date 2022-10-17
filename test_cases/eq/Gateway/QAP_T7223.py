@@ -8,6 +8,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
@@ -33,7 +35,7 @@ class QAP_T7223(TestCase):
         self.price = '10'
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.venue = self.data_set.get_mic_by_name('mic_1')
-        self.client = self.data_set.get_client('client_pt_1')
+        self.client = self.data_set.get_client('client_co_1')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
@@ -46,6 +48,9 @@ class QAP_T7223(TestCase):
         self.firm_client = self.data_set.get_client_by_name('client_pos_3')
         self.firm_acount = self.data_set.get_account_by_name('client_pos_3_acc_3')
         self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.trade_entry_message = TradeEntryOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -53,18 +58,16 @@ class QAP_T7223(TestCase):
         # region create CO order (precondition)
         self.fix_message.set_default_care_limit()
         self.fix_message.change_parameters(
-            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price
-             })
+            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        filter_dict_order_book = {filter_list[0]: filter_list[1]}
-        self.client_inbox.accept_order(filter=filter_dict_order_book)
         # endregion
 
         # region do house fill (step 1)
-        self.order_book.house_fill(qty=self.qty, price=self.price, filter_dict=filter_dict_order_book,
-                                   source_account=self.firm_acount)
+        self.trade_entry_message.set_default_trade(order_id, self.price, self.qty)
+        self.trade_entry_message.update_fields_in_component('TradeEntryRequestBlock',
+                                                            {'SourceAccountID': self.firm_acount})
+        self.java_api_manager.send_message(self.trade_entry_message)
         # endregion
 
         # region check fix message (step 2)
@@ -81,8 +84,9 @@ class QAP_T7223(TestCase):
                                             'ExecBroker': '*',
                                             'VenueType': '*',
                                             })
+        list_of_ignored_fields = ['NoParty', 'SecurityDesc']
         execution_report.change_parameters({'Side': '1'})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report, ['ClOrdID', 'OrdStatus', 'Side'])
-        execution_report.change_parameters({'Side': '2','Account':self.firm_client})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report, ['ClOrdID', 'OrdStatus', 'Side'])
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ['ClOrdID', 'OrdStatus', 'Side'], ignored_fields=list_of_ignored_fields)
+        execution_report.change_parameters({'Side': '2', 'Account': self.firm_client})
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ['ClOrdID', 'OrdStatus', 'Side'], ignored_fields=list_of_ignored_fields)
         # endregion

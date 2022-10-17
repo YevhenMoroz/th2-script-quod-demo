@@ -183,3 +183,7 @@ class AlgoFormulasManager:
     def get_pov_child_qty_for_worse_price_behavior(min_part: float, max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil(((total_traded_volume * ((min_part + max_part) / 2)) / 100) - executed_qty), ord_qty)
 
+    @staticmethod
+    def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
+        return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
+

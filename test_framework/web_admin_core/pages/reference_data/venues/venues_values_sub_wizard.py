@@ -108,7 +108,7 @@ class VenuesValuesSubWizard(CommonPage):
     def get_all_position_flattening_period_drop_menu(self):
         self.find_by_xpath(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH)
 
     def is_all_position_flattening_period_entity_selected(self):
         self.find_by_xpath(VenuesConstants.VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH).click()

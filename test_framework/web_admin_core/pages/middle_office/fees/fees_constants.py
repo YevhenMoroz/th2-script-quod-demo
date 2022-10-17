@@ -20,6 +20,8 @@ class FeesConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+
     # Main page
 
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -104,3 +106,4 @@ class FeesConstants:
     DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH = '//*[@id = "instrumentGroup"]'
     DIMENSIONS_TAB_DROP_DOWN_MENU_ITEMS_XPATH = '//*[@class="option-list"]//span'
     DIMENSIONS_TAB_ROUTE_XPATH = '//*[@id="route"]'
+    DIMENSIONS_TAB_CLIENT_LIST_XPATH = '//*[@id="clientList"]'

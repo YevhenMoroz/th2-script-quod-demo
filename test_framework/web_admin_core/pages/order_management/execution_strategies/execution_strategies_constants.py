@@ -1,5 +1,6 @@
 class ExecutionStrategiesConstants:
     EXECUTION_STRATEGIES_PAGE_TITLE_XPATH = "//span[@class='title left'][text()='Execution Strategies']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # --MAIN MENU--
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
@@ -70,7 +71,7 @@ class ExecutionStrategiesConstants:
     DELETE_BUTTON_AT_PARAMETERS_SUB_WIZARD ='//*[@data-name="trash-2"]'
 
     PARAMETER_FIELD_AT_PARAMETERS_SUB_WIZARD = "//*[@placeholder='Parameter *']"
-    PARAMETER_FILTER_AT_PARAMETERS_SUB_WIZARD ='//*[@class="ng2-smart-th scenarioParameter ng-star-inserted"]//input'
+    PARAMETER_FILTER_AT_PARAMETERS_SUB_WIZARD ='(//*[@placeholder="Filter"])[1]'
 
     VISIBLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng-star-inserted"]//td[3]//*[@class="custom-checkbox"]'
     VISIBLE_FILTER_AT_PARAMETERS_SUB_WIZARD = '//*[@class="isVisible ng2-smart-th ng-star-inserted"]//input'
