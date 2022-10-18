@@ -62,7 +62,7 @@ class WashBookRulesWizard(CommonPage):
     def get_all_account_from_drop_menu(self):
         self.set_text_by_xpath(WashBookRulesConstants.WIZARD_ACCOUNT_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_client(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_CLIENT_XPATH, value)
@@ -79,7 +79,7 @@ class WashBookRulesWizard(CommonPage):
     def get_all_users_from_drop_menu(self):
         self.set_text_by_xpath(WashBookRulesConstants.WIZARD_USER_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_desk(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_DESK_XPATH, value)
@@ -90,7 +90,7 @@ class WashBookRulesWizard(CommonPage):
     def get_all_desk_from_drop_menu(self):
         self.set_text_by_xpath(WashBookRulesConstants.WIZARD_DESK_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def set_institution(self, value):
         self.set_combobox_value(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH, value)
@@ -101,7 +101,7 @@ class WashBookRulesWizard(CommonPage):
     def get_all_institutions_from_drop_menu(self):
         self.set_text_by_xpath(WashBookRulesConstants.WIZARD_INSTITUTION_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(WashBookRulesConstants.DROP_DOWN_MENU_XPATH)
 
     def click_at_institution_link_by_name(self, name):
         self.find_by_xpath(WashBookRulesConstants.INSTITUTION_LINK_NAME_AT_ASSIGNMENTS_TAB.format(name)).click()

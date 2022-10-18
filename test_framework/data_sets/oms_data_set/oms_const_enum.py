@@ -147,6 +147,8 @@ class OmsVenueClientNames(Enum):
 
 
 class OmsAccounts(Enum):
+    """Base"""
+    client_1_acc_1 = "NEWACCOUNT"
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"

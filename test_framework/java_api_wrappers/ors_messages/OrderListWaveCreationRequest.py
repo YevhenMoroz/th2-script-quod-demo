@@ -9,13 +9,15 @@ class OrderListWaveCreationRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.OrderListWaveCreationRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, list_id, ord_id1, ord_id2, percent_qty="1", profile=QtyPercentageProfile.RemainingQty.value):
+    def set_default(self, list_id, ord_id_list:list, percent_qty="1", profile=QtyPercentageProfile.RemainingQty.value):
+        id_list = list()
+        for ord_id in ord_id_list:
+            id_list.append({'ParentOrdID': ord_id})
         base_parameters = {
-
             'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderListWaveCreationRequestBlock': {
-                'ParentOrdrList': {'ParentOrdrBlock': [{'ParentOrdID': ord_id1},
-                                                       {'ParentOrdID': ord_id2}]},
+                'ParentOrdrList': {'ParentOrdrBlock': id_list},
                 'OrderListID': list_id,
                 'PercentQtyToRelease': percent_qty,
                 'QtyPercentageProfile': profile

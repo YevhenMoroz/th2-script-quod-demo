@@ -45,7 +45,7 @@ class QAP_T4969(TestCase):
         self.px_for_incr = 0
         self.qty_for_incr = 0
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_6.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
         self.sell = constants.OrderSide.Sell.value
         # endregion
 
@@ -174,7 +174,7 @@ class QAP_T4969(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl9_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        time.sleep(125)
+        time.sleep(121)
 
         market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=4)

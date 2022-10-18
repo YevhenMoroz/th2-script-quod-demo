@@ -61,6 +61,7 @@ class QAP_T8215(CommonTestCase):
             manage_sub_wizard.set_gateway_instance(self.gateway_instance_at_manage)
             manage_sub_wizard.click_on_unsolicited_checkmark()
             manage_sub_wizard.click_on_save_checkmark()
+            time.sleep(1)
 
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_go_back()

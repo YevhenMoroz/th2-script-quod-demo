@@ -34,7 +34,7 @@ class NewOrderReplyOMS(NewOrderReply):
                 "TimeInForce": "Day",
                 "ExDestination": data_set.get_mic_by_name("mic_1"),
                 "ReplyReceivedTime": datetime.utcnow().isoformat(),
-                "VenueAccount": {"VenueActGrpName": data_set.get_venue_client_account("client_1_venue_1")},
+                "VenueAccount": {"VenueActGrpName": data_set.get_venue_client_names_by_name("client_1_venue_1")},
             }
         }
 

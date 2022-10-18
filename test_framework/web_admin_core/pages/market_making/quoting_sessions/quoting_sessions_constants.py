@@ -18,6 +18,8 @@ class QuotingSessionsConstants:
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    FOOTER_WARNING_XPATH = '//nb-card-footer//*[@status="danger"]//following-sibling::span'
+
     # main page
 
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]//div[1]//input'

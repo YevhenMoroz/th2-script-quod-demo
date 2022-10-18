@@ -35,7 +35,7 @@ class UsersRoutesSubWizard(CommonPage):
     def get_all_routes_from_drop_menu(self):
         self.set_text_by_xpath(UsersConstants.ROUTE_AT_ROUTES_SUB_WIZARD, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(UsersConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(UsersConstants.DROP_DOWN_MENU_XPATH)
 
     def set_route_user_name(self, value):
         self.set_text_by_xpath(UsersConstants.ROUTE_USER_NAME_AT_ROUTES_SUB_WIZARD, value)

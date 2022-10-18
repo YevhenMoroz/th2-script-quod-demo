@@ -8,7 +8,7 @@ from custom import basic_custom_actions as bca
 def test_run(parent_id=None):
     report_id = bca.create_event('Regression', parent_id)
     try:
-        logging.getLogger().setLevel(logging.WARN)
+        logging.getLogger().setLevel(logging.INFO)
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
         version = root.find(".//version").text
