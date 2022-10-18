@@ -11,6 +11,7 @@ class OrderReplyConst(Enum):
     PostTradeStatus_BKD = 'BKD'
     DoneForDay_YES = "Y"
     TransStatus_OPN = 'OPN'
+    OrdStatus_HLD = 'HLD'
 
 
 class SubmitRequestConst(Enum):
@@ -68,6 +69,8 @@ class JavaApiFields(Enum):
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
     ClOrdID = 'ClOrdID'
+    OrdReplyBlock = 'OrdReplyBlock'
+    OrdStatus = 'OrdStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
