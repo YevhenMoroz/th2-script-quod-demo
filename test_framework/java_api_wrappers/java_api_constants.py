@@ -12,6 +12,7 @@ class OrderReplyConst(Enum):
     DoneForDay_YES = "Y"
     TransStatus_OPN = 'OPN'
     OrdStatus_HLD = 'HLD'
+    ExecStatus_OPN = 'OPN'
 
 
 class SubmitRequestConst(Enum):
@@ -71,6 +72,7 @@ class JavaApiFields(Enum):
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     OrdStatus = 'OrdStatus'
+    ExecType = 'ExecType'
 
 
 class JavaApiPartyRoleConstants(Enum):
