@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 from pathlib import Path
@@ -88,6 +89,7 @@ class QAP_T8835(TestCase):
         # endregion
 
         # region Read log verifier params
+        self.rep = report_id
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_is_no_suitablle_liquidity.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_is_no_suitablle_liquidity")
@@ -172,14 +174,15 @@ class QAP_T8835(TestCase):
         time.sleep(2)
 
         # region Check Read log
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name, self.rep)
+
         time.sleep(70)
 
         compare_message = ReadLogMessageAlgo().set_compare_message_for_check_that_is_no_suitablle_liquidity()
         compare_message.change_parameters(dict(Time='*', ClOrdrId=parent_synthMinQty_order_id, Text=self.text))
 
-        self.read_log_verifier.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
-        # self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message], [self.key_params_readlog, self.key_params_readlog], pre_filter=self.pre_filter)
-        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message], [self.key_params_readlog, self.key_params_readlog])
+        self.read_log_verifier_1.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message, self.key_params_readlog)
         # endregion
 
         time.sleep(5)
