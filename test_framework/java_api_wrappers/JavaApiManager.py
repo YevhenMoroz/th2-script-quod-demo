@@ -27,6 +27,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply impor
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 
 
@@ -259,7 +260,7 @@ class JavaApiManager:
             elif message_type == ORSMessageType.ManualOrderCrossReply.value:
                 response_fix_message = ManualOrderCrossReply()
             elif message_type == ORSMessageType.OrderModificationReply.value:
-                response_fix_message = ManualOrderCrossReply()
+                response_fix_message = OrderModificationReply()
             elif message_type == ORSMessageType.OrderBagCreationReply.value:
                 response_fix_message = OrderBagCreationReply()
             elif message_type == ORSMessageType.OrderBagNotification.value:

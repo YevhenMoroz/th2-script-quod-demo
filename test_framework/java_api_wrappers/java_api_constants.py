@@ -6,6 +6,11 @@ class ExecutionReportConst(Enum):
     TransExecStatus_PFL = 'PFL'
 
 
+class BasketMessagesConst(Enum):
+    ListExecutionPolicy_C = 'C'
+    ListOrderStatus_EXE = 'EXE'
+
+
 class OrderReplyConst(Enum):
     PostTradeStatus_RDY = 'RDY'
     PostTradeStatus_BKD = 'BKD'
@@ -73,6 +78,12 @@ class JavaApiFields(Enum):
     OrdReplyBlock = 'OrdReplyBlock'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
+    NewOrderListReplyBlock = 'NewOrderListReplyBlock'
+    OrderListID = 'OrderListID'
+    OrderListName = 'OrderListName'
+    ListExecutionPolicy = 'ListExecutionPolicy'
+    ListOrderStatus = 'ListOrderStatus'
+    NewOrderSingleBlock = 'NewOrderSingleBlock'
 
 
 class JavaApiPartyRoleConstants(Enum):

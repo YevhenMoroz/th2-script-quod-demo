@@ -54,7 +54,7 @@ class ORSMessageType(Enum):
     OrderListWaveNotification ='Order_OrderListWaveNotification'
     PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
-    OrderModificationReply = 'OrderModificationReply'
+    OrderModificationReply = 'Order_OrderModificationReply'
     OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
     OrderBagCreationReply = 'Order_OrderBagCreationReply'
     OrderBagNotification = 'Order_OrderBagNotification'
