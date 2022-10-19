@@ -228,6 +228,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'Waves': '5',
             }
         }
+        super().change_parameters(base_parameters)
         return self
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:
