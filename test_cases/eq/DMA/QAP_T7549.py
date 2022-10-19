@@ -60,7 +60,3 @@ class QAP_T7549(TestCase):
             time.sleep(3)
             self.rule_manager.remove_rule(nos_rule_paris)
             self.rule_manager.remove_rule(trade_rule_paris)
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
