@@ -62,6 +62,7 @@ class QAP_T7497(TestCase):
         self.__verify_commissions(message)
         message = 'Check values of order after complete'
         self.__verify_order_value(message)
+        self.rest_commission_sender.clear_commissions()
 
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
