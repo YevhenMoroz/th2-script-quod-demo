@@ -5,12 +5,14 @@ from pathlib import Path
 from custom.basic_custom_actions import create_event
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
@@ -32,11 +34,13 @@ class QAP_T7497(TestCase):
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.test_id = create_event(self.__class__.__name__, self.report_id)
         self.trades = OMSTradesBook(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.abs_amt_profile = self.data_set.get_comm_profile_by_name("abs_amt_2")
+        self.trade_entry_request = TradeEntryOMS(self.data_set)
+        self.java_api_conn = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_conn, self.test_id)
+        self.dfd_management_request = DFDManagementBatchOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -45,9 +49,19 @@ class QAP_T7497(TestCase):
                                                                          comm_profile=self.abs_amt_profile
                                                                          ).send_post_request()
         self.__send_fix_orders()
-        self.cl_inbox.accept_order("VETO", self.qty, self.price)
-        self.order_book.manual_execution()
-        self.__verify_commissions()
+        order_id = self.response[0].get_parameter("OrderID")
+        self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
+        message = 'Check values after manual execution'
+        QAP_T7497.print_message('Message after manual execution of order', responses)
+        self.__verify_commissions(message)
+        self.dfd_management_request.set_default_complete(order_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.dfd_management_request)
+        QAP_T7497.print_message('Message after complete of order', responses)
+        message = 'Check values of execution after complete'
+        self.__verify_commissions(message)
+        message = 'Check values of order after complete'
+        self.__verify_order_value(message)
 
     def __send_fix_orders(self):
         no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
@@ -58,11 +72,25 @@ class QAP_T7497(TestCase):
              "Currency": self.data_set.get_currency_by_name("currency_3")})
         self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
 
-    def __verify_commissions(self):
-        order_id = self.response[0].get_parameter("OrderID")
-        self.trades.set_filter(["Order ID", order_id])
-        commissions = {
-            TradeBookColumns.client_commission.value: self.trades.extract_field(
-                TradeBookColumns.client_commission.value)}
-        self.trades.compare_values({TradeBookColumns.client_commission.value: "0.001"}, commissions,
-                                   event_name='Check values')
+    def __verify_commissions(self, message):
+        actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.ClientCommission.value: "1.0E-5"}, actually_result,
+                                             event_name=message)
+
+    def __verify_order_value(self, message):
+        actually_result = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
+             JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
+             JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}, actually_result,
+            message)
+
+    @staticmethod
+    def print_message(message, responses):
+        logger.info(message)
+        for i in responses:
+            logger.info(i)
+            logger.info(i.get_parameters())

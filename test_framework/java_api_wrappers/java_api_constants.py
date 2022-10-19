@@ -84,6 +84,8 @@ class JavaApiFields(Enum):
     ListExecutionPolicy = 'ListExecutionPolicy'
     ListOrderStatus = 'ListOrderStatus'
     NewOrderSingleBlock = 'NewOrderSingleBlock'
+    ClientCommissionDataBlock = 'ClientCommissionDataBlock'
+    ClientCommission = 'ClientCommission'
 
 
 class JavaApiPartyRoleConstants(Enum):
