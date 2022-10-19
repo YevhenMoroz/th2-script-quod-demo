@@ -727,7 +727,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
-        if order_cancel_replace.get_parameter('TargetStrategy') in ['1010', '1011']:
+        if order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty'):
+            temp.update(SecondaryAlgoPolicyID='*')
+        if order_cancel_replace.get_parameter('TargetStrategy') in ['1010', '1011', '1008']:
             temp.update(NoParty='*')
         if order_cancel_replace.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
@@ -918,7 +920,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
         if order_cancel_replace.get_parameter('TargetStrategy') == '1011' and order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(SecondaryAlgoPolicyID='*')
-        if order_cancel_replace.get_parameter('TargetStrategy') == '1010':
+        if order_cancel_replace.get_parameter('TargetStrategy') == '1010' or (order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty')):
             temp.update(
                 NoParty='*',
                 SecondaryAlgoPolicyID='*'
