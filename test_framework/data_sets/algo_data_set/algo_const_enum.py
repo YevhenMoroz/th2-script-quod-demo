@@ -324,6 +324,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
+    key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
 
 
 class AlgoPreFilter(Enum):
@@ -359,7 +360,12 @@ class AlgoPreFilter(Enum):
         'PrimaryListingID': ('*', "EQUAL")
     }
 
-    pre_filter_primary_status_of_transaction= {
+    pre_filter_primary_status_of_transaction = {
         'NewStatus': ('*', "EQUAL")
+    }
+
+    pre_filter_suitable_liquidity = {
+        'ClOrdrId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
     }
 
