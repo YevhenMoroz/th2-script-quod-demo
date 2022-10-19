@@ -312,6 +312,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType", "ExDestination"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
@@ -323,6 +324,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
+    key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
 
 
 class AlgoPreFilter(Enum):
@@ -358,7 +360,12 @@ class AlgoPreFilter(Enum):
         'PrimaryListingID': ('*', "EQUAL")
     }
 
-    pre_filter_primary_status_of_transaction= {
+    pre_filter_primary_status_of_transaction = {
         'NewStatus': ('*', "EQUAL")
+    }
+
+    pre_filter_suitable_liquidity = {
+        'ClOrdrId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
     }
 

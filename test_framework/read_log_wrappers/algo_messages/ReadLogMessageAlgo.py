@@ -183,3 +183,12 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_that_is_no_suitablle_liquidity(self) -> ReadLogMessage:
+        base_parameters = {
+            "Time": "*",
+            "ClOrdrId": "*",
+            "Text": "no suitable liquidity"
+        }
+        super().change_parameters(base_parameters)
+        return self
+

@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 from pathlib import Path
@@ -15,6 +16,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T8835(TestCase):
@@ -85,6 +88,19 @@ class QAP_T8835(TestCase):
         self.key_params_ER_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
         # endregion
 
+        # region Read log verifier params
+        self.rep = report_id
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_is_no_suitablle_liquidity.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_is_no_suitablle_liquidity")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
+        # endregion
+
+        # region Compare message params
+        self.text = "no suitable liquidity"
+        self.pre_filter['Text'] = (self.text, "EQUAL")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -122,6 +138,10 @@ class QAP_T8835(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
 
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+        parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
+        self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")
+
         time.sleep(3)
         # endregion
 
@@ -153,9 +173,16 @@ class QAP_T8835(TestCase):
 
         time.sleep(2)
 
-        # TODO Add checking in logs
-        # region Check that is no child orders
+        # region Check Read log
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name, self.rep)
 
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_that_is_no_suitablle_liquidity()
+        compare_message.change_parameters(dict(Time='*', ClOrdrId=parent_synthMinQty_order_id, Text=self.text))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message, self.key_params_readlog)
         # endregion
 
         time.sleep(5)
@@ -170,7 +197,7 @@ class QAP_T8835(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_synthMinQty_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_synthMinQty_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
         
