@@ -295,6 +295,7 @@ class ReadLogVerifiers(Enum):
     log319_check_tag_5047 = "log319-check-tag-5047"
     log319_check_tag_5048 = "log319-check-tag-5048"
     log319_check_tag_1 = "log319-check-tag-1"
+    log_319_check_that_is_no_suitablle_liquidity = "log319-check-that-is-no-suitable-liquidity"
 
 
 class WebAdminURL(Enum):

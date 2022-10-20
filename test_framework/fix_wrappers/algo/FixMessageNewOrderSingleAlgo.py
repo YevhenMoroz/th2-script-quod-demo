@@ -251,6 +251,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'Waves': '5',
             }
         }
+        super().change_parameters(base_parameters)
         return self
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:
@@ -553,6 +554,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "DisplayInstruction": {
                 'DisplayQty': '15000'
             }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_TIF_params(self):
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '30000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1003'
         }
         super().change_parameters(base_parameters)
         return self

@@ -41,7 +41,6 @@ class QAP_T8815(TestCase):
         self.qty_bid = self.qty_ask = 10000
         self.delay_for_eliminate = 3000
         self.delay_for_cancel = 5000
-        self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         self.party_id_1 = constants.PartyID.party_id_6.value
         self.party_id_2 = constants.PartyID.party_id_7.value
         self.party_id_source = constants.PartyIDSource.party_id_source_2.value
@@ -54,9 +53,6 @@ class QAP_T8815(TestCase):
             {'PartyID': self.party_id_2, 'PartyIDSource': self.party_id_source,
              'PartyRole': self.party_role_2},
         ]
-
-        now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate = (now + timedelta(days=4)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -121,41 +117,41 @@ class QAP_T8815(TestCase):
         case_id_1 = bca.create_event("Create Synthetic TIF Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
-        self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qdl11, TimeInForce=self.tif_gtd)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
+        self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
 
-        self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
+        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
         # endregion
 
         # region Cancel Synthetic TIF order
         case_id_2 = bca.create_event("Cancel Synthetic TIF Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
-        cancel_request_Synthetic_TIF_order = FixMessageOrderCancelRequest(self.Synthetic_TIF_order)
+        cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
 
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_Synthetic_TIF_order, case_id_2)
-        self.fix_verifier_sell.check_fix_message(cancel_request_Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
+        self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         # endregion
 
         time.sleep(3)
 
         # region Check Sell side
-        self.fix_verifier_sell.set_case_id(bca.create_event("Check Synthetic TIF order", self.test_id))
+        self.fix_verifier_sell.set_case_id(bca.create_event("Check SORPING order", self.test_id))
 
-        self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.SORPING_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
+        er_pending_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.SORPING_order, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(er_pending_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
-        er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_new)
-        er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*'))
-        self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
+        er_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.SORPING_order, self.status_new)
+        er_new_SORPING_order_params.add_tag(dict(TargetStrategy='*'))
+        self.fix_verifier_sell.check_fix_message(er_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_qdl11_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_child_params()
+        self.dma_qdl11_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
         self.dma_qdl11_order.change_parameters(dict(Account=self.account_qdl11, ExDestination=self.ex_destination_qdl11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_qdl11_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
@@ -167,10 +163,10 @@ class QAP_T8815(TestCase):
         self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdl11_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
         # endregion
 
-        # region Check that Synthetic TIF order was canceled
-        er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_cancel)
-        er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*'))
-        self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        # region Check that SORPING order was canceled
+        er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.SORPING_order, self.status_cancel)
+        er_cancel_SORPING_order_params.add_tag(dict(TargetStrategy='*'))
+        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
         time.sleep(3)
