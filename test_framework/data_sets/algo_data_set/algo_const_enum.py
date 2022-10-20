@@ -378,7 +378,7 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('A', 'EQUAL')
     }
 
-    pre_filer_equal_ER__new = {
+    pre_filer_equal_ER_new = {
         'header': {
             'MsgType': ('8', 'EQUAL')
         },
