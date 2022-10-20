@@ -370,3 +370,18 @@ class AlgoPreFilter(Enum):
         'Text': ('*', "EQUAL")
     }
 
+    pre_filer_equal_ER_pending_new = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('A', 'EQUAL'),
+        'OrdStatus': ('A', 'EQUAL')
+    }
+
+    pre_filer_equal_ER__new = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('0', 'EQUAL'),
+        'OrdStatus': ('0', 'EQUAL')
+    }
