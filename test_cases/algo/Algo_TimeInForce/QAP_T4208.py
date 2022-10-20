@@ -85,7 +85,7 @@ class QAP_T4208(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         nos_eliminate_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, 0, "X: Expired", self.delay)
-        self.rule_list = [nos_eliminate_rule]
+        self.rule_list = [nos_eliminate_rule, nos_rule]
         # endregion
 
         # region Send_MarketData
@@ -144,9 +144,8 @@ class QAP_T4208(TestCase):
         # endregion
 
         # region Check that there is no new child orders
-        self.fix_verifier_sell.set_case_id(bca.create_event("Check that there is no new child orders", self.test_id))
-        # self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_dma_order, er_new_dma_order, er_eliminate_dma_order_params], key_parameters_list=[self.key_params, self.key_params, self.key_params], direction=self.FromQuod, pre_filter=None)
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_dma_order, er_new_dma_order, er_eliminate_dma_order_params], [None, None, None])
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that there is no new child orders", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_order, er_new_dma_order, er_eliminate_dma_order_params], [None, None, None], self.ToQuod)
         # endregion
 
 
