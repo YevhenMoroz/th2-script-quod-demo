@@ -49,20 +49,19 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameters(
             {"SenderSubID": self.platinum, "NoRelatedSymbols": self.no_related_symbols})
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.default_bid_px_1 = response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"]
         self.default_ask_px_1 = response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"]
-        print("!!!!!!!!!!!!!!!!!", self.default_bid_px_1, self.default_ask_px_1, "!!!!!!!!!!!!!!!!!")
 
         self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.usd_sek)
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0.5", "0.5")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -82,7 +81,7 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -100,20 +99,19 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameters(
             {"SenderSubID": self.platinum, "NoRelatedSymbols": self.no_related_symbols})
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.default_bid_px_1 = response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"]
         self.default_ask_px_1 = response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"]
-        print("!!!!!!!!!!!!!!!!!", self.default_bid_px_1, self.default_ask_px_1, "!!!!!!!!!!!!!!!!!")
 
         self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.eur_nok)
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0.5", "0.5")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -131,7 +129,7 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(

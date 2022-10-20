@@ -1,17 +1,14 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
 
@@ -42,10 +39,10 @@ class QAP_T2964(TestCase):
     def run_pre_conditions_and_steps(self):
         # region 1-2
         self.adjustment_request.set_empty_params()
-        self.adjustment_request.update_instrument("EUR/USD")
+        self.adjustment_request.update_instrument(self.eur_usd)
         self.adjustment_request.set_specific_bands_and_margins(3, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.default_bid_px_1 = response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"]
@@ -63,7 +60,7 @@ class QAP_T2964(TestCase):
         self.adjustment_request.update_margins_by_index(2, "-0.2", "0.2")
         self.adjustment_request.update_margins_by_index(3, "-0.3", "0.3")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
@@ -91,7 +88,7 @@ class QAP_T2964(TestCase):
         self.adjustment_request.update_margins_by_index(2, "0", "0")
         self.adjustment_request.update_margins_by_index(3, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(15)
+        self.sleep(2)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)

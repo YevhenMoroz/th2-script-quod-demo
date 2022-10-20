@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.data_sets.constants import Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -126,7 +126,7 @@ class QAP_T2966(TestCase):
              "QuoteAdjustmentEntryList": self.quote_adj_entry,
              "Tenor": self.tenor_1w_java})
         self.java_manager.send_message(self.quote_adjustment)
-        time.sleep(15)
+        time.sleep(2)
         # endregion
 
         # region Step 2

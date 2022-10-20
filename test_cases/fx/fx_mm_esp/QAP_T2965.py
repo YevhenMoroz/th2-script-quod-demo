@@ -4,7 +4,7 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import Status, DirectionEnum
+from test_framework.data_sets.constants import Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -49,15 +49,15 @@ class QAP_T2965(TestCase):
         self.instrument = {
             'Symbol': self.eur_usd,
             'SecurityType': self.security_type_fwd,
-            'Product': '4', }
+            'Product': '4'}
         self.instrument_order_1 = {
             'Symbol': self.eur_usd,
             'SecurityType': self.security_type_fwd,
-            'Product': '4', }
+            'Product': '4'}
         self.instrument_order_2 = {
             'Symbol': self.eur_usd,
             'SecurityType': self.security_type_fwd,
-            'Product': '4', }
+            'Product': '4'}
         self.no_related_symbols = [{
             'Instrument': self.instrument,
             'SettlType': self.settle_type_1w}]
@@ -76,7 +76,7 @@ class QAP_T2965(TestCase):
             {"Tenor": self.settle_type_1w_java})
         self.manual_settings_request.set_pricing_off()
         self.java_manager.send_message(self.manual_settings_request)
-        time.sleep(15)
+        time.sleep(2)
         # endregion
 
         # region Step 2
@@ -116,7 +116,7 @@ class QAP_T2965(TestCase):
              "Tenor": self.tenor_1w_java})
         self.quote_adjustment.disable_pricing_by_index(2).disable_pricing_by_index(3)
         self.java_manager.send_message(self.quote_adjustment)
-        time.sleep(15)
+        time.sleep(2)
         # endregion
 
         # region Step 2
