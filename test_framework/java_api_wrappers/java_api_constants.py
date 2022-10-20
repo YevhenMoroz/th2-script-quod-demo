@@ -86,8 +86,38 @@ class JavaApiFields(Enum):
     NewOrderSingleBlock = 'NewOrderSingleBlock'
     ClientCommissionDataBlock = 'ClientCommissionDataBlock'
     ClientCommission = 'ClientCommission'
+    OrderBagNotificationBlock = 'OrderBagNotificationBlock'
+    OrderBagName = 'OrderBagName'
+    OrderBagID = 'OrderBagID'
+    OrderBagQty = 'OrderBagQty'
+    PegScope = 'PegScope'
+    PegOffsetType = 'PegOffsetType'
+    PegOffsetValue = 'PegOffsetValue'
+    OrderBagWaveNotificationBlock = 'OrderBagWaveNotificationBlock'
+    PegInstructionsBlock = 'PegInstructionsBlock'
+    OrderBagWaveRequestBlock = 'OrderBagWaveRequestBlock'
 
 
 class JavaApiPartyRoleConstants(Enum):
     PartyRole_EXF = 'EXF'
     PartyRole_CNF = 'CNF'
+
+
+class BagChildCreationPolicy(Enum):
+    Split = 'SPL'
+
+
+class TimeInForces(Enum):
+    DAY = 'DAY'
+
+
+class OrdTypes(Enum):
+    Limit = 'LMT'
+
+
+class PegScopes(Enum):
+    Local = 'LOC'
+
+
+class PegOffsetTypes(Enum):
+    Price = 'PRC'
