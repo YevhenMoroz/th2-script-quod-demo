@@ -139,7 +139,6 @@ class QAP_T8791(TestCase):
 
         # region Fix verifier buy
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.fix_verifier_buy_2 = FixVerifier(self.fix_env1.buy_side, self.test_id)
         # endregion
 
         # region Send NewOrderSingle (35=D) for POV order
@@ -212,10 +211,10 @@ class QAP_T8791(TestCase):
         self.fix_verifier_buy.check_fix_message_sequence([ioc_child_order_par_1], [self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'))
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy Side Pending New IOC", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_ioc_child_order_par_1_params], [self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_ioc_child_order_par_1_params], [self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'))
 
-        self.fix_verifier_buy_2.set_case_id(bca.create_event("Check 12 child orders Buy Side New IOC", self.test_id))
-        self.fix_verifier_buy_2.check_fix_message_sequence([new_ioc_child_order_par_1_params], [self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy Side New IOC", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([new_ioc_child_order_par_1_params], [self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'))
         # endregion
 
         # # region Clear Market Data
