@@ -72,7 +72,7 @@ class QAP_T7453(TestCase):
         # endregion
 
         # region create basket
-        self.create_basket_from_existing_orders.set_default([{'OrdID': order_id_first}, {'OrdID': order_id_second}],
+        self.create_basket_from_existing_orders.set_default([order_id_first, order_id_second],
                                                             self.basket_name)
         responses = self.ja_manager.send_message_and_receive_response(self.create_basket_from_existing_orders)
         self.class_name.print_message("Message after creation of basket", responses)
