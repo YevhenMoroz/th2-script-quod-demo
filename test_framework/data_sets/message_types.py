@@ -69,7 +69,8 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
-
+    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    Order_PositionTransferReport = 'Order_PositionTransferReport'
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
