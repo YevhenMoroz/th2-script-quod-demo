@@ -1251,12 +1251,6 @@ pipeline {
     environment {
         REGRESSION_CONFIG = "${env.WORKSPACE}/regression_run_config.xml"
     }
-    triggers {
-        parameterizedCron(
-        '''
-        45 08 * * * %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
-        ''')
-    }
 
     stages {
         stage('Algo section') {
