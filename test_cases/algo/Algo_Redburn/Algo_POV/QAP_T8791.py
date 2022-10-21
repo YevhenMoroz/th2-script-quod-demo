@@ -203,7 +203,7 @@ class QAP_T8791(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC XPAR child order - 1", self.test_id))
 
         ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=4445, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
+        ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=2223, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
         self.fix_verifier_buy.check_fix_message(ioc_child_order_par_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_pending)
@@ -219,7 +219,7 @@ class QAP_T8791(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC TRQX child order - 1", self.test_id))
 
         ioc_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        ioc_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=4445, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
+        ioc_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=2223, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
         self.fix_verifier_buy.check_fix_message(ioc_child_order_trqx_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
