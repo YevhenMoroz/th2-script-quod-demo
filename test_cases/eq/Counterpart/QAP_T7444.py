@@ -14,10 +14,10 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7444(TestCase):
@@ -30,8 +30,8 @@ class QAP_T7444(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
-        self.client = self.data_set.get_client_by_name("client_counterpart_1")
-        self.client_acc = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.client = self.data_set.get_client_by_name("client_counterpart_3")
+        self.client_acc = self.data_set.get_account_by_name("client_counterpart_3_acc_1")
         self.change_params = {'Account': self.client,
                               'PreAllocGrp': {
                                   'NoAllocs': [{
@@ -43,18 +43,20 @@ class QAP_T7444(TestCase):
         self.price = self.fix_message.get_parameter("Price")
         self.mic = self.data_set.get_mic_by_name("mic_1")
         self.rule_manager = RuleManager(Simulators.equity)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_3_venue_1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                             self.client_for_rule, self.mic,
-                                                                                             int(self.price))
+                                                                                                  self.client_for_rule,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       self.client_for_rule, self.mic, int(self.price),
-                                                                                       int(self.qty), 2)
+                                                                                            self.client_for_rule,
+                                                                                            self.mic, int(self.price),
+                                                                                            int(self.qty), 2)
 
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
@@ -63,26 +65,22 @@ class QAP_T7444(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
+        list_of_ignored_fields = ['Account', 'PartyRoleQualifier']
+        party_stub_dict = {'PartyRole': "*",
+                           'PartyID': "*",
+                           'PartyIDSource': "*"}
         parties = {
             'NoPartyIDs': [
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyRoleQualifier': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"}
+                party_stub_dict,
+                party_stub_dict,
+                party_stub_dict,
+                party_stub_dict,
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
-        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message).change_parameters(
+        exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
+            self.fix_message).change_parameters(
             {"Parties": parties,
              "ReplyReceivedTime": "*",
              "SecondaryOrderID": "*",
@@ -92,38 +90,29 @@ class QAP_T7444(TestCase):
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2,ignored_fields=list_of_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
-        no_party =  [
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"},
-                {'PartyRole': "*",
-                 'PartyID': "*",
-                 'PartyIDSource': "*"}]
-        alloc_grp = { 'NoAllocs': [{'IndividualAllocID':"*",
-                                    'AllocNetPrice': self.price,
-                                    'AllocPrice': self.price,
-                                      'AllocAccount': self.client_acc,
-                                      'AllocQty': "100"}]}
+        no_party = [
+            party_stub_dict,
+            party_stub_dict,
+            party_stub_dict,
+            party_stub_dict,
+            party_stub_dict]
+        alloc_grp = {'NoAllocs': [{'IndividualAllocID': "*",
+                                   'AllocNetPrice': self.price,
+                                   'AllocPrice': self.price,
+                                   'AllocAccount': self.client_acc,
+                                   'AllocQty': "100"}]}
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_preliminary(
             self.fix_message).change_parameters(
             {"NoParty": no_party, "Account": self.client, "tag5120": "*", 'NoAllocs': alloc_grp})
         # endregion
         # region Check Book & Allocation
-        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report,ignored_fields=list_of_ignored_fields)
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
-        conf_report.change_parameters({'tag5120':"*", "Account": self.client})
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
+        conf_report.change_parameters({'tag5120': "*", "Account": self.client})
+        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report,ignored_fields=list_of_ignored_fields)
         # endregion
-
-

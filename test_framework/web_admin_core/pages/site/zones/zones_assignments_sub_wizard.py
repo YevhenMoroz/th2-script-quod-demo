@@ -18,7 +18,7 @@ class ZonesAssignmentsSubWizard(CommonPage):
     def get_all_institutions_from_drop_menu(self):
         self.set_text_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_INSTITUTION_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(ZonesConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(ZonesConstants.DROP_DOWN_MENU_XPATH)
 
     def click_on_locations(self, desk_name):
         self.find_by_xpath(ZonesConstants.ASSIGNMENTS_TAB_LOCATIONS_LINK_XPATH.format(desk_name)).click()

@@ -89,12 +89,13 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
-        # if new_order_single.get_parameter("SettlType") != "0":
-        #     super().add_tag({"LastForwardPoints": "*"})
+        if new_order_single.get_parameter("SettlType") != "0":
+            super().add_tag({"LastForwardPoints": "*"})
         return self
 
     def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None, text: str = None):
         temp = dict(
+            Account=new_order_single.get_parameter("Account"),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
             Currency=new_order_single.get_parameter("Currency"),
@@ -107,7 +108,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
-            Account="*",
             LastMkt="*",
             OrdStatus="8",
             TransactTime="*",
@@ -115,7 +115,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx="*",
             ExecID="*",
             LastPx="*",
-            OrdRejReason="99",
+            # OrdRejReason="99",
             OrderID="*",
             OrderCapacity="A",
             SettlDate="*",
@@ -288,6 +288,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -304,6 +305,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -371,6 +373,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -387,6 +390,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -453,6 +457,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -469,6 +474,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                      LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
+                     LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
                      LegSecurityExchange="XQFX",
                      LegSecurityIDSource="8",
                  )
@@ -705,3 +711,5 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         )
         super().update_repeating_group("NoParty", [party, party_1, party_1])
         return self
+
+    # endregion

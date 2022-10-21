@@ -1,11 +1,11 @@
 import time
-from test_framework.web_admin_core.pages.common_page import CommonPage
+from test_framework.web_admin_core.pages.common_page import CommonPage as CP
 from test_framework.web_admin_core.pages.general.common.common_constants import CommonConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 import pyperclip
 
 
-class CommonPage(CommonPage):
+class CommonPage(CP):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
@@ -151,3 +151,6 @@ class CommonPage(CommonPage):
 
     def get_browser_cookies(self) -> dict:
         return self.web_driver_container.get_driver().get_cookies()[0]
+
+    def get_error_pop_up_text(self):
+        return self.find_by_xpath(CommonConstants.INFO_ERROR_TEXT).text

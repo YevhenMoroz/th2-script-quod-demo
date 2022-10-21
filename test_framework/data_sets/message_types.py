@@ -4,6 +4,7 @@ from enum import Enum
 class FIXMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     ExecutionReport = "ExecutionReport"
+    ExternalExecutionReport = "ExternalExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
     MarketDataRequest = "MarketDataRequest"
@@ -68,7 +69,8 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
-
+    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    Order_PositionTransferReport = 'Order_PositionTransferReport'
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -118,6 +120,9 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+
+class QSMessageType(Enum):
+    QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
 
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"

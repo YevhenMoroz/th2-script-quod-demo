@@ -29,6 +29,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification impo
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
+from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 
 
@@ -186,6 +187,18 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.Order_PositionTransferInstruction.value:
+            response = self.act.submitPositionTransferInstructionRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ESMessageType.ExecutionReport.value:
+            response = self.act.submitExecutionReport(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -276,6 +289,8 @@ class JavaApiManager:
                 response_fix_message = OrderBagWaveModificationReply()
             elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
                 response_fix_message = OrderBagWaveCancelReply()
+            elif message_type == ORSMessageType.Order_PositionTransferReport.value:
+                response_fix_message = PositionTransferReport()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

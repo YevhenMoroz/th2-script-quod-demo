@@ -136,6 +136,9 @@ class ClientsValuesSubWizard(CommonPage):
     def get_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH)
 
+    def clear_allocation_matching_service_field(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, "")
+
     def set_external_allocation_matching_service(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
 
@@ -148,6 +151,24 @@ class ClientsValuesSubWizard(CommonPage):
     def click_on_manage_external_allocation_matching_service(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH).click()
 
+    def set_give_up_service(self, value):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, value)
+
+    def get_give_up_service(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE)
+
+    def set_external_give_up_service(self, value):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE, value)
+
+    def get_external_give_up_service(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE)
+
+    def is_external_give_up_service_field_enable(self):
+        return self.is_field_enabled(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE)
+
+    def click_on_manage_external_give_up_service(self):
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON).click()
+
     def set_default_account(self, name):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH, name)
 
@@ -156,3 +177,9 @@ class ClientsValuesSubWizard(CommonPage):
 
     def clear_default_account(self):
         self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH, "")
+
+    def set_order_attribute(self, name):
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_ORDER_ATTRIBUTE, name)
+
+    def get_order_attribute(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ORDER_ATTRIBUTE)

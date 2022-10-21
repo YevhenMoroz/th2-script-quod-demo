@@ -92,6 +92,12 @@ class AutoHedgerInstrumentsSubWizard(CommonPage):
     def get_hedging_execution_strategy(self):
         return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH)
 
+    def set_execution_strategy_type(self, value):
+        self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_TYPE_XPATH, value)
+
+    def get_execution_strategy_type(self):
+        return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_TYPE_XPATH)
+
     def set_hedging_execution_strategy_tif(self, value):
         self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH, value)
 

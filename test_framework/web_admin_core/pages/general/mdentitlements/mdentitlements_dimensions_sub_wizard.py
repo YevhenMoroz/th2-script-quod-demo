@@ -4,7 +4,7 @@ from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_c
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-class MDEntitlementsDimensionsSubWizard(CommonPage):
+class EntitlementsDimensionsSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
@@ -30,7 +30,7 @@ class MDEntitlementsDimensionsSubWizard(CommonPage):
         self.set_combobox_value(MDEntitlementsConstants.DIMENSIONS_TAB_SUB_VENUE_XPATH, value)
 
     def get_sub_venue(self):
-        return self.get_text_by_xpath(MDEntitlementsConstants.MDENTITLEMENTS_PAGE_TITLE_XPATH)
+        return self.get_text_by_xpath(MDEntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
 
     def set_location(self, value):
         self.set_combobox_value(MDEntitlementsConstants.DIMENSIONS_TAB_LOCATION_XPATH, value)
