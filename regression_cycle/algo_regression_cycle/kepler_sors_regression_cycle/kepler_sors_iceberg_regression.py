@@ -1,9 +1,6 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4158 import QAP_T4158
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4360 import QAP_T4360
-from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4738 import QAP_T4738
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4872 import QAP_T4872
@@ -40,12 +37,6 @@ def test_run(parent_id=None, version=None):
         QAP_T4811(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4810(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
-
-        QAP_T4738(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4158(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4360(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
