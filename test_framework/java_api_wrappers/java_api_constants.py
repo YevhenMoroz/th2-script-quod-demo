@@ -96,6 +96,10 @@ class JavaApiFields(Enum):
     OrderBagWaveNotificationBlock = 'OrderBagWaveNotificationBlock'
     PegInstructionsBlock = 'PegInstructionsBlock'
     OrderBagWaveRequestBlock = 'OrderBagWaveRequestBlock'
+    PositionReportBlock = 'PositionReportBlock'
+    PositionList = 'PositionList'
+    PositionBlock = 'PositionBlock'
+    PositQty = 'PositQty'
 
 
 class JavaApiPartyRoleConstants(Enum):
