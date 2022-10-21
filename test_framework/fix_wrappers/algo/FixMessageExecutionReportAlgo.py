@@ -345,6 +345,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011', '1010']:
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
+        if new_order_single.is_parameter_exist("IClOrdIdTO"):
+            temp.update(IClOrdIdTO=new_order_single.get_parameter("IClOrdIdTO"))
         if new_order_single.get_parameter('TargetStrategy') != '1010':
             temp.update(
                 SecAltIDGrp='*',
