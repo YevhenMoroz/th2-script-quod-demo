@@ -39,7 +39,7 @@ class QAP_T8862(TestCase):
         self.min_qty = 700
         self.display_qty = 750
         self.price = 35
-        self.dark_price = 35
+        self.dark_price = 30
         self.traded_qty = 0
         self.qty_for_md = 10000
         self.price_ask = 40
