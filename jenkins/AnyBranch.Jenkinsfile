@@ -1245,7 +1245,8 @@ properties([
 pipeline {
     agent { 
         dockerfile {
-            filename 'Dockerfile'  
+            filename 'Dockerfile'
+            dir 'jenkins'
         }
     }
     environment {
