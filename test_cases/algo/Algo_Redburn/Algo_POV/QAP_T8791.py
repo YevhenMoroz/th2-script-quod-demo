@@ -55,6 +55,8 @@ class QAP_T8791(TestCase):
 
         self.passive_pov_qty = AlgoFormulasManager.get_pov_child_qty(self.percentage_volume, self.qty_bid, self.qty)
         self.aggressive_pov_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
+
+        self.check_order_sequence = False
         # endregion
 
         # region Gateway Side
@@ -150,8 +152,13 @@ class QAP_T8791(TestCase):
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
+
         time.sleep(5)
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
+        # endregion
+
+        # region Send MarketData to trigger the POV Aggressive order creation
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger the POV Aggressive order creation", self.test_id))
         market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
@@ -171,74 +178,60 @@ class QAP_T8791(TestCase):
         self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check passive child order 1
-        self.fix_verifier_buy.set_case_id(bca.create_event("Passive PAR child order - 1", self.test_id))
+        # region Create list of fix message for check_message_sequence
+        # region Passive XPAR order
+        passive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        passive_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.passive_pov_qty, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_xpar))
 
-        self.passive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.passive_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.passive_pov_qty, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_xpar))
-        self.fix_verifier_buy.check_fix_message(self.passive_child_order_par_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
+        pending_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_par_1, self.gateway_side_buy, self.status_pending)
 
-        pending_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_par_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_passive_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
-
-        new_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_par_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(new_passive_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  Passive Child 1')
+        new_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_par_1, self.gateway_side_buy, self.status_new)
         # endregion
 
-        # region Check passive child order 1
-        self.fix_verifier_buy.set_case_id(bca.create_event("Passive TRQX child order - 1", self.test_id))
+        # region Passive TRQX order
+        passive_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        passive_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=self.passive_pov_qty, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_trqx))
 
-        self.passive_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.passive_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=self.passive_pov_qty, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_trqx))
-        self.fix_verifier_buy.check_fix_message(self.passive_child_order_trqx_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
+        pending_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
 
-        pending_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_passive_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
-
-        new_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(new_passive_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  Passive Child 1')
+        new_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_trqx_1, self.gateway_side_buy, self.status_new)
         # endregion
 
-        # region Check Aggressive SOR child orders
-        self.fix_verifier_buy.set_case_id(bca.create_event("IOC XPAR child order - 1", self.test_id))
-
+        # region Aggressive XPAR order
         ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=2223, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
-        self.fix_verifier_buy.check_fix_message(ioc_child_order_par_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 1')
 
         new_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 1')
 
         eliminate_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_eliminated)
-        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate IOC Child 1')
+        # endregion
 
-
-        self.fix_verifier_buy.set_case_id(bca.create_event("IOC TRQX child order - 1", self.test_id))
-
+        # region Aggressive TRQX order
         ioc_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=2223, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
-        self.fix_verifier_buy.check_fix_message(ioc_child_order_trqx_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 1')
 
         new_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_1, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_ioc_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 1')
 
         eliminate_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_1, self.gateway_side_buy, self.status_eliminated)
-        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate IOC Child 1')
+        # endregion
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy side NewOrderSingle IOC", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([ioc_child_order_par_1], [self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'))
+        # region Check sequence of 2 Passive and 12 Aggressive POV child orders
+        case_id_2 = bca.create_event("Check sequence of 2 Passive and 12 Aggressive POV child orders", self.test_id)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 14 child orders Buy side NewOrderSingle Passive and Aggressive", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([passive_child_order_par_1, passive_child_order_trqx_1, ioc_child_order_par_1, ioc_child_order_par_1, ioc_child_order_par_1, ioc_child_order_par_1, ioc_child_order_par_1, ioc_child_order_par_1, ioc_child_order_trqx_1, ioc_child_order_trqx_1, ioc_child_order_trqx_1, ioc_child_order_trqx_1, ioc_child_order_trqx_1, ioc_child_order_trqx_1], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy Side Pending New IOC", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_passive_child_order_par_1_params, pending_passive_child_order_trqx_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 14 child orders Buy Side Pending New Passive and Aggressive", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_passive_child_order_par_1_params, pending_passive_child_order_trqx_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_par_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params, pending_ioc_child_order_trqx_1_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy Side New IOC", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([new_ioc_child_order_par_1_params], [self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 14 child orders Buy Side New Passive and Aggressive", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([new_passive_child_order_par_1_params, new_passive_child_order_trqx_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_par_1_params, new_ioc_child_order_trqx_1_params, new_ioc_child_order_trqx_1_params, new_ioc_child_order_trqx_1_params, new_ioc_child_order_trqx_1_params, new_ioc_child_order_trqx_1_params, new_ioc_child_order_trqx_1_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 child orders Buy Side Eliminate Aggressive", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_par_1_params, eliminate_ioc_child_order_trqx_1_params, eliminate_ioc_child_order_trqx_1_params, eliminate_ioc_child_order_trqx_1_params, eliminate_ioc_child_order_trqx_1_params, eliminate_ioc_child_order_trqx_1_params, eliminate_ioc_child_order_trqx_1_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
 
         # # region Clear Market Data
