@@ -14,7 +14,7 @@ def test_run(parent_id=None):
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
         version = root.find(".//version").text
-        cycle_name_rest_api = 'V172_REST_API'
+        cycle_name_rest_api = 'V178_REST_API'
         cycle_report_rest_api = bca.create_event(f"{cycle_name_rest_api}" if version is None else f"{cycle_name_rest_api} | {version}", report_id)
         logging.getLogger().setLevel(logging.WARN)
 
@@ -34,16 +34,16 @@ def test_run(parent_id=None):
         # # endregion
         #
         # # region __WebAdminRestApi__ block
-        # if eval(root.find(".//component[@name='WA_REST_API_Site']").attrib["run"]):
-        #     web_admin_rest_api_site.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='WA_REST_API_Users']").attrib["run"]):
-        #     web_admin_rest_api_users.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='WA_REST_API_Client_Accounts']").attrib["run"]):
-        #     web_admin_rest_api_client_accounts.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='WA_REST_API_Risk_Limits']").attrib["run"]):
-        #     web_admin_rest_api_risk_limits.test_run(cycle_report_rest_api)
-        # if eval(root.find(".//component[@name='WA_REST_API_Positions']").attrib["run"]):
-        #     web_admin_rest_api_positions.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='WA_REST_API_Site']").attrib["run"]):
+            web_admin_rest_api_site.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='WA_REST_API_Users']").attrib["run"]):
+            web_admin_rest_api_users.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='WA_REST_API_Client_Accounts']").attrib["run"]):
+            web_admin_rest_api_client_accounts.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='WA_REST_API_Risk_Limits']").attrib["run"]):
+            web_admin_rest_api_risk_limits.test_run(cycle_report_rest_api)
+        if eval(root.find(".//component[@name='WA_REST_API_Positions']").attrib["run"]):
+            web_admin_rest_api_positions.test_run(cycle_report_rest_api)
         # if eval(root.find(".//component[@name='WA_REST_API_Others']").attrib["run"]):
         #     pass
         # endregion
