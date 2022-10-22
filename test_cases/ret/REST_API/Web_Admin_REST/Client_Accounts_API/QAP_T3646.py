@@ -31,7 +31,7 @@ class QAP_T3646(TestCase):
         self.test_client = self.data_set.get_client_by_name('client_5')
         self.institution_id = self.hierarchical_level_test['institutionID']
         self.desk_id = self.hierarchical_level_test['deskID']['deskUserRole']
-        self.new_client = "client_" + os.path.basename(__file__)[:-3]
+        self.new_client = "api_client_" + os.path.basename(__file__)[:-3]
 
     @try_except(test_id=os.path.basename(__file__)[:-3])
     def run_pre_conditions_and_steps(self):
@@ -69,7 +69,7 @@ class QAP_T3646(TestCase):
                         actual_result=disabled_client[0]['alive'])
         # endregion
 
-        # region step 3, enable test client
+        # region step 3, enable test client and check result
         self.client_messages.enable_client(client_id=self.test_client)
         self.wa_api_manager_test.send_post_request(self.client_messages)
 
@@ -95,4 +95,6 @@ class QAP_T3646(TestCase):
         )
         if 'accountGroupName' in new_client[0].keys():
             bca.create_event(f"Check that client '{self.new_client}' is created", parent_id=self.test_id)
+        else:
+            bca.create_event(f"Client '{self.new_client}' was not created", status='FAILED', parent_id=self.test_id)
         # endregion

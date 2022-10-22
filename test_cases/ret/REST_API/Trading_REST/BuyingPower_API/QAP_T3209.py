@@ -40,9 +40,9 @@ class QAP_T3209(TestCase):
     def run_pre_conditions_and_steps(self):
 
         # region Pre-Condition, create new order with side=Buy
-        # self.nos_message.set_default_request()
-        # self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
-        # self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
+        self.nos_message.set_default_request()
+        self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
+        self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)
         # endregion
 
         # region Pre-Condition, get new security position

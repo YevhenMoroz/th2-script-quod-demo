@@ -35,7 +35,7 @@ class QAP_T3181(TestCase):
         self.noss_message.change_key_fields_web_socket_response({'OrderStatus': 'Rejected'})
         noss_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
-        print(noss_response)
+
         data_validation(test_id=self.test_id,
                         event_name="Check FreeNotes field with an error message",
                         expected_result=self.tested_free_notes,
