@@ -5,21 +5,32 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3181 import QAP_T3181
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3193 import QAP_T3193
+from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3209 import QAP_T3209
+from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3315 import QAP_T3315
 from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T3316 import QAP_T3316
+from test_cases.ret.REST_API.Trading_REST.BuyingPower_API.QAP_T8216 import QAP_T8216
 from test_cases.ret.REST_API.Trading_REST.DMA_API.QAP_T3343 import QAP_T3343
 from test_cases.ret.REST_API.Trading_REST.DMA_API.QAP_T3520 import QAP_T3520
 from test_cases.ret.REST_API.Trading_REST.Risk_Limits_API.QAP_T3505 import QAP_T3505
 from test_cases.ret.REST_API.Trading_REST.Risk_Limits_API.QAP_T3506 import QAP_T3506
+from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3637 import QAP_T3637
+from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3639 import QAP_T3639
+from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3641 import QAP_T3641
 from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3646 import QAP_T3646
+from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3804 import QAP_T3804
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3139 import QAP_T3139
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3140 import QAP_T3140
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3128 import QAP_T3128
+from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3159 import QAP_T3159
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3203 import QAP_T3203
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8618 import QAP_T8618
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8620 import QAP_T8620
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8621 import QAP_T8621
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8622 import QAP_T8622
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T8623 import QAP_T8623
+from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3605 import QAP_T3605
+from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3608 import QAP_T3608
+from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3620 import QAP_T3620
 from test_cases.ret.REST_API.Web_Admin_REST.risk_limit_dimension_deleter import RiskLimitDimensionDeleter
 from test_cases.ret.REST_API.Web_Admin_REST.Users_API.QAP_T3609 import QAP_T3609
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -60,8 +71,10 @@ def test_run():
         # region Trading API __BuyingPower__ block
         # QAP_T3181(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
-        QAP_T3193(report_id, configuration_trading_api_buying_power.data_set,
-                  configuration_trading_api_buying_power.environment).execute()
+        # QAP_T3193(report_id, configuration_trading_api_buying_power.data_set,
+        #           configuration_trading_api_buying_power.environment).execute()
+        # QAP_T3209(report_id, configuration_trading_api_buying_power.data_set,
+        #           configuration_trading_api_buying_power.environment).execute()
         # QAP_T3315(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
         # QAP_T3316(report_id, configuration_trading_api_buying_power.data_set,
@@ -82,6 +95,8 @@ def test_run():
         # QAP_T8212(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
         # QAP_T8213(report_id, configuration_trading_api_buying_power.data_set,
+        #           configuration_trading_api_buying_power.environment).execute()
+        # QAP_T8216(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
         # QAP_T8218(report_id, configuration_trading_api_buying_power.data_set,
         #           configuration_trading_api_buying_power.environment).execute()
@@ -129,10 +144,16 @@ def test_run():
         #           configuration_users_admin_api.environment).execute()
         # QAP_T3604(report_id, configuration_users_admin_api.data_set,
         #           configuration_users_admin_api.environment).execute()
+        # QAP_T3605(report_id, configuration_admin_api_users.data_set,
+        #           configuration_admin_api_users.environment).execute()
+        # QAP_T3608(report_id, configuration_admin_api_users.data_set,
+        #           configuration_admin_api_users.environment).execute()
         # QAP_T3607(report_id, configuration_users_admin_api.data_set,
         #           configuration_users_admin_api.environment).execute()
         # QAP_T3609(report_id, configuration_admin_api_users.data_set,
         #           configuration_admin_api_users.environment).execute()
+        QAP_T3620(report_id, configuration_admin_api_users.data_set,
+                  configuration_admin_api_users.environment).execute()
         # QAP_T3622(report_id, configuration_users_admin_api.data_set,
         #           configuration_users_admin_api.environment).execute()
         # endregion
@@ -141,6 +162,8 @@ def test_run():
         # RiskLimitDimensionDeleter(report_id, configuration_admin_api_risk_limits.data_set,
         #                           configuration_admin_api_risk_limits.environment).execute()
         # QAP_T3128(report_id, configuration_admin_api_risk_limits.data_set,
+        #           configuration_admin_api_risk_limits.environment).execute()
+        # QAP_T3159(report_id, configuration_admin_api_risk_limits.data_set,
         #           configuration_admin_api_risk_limits.environment).execute()
         # QAP_T3203(report_id, configuration_admin_api_risk_limits.data_set,
         #           configuration_admin_api_risk_limits.environment).execute()
@@ -165,7 +188,15 @@ def test_run():
         # endregion
 
         # region Admin API __Client/Accounts__ block
+        # QAP_T3637(report_id, configuration_client_accounts_api.data_set,
+        #           configuration_client_accounts_api.environment).execute()
+        # QAP_T3639(report_id, configuration_client_accounts_api.data_set,
+        #           configuration_client_accounts_api.environment).execute()
+        # QAP_T3641(report_id, configuration_client_accounts_api.data_set,
+        #           configuration_client_accounts_api.environment).execute()
         # QAP_T3646(report_id, configuration_client_accounts_api.data_set,
+        #           configuration_client_accounts_api.environment).execute()
+        # QAP_T3804(report_id, configuration_client_accounts_api.data_set,
         #           configuration_client_accounts_api.environment).execute()
         # endregion
 
