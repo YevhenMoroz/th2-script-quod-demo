@@ -153,6 +153,7 @@ class OmsAccounts(Enum):
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
     client_pos_3_acc_3 = "PROP"
+    client_pos_3_acc_4 = "PROP_TEST"
     """PostTrade"""
     client_pt_1_acc_1 = "MOClient_SA1"
     client_pt_1_acc_2 = "MOClient_SA2"

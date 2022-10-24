@@ -96,6 +96,17 @@ class JavaApiFields(Enum):
     OrderBagWaveNotificationBlock = 'OrderBagWaveNotificationBlock'
     PegInstructionsBlock = 'PegInstructionsBlock'
     OrderBagWaveRequestBlock = 'OrderBagWaveRequestBlock'
+    PositionReportBlock = 'PositionReportBlock'
+    PositionList = 'PositionList'
+    PositionBlock = 'PositionBlock'
+    PositQty = 'PositQty'
+    MiscFeesList = 'MiscFeesList'
+    MiscFeesBlock = 'MiscFeesBlock'
+    MiscFeeType = 'MiscFeeType'
+    MiscFeeBasis = 'MiscFeeBasis'
+    MiscFeeAmt = 'MiscFeeAmt'
+    MiscFeeRate = 'MiscFeeRate'
+    MiscFeeCurr = 'MiscFeeCurr'
 
 
 class JavaApiPartyRoleConstants(Enum):

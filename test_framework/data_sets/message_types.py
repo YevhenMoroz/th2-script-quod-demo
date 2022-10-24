@@ -51,7 +51,7 @@ class ORSMessageType(Enum):
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
-    OrderListWaveNotification ='Order_OrderListWaveNotification'
+    OrderListWaveNotification = 'Order_OrderListWaveNotification'
     PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
     OrderModificationReply = 'Order_OrderModificationReply'
@@ -71,6 +71,9 @@ class ORSMessageType(Enum):
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
     Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
     Order_PositionTransferReport = 'Order_PositionTransferReport'
+    Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
+    Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
+
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -121,11 +124,14 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
 
+
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
+
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"

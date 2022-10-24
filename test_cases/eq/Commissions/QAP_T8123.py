@@ -13,14 +13,7 @@ from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMess
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
-    ExecSts
 import xml.etree.ElementTree as ET
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -44,17 +37,11 @@ class QAP_T8123(TestCase):
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_com_1')
-        self.alloc_account = self.data_set.get_account_by_name('client_pt_10_acc_1')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
@@ -106,29 +93,22 @@ class QAP_T8123(TestCase):
                                                                                             self.venue_client_names,
                                                                                             self.venue,
                                                                                             float(self.price),
-                                                                                            int(self.qty), 30000
+                                                                                            int(self.qty), 0
                                                                                             )
             self.fix_message.set_default_dma_limit(instr='instrument_3')
             self.fix_message.change_parameters(
                 {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
                  'Currency': self.currency, 'ExDestination': 'XEUR'})
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            order_id = response[0].get_parameters()['OrderID']
         except Exception as E:
             logger.error(f"Error is {E}", exc_info=True)
         finally:
-            # region check expected result from step 1
-            filter_list = [OrderBookColumns.order_id.value, order_id]
-            dict_of_extraction = {OrderBookColumns.sts.value: OrderBookColumns.sts.value}
-            expected_result = {OrderBookColumns.sts.value: ExecSts.open.value}
-            message = "Check values from expecter result of step 1"
-            self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
-            # endregion
             time.sleep(3)
             self.rule_manager.remove_rule(new_order_single)
             self.rule_manager.remove_rule(trade_rule)
 
         # region check 35=8 message step 2
+        list_of_ignored_fields = ['SettlType']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_calculated(self.fix_message)
         rate = '1'
@@ -144,19 +124,13 @@ class QAP_T8123(TestCase):
                                                 'MiscFeeCurr': self.currency_post_trade,
                                                 'MiscFeeType': '12'
                                             }]})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
-
-    def __check_expected_result_from_order_book(self, filter_list, expected_result, dict_of_extraction, message):
-        self.order_book.set_filter(filter_list=filter_list)
-        actual_result = self.order_book.extract_fields_list(
-            dict_of_extraction)
-        self.order_book.compare_values(expected_result, actual_result,
-                                       message)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart all")
+        time.sleep(120)
         os.remove("temp.xml")

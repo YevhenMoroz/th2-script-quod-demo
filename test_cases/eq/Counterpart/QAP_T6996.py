@@ -17,7 +17,7 @@ from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiSettlementModelMessages import RestApiSettlementModelMessages
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.java_api_constants import ExecutionReportConst, JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, JavaApiFields
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
