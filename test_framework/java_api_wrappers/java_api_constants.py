@@ -100,6 +100,13 @@ class JavaApiFields(Enum):
     PositionList = 'PositionList'
     PositionBlock = 'PositionBlock'
     PositQty = 'PositQty'
+    MiscFeesList = 'MiscFeesList'
+    MiscFeesBlock = 'MiscFeesBlock'
+    MiscFeeType = 'MiscFeeType'
+    MiscFeeBasis = 'MiscFeeBasis'
+    MiscFeeAmt = 'MiscFeeAmt'
+    MiscFeeRate = 'MiscFeeRate'
+    MiscFeeCurr = 'MiscFeeCurr'
 
 
 class JavaApiPartyRoleConstants(Enum):

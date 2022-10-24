@@ -105,10 +105,14 @@ class OrderSubmitOMS(OrderSubmit):
         self.add_tag(params)
         return self
 
-    def set_default_child_dma(self, parent_id: str = None):
+    def set_default_child_dma(self, parent_id: str = None, client_order_id: str = None):
+        if client_order_id:
+            cl_ord_id = client_order_id
+        else:
+            cl_ord_id = basic_custom_actions.client_orderid(9)
         self.change_parameters(self.base_parameters)
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
-                                         'ClOrdID': basic_custom_actions.client_orderid(9)})
+                                         'ClOrdID': cl_ord_id})
         return self
