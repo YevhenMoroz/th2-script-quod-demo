@@ -6,22 +6,22 @@ from test_framework.data_sets.message_types import ESMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
-class NewOrderReply(JavaApiMessage):
+class OrderCancelReply(JavaApiMessage):
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ESMessageType.NewOrderReply.value)
+        super().__init__(message_type=ESMessageType.OrderCancelReply.value)
         super().change_parameters(parameters)
 
-    def set_default(self, data_set: BaseDataSet):
+    def set_default(self, data_set: BaseDataSet, cl_ord_id):
         base_parameters = {
-            'SEND_SUBJECT': 'QUOD.ES.BUYGTW.REPLY',
-            'REPLY_SUBJECT': 'QUOD.BUYGTW.ES.REPLY',
+            'SEND_SUBJECT': 'QUOD.ES.BUYTH2TEST.REPLY',
+            'REPLY_SUBJECT': 'QUOD.BUYTH2TEST.ES.REPLY',
             "Header": {
                 "MsgTime": datetime.utcnow().isoformat(),
                 "CreationTime": datetime.utcnow().isoformat()},
-            "NewOrderReplyBlock": {
+            "OrderCancelReplyBlock": {
                 "InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
                 "LastVenueOrdID": basic_custom_actions.client_orderid(9),
-                "ClOrdID": "*",
+                "ClOrdID": cl_ord_id,
                 "ReplySource": "Exchange",
                 "TransactTime": datetime.utcnow().isoformat(),
                 "Side": "Buy",
@@ -31,7 +31,7 @@ class NewOrderReply(JavaApiMessage):
                 "CumQty": "0.000000000",
                 "LeavesQty": "100.000000000",
                 "AvgPrice": "20.000000000",
-                "ExecType": "Open",
+                "ExecType": "CXL",
                 "OrdType": "Limit",
                 "TimeInForce": "Day",
                 "ExDestination": data_set.get_mic_by_name("mic_1"),
@@ -40,4 +40,5 @@ class NewOrderReply(JavaApiMessage):
             }
         }
         super().change_parameters(base_parameters)
+        return self
 
