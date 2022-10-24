@@ -385,3 +385,11 @@ class AlgoPreFilter(Enum):
         'ExecType': ('0', 'EQUAL'),
         'OrdStatus': ('0', 'EQUAL')
     }
+
+    pre_filer_equal_ER_eliminate = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('4', 'EQUAL'),
+        'OrdStatus': ('4', 'EQUAL')
+    }
