@@ -199,7 +199,7 @@ class QAP_T5061(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check replace 1st child DMA order", self.test_id))
         
         self.dma_1_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.dma_1_order)
-        self.dma_1_order_replace_params.change_parameters(dict(OrderQty=self.dec_display_qty))
+        self.dma_1_order_replace_params.change_parameters(dict(OrderQty=self.dec_display_qty)).add_tag(dict(ChildOrderID='*'))
 
         er_replace_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel_replace)
         er_replace_dma_1_order_params.change_parameters(dict(OrderQty=self.dec_display_qty))
