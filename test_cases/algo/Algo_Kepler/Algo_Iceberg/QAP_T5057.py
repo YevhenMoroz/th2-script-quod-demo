@@ -160,6 +160,11 @@ class QAP_T5057(TestCase):
 
         time.sleep(5)
 
+        # region Check that are no modification or cancel request on child
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that are no modification or cancel request on child", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_qdl6_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=None)
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
