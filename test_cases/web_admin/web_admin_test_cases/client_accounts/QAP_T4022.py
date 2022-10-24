@@ -26,7 +26,7 @@ class QAP_T4022(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = 'QAP_T4022'
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.block_approval = ''
         self.confirmation_service = ''
@@ -72,9 +72,9 @@ class QAP_T4022(CommonTestCase):
             values_tab.set_name(self.new_name)
             self.block_approval = random.choice(values_tab.get_all_block_approval_from_drop_menu())
             values_tab.set_block_approval(self.block_approval)
-            self.confirmation_service = random.choice(values_tab.get_confirmation_service())
+            self.confirmation_service = random.choice(values_tab.get_all_confirmation_service_from_drop_menu())
             values_tab.set_confirmation_service(self.confirmation_service)
-            self.user_manager = random.choice(values_tab.get_all_confirmation_service_from_drop_menu())
+            self.user_manager = random.choice(values_tab.get_all_user_manager_from_drop_menu())
             values_tab.set_user_manager(self.user_manager)
             values_tab.set_price_precision(self.price_precision)
 
@@ -86,7 +86,7 @@ class QAP_T4022(CommonTestCase):
             policies_tab.set_default_execution_strategy(self.default_execution_strategy)
             wizard.click_on_save_changes()
 
-            main_page.set_name(self.name)
+            main_page.set_name(self.new_name)
             time.sleep(1)
             main_page.click_on_more_actions()
             main_page.click_on_edit()

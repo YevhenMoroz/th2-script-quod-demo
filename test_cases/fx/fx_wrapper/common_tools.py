@@ -236,8 +236,9 @@ def restart_qs_rfq_fix_th2():
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
-
+    ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
+    ssh.exec_command("su - quod314")
+    ssh.exec_command("quod314")
     stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.QS_RFQ_FIX_TH2")
     for line in stdout.read().splitlines():
         print(line)

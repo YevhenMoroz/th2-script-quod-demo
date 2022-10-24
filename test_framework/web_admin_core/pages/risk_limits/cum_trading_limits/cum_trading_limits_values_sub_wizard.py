@@ -31,7 +31,7 @@ class CumTradingLimitsValuesSubWizard(CommonPage):
     def get_all_currency_from_drop_menu(self):
         self.set_text_by_xpath(CumTradingLimitsConstants.VALUES_TAB_CURRENCY_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(CumTradingLimitsConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(CumTradingLimitsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_max_quantity(self, value):
         self.set_text_by_xpath(CumTradingLimitsConstants.VALUES_TAB_MAX_QUANTITY_XPATH, value)

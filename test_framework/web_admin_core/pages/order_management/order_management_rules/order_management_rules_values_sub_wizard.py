@@ -56,7 +56,7 @@ class OrderManagementRulesValuesSubWizard(CommonPage):
     def get_all_clients_from_drop_menu(self):
         self.set_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_CLIENT_XPATH, "")
         time.sleep(2)
-        items = self._get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
+        items = self.get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
         return items
 
     def set_user(self, value):
@@ -86,5 +86,5 @@ class OrderManagementRulesValuesSubWizard(CommonPage):
     def get_all_venues_from_drop_menu(self):
         self.set_text_by_xpath(OrderManagementRulesConstants.VALUES_TAB_VENUE_XPATH, "")
         time.sleep(2)
-        items = self._get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
+        items = self.get_all_items_from_drop_down(OrderManagementRulesConstants.DROP_DOWN_ENTITY_XPATH)
         return items

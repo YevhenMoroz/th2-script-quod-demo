@@ -7,8 +7,8 @@ class RestApiWashBookRuleMessages(RestApiMessages):
     def __init__(self, data_set: BaseDataSet):
         super().__init__("")
         self.data_set = data_set
-        self.default_washbook_rule_id = self.data_set.get_washbook_rule_pair_by_name('RuleForTest').value
-        self.default_washbook_rule_name = self.data_set.get_washbook_rule_pair_by_name('RuleForTest').name
+        self.default_washbook_rule_id = self.data_set.get_washbook_rule_by_name('RuleForTest').value
+        self.default_washbook_rule_name = self.data_set.get_washbook_rule_by_name('RuleForTest').name
         self.new_default_washbook_rule = self.data_set.get_washbook_rule_by_name('name_washbook_rule')
         self.default_washbook_account = self.data_set.get_washbook_account_by_name('washbook_account_4')
 

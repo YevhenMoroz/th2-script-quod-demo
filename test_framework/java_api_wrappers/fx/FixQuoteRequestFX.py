@@ -82,3 +82,10 @@ class FixQuoteRequestFX(JavaApiMessage):
         params = self.get_parameters()
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
         return self
+
+    def change_instrument(self, instrument, currency):
+        params = self.get_parameters()
+        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"]["InstrSymbol"] = instrument
+        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
+        return self
+

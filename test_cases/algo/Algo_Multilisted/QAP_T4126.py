@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -83,7 +83,7 @@ class QAP_T4126(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         market_rule = rule_manager.add_NewOrdSingle_Market(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 0)
         self.rule_list = [ocr_rule,market_rule]
@@ -140,9 +140,11 @@ class QAP_T4126(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params,message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_pending)
+        pending_dma_1_order_params.remove_parameter('ExpireDate')
         self.fix_verifier_buy.check_fix_message(pending_dma_1_order_params, key_parameters=self.key_params,direction=self.ToQuod,message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_pending)
+        new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order,self.gateway_side_buy, self.status_new)
+        new_dma_1_order_params.remove_parameter('ExpireDate')
         self.fix_verifier_buy.check_fix_message(new_dma_1_order_params, key_parameters=self.key_params,direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
@@ -152,16 +154,17 @@ class QAP_T4126(TestCase):
 
         # region Check child Eliminate
         eliminate_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy,self.status_eliminate)
-        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*')).remove_parameters(['LastPx', 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
+        eliminate_dma_1_order.add_tag(dict(OrdType='*', Text='*', ExDestination='*'))#.remove_parameters([ 'LastQty', 'OrderCapacity', 'Currency', 'Instrument'])
         self.fix_verifier_buy.check_fix_message(eliminate_dma_1_order, self.key_params, self.ToQuod, "Buy side ExecReport Eliminate child order")
         # endregion
 
         # region check parent Eliminate
         eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
+        eliminate_multilisting_order.add_tag(dict(Text='*', LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, key_parameters=self.key_params, message_name="Sell side ExecReport Eliminate")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

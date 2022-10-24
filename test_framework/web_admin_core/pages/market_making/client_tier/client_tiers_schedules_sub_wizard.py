@@ -1,3 +1,4 @@
+from selenium.webdriver.common.action_chains import ActionChains
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -9,7 +10,16 @@ class ClientTiersSchedulesSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def click_on_plus_button_at_schedule_name(self):
-        self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_PLUS_BUTTON).click()
+        """
+        ActionChains helps to avoid falling test when adding several quantities at once.
+        (The usual "click" method fails because after adding the first entry, the cursor remains on the "edit" button
+        and the pop-up of edit btn covers half of the "+" button)
+        """
+        element = self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_PLUS_BUTTON)
+        action = ActionChains(self.web_driver_container.get_driver())
+        action.move_to_element(element)
+        action.click()
+        action.perform()
 
     def click_on_checkmark_button_at_schedule_name(self):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_NAME_TAB_CHECKMARK_XPATH).click()

@@ -64,7 +64,7 @@ class FrontEnd(Enum):
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
-    DESKS_ID_317 = [""]
+    DESKS_ID_317 = [9, 10]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
     LOGIN_WIN_NAME_317 = "Login to Quod Financial (317 GANYMEDE) "
     # common values
@@ -84,6 +84,14 @@ class FrontEnd(Enum):
     TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
     # endregion
 
+    # region quod310
+    USERS_310 = ["HD5"]
+    PASSWORDS_310 = ["HD5"]
+    FOLDER_310 = ""
+    DESKS_310 = ["Q"]
+    MAIN_WIN_NAME_310 = "Quod Financial - Quod site"
+    LOGIN_WIN_NAME_310 = "Login to Quod Financial (Quod site)"
+    # endregion
 
 class DirectionEnum(Enum):
     FromQuod = "FIRST"
@@ -209,6 +217,9 @@ class TargetStrategy(Enum):
     LitDark = '1011'
     SynthBlock = '1019'
 
+
+class Custom(Enum):
+    Passive = 'Passive'
 
 class OrderSide(Enum):
     Buy = 1

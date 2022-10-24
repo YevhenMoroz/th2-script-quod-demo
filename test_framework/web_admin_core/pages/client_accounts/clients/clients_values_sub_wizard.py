@@ -136,6 +136,9 @@ class ClientsValuesSubWizard(CommonPage):
     def get_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH)
 
+    def clear_allocation_matching_service_field(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, "")
+
     def set_external_allocation_matching_service(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
 

@@ -73,4 +73,4 @@ class MarketDataSourceWizard(CommonPage):
     def get_all_symbol_from_drop_menu(self):
         self.find_by_xpath(MarketDataSourceConstants.WIZARD_SYMBOL_XPATH).click()
         time.sleep(1)
-        return self._get_all_items_from_drop_down(MarketDataSourceConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(MarketDataSourceConstants.DROP_DOWN_MENU_XPATH)
