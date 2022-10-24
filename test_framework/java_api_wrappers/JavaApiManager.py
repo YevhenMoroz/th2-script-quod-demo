@@ -9,6 +9,8 @@ from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderR
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
+from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
+    ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
@@ -199,6 +201,13 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+
+        elif message.get_message_type() == ORSMessageType.Order_ComputeBookingFeesCommissionsRequest.value:
+            response = self.act.submitComputeBookingFeesCommissionsRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -291,6 +300,8 @@ class JavaApiManager:
                 response_fix_message = OrderBagWaveCancelReply()
             elif message_type == ORSMessageType.Order_PositionTransferReport.value:
                 response_fix_message = PositionTransferReport()
+            elif message_type == ORSMessageType.Order_ComputeBookingFeesCommissionsReply.value:
+                response_fix_message = ComputeBookingFeesCommissionsReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

@@ -16,7 +16,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS impo
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderType
-from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)

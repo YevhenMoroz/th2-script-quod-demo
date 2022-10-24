@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-import typing
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -21,7 +20,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import Con
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.java_api_constants import OrderReplyConst
+from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
