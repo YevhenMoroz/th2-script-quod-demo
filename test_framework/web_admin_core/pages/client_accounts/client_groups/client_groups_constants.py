@@ -1,5 +1,5 @@
 class ClientGroupsConstants:
-    CLIENT_GROUPS_PAGE_TITLE_CSS_XPATH = "//span[@class='entity-title left'][text()='ClientGroups ']"
+    CLIENT_GROUPS_PAGE_TITLE_CSS_XPATH = "//span[@class='entity-title left'][normalize-space()='Client Groups']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"

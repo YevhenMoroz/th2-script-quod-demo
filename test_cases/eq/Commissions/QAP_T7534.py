@@ -32,23 +32,19 @@ class QAP_T7534(TestCase):
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
         self.test_id = create_event(self.__class__.__name__, self.report_id)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.send_default_fee()
         self.__send_fix_order()
-        ignor_list = ['Account', 'ReplyReceivedTime', 'SettlCurrency', 'Currency', 'LastMkt', 'Text', 'CommissionData']
-        self.exec_report.set_default_filled(self.new_order_single)
-        self.exec_report.change_parameters({'MiscFeesGrp': {'NoMiscFees': [
-            {"MiscFeeAmt": '0.01', "MiscFeeCurr": self.data_set.get_currency_by_name("currency_2"),
-             'MiscFeeType': '4'}]}})
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignor_list)
+        self.__verify_commissions()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __send_fix_order(self):
@@ -59,13 +55,31 @@ class QAP_T7534(TestCase):
                 self.data_set.get_mic_by_name("mic_2"), float(self.price), float(self.price), int(self.qty),
                 int(self.qty), 1)
 
-            self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit(
+            self.new_order_single.set_default_dma_limit(
                 "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
                 {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
                  'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")
                     , "Currency": self.data_set.get_currency_by_name("currency_3")})
-
             self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
+        except Exception as E:
+            logger.error(f'Your exception is {E}', exc_info=True)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
+        self.rest_commission_sender.clear_fees()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __verify_commissions(self):
+        value_of_commission = '0.01'
+        list_of_ignored_fields = ['ReplyReceivedTime', 'Account',
+                                  'SettlCurrency', 'Currency', 'LastMkt', 'SettlType', 'Text']
+        self.fix_execution_report.change_parameters({'CommissionData': {'Commission': value_of_commission,
+                                                                        'CommType': '3'},
+                                                     'MiscFeesGrp': {
+                                                         'NoMiscFees': [{'MiscFeeAmt': value_of_commission,
+                                                                         'MiscFeeCurr': self.data_set.get_currency_by_name(
+                                                                             'currency_2'),
+                                                                         'MiscFeeType': '4'}]}})
+        self.fix_execution_report.set_default_filled(self.new_order_single)
+        self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_report,
+                                                         ignored_fields=list_of_ignored_fields)

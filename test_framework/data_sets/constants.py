@@ -80,6 +80,14 @@ class FrontEnd(Enum):
     TARGET_SERVER_WIN_OSTRONOV = "quod_11q"
     # endregion
 
+    # region quod310
+    USERS_310 = ["HD5"]
+    PASSWORDS_310 = ["HD5"]
+    FOLDER_310 = ""
+    DESKS_310 = ["Q"]
+    MAIN_WIN_NAME_310 = "Quod Financial - Quod site"
+    LOGIN_WIN_NAME_310 = "Login to Quod Financial (Quod site)"
+    # endregion
 
 class DirectionEnum(Enum):
     FromQuod = "FIRST"

@@ -22,8 +22,8 @@ from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import Trade
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
-from test_framework.win_gui_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
-    SubmitRequestConst, AllocationReportConst, AllocationInstructionConst, ConfirmationReportConst
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
+    SubmitRequestConst, AllocationReportConst, ConfirmationReportConst
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)

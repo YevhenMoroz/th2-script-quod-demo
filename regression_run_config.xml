@@ -21,12 +21,15 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Participation" run="False">
+                <component name="Participation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
                             <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod310_fe</fe_environment>
+                        </fe_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="False">

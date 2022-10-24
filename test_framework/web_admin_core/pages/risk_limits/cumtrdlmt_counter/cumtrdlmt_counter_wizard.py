@@ -44,7 +44,7 @@ class CumTrdLmtCounterWizard(CommonPage):
     def get_all_cum_trading_limit_from_drop_menu(self):
         self.set_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_TRADING_LIMIT_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(CumTrdLmtCounterConstants.DROP_DOWN_MENU)
+        return self.get_all_items_from_drop_down(CumTrdLmtCounterConstants.DROP_DOWN_MENU)
 
     def set_cum_buy_ord_qty(self, value):
         self.set_text_by_xpath(CumTrdLmtCounterConstants.WIZARD_CUM_BUY_ORD_QTY_XPATH, value)

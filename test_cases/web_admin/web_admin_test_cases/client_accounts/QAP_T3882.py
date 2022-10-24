@@ -47,7 +47,9 @@ class QAP_T3882(CommonTestCase):
                                values_sub_wizard.get_block_approval()]
             actual_result = True
             for i in selected_values:
-                if i != self.clearing_account_type or i != self.option:
+                if i == self.clearing_account_type or i == self.option:
+                    pass
+                else:
                     actual_result = False
                     break
 

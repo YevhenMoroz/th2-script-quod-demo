@@ -37,7 +37,6 @@ class QAP_T3357(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_clients_page()
         main_page = ClientsPage(self.web_driver_container)
@@ -46,8 +45,6 @@ class QAP_T3357(CommonTestCase):
 
         if not main_page.is_searched_client_found(self.name):
             main_page.click_on_new()
-            time.sleep(2)
-
             values_tab = ClientsValuesSubWizard(self.web_driver_container)
             values_tab.set_id(self.id)
             values_tab.set_name(self.name)
@@ -66,15 +63,12 @@ class QAP_T3357(CommonTestCase):
 
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
-            time.sleep(2)
             main_page.set_name(self.name)
             time.sleep(1)
 
         else:
             main_page.click_on_more_actions()
-            time.sleep(1)
             main_page.click_on_edit()
-            time.sleep(2)
             routes_tab = ClientsRoutesSubWizard(self.web_driver_container)
             routes_tab.click_on_plus()
             routes_tab.set_route(self.route)
@@ -89,7 +83,6 @@ class QAP_T3357(CommonTestCase):
         routes_tab.click_on_delete()
         wizard = ClientsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
-        time.sleep(2)
 
     def test_context(self):
         routes_tab = ClientsRoutesSubWizard(self.web_driver_container)
@@ -101,9 +94,7 @@ class QAP_T3357(CommonTestCase):
             main_page.set_name(self.name)
             time.sleep(1)
             main_page.click_on_more_actions()
-            time.sleep(1)
             main_page.click_on_edit()
-            time.sleep(2)
             routes_tab.set_route_filter(self.route)
             time.sleep(1)
             self.verify("Agent Fee Exemption checkbox in Route section checked", True,

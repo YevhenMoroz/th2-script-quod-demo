@@ -9,6 +9,8 @@ from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderR
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
+from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
+    ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
@@ -27,6 +29,9 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply impor
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
+from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
+from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 
 
@@ -184,6 +189,25 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.Order_PositionTransferInstruction.value:
+            response = self.act.submitPositionTransferInstructionRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ESMessageType.ExecutionReport.value:
+            response = self.act.submitExecutionReport(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+
+        elif message.get_message_type() == ORSMessageType.Order_ComputeBookingFeesCommissionsRequest.value:
+            response = self.act.submitComputeBookingFeesCommissionsRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
         return self.parse_response(response)
@@ -249,7 +273,7 @@ class JavaApiManager:
             elif message_type == ORSMessageType.OrderListWaveNotification.value:
                 response_fix_message = OrderListWaveNotification()
             elif message_type == ORSMessageType.PositionReport.value:
-                response_fix_message = OrdListNotification()
+                response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
             elif message_type == ESMessageType.ExecutionReport.value:
@@ -259,7 +283,7 @@ class JavaApiManager:
             elif message_type == ORSMessageType.ManualOrderCrossReply.value:
                 response_fix_message = ManualOrderCrossReply()
             elif message_type == ORSMessageType.OrderModificationReply.value:
-                response_fix_message = ManualOrderCrossReply()
+                response_fix_message = OrderModificationReply()
             elif message_type == ORSMessageType.OrderBagCreationReply.value:
                 response_fix_message = OrderBagCreationReply()
             elif message_type == ORSMessageType.OrderBagNotification.value:
@@ -274,6 +298,10 @@ class JavaApiManager:
                 response_fix_message = OrderBagWaveModificationReply()
             elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
                 response_fix_message = OrderBagWaveCancelReply()
+            elif message_type == ORSMessageType.Order_PositionTransferReport.value:
+                response_fix_message = PositionTransferReport()
+            elif message_type == ORSMessageType.Order_ComputeBookingFeesCommissionsReply.value:
+                response_fix_message = ComputeBookingFeesCommissionsReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
