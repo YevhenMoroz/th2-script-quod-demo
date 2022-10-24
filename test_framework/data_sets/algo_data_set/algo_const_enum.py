@@ -315,6 +315,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
     verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
@@ -336,6 +337,11 @@ class AlgoPreFilter(Enum):
     pre_filer_equal_D = {
         'header': {
             'MsgType': ('D', "EQUAL")
+        }}
+
+    pre_filer_equal_G = {
+        'header': {
+            'MsgType': ('G', "EQUAL")
         }}
 
     pre_filer_equal_ER_canceled = {
