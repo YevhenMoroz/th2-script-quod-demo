@@ -1,5 +1,5 @@
 class PriceToleranceControlConstants:
-    PRICE_TOLERANCE_CONTROL_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Price Tolerance Control ']"
+    PRICE_TOLERANCE_CONTROL_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Order Tolerance Limits ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
