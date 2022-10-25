@@ -69,6 +69,8 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    OrderReply = 'Order_OrdReply'
     Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
     Order_PositionTransferReport = 'Order_PositionTransferReport'
     Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
