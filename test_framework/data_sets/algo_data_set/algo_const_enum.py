@@ -259,7 +259,7 @@ class AlgoListingId(Enum):
     listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
     listing_13 = "125917202" # JANESTREET for FR0000031577
-    listing_14 = "181116477" # CITADEL for FR0000031577
+    listing_14 = "422226892" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
     listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
@@ -315,6 +315,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
     verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
@@ -336,6 +337,11 @@ class AlgoPreFilter(Enum):
     pre_filer_equal_D = {
         'header': {
             'MsgType': ('D', "EQUAL")
+        }}
+
+    pre_filer_equal_G = {
+        'header': {
+            'MsgType': ('G', "EQUAL")
         }}
 
     pre_filer_equal_ER_canceled = {

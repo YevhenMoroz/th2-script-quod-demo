@@ -108,7 +108,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
             if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
+                key_parameters = ['MDReqID']
 
             if message_name is None:
                 message_name = "Check MarketDataSnapshotFullRefresh"

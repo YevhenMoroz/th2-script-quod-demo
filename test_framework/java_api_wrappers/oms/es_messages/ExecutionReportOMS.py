@@ -15,8 +15,8 @@ class ExecutionReportOMS(ExecutionReport):
         self.data_set = data_set
 
         self.base_parameters = {
-            'SEND_SUBJECT': 'QUOD.ES.FIXBUYTH2TEST.REPLY',
-            'REPLY_SUBJECT': 'QUOD.FIXBUYTH2TEST.ES.REPLY',
+            'SEND_SUBJECT': 'QUOD.ES.BUYTH2TEST.REPLY',
+            'REPLY_SUBJECT': 'QUOD.BUYTH2TEST.ES.REPLY',
             "Header": {"OnBehalfOf": {"OnBehalfOfCompID": "PARIS"},
                        "MsgTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                        "CreationTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(

@@ -54,7 +54,7 @@ class QAP_T2459(TestCase):
             update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0').\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD IND")
-        time.sleep(10)
+        time.sleep(2)
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
@@ -65,7 +65,6 @@ class QAP_T2459(TestCase):
                                             key_parameters=["MDReqID"])
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
-        time.sleep(10)
         # endregion
 
         # region Step 2
@@ -79,6 +78,8 @@ class QAP_T2459(TestCase):
             self.bands_nok_sek.append("*")
         # endregion
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False)
+        # self.fix_md_snapshot.update_fields_in_component("NoMDEntries", {"MDEntryPositionNo": "*"})
+        self.fix_md_snapshot.update_value_in_repeating_group("NoMDEntries", "MDEntryPositionNo", "*")
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -90,7 +91,7 @@ class QAP_T2459(TestCase):
         self.fix_md.set_market_data().\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")
-        time.sleep(10)
+        time.sleep(2)
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
