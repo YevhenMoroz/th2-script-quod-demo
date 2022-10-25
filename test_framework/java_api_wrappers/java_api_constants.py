@@ -4,6 +4,7 @@ from enum import Enum
 class ExecutionReportConst(Enum):
     TransExecStatus_FIL = 'FIL'
     TransExecStatus_PFL = 'PFL'
+    ExecType_TRD = 'TRD'
 
 
 class BasketMessagesConst(Enum):
@@ -38,6 +39,7 @@ class AllocationReportConst(Enum):
     MatchStatus_MAT = 'MAT'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
+    AllocStatus_CXL = 'CXL'
 
 
 class AllocationInstructionConst(Enum):
@@ -46,6 +48,7 @@ class AllocationInstructionConst(Enum):
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
     COMM_AND_FEES_BASIS_UNI = 'UNI'
+    ConfirmationService_MAN = 'MAN'
 
 
 class ConfirmationReportConst(Enum):
@@ -86,13 +89,19 @@ class JavaApiFields(Enum):
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
+    AffirmStatus = 'AffirmStatus'
+    ConfirmationService = 'ConfirmationService'
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
+    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
+    ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
+    MatchStatus = 'MatchStatus'
+    AllocStatus = 'AllocStatus'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
     OrderListID = 'OrderListID'
     OrderListName = 'OrderListName'
