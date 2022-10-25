@@ -122,9 +122,11 @@ class QAP_T7180(TestCase):
                                                   {'AccountGroupID': self.client, 'AvgPx': '0.100000000'})
         responses = self.java_api_manager.send_message_and_receive_response(self.comp_comm)
         self.__return_result(responses, ORSMessageType.ComputeBookingFeesCommissionsReply.value)
-        comm_list = {'ClientCommissionBlock': [
+        comm_list_exp = {'ClientCommissionBlock': [
             {'CommissionAmount': '100.0', 'CommissionRate': '100.0', 'CommissionBasis': 'ABS',
              'CommissionCurrency': 'GBP', 'CommissionAmountType': 'BRK'}]}
+        comm_list = self.result.get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
+            'ClientCommissionList']
         # region book order
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {
@@ -181,14 +183,14 @@ class QAP_T7180(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value,
              JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
-             'ClientCommissionList': comm_list},
+             'ClientCommissionList': comm_list_exp},
             self.result.get_parameter(JavaApiFields.AllocationReportBlock.value),
             'Check block sts in the Allocation')
         self.__return_result(responses, ORSMessageType.ConfirmationReport.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.AffirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
-             'ClientCommissionList': comm_list},
+             'ClientCommissionList': comm_list_exp},
             self.result.get_parameter(JavaApiFields.ConfirmationReportBlock.value),
             'Check block sts in the Confirmation')
         conf_id = self.result.get_parameter(JavaApiFields.ConfirmationReportBlock.value)['ConfirmationID']
@@ -203,17 +205,15 @@ class QAP_T7180(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.AffirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value, "AvgPx": "15.0",
-             'ClientCommissionList': comm_list},
+             'ClientCommissionList': comm_list_exp},
             self.result.get_parameter(JavaApiFields.ConfirmationReportBlock.value),
             'Check block sts in the Amended Confirmation')
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
     def __return_result(self, responses, message_type):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
 
-    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
