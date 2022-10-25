@@ -11,7 +11,7 @@ from test_cases.eq import MD_test
 from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -80,7 +80,7 @@ def send_incremental(symbol: str, case_id: str, market_data):
     ))
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-buy-side-316-ganymede", account, ex_destination_1, 19.97)
     ocr_rule = rule_manager.add_OrderCancelRequest("fix-buy-side-316-ganymede", account, ex_destination_1, False)
     rule_manager.print_active_rules()
@@ -89,7 +89,7 @@ def rule_creation():
 
 def rule_destroyer(list_rules):
     if list_rules != None:
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         for rule in list_rules:
             rule_manager.remove_rule(rule)
 

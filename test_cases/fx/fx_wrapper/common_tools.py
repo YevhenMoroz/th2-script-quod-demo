@@ -117,6 +117,35 @@ def update_quod_settings(setting_value: str):
             print("PostgreSQL connection is closed")
 
 
+def check_quote_request_id(quote_request):
+    """
+    Get QuoteRequestId from DB using quote_req_id from fix request
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        quote_req_id = quote_request.get_parameter("QuoteReqID")
+        query = f"SELECT quoterequestid  FROM quoterequest WHERE clientquotereqid ='{quote_req_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
                       minutes_to_time=None, day: str = None):
     schedule_dict = {
@@ -207,8 +236,9 @@ def restart_qs_rfq_fix_th2():
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
-
+    ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
+    ssh.exec_command("su - quod314")
+    ssh.exec_command("quod314")
     stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.QS_RFQ_FIX_TH2")
     for line in stdout.read().splitlines():
         print(line)

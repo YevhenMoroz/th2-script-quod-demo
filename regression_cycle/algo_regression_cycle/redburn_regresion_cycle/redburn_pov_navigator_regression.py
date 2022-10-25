@@ -2,7 +2,6 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV import QAP_T4313
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8718 import QAP_T8718
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 
@@ -17,10 +16,10 @@ def test_run(parent_id=None, version=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
-        configuration = ComponentConfiguration("Participation")
-        # QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # configuration = ComponentConfiguration("Participation")
+        configuration = ComponentConfiguration("Scaling")
 
-        QAP_T4313.execute(report_id)
+        # QAP_T4313.execute(report_id)
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

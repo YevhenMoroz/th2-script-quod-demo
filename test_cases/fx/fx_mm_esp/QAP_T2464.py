@@ -63,15 +63,17 @@ class QAP_T2464(TestCase):
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot)
         self.new_order_single.set_default().change_parameter("OrderQty", "500000")
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single,
+                                                               response=response[-1])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
         # region Step 3
         self.new_order_single.set_default().change_parameter("OrderQty", self.qty_for_reject)
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
         reject = Status.Reject
-        self.execution_report_rej.set_params_from_new_order_single(self.new_order_single, status=reject)
+        self.execution_report_rej.set_params_from_new_order_single(self.new_order_single, status=reject,
+                                                                   response=response[-1])
         text = f"17568 Accumulated quantity of order creation/modification reached " \
                f"the limit {self.qty_for_reject} of 'OrderVelocityLimit' {limit_id}"
         self.execution_report_rej.change_parameter("Text", text)
@@ -82,8 +84,9 @@ class QAP_T2464(TestCase):
         # region Step 4
         self.sleep(30)
         self.new_order_single.set_default().change_parameter("OrderQty", "500000")
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single,
+                                                               response=response[-1])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 

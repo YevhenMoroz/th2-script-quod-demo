@@ -73,6 +73,10 @@ class ORSMessageType(Enum):
     Order_PositionTransferReport = 'Order_PositionTransferReport'
     Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
     Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
+    QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
+    QuoteRequest = "Fix_QuoteRequest"
+    QuoteRequestNotif = "Order_QuoteRequestNotif"
+    QuoteRequestActionReply = "Order_QuoteRequestActionReply"
 
 
 class TradingRestApiMessageType(Enum):
@@ -128,6 +132,8 @@ class PKSMessageType(Enum):
 
 class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
+    Quote = "Order_Quote"
 
 
 class ReadLogMessageType(Enum):
