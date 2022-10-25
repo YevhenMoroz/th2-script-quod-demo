@@ -904,4 +904,9 @@ class BaseDataSet:
         if hasattr(self.java_api_instruments, name):
             return getattr(self.java_api_instruments, name).value
         return ValueError(f"{self.java_api_instruments} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        return ValueError(f"{self.contra_firm} not found!")
     # endregion

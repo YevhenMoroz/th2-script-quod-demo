@@ -73,6 +73,7 @@ class JavaApiFields(Enum):
     OrdID = 'OrdID'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
+    ConfirmationReportBlock = 'ConfirmationReportBlock'
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
