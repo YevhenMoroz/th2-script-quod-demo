@@ -1,12 +1,17 @@
 import logging
 import os
 import time
+import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
@@ -14,17 +19,13 @@ from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS im
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    ExecSts, TradeBookColumns, SecondLevelTabs, Basis, FeeTypeForMiscFeeTab, MiddleOfficeColumns, \
-    AllocationsColumns
-import xml.etree.ElementTree as ET
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -48,22 +49,22 @@ class QAP_T6990(TestCase):
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_pt_10')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_10_acc_1')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_backend.xml")
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_backend.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.trade_request = TradeEntryOMS(self.data_set)
+        self.complete_message = DFDManagementBatchOMS(self.data_set)
+        self.submit_request = OrderSubmitOMS(self.data_set)
         # endregion
         # endregion
 
@@ -85,7 +86,6 @@ class QAP_T6990(TestCase):
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
         # endregion
-
         # region set configuration on backend (precondition)
         tree = ET.parse(self.local_path)
         element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
@@ -97,148 +97,93 @@ class QAP_T6990(TestCase):
         self.ssh_client.send_command("qrestart all")
         time.sleep(120)
         # endregion
-
         # region create CO  and partially fill it step 1
-        self.fix_message.set_default_care_limit(instr='instrument_3')
-        self.fix_message.change_parameters(
-            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
-             'Currency': self.currency, 'ExDestination': 'XEUR'})
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order({OrderBookColumns.order_id.value: order_id})
+        self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                   desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                   role=SubmitRequestConst.USER_ROLE_1.value)
+        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {
+            "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"),
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
+            'OrdQty': self.qty, 'Currency': self.currency, 'AccountGroupID': self.client, 'Price': self.price})
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
+            JavaApiFields.OrderNotificationBlock.value)["OrdID"]
+        cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
+            JavaApiFields.OrderNotificationBlock.value)["ClOrdID"]
         allocation_qty = str(int(int(self.qty) / 2))
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        filter_dict = {MiddleOfficeColumns.order_id.value: order_id}
-        contra_firm = self.data_set.get_contra_firm('contra_firm_1')
-        self.order_book.manual_execution(allocation_qty, price=self.price, contra_firm=contra_firm)
+        self.trade_request.set_default_trade(order_id, self.price, allocation_qty)
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {'CounterpartList': {'CounterpartBlock':
+            [self.data_set.get_counterpart_id_java_api(
+                'counterpart_contra_firm')]}})
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
         # endregion
-
         # region check actually  result from step 1
-        dict_of_extraction = {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value}
-        expected_result = {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value}
-        message = "Check values from expecter result of step 1"
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
+        exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        expected_result = {"TransExecStatus": "PFL"}
+        self.java_api_manager.compare_values(expected_result, exec_reply, "Compare TransExecStatus")
         # endregion
-
         # region step 2
-        self.order_book.manual_execution(allocation_qty, price=self.price, contra_firm=contra_firm)
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
         # endregion
-
         # region check actually result from step 2
-        dict_of_extraction = {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value}
-        expected_result = {OrderBookColumns.exec_sts.value: ExecSts.filled.value}
-        message = message.replace('1', '2')
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
+        ord_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        expected_result = {"TransExecStatus": "FIL"}
+        self.java_api_manager.compare_values(expected_result, ord_reply, "Compare TransExecStatus 2")
         # endregion
-
         # region step 3
-        self.order_book.complete_order(filter_list=filter_list)
+        self.complete_message.set_default_complete(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.complete_message)
         # endregion
-
         # region check actually result from step 3
-        filter_list_block = [MiddleOfficeColumns.order_id.value, order_id]
-        dict_of_extraction.clear()
-        dict_of_extraction.update({OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value})
-        expected_result = {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value}
-        message = message.replace('2', '3')
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
-        expected_result.clear()
-        expected_result.update({MiddleOfficeColumns.sts.value: MiddleOfficeColumns.accepted_sts.value,
-                                MiddleOfficeColumns.match_status.value: MiddleOfficeColumns.matched_sts.value,
-                                MiddleOfficeColumns.summary_status.value: MiddleOfficeColumns.matched_agreed_sts.value,
-                                MiddleOfficeColumns.total_fees.value: ''})
-        list_of_column = [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-                          MiddleOfficeColumns.summary_status.value, MiddleOfficeColumns.total_fees.value]
-        self.__extract_and_check_value_from_block(list_of_column, filter_list_block, expected_result, message)
-        actually_result_from_allocation = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value, AllocationsColumns.total_fees.value],
-            filter_dict_block=filter_dict,
-            clear_filter_from_block=True, allocate_number=1)
-        self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
-                                           AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value,
-                                           AllocationsColumns.total_fees.value: ''},
-                                          actually_result_from_allocation,
-                                          message)
-        # endregion
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        expected_result = {"MatchStatus": "MAT", "AllocSummaryStatus": "MAG", "AllocStatus": "ACK", "AllocType": "P"}
+        self.java_api_manager.compare_values(expected_result, alloc_report, "Compare Block")
+        self.java_api_manager.key_is_absent("CommissionDataBlock", expected_result, "Fee is absent")
+        conf_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value
+        ]
+        expected_result = {"AffirmStatus": "AFF", "AllocSummaryStatus": "MAG", "MatchStatus": "MAT"}
+        self.java_api_manager.compare_values(expected_result, conf_report, "Compare Alloc")
+        self.java_api_manager.key_is_absent("CommissionDataBlock", conf_report, "Fee is absent")
 
-        # region step 4
-        list_of_column = [TradeBookColumns.fee_type.value, TradeBookColumns.rate.value, TradeBookColumns.basis.value,
-                          TradeBookColumns.amount.value]
-        rate = '1'
-        filter_dict = {filter_list[0]: filter_list[1]}
-        amount = str(round(int(rate) / 100, 2))
-        avg_px = str(round(int(self.price) / 100, 1))
-        exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                      [TradeBookColumns.exec_id.value], [3], filter_dict)[0]
-        expected_result = [{TradeBookColumns.fee_type.value + '1': FeeTypeForMiscFeeTab.agent.value},
-                           {TradeBookColumns.rate.value + '1': rate},
-                           {TradeBookColumns.basis.value + '1': Basis.absolute.value},
-                           {TradeBookColumns.amount.value + '1': amount}]
-        message = message.replace('3', '4')
-        self.__compare_values_of_fees(exec_id, expected_result, list_of_column, message)
-        # endregion
-
-        # region check 35=8 message step 5
+        # region check 35=8 message
         execution_report = FixMessageExecutionReportOMS(self.data_set)
+        self.fix_message.change_parameters({"ClOrdID": cl_ord_id, "Account": self.client,
+                                            'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price})
         execution_report.set_default_calculated(self.fix_message)
         execution_report.remove_parameter('Parties')
         execution_report.remove_parameter('TradeReportingIndicator')
-        execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
-                                            'Currency': self.currency, 'NoParty': '*', 'CommissionData': '*',
-                                            'tag5120': '*', 'ExecBroker': '*',
-                                            'NoMiscFees': [{
-                                                'MiscFeeAmt': amount,
-                                                'MiscFeeCurr': self.currency_post_trade,
-                                                'MiscFeeType': '12'
-                                            }]})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        execution_report.change_parameters({'NoMiscFees': [{'MiscFeeAmt': '*', 'MiscFeeCurr': self.currency_post_trade,
+                                                            'MiscFeeType': '12'}]})
+        ignored_fields = ["SettlCurrency", "PositionEffect", "SettlType", "AvgPx", "Currency", "tag5120", "NoParty",
+                          "ExecBroker", "BookID", "QuodTradeQualifier", "NoParty", "RootSettlCurrency", "Account",
+                          "RootSettlCurrFxRateCalc", "RootSettlCurrFxRate", "RootSettlCurrAmt", "CommissionData",
+                          "Instrument", "SettlCurrFxRate", "SettlCurrFxRateCalc", "SettlCurrAmt",
+                          "AllocInstructionMiscBlock2"]
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=ignored_fields)
         # endregion
 
         # region step 6
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
-        allocation_report.change_parameters({'AvgPx': avg_px, 'Currency': self.currency_post_trade,
-                                             'tag5120': "*"})
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report)
-        allocation_report.change_parameters({'NoAllocs': [{'AllocAccount': self.alloc_account,
-                                                           'AllocQty': self.qty,
-                                                           'IndividualAllocID': '*',
-                                                           'AllocNetPrice': '*',
-                                                           'AllocPrice': '*',
-                                                           'AllocInstructionMiscBlock2': '*'
-                                                           }],
-                                             'AllocType': '2'})
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report)
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=ignored_fields)
+        allocation_report.change_parameters({'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty,
+                                                           'AllocSettlCurrAmt': '*', 'AllocSettlCurrency': '*',
+                                                           'SettlCurrAmt': '*', 'SettlCurrFxRate': '*',
+                                                           'SettlCurrFxRateCalc': '*', 'IndividualAllocID': '*',
+                                                           'AllocNetPrice': '*', 'AllocPrice': '*',
+                                                           'AllocInstructionMiscBlock2': '*'}], 'AllocType': '2'})
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=ignored_fields)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         confirmation_report.set_default_confirmation_new(self.fix_message)
-        confirmation_report.change_parameters({'AvgPx': avg_px, 'Account': '*', 'Currency': self.currency_post_trade,
-                                               'tag5120': '*', 'AllocInstructionMiscBlock2': '*'})
         confirmation_report.change_parameters({'AllocQty': self.qty,
                                                'AllocAccount': self.alloc_account})
-        self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'OrdStatus', 'AllocAccount'])
+        self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'OrdStatus', 'AllocAccount'],
+                                                         ignored_fields=ignored_fields)
         # endregion
-
-    def __check_expected_result_from_order_book(self, filter_list, expected_result, dict_of_extraction, message):
-        self.order_book.set_filter(filter_list=filter_list)
-        actual_result = self.order_book.extract_fields_list(
-            dict_of_extraction)
-        self.order_book.compare_values(expected_result, actual_result,
-                                       message)
-
-    def __extract_and_check_value_from_block(self, list_of_column, filter_list, expected_result, message):
-        self.middle_office.clear_filter()
-        actual_result = self.middle_office.extract_list_of_block_fields(list_of_column=list_of_column,
-                                                                        filter_list=filter_list)
-        print(actual_result)
-        self.middle_office.compare_values(expected_result, actual_result, message)
-
-    def __compare_values_of_fees(self, filter_dict, expected_result, list_of_column: list, message):
-        for value in list_of_column:
-            actual_result = self.trade_book.extract_sub_lvl_fields(
-                [value], SecondLevelTabs.fees.value, 1, filter_dict)
-            print(actual_result)
-            self.order_book.compare_values(expected_result[list_of_column.index(value)], actual_result,
-                                           message)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

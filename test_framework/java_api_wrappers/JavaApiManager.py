@@ -228,14 +228,19 @@ class JavaApiManager:
                         # Component
                         for component_field in message.fields[main_field].message_value.fields[
                             field].message_value.fields:
-                            if message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value != "":
-                                component_fields.update({component_field: message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value})
+                            if message.fields[main_field].message_value.fields[field].message_value.fields[
+                                component_field].simple_value != "":
+                                component_fields.update({component_field:
+                                                             message.fields[main_field].message_value.fields[
+                                                                 field].message_value.fields[
+                                                                 component_field].simple_value})
                                 fields_content.update({field: component_fields})
                             else:
                                 # Repeating Group
                                 repeating_group_list = list()
                                 for repeating_group in \
-                                message.fields[main_field].message_value.fields[field].message_value.fields[component_field].list_value.values:
+                                        message.fields[main_field].message_value.fields[field].message_value.fields[
+                                            component_field].list_value.values:
                                     repeating_group_list_field = dict()
                                     for repeating_group_field in repeating_group.message_value.fields:
                                         repeating_group_list_field.update({repeating_group_field:
@@ -328,6 +333,17 @@ class JavaApiManager:
                                              verification_method)
         except KeyError:
             print("Element: " + k + " not found")
+        self.verifier.verify()
+        self.verifier = Verifier(self.__case_id)
+
+    def key_is_absent(self, key: str, actual_values: dict, event_name: str):
+        if key in actual_values:
+            self.verifier.success = False
+
+        self.verifier.fields.update(
+            {"Is absent:": {"expected": key, "key": False, "type": "field",
+                            "status": "PASSED" if self.verifier.success else "FAILED"}})
+        self.verifier.set_event_name(event_name)
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
