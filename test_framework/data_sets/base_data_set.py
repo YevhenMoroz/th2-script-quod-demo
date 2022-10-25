@@ -27,6 +27,7 @@ class BaseDataSet:
     symbols = None
     security_types = None
     settle_types = None
+    settle_types_ja = None
     settle_dates = None
     routes = None
     route_id = None
@@ -40,6 +41,7 @@ class BaseDataSet:
     client_tiers_id = None
     days_of_week = None
     tenors = None
+    tenors_java_api = None
     auto_hedgers = None
     auto_hedgers_id = None
     algo_policies = None
@@ -94,6 +96,7 @@ class BaseDataSet:
     symbol = None
     instr_type = None
     fx_istr_type_wa = None
+    fx_istr_type_ja = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -280,6 +283,13 @@ class BaseDataSet:
             return getattr(self.fx_istr_type_wa, name).value
         return ValueError(f"{self.fx_istr_type_wa} not found!")
 
+
+    def get_fx_instr_type_ja(self, name: str):
+        if hasattr(self.fx_istr_type_ja, name):
+            return getattr(self.fx_istr_type_ja, name).value
+        return ValueError(f"{self.fx_istr_type_ja} not found!")
+
+
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
             return getattr(self.mic, name).value
@@ -332,6 +342,15 @@ class BaseDataSet:
         if hasattr(self.settle_types, name):
             return getattr(self.settle_types, name).value
         raise ValueError(f"{self.settle_types} not found!")
+
+    def get_settle_type_ja_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypesJavaAPi
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.settle_types_ja, name):
+            return getattr(self.settle_types_ja, name).value
+        raise ValueError(f"{self.settle_types_ja} not found!")
 
     def get_settle_date_by_name(self, name: str):
         """
@@ -387,6 +406,15 @@ class BaseDataSet:
         if hasattr(self.tenors, name):
             return getattr(self.tenors, name).value
         raise ValueError(f"{self.tenors} not found!")
+
+    def get_tenor_java_api_by_name(self, name: str):
+        """
+        get tenor by name from FxTenors
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors_java_api, name):
+            return getattr(self.tenors_java_api, name).value
+        raise ValueError(f"{self.tenors_java_api} not found!")
 
     def get_auto_hedger_by_name(self, name: str):
         """
@@ -876,4 +904,9 @@ class BaseDataSet:
         if hasattr(self.java_api_instruments, name):
             return getattr(self.java_api_instruments, name).value
         return ValueError(f"{self.java_api_instruments} not found!")
+
+    def get_contra_firm(self, name: str):
+        if hasattr(self.contra_firm, name):
+            return getattr(self.contra_firm, name).value
+        return ValueError(f"{self.contra_firm} not found!")
     # endregion

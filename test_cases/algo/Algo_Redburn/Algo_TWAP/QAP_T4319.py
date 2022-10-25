@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
+from rule_management import RuleManager, Simulators, Simulators
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -20,15 +20,6 @@ from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySid
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-
-# connectivity
-case_name = os.path.basename(__file__)
-instrument = DataSet.Instrument.BUI
-FromQuod = DataSet.DirectionEnum.FromQuod
-ToQuod = DataSet.DirectionEnum.ToQuod
-connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
-connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
-connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
 
 
 class QAP_T4319(TestCase):
@@ -54,15 +45,14 @@ class QAP_T4319(TestCase):
         self.navigator_limit_price_reference = DataSet.Reference.Limit.value
         self.price = 29.995
         self.price_nav = 25
-        self.ex_destination_1 = "XPAR"
-        self.client = "CLIENT2"
-        self.account = 'XPAR_CLIENT2'
-        self.currency = 'EUR'
-        self.s_par = '555'
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.s_par = self.data_set.get_listing_id_by_name('listing_36')
 
         # Key parameters
-        self.key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-        self.key_params = ['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_2')
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -77,13 +67,18 @@ class QAP_T4319(TestCase):
         self.status_reject = Status.Reject
         # endregion
 
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
+
         self.text_reject_navigator_limit_price = DataSet.FreeNotesReject.MissNavigatorLimitPrice.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, connectivity_fh)
+        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         self.fix_manager_feed_handler.send_message(market_data_snapshot)
 
         time.sleep(3)
@@ -103,7 +98,7 @@ class QAP_T4319(TestCase):
         time.sleep(3)
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, self.gateway_side_sell, self.status_pending).remove_parameter("Account").add_tag(dict(NoStrategyParameters="*", NoParty="*", SecAltIDGrp="*"))
         self.fix_verifier_sell.check_fix_message(pending_twap_nav_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew Parent')
@@ -114,7 +109,7 @@ class QAP_T4319(TestCase):
                                                        LastQty=0, SettlDate="*", Currency="EUR", HandlInst=2, NoParty="*", LastPx=0, OrderCapacity="A",
                                                        SecAltIDGrp="*", QtyType=0, ExecRestatementReason=4, TargetStrategy="*", Instrument="*"))
         reject_moc_order_params.remove_parameter("ExDestination")
-        self.fix_verifier_sell.check_fix_message(reject_moc_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecRepor          t Reject')
+        self.fix_verifier_sell.check_fix_message(reject_moc_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Reject')
 
         # endregion
 

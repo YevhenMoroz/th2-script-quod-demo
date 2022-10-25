@@ -36,12 +36,13 @@ class QAP_T2684(TestCase):
 
         # region Step 1
         self.new_order_single.set_default()
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
         # region step 2
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_filled)
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_filled,
+                                                                   response=response[-1])
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

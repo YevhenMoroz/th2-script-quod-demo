@@ -44,10 +44,11 @@ class QAP_T2893(TestCase):
         # region step 2
         self.new_order_single.set_default().change_parameters(
             {"Account": self.silver, "TimeInForce": "3", "OrdType": "1"}).remove_parameter("Price")
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
         self.execution_report.set_params_from_new_order_single(self.new_order_single,
-                                                               self.status_fill).remove_parameter("Price").add_tag(
+                                                               self.status_fill,
+                                                               response=response[-1]).remove_parameter("Price").add_tag(
             {"LastMkt": "*"})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod,
                                             key_parameters=['ExecType'])

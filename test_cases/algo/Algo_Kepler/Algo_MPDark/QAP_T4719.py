@@ -5,7 +5,7 @@ from pathlib import Path
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -100,7 +100,7 @@ class QAP_T4719(TestCase):
         self.rule_list = []
 
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_rfq_1_reject_rule = rule_manager.add_NewOrderSingle_RFQ_Reject(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty)
         nos_rfq_2_reject_rule = rule_manager.add_NewOrderSingle_RFQ_Reject(self.fix_env1.buy_side, self.client, self.ex_destination_trql, self.qty)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
@@ -222,5 +222,5 @@ class QAP_T4719(TestCase):
         self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPhase", 'N')
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
