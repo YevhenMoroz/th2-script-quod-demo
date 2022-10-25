@@ -12,6 +12,7 @@ from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
+from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
@@ -329,7 +330,8 @@ class JavaApiManager:
                 response_fix_message = QuoteRequestNotifFX()
             elif message_type == ORSMessageType.QuoteRequestActionReply.value:
                 response_fix_message = QuoteRequestActionReplyFX()
-
+            elif message_type == ORSMessageType.BookingCancelReply.value:
+                response_fix_message = BookingCancelReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
