@@ -259,7 +259,8 @@ class AlgoListingId(Enum):
     listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
     listing_13 = "125917202" # JANESTREET for FR0000031577
-    listing_14 = "181116477" # CITADEL for FR0000031577
+    # listing_14 = "181116477" # CITADEL for FR0000031577
+    listing_14 = "422226892" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
     listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
@@ -297,7 +298,8 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_1 = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
     verifier_key_parameters_2 = ['OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_3 = ['OrdStatus', 'ExecType', 'OrderQty']
-    verifier_key_parameters_4 = ['OrdStatus', 'ExecType', 'OrderQty']
+    verifier_key_parameters_4 = ['OrdStatus', 'ExecType', 'OrderQty', 'OrdType']
+    verifier_key_parameters_5 = ['ExDestination', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'Account']
     verifier_key_parameters_NOS_child = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce']
     verifier_key_parameters_NOS_child_with_minqty = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'MinQty']
     verifier_key_parameters_NOS_child_with_stoppx = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'StopPx']
@@ -312,7 +314,9 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_RFQ = ['OrdStatus', 'ExecType', 'AlgoCst01', "OrdType", "ExDestination"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
+    verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
@@ -323,6 +327,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
+    key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
 
 
 class AlgoPreFilter(Enum):
@@ -333,6 +338,11 @@ class AlgoPreFilter(Enum):
     pre_filer_equal_D = {
         'header': {
             'MsgType': ('D', "EQUAL")
+        }}
+
+    pre_filer_equal_G = {
+        'header': {
+            'MsgType': ('G', "EQUAL")
         }}
 
     pre_filer_equal_ER_canceled = {
@@ -358,7 +368,35 @@ class AlgoPreFilter(Enum):
         'PrimaryListingID': ('*', "EQUAL")
     }
 
-    pre_filter_primary_status_of_transaction= {
+    pre_filter_primary_status_of_transaction = {
         'NewStatus': ('*', "EQUAL")
     }
 
+    pre_filter_suitable_liquidity = {
+        'ClOrdrId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
+    }
+
+    pre_filer_equal_ER_pending_new = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('A', 'EQUAL'),
+        'OrdStatus': ('A', 'EQUAL')
+    }
+
+    pre_filer_equal_ER_new = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('0', 'EQUAL'),
+        'OrdStatus': ('0', 'EQUAL')
+    }
+
+    pre_filer_equal_ER_eliminate = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('4', 'EQUAL'),
+        'OrdStatus': ('4', 'EQUAL')
+    }

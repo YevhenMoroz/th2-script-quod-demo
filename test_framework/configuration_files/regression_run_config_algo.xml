@@ -1,0 +1,201 @@
+<regression>
+    <target_server_win></target_server_win>
+    <name>Regression 176v</name>
+    <version>5.1.163.176</version>
+    <product_lines>
+        <product_line name="algo" run="False">
+            <components>
+                <component name="Twap" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Vwap" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Participation" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod310_fe</fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+                <component name="Iceberg" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Multilisted" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Peg" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Stop" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Lit_dark" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Block" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Gating_rules" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Web_admin" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Mp_dark" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod319_kuiper_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
+                    </environments>
+                </component>
+                <component name="Synth_min_qty" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Lit_dark_iceberg" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Sorping" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Multiple_emulation" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod319_kuiper_kepler</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="PreOpen_Auction" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Expity_Auction" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="PreClose_Auction" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Scaling" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="POV_Scaling" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Pair_trading" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Acceptance_list" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+            </components>
+        </product_line>
+    </product_lines>
+</regression>
