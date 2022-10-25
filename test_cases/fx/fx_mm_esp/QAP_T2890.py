@@ -46,11 +46,12 @@ class QAP_T2890(TestCase):
         # region step 2
         self.new_order_single.set_default().change_parameters(
             {"Account": self.account, "Price": self.price})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
         # region step 3-4
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
+                                                               response=response[-1])
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 

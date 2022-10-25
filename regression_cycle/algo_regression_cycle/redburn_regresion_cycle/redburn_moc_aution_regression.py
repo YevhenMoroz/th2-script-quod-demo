@@ -2,8 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOC import QAP_T4308, QAP_T4311
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8718 import QAP_T8718
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -17,11 +16,10 @@ def test_run(parent_id=None, version=None):
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
-        configuration = ComponentConfiguration("PreClose_Auction")
-        # QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        configuration = ComponentConfigurationAlgo("PreClose_Auction")
 
-        QAP_T4308.execute(report_id)
-        QAP_T4311.execute(report_id)
+        # QAP_T4308.execute(report_id)
+        # QAP_T4311.execute(report_id)
 
 
     except Exception:

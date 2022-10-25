@@ -52,6 +52,10 @@ class Connectivity(Enum):
     Kepler_319_Buy_Side = 'fix-buy-side-319-kepler'
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
     Kuiper_319_web_admin_site = 'rest_wa319kuiper'
+    Kratos_309_ss_rfq = 'fix-sell-rfq-m-309kratos-stand'
+    Kratos_309_ss_esp = 'fix-sell-esp-m-309kratos-stand'
+    Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
+
 
 
 class FrontEnd(Enum):
@@ -187,6 +191,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_7 = "QA_Auto_SORPING_7"
     qa_sorping_8 = "QA_Auto_SORPING_8"
     qa_sorping_9 = "QA_Auto_SORPING_9"
+    qa_sorping_10 = "QA_Auto_SORPING_10"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
     qa_iceberg = 'QA_Auto_ICEBERG'
@@ -213,6 +218,9 @@ class TargetStrategy(Enum):
     LitDark = '1011'
     SynthBlock = '1019'
 
+
+class Custom(Enum):
+    Passive = 'Passive'
 
 class OrderSide(Enum):
     Buy = 1
@@ -288,6 +296,7 @@ class ReadLogVerifiers(Enum):
     log319_check_tag_5047 = "log319-check-tag-5047"
     log319_check_tag_5048 = "log319-check-tag-5048"
     log319_check_tag_1 = "log319-check-tag-1"
+    log_319_check_that_is_no_suitablle_liquidity = "log319-check-that-is-no-suitable-liquidity"
 
 
 class WebAdminURL(Enum):

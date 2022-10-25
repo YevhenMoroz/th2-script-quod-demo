@@ -15,10 +15,9 @@ from stubs import ROOT_DIR
 
 
 class ComponentConfiguration:
-    xpath = f"{ROOT_DIR}/regression_run_config.xml"
 
-    def __init__(self, component_name: str):
-        tree = ElementTree.parse(ComponentConfiguration.xpath)
+    def __init__(self, component_name: str, xpath=f"{ROOT_DIR}/regression_run_config.xml"):
+        tree = ElementTree.parse(xpath)
         root = tree.getroot()
         try:
             self.name = root.find(f".//component[@name='{component_name}']").attrib["name"]
@@ -30,3 +29,7 @@ class ComponentConfiguration:
 
         component_environment = list(root.find(f".//component[@name='{self.name}']/environments"))
         self.environment = FullEnvironment(component_environment)
+
+class ComponentConfigurationAlgo(ComponentConfiguration):
+    def __init__(self, component_name: str):
+        super().__init__(component_name, f"{ROOT_DIR}/test_framework/configuration_files/regression_run_config_algo.xml")

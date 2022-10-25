@@ -109,6 +109,7 @@ class OmsClients(Enum):
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
+    client_counterpart_3 = "CLIENT_COUNTERPART_3"
 
 
 class OmsVenueClientNames(Enum):
@@ -142,13 +143,17 @@ class OmsVenueClientNames(Enum):
     client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
     client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
+    client_counterpart_3_venue_1 = "CLIENT_COUNTERPART_3_PARIS"
 
 
 class OmsAccounts(Enum):
+    """Base"""
+    client_1_acc_1 = "NEWACCOUNT"
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
     client_pos_3_acc_3 = "PROP"
+    client_pos_3_acc_4 = "PROP_TEST"
     """PostTrade"""
     client_pt_1_acc_1 = "MOClient_SA1"
     client_pt_1_acc_2 = "MOClient_SA2"
@@ -183,6 +188,7 @@ class OmsAccounts(Enum):
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
+    client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
 
 
 class AlgoParametersExternal(Enum):
@@ -504,6 +510,7 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_custodian_user = {'PartyRole': '28', 'PartyID': 'CustodianUser', 'PartyRoleQualifier': '24',
                                      'PartyIDSource': 'C'}
     counter_part_id_contra_firm = {'PartyRole': "17", 'PartyID': 'ContraFirm', 'PartyIDSource': "C"}
+    counter_part_id_contra_firm_2 = {'PartyRole': "17", 'PartyID': 'ContraFirm2', 'PartyIDSource': "C"}
     counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
                                                      'PartyIDSource': "C"}

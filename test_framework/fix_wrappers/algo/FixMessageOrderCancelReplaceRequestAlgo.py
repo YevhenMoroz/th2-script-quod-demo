@@ -57,6 +57,8 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             temp.update(NoStrategyParameters=new_order_single.get_parameter('NoStrategyParameters'))
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy=new_order_single.get_parameter('TargetStrategy'))
+        if new_order_single.is_parameter_exist('ExDestination'):
+            temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
@@ -73,5 +75,10 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             Instrument=new_order_single.get_parameter('Instrument'),
             OrigClOrdID=new_order_single.get_parameter("ClOrdID"),
         )
+        if new_order_single.get_parameter('ClOrdID') == '*':                                            # for checking modification request on child
+            temp.update(
+                OrderID='*',
+                TransactTime='*',
+            )
         super().change_parameters(temp)
         return self

@@ -108,7 +108,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
             if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
+                key_parameters = ['MDReqID']
 
             if message_name is None:
                 message_name = "Check MarketDataSnapshotFullRefresh"
@@ -249,7 +249,7 @@ class FixVerifier:
         # TODO add exeption into else
 
     def check_fix_message_sequence(self, fix_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
-                                   message_name: str = None, pre_filter: dict = None, ):
+                                   message_name: str = None, pre_filter: dict = None, check_order=True):
         if pre_filter is None:
             pre_filter = {
                 'header': {
@@ -273,6 +273,7 @@ class FixVerifier:
 
         self.__verifier.submitCheckSequenceRule(
             basic_custom_actions.create_check_sequence_rule(
+                check_order=check_order,
                 description=message_name,
                 prefilter=pre_filter_req,
                 msg_filters=message_filters_req,

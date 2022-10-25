@@ -1,6 +1,5 @@
 properties([
     parameters([
-        string(defaultValue: 'schema_quod', description: 'enter branch name which exists in th2-script-quod-demo repository', name: 'BranchName'),
         string(name: 'Name', defaultValue: 'Regression', description: ''),
         string(name: 'Version', defaultValue: '', description: 'e.g. 5.1.159.170'),
         separator(name: 'separator-323aceab-1ada-40c5-b7de-fd214cf067e0', sectionHeader: 'Choose mode'), 
@@ -1245,19 +1244,18 @@ properties([
 pipeline {
     agent { 
         dockerfile {
-            filename 'Dockerfile'  
+            filename 'Dockerfile'
         }
     }
     environment {
         REGRESSION_CONFIG = "${env.WORKSPACE}/regression_run_config.xml"
     }
-    /*triggers {
+    triggers {
         parameterizedCron(
         '''
-        38 13 * * * %RunTestScript=true;TestScriptPath=test_cases/Test_run.py
-        5 14 * * * %Regression=true;algo=true;fx=false;oms=false;retail=false;web_admin=false;Twap=false;Vwap=false;Participation=false;Iceberg=true;Multilisted=false;Peg=false;Stop=false;Lit_dark=false;Block=false;Gating_rules=false;Web_admin=false;Mp_dark=false;Synth_min_qty=false;Lit_dark_iceberg=false;Sorping=false;Multiple_emulation=false;PreOpen_Auction=false;Expity_Auction=false;PreClose_Auction=false;Scaling=false;POV_Scaling=false;Pair_trading=false;
+        45 08 * * 1-5 %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
         ''')
-    }*/
+    }
 
     stages {
         stage('Algo section') {
