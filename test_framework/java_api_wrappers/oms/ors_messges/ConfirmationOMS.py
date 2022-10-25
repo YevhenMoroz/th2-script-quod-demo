@@ -33,3 +33,11 @@ class ConfirmationOMS(Confirmation):
         self.update_fields_in_component('ConfirmationBlock',
                                         {"AllocInstructionID": alloc_id})
         return self
+
+    def set_default_amend_allocation(self, conf_id, alloc_id, price="10", qty_to_allocate="100"):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('ConfirmationBlock',
+                                        {"ConfirmationID": conf_id, "AllocInstructionID": alloc_id,
+                                         'ConfirmTransType': "REP", "AllocQty": qty_to_allocate, "AvgPx": price})
+        return self
+
