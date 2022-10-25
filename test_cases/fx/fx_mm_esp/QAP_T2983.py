@@ -44,11 +44,12 @@ class QAP_T2983(TestCase):
 
         # region step 2
         self.new_order_single.set_default().change_parameter("Account", self.account)
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
         # region step 3-5
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status,
+                                                               response=response[-1])
         self.execution_report.add_tag({"LastMkt": "*"})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

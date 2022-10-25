@@ -16,7 +16,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 
 
-
 class QAP_T2736(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
@@ -65,9 +64,10 @@ class QAP_T2736(TestCase):
         self.new_order_single.set_default().change_parameters(
             {"Account": self.palladium2, "Instrument": self.instrument, "Currency": self.gbp,
              "SettlType": self.settle_type_1w})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
+                                                               response=response[-1])
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 

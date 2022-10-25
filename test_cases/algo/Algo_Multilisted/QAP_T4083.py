@@ -9,7 +9,7 @@ from custom.basic_custom_actions import convert_to_request, message_to_grpc
 from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
 
 #order param
@@ -40,7 +40,7 @@ connectivity_sell_side = "fix-ss-310-columbia-standart"
 
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     market_rule_1 = rule_manager.add_NewOrdSingle_Market(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", False, 0, price)
     # nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price)
     # nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, "XPAR_CLIENT1", "XPAR", price)
@@ -51,7 +51,7 @@ def rule_creation():
 
 def rule_destroyer(list_rules):
     if list_rules != None:
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         for rule in list_rules:
             rule_manager.remove_rule(rule)
 

@@ -64,9 +64,10 @@ class QAP_T2432(TestCase):
              "SettlDate": self.settle_date, "SettlType": self.settle_type, "TimeInForce": "4", "OrdType": "1",
              "OrderQty": self.qty})
         self.new_order_single.remove_parameter("Price")
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
 
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
+                                                               response=response[-1])
         self.execution_report.remove_parameter("Price")
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

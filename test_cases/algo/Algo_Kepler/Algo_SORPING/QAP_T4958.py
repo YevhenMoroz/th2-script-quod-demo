@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -106,7 +106,7 @@ class QAP_T4958(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_ioc_1_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_batsdark, self.ex_destination_batsdark, False, self.traded_qty, self.price_bid)
         nos_ioc_2_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chixdark, self.ex_destination_chixdark, False, self.traded_qty, self.price_bid)
         nos_ioc_3_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty, self.price_ask)
@@ -264,6 +264,6 @@ class QAP_T4958(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
         
