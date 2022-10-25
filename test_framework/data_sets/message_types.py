@@ -79,6 +79,7 @@ class ORSMessageType(Enum):
     QuoteRequest = "Fix_QuoteRequest"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
+    BookingCancelReply = "Order_BookingCancelReply"
 
 
 class TradingRestApiMessageType(Enum):
