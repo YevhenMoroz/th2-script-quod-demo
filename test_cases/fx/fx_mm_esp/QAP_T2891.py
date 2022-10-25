@@ -43,7 +43,6 @@ class QAP_T2891(TestCase):
             'Instrument': self.instrument,
             'SettlType': self.settle_type}]
 
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
@@ -60,11 +59,12 @@ class QAP_T2891(TestCase):
         self.new_order_single.set_default().change_parameters(
             {"Account": self.account, "Instrument": self.instrument, "Currency": self.currency,
              "SettlDate": self.settle_date, "SettlType": self.settle_type})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         # endregion
 
         # region step 3-5
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_fill,
+                                                               response=response[-1])
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion
 

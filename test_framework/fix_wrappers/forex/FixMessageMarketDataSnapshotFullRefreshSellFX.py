@@ -161,6 +161,7 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                         "MDEntryPx": "*",
                         "MDEntrySize": qty,
                         "OrdType": "2",
+                        "SettlType": "B",
                         "SettlDate": md_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
                         "MDQuoteType": "*",
                         "MDEntryForwardPoints": "*",

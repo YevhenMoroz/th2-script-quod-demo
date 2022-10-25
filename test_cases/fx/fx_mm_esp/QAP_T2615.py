@@ -53,8 +53,9 @@ class QAP_T2615(TestCase):
                                             key_parameters=["MDReqID"])
         self.new_order_single.set_default().change_parameters({"Instrument": self.instrument,
                                                                "Price": "1.89", "Account": self.palladium1})
-        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_filled)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_filled,
+                                                               response=response[-1])
         self.execution_report.change_parameter("Price", "1.89")
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

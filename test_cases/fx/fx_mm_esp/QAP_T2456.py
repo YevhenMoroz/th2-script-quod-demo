@@ -43,17 +43,22 @@ class QAP_T2456(TestCase):
             "SettlType": self.settle_type_spot,
             "MarketID": self.market_id_citi_sw
         }]
-
+        self.bands = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.md_request.set_md_req_parameters_taker().change_parameter("MDReqID", self.md_req_id)
         self.md_request.update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        # region adapting for flexible market data
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands.append("*")
+        # endregion
         # endregion
         # region step 2
-        self.md_snapshot.set_params_for_md_response_taker_bda(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response_taker_bda(self.md_request, self.bands)
         self.sleep(4)
         self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime"])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)

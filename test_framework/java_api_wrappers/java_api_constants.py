@@ -18,6 +18,7 @@ class OrderReplyConst(Enum):
     TransStatus_OPN = 'OPN'
     DiscloseExec_R = 'R'
     DiscloseExec_M = 'M'
+    TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
 
@@ -36,6 +37,7 @@ class AllocationReportConst(Enum):
     AllocStatus_ACK = 'ACK'
     MatchStatus_MAT = 'MAT'
     AllocSummaryStatus_MAG = 'MAG'
+    AllocStatus_APP = 'APP'
 
 
 class AllocationInstructionConst(Enum):
@@ -83,6 +85,7 @@ class JavaApiFields(Enum):
     OrdID = 'OrdID'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
+    ConfirmationReportBlock = 'ConfirmationReportBlock'
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'

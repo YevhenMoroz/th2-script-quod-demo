@@ -44,13 +44,13 @@ class ComputeBookingFeesCommissionsRequestOMS(ComputeBookingFeesCommissionsReque
         for instance in self.__list_exec_alloc_block:
             instance_exec_alloc_block.append({'ExecQty': instance.exec_qty, 'ExecID': instance.exec_id,
                                               'ExecPrice': instance.exec_price,
-                                              'PostTradeStatus': instance.post_trade_exec_status})
+                                              'PostTradeExecStatus': instance.post_trade_exec_status})
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.ALLOC.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'ComputeBookingFeesCommissionsRequestBlock': {
                 'OrdAllocList': {
-                    'OrderAllocBlock': instance_order_alloc_block},
+                    'OrdAllocBlock': instance_order_alloc_block},
                 'ExecAllocList': {
                     'ExecAllocBlock': instance_exec_alloc_block},
                 'Qty': qty,

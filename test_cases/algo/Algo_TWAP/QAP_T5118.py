@@ -11,7 +11,7 @@ from custom.basic_custom_actions import timestamps, create_event, message_to_grp
 from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 from th2_grpc_common.common_pb2 import ConnectionID
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 
 
 logger = getLogger(__name__)
@@ -34,7 +34,7 @@ def execute(report_id):
     client = "CLIENT2"
 
 
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew("fix-bs-eq-trqx", ex_destination +"_"+ client, ex_destination, limit)
     ocr_rule = rule_manager.add_OrderCancelRequest('fix-bs-eq-trqx','TRQX_CLIENT2','TRQX', True)
 

@@ -1,5 +1,5 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.fix_wrappers.DataSet import MessageType
+from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from custom import basic_custom_actions as bca
 
@@ -7,7 +7,7 @@ from custom import basic_custom_actions as bca
 class FixMessageQuoteRequestFX(FixMessage):
 
     def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
-        super().__init__(message_type=MessageType.QuoteRequest.value, data_set=data_set)
+        super().__init__(message_type=FIXMessageType.QuoteRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
     def set_rfq_params(self):
@@ -202,6 +202,10 @@ class FixMessageQuoteRequestFX(FixMessage):
         if leg_qty is not None:
             self.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegOrderQty"] = leg_qty
         return self
+
+    def remove_side_from_legs(self):
+        self.get_parameter(["NoRelatedSymbols"][0]["NoLegs"][0]).remove({"LegSide": "2"})
+        self.get_parameter(["NoRelatedSymbols"][0]["NoLegs"][1]).remove({"LegSide": "2"})
 
     def set_deposit_and_loan_param(self):
         quote_request_params = {
