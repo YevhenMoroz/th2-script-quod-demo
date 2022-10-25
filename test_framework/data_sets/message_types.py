@@ -70,11 +70,10 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
-    OrderReply = 'Order_OrdReply'
-    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
-    Order_PositionTransferReport = 'Order_PositionTransferReport'
-    Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
-    Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
+    PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    PositionTransferReport = 'Order_PositionTransferReport'
+    ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
+    ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
