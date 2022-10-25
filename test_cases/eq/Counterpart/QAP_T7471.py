@@ -137,7 +137,9 @@ class QAP_T7471(TestCase):
         class_name.__print_message('Complete Second Order', responses)
         # endregion
         # region Book orders
-        self.allocation_instruction.set_default_book(order_id, order_id_second)
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component("AllocationInstructionBlock", {
+            "OrdAllocList": {"OrdAllocBlock": [{"OrdID": order_id}, {"OrdID": order_id_second}]}})
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
             'Qty': str(int(int(self.qty) * 2)),
             "InstrID": instr_id,
