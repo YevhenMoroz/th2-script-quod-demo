@@ -68,16 +68,9 @@ class QAP_T7473(TestCase):
         # region Set-up parameters for ExecutionReports
         parties = {
             'NoPartyIDs': [
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "36",
-                 "PartyRoleQualifier": "1011",
-                 'PartyID': "gtwquod4",
-                 'PartyIDSource': "D"},
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
@@ -94,12 +87,8 @@ class QAP_T7473(TestCase):
         # region Set-up parameters Confirmation report
         no_party = {
             'NoParty': [
-                {'PartyRole': "67",
-                 'PartyID': "InvestmentFirm - ClCounterpart_SA1",
-                 'PartyIDSource': "C"},
-                {'PartyRole': "66",
-                 'PartyID': "MarketMaker - TH2Route",
-                 'PartyIDSource': "C"}
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
             ]
         }
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(

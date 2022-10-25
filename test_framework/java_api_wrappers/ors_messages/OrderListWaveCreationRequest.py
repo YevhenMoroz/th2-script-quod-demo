@@ -1,6 +1,6 @@
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
-from test_framework.win_gui_wrappers.java_api_constants import QtyPercentageProfile
+from test_framework.java_api_wrappers.java_api_constants import QtyPercentageProfile
 
 
 class OrderListWaveCreationRequest(JavaApiMessage):

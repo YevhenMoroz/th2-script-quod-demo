@@ -6,11 +6,19 @@ class ExecutionReportConst(Enum):
     TransExecStatus_PFL = 'PFL'
 
 
+class BasketMessagesConst(Enum):
+    ListExecutionPolicy_C = 'C'
+    ListOrderStatus_EXE = 'EXE'
+
+
 class OrderReplyConst(Enum):
     PostTradeStatus_RDY = 'RDY'
     PostTradeStatus_BKD = 'BKD'
     DoneForDay_YES = "Y"
     TransStatus_OPN = 'OPN'
+    TransStatus_SEN = 'SEN'
+    OrdStatus_HLD = 'HLD'
+    ExecStatus_OPN = 'OPN'
 
 
 class SubmitRequestConst(Enum):
@@ -22,6 +30,7 @@ class AllocationReportConst(Enum):
     AllocStatus_ACK = 'ACK'
     MatchStatus_MAT = 'MAT'
     AllocSummaryStatus_MAG = 'MAG'
+    AllocStatus_APP = 'APP'
 
 
 class AllocationInstructionConst(Enum):
@@ -67,8 +76,61 @@ class JavaApiFields(Enum):
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
+    ClOrdID = 'ClOrdID'
+    OrdReplyBlock = 'OrdReplyBlock'
+    OrdStatus = 'OrdStatus'
+    ExecType = 'ExecType'
+    NewOrderListReplyBlock = 'NewOrderListReplyBlock'
+    OrderListID = 'OrderListID'
+    OrderListName = 'OrderListName'
+    ListExecutionPolicy = 'ListExecutionPolicy'
+    ListOrderStatus = 'ListOrderStatus'
+    NewOrderSingleBlock = 'NewOrderSingleBlock'
+    ClientCommissionDataBlock = 'ClientCommissionDataBlock'
+    ClientCommission = 'ClientCommission'
+    OrderBagNotificationBlock = 'OrderBagNotificationBlock'
+    OrderBagName = 'OrderBagName'
+    OrderBagID = 'OrderBagID'
+    OrderBagQty = 'OrderBagQty'
+    PegScope = 'PegScope'
+    PegOffsetType = 'PegOffsetType'
+    PegOffsetValue = 'PegOffsetValue'
+    OrderBagWaveNotificationBlock = 'OrderBagWaveNotificationBlock'
+    PegInstructionsBlock = 'PegInstructionsBlock'
+    OrderBagWaveRequestBlock = 'OrderBagWaveRequestBlock'
+    PositionReportBlock = 'PositionReportBlock'
+    PositionList = 'PositionList'
+    PositionBlock = 'PositionBlock'
+    PositQty = 'PositQty'
+    MiscFeesList = 'MiscFeesList'
+    MiscFeesBlock = 'MiscFeesBlock'
+    MiscFeeType = 'MiscFeeType'
+    MiscFeeBasis = 'MiscFeeBasis'
+    MiscFeeAmt = 'MiscFeeAmt'
+    MiscFeeRate = 'MiscFeeRate'
+    MiscFeeCurr = 'MiscFeeCurr'
 
 
 class JavaApiPartyRoleConstants(Enum):
     PartyRole_EXF = 'EXF'
     PartyRole_CNF = 'CNF'
+
+
+class BagChildCreationPolicy(Enum):
+    Split = 'SPL'
+
+
+class TimeInForces(Enum):
+    DAY = 'DAY'
+
+
+class OrdTypes(Enum):
+    Limit = 'LMT'
+
+
+class PegScopes(Enum):
+    Local = 'LOC'
+
+
+class PegOffsetTypes(Enum):
+    Price = 'PRC'
