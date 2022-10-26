@@ -42,7 +42,7 @@ class QAP_T4747(TestCase):
 
         self.no_strategy_1 = [
             {'StrategyParameterName': 'ReleaseTime', 'StrategyParameterType': '19',
-             'StrategyParameterValue': '20221026-08:20:00'}
+             'StrategyParameterValue': '20221026-10:25:00'}
         ]
 
         now = datetime.today() - timedelta(hours=3)
@@ -175,5 +175,3 @@ class QAP_T4747(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
-        rule_manager.remove_rule(self.nos_rule)
-
