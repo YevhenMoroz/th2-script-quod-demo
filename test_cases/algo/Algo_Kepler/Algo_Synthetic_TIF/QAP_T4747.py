@@ -62,6 +62,7 @@ class QAP_T4747(TestCase):
         # endregion
 
         # region instrument
+        # TODO Change instrument (should don`t support TIF=GTC)
         self.instrument = self.data_set.get_fix_instrument_by_name("instrument_17")
         # endregion
 
