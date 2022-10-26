@@ -13,7 +13,7 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T3476 import QAP_T3476
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3545 import QAP_T3545
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3573 import QAP_T3573
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3677 import QAP_T3677
-from test_cases.web_admin.web_admin_test_cases.others.QAP_T3678 import QAP_T3678
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3678 import QAP_T3678
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3824 import QAP_T3824
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3833 import QAP_T3833
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3834 import QAP_T3834
@@ -26,13 +26,9 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T3966 import QAP_T3966
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3970 import QAP_T3970
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3972 import QAP_T3972
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3973 import QAP_T3973
-from test_cases.web_admin.web_admin_test_cases.others.QAP_T4011 import QAP_T4011
-from test_cases.web_admin.web_admin_test_cases.others.QAP_T4012 import QAP_T4012
-from test_cases.web_admin.web_admin_test_cases.others.QAP_T4013 import QAP_T4013
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4014 import QAP_T4014
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4015 import QAP_T4015
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4016 import QAP_T4016
-from test_cases.web_admin.web_admin_test_cases.others.QAP_T4036 import QAP_T4036
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4037 import QAP_T4037
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4038 import QAP_T4038
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4039 import QAP_T4039
@@ -90,19 +86,11 @@ class RunOthers:
                       environment=configuration.environment).run()
             QAP_T3973(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T4011(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T4012(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T4013(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
             QAP_T4014(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4015(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4016(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T4036(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4037(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
