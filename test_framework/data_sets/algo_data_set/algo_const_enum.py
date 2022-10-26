@@ -162,6 +162,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_21 = dict(
+        Symbol='AXS',
+        SecurityID='GB00B0LMC530',
+        SecurityIDSource='4',
+        SecurityExchange='XLON',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -193,6 +201,7 @@ class AlgoAccounts(Enum):
     account_12 = "BATS_KEPLER"
     account_13 = "CHIX_KEPLER"
     account_14 = "XAMS_KEPLER"
+    account_15 = "XAMS_CLIENT1"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -282,6 +291,7 @@ class AlgoListingId(Enum):
     listing_34 = "125911519"       # JANESTREET for FR0010411884
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
+    listing_37 = "48"       # Euronext Фьіеуквфь for AXS
 
 
 class AlgoCurrency(Enum):

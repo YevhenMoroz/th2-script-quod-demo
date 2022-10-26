@@ -13,7 +13,7 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T3335(CommonTestCase):
+class QAP_T3262(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
@@ -45,6 +45,8 @@ class QAP_T3335(CommonTestCase):
             values_tab.set_name(self.name)
 
             security_values = SecurityValuesTab(self.web_driver_container)
+            security_values.set_reference_value(self.reference_value)
+            security_values.set_holdings_ratio(self.holding_ratio)
             security_values.click_on_plus_in_table()
             security_values.set_settlement_period(self.settlement_period)
             security_values.set_position_validity(self.position_validity)

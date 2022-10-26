@@ -1,5 +1,6 @@
 class Constants:
     class MainPage:
+        PAGE_TITLE = '//span[@class="entity-title left"][normalize-space()="Buying Power"]'
         GLOBAL_FILTER = '//nb-card-header//*[@placeholder="Filter"]'
         HELP_ICON = '//nb-card-header//*[@nbtooltip="Help"]/a'
         DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
@@ -38,19 +39,19 @@ class Constants:
             DESCRIPTION_FIELD = '//input[@id="buyingPowerLimitDesc"]'
 
         class CashValuesTab:
-            CASH_CHECKBOX = '//nb-checkbox[@formcontrolname="includeCash"]//span[@class="custom-checkbox"]'
-            TEMPORARY_CASH_CHECKBOX = '//nb-checkbox[@formcontrolname="includeTempCash"]//span[@class="custom-checkbox"]'
-            CASH_LOAN_CHECKBOX = '//nb-checkbox[@formcontrolname="includeCashLoan"]//span[@class="custom-checkbox"]'
-            COLLATERAL_CHECKBOX = '//nb-checkbox[@formcontrolname="includeCollateralCash"]//span[@class="custom-checkbox"]'
-            ALLOW_COLLATERAL_ON_NEGATIVE_LEADER_CHECKBOX = '//nb-checkbox[@formcontrolname="allowCashOnNegativeLedger"]//span[@class="custom-checkbox"]'
+            CASH_CHECKBOX = '//*[text()="Cash"]/preceding-sibling::span'
+            TEMPORARY_CASH_CHECKBOX = '//*[text()="Temporary Cash"]/preceding-sibling::span'
+            CASH_LOAN_CHECKBOX = '//*[text()="Cash Loan"]/preceding-sibling::span'
+            COLLATERAL_CHECKBOX = '//*[text()="Collateral"]/preceding-sibling::span'
+            ALLOW_COLLATERAL_ON_NEGATIVE_LEADER_CHECKBOX = '//*[text()="Allow Collateral on Negative Ledger"]/preceding-sibling::span'
 
         class SecurityValuesTab:
-            INCLUDE_SECURITIES_CHECKBOX = '//nb-checkbox[@formcontrolname="includeSecurities"]//span[@class="custom-checkbox"]'
+            INCLUDE_SECURITIES_CHECKBOX = '//*[text()="Include Securities"]/preceding-sibling::span'
             REFERENCE_VALUE_FIELD = '//input[@id="buyingPowerRefPriceType"]'
             HOLDINGS_RATIO_FIELD = '//input[@id="holdingsRatio"]'
-            ALLOW_SECURITIES_ON_NEGATIVE_LEDGERS_CHECKBOX = '//nb-checkbox[@formcontrolname="allowSecuritiesOnNegLedger"]//span[@class="custom-checkbox"]'
-            DISALLOW_FOR_SAME_LISTING_CHECKBOX = '//nb-checkbox[@formcontrolname="disallowSameListing"]//span[@class="custom-checkbox"]'
-            DISALLOW_FOR_DELIVERABLE_CONTRACTS_CHECKBOX = '//nb-checkbox[@formcontrolname="disallowDelivContracts"]//span[@class="custom-checkbox"]'
+            ALLOW_SECURITIES_ON_NEGATIVE_LEDGERS_CHECKBOX = '//*[text()="Allow Securities on Negative Ledgers"]/preceding-sibling::span'
+            DISALLOW_FOR_SAME_LISTING_CHECKBOX = '//*[text()="Disallow for same Listing"]/preceding-sibling::span'
+            DISALLOW_FOR_DELIVERABLE_CONTRACTS_CHECKBOX = '//*[text()="Disallow for deliverable contracts"]/preceding-sibling::span'
 
             class Table:
                 PLUS_BUTTON = '//button[contains(@class, "add-button")]'

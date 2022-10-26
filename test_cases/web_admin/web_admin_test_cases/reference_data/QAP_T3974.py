@@ -310,7 +310,7 @@ class QAP_T3974(CommonTestCase):
                                self.per_unit_comm_amt[1], self.quote_book_symbol[1], self.security_id[1],
                                self.security_id_source[1], self.tick_denominator[1], self.contract_multiplier[1],
                                True, True, self.min_trade_vol[1], self.trading_phase[1], False, self.misk_0[1],
-                               self.counterpart[1], False]
+                               self.counterpart[1], True]
 
             self.verify("Edit data is correct", actual_result, excepted_result)
 

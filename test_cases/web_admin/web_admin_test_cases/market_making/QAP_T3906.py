@@ -7,6 +7,8 @@ from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_i
     ClientTiersInstrumentTenorsSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_wizard import \
     ClientTierInstrumentWizard
+from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard\
+    import ClientTiersValuesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page import \
     ClientTierInstrumentsPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
@@ -29,6 +31,7 @@ class QAP_T3906(CommonTestCase):
         self.position = "1"
         self.bid_margin = "2"
         self.offer_margin = "2"
+        self.tod_end_time = "23:59:59"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -47,6 +50,8 @@ class QAP_T3906(CommonTestCase):
         time.sleep(2)
         client_tiers_instruments_page.click_on_edit()
         time.sleep(2)
+        values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        values_tab.set_tod_end_time(self.tod_end_time)
         tenor_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
         # tenor_sub_wizard.set_tenor_filter(self.tenor_filter)
         time.sleep(2)

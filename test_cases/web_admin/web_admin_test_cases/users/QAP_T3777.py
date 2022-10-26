@@ -24,6 +24,7 @@ class QAP_T3777(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.id = 'adm03'
         self.user_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = self.data_set.get_email("email_1")
@@ -33,15 +34,13 @@ class QAP_T3777(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_users_page()
-        time.sleep(2)
         users_page = UsersPage(self.web_driver_container)
-        users_page.click_on_more_actions()
+        users_page.set_user_id(self.id)
         time.sleep(1)
+        users_page.click_on_more_actions()
         users_page.click_on_clone_at_more_actions()
-        time.sleep(2)
 
     def test_context(self):
         try:
