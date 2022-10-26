@@ -62,8 +62,8 @@ from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_
     VenueListsConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_groups.constants import \
     InstrumentGroupsConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_list.instrument_list_constants import \
-    InstrumentListConstants
+from test_framework.web_admin_core.pages.reference_data.instrument_lists.constants import \
+    InstrumentListsConstants
 from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_constants import \
     ListingGroupsConstants
 from test_framework.web_admin_core.pages.reference_data.listings.listings_constants import ListingsConstants
@@ -291,7 +291,7 @@ class SideMenu(CommonPage):
     def open_instrument_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrumentListConstants.INSTRUMENT_LIST_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentListsConstants.INSTRUMENT_LIST_PAGE_TITLE_XPATH)
 
     def open_listing_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.LISTING_GROUPS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,

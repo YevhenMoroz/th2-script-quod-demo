@@ -28,7 +28,7 @@ class RootConstants:
     RECOVER_HISTORICAL_VOLUME_ITEM_XPATH = "//span[text()='Recover Historical Volume']"
     INSTR_SYMBOL_INFO_ITEM_XPATH = "//span[text()='Instrument Symbols']"
     INSTRUMENT_GROUPS_ITEM_XPATH = "//span[text()='Instrument Groups']"
-    INSTRUMENT_LIST_ITEM_XPATH = "//span[text()='Instrument List']"
+    INSTRUMENT_LIST_ITEM_XPATH = "//span[text()='Instrument Lists']"
     VENUE_LISTS_XPATH = "//span[text()='Venue Lists']"
 
     CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR = "a[title='Clients/Accounts']"
