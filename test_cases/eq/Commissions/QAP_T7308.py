@@ -33,7 +33,7 @@ class QAP_T7308(TestCase):
         self.client = self.data_set.get_client_by_name("client_pt_3")
         self.client_acc = self.data_set.get_account_by_name("client_pt_3_acc_1")
         self.currency = self.data_set.get_currency_by_name("currency_3")
-        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.force_alloc = ForceAllocInstructionStatusRequestOMS(self.data_set)
@@ -93,4 +93,8 @@ class QAP_T7308(TestCase):
         self.java_api_manager.compare_values(expected_result,
                                              confirm_report["ClientCommissionList"]["ClientCommissionBlock"][0],
                                              "Compare ClientCommission")
+
         # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()

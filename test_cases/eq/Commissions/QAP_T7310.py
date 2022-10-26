@@ -35,7 +35,7 @@ class QAP_T7310(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id,
                                                             self.data_set)
-        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_request = TradeEntryOMS(self.data_set)
         self.submit_request = OrderSubmitOMS(self.data_set)
@@ -106,8 +106,10 @@ class QAP_T7310(TestCase):
         # region step 5
         self.alloc_instr.set_default_book(order_id)
         self.alloc_instr.update_fields_in_component("AllocationInstructionBlock",
-                        {"ClientCommissionList": compute_reply["ClientCommissionList"],"AccountGroupID": self.client,
-                        "InstrID": self.data_set.get_instrument_id_by_name("instrument_3")})
+                                                    {"ClientCommissionList": compute_reply["ClientCommissionList"],
+                                                     "AccountGroupID": self.client,
+                                                     "InstrID": self.data_set.get_instrument_id_by_name(
+                                                         "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
@@ -121,7 +123,8 @@ class QAP_T7310(TestCase):
         self.java_api_manager.send_message(self.force_alloc)
         self.confirm.set_default_allocation(alloc_id)
         self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.client_acc,
-                                                    "InstrID": self.data_set.get_instrument_id_by_name("instrument_3")})
+                                                                      "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.confirm)
         confirm_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
@@ -130,3 +133,7 @@ class QAP_T7310(TestCase):
                                              confirm_report["ClientCommissionList"]["ClientCommissionBlock"][0],
                                              "Compare ClientCommission")
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
