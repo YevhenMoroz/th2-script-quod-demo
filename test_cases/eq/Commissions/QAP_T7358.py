@@ -20,7 +20,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import Con
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
     ConfirmationReportConst
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,6 @@ class QAP_T7358(TestCase):
             {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
              "ExDestination": self.mic,
              "Currency": self.cur})
-
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.fix_verifier_dc = FixVerifier(self.bo_connectivity, self.test_id)
