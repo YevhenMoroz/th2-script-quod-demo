@@ -13,7 +13,6 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T3476 import QAP_T3476
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3545 import QAP_T3545
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3573 import QAP_T3573
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3677 import QAP_T3677
-from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3678 import QAP_T3678
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3824 import QAP_T3824
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3833 import QAP_T3833
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T3834 import QAP_T3834
@@ -33,6 +32,7 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T4037 import QAP_T4037
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4038 import QAP_T4038
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4039 import QAP_T4039
 
+
 class RunOthers:
     def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Others", root_report_id)
@@ -46,6 +46,7 @@ class RunOthers:
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
+
             QAP_T3118(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3291(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -59,8 +60,6 @@ class RunOthers:
             QAP_T3573(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3677(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3678(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3824(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
