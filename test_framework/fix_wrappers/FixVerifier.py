@@ -35,6 +35,8 @@ class FixVerifier:
 
             if fix_message.is_parameter_exist('TransactTime') and fix_message.get_parameter('TransactTime')[0] not in ('!', '%', '<', '>', '%'):
                 fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
+                if fix_message.get_parameter('TransactTime')[-2:] == "00":
+                    fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime')[:-3])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
