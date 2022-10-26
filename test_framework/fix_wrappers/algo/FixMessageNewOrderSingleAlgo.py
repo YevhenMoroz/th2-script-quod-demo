@@ -1271,3 +1271,44 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_Synthetic_TIF_Kepler(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Account': "KEPLER",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "1",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1003',
+            'ExDestination': 'QDL11',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_Synthetic_TIF_Kepler(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL11",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+        }
+        super().change_parameters(base_parameters)
+        return self

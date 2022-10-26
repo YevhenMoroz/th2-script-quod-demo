@@ -44,8 +44,6 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
         if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(
                 ClientAlgoPolicyID=new_order_single.get_parameter('ClientAlgoPolicyID'),
-                IClOrdIdAO='OD_5fgfDXg-00',
-                ShortCode='17536'
             )
         if new_order_single.is_parameter_exist('IClOrdIdAO'):
             temp.update(IClOrdIdAO='OD_5fgfDXg-00',)
