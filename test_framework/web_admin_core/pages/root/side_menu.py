@@ -26,8 +26,8 @@ from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_
     QuotingSessionsConstants
 from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import \
     SystemCommandsConstants
-from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \
-    MDEntitlementsConstants
+from test_framework.web_admin_core.pages.general.entitlements.constants import \
+    EntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
@@ -56,12 +56,12 @@ from test_framework.web_admin_core.pages.price_cleansing.rates_following_trades.
 from test_framework.web_admin_core.pages.price_cleansing.stale_rates.stale_rates_constants import StaleRatesConstants
 from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbalanced_rates_constants import \
     UnbalancedRatesConstants
-from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_constants import \
-    InstrSymbolInfoConstants
+from test_framework.web_admin_core.pages.reference_data.instrument_symbols.constants import \
+    InstrumentSymbolsConstants
 from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_constants import \
     VenueListsConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_group.instrument_group_constants import \
-    InstrumentGroupConstants
+from test_framework.web_admin_core.pages.reference_data.instrument_groups.constants import \
+    InstrumentGroupsConstants
 from test_framework.web_admin_core.pages.reference_data.instrument_list.instrument_list_constants import \
     InstrumentListConstants
 from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_constants import \
@@ -185,7 +185,7 @@ class SideMenu(CommonPage):
     def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(MDEntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(EntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
 
     def open_settings_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
@@ -281,12 +281,12 @@ class SideMenu(CommonPage):
     def open_instr_symbol_info_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTR_SYMBOL_INFO_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrSymbolInfoConstants.INSTR_SYMBOL_INFO_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentSymbolsConstants.INSTR_SYMBOL_INFO_PAGE_TITLE_XPATH)
 
     def open_instrument_group_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTRUMENT_GROUP_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrumentGroupConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentGroupsConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
 
     def open_instrument_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,

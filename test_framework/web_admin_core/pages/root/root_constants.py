@@ -27,7 +27,7 @@ class RootConstants:
     LISTINGS_ITEM_XPATH = "//span[text()='Listings']"
     RECOVER_HISTORICAL_VOLUME_ITEM_XPATH = "//span[text()='Recover Historical Volume']"
     INSTR_SYMBOL_INFO_ITEM_XPATH = "//span[text()='Instrument Symbols']"
-    INSTRUMENT_GROUP_ITEM_XPATH = "//span[text()='Instrument Group']"
+    INSTRUMENT_GROUPS_ITEM_XPATH = "//span[text()='Instrument Groups']"
     INSTRUMENT_LIST_ITEM_XPATH = "//span[text()='Instrument List']"
     VENUE_LISTS_XPATH = "//span[text()='Venue Lists']"
 
