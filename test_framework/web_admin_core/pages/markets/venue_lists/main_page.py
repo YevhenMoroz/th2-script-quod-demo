@@ -1,6 +1,6 @@
 import time
 from test_framework.web_admin_core.pages.common_page import CommonPage
-from test_framework.web_admin_core.pages.markets.venue_lists.venue_lists_constants import VenueListsConstants
+from test_framework.web_admin_core.pages.markets.venue_lists.constants import VenueListsConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 

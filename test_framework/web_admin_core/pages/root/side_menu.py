@@ -58,7 +58,7 @@ from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbala
     UnbalancedRatesConstants
 from test_framework.web_admin_core.pages.markets.instrument_symbols.constants import \
     InstrumentSymbolsConstants
-from test_framework.web_admin_core.pages.markets.venue_lists.venue_lists_constants import \
+from test_framework.web_admin_core.pages.markets.venue_lists.constants import \
     VenueListsConstants
 from test_framework.web_admin_core.pages.markets.instrument_groups.constants import \
     InstrumentGroupsConstants
