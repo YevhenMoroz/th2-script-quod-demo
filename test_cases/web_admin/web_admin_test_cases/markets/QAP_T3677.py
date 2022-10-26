@@ -6,11 +6,11 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.others.routes.routes_page import RoutesPage
-from test_framework.web_admin_core.pages.others.routes.routes_wizard import RoutesWizard
-from test_framework.web_admin_core.pages.others.routes.routes_venues_subwizard import RoutesVenuesSubWizard
-from test_framework.web_admin_core.pages.others.routes.routes_strategy_type_subwizard import RoutesStrategyTypeSubWizard
-from test_framework.web_admin_core.pages.others.routes.routes_instr_symbols_subwizard import RoutesInstrSymbolsSubWizard
+from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
+from test_framework.web_admin_core.pages.markets.routes.wizard import RoutesWizard
+from test_framework.web_admin_core.pages.markets.routes.venues_subwizard import RoutesVenuesSubWizard
+from test_framework.web_admin_core.pages.markets.routes.strategy_type_subwizard import RoutesStrategyTypeSubWizard
+from test_framework.web_admin_core.pages.markets.routes.instrument_symbols_subwizard import RoutesInstrumentSymbolsSubWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -54,7 +54,7 @@ class QAP_T3677(CommonTestCase):
         venue_tab.click_on_plus_at_venues_tab()
         venue_tab.set_venue_at_venues_tab(self.venue)
         venue_tab.click_on_check_mark_at_venues_tab()
-        insrt_symbols_tab = RoutesInstrSymbolsSubWizard(self.web_driver_container)
+        insrt_symbols_tab = RoutesInstrumentSymbolsSubWizard(self.web_driver_container)
         insrt_symbols_tab.click_on_plus_button_at_instr_symbols_tab()
         insrt_symbols_tab.set_instr_symbol_at_instr_symbols_tab(self.instr_symbol)
         insrt_symbols_tab.set_price_multiplier_at_instr_symbols_tab(self.price_multiplier)

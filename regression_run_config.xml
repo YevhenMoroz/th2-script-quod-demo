@@ -868,7 +868,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                <component name="WA_Reference_Data" run="True">
+                <component name="WA_Markets" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>

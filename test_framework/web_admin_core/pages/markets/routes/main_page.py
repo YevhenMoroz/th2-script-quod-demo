@@ -1,7 +1,7 @@
 import time
 
 from test_framework.web_admin_core.pages.common_page import CommonPage
-from test_framework.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
+from test_framework.web_admin_core.pages.markets.routes.constants import RoutesConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 

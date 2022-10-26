@@ -1,9 +1,9 @@
 from test_framework.web_admin_core.pages.common_page import CommonPage
-from test_framework.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
+from test_framework.web_admin_core.pages.markets.routes.constants import RoutesConstants
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
 
-class RoutesInstrSymbolsSubWizard(CommonPage):
+class RoutesInstrumentSymbolsSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 

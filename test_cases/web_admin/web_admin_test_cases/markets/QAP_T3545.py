@@ -6,9 +6,9 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.others.routes.routes_page import RoutesPage
-from test_framework.web_admin_core.pages.others.routes.routes_venues_subwizard import RoutesVenuesSubWizard
-from test_framework.web_admin_core.pages.others.routes.routes_wizard import RoutesWizard
+from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
+from test_framework.web_admin_core.pages.markets.routes.venues_subwizard import RoutesVenuesSubWizard
+from test_framework.web_admin_core.pages.markets.routes.wizard import RoutesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
