@@ -4,9 +4,9 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
-from test_framework.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard import \
+from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
+from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
+from test_framework.web_admin_core.pages.markets.listings.listings_market_identifies_sub_wizard import \
     ListingsMarketIdentifiersSubWizard
 
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu

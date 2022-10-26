@@ -6,10 +6,10 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_description_sub_wizard import \
+from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_description_sub_wizard import \
     ListingGroupsDescriptionSubWizard
-from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_page import ListingGroupsPage
-from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_wizard import \
+from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_page import ListingGroupsPage
+from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_wizard import \
     ListingGroupsWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer

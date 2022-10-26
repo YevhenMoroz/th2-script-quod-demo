@@ -56,21 +56,21 @@ from test_framework.web_admin_core.pages.price_cleansing.rates_following_trades.
 from test_framework.web_admin_core.pages.price_cleansing.stale_rates.stale_rates_constants import StaleRatesConstants
 from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbalanced_rates_constants import \
     UnbalancedRatesConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_symbols.constants import \
+from test_framework.web_admin_core.pages.markets.instrument_symbols.constants import \
     InstrumentSymbolsConstants
-from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_constants import \
+from test_framework.web_admin_core.pages.markets.venue_lists.venue_lists_constants import \
     VenueListsConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_groups.constants import \
+from test_framework.web_admin_core.pages.markets.instrument_groups.constants import \
     InstrumentGroupsConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_lists.constants import \
+from test_framework.web_admin_core.pages.markets.instrument_lists.constants import \
     InstrumentListsConstants
-from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_constants import \
+from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_constants import \
     ListingGroupsConstants
-from test_framework.web_admin_core.pages.reference_data.listings.listings_constants import ListingsConstants
-from test_framework.web_admin_core.pages.reference_data.recover_historical_volume.recover_historical_volume_constants import \
+from test_framework.web_admin_core.pages.markets.listings.listings_constants import ListingsConstants
+from test_framework.web_admin_core.pages.markets.recover_historical_volume.recover_historical_volume_constants import \
     RecoverHistoricalVolumeConstants
-from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_constants import SubVenuesConstants
-from test_framework.web_admin_core.pages.reference_data.venues.venues_constants import VenuesConstants
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_constants import SubVenuesConstants
+from test_framework.web_admin_core.pages.markets.venues.venues_constants import VenuesConstants
 from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_constants import \
     CumTradingLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.cumtrdlmt_counter.cumtrdlmt_counter_constants import \

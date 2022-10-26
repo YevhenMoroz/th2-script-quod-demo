@@ -6,37 +6,37 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.reference_data.listings.listings_attachment_sub_wizard import \
+from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_currency_sub_wizard import \
+from test_framework.web_admin_core.pages.markets.listings.listings_currency_sub_wizard import \
     ListingsCurrencySubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_page import ListingsPage
-from test_framework.web_admin_core.pages.reference_data.listings.listings_values_sub_wizard import \
+from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
+from test_framework.web_admin_core.pages.markets.listings.listings_values_sub_wizard import \
     ListingsValuesSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_wizard import ListingsWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_translation_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
+from test_framework.web_admin_core.pages.markets.listings.listings_translation_sub_wizard\
     import ListingsTranslationSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_dark_algo_comission_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_dark_algo_comission_sub_wizard\
     import ListingsDarkAlgoCommissionSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_market_data_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_market_data_sub_wizard\
     import ListingsMarketDataSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_format_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_format_sub_wizard\
     import ListingsFormatSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_feature_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_feature_sub_wizard\
     import ListingsFeatureSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_market_identifies_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_market_identifies_sub_wizard\
     import ListingsMarketIdentifiersSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_validations_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_validations_sub_wizard\
     import ListingsValidationsSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_status_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_status_sub_wizard\
     import ListingsStatusSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_short_shell_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_short_shell_sub_wizard\
     import ListingsShortShellSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_misc_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_misc_sub_wizard\
     import ListingsMiscSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_counterpart_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_counterpart_sub_wizard\
     import ListingsCounterpartSubWizard
-from test_framework.web_admin_core.pages.reference_data.listings.listings_fee_type_exemption_sub_wizard\
+from test_framework.web_admin_core.pages.markets.listings.listings_fee_type_exemption_sub_wizard\
     import ListingsFeeTypeExemptionSubWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
