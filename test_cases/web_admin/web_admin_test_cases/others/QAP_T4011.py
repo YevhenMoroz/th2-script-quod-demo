@@ -4,8 +4,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.others.market_data_source.market_data_source_page import \
-    MarketDataSourcePage
+from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
+    MarketDataSourcesPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -24,14 +24,14 @@ class QAP_T4011(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_market_data_source_page()
-        main_page = MarketDataSourcePage(self.web_driver_container)
+        main_page = MarketDataSourcesPage(self.web_driver_container)
         main_page.click_on_more_actions()
         time.sleep(2)
 
     def test_context(self):
         try:
             self.precondition()
-            main_page = MarketDataSourcePage(self.web_driver_container)
+            main_page = MarketDataSourcesPage(self.web_driver_container)
 
             main_page.click_on_delete_and_confirmation(False)
             time.sleep(2)

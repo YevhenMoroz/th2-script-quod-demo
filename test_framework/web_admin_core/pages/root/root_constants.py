@@ -83,6 +83,6 @@ class RootConstants:
     OTHERS_TOGGLE_CSS_SELECTOR = "a[title='Others']"
     COUNTERPARTS_ITEM_XPATH = "//span[text()='Counterparts']"
     INSTITUTIONS_ITEM_XPATH = "//span[text()='Institutions']"
-    MARKET_DATA_SOURCE_ITEM_XPATH = "//span[text()='Market Data Source']"
+    MARKET_DATA_SOURCE_ITEM_XPATH = "//span[text()='Market Data Sources']"
     ROUTES_ITEM_XPATH = "//span[text()='Routes']"
     USER_INSTR_SYMB_BLACK_OUT_ITEM_XPATH = "//span[text()='User Instr Symb Black Out']"

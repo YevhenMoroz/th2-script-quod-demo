@@ -41,8 +41,8 @@ from test_framework.web_admin_core.pages.order_management.order_management_rules
     OrderManagementRulesConstants
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
 from test_framework.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
-from test_framework.web_admin_core.pages.others.market_data_source.market_data_source_constants import \
-    MarketDataSourceConstants
+from test_framework.web_admin_core.pages.markets.market_data_sources.constants import \
+    MarketDataSourcesConstants
 from test_framework.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
 from test_framework.web_admin_core.pages.others.user_instr_symb_black_out.user_instr_symb_black_out_constants import \
     UserInstrSymbBlackOutConstants
@@ -236,7 +236,7 @@ class SideMenu(CommonPage):
     def open_market_data_source_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.MARKET_DATA_SOURCE_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(MarketDataSourceConstants.MARKET_DATA_SOURCE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(MarketDataSourcesConstants.MARKET_DATA_SOURCE_PAGE_TITLE_XPATH)
 
     def open_routes_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ROUTES_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,

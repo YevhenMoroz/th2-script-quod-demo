@@ -6,10 +6,10 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.others.market_data_source.market_data_source_page import \
-    MarketDataSourcePage
-from test_framework.web_admin_core.pages.others.market_data_source.market_data_source_wizard import \
-    MarketDataSourceWizard
+from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
+    MarketDataSourcesPage
+from test_framework.web_admin_core.pages.markets.market_data_sources.wizard import \
+    MarketDataSourcesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -32,10 +32,10 @@ class QAP_T4013(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_market_data_source_page()
-        main_page = MarketDataSourcePage(self.web_driver_container)
+        main_page = MarketDataSourcesPage(self.web_driver_container)
         main_page.click_on_new_button()
         time.sleep(2)
-        wizard = MarketDataSourceWizard(self.web_driver_container)
+        wizard = MarketDataSourcesWizard(self.web_driver_container)
         wizard.set_symbol(self.symbol)
         time.sleep(1)
         wizard.set_user(self.user)
@@ -47,8 +47,8 @@ class QAP_T4013(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            wizard = MarketDataSourceWizard(self.web_driver_container)
-            main_page = MarketDataSourcePage(self.web_driver_container)
+            wizard = MarketDataSourcesWizard(self.web_driver_container)
+            main_page = MarketDataSourcesPage(self.web_driver_container)
             expected_pdf = [self.symbol, self.user, self.venue, self.md_source]
             self.verify("Is pdf contains selected value ? ", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf))
