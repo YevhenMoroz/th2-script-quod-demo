@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -62,6 +63,7 @@ class QAP_T7026(TestCase):
         self.commission_sender.send_post_request()
         self.commission_sender.set_modify_client_commission_message(comm_profile=self.perc_amt)
         self.commission_sender.send_post_request()
+        time.sleep(5)
         # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
