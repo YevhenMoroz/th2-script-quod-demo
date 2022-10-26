@@ -5,10 +5,10 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_page import \
-    InstrSymbolInfoPage
-from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_wizard import \
-    InstrSymbolInfoWizard
+from test_framework.web_admin_core.pages.reference_data.instrument_symbols.main_page import \
+    InstrumentSymbolsMainPage
+from test_framework.web_admin_core.pages.reference_data.instrument_symbols.wizard import \
+    InstrumentSymbolsWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -31,15 +31,15 @@ class QAP_T3978(CommonTestCase):
         time.sleep(2)
         side_menu.open_instr_symbol_info_page()
         time.sleep(2)
-        page = InstrSymbolInfoPage(self.web_driver_container)
-        wizard = InstrSymbolInfoWizard(self.web_driver_container)
+        page = InstrumentSymbolsMainPage(self.web_driver_container)
+        wizard = InstrumentSymbolsWizard(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
         wizard.click_on_save_changes()
         time.sleep(2)
 
     def post_condition(self):
-        page = InstrSymbolInfoPage(self.web_driver_container)
+        page = InstrumentSymbolsMainPage(self.web_driver_container)
         page.set_instr_symbol(self.instr_symbol)
         page.click_on_more_actions()
         time.sleep(1)
@@ -48,8 +48,8 @@ class QAP_T3978(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            page = InstrSymbolInfoPage(self.web_driver_container)
-            wizard = InstrSymbolInfoWizard(self.web_driver_container)
+            page = InstrumentSymbolsMainPage(self.web_driver_container)
+            wizard = InstrumentSymbolsWizard(self.web_driver_container)
             self.verify("Incorrect or missing values displayed", True,
                         page.is_incorrect_or_missing_value_message_displayed())
 
