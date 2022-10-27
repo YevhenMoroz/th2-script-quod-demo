@@ -43,7 +43,7 @@ from test_framework.web_admin_core.pages.others.counterparts.counterparts_consta
 from test_framework.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
 from test_framework.web_admin_core.pages.markets.market_data_sources.constants import \
     MarketDataSourcesConstants
-from test_framework.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
+from test_framework.web_admin_core.pages.markets.routes.constants import RoutesConstants
 from test_framework.web_admin_core.pages.others.user_instr_symb_black_out.user_instr_symb_black_out_constants import \
     UserInstrSymbBlackOutConstants
 from test_framework.web_admin_core.pages.positions.fx_positions.fx_positions_constants import FxPositionsConstants
@@ -234,12 +234,12 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(CounterpartsConstants.COUNTERPARTS_PAGE_TITLE_XPATH)
 
     def open_market_data_source_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.MARKET_DATA_SOURCE_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.MARKET_DATA_SOURCE_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(MarketDataSourcesConstants.MARKET_DATA_SOURCE_PAGE_TITLE_XPATH)
 
     def open_routes_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ROUTES_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.ROUTES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(RoutesConstants.ROUTES_PAGE_TITLE_XPATH)
 
@@ -279,47 +279,47 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(UnbalancedRatesConstants.UNBALANCED_RATES_PAGE_TITLE_XPATH)
 
     def open_instr_symbol_info_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTR_SYMBOL_INFO_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.INSTR_SYMBOL_INFO_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(InstrumentSymbolsConstants.INSTR_SYMBOL_INFO_PAGE_TITLE_XPATH)
 
     def open_instrument_group_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTRUMENT_GROUP_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.INSTRUMENT_GROUP_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(InstrumentGroupsConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
 
     def open_instrument_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(InstrumentListsConstants.INSTRUMENT_LIST_PAGE_TITLE_XPATH)
 
     def open_listing_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTING_GROUPS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.LISTING_GROUPS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingGroupsConstants.LISTING_GROUPS_PAGE_TITLE_XPATH)
 
     def open_listings_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingsConstants.LISTINGS_PAGE_TITLE_XPATH)
 
     def open_venue_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(VenueListsConstants.MainPage.TITLE_XPATH)
 
     def open_recover_historical_volume_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RECOVER_HISTORICAL_VOLUME_ITEM_XPATH,
-                       RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR, container_expected_state)
+                       RootConstants.MARKETS_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(RecoverHistoricalVolumeConstants.RECOVER_HISTORICAL_VOLUME_PAGE_TITLE_XPATH)
 
     def open_subvenues_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.SUBVENUES_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.SUBVENUES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(SubVenuesConstants.SUBVENUES_PAGE_TITLE_XPATH)
 
     def open_venues_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.VENUES_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.VENUES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(VenuesConstants.VENUES_PAGE_TITLE_XPATH)
 

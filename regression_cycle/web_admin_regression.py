@@ -36,7 +36,7 @@ def test_run(parent_id=None):
             RunSite(report_id).execute()
         if eval(root.find(".//component[@name='WA_Users']").attrib["run"]):
             RunUsers(report_id).execute()
-        if eval(root.find(".//component[@name='WA_Reference_Data']").attrib["run"]):
+        if eval(root.find(".//component[@name='WA_Markets']").attrib["run"]):
             RunMarkets(report_id).execute()
         if eval(root.find(".//component[@name='WA_Client_Accounts']").attrib["run"]):
             RunClientsAccounts(report_id).execute()

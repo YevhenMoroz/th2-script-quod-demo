@@ -20,7 +20,7 @@ class RootConstants:
     USERS_ITEM_XPATH = "//*[@href='#/pages/users/view']//span[text()='Users']"
     USER_SESSIONS_ITEM_XPATH = "//span[text()='User Sessions']"
 
-    REFERENCE_DATA_TOGGLE_CSS_SELECTOR = "a[title='Markets']"
+    MARKETS_TOGGLE_CSS_SELECTOR = "a[title='Markets']"
     VENUES_ITEM_XPATH = "//span[text()='Venues']"
     SUBVENUES_ITEM_XPATH = "//span[text()='Sub-Venues']"
     LISTING_GROUPS_ITEM_XPATH = "//span[text()='Listing Groups']"

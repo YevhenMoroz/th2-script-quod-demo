@@ -75,12 +75,12 @@ from test_cases.web_admin.web_admin_test_cases.markets.QAP_T4036 import QAP_T403
 
 class RunMarkets:
     def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Reference_Data", root_report_id)
+        self.second_lvl_id = bca.create_event("WA_Markets", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_Reference_Data")
+            configuration = ComponentConfiguration("WA_Markets")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
