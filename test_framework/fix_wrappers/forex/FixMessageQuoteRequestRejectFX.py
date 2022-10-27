@@ -23,7 +23,7 @@ class FixMessageQuoteRequestRejectFX(FixMessageQuoteRequestReject):
         quote_reject_params = {
             "QuoteReqID": quote_request.get_parameter("QuoteReqID"),
             "QuoteRequestRejectReason": "3",
-            "VenueType": "I",
+            "VenueType": quote_request.get_parameter("VenueType"),
             "Text": text if text is not None else "*",
 
         }
