@@ -5,7 +5,7 @@
     <product_lines>
         <product_line name="algo" run="False">
             <components>
-                <component name="Twap" run="False">
+                <component name="Twap" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -32,7 +32,7 @@
                         </fe_environments>
                     </environments>
                 </component>
-                <component name="Iceberg" run="False">
+                <component name="Iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -40,7 +40,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Multilisted" run="False">
+                <component name="Multilisted" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -64,7 +64,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark" run="True">
+                <component name="Lit_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -96,7 +96,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Mp_dark" run="True">
+                <component name="Mp_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -107,7 +107,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="Synth_min_qty" run="True">
+                <component name="Synth_min_qty" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -115,7 +115,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark_iceberg" run="True">
+                <component name="Lit_dark_iceberg" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -123,7 +123,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Sorping" run="True">
+                <component name="Sorping" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -131,7 +131,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Multiple_emulation" run="True">
+                <component name="Multiple_emulation" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -139,7 +139,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="PreOpen_Auction" run="True">
+                <component name="PreOpen_Auction" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -195,6 +195,15 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="TimeInForce" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+
             </components>
         </product_line>
         <product_line name="fx" run="False">
