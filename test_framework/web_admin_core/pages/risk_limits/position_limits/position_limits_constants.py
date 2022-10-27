@@ -63,9 +63,9 @@ class PositionsLimitsConstants:
     DIMENSIONS_TAB_INSTRUMENT_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrumentGroup"]'
     DIMENSIONS_TAB_INSTRUMENT_TYPE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="instrType"]'
     DIMENSIONS_TAB_ACCOUNT_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="account"]'
-    DIMENSIONS_TAB_WILD_CARD_INSTRUMENT_CHECKBOX_XPATH = '//*[text()="Wild Card Instrument"]/preceding-sibling::span'
-    DIMENSIONS_TAB_WILD_CARD_INSTR_GROUP_CHECKBOX_XPATH = '//*[text()="Wild Card Instr Group"]/preceding-sibling::span'
-    DIMENSIONS_TAB_WILD_CARD_INSTR_TYPE_XPATH = '//*[text()="Wild Card Instr Type"]/preceding-sibling::span'
+    DIMENSIONS_TAB_PER_INSTRUMENT_CHECKBOX_XPATH = '//*[text()="Per Instrument"]/preceding-sibling::span'
+    DIMENSIONS_TAB_PER_INSTR_TYPE_CHECKBOX_XPATH = '//*[text()="Per Instr Type"]/preceding-sibling::span'
+    DIMENSIONS_TAB_PER_INSTR_GROUP_CHECKBOX_XPATH = '//*[text()="Per Instr Group"]/preceding-sibling::span'
 
     # Assignments tab
     ASSIGNMENTS_TAB_INSTITUTIONS = '//*[normalize-space()="Assignments"]/..//input[@id="institution"]'
