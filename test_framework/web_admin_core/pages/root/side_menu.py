@@ -31,8 +31,8 @@ from test_framework.web_admin_core.pages.general.entitlements.constants import \
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_constants import \
-    AllocationMatchingProfileConstants
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import \
+    AllocationMatchingProfilesConstants
 from test_framework.web_admin_core.pages.middle_office.settlement_models.constants import \
     SettlementModelsConstants
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
@@ -202,10 +202,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(FeesConstants.FEES_PAGE_TITLE_XPATH)
 
-    def open_allocation_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_allocation_matching_profiles_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILES_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfileConstants.ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfilesConstants.ALLOCATION_MATCHING_PROFILES_PAGE_TITLE_XPATH)
 
     def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,

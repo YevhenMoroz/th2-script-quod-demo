@@ -1,5 +1,5 @@
-class AllocationMatchingProfileConstants:
-    ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Allocation Matching Profiles"]'
+class AllocationMatchingProfilesConstants:
+    ALLOCATION_MATCHING_PROFILES_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Allocation Matching Profiles"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
