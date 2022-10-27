@@ -285,7 +285,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("Currency"),
@@ -302,7 +305,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("Currency"),
@@ -370,7 +376,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
@@ -387,7 +396,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
@@ -454,7 +466,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[0]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
@@ -471,7 +486,10 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
-                     LegSymbol=new_order_single.get_parameter("Instrument")["Symbol"],
+                     LegSymbol=(new_order_single.get_parameter("Instrument")["Symbol"],
+                                new_order_single.get_parameter("Instrument")["Symbol"] + "-SPO-QUODFX") if
+                     new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"] == "FXSPOT" else
+                     new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityID=new_order_single.get_parameter("Instrument")["Symbol"],
                      LegSecurityType=new_order_single.get_parameter("NoLegs")[1]["InstrumentLeg"]["LegSecurityType"],
                      LegCurrency=new_order_single.get_parameter("NoRelatedSymbols")[0]["Currency"],
@@ -481,17 +499,13 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  )
         ]
 
-        if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "0":
-            no_legs[0]["InstrumentLeg"]["LegSymbol"] += "-SPO-QUODFX"
-        elif new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W1":
+        if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W1":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
         elif new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W2":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
         elif new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W3":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk3_ndf_maturity()
-        if new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "0":
-            no_legs[1]["InstrumentLeg"]["LegSymbol"] += "-SPO-QUODFX"
-        elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W1":
+        if new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W1":
             no_legs[1]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
         elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W2":
             no_legs[1]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
