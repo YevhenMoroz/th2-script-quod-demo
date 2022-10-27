@@ -73,8 +73,8 @@ from test_framework.web_admin_core.pages.markets.subvenues.subvenues_constants i
 from test_framework.web_admin_core.pages.markets.venues.venues_constants import VenuesConstants
 from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_constants import \
     CumTradingLimitsConstants
-from test_framework.web_admin_core.pages.risk_limits.cumtrdlmt_counter.cumtrdlmt_counter_constants import \
-    CumTrdLmtCounterConstants
+from test_framework.web_admin_core.pages.risk_limits.cum_trading_limit_counters.constants import \
+    CumTradingLimitCountersConstants
 from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_constants import \
     ExternalCheckConstants
 from test_framework.web_admin_core.pages.risk_limits.fx_position_limits.fx_position_limits_constants import \
@@ -328,10 +328,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(CumTradingLimitsConstants.CUM_TRADING_LIMITS_PAGE_TITLE_XPATH)
 
-    def open_cumtrdlmt_counter_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CUMTRDLMT_COUNTER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+    def open_cum_trading_limit_counters_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.CUM_TRADING_LIMIT_COUNTER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(CumTrdLmtCounterConstants.CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(CumTradingLimitCountersConstants.CUM_TRADING_LIMIT_COUNTERS_PAGE_TITLE_XPATH)
 
     def open_external_check_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.EXTERNAL_CHECK_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
