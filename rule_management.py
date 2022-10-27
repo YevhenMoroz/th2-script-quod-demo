@@ -398,12 +398,13 @@ class RuleManager:
                                                               trade=trade
                                                               ))
 
-    def add_OrderCancelReplaceRequest(self, session: str, account: str, exdestination: str, modify=True):
+    def add_OrderCancelReplaceRequest(self, session: str, account: str, exdestination: str, modify=True, delay=0):
         return self.sim.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
                                                       exdestination=exdestination,
-                                                      modify=modify
+                                                      modify=modify,
+                                                      delay=delay
                                                       ))
 
     def add_OrderCancelReplaceRequest_FIXStandard(self, session: str, account: str, exdestination: str, modify=True):

@@ -59,8 +59,17 @@ class ZonesPage(CommonPage):
         time.sleep(2)
         self.find_by_xpath(ZonesConstants.OK_BUTTON_XPATH).click()
 
+    def is_zone_enable(self):
+        return self.is_toggle_button_enabled(ZonesConstants.ENABLE_DISABLE_BUTTON_XPATH)
+
     def click_on_download_csv(self):
         self.find_by_xpath(ZonesConstants.MAIN_PAGE_DOWNLOAD_CSV_XPATH).click()
+
+    def click_on_download_csv_button_and_get_content(self):
+        self.clear_download_directory()
+        self.find_by_xpath(ZonesConstants.MAIN_PAGE_DOWNLOAD_CSV_XPATH).click()
+        time.sleep(1)
+        return self.get_csv_context()
 
     def is_searched_zone_found(self, value):
         return self.is_element_present(ZonesConstants.DISPLAYED_ENTITY_XPATH.format(value))

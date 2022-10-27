@@ -1,5 +1,5 @@
 class ExternalCheckConstants:
-    EXTERNAL_CHECK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='External Check ']"
+    EXTERNAL_CHECK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='External Checks ']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"

@@ -32,29 +32,19 @@ class QAP_T3948(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_washbook_rules_page()
         page = WashBookRulesPage(self.web_driver_container)
         page.click_on_new_button()
-        time.sleep(1)
         wizard = WashBookRulesWizard(self.web_driver_container)
         wizard.set_name(self.name)
-        time.sleep(1)
         wizard.set_instr_type(self.instr_type)
-        time.sleep(1)
         wizard.set_execution_policy(self.execution_policy)
-        time.sleep(1)
         self.account = random.choice(wizard.get_all_account_from_drop_menu())
         wizard.set_account(self.account)
-        time.sleep(1)
         wizard.set_client(self.client)
-        time.sleep(1)
         wizard.set_user(self.user)
-        time.sleep(1)
         wizard.set_desk(self.desk)
-        time.sleep(1)
         wizard.set_institution(self.institution)
-        time.sleep(1)
 
     def test_context(self):
         try:
@@ -66,11 +56,9 @@ class QAP_T3948(CommonTestCase):
                                 self.user, self.desk]
             self.verify("Is pdf contains values ", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(expected_content))
-            time.sleep(1)
             wizard.click_on_save_changes()
-            time.sleep(2)
             page.set_name_at_filter(self.name)
-            time.sleep(2)
+            time.sleep(1)
             headers = ["Name", "Client", "Instr Type", "Execution Policy", "WashBook Account", "User", "Desk"]
             actual_content = [page.get_name(), page.get_client(), page.get_instr_type(), page.get_execution_policy(),
                               page.get_wash_book_account(), page.get_user(),

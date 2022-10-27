@@ -2,7 +2,8 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
+from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -17,8 +18,9 @@ def test_run(parent_id=None, version=None):
     try:
         # region Iceberg: Route/Venue
         # configuration = ComponentConfiguration("Participation")
-        configuration = ComponentConfiguration("Scaling")
+        configuration = ComponentConfigurationAlgo("Participation")
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         pass
 

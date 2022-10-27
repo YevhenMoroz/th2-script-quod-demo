@@ -70,7 +70,8 @@ class QAP_T4158(TestCase):
 
         # region venue param
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
-        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_20")
+        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_13")
+        self.deliver_to_comp_id_tqlis = self.data_set.get_mic_by_name("mic_20")
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
@@ -195,7 +196,7 @@ class QAP_T4158(TestCase):
 
         # region quote canceled on CHIXLIS and TRQXLIS
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that RFQ cancel requests received", self.test_id))
-        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_tqlis)
+        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.deliver_to_comp_id_tqlis)
         rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_chixlis_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
         self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion

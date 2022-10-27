@@ -2,7 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4378, QAP_T4449, QAP_T4281, QAP_T4379, QAP_T4282, QAP_T4424, QAP_T4425, QAP_T4426, QAP_T4427, QAP_T4430, QAP_T4436, QAP_T4437, QAP_T4320, QAP_T4438, QAP_T4439, QAP_T4441, QAP_T4442, QAP_T4443, QAP_T4370, QAP_T4444, QAP_T4372, QAP_T4448, QAP_T4361, QAP_T4380, QAP_T4385, QAP_T4292, QAP_T4303
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4297 import QAP_T4297
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4304 import QAP_T4304
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4315 import QAP_T4315
@@ -23,7 +23,7 @@ def test_run(parent_id=None, version=None):
     try:
         # region Iceberg: Route/Venue
         # configuration = ComponentConfiguration("Twap")
-        configuration = ComponentConfiguration("Scaling")
+        configuration = ComponentConfigurationAlgo("Twap")
         # QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         QAP_T4297(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
