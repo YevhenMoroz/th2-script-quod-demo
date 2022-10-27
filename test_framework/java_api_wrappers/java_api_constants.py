@@ -110,6 +110,14 @@ class JavaApiFields(Enum):
     MiscFeeAmt = 'MiscFeeAmt'
     MiscFeeRate = 'MiscFeeRate'
     MiscFeeCurr = 'MiscFeeCurr'
+    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
+    RootMiscFeeBasis = 'RootMiscFeeBasis'
+    RootMiscFeeRate = 'RootMiscFeeRate'
+    RootMiscFeeCurr = 'RootMiscFeeCurr'
+    RootMiscFeeType = 'RootMiscFeeType'
+    RootMiscFeeAmt = 'RootMiscFeeAmt'
+    RootMiscFeesBlock = 'RootMiscFeesBlock'
+    RootMiscFeesList = 'RootMiscFeesList'
 
 
 class JavaApiPartyRoleConstants(Enum):
