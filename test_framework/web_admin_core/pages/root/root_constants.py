@@ -48,7 +48,7 @@ class RootConstants:
     MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR = "a[title='Middle Office']"
     FEES_ITEM_XPATH = "//span[text()='Fees']"
     COMMISSIONS_ITEM_XPATH = "//span[text()='Commissions']"
-    SETTLEMENT_MODEL_ITEM_XPATH = "//span[text()='Settlement Models']"
+    SETTLEMENT_MODELS_ITEM_XPATH = "//span[text()='Settlement Models']"
     ALLOCATION_MATCHING_PROFILE_ITEM_XPATH = "//span[text()='Allocation Matching Profiles']"
 
     FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='Market Making']"

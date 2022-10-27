@@ -33,8 +33,8 @@ from test_framework.web_admin_core.pages.middle_office.commissions.commissions_c
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_constants import \
     AllocationMatchingProfileConstants
-from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_constants import \
-    SettlementModelConstants
+from test_framework.web_admin_core.pages.middle_office.settlement_models.constants import \
+    SettlementModelsConstants
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
     ExecutionStrategiesConstants
 from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
@@ -207,10 +207,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(AllocationMatchingProfileConstants.ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH)
 
-    def open_settlement_model_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.SETTLEMENT_MODEL_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(SettlementModelConstants.SETTLEMENT_MODEL_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(SettlementModelsConstants.SETTLEMENT_MODELS_PAGE_TITLE_XPATH)
 
     def open_execution_strategies_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH,

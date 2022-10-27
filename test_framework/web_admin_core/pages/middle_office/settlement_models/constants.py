@@ -1,5 +1,5 @@
-class SettlementModelConstants:
-    SETTLEMENT_MODEL_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Settlement Models ']"
+class SettlementModelsConstants:
+    SETTLEMENT_MODELS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Settlement Models']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
