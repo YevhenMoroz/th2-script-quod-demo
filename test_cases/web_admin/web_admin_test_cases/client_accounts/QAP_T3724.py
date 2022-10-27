@@ -4,9 +4,9 @@ import random
 import string
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_page import AccountsPage
+from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
-from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_wizard import AccountsWizard
+from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer

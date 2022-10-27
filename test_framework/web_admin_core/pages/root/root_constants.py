@@ -31,7 +31,7 @@ class RootConstants:
     INSTRUMENT_LIST_ITEM_XPATH = "//span[text()='Instrument Lists']"
     VENUE_LISTS_XPATH = "//span[text()='Venue Lists']"
 
-    CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR = "a[title='Clients/Accounts']"
+    CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR = "a[title='Clients/Accounts']"
     ACCOUNTS_ITEM_XPATH = "//span[text()='Accounts']"
     WASHBOOK_ITEM_XPATH = "//span[text()='Wash Books']"
     WASHBOOK_RULES_ITEM_XPATH = "//span[text()='Wash Book Rules']"

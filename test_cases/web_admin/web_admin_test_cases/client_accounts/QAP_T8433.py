@@ -2,7 +2,7 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_lists.main_page import ClientListsPage
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu

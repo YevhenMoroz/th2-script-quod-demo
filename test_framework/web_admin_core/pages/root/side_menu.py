@@ -1,14 +1,14 @@
 import time
 
-from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
-from test_framework.web_admin_core.pages.client_accounts.cash_accounts.cash_accounts_constants import \
+from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_constants import AccountsConstants
+from test_framework.web_admin_core.pages.clients_accounts.cash_accounts.cash_accounts_constants import \
     CashAccountsConstants
-from test_framework.web_admin_core.pages.client_accounts.external_client_groups_ids.constants import \
+from test_framework.web_admin_core.pages.clients_accounts.external_client_groups_ids.constants import \
     ExternalClientGroupIDsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_constants import \
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_lists.constants import ClientListsConstants
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.constants import ClientListsConstants
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
     CashPositionsConstants
 from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_constants import \
@@ -123,32 +123,32 @@ class SideMenu(CommonPage):
         self.find_by_xpath(page_title_selector)
 
     def open_accounts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ACCOUNTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.ACCOUNTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(AccountsConstants.ACCOUNTS_PAGE_TITLE_XPATH)
 
     def open_cash_accounts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CASH_ACCOUNTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CASH_ACCOUNTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(CashAccountsConstants.CASH_ACCOUNTS_PAGE_TITLE_XPATH)
 
     def open_client_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ExternalClientGroupIDsConstants.EXTERNAL_CLIENT_GROUP_ID_PAGE_TITLE_XPATH)
 
     def open_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientGroupsConstants.CLIENT_GROUPS_PAGE_TITLE_CSS_XPATH)
 
     def open_client_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_LISTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENT_LISTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientListsConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
 
     def open_clients_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientsConstants.CLIENTS_PAGE_TITLE_XPATH)
 
