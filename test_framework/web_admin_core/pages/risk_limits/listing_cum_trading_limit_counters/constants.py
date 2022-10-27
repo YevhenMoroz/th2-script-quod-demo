@@ -1,5 +1,5 @@
-class ListingCumTrdLmtCounterConstants:
-    LISTING_CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Listing CumTrdLmt Counter ']"
+class ListingCumTradingLimitCountersConstants:
+    LISTING_CUM_TRADING_LIMIT_COUNTERS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Listing Cum Trading Limit Counters']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"

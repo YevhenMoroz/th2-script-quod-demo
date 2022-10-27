@@ -79,8 +79,8 @@ from test_framework.web_admin_core.pages.risk_limits.external_check.external_che
     ExternalCheckConstants
 from test_framework.web_admin_core.pages.risk_limits.fx_position_limits.fx_position_limits_constants import \
     FxPositionsLimitsConstants
-from test_framework.web_admin_core.pages.risk_limits.listing_cumtrdlmt_counter.listing_cumtrdlmt_counter_constants import \
-    ListingCumTrdLmtCounterConstants
+from test_framework.web_admin_core.pages.risk_limits.listing_cum_trading_limit_counters.constants import \
+    ListingCumTradingLimitCountersConstants
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_constants import \
     PositionsLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.constants import Constants \
@@ -343,10 +343,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(FxPositionsLimitsConstants.FX_POSITIONS_LIMITS_PAGE_TITLE_XPATH)
 
-    def open_listing_cumtrdlmt_counter_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTING_CUMTRDLMT_COUNTER_ITEM_XPATH,
+    def open_listing_cum_trading_limit_counters_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.LISTING_CUM_TRADING_LIMIT_COUNTERS_ITEM_XPATH,
                        RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR, container_expected_state)
-        self.check_is_page_opened(ListingCumTrdLmtCounterConstants.LISTING_CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ListingCumTradingLimitCountersConstants.LISTING_CUM_TRADING_LIMIT_COUNTERS_PAGE_TITLE_XPATH)
 
     def open_positions_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.POSITION_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
