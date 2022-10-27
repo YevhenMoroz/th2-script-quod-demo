@@ -7,7 +7,7 @@ from test_framework.web_admin_core.pages.client_accounts.client_client_groups.cl
     ClientClientGroupsConstants
 from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
+from test_framework.web_admin_core.pages.client_accounts.client_lists.constants import ClientListsConstants
 from test_framework.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
     CashPositionsConstants
@@ -145,7 +145,7 @@ class SideMenu(CommonPage):
     def open_client_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CLIENT_LIST_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(ClientListConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ClientListsConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
 
     def open_clients_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
