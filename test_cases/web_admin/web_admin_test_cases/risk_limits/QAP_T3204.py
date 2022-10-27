@@ -37,14 +37,14 @@ from test_framework.web_admin_core.pages.risk_limits.position_limits.position_li
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_assignments_sub_wizard \
     import PositionLimitsAssignmentsSubWizardPage
 
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_page \
-    import PriceToleranceLimitPage
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_wizard \
-    import PriceToleranceControlWizard
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_values_sub_wizard \
-    import PriceToleranceControlSubWizard
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_assignments_sub_wizard \
-    import PriceToleranceControlAssignmentsSubWizardPage
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.main_page \
+    import OrderToleranceLimitsPage
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.wizard \
+    import OrderToleranceLimitsWizard
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.values_sub_wizard \
+    import OrderToleranceLimitsValuesSubWizard
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.assignments_sub_wizard \
+    import OrderToleranceLimitsAssignmentsSubWizardPage
 
 from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_page import \
     OrderVelocityLimitPage
@@ -272,18 +272,18 @@ class QAP_T3204(CommonTestCase):
 
     def price_tolerance_control(self):
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_price_tolerance_control_page()
+        side_menu.open_order_tolerance_limits_page()
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
-        price_tolerance_page = PriceToleranceLimitPage(self.web_driver_container)
+        price_tolerance_page = OrderToleranceLimitsPage(self.web_driver_container)
         price_tolerance_page.click_on_new()
-        value_tab = PriceToleranceControlSubWizard(self.web_driver_container)
+        value_tab = OrderToleranceLimitsValuesSubWizard(self.web_driver_container)
         value_tab.set_name(self.name)
         value_tab.set_external_id(self.external_id)
 
-        assignments_tab = PriceToleranceControlAssignmentsSubWizardPage(self.web_driver_container)
+        assignments_tab = OrderToleranceLimitsAssignmentsSubWizardPage(self.web_driver_container)
         assignments_tab.set_institution(self.institution)
-        wizard = PriceToleranceControlWizard(self.web_driver_container)
+        wizard = OrderToleranceLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         price_tolerance_page.set_name(self.name)
         time.sleep(1)

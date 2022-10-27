@@ -85,8 +85,8 @@ from test_framework.web_admin_core.pages.risk_limits.position_limits.position_li
     PositionsLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.constants import Constants \
     as RiskLimitDimensionsConstants
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_constants import \
-    PriceToleranceControlConstants
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.constants import \
+    OrderToleranceLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
     TradingLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.buying_power.constants import Constants as BuyingPower
@@ -358,10 +358,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(RiskLimitDimensionsConstants.MainPage.TITLE)
 
-    def open_price_tolerance_control_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.PRICE_TOLERANCE_CONTROL_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+    def open_order_tolerance_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ORDER_TOLERANCE_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(PriceToleranceControlConstants.PRICE_TOLERANCE_CONTROL_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(OrderToleranceLimitsConstants.ORDER_TOLERANCE_LIMITS_PAGE_TITLE_XPATH)
 
     def open_trading_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.TRADING_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,

@@ -1,5 +1,5 @@
-class PriceToleranceControlConstants:
-    PRICE_TOLERANCE_CONTROL_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Order Tolerance Limits ']"
+class OrderToleranceLimitsConstants:
+    ORDER_TOLERANCE_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Order Tolerance Limits']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
@@ -45,7 +45,7 @@ class PriceToleranceControlConstants:
     VALUES_TAB_LISTING_GROUP_XPATH = '//*[@id="listingGroup"]'
     VALUES_TAB_INSTR_TYPE_XPATH = '//*[@id="instrType"]'
     VALUES_TAB_LISTING_XPATH = '//*[@id="listing"]'
-    VALUES_TAB_WILDCARD_LISTING_CHECKBOX_XPATH = '//*[text()="Wildcard Listing"]/preceding-sibling::span'
+    VALUES_TAB_PER_LISTING_CHECKBOX_XPATH = '//*[text()="Per Listing"]/preceding-sibling::span'
     VALUES_TAB_USER_XPATH = '//*[@id="user"]'
     VALUES_TAB_CLIENT_XPATH = '//*[@id="accountGroup"]'
     VALUES_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
