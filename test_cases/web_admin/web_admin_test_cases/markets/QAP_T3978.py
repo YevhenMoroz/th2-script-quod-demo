@@ -29,7 +29,7 @@ class QAP_T3978(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
-        side_menu.open_instr_symbol_info_page()
+        side_menu.open_instrument_symbols_page()
         time.sleep(2)
         page = InstrumentSymbolsMainPage(self.web_driver_container)
         wizard = InstrumentSymbolsWizard(self.web_driver_container)

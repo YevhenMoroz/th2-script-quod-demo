@@ -3,8 +3,8 @@ import time
 from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
 from test_framework.web_admin_core.pages.client_accounts.cash_accounts.cash_accounts_constants import \
     CashAccountsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_client_groups.client_client_groups_constants import \
-    ClientClientGroupsConstants
+from test_framework.web_admin_core.pages.client_accounts.external_client_groups_ids.constants import \
+    ExternalClientGroupIDsConstants
 from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
 from test_framework.web_admin_core.pages.client_accounts.client_lists.constants import ClientListsConstants
@@ -133,9 +133,9 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(CashAccountsConstants.CASH_ACCOUNTS_PAGE_TITLE_XPATH)
 
     def open_client_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(ClientClientGroupsConstants.CLIENT_CLIENT_GROUPS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ExternalClientGroupIDsConstants.EXTERNAL_CLIENT_GROUP_ID_PAGE_TITLE_XPATH)
 
     def open_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
@@ -143,7 +143,7 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(ClientGroupsConstants.CLIENT_GROUPS_PAGE_TITLE_CSS_XPATH)
 
     def open_client_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_LIST_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENT_LISTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientListsConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
 
@@ -278,13 +278,13 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(UnbalancedRatesConstants.UNBALANCED_RATES_PAGE_TITLE_XPATH)
 
-    def open_instr_symbol_info_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTR_SYMBOL_INFO_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
+    def open_instrument_symbols_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INSTRUMENT_SYMBOLS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrumentSymbolsConstants.INSTR_SYMBOL_INFO_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentSymbolsConstants.INSTRUMENT_SYMBOLS_PAGE_TITLE_XPATH)
 
-    def open_instrument_group_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTRUMENT_GROUP_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
+    def open_instrument_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INSTRUMENT_GROUPS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(InstrumentGroupsConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
 

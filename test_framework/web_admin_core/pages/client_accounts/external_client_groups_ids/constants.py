@@ -1,5 +1,5 @@
-class ClientClientGroupsConstants:
-    CLIENT_CLIENT_GROUPS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='ClientClientGroups ']"
+class ExternalClientGroupIDsConstants:
+    EXTERNAL_CLIENT_GROUP_ID_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='External Client Group IDs']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
