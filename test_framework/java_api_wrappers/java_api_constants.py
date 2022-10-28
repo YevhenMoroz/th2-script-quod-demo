@@ -41,6 +41,7 @@ class AllocationReportConst(Enum):
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
     AllocStatus_CXL = 'CXL'
+    AllocReportType_ACC = 'ACC'
 
 
 class AllocationInstructionConst(Enum):
@@ -125,6 +126,7 @@ class JavaApiFields(Enum):
     PositionList = 'PositionList'
     PositionBlock = 'PositionBlock'
     PositQty = 'PositQty'
+    ExecCommission = 'ExecCommission'
     MiscFeesList = 'MiscFeesList'
     MiscFeesBlock = 'MiscFeesBlock'
     MiscFeeType = 'MiscFeeType'
@@ -133,6 +135,11 @@ class JavaApiFields(Enum):
     MiscFeeRate = 'MiscFeeRate'
     MiscFeeCurr = 'MiscFeeCurr'
     ExecutionPolicy = 'ExecutionPolicy'
+    ManualDayCumAmt = 'ManualDayCumAmt'
+    ManualDayCumQty = 'ManualDayCumQty'
+    AllocInstructionID = 'AllocInstructionID'
+    AllocReportType = 'AllocReportType'
+    RootMiscFeesList = 'RootMiscFeesList'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -148,7 +155,6 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
-
 
 
 class JavaApiPartyRoleConstants(Enum):
