@@ -11,8 +11,8 @@ from test_framework.web_admin_core.pages.clients_accounts.client_lists.constants
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
     CashPositionsConstants
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_constants import \
-    OrderVelocityLimitConstants
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.constants import \
+    OrderVelocityLimitsConstants
 from test_framework.web_admin_core.pages.site.desks.desks_constants import DesksConstants
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_constants import WashBookConstants
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_constants import \
@@ -413,7 +413,7 @@ class SideMenu(CommonPage):
     def open_order_velocity_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_VELOCITY_LIMIT_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(OrderVelocityLimitConstants.ORDER_VELOCITY_LIMIT_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(OrderVelocityLimitsConstants.ORDER_VELOCITY_LIMIT_PAGE_TITLE_XPATH)
 
     def open_cash_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CASH_POSITIONS_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,
