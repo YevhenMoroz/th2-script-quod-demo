@@ -46,13 +46,13 @@ from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.valu
 from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.assignments_sub_wizard \
     import OrderToleranceLimitsAssignmentsSubWizardPage
 
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_page import \
-    OrderVelocityLimitPage
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_values_sub_wizard import \
-    OrderVelocityLimitValuesSubWizard
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_wizard import \
-    OrderVelocityLimitWizard
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_assignment_tab import \
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.main_page import \
+    OrderVelocityLimitsPage
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.values_sub_wizard import \
+    OrderVelocityLimitsValuesSubWizard
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.wizard import \
+    OrderVelocityLimitsWizard
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.assignment_tab import \
     OrderVelocityLimitsAssignmentsSubWizardPage
 
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -321,16 +321,16 @@ class QAP_T3204(CommonTestCase):
     def order_velocity_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_order_velocity_page()
-        order_velocity_limit_page = OrderVelocityLimitPage(self.web_driver_container)
+        order_velocity_limit_page = OrderVelocityLimitsPage(self.web_driver_container)
         order_velocity_limit_page.click_on_new()
 
-        values_sub_wizard = OrderVelocityLimitValuesSubWizard(self.web_driver_container)
+        values_sub_wizard = OrderVelocityLimitsValuesSubWizard(self.web_driver_container)
         values_sub_wizard.set_order_velocity_limit_name(self.name)
         values_sub_wizard.set_moving_time_window(self.moving_time_window)
 
         assignments_tab = OrderVelocityLimitsAssignmentsSubWizardPage(self.web_driver_container)
         assignments_tab.set_institution(self.institution)
-        wizard = OrderVelocityLimitWizard(self.web_driver_container)
+        wizard = OrderVelocityLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         order_velocity_limit_page.set_name(self.name)
         time.sleep(1)
