@@ -76,8 +76,7 @@ class QAP_T7310(TestCase):
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters({"Account": self.client, "AvgPx": "*", "Currency": "*", "tag5120": "*",
-                                       "CommissionData": {"CommissionType": "3", "Commission": "0.01",
-                                                          "CommCurrency": "*"}})
+                                       "CommissionData": {"CommissionType": "3", "Commission": "0.01", "CommCurrency": "*"}})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
         # endregion
 
