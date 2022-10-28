@@ -69,14 +69,16 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
-    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
-    Order_PositionTransferReport = 'Order_PositionTransferReport'
-    Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
-    Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
+    AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    PositionTransferReport = 'Order_PositionTransferReport'
+    ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
+    ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
+    BookingCancelReply = "Order_BookingCancelReply"
 
 
 class TradingRestApiMessageType(Enum):

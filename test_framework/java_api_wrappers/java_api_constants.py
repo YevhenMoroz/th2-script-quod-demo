@@ -16,9 +16,16 @@ class OrderReplyConst(Enum):
     PostTradeStatus_BKD = 'BKD'
     DoneForDay_YES = "Y"
     TransStatus_OPN = 'OPN'
+    DiscloseExec_R = 'R'
+    DiscloseExec_M = 'M'
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
+
+
+class ExecutionPolicyConst(Enum):
+    DMA = 'D'
+    CARE = 'C'
 
 
 class SubmitRequestConst(Enum):
@@ -54,6 +61,11 @@ class CommissionBasisConst(Enum):
 
 class CommissionAmountTypeConst(Enum):
     CommissionAmountType_BRK = 'BRK'
+
+
+class OrdListNotificationConst(Enum):
+    ListOrderStatus_EXE = 'EXE'
+    OrderListWaveStatus_TER = 'TER'
 
 
 class QtyPercentageProfile(Enum):
@@ -110,6 +122,23 @@ class JavaApiFields(Enum):
     MiscFeeAmt = 'MiscFeeAmt'
     MiscFeeRate = 'MiscFeeRate'
     MiscFeeCurr = 'MiscFeeCurr'
+    ExecutionPolicy = 'ExecutionPolicy'
+    """List Wave"""
+    OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
+    OrderNotificationElements = "OrdNotificationElements"
+    OrderListWaveStatus = 'OrderListWaveStatus'
+    PercentQtyToRelease = 'PercentQtyToRelease'
+    RouteID = 'RouteID'
+    """External Algo"""
+    ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
+    ExternalAlgoParameterListBlock = 'ExternalAlgoParameterListBlock'
+    ExternalAlgoParameterBlock = 'ExternalAlgoParameterBlock'
+    AlgoParamString = 'AlgoParamString'
+    AlgoParameterName = 'AlgoParameterName'
+    VenueScenarioParameterID = 'VenueScenarioParameterID'
+    ScenarioID = 'ScenarioID'
+    ExternalAlgo = 'ExternalAlgo'
+
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
     RootMiscFeeRate = 'RootMiscFeeRate'

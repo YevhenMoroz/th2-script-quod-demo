@@ -35,7 +35,10 @@ class ComputeBookingFeesCommissionsRequestOMS(ComputeBookingFeesCommissionsReque
     def set_list_of_order_alloc_block(self, cl_ord_id, order_id, post_trade_status):
         self.__list_order_alloc_block.append(OrderAllocBlockInstance(cl_ord_id, order_id, post_trade_status))
 
-    def set_default_compute_booking_request(self, qty) -> None:
+    def set_default_compute_booking_request(self, qty=None, avg_px=None, client=None) -> None:
+        if qty is None: qty = "100"
+        if avg_px is None: avg_px = "20"
+        if client is None: client = self.__data_set.get_client_by_name('client_1')
         instance_order_alloc_block = []
         for instance in self.__list_order_alloc_block:
             instance_order_alloc_block.append({'ClOrdID': instance.cl_ord_id, 'OrdID': instance.order_id,
@@ -54,8 +57,8 @@ class ComputeBookingFeesCommissionsRequestOMS(ComputeBookingFeesCommissionsReque
                 'ExecAllocList': {
                     'ExecAllocBlock': instance_exec_alloc_block},
                 'Qty': qty,
-                'AccountGroupID': self.__data_set.get_client_by_name('client_1'),
-                'AvgPx': '20',
+                'AccountGroupID': client,
+                'AvgPx': avg_px,
                 'RecomputeInSettlCurrency': 'N'
             }
         }
