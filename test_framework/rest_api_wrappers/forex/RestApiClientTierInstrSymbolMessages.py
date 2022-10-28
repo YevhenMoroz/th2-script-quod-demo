@@ -128,7 +128,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         for tenor in tenors:
-            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"]) + 1
             tenor["clientTierInstrSymbolTenorQty"].append({
                 "upperQty": str(sweepable_qty),
                 "MDQuoteType": "TRD",
@@ -226,14 +226,13 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.update_parameters({'clientTierInstrSymbolQty': sweepable, 'clientTierInstrSymbolTenor': tenors})
         return self
 
-
     def add_tenor_qty(self, qty, default_bid_margin=None, default_offer_margin=None):
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
         timestamp = str(datetime.now().timestamp())
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         for tenor in tenors:
-            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"]) + 1
             tenor["clientTierInstrSymbolTenorQty"].append({
                 "upperQty": str(qty),
                 "MDQuoteType": "TRD",
@@ -247,5 +246,3 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             tenor.update({'lastUpdateTime': timestamp})
         self.update_parameters({'clientTierInstrSymbolTenor': tenors})
         return self
-
-

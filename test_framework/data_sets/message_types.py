@@ -51,10 +51,10 @@ class ORSMessageType(Enum):
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
-    OrderListWaveNotification ='Order_OrderListWaveNotification'
+    OrderListWaveNotification = 'Order_OrderListWaveNotification'
     PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
-    OrderModificationReply = 'OrderModificationReply'
+    OrderModificationReply = 'Order_OrderModificationReply'
     OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
     OrderBagCreationReply = 'Order_OrderBagCreationReply'
     OrderBagNotification = 'Order_OrderBagNotification'
@@ -69,6 +69,10 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    Order_PositionTransferReport = 'Order_PositionTransferReport'
+    Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
+    Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
     QuoteRequestNotif = "Order_QuoteRequestNotif"

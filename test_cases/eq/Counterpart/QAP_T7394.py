@@ -11,7 +11,7 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst, \
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst, \
     JavaApiPartyRoleConstants
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
