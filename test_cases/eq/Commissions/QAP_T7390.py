@@ -6,8 +6,16 @@ from custom.basic_custom_actions import create_event
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.fe_trading_constant import TradeBookColumns, MiddleOfficeColumns, \
     AllocationsColumns, ClientInboxColumns, OrderBookColumns
@@ -28,59 +36,72 @@ class QAP_T7390(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
+        self.drop_copy = self.fix_env.drop_copy
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.qty = "4232"
         self.price = "4232"
-        self.client = self.data_set.get_client_by_name("client_com_1")
-        self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
+        self.client = self.data_set.get_client_by_name("client_counterpart_1")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
+        self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit(
+            "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
+            {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
+             'PreAllocGrp': self.no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
         self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.trades = OMSTradesBook(self.test_id, self.session_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.fix_verifier_dc = FixVerifier(self.drop_copy, self.test_id)
+        self.alloc_report = FixMessageAllocationInstructionReportOMS()
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.confirmation = FixMessageConfirmationReportOMS(self.data_set)
+        self.trade = TradeEntryOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region send fee
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(recalculate=True).change_message_params(
             {"venueID": self.data_set.get_venue_by_name("venue_2")}).send_post_request()
-        self.__send_fix_orders()
+        # endregion
 
-        self.cl_inbox.accept_order(filter={ClientInboxColumns.order_id.value: self.order_id})
-        self.order_book.manual_execution(filter_dict={OrderBookColumns.order_id.value: self.order_id})
-        filter_list = [OrderBookColumns.order_id.value, self.order_id]
-        self.order_book.complete_order(filter_list=filter_list)
-        self.__verify_fees_of_executions()
-        self.middle_office.set_modify_ticket_details(remove_fee=True)
-        self.middle_office.book_order(filter=filter_list)
-        self.__verify_fees_in_middle_office()
-        self.middle_office.approve_block(filter_list=filter_list)
-        self.middle_office.allocate_block(filter=filter_list)
-        self.__verify_fees_in_allocation_ticket()
+        # region send order
+        self.__send_fix_orders()
+        # endregion
+
+        # region execute order
+        self.trade.set_default_trade(self.order_id, self.price, self.qty)
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade)
+        self.__return_result(responses, ORSMessageType.ComputeBookingFeesCommissionsReply.value)
+        exec_id = self.result.get_parameter('ExecutionReportBlock')['ExecID']
+        # endregion
+
+        # region check calculated message
+        self.exec_report.set_default_calculated(self.new_order_single)
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        # endregion
+
+        # region check ready to book message
+        self.alloc_report.set_default_ready_to_book(self.new_order_single)
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report)
+        # endregion
+
+        # region check confirmation message
+        self.confirmation.set_default_confirmation_new(self.new_order_single)
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation)
+        # endregion
 
     def __send_fix_orders(self):
-        no_allocs: dict = {"NoAllocs": [{'AllocAccount': self.account, 'AllocQty': self.qty}]}
-        new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit(
-            "instrument_3").add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
-            {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
-             'PreAllocGrp': no_allocs, "ExDestination": self.data_set.get_mic_by_name("mic_2")})
-        self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(new_order_single)
+        self.response: list = self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
         self.order_id = self.response[0].get_parameter("OrderID")
 
-    def __verify_fees_of_executions(self):
-        self.trades.set_filter(["Order ID", self.order_id])
-        fees = {TradeBookColumns.exec_fees.value: self.trades.extract_field(TradeBookColumns.exec_fees.value)}
-        self.trades.compare_values({TradeBookColumns.exec_fees.value: ""}, fees, event_name='Check values')
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response
 
-    def __verify_fees_in_middle_office(self):
-        fees = self.middle_office.extract_block_field(MiddleOfficeColumns.total_fees.value,
-                                                      filter_list=[MiddleOfficeColumns.order_id.value, self.order_id])
-        self.middle_office.compare_values({MiddleOfficeColumns.total_fees.value: ""}, fees, event_name='Check values')
 
-    def __verify_fees_in_allocation_ticket(self):
-        fees = self.middle_office.extract_allocate_value(AllocationsColumns.total_fees.value)
-        self.middle_office.compare_values({AllocationsColumns.total_fees.value: "0.01"}, fees,
-                                          event_name='Check values')
