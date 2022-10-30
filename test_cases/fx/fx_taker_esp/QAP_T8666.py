@@ -29,7 +29,7 @@ class QAP_T8666(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.new_order.set_default_mo()
-        self.new_order.change_parameters({"OrderQty": self.qty, "ExDestination": self.venue_d3})
+        self.new_order.change_parameters({"ExDestination": self.venue_d3})
         self.fix_manager.send_message_and_receive_response(self.new_order)
         # endregion
         # regions Step 2
