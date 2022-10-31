@@ -63,8 +63,8 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def clear_assignments_tab(self):
         if self.is_desks_field_displayed():
-            if self.is_desks_field_enabled():
-                selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
+            selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
+            if self.is_desks_field_enabled() and len(selected_desks) > 1:
                 self.set_desks([_.strip() for _ in selected_desks.split(",")])
         if self.is_location_field_displayed():
             if self.is_location_field_enabled():

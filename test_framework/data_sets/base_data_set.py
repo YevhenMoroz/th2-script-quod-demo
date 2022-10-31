@@ -13,11 +13,13 @@ class BaseDataSet:
     cash_account_counters = None
     washbook_accounts = None
     washbook_rules = None
+    counterpart_id_fix = None
     recipients = None
     web_admin_rest_api_users = None
     risk_limit_dimensions = None
     cash_transfer_types = None
     listing_id = None
+    counterpart_id_java_api = None
     mic = None  # Market Identifier Code
     currency = None
     settl_currency = None
@@ -25,6 +27,7 @@ class BaseDataSet:
     symbols = None
     security_types = None
     settle_types = None
+    settle_types_ja = None
     settle_dates = None
     routes = None
     route_id = None
@@ -38,6 +41,7 @@ class BaseDataSet:
     client_tiers_id = None
     days_of_week = None
     tenors = None
+    tenors_java_api = None
     auto_hedgers = None
     auto_hedgers_id = None
     algo_policies = None
@@ -92,6 +96,7 @@ class BaseDataSet:
     symbol = None
     instr_type = None
     fx_istr_type_wa = None
+    fx_istr_type_ja = None
     preferred_venue = None
     listing_group = None
     settle_type = None
@@ -125,7 +130,10 @@ class BaseDataSet:
     core_spot_price_strategy = None
     party_role = None
     counterpart_id = None
+    cl_list_id = None
     pre_filter = None
+    reference_price = None
+    java_api_instruments = None
     # endregion
 
     # region fields added by Web Trading team
@@ -279,6 +287,13 @@ class BaseDataSet:
             return getattr(self.fx_istr_type_wa, name).value
         return ValueError(f"{self.fx_istr_type_wa} not found!")
 
+
+    def get_fx_instr_type_ja(self, name: str):
+        if hasattr(self.fx_istr_type_ja, name):
+            return getattr(self.fx_istr_type_ja, name).value
+        return ValueError(f"{self.fx_istr_type_ja} not found!")
+
+
     def get_mic_by_name(self, name: str):
         if hasattr(self.mic, name):
             return getattr(self.mic, name).value
@@ -298,6 +313,16 @@ class BaseDataSet:
         if hasattr(self.venue_client_names, name):
             return getattr(self.venue_client_names, name).value
         raise ValueError(f"{self.venue_client_names} not found!")
+
+    def get_counterpart_id_fix(self, name: str):
+        if hasattr(self.counterpart_id_fix, name):
+            return getattr(self.counterpart_id_fix, name).value
+        raise ValueError(f"{self.counterpart_id_fix} not found!")
+
+    def get_counterpart_id_java_api(self, name: str):
+        if hasattr(self.counterpart_id_java_api, name):
+            return getattr(self.counterpart_id_java_api, name).value
+        raise ValueError(f"{self.counterpart_id_java_api} not found!")
 
     def get_hierarchical_level_by_name(self, name: str):
         if hasattr(self.hierarchical_levels, name):
@@ -331,6 +356,15 @@ class BaseDataSet:
         if hasattr(self.settle_types, name):
             return getattr(self.settle_types, name).value
         raise ValueError(f"{self.settle_types} not found!")
+
+    def get_settle_type_ja_by_name(self, name: str):
+        """
+        get settle type by name from FxSettleTypesJavaAPi
+        example ---> get_security_type_by_name("fxspot"):
+        """
+        if hasattr(self.settle_types_ja, name):
+            return getattr(self.settle_types_ja, name).value
+        raise ValueError(f"{self.settle_types_ja} not found!")
 
     def get_settle_date_by_name(self, name: str):
         """
@@ -386,6 +420,15 @@ class BaseDataSet:
         if hasattr(self.tenors, name):
             return getattr(self.tenors, name).value
         raise ValueError(f"{self.tenors} not found!")
+
+    def get_tenor_java_api_by_name(self, name: str):
+        """
+        get tenor by name from FxTenors
+        example ---> get_tenor_by_name("tenor_spot"):
+        """
+        if hasattr(self.tenors_java_api, name):
+            return getattr(self.tenors_java_api, name).value
+        raise ValueError(f"{self.tenors_java_api} not found!")
 
     def get_auto_hedger_by_name(self, name: str):
         """
@@ -822,6 +865,7 @@ class BaseDataSet:
         if hasattr(self.pre_filter, name):
             return getattr(self.pre_filter, name).value
         return ValueError(f"{self.pre_filter,} not found!")
+
     # endregion
 
     # region WebTrading getters
@@ -855,4 +899,23 @@ class BaseDataSet:
             return getattr(self.counterpart, name).value
         return ValueError(f"{self.counterpart} not found!")
 
+    def get_cl_list_id(self, name: str):
+        if hasattr(self.cl_list_id, name):
+            return getattr(self.cl_list_id, name).value
+        return ValueError(f"{self.cl_list_id} not found!")
+
+    def get_ref_price(self, name: str):
+        if hasattr(self.reference_price, name):
+            return getattr(self.reference_price, name).value
+        return ValueError(f"{self.reference_price} not found!")
+
+    def get_venue_list(self, name: str):
+        if hasattr(self.venue_list, name):
+            return getattr(self.venue_list, name).value
+        return ValueError(f"{self.venue_list} not found!")
+
+    def get_java_api_instrument(self, name: str):
+        if hasattr(self.java_api_instruments, name):
+            return getattr(self.java_api_instruments, name).value
+        return ValueError(f"{self.java_api_instruments} not found!")
     # endregion

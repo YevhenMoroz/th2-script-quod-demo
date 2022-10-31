@@ -62,11 +62,11 @@ class QAP_T3847(CommonTestCase):
         self.client = random.choice(commission_wizard_dimensions_tab.get_all_client_from_drop_menu())
         commission_wizard_dimensions_tab.set_client(self.client)
         self.commission_amount_type = random.choice(
-            commission_wizard_dimensions_tab.get_all_commission_amount_type_from_drop_menu())
-        commission_wizard_dimensions_tab.set_commission_amount_type(self.commission_amount_type)
+            commission_wizard_value_tab.get_all_commission_amount_type_from_drop_menu())
+        commission_wizard_value_tab.set_commission_amount_type(self.commission_amount_type)
         self.commission_profile = random.choice(
-            commission_wizard_dimensions_tab.get_all_commission_profile_from_drop_menu())
-        commission_wizard_dimensions_tab.set_commission_profile(self.commission_profile)
+            commission_wizard_value_tab.get_all_commission_profile_from_drop_menu())
+        commission_wizard_value_tab.set_commission_profile(self.commission_profile)
         commission_wizard = CommissionsWizard(self.web_driver_container)
         commission_wizard.click_on_save_changes()
 
@@ -102,8 +102,8 @@ class QAP_T3847(CommonTestCase):
                                commission_wizard_dimensions_tab.get_instr_type(),
                                commission_wizard_dimensions_tab.get_side(),
                                commission_wizard_dimensions_tab.get_client(),
-                               commission_wizard_dimensions_tab.get_commission_amount_type(),
-                               commission_wizard_dimensions_tab.get_commission_profile()]
+                               commission_wizard_value_tab.get_commission_amount_type(),
+                               commission_wizard_value_tab.get_commission_profile()]
 
             self.verify("Cloned entity contains all data", actual_result, excepted_result)
 

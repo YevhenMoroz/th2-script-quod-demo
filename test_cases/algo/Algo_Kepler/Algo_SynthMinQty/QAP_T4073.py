@@ -5,7 +5,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -86,7 +86,7 @@ class QAP_T4073(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_1_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.price)
         nos_2_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, self.price)
         self.rule_list = [nos_1_fok_rule, nos_2_fok_rule]
@@ -155,7 +155,7 @@ class QAP_T4073(TestCase):
         # region check fill first dma child order
         er_fill_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_fill)
         er_fill_dma_qdl1_order.change_parameters(dict(CumQty=self.trade_1_qty, LeavesQty=0, LastQty=self.trade_1_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
         # endregion
         
         time.sleep(3)
@@ -174,7 +174,7 @@ class QAP_T4073(TestCase):
         # region check fill second dma child order
         er_fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
         er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.trade_2_qty, LeavesQty=0, LastQty=self.trade_2_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
         # endregion
         
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
@@ -187,5 +187,5 @@ class QAP_T4073(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

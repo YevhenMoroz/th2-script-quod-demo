@@ -134,10 +134,10 @@ class QAP_T7648(TestCase):
         expected_values_bag = dict()
         order_bag_id = None
         if return_order_bag_id:
-            order_bag_id = fields.pop('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.pop(OrderBagColumn.id.value)
             bag_column_extraction.remove(OrderBagColumn.id.value)
         for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({'order_bag.' + bag_column_extraction[count]: expected_values[count]})
+            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
         self.bag_order_book.compare_values(expected_values_bag,
                                            fields, f'Compare values from bag_book after{action}')
         if return_order_bag_id:

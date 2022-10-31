@@ -27,7 +27,6 @@ class QAP_T7302(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_1')
         self.exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
         self.mic = self.data_set.get_mic_by_name("mic_1")
@@ -47,16 +46,9 @@ class QAP_T7302(TestCase):
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
         party = {"Parties": {'NoPartyIDs': [
-            {'PartyRole': "66",
-             'PartyID': "MarketMaker - TH2Route",
-             'PartyIDSource': "C"},
-            {'PartyRole': "36",
-             'PartyID': "gtwquod4",
-             'PartyIDSource': "D",
-             "PartyRoleQualifier": "*"},
-            {'PartyRole': "34",
-             'PartyID': "RegulatoryBody - Venue(Paris)",
-             'PartyIDSource': "C"}
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
         ]}}
         self.exec_report.add_tag(party)
         self.exec_report.add_tag({"ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})

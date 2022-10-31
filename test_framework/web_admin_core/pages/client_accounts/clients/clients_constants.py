@@ -27,6 +27,8 @@ class ClientsConstants:
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -62,8 +64,13 @@ class ClientsConstants:
     VALUES_TAB_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
     VALUES_TAB_PRICE_PRECISION_XPATH = '//*[@formcontrolname="pxPrecision"]'
     VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="confirmationService"]'
+    VALUES_TAB_GIVE_UP_SERVICE = '//*[@id="giveUpService"]'
+    VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE = '//*[@id="extGiveUpService"]'
+    VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON = '//*[@id="extGiveUpService"]//ancestor::div[@class="row"]//button'
     VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="extConfirmationService"]'
     VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
+    VALUES_TAB_DEFAULT_ACCOUNT_XPATH = '//*[@id="defaultAccount"]'
+    VALUES_TAB_ORDER_ATTRIBUTE = '//*[@id="orderAttributeType"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
@@ -219,3 +226,16 @@ class ClientsConstants:
         NAME = '//input[@placeholder="Name *"]'
         GATEWAY_INSTANCE = '//input[@placeholder="Gateway Instance *"]'
         UNSOLICITED_CHECKBOX = '//nb-checkbox//span[@class="custom-checkbox"]'
+
+    class ExternalGiveUpService:
+        PLUS_BUTTON = '//*[@nbtooltip="Add"]'
+        SAVE_CHECKMARK = '//*[@data-name="checkmark"]'
+        CANCEL_CHECKMARK = '//*[@nbtooltip="Cancel"]'
+        EDIT_BUTTON = '//*[@data-name="edit"]'
+        DELETE_BUTTON = '//*[@data-name="trash-2"]'
+        NAME_FILTER = '(//input[@placeholder="Filter"])[1]'
+        GATEWAY_INSTANCE_FILTER = '(//input[@placeholder="Filter"])[2]'
+        NAME = '//input[@placeholder="Name *"]'
+        GATEWAY_INSTANCE = '//input[@placeholder="Gateway Instance *"]'
+        UNSOLICITED_CHECKBOX = '//nb-checkbox//span[@class="custom-checkbox"]'
+        GATEWAY_PREFIX = '//input[@placeholder="Gateway Prefix"]'

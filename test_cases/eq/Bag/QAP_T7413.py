@@ -54,7 +54,7 @@ class QAP_T7413(TestCase):
         self.fix_message.change_parameter('ExDestination', exec_destination)
         lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.fix_message.change_parameter("HandlInst", '3')
-        qty_of_bag = str(int(qty) * 3)
+        qty_of_bag = str(int(qty) * 2)
         tif = self.data_set.get_time_in_force("time_in_force_1")
         orders_id = []
         name_of_bag = 'QAP_T7413'
@@ -70,7 +70,7 @@ class QAP_T7413(TestCase):
         # endregion
 
         # region step 2
-        self.bag_order_book.create_bag_details([1, 2, 3], name_of_bag=name_of_bag, price='5')
+        self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag, price='5')
         self.bag_order_book.create_bag()
         fields = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.order_bag_qty.value,
                                                                           OrderBagColumn.ord_bag_name.value,

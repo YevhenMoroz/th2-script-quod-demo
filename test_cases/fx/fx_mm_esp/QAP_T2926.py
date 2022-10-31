@@ -19,6 +19,7 @@ from custom import basic_custom_actions as bca
 
 
 class QAP_T2926(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -289,6 +290,12 @@ class QAP_T2926(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Precondition
+        #  !subscribing to MD in order to modify it!
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account).change_parameter(
+            'NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        # endregion
         self.fix_md.change_parameter("MDReqID", self.md_id_citi)
         self.fix_md.change_parameter("NoMDEntries", self.no_md_entries_usd_chf_citi)
         self.fix_md.change_parameter("Instrument", self.instrument)
@@ -323,7 +330,6 @@ class QAP_T2926(TestCase):
         # region Step 3
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.md_snapshot.change_parameter("NoMDEntries", self.no_md_entries)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

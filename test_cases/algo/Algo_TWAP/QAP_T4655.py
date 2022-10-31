@@ -3,7 +3,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -58,7 +58,7 @@ connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
 
 
 def rules_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(connectivity_buy_side, account, ex_destination_1, True, qty, price_ask)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination_1, True)
     return [nos_ioc_rule, ocr_rule]
@@ -137,5 +137,6 @@ def execute(report_id):
     except:
         logging.error("Error execution", exc_info=True)
     finally:
-        RuleManager.remove_rules(rules_list)
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(rules_list)
 

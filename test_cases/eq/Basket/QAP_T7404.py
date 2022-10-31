@@ -36,7 +36,7 @@ class QAP_T7404(TestCase):
         self.cl_inbox.accept_order(filter=ord_filter_1)
         self.cl_inbox.accept_order(filter=ord_filter_2)
         basket_filter = {BasketBookColumns.cl_basket_id.value: nol.get_parameter("ListID")}
-        self.basket_book.wave_basket("100", basket_filter=basket_filter)
+        self.basket_book.wave_basket(basket_filter=basket_filter)
         result = self.basket_book.is_menu_item_present(BasketBookColumns.remove_from_basket.value,
                                                        sub_lvl_tab=BasketSecondLvlTabName.orders.value,
                                                        filter_dict=basket_filter)

@@ -5,51 +5,57 @@ from datetime import timedelta
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4003 import QAP_T4003
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4001 import QAP_T4001
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4000 import QAP_T4000
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3997 import QAP_T3997
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3996 import QAP_T3996
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3995 import QAP_T3995
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3994 import QAP_T3994
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3924 import QAP_T3924
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3923 import QAP_T3923
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3886 import QAP_T3886
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3885 import QAP_T3885
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3877 import QAP_T3877
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3872 import QAP_T3872
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3871 import QAP_T3871
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3870 import QAP_T3870
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3869 import QAP_T3869
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3868 import QAP_T3868
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3867 import QAP_T3867
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3866 import QAP_T3866
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3865 import QAP_T3865
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3864 import QAP_T3864
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3863 import QAP_T3863
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3819 import QAP_T3819
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3818 import QAP_T3818
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3791 import QAP_T3791
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3778 import QAP_T3778
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3776 import QAP_T3776
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3775 import QAP_T3775
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3774 import QAP_T3774
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3773 import QAP_T3773
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3771 import QAP_T3771
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3716 import QAP_T3716
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3689 import QAP_T3689
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3687 import QAP_T3687
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3660 import QAP_T3660
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3570 import QAP_T3570
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3569 import QAP_T3569
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3544 import QAP_T3544
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3116 import QAP_T3116
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3398 import QAP_T3398
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4008 import QAP_T4008
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4007 import QAP_T4007
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4006 import QAP_T4006
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4005 import QAP_T4005
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3544 import QAP_T3544
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3569 import QAP_T3569
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3570 import QAP_T3570
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3660 import QAP_T3660
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3687 import QAP_T3687
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3689 import QAP_T3689
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3716 import QAP_T3716
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3771 import QAP_T3771
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3773 import QAP_T3773
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3774 import QAP_T3774
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3775 import QAP_T3775
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3776 import QAP_T3776
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3778 import QAP_T3778
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3791 import QAP_T3791
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3818 import QAP_T3818
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3819 import QAP_T3819
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3820 import QAP_T3820
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3821 import QAP_T3821
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3863 import QAP_T3863
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3864 import QAP_T3864
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3865 import QAP_T3865
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3866 import QAP_T3866
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3867 import QAP_T3867
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3868 import QAP_T3868
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3869 import QAP_T3869
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3870 import QAP_T3870
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3871 import QAP_T3871
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3872 import QAP_T3872
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3877 import QAP_T3877
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3885 import QAP_T3885
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3886 import QAP_T3886
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3923 import QAP_T3923
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3924 import QAP_T3924
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3994 import QAP_T3994
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3995 import QAP_T3995
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3996 import QAP_T3996
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3997 import QAP_T3997
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4000 import QAP_T4000
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4001 import QAP_T4001
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4003 import QAP_T4003
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4004 import QAP_T4004
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4005 import QAP_T4005
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4006 import QAP_T4006
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4007 import QAP_T4007
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4008 import QAP_T4008
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4814 import QAP_T4814
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4815 import QAP_T4815
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T4816 import QAP_T4816
+from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T7930 import QAP_T7930
 
 
 class RunOrderManagement:
@@ -64,6 +70,10 @@ class RunOrderManagement:
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
+
+            QAP_T3116(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+
             # TODO: остановились тут
             # Мануал ОК. Авто падал из-за симпл даты.
             # Неполный авто тест. Нет проверки степов 1, 4 из ТК.
@@ -158,6 +168,10 @@ class RunOrderManagement:
             # LISResidentTime: 5000 и LISPools: CHIXLIS/TQDARK - не увидел проверку этих параметров. в АТ только LISPhase: Y
             QAP_T3819(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3821(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3820(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
 
             # Не увидел проверки, что кнопка действительно сменила статус (Степ 4, 6, 8, 10)
             QAP_T3818(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -216,7 +230,13 @@ class RunOrderManagement:
                       environment=configuration.environment).run()
             QAP_T3398(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T4814(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T4815(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T4816(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7930(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

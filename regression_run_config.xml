@@ -4,41 +4,9 @@
     <name>REST_API</name>
     <version>5.1.166.179</version>
     <product_lines>
-        <product_line name="algo" run="True">
+        <product_line name="algo" run="False">
             <components>
-                <component name="twap" run="True">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="wwap" run="True">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="participation" run="True">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="iceberg" run="True">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="multilisted" run="True">
+                <component name="Twap" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -46,7 +14,34 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="pov" run="True">
+                <component name="Vwap" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Participation" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod310_fe</fe_environment>
+                        </fe_environments>
+                    </environments>
+                </component>
+                <component name="Iceberg" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Multilisted" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -54,7 +49,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="peg" run="True">
+                <component name="Peg" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -62,7 +57,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="stop" run="True">
+                <component name="Stop" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -70,7 +65,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="lit_dark" run="True">
+                <component name="Lit_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -78,7 +73,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="block" run="True">
+                <component name="Block" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -86,7 +81,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="gating_rules" run="True">
+                <component name="Gating_rules" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -94,7 +89,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="web_admin" run="True">
+                <component name="Web_admin" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -102,7 +97,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="mp_dark" run="True">
+                <component name="Mp_dark" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -113,7 +108,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="synth_min_qty" run="True">
+                <component name="Synth_min_qty" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -121,7 +116,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="lit_dark_iceberg" run="True">
+                <component name="Lit_dark_iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -129,7 +124,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="sorping" run="True">
+                <component name="Sorping" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -137,7 +132,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="multiple_emulation" run="True">
+                <component name="Multiple_emulation" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -145,6 +140,71 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="PreOpen_Auction" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Expity_Auction" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="PreClose_Auction" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Scaling" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="POV_Scaling" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_redburn</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Pair_trading" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Acceptance_list" run="False">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="TimeInForce" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+
             </components>
         </product_line>
         <product_line name="fx" run="False">
@@ -161,6 +221,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -175,6 +238,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -189,6 +255,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -203,6 +272,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -217,6 +289,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -231,6 +306,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -245,6 +323,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                       <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -259,6 +340,26 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
+                    </environments>
+                </component>
+                <component name="Price_Cleansing" run="True">
+                    <data_set>FxDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod314_luna_standard</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod314_luna_fe</fe_environment>
+                        </fe_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -273,12 +374,38 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod314_luna_web_admin</web_admin_rest_api_environment>
                         </rest_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod314_java_api</java_api_environment>
+                        </java_api_environments>
                     </environments>
                 </component>
             </components>
         </product_line>
         <product_line name="oms" run="False">
             <components>
+            <component name="AcceptanceList" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod317_fe</fe_environment>
+                        </fe_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                    </environments>
+            </component>
                 <component name="DMA" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
@@ -297,6 +424,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Counterparts" run="True">
@@ -317,6 +447,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="PostTrade" run="True">
@@ -337,6 +470,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Commissions" run="True">
@@ -357,6 +493,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                  <component name="Bag" run="True">
@@ -377,6 +516,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                  <component name="Care" run="True">
@@ -397,6 +539,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Positions" run="True">
@@ -417,6 +562,9 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="BasketTrading" run="True">
@@ -437,6 +585,32 @@
                         <read_log_environments>
                             <read_log_environment>quod317_read_log</read_log_environment>
                         </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                    </environments>
+                </component>
+                <component name="Gateway" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod317_fe</fe_environment>
+                        </fe_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
             </components>
@@ -451,7 +625,7 @@
                         </fe_environments>
                     </environments>
                 </component>
-                <component name="PositionValidity" run="True">
+                <component name="PRET_Position_Validity" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <fe_environments>
@@ -510,7 +684,7 @@
                         </mobile_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_Login_And_Logout" run="True">
+                <component name="WebTrading_Login_Logout" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -518,7 +692,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_OrderTicket_And_Book" run="True">
+                <component name="WebTrading_OrderTicket_Book" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -566,7 +740,7 @@
                         </web_trading_environments>
                     </environments>
                 </component>
-                <component name="WebTrading_Account_Summary" run="True">
+                <component name="WebTrading_AccountSummary" run="True">
                     <data_set>WebTradingDataSet</data_set>
                     <environments>
                         <web_trading_environments>
@@ -746,7 +920,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Middle_Office" run="True">
+                <component name="WA_Middle_Office" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -754,7 +928,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Market_Making" run="True">
+                <component name="WA_Market_Making" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -762,7 +936,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Risk_Limits" run="True">
+                <component name="WA_Price_Cleansing" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -770,7 +944,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Positions" run="True">
+                <component name="WA_Risk_Limits" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
@@ -778,7 +952,15 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                 <component name="WA_Others" run="True">
+                <component name="WA_Positions" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_Others" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>

@@ -89,6 +89,7 @@ from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.pri
     PriceToleranceControlConstants
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
     TradingLimitsConstants
+from test_framework.web_admin_core.pages.risk_limits.buying_power.constants import Constants as BuyingPower
 from test_framework.web_admin_core.pages.root.root_constants import RootConstants
 from test_framework.web_admin_core.pages.site.locations.locations_constants import LocationsConstants
 from test_framework.web_admin_core.pages.site.zones.zones_constants import ZonesConstants
@@ -181,10 +182,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(SystemCommandsConstants.SYSTEM_COMMANDS_PAGE_TITLE_XPATH)
 
-    def open_mdentitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.MDENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+    def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(MDEntitlementsConstants.MDENTITLEMENTS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(MDEntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
 
     def open_settings_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
@@ -366,6 +367,11 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.TRADING_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(TradingLimitsConstants.TRADING_LIMITS_PAGE_TITLE_XPATH)
+
+    def open_buying_power_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.BUYING_POWER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(BuyingPower.MainPage.PAGE_TITLE)
 
     def open_institutions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTITUTIONS_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR,

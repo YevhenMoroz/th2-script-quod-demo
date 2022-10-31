@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -36,7 +36,7 @@ class QAP_T5072(TestCase):
         # region order parameters
         self.qty = 1500
         self.price = 20
-        self.dec_price = 35
+        self.inc_price = 35
         self.traded_qty = 500
         self.leaves_after_amend = self.qty - self.traded_qty
         self.qty_bid = 1000
@@ -94,10 +94,10 @@ class QAP_T5072(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.dec_price)
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, self.traded_qty, self.dec_price)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.inc_price)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, self.traded_qty, self.inc_price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True)
         self.rule_list = [nos_1_rule, nos_2_rule, nos_ioc_rule, ocrr_rule, ocr_rule]
@@ -110,7 +110,7 @@ class QAP_T5072(TestCase):
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
-        market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
@@ -120,7 +120,7 @@ class QAP_T5072(TestCase):
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
-        market_data_snap_shot_qdl2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
@@ -172,7 +172,7 @@ class QAP_T5072(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.SORPING_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.SORPING_order)
-        self.SORPING_order_replace_params.change_parameters(dict(Price=self.dec_price))
+        self.SORPING_order_replace_params.change_parameters(dict(Price=self.inc_price))
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order_replace_params, case_id_2)
 
         time.sleep(1)
@@ -194,7 +194,7 @@ class QAP_T5072(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("New child DMA order", self.test_id))
 
         self.dma_2_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_2_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.dec_price))
+        self.dma_2_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.inc_price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_2_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_qdl1_order, self.gateway_side_buy, self.status_pending)
@@ -238,7 +238,7 @@ class QAP_T5072(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive child DMA order", self.test_id))
 
         self.dma_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.traded_qty, Price=self.dec_price, TimeInForce=self.tif_iok))
+        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.traded_qty, Price=self.inc_price, TimeInForce=self.tif_iok))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 3 order')
 
         er_pending_new_dma_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_pending)
@@ -254,12 +254,12 @@ class QAP_T5072(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Fill aggressive child Order", self.test_id))
         # Fill Order
         fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
-        fill_dma_qdl2_order.change_parameters(dict(CumQty=self.traded_qty, LeavesQty=0, LastQty=self.traded_qty, LastPx=self.dec_price))
+        fill_dma_qdl2_order.change_parameters(dict(CumQty=self.traded_qty, LeavesQty=0, LastQty=self.traded_qty, LastPx=self.inc_price))
         self.fix_verifier_buy.check_fix_message(fill_dma_qdl2_order, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Partial fill Algo Order", self.test_id))
         partially_fill_SORPING_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
-        partially_fill_SORPING_order.change_parameters(dict(Price=self.dec_price, LastPx=self.dec_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty))
+        partially_fill_SORPING_order.change_parameters(dict(Price=self.inc_price, LastPx=self.inc_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty)).add_tag(dict(SettlType="*"))
         self.fix_verifier_sell.check_fix_message(partially_fill_SORPING_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partially Fill')
         # endregion
 
@@ -284,5 +284,5 @@ class QAP_T5072(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

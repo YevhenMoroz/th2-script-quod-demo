@@ -9,7 +9,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from test_framework.old_wrappers.fix_manager import FixManager
 from test_framework.old_wrappers.fix_message import FixMessage
 from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from stubs import Stubs
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 
@@ -47,9 +47,9 @@ currency = 'EUR'
 s_par = '1015'
 
 case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-ganymede"
-connectivity_fh = 'fix-feed-handler-316-ganymede'
+connectivity_buy_side = "fix-buy-side-310-columbia"
+connectivity_sell_side = "fix-sell-side-310-columbia"
+connectivity_fh = 'fix-feed-handler-310-columbia'
 
 instrument = {
             'Symbol': 'FR0010263202_EUR',
@@ -59,7 +59,7 @@ instrument = {
         }
 
 def rule_creation():
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
     nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
     nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price_20)
     ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account,ex_destination_1, True)
@@ -68,7 +68,7 @@ def rule_creation():
 
 def rule_destroyer(list_rules):
     if list_rules != None:
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         for rule in list_rules:
             rule_manager.remove_rule(rule)
 

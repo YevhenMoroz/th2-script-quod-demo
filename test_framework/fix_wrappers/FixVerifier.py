@@ -1,3 +1,5 @@
+import re
+
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
 
@@ -26,6 +28,8 @@ class FixVerifier:
 
     def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
                           direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, ignored_fields: list = None):
+        if fix_message.is_parameter_exist('TransactTime') and fix_message.get_parameter('TransactTime')[0] not in ('!', '%', '<', '>', '%'):
+            fix_message.change_parameter('TransactTime', "*")
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -33,8 +37,10 @@ class FixVerifier:
             if message_name is None:
                 message_name = "Check NewOrderSingle"
 
-            if fix_message.is_parameter_exist('TransactTime'):
+            if fix_message.is_parameter_exist('TransactTime') and fix_message.get_parameter('TransactTime')[0] not in ('!', '%', '<', '>', '%'):
                 fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime').split('.')[0])
+                if re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00').search(fix_message.get_parameter('TransactTime')):
+                    fix_message.change_parameter('TransactTime', fix_message.get_parameter('TransactTime')[:-3])
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
@@ -108,7 +114,7 @@ class FixVerifier:
             )
         elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
             if key_parameters is None:
-                key_parameters = ['ClOrdID', 'OrdStatus']
+                key_parameters = ['MDReqID']
 
             if message_name is None:
                 message_name = "Check MarketDataSnapshotFullRefresh"
@@ -249,7 +255,7 @@ class FixVerifier:
         # TODO add exeption into else
 
     def check_fix_message_sequence(self, fix_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
-                                   message_name: str = None, pre_filter: dict = None, ):
+                                   message_name: str = None, pre_filter: dict = None, check_order=True):
         if pre_filter is None:
             pre_filter = {
                 'header': {
@@ -273,6 +279,7 @@ class FixVerifier:
 
         self.__verifier.submitCheckSequenceRule(
             basic_custom_actions.create_check_sequence_rule(
+                check_order=check_order,
                 description=message_name,
                 prefilter=pre_filter_req,
                 msg_filters=message_filters_req,
@@ -284,7 +291,7 @@ class FixVerifier:
         )
 
     def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None,
-                                       direction: DirectionEnum = DirectionEnum.FromQuod):
+                                       direction: DirectionEnum = DirectionEnum.FromQuod, ignored_fields: list = None):
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
                 key_parameters = ['ClOrdID', 'OrdStatus']
@@ -293,7 +300,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check NewOrderSingle",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderSingle.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -307,7 +314,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ExecutionReport",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ExecutionReport.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -322,7 +329,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -337,7 +344,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ListStatus.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -352,7 +359,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check Confirmation",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.Confirmation.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -367,7 +374,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check OrderCancelReject",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.OrderCancelReject.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -382,7 +389,7 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.AllocationInstruction.value,
-                                                                     fix_message.get_parameters(), key_parameters),
+                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

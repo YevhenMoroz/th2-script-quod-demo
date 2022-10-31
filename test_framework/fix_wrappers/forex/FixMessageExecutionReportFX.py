@@ -13,21 +13,21 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         super().change_parameters(parameters)
 
     def set_params_from_new_order_single(self, new_order_single: FixMessageNewOrderSingle,
-                                         status: Status = Status.Fill):
+                                         status: Status = Status.Fill,
+                                         response=None):
 
         if status is Status.Fill:
-            self.__set_fill_sell(new_order_single)
+            self.__set_fill_sell(new_order_single, response)
         elif status is Status.Reject:
-            self.__set_reject_sell(new_order_single)
+            self.__set_reject_sell(new_order_single, response)
         elif status is Status.PartialFill:
-            self.__set_partialfill_sell(new_order_single)
+            self.__set_partialfill_sell(new_order_single, response)
         else:
             raise Exception(f"Incorrect Status")
         return self
 
-    def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None, response=None):
         temp = dict(
-            Account="*",
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty=new_order_single.get_parameter("OrderQty"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -74,9 +74,12 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         super().update_fields_in_component("Instrument", instrument)
         if new_order_single.get_parameter('SettlType') != "0":
             super().add_tag({"LastForwardPoints": "*"})
+        if response is not None:
+            if "Account" in response.get_parameters():
+                self.add_tag({"Account": "*"})
         return self
 
-    def __set_partialfill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_partialfill_sell(self, new_order_single: FixMessageNewOrderSingle = None, response=None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="*",
@@ -124,9 +127,12 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
         super().update_fields_in_component("Instrument", instrument)
         if new_order_single.get_parameter('SettlType') != "0":
             super().add_tag({"LastForwardPoints": "*"})
+        if response is not None:
+            if "Account" in response.get_parameters():
+                self.add_tag({"Account": "*"})
         return self
 
-    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+    def __set_reject_sell(self, new_order_single: FixMessageNewOrderSingle = None, response=None):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
@@ -140,7 +146,6 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SettlType=new_order_single.get_parameter("SettlType"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price="*",
-            Account="*",
             LastMkt="*",
             OrdStatus="8",
             TransactTime="*",
@@ -168,6 +173,9 @@ class FixMessageExecutionReportFX(FixMessageExecutionReport):
             SecurityExchange="*",
         )
         super().update_fields_in_component("Instrument", instrument)
+        if response is not None:
+            if "Account" in response.get_parameters():
+                self.add_tag({"Account": "*"})
         return self
 
     def add_party_role(self):

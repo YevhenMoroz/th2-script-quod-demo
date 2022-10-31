@@ -1,7 +1,7 @@
 class AccountsConstants:
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Accounts ']"
-    NEW_BUTTON_XPATH = "//button[text()='New']"
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Accounts"]//..//*[normalize-space()="New"]'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@col-id="clearingAccountType"]//*[@class="ag-group-value"]'
     MAIN_PAGE_CLIENT ='//*[@col-id="accountGroup.accountGroupName"]//*[@class="ag-group-value"]'
     ACCOUNT_VALUE_FOR_LOAD = "//*[@id='undefined']"
@@ -68,7 +68,7 @@ class AccountsConstants:
     ROUTES_ROUTE_FILTER_XPATH = '//*[normalize-space()="Routes"]//parent::nb-accordion-item//tr[2]//th[3]//input'
     ROUTES_ROUTE_ACCOUNT_NAME_INPUT_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route Account Name *']"
     ROUTES_ROUTE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[3]//input[@placeholder='Route *']"
-    ROUTES_DEFAULT_ROUTE_XPATH = '//*[@id="defaultRoute"]'
+    ROUTES_DEFAULT_ROUTE_XPATH = '//*[normalize-space()="Routes"]//..//*[@id="defaultRoute"]'
     ROUTES_AGENT_FEE_EXEMPTION_XPATH = '//nb-accordion/nb-accordion-item[3]//*[@class="label"] //span'
 
     ROUTES_EDIT_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='edit']"

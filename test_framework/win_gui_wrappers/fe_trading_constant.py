@@ -285,6 +285,7 @@ class BasketBookColumns(Enum):
     """Basket sts"""
     exec_sts = "Executing"
     all_done = 'AllDone'
+    canceling = "Cancelling"
     """Exec policy value"""
     care = "Care"
     """List Exec Inst Type value"""
@@ -690,4 +691,8 @@ class CommissionType(Enum):
 
 class CommissionBasis(Enum):
     persentage = "Percentage"
+
+
+class OMSFeeType(Enum):
+    value_added_tax = "ValueAddedTax"
 

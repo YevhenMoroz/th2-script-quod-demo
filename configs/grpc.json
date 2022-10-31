@@ -30,6 +30,21 @@
         ]
       }
     },
+    "SimulatorAlgo": {
+      "service-class": "TemplateSimulatorServiceAlgoService",
+      "endpoints": {
+        "sim_algo": {
+          "host": "10.0.22.24",
+          "port": 32650
+        }
+      },
+      "strategy": {
+        "name": "robin",
+        "endpoints": [
+          "sim-algo"
+        ]
+      }
+    },
     "Simulator": {
       "service-class": "TemplateSimulatorServiceService",
       "endpoints": {

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -41,7 +41,7 @@ class QAP_T4997(TestCase):
         self.price_ask_qdl1 = 40
         self.price_ask_qdl2 = 50
         self.price_bid = 30
-        self.party_id = constants.PartyID.party_id_2.value
+        self.party_id = constants.PartyID.party_id_8.value
         self.party_id_source = constants.PartyIDSource.party_id_source_1.value
         self.party_role = constants.PartyRole.party_role_3.value
 
@@ -99,7 +99,7 @@ class QAP_T4997(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, True)
         self.rule_list = [nos_rule, ocr_rule]
@@ -158,7 +158,6 @@ class QAP_T4997(TestCase):
 
         self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
-        self.dma_qdl1_order.remove_parameter('AlgoCst01')
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_pending)
@@ -181,10 +180,10 @@ class QAP_T4997(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel Child DMA order")
         # endregion
 
-        # region Check Fill algo order
+        # region Check Cancel algo order
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

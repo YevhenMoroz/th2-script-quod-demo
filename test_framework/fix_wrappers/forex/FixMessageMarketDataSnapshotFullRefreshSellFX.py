@@ -1,4 +1,4 @@
-from custom.tenor_settlement_date import spo, wk1, wk2, spo_ndf, wk1_ndf, wk2_ndf, today
+from custom.tenor_settlement_date import spo, wk1, wk2, spo_ndf, wk1_ndf, wk2_ndf, today, tom, wk3, m1, wk3_ndf, m1_ndf
 from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import FixMessageMarketDataSnapshotFullRefresh
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 
@@ -47,28 +47,57 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                     if md_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["SecurityType"] == "FXFWD":
                         self.get_parameter("NoMDEntries")[band]["MDEntryForwardPoints"] = "*"
                         self.get_parameter("NoMDEntries")[band]["MDEntrySpotRate"] = "*"
-                        if md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W1":
+                        if md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "1":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "1"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = today()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "2":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "2"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = tom()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W1":
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "W1"
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk1()
                         elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W2":
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "W2"
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk2()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W3":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "W3"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk3()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "M1":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "M1"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = m1()
                         elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "1":
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "1"
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = today()
                         # TODO add more SettleType`s
                     if ndf is not False:
-                        self.get_parameter("NoMDEntries")[band]["SettlType"] = "0"
-                        self.get_parameter("NoMDEntries")[band]["SettlDate"] = spo_ndf()
+                        if md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "1":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "1"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = today()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "2":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "2"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = tom()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "0"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = spo_ndf()
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "0":
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "0"
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = spo_ndf()
                     if md_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["SecurityType"] == "FXNDF":
                         self.get_parameter("NoMDEntries")[band]["MDEntryForwardPoints"] = "*"
                         self.get_parameter("NoMDEntries")[band]["MDEntrySpotRate"] = "*"
                         if md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W1":
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk1_ndf()
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "W1"
-                        if md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W2":
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W2":
                             self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk2_ndf()
                             self.get_parameter("NoMDEntries")[band]["SettlType"] = "W2"
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "W3":
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = wk3_ndf()
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "W3"
+                        elif md_request.get_parameter("NoRelatedSymbols")[0]["SettlType"] == "M1":
+                            self.get_parameter("NoMDEntries")[band]["SettlDate"] = m1_ndf()
+                            self.get_parameter("NoMDEntries")[band]["SettlType"] = "M1"
+
                     if published == False:
                         if band_not_pub == None:
                             self.get_parameter("NoMDEntries")[band]["MDQuoteType"] = "0"
@@ -144,6 +173,7 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                         "MDEntryPx": "*",
                         "MDEntrySize": qty,
                         "OrdType": "2",
+                        "SettlType": "B",
                         "SettlDate": md_request.get_parameter("NoRelatedSymbols")[0]["SettlDate"],
                         "MDQuoteType": "*",
                         "MDEntryForwardPoints": "*",

@@ -95,7 +95,7 @@ class QAP_T7016(TestCase):
         # region Check Confirmation Report
         self.confirmation_message.set_default_confirmation_new(self.fix_message)
         self.confirmation_message.change_parameters(
-            {'Account': self.client, 'AllocInstructionMiscBlock2': '*', 'tag5120': '*', 'NoMiscFees': '*',
+            {'AllocInstructionMiscBlock2': '*', 'tag5120': '*', 'NoMiscFees': '*',
              'CommissionData': '*', 'AllocAccount': self.alloc_account})
         self.confirmation_message.add_tag({'RootSettlCurrency': OmsCurrency.currency_1.value})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message, ['AllocAccount', 'ClOrdID'])

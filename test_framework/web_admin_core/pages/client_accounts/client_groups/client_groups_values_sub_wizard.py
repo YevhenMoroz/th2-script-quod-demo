@@ -1,3 +1,4 @@
+import time
 from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
 from test_framework.web_admin_core.pages.common_page import CommonPage
@@ -32,17 +33,32 @@ class ClientGroupsValuesSubWizard(CommonPage):
     def get_confirmation_service(self):
         self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
 
+    def get_all_confirmation_service_from_drop_menu(self):
+        self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, "")
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_block_approval(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
 
     def get_block_approval(self):
         return self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH)
 
+    def get_all_block_approval_from_drop_menu(self):
+        self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, "")
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_user_manager(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH, value)
 
     def get_user_manager(self):
         return self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH)
+
+    def get_all_user_manager_from_drop_menu(self):
+        self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH, "")
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_booking_inst(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_BOOKING_INST_XPATH, value)

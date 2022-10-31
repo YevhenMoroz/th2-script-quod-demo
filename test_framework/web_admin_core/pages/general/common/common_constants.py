@@ -9,7 +9,7 @@ class CommonConstants:
     OLD_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH = "//*[@formcontrolname='currentPassword']"
     NEW_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH = "//*[@formcontrolname='newPassword']"
     CONFIRM_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH = "//*[@formcontrolname='confirmNewPassword']"
-    CHANGE_PASSWORD_BUTTON_AT_LOGIN_PAGE_XPATH = '//button[text()=" Change password "]'
+    CHANGE_PASSWORD_BUTTON_AT_LOGIN_PAGE_XPATH = '//button[normalize-space()="Change password"]'
     BACK_BUTTON_AT_LOGIN_PAGE_XPATH = '//a[text()="Back"]'
     HELP_ICON_XPATH = '//*[@nbtooltip="Help"]'
     HELP_ICON_AT_LOGIN_PAGE_XPATH = '//*[@icon="question-mark-circle-outline"]'
@@ -26,3 +26,4 @@ class CommonConstants:
     HEADER_XPATH = '//*[@class="fixed"]'
     USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION = '//*[@id="userFeedback"]//*[text()="User ID"]/following-sibling::td'
     INFO_ERROR_MESSAGE_POP_UP = '//nb-toast'
+    INFO_ERROR_TEXT = '//nb-toast//*[@class="message"]'

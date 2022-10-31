@@ -34,4 +34,7 @@ class DesksAssignmentsSubWizard(CommonPage):
     def get_all_locations_from_drop_menu(self):
         self.set_text_by_xpath(DesksConstants.LOCATION_AT_ASSIGNMENTS_TAB_XPATH, "")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(DesksConstants.DROP_DOWN_MENU_XPATH)
+        return self.get_all_items_from_drop_down(DesksConstants.DROP_DOWN_MENU_XPATH)
+
+    def get_all_assigned_users(self):
+        return [_.text.strip() for _ in self.find_elements_by_xpath(DesksConstants.ASSIGNMENTS_TAB_USERS_XPATH)]

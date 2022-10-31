@@ -25,7 +25,7 @@ class QAP_T7680(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fe_env = self.environment.get_list_fe_environment()[0]
-        self.desk = self.fe_env.desk_3
+        self.desk = self.fe_env.desk_1
         self.qty = "900"
         self.qty2 = "1000"
         self.price = "20"

@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle import iceberg_regression, twap_regression, multilisted_regression, participation_regression
+from regression_cycle.algo_regression_cycle import iceberg_regression, twap_regression, multilisted_regression, participation_regression, tif_regression
 from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_mpdark_other_regression, kepler_sors_iceberg_regression, kepler_sors_multiple_emulation_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression
 from stubs import Stubs, ROOT_DIR
 import logging
@@ -63,6 +63,8 @@ def test_run(parent_id=None):
             pass
         if eval(root.find(".//component[@name='Pair_trading']").attrib["run"]):
             pass
+        if eval(root.find(".//component[@name='TimeInForce']").attrib["run"]):
+            tif_regression.test_run(report_id, version)
 
         #RB
         #twap_regression_rb.test_run(report_id)

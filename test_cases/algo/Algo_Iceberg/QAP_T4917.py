@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -80,7 +80,7 @@ class QAP_T4917(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
@@ -115,10 +115,11 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(self.iceberg_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_pending)
+        pending_iceberg_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        new_iceberg_order_params.change_parameter('NoParty', '*')
+        new_iceberg_order_params.change_parameter('NoParty', '*').remove_parameter('SecondaryAlgoPolicyID')
         self.fix_verifier_sell.check_fix_message(new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -170,7 +171,7 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        cancel_iceberg_order_params.change_parameters(dict(Price=self.dec_price, NoParty='*', SettlType='*'))
+        cancel_iceberg_order_params.change_parameters(dict(Price=self.dec_price, SettlType='*')).remove_parameters(['SecondaryAlgoPolicyID', 'NoStrategyParameters'])
         self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
         # endregion
 
@@ -179,5 +180,5 @@ class QAP_T4917(TestCase):
         self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

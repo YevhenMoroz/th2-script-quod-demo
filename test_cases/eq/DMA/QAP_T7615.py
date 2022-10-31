@@ -12,8 +12,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,12 +33,10 @@ class QAP_T7615(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')  # XPAR_CLIENT1
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.exec_sts = None
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -53,9 +49,7 @@ class QAP_T7615(TestCase):
             self.fix_message.set_default_dma_market()
             self.fix_message.change_parameters(
                 {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'TimeInForce': '4'})
-            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            # get Client Order ID
-            cl_ord_id = response[0].get_parameters()['ClOrdID']
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
 
         except Exception:
             logger.error('Error execution', exc_info=True)
@@ -64,26 +58,17 @@ class QAP_T7615(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         # endregion
 
-        # region Set-up parameters for ExecutionReports
-        self.exec_report.set_default_new(self.fix_message)
+        # region Set-up parameters for ExecutionReport
+        self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.remove_parameter('Price')
-        self.exec_report.change_parameters(
-            {'ReplyReceivedTime': '*', 'SecondaryOrderID': '*', 'Text': '*', 'LastMkt': '*'})
         # endregion
 
-        # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
-        # endregion
-
-        # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        # endregion
-
-        # region Check values in OrderBook
-        self.exec_sts = self.order_book.extract_field(OrderBookColumns.exec_sts.value)
-        self.order_book.compare_values({OrderBookColumns.exec_sts.value: ExecSts.filled.value},
-                                       {OrderBookColumns.exec_sts.value: self.exec_sts},
-                                       'Checking order status in the Order book')
+        # region Check ExecutionReport
+        list_of_ignored_fields: list = ['ReplyReceivedTime', 'SecondaryOrderID', 'Text', 'LastMkt',
+                                        "LastExecutionPolicy", "TradeDate", "TradeReportingIndicator",
+                                        "SecondaryExecID", "ExDestination", "GrossTradeAmt", "SettlCurrency",
+                                        "Instrument"]
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

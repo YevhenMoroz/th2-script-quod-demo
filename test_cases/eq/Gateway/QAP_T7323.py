@@ -37,7 +37,7 @@ class QAP_T7323(TestCase):
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.client = self.data_set.get_client('client_pt_1')
+        self.client = self.data_set.get_client('client_co_1')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -58,20 +58,16 @@ class QAP_T7323(TestCase):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
         time.sleep(5)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(110)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
+        time.sleep(70)
         # endregion
 
-        # region create CO  order (precondition)
+        # region create CO  order (precondition and step 1)
         self.fix_message.set_default_care_limit()
         self.fix_message.change_parameters(
             {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
-
-        # region accept CO order (step 1)
-        self.client_inbox.accept_order(filter={OrderBookColumns.order_id.value: order_id})
-        # endregion
 
         # region trade CO order (step 2)
         self.trade_entry_message.set_default_trade(order_id)
@@ -85,13 +81,14 @@ class QAP_T7323(TestCase):
         execution_report.set_default_filled(self.fix_message)
         execution_report.remove_parameter('SecondaryOrderID').remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
-            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0', 'TradePublishIndicator': '*'})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0'})
+        list_of_ignore_fields = ['SecurityDesc']
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignore_fields)
         # endregion
 
-    @try_except
+    # @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
         time.sleep(5)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(110)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
+        time.sleep(70)

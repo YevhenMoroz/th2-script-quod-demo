@@ -14,7 +14,6 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.OrderSubmit import OrderSubmit
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -36,7 +35,7 @@ class QAP_T7324(TestCase):
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.client = self.data_set.get_client('client_pt_1')
+        self.client = self.data_set.get_client('client_co_1')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -56,48 +55,44 @@ class QAP_T7324(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        time.sleep(10)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(100)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
+        time.sleep(60)
         # endregion
 
         # region create CO  order (precondition)
-        print(self.java_api_connectivity)
         self.fix_message.set_default_care_limit()
         self.fix_message.change_parameters(
             {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
 
-        # region accept CO order (step 1)
-        self.client_inbox.accept_order(filter={OrderBookColumns.order_id.value: order_id})
-        # endregion
-
         # region trade CO order (step 2)
         self.trade_entry_message.set_default_trade(order_id)
         self.trade_entry_message.update_fields_in_component('TradeEntryRequestBlock',
                                                             {'ExecQty': self.qty, 'ExecPrice': self.price,
-                                                             'ReportVenueID': self.data_set.get_venue_by_name('venue_2'),
+                                                             'ReportVenueID': self.data_set.get_venue_by_name(
+                                                                 'venue_2'),
                                                              'TradePublishIndicator': 'PTR',
                                                              'TargetAPA': 'LUK',
                                                              'AssistedReportAPA': 'NAS',
                                                              'OnExchangeRequested': 'ONR'})
         self.java_api_manager.send_message(self.trade_entry_message)
+        time.sleep(13)
         # endregion
 
         # region check fix message
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_filled(self.fix_message)
         execution_report.remove_parameter('SecondaryOrderID')
+        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc']
         execution_report.remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
-            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '6'})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+            {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '6', 'TradePublishIndicator': '*'})
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
     @try_except
     def run_post_conditions(self):
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        time.sleep(5)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(100)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
+        time.sleep(60)

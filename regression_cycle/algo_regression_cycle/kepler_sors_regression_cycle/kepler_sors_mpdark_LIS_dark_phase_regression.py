@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4522 import QAP_T4522
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4587 import QAP_T4587
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4707 import QAP_T4707
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4708 import QAP_T4708
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4710 import QAP_T4710
@@ -85,7 +86,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"MPDark (LIS + Dark phase)" if version is None else f"MPDark (LIS + Dark phase) for th2 integration (cloned) | {version}", parent_id)
+    report_id = bca.create_event(f"MPDark (LIS + Dark phase)" if version is None else f"MPDark (LIS + Dark phase) (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         configuration = ComponentConfiguration("Mp_dark")
@@ -118,6 +119,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4614(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4589(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4587(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Part Execution (LIS order)

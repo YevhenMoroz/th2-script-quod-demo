@@ -54,7 +54,7 @@ class VenuesFeaturesSubWizard(CommonPage):
     def get_all_time_zones_from_drop_menu(self):
         self.set_time_zone("")
         time.sleep(1)
-        return self._get_all_items_from_drop_down(VenuesConstants.FEATURES_TAB_TIME_ZONE_XPATH)
+        return self.get_all_items_from_drop_down(VenuesConstants.FEATURES_TAB_TIME_ZONE_XPATH)
 
     def set_default_execution_strategy(self, value):
         self.set_combobox_value(VenuesConstants.FEATURES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH, value)

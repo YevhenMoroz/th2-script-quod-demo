@@ -11,9 +11,9 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossRequest import ManualOrderCrossRequest
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,10 @@ class QAP_T7155(TestCase):
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
         self.fix_message.change_parameters({'Account': self.client})
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.fix_message2.change_parameters({'Account': self.client})
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.manual_cross = ManualOrderCrossRequest()
         self.client_id = self.fix_message.get_parameter('ClOrdID')
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
@@ -52,29 +55,24 @@ class QAP_T7155(TestCase):
         root = tree.getroot()
         root.find("ors/BackToFront/FIXReportOrdrParties").text = "false"
         root.find("ors/BackToFront/EnrichFIXExecReportParties").text = "false"
+        root.find("ors/counterpartEnrichment/ManualOrderCross").text = "false"
         tree.write("temp.xml")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
         time.sleep(30)
         # endregion
-        # region send and accept first order
+        # region send  first order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
-        filter_dict = {OrderBookColumns.order_id.value: order_id}
-        self.client_inbox.accept_order(filter=filter_dict)
         # region Declaration
-        # region send and accept second order
+        # region send  second order
         self.fix_message2.change_parameter("Side", "2")
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message2)
-        order_id = response[0].get_parameters()['OrderID']
-        filter_dict = {OrderBookColumns.order_id.value: order_id}
-        self.client_inbox.accept_order(filter=filter_dict)
+        order_id_2 = response[0].get_parameters()['OrderID']
         # endregion
         # region manual cross orders
-        self.order_book.set_filter([OrderBookColumns.client_id.value, self.client_id]).manual_cross_orders([1, 2],
-                                                                                                           self.qty,
-                                                                                                           self.price,
-                                                                                                           last_mkt="CHIX")
+        self.manual_cross.set_default(self.data_set, order_id, order_id_2, exec_qty=self.qty, exec_price=self.price)
+        self.java_api_manager.send_message(self.manual_cross)
         # endregion
         # region send exec report
         execution_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
@@ -85,4 +83,5 @@ class QAP_T7155(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        time.sleep(30)
         os.remove("temp.xml")

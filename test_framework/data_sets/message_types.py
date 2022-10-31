@@ -4,6 +4,7 @@ from enum import Enum
 class FIXMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
     ExecutionReport = "ExecutionReport"
+    ExternalExecutionReport = "ExternalExecutionReport"
     OrderCancelReplaceRequest = "OrderCancelReplaceRequest"
     OrderCancelRequest = "OrderCancelRequest"
     MarketDataRequest = "MarketDataRequest"
@@ -31,7 +32,6 @@ class ORSMessageType(Enum):
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
     OrderModificationRequest = 'Order_OrderModificationRequest'
-    OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
     OrdReply = 'Order_OrdReply'
     OrdNotification = 'Order_OrdNotification'
@@ -45,6 +45,38 @@ class ORSMessageType(Enum):
     ForceAllocInstructionStatusRequest = 'Order_ForceAllocInstructionStatusRequest'
     ForceAllocInstructionStatusReply = 'Order_ForceAllocInstructionStatusReply'
     CDNotifDealer = 'Order_CDNotifDealer'
+    TradeEntryNotif = 'Order_TradeEntryNotif'
+    BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
+    BookingCancelRequest = 'Order_BookingCancelRequest'
+    NewOrderList = 'Order_NewOrderList'
+    NewOrderListReply = 'Order_NewOrderListReply'
+    OrdListNotification = 'Order_OrdListNotification'
+    OrderListWaveNotification = 'Order_OrderListWaveNotification'
+    PositionReport = 'Order_PositionReport'
+    ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
+    OrderModificationReply = 'Order_OrderModificationReply'
+    OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
+    OrderBagCreationReply = 'Order_OrderBagCreationReply'
+    OrderBagNotification = 'Order_OrderBagNotification'
+    OrderBagModificationRequest = 'Order_OrderBagModificationRequest'
+    OrderBagModificationReply = 'Order_OrderBagModificationReply'
+    OrderBagCancelRequest = 'Order_OrderBagCancelRequest'
+    OrderBagCancelReply = 'Order_OrderBagCancelReply'
+    OrderBagWaveRequest = 'Order_OrderBagWaveRequest'
+    OrderBagWaveNotification = 'Order_OrderBagWaveNotification'
+    OrderBagWaveModificationRequest = 'Order_OrderBagWaveModificationRequest'
+    OrderBagWaveModificationReply = 'Order_OrderBagWaveModificationReply'
+    OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
+    OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
+    OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    Order_PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    Order_PositionTransferReport = 'Order_PositionTransferReport'
+    Order_ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
+    Order_ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
+    QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
+    QuoteRequest = "Fix_QuoteRequest"
+    QuoteRequestNotif = "Order_QuoteRequestNotif"
+    QuoteRequestActionReply = "Order_QuoteRequestActionReply"
 
 
 class TradingRestApiMessageType(Enum):
@@ -79,6 +111,7 @@ class TradingRestApiMessageType(Enum):
 class ESMessageType(Enum):
     OrdReport = 'Gateway_OrdReport'
     ExecutionReport = 'Gateway_ExecutionReport'
+    NewOrderReply = 'Gateway_NewOrderReply'
 
 
 class ResAPIMessageType(Enum):
@@ -95,8 +128,16 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
 
+
+class QSMessageType(Enum):
+    QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
+    QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
+    Quote = "Order_Quote"
+
+
 class ReadLogMessageType(Enum):
     Csv_Message = "Csv_Message"
+
 
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"

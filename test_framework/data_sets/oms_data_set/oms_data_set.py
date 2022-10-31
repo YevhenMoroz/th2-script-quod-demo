@@ -8,7 +8,8 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSBagScenario, OMSBagStrategy, OMSVenueID, OMSCounterpartID, OMSInstrType, OMSContraFirm, \
     OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, \
     OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID, OMSISINSecurityAltIDs, \
-    OMSSecurityIDSourceForListings, OMS_SymbolForListingsFromWebAdmin, OMSTickSizeProfile
+    OMSSecurityIDSourceForListings, OMS_SymbolForListingsFromWebAdmin, OMSTickSizeProfile, OmsJavaApiInstruments, \
+    OMSCounterPartyIDs_FIX, OMSCounterPartyIDs_JavaAPI
 
 
 class OmsDataSet(BaseDataSet):
@@ -69,4 +70,7 @@ class OmsDataSet(BaseDataSet):
     security_id_source = OMSSecurityIDSourceForListings
     symbols = OMS_SymbolForListingsFromWebAdmin
     tick_size_profile = OMSTickSizeProfile
+    java_api_instruments = OmsJavaApiInstruments
+    counterpart_id_fix = OMSCounterPartyIDs_FIX
+    counterpart_id_java_api = OMSCounterPartyIDs_JavaAPI
 

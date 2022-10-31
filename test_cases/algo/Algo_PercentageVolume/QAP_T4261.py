@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -42,7 +42,7 @@ class QAP_T4261(TestCase):
         self.md_entry_px_incr_r = 1
         self.md_entry_size_incr_r = 360 # for partially fill
         self.md_entry_size_incr_r_new = 317 # child with qty 136 is created
-        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r)
+        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r, self.qty)
         self.last_order_qty = self.qty - self.child_qty
         # endregion
 
@@ -87,7 +87,7 @@ class QAP_T4261(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         # TODO Edit rules
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.child_qty, self.price)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
@@ -197,5 +197,5 @@ class QAP_T4261(TestCase):
         # self.fix_verifier_sell.check_fix_message(cancel_POV_order_params, key_parameters=self.key_params_ER_child, message_name='Sell side ExecReport Cancel')
         # endregion
         
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

@@ -77,14 +77,13 @@ class QAP_T7643(TestCase):
                                                                           OrderBagColumn.unmatched_qty.value,
                                                                           OrderBagColumn.leaves_qty.value
                                                                           ])
-        expected_values = {'order_bag.' + OrderBagColumn.ord_bag_name.value: name_of_bag,
-                           'order_bag.' + OrderBagColumn.unmatched_qty.value: qty_of_bag,
-                           'order_bag.' + OrderBagColumn.leaves_qty.value: qty_of_bag,
-                           'order_bag.' + OrderBagColumn.id.value: fields.get('order_bag.' +
-                                                                              OrderBagColumn.id.value)
+        expected_values = {OrderBagColumn.ord_bag_name.value: name_of_bag,
+                           OrderBagColumn.unmatched_qty.value: qty_of_bag,
+                           OrderBagColumn.leaves_qty.value: qty_of_bag,
+                           OrderBagColumn.id.value: fields.get(OrderBagColumn.id.value)
                            }
         self.bag_order_book.compare_values(expected_values,
                                            fields, f'Compare values from bag_book after {action}')
         if need_order_bag_id:
-            order_bag_id = fields.get('order_bag.' + OrderBagColumn.id.value)
+            order_bag_id = fields.get(OrderBagColumn.id.value)
             return order_bag_id

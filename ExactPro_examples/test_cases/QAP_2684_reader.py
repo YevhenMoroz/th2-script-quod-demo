@@ -210,7 +210,7 @@ def execute(report_id):
                 "Readlog NewOrderSingle Received",
                 bca.filter_to_grpc("NewOrderSingle", readlog_nos_params, keys=['ClOrdID', 'CDOrdFreeNotes'],
                                    ignored_fields=['Header']),
-                checkpoint_1, 'log305-kepler-sell', case_id
+                checkpoint_1, 'log305-kepler-sell', case_id,
             )
         )
 
@@ -282,7 +282,7 @@ def execute(report_id):
 
         cancel_order_params = {
             'OrigClOrdID': sor_order_params['ClOrdID'],
-            'ClOrdID': (sor_order_params['ClOrdID']),
+            'ClOrdID': bca.client_orderid(9),
             'Instrument': sor_order_params['Instrument'],
             'Side': case_params['Side'],
             'TransactTime': (datetime.utcnow().isoformat()),
@@ -320,7 +320,6 @@ def execute(report_id):
             )
         )
 
-
     except Exception:
         logger.error("Error execution", exc_info=True)
 
@@ -330,5 +329,7 @@ def execute(report_id):
     rule_man.remove_rule(NOS1)
     rule_man.remove_rule(OCR1)
     rule_man.print_active_rules()
+    # time.sleep(60)
+    print("check is done")
     logger.info("Case {} was executed in {} sec.".format(
         case_name, str(round(datetime.now().timestamp() - seconds))))

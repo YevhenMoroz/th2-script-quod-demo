@@ -33,10 +33,9 @@ class QAP_T7666(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        # endregion
         # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = response[0].get_parameters()['OrderID']
         self.client_inbox.accept_order()
         # endregion
         # region check market order has open status

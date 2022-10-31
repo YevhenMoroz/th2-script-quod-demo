@@ -5,7 +5,7 @@ from pathlib import Path
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -70,7 +70,8 @@ class QAP_T4158(TestCase):
 
         # region venue param
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
-        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_20")
+        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_13")
+        self.deliver_to_comp_id_tqlis = self.data_set.get_mic_by_name("mic_20")
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
@@ -103,7 +104,7 @@ class QAP_T4158(TestCase):
         # endregion
 
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rfq_cancel_1_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         rfq_cancel_2_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
@@ -195,7 +196,7 @@ class QAP_T4158(TestCase):
 
         # region quote canceled on CHIXLIS and TRQXLIS
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that RFQ cancel requests received", self.test_id))
-        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_tqlis)
+        rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.deliver_to_comp_id_tqlis)
         rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_chixlis_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
         self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
@@ -293,5 +294,5 @@ class QAP_T4158(TestCase):
         self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "LISResidentTime", "45000")
         # endregion
 
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

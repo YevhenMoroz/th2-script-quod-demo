@@ -47,7 +47,7 @@ class QAP_T7649(TestCase):
         lookup = self.data_set.get_lookup_by_name('lookup_1')
         self.fix_message.change_parameter("HandlInst", '3')
         qty_of_bag = str(int(qty) * 3)
-        qty_of_bag_after_modification = str(int(qty) * 4)
+        qty_of_bag_after_modification = str(int(qty) * 3)
         orders_id = []
         name_of_bag = 'QAP_T7649'
         # endregion

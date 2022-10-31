@@ -21,8 +21,8 @@ timeouts = True
 
 class QAP_T7686(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None):
-        super().__init__(report_id, session_id, data_set)
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
         self.venue = self.data_set.get_mic_by_name("mic_1")

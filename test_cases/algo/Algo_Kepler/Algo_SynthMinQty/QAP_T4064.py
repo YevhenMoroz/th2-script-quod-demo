@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
@@ -14,6 +14,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T4064(TestCase):
@@ -83,12 +85,24 @@ class QAP_T4064(TestCase):
         self.key_params_ER_fill_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_is_no_suitablle_liquidity.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_is_no_suitablle_liquidity")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
+        # endregion
+
+        # region Compare message params
+        self.text = "no suitable liquidity"
+        self.pre_filter['Text'] = (self.text, "EQUAL")
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_1_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, self.price)
         nos_2_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, self.price)
         self.rule_list = [nos_1_fok_rule, nos_2_fok_rule]
@@ -118,7 +132,10 @@ class QAP_T4064(TestCase):
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+
+        parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
+        self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")
 
         time.sleep(3)
         # endregion
@@ -173,7 +190,7 @@ class QAP_T4064(TestCase):
         # region check fill first dma child order
         er_fill_dma_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_fill)
         er_fill_dma_qdl1_order.change_parameters(dict(CumQty=self.trade_qty, LeavesQty=0, LastQty=self.trade_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 1 order")
         # endregion
 
         time.sleep(2)
@@ -200,19 +217,27 @@ class QAP_T4064(TestCase):
         # region check fill first dma child order
         er_fill_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_fill)
         er_fill_dma_qdl2_order.change_parameters(dict(CumQty=self.trade_qty, LeavesQty=0, LastQty=self.trade_qty, LastPx=self.price))
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_fill_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_qdl2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Fill Aggressive DMA 2 order")
         # endregion
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
 
-        er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_fill)
+        er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_fill)
         er_fill_synthMinQty_order.change_parameters(dict(LastPx=self.price, CumQty=self.cum_qty, LeavesQty=self.leaves_qty, LastQty=self.trade_qty))
         self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
-        time.sleep(3)
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_that_is_no_suitablle_liquidity()
+        compare_message.change_parameters(dict(Time='*', ClOrdrId=parent_synthMinQty_order_id, Text=self.text))
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

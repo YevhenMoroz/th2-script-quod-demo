@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -50,6 +50,7 @@ class QAP_T4097(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
@@ -80,7 +81,7 @@ class QAP_T4097(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price_ask)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_ioc_rule, ocr_rule]
@@ -137,6 +138,12 @@ class QAP_T4097(TestCase):
         self.fix_verifier_buy.check_fix_message(new_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order')
         # endregion
 
+        # region check eliminate dma child order
+        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_dma_order.change_parameters(dict(OrdType=self.order_type_ioc, TimeInForce=self.tif_ioc)).remove_parameter('OrigClOrdID')
+        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order")
+        # endregion
+
         # region Cancel Algo Order
         # region check cancel first dma child order
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
@@ -146,12 +153,6 @@ class QAP_T4097(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        # region check cancel dma child order
-        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        cancel_dma_order.change_parameters(dict(OrdType=self.order_type_ioc, TimeInForce=self.tif_ioc)).remove_parameter('OrigClOrdID')
-        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
-        # endregion
-
         cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_cancel)
         cancel_multilisting_order_params.change_parameters(dict(TimeInForce=self.tif_ioc))
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
@@ -159,5 +160,5 @@ class QAP_T4097(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

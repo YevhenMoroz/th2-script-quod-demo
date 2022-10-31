@@ -36,7 +36,7 @@ class QAP_T8205(CommonTestCase):
             main_page.click_on_edit()
 
             values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.set_allocation_matching_service("")
+            values_sub_wizard.clear_allocation_matching_service_field()
             time.sleep(1)
             self.verify("Allocation Matching Service field is disable", False,
                         values_sub_wizard.is_external_allocation_matching_service_field_enable())

@@ -231,7 +231,7 @@ class WebAdminRouteAccountName(Enum):
 
 
 class WebAdminRoute(Enum):
-    route_1 = "Direct"
+    route_1 = "JP Morgan"
     route_2 = "DB RFQ"
 
 

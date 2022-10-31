@@ -10,9 +10,11 @@ class EnvironmentType(Enum):
     quod317_ganymede_standard_test = "quod317_ganymede_standard_test"
     quod317_ganymede_standard = "quod317_ganymede_standard"
     quod319_kuiper_kepler = "quod319_kuiper_kepler"
+    quod309_kratos_standard = "quod309_kratos_standard"
     # endregion
 
     # region fe
+    quod310_fe = "quod310_fe"
     quod315_fe = "quod315_fe"
     quod317_fe = "quod317_fe"
     quod316_fe = "quod316_fe"

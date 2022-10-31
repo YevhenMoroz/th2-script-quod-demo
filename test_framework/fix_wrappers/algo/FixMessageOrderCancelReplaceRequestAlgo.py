@@ -44,15 +44,19 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
         if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(
                 ClientAlgoPolicyID=new_order_single.get_parameter('ClientAlgoPolicyID'),
-                IClOrdIdAO='OD_5fgfDXg-00',
-                ShortCode='17536'
             )
+        if new_order_single.is_parameter_exist('IClOrdIdAO'):
+            temp.update(IClOrdIdAO='OD_5fgfDXg-00',)
+        if new_order_single.is_parameter_exist('ShortCode'):
+            temp.update(ShortCode='17536')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') != '1004':
             temp.update(NoStrategyParameters=new_order_single.get_parameter('NoStrategyParameters'))
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy=new_order_single.get_parameter('TargetStrategy'))
+        if new_order_single.is_parameter_exist('ExDestination'):
+            temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
@@ -69,5 +73,10 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             Instrument=new_order_single.get_parameter('Instrument'),
             OrigClOrdID=new_order_single.get_parameter("ClOrdID"),
         )
+        if new_order_single.get_parameter('ClOrdID') == '*':                                            # for checking modification request on child
+            temp.update(
+                OrderID='*',
+                TransactTime='*',
+            )
         super().change_parameters(temp)
         return self

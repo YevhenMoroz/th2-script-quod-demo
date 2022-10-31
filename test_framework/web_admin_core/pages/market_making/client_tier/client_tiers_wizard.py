@@ -25,6 +25,9 @@ class ClientTiersWizard(CommonPage):
     def click_on_cancel_button(self):
         self.find_by_xpath(ClientTierConstants.CANCEL_BUTTON_XPATH).click()
 
+    def click_on_go_back_button(self):
+        self.find_by_xpath(ClientTierConstants.GO_BACK_BUTTON_XPATH).click()
+
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
         self.find_by_xpath(ClientTierConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()

@@ -25,7 +25,7 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('WebAdmin | 5.1.161.174', parent_id)
+    report_id = bca.create_event('Regression 178v | 5.1.165.178', parent_id)
     tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
     root = tree.getroot()
     try:

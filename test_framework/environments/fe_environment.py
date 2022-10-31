@@ -8,7 +8,7 @@ class FEEnvironment(BaseEnvironment):
 
     def __init__(self, environment_type: str = None, users: list = None, passwords: list = None, folder: str = None,
                  desks: list = None, target_server_win: str = None, main_window: str = None, login_window: str = None,
-                 exe_name: str = None):
+                 exe_name: str = None, desk_ids: list = None):
         self.environment_type = environment_type
         self.user_1 = users[0]
         self.user_2 = users[1] if len(users) > 1 else None
@@ -24,6 +24,7 @@ class FEEnvironment(BaseEnvironment):
         self.main_window = main_window
         self.login_window = login_window
         self.exe_name = exe_name
+        self.desk_ids = desk_ids
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -38,7 +39,8 @@ class FEEnvironment(BaseEnvironment):
                     target_server_win=FrontEnd.TARGET_SERVER_WIN.value,
                     main_window=FrontEnd.MAIN_WIN_NAME_317.value,
                     login_window=FrontEnd.LOGIN_WIN_NAME_317.value,
-                    exe_name=FrontEnd.EXE_NAME.value
+                    exe_name=FrontEnd.EXE_NAME.value,
+                    desk_ids=FrontEnd.DESKS_ID_317.value
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod317_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod317_fe.value]
@@ -53,7 +55,21 @@ class FEEnvironment(BaseEnvironment):
                 )
                 FEEnvironment.environment_instances.update({EnvironmentType.quod314_luna_fe.value: site_environment})
             return FEEnvironment.environment_instances[EnvironmentType.quod314_luna_fe.value]
-
+        elif env.value == EnvironmentType.quod310_fe.value:
+            if EnvironmentType.quod310_fe.value not in FEEnvironment.environment_instances.keys():
+                site_environment = FEEnvironment(
+                    environment_type=EnvironmentType.quod310_fe.value,
+                    users=FrontEnd.USERS_310.value,
+                    passwords=FrontEnd.PASSWORDS_310.value,
+                    folder=FrontEnd.FOLDER_310.value,
+                    desks=FrontEnd.DESKS_310.value,
+                    target_server_win=FrontEnd.TARGET_SERVER_WIN.value,
+                    main_window=FrontEnd.MAIN_WIN_NAME_310.value,
+                    login_window=FrontEnd.LOGIN_WIN_NAME_310.value,
+                    exe_name=FrontEnd.EXE_NAME.value,
+                )
+                FEEnvironment.environment_instances.update({EnvironmentType.quod310_fe.value: site_environment})
+            return FEEnvironment.environment_instances[EnvironmentType.quod310_fe.value]
         else:
             raise Exception('No such environment')
 

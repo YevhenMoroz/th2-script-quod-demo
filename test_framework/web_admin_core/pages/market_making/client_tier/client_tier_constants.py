@@ -7,6 +7,7 @@ class ClientTierConstants:
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    GO_BACK_BUTTON_XPATH = '//button[normalize-space()="Go Back"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
@@ -26,6 +27,12 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
     MAIN_PAGE_CLIENT_TIER_GLOBAL_FILTER_XPATH = '//*[text()="Client Tiers"]/following-sibling::div/input[@placeholder="Filter"]'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_XPATH = '//*[normalize-space()="Executable"]//nb-icon'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_ENABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Executable Enabled, Click to Disable"]'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_DISABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Executable Disabled, Click to Enable"]'
+    MAIN_PAGE_CLIENT_TIER_PRICING_XPATH = '//*[normalize-space()="Pricing"]//nb-icon'
+    MAIN_PAGE_CLIENT_TIER_PRICING_ENABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Enabled, Click to Disable"]'
+    MAIN_PAGE_CLIENT_TIER_PRICING_DISABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Disabled, Click to Enable"]'
     # region wizard
     # values tab
     CLIENT_TIER_VALUES_TAB_NAME_XPATH = '//*[@id="clientTierName"]'
@@ -33,6 +40,8 @@ class ClientTierConstants:
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH = "//*[@class='option-list']//span"
     CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[normalize-space()="Schedule"]//following::button[normalize-space()="Manage"]'
+    CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX = '//*[normalize-space()="Schedule"]//..//*[@class="custom-checkbox"]'
+    CLIENT_TIER_VALUES_TAB_SCHEDULES = '//*[@id="schedule"]'
     # schedules
     # schedules schedules
     CLIENT_TIER_SCHEDULES_NAME_TAB_NAME_XPATH = '//*[@placeholder="Schedule Name *"]'
@@ -91,6 +100,7 @@ class ClientTierConstants:
     # region wizard
     # values tab
     CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH = '//*[@id="instrSymbol"]'
+    CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_LABEL_XPATH = '//*[@for="instrSymbol"]'
     CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH = '//*[@formcontrolname="quoteTTL"]'
     CLIENT_TIER_INSTRUMENTS_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = '//*[@id="pricingMethod"]'
     # spot venues tab
@@ -134,6 +144,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[normalize-space()="External Clients"]//..//*[@placeholder ="Client *"]'
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH = '//*[text()=" External Clients "]/parent::nb-accordion-item//tbody//span'
     CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = "//*[text()=' External Clients ']/parent::nb-accordion-item//thead//tr[2]//th[2]//input"
+    CLIENT_TIER_INSTRUMENTS_EXTERNAL_CLIENTS_TAB_WARNING_ICON = '//*[normalize-space()="External Clients"]//..//*[@data-name="alert-triangle"]'
 
     # internal clients tab
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//*[@data-name="plus"]'
@@ -145,6 +156,7 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CREATED_CLIENT_XPATH = '//*[text()=" Internal Clients "]/parent::nb-accordion-item//tbody//span'
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[normalize-space()="Internal Clients"]//..//*[@placeholder ="Client *"]'
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = "//*[text()=' Internal Clients ']/parent::nb-accordion-item//thead//tr[2]//th[2]//input"
+    CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_WARNING_ICON = '//*[normalize-space()="Internal Clients"]//..//*[@data-name="alert-triangle"]'
 
     # sweepable quantities
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//*[@data-name="plus"]'

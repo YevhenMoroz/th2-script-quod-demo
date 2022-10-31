@@ -1,263 +1,123 @@
 import os
-import logging
 import time
-from datetime import datetime
+from pathlib import Path
+
+from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
-from test_framework.old_wrappers.fix_manager import FixManager
-from test_framework.old_wrappers.fix_message import FixMessage
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from stubs import Stubs
-from custom.basic_custom_actions import message_to_grpc, convert_to_request
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-
-qty = 300
-price_20 = 20  
-percentage = 10
-aggressivity = 1
-text_pn = 'Pending New status'
-text_n = 'New status'
-text_ocrr = 'OCRRRule'
-text_c = 'order canceled'
-text_f = 'Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-text_r = 'order replaced'
-text_rej = 'MinParticipationPriceOffset should be a positive number'
-side = 1
-tif_day = 0
-ex_destination_1 = "XPAR"
-client = "CLIENT2"
-order_type = 2
-account = 'XPAR_CLIENT2'
-currency = 'EUR'
-s_par = '1015'
-
-case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-buy-side-316-ganymede"
-connectivity_sell_side = "fix-sell-side-316-ganymede"
-connectivity_fh = 'fix-feed-handler-316-ganymede'
-
-instrument = {
-            'Symbol': 'FR0010263202_EUR',
-            'SecurityID': 'FR0010263202',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR'
-        }
+from rule_management import RuleManager, Simulators
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.core.test_case import TestCase
+from test_framework.data_sets import constants
 
 
-def send_market_data(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
+class QAP_T4590(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, data_set=None, environment=None):
+        super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
+        self.fix_env1 = self.environment.get_list_fix_environment()[0]
 
-def send_market_dataT(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
-            connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntriesIR': market_data
-    }
+        # region th2 components
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        # endregion
 
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
-    ))
+        # region order parameters
+        self.qty = 300
+        self.price = 20
+        self.pct_vol = 0.1
+        self.aggressivity = 1
+        self.qty_bid = self.qty_ask = 1000
+        self.price_bid = self.price_ask = 20
+        self.tif_day = constants.TimeInForce.Day.value
+        # endregion
 
+        # region Gateway Side
+        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_sell = GatewaySide.Sell
+        # endregion
 
-def execute(report_id):
-    try:
-        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        # Send_MarkerData
-        fix_manager_316 = FixManager(connectivity_sell_side, case_id)
-        fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-        fix_verifier_bs = FixVerifier(connectivity_buy_side, case_id)
+        # region Status
+        self.status_pending = Status.Pending
+        self.status_reject = Status.Reject
+        # endregion
 
-        case_id_0 = bca.create_event("Send Market Data", case_id)
-        market_data1 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': price_20,
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': price_20,
-                'MDEntrySize': '100000',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data1) 
+        # region instrument
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
+        # endregion
 
-        market_data2 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': price_20,
-                'MDEntrySize': '100000',
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_0, market_data2)
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
 
-        time.sleep(1)
+        # region venue param
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.s_par = self.data_set.get_listing_id_by_name("listing_1")
+        # endregion
 
-        #region Send NewOrderSingle (35=D)
-        case_id_1 = bca.create_event("Create Algo Order", case_id)
-        new_order_single_params = {
-            'Account': client,
-            'ClOrdID': 'QAP_4784_' + bca.client_orderid(9),
-            'HandlInst': 2,
-            'Side': side,
-            'OrderQty': qty,
-            'TimeInForce': tif_day,
-            'OrdType': order_type,
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': instrument,
-            'OrderCapacity': 'A',
-            'Price': price_20,
-            'Currency': currency,
-            'TargetStrategy': 2,
-            'ExDestination': ex_destination_1,
-            'NoStrategyParameters': [
-                {
-                    'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': percentage
-                },
-                {
-                    'StrategyParameterName': 'Aggressivity',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': aggressivity
-                },
-                {
-                    'StrategyParameterName': 'MinParticipation',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '5'
-                },
-                {
-                    'StrategyParameterName': 'MinParticipationTimeTolerance',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '10'
-                },
-                {
-                    'StrategyParameterName': 'MinParticipationPriceOffset',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '-1'
-                },
-                {
-                    'StrategyParameterName': 'Passive',
-                    'StrategyParameterType': '14',
-                    'StrategyParameterValue': 'PRM'
-                },
-                {
-                    'StrategyParameterName': 'PassiveOffset',
-                    'StrategyParameterType': '1',
-                    'StrategyParameterValue': '-1'
-                }
-            ]
-        }
+        # region Key parameters
+        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        # endregion
 
-        fix_message_new_order_single = FixMessage(new_order_single_params)
-        responce_new_order_single = fix_manager_316.Send_NewOrderSingle_FixMessage(fix_message_new_order_single, case=case_id_1)
-        
-        time.sleep(1)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
 
-        nos_1 = dict(
-            fix_message_new_order_single.get_parameters(),
-            TransactTime='*',
-            ClOrdID=fix_message_new_order_single.get_parameter('ClOrdID'))
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        fix_verifier_ss.CheckNewOrderSingle(nos_1, responce_new_order_single, direction='SECOND', case=case_id_1, message_name='FIXQUODSELL5 receive 35=D')
+        # region Set TradingPhase and LTQ for POV
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV"))
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(
+            self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_incr_par)
 
-        #Check that FIXQUODSELL6 sent 35=8 pending new
-        er_1 ={
-            'Account': client,
-            'ExecID': '*',
-            'OrderQty': qty,
-            'NoStrategyParameters': '*',
-            'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': 'A',
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'ExecType': "A",
-            'HandlInst': new_order_single_params['HandlInst'],
-            'LeavesQty': qty,
-            'NoParty': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'QtyType': '0',
-            'Price': price_20,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
-            'Instrument': instrument
+        time.sleep(3)
+        # endregion
 
-        }
-        fix_verifier_ss.CheckExecutionReport(er_1, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
+        # region Send NewOrderSingle (35=D) for Multilisting order
+        case_id_1 = bca.create_event("Create POV Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
 
-        # Check that FIXQUODSELL5 sent 35=8 Reject
-        er_2 ={
-            'ExecID': '*',
-            'OrderQty': qty,
-            'NoStrategyParameters': '*',
-            'LastQty': '0',
-            'OrderID': responce_new_order_single.response_messages_list[0].fields['OrderID'].simple_value,
-            'TransactTime': '*',
-            'Side': side,
-            'AvgPx': '0',
-            'OrdStatus': '8',
-            'SettlDate': '*',
-            'Currency': currency,
-            'TimeInForce': tif_day,
-            'ExecType': "8",
-            'HandlInst': new_order_single_params['HandlInst'],
-            'LeavesQty': '0',
-            'NoParty': '*',
-            'CumQty': '0',
-            'LastPx': '0',
-            'OrdType': order_type,
-            'ClOrdID': fix_message_new_order_single.get_ClOrdID(), 
-            'Text': text_rej,
-            'OrderCapacity': new_order_single_params['OrderCapacity'],
-            'QtyType': '0',
-            'ExecRestatementReason': '*',
-            'SettlType': '0',
-            'Price': price_20,
-            'TargetStrategy': new_order_single_params['TargetStrategy'],
-            'Instrument': instrument
+        self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
+        self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.pov_order.update_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': 6, 'StrategyParameterValue': self.pct_vol}])
+        self.pov_order.add_fields_into_repeating_group_algo('NoStrategyParameters', [['Aggressivity', 1, self.aggressivity], ['MinParticipation', 6, 0.05],
+                                                                                     ['MinParticipationTimeTolerance', 6, 10], ['MinParticipationPriceOffset', 1, -1],
+                                                                                     ['Passive', 14, 'PRM'], ['PassiveOffset', 1, -1]])
 
-        }
-        fix_verifier_ss.CheckExecutionReport(er_2, responce_new_order_single, case=case_id_1,   message_name='FIXQUODSELL5 sent 35=8 Pending New', key_parameters=['ClOrdID', 'OrdStatus', 'ExecType'])
-        
-        time.sleep(1)
-    except:
-        logging.error("Error execution", exc_info=True)
+        self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
+        time.sleep(3)
+        # endregion
+
+        # region Check Sell side
+        self.fix_verifier_sell.check_fix_message(self.pov_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        er_pending_new_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(er_pending_new_pov_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
+
+        er_rejected_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_reject)
+        er_rejected_pov_order_params.change_parameters({'Account': self.client, 'LastQty': 0, 'SettlDate': '*', 'Currency': '*',
+                                                        'HandlInst': '*', 'NoParty': '*', 'LastPx': 0, 'Text': 'MinParticipationPriceOffset should be a positive number',
+                                                        'OrderCapacity': 'A', 'QtyType': 0, 'ExecRestatementReason': 4, 'TargetStrategy': 2, 'Instrument': '*'})\
+            .remove_parameter('ExDestination')
+        self.fix_verifier_sell.check_fix_message(er_rejected_pov_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side Reject')
+        # endregion

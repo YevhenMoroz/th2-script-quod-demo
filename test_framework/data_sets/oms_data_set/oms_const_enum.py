@@ -8,7 +8,7 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='DREAMNEX'
+        SecurityDesc='VETOQUINOL'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
@@ -37,6 +37,16 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
+    )
+
+
+class OmsJavaApiInstruments(Enum):
+    instrument_1 = dict(
+        InstrSymbol="FR0010436584_EUR",
+        SecurityID="FR0010436584",
+        SecurityIDSource="ISI",
+        InstrType="Equity",
+        SecurityExchange="XPAR"
     )
 
 
@@ -99,6 +109,7 @@ class OmsClients(Enum):
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
+    client_counterpart_3 = "CLIENT_COUNTERPART_3"
 
 
 class OmsVenueClientNames(Enum):
@@ -114,10 +125,12 @@ class OmsVenueClientNames(Enum):
     client_pt_3_venue_1 = "MOClient3_PARIS"
     client_pt_3_venue_2 = "MOClient3_EUREX"
     client_pt_4_venue_1 = "MOClient4_PARIS"
+    client_pt_4_venue_2 = "MOClient4_EUREX"
     client_pt_5_venue_1 = "MOClient5_PARIS"
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
+    client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     """Care"""
@@ -130,13 +143,17 @@ class OmsVenueClientNames(Enum):
     client_counterpart_1_venue_1 = "CLIENT_COUNTERPART_PARIS"
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
     client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
+    client_counterpart_3_venue_1 = "CLIENT_COUNTERPART_3_PARIS"
 
 
 class OmsAccounts(Enum):
+    """Base"""
+    client_1_acc_1 = "NEWACCOUNT"
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
     client_pos_3_acc_3 = "PROP"
+    client_pos_3_acc_4 = "PROP_TEST"
     """PostTrade"""
     client_pt_1_acc_1 = "MOClient_SA1"
     client_pt_1_acc_2 = "MOClient_SA2"
@@ -171,6 +188,7 @@ class OmsAccounts(Enum):
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
+    client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
 
 
 class AlgoParametersExternal(Enum):
@@ -477,3 +495,34 @@ class OMS_SymbolForListingsFromWebAdmin(Enum):
 
 class OMSTickSizeProfile(Enum):
     tick_size_profile_1 = 3
+
+
+class OMSCounterPartyIDs_FIX(Enum):
+    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
+                               'PartyIDSource': "D"}
+    counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyID': "MarketMaker - TH2Route",
+                                             'PartyIDSource': "C"}
+    counterpart_id_investment_firm_cl_counterpart_sa1 = {'PartyRole': "5",
+                                                         'PartyID': 'InvestorID - ClCounterpart_SA1',
+                                                         'PartyIDSource': "C"}
+    counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyID': 'CustodianUser2', 'PartyRoleQualifier': '24',
+                                       'PartyIDSource': 'C'}
+    counterpart_id_custodian_user = {'PartyRole': '28', 'PartyID': 'CustodianUser', 'PartyRoleQualifier': '24',
+                                     'PartyIDSource': 'C'}
+    counter_part_id_contra_firm = {'PartyRole': "17", 'PartyID': 'ContraFirm', 'PartyIDSource': "C"}
+    counter_part_id_contra_firm_2 = {'PartyRole': "17", 'PartyID': 'ContraFirm2', 'PartyIDSource': "C"}
+    counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
+    counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
+                                                     'PartyIDSource': "C"}
+    counterpart_id_regulatory_body_venue_paris = {'PartyRole': "34",
+                                                  'PartyID': "RegulatoryBody - Venue(Paris)",
+                                                  'PartyIDSource': "C"}
+    counterpart_id_settlement_location = {'PartyRole': '10',
+                                          'PartyID': "CREST",
+                                          'PartyIDSource': "D"}
+
+
+class OMSCounterPartyIDs_JavaAPI(Enum):
+    counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
+    counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
+    counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}

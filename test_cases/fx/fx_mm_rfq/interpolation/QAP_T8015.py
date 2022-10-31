@@ -34,7 +34,6 @@ class QAP_T8015(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        #TODO check one more time
         self.quote_request.set_deposit_and_loan_param()
         self.quote_request.update_repeating_group_by_index("NoRelatedSym", index=0, SettlDate=self.settle_date_tod,
                                                            MaturityDate=self.settle_date_wk1)
