@@ -5,6 +5,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -13,6 +14,8 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T4072(TestCase):
@@ -72,6 +75,18 @@ class QAP_T4072(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_is_no_suitablle_liquidity.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_is_no_suitablle_liquidity")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
+        # endregion
+
+        # region Compare message params
+        self.text = "no suitable liquidity"
+        self.pre_filter['Text'] = (self.text, "EQUAL")
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         now = datetime.today() - timedelta(hours=3)
@@ -100,7 +115,10 @@ class QAP_T4072(TestCase):
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+
+        parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
+        self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")
 
         time.sleep(3)
         # endregion
@@ -115,7 +133,17 @@ class QAP_T4072(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(3)
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_that_is_no_suitablle_liquidity()
+        compare_message.change_parameters(dict(Time='*', ClOrdrId=parent_synthMinQty_order_id, Text=self.text))
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)
+        # endregion
+
+        time.sleep(5)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

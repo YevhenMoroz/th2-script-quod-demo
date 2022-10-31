@@ -33,7 +33,7 @@ class QAP_T3354(CommonTestCase):
         self.name = 'QAP_T3354'
         self.core_spot_price_strategy = self.data_set.get_core_spot_price_strategy("core_spot_price_strategy_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_1")
-        self.tod_end_time = "01:00:00"
+        self.tod_end_time = "23:59:59"
         self.tenor = 'Spot'
         self.tiered_quantity = "1000"
 
@@ -77,6 +77,8 @@ class QAP_T3354(CommonTestCase):
             time.sleep(1)
             client_tiers_frame.select_client_tier_by_name(self.name)
             client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
+            client_tier_instrument_frame.set_symbol(self.symbol)
+            time.sleep(1)
             client_tier_instrument_frame.click_on_more_actions()
             client_tier_instrument_frame.click_on_edit()
             tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
