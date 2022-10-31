@@ -32,6 +32,13 @@ class RetTradingApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XNSE"
     )
+    instrument_5 = dict(
+        InstrSymbol="SPICEJET-IQ[NSE]",
+        SecurityID="11564",
+        SecurityIDSource="ExchSymb",
+        InstrType="Equity",
+        SecurityExchange="XNSE"
+    )
 
 
 class RetInstruments(Enum):

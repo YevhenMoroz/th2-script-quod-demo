@@ -2,7 +2,7 @@
     <target_server_win></target_server_win>
 <!--  set_name must be like that 5.1.149.162|Regression|-->
     <name>REST_API</name>
-    <version>5.1.165.178</version>
+    <version>5.1.166.179</version>
     <product_lines>
         <product_line name="algo" run="True">
             <components>

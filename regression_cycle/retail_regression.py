@@ -14,7 +14,7 @@ def test_run(parent_id=None):
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
         version = root.find(".//version").text
-        cycle_name_rest_api = 'V178_REST_API'
+        cycle_name_rest_api = 'V179_REST_API'
         cycle_report_rest_api = bca.create_event(f"{cycle_name_rest_api}" if version is None else f"{cycle_name_rest_api} | {version}", report_id)
         logging.getLogger().setLevel(logging.WARN)
 
