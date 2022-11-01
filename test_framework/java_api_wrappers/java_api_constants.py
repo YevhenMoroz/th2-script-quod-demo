@@ -139,6 +139,14 @@ class JavaApiFields(Enum):
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
 
+    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
+    RootMiscFeeBasis = 'RootMiscFeeBasis'
+    RootMiscFeeRate = 'RootMiscFeeRate'
+    RootMiscFeeCurr = 'RootMiscFeeCurr'
+    RootMiscFeeType = 'RootMiscFeeType'
+    RootMiscFeeAmt = 'RootMiscFeeAmt'
+    RootMiscFeesBlock = 'RootMiscFeesBlock'
+    RootMiscFeesList = 'RootMiscFeesList'
 
 
 class JavaApiPartyRoleConstants(Enum):
