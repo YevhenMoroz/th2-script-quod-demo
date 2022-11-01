@@ -17,18 +17,18 @@ def regression_run():
 
         report_id = bca.create_event(root.find("name").text + start.strftime(' %Y%m%d-%H:%M:%S'))
 
-        # if eval(root.find(".//product_line[@name='algo']").attrib["run"]):
-        #     algo_regression.test_run(report_id)
+        if eval(root.find(".//product_line[@name='algo']").attrib["run"]):
+            algo_regression.test_run(report_id)
         # if eval(root.find(".//product_line[@name='fx']").attrib["run"]):
         #     fx_regression.test_run(report_id)
         # if eval(root.find(".//product_line[@name='oms']").attrib["run"]):
         #     oms_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='retail']").attrib["run"]):
             retail_regression.test_run(report_id)
-        # if eval(root.find(".//product_line[@name='web_admin']").attrib["run"]):
-        #     web_admin_regression.test_run(report_id)
-        # if eval(root.find(".//product_line[@name='web_trading']").attrib["run"]):
-        #     web_trading_regression.test_run(report_id)
+        if eval(root.find(".//product_line[@name='web_admin']").attrib["run"]):
+            web_admin_regression.test_run(report_id)
+        if eval(root.find(".//product_line[@name='web_trading']").attrib["run"]):
+            web_trading_regression.test_run(report_id)
         # if eval(root.find(".//product_line[@name='mobile_android']").attrib["run"]):
         #     mobile_android_regression.test_run(report_id)
     except Exception:
