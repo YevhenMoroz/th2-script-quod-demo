@@ -7,6 +7,7 @@ from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3140 import QAP_T
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3178 import QAP_T3178
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3213 import QAP_T3213
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3353 import QAP_T3353
+from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3413 import QAP_T3413
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3481 import QAP_T3481
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3482 import QAP_T3482
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3488 import QAP_T3488
@@ -37,6 +38,8 @@ def test_run(parent_id=None):
         QAP_T3213(report_id, configuration_admin_api_positions.data_set,
                   configuration_admin_api_positions.environment).execute()
         QAP_T3353(report_id, configuration_admin_api_positions.data_set,
+                  configuration_admin_api_positions.environment).execute()
+        QAP_T3413(report_id, configuration_admin_api_positions.data_set,
                   configuration_admin_api_positions.environment).execute()
         QAP_T3481(report_id, configuration_admin_api_positions.data_set,
                   configuration_admin_api_positions.environment).execute()
