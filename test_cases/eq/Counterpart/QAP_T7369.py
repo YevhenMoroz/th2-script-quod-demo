@@ -36,7 +36,7 @@ class QAP_T7369(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.client = self.data_set.get_client_by_name("client_counterpart_1")
-        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
@@ -121,8 +121,8 @@ class QAP_T7369(TestCase):
         list_of_counterparts = [
                 self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
             ]
         parties = {
             'NoPartyIDs': list_of_counterparts
@@ -142,7 +142,7 @@ class QAP_T7369(TestCase):
 
         # region unmatch and transfer
         self.unmatch_transfer.set_default(self.data_set, exec_id)
-        self.unmatch_transfer.set_default_unmatch_and_transfer(self.data_set.get_account_by_name('client_pos_3_acc_1'))
+        self.unmatch_transfer.set_default_unmatch_and_transfer(self.data_set.get_account_by_name('client_pos_3_acc_3'))
         self.java_api_manager.send_message(self.unmatch_transfer)
         class_name.__print_message(f"{class_name} - After UNMATCH_AND_TRANSFER", responses)
         # endregion
