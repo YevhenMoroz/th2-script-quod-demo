@@ -48,6 +48,13 @@ class OmsJavaApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XPAR"
     )
+    instrument_3 = dict(
+        InstrSymbol='ISI3',
+        SecurityID='ISI3',
+        SecurityIDSource='ISI',
+        InstrType='Equity',
+        SecurityExchange='XEUR'
+    )
 
 
 class OmsInstrumentId(Enum):
@@ -187,6 +194,8 @@ class OmsAccounts(Enum):
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
+    client_counterpart_1_acc_2 = "CLIENT_COUNTERPART_SA2"
+    client_counterpart_1_acc_3 = "CLIENT_COUNTERPART_SA3"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
     client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
 
@@ -514,11 +523,17 @@ class OMSCounterPartyIDs_FIX(Enum):
     counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
                                                      'PartyIDSource': "C"}
+    counterpart_id_investment_firm_cl_counterpart_sa3 = {'PartyRole': "67",
+                                                         'PartyID': "InvestmentFirm - ClCounterpart_SA3",
+                                                         'PartyIDSource': "C"}
     counterpart_id_regulatory_body_venue_paris = {'PartyRole': "34",
                                                   'PartyID': "RegulatoryBody - Venue(Paris)",
                                                   'PartyIDSource': "C"}
     counterpart_id_settlement_location = {'PartyRole': '10',
                                           'PartyID': "CREST",
+                                          'PartyIDSource': "D"}
+    counterpart_id_euro_clear = {'PartyRole': '10',
+                                          'PartyID': "EURO_CLEAR",
                                           'PartyIDSource': "D"}
 
 

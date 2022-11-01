@@ -4,14 +4,14 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 class ComputeBookingFeesCommissionsReply(JavaApiMessage):
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessageType.Order_ComputeBookingFeesCommissionsReply.value)
+        super().__init__(message_type=ORSMessageType.ComputeBookingFeesCommissionsReply.value)
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.ALLOC.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
-            'Order_ComputeBookingFeesCommissionsReply': {
+            'ComputeBookingFeesCommissionsReply': {
             }
         }
         super().change_parameters(base_parameters)

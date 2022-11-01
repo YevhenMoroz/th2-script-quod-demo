@@ -1,28 +1,20 @@
 import logging
-import time
-from datetime import datetime
 from pathlib import Path
-
-from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OMSCommission
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
+    ComputeBookingFeesCommissionsRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import (
-    OrderBookColumns,
-    ExecSts,
-    PostTradeStatuses,
-)
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,26 +28,18 @@ class QAP_T7163(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.ss_connectivity = self.fix_env.sell_side
-        self.bs_connectivity = self.fix_env.buy_side
-        self.qty = "200"
+        self.qty = "100"
         self.price = "20"
-        self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name(
-            "client_com_1_venue_2"
-        )  # CLIENT_COMM_1_EUREX
-        self.venue = self.data_set.get_mic_by_name("mic_2")  # EUREX
         self.client = self.data_set.get_client("client_com_1")  # CLIENT_COMM_1
         self.perc_amt = self.data_set.get_comm_profile_by_name("perc_amt")
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.confirmation_message = FixMessageConfirmationReportOMS(self.data_set)
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.trade_request = TradeEntryOMS(self.data_set)
+        self.complete_message = DFDManagementBatchOMS(self.data_set)
+        self.submit_request = OrderSubmitOMS(self.data_set)
+        self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -72,65 +56,47 @@ class QAP_T7163(TestCase):
         self.commission_sender.send_post_request()
         # endregion
 
-        # region Create DMA order via FIX
-        try:
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(
-                self.bs_connectivity, self.venue_client_names, self.venue, float(self.price), int(self.qty), 0
-            )
-            self.fix_message.set_default_dma_limit(instr="instrument_3")
-            self.fix_message.change_parameters(
-                {
-                    "Side": "1",
-                    "OrderQtyData": {"OrderQty": self.qty},
-                    "Account": self.client,
-                    "ExDestination": self.venue,
-                    "Currency": self.data_set.get_currency_by_name("currency_3"),
-                }
-            )
-            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            # get Client Order ID and Order ID
-            cl_ord_id: str = response[0].get_parameters()["ClOrdID"]
-
-        except Exception:
-            logger.error("Error execution", exc_info=True)
-        finally:
-            time.sleep(2)
-            self.rule_manager.remove_rule(trade_rule)
+        # region step 1
+        self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                   desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                   role=SubmitRequestConst.USER_ROLE_1.value)
+        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {
+            "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"), 'AccountGroupID': self.client,
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]}})
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
+            JavaApiFields.OrderNotificationBlock.value)["OrdID"]
+        cl_order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
+            JavaApiFields.OrderNotificationBlock.value)["ClOrdID"]
         # endregion
-
-        # region Checking statuses in OrderBook
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {
-                OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-                OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
-                OrderBookColumns.done_for_day.value: "Yes",
-            },
-            "Comparing statuses after trading",
-        )
+        # region step 2
+        self.trade_request.set_default_trade(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        expected_result = {"TransExecStatus": "FIL", "ClientCommission": "0.5"}
+        self.java_api_manager.compare_values(expected_result, exec_reply,
+                                             "Compare TransExecStatus and ClientCommission")
         # endregion
-
-        # region Extracting values from Booking ticket
-        extract_comm_panel_from_booking = self.order_book.extracting_values_from_booking_ticket(
-            [PanelForExtraction.COMMISSION], filter_dict={OrderBookColumns.cl_ord_id.value: cl_ord_id}
-        )
-        splitted_fees: dict = self.middle_office.split_fees(extract_comm_panel_from_booking)[0]
-        values_from_commission_panel: dict = {k: v.replace(",", "") for k, v in splitted_fees.items()}
+        # region step 3
+        self.complete_message.set_default_complete(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.complete_message)
+        exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        post_trd_sts = exec_reply["PostTradeStatus"]
+        exec_id = exec_reply["ExecID"]
         # endregion
-
-        # region Comparing values from the Commission panel
-        expected_values_from_commission_panel: dict = {
-            "Basis": "Percent",
-            "Rate": "5",
-            "Amount": "2",
-            "Currency": "GBP",
-            "AmountType": "BRK",
-        }
-        self.middle_office.compare_values(
-            expected_values_from_commission_panel,
-            values_from_commission_panel,
-            "Comparing values from the Commission panel",
-        )
+        # region step 4
+        self.compute_request.set_list_of_order_alloc_block(cl_order_id, order_id, post_trd_sts)
+        self.compute_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trd_sts)
+        self.compute_request.set_default_compute_booking_request(self.qty, self.price, self.client)
+        self.java_api_manager.send_message_and_receive_response(self.compute_request)
+        compute_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
+            "ComputeBookingFeesCommissionsReplyBlock"]
+        expected_result = {'CommissionCurrency': 'GBP', 'CommissionBasis': 'PCT', 'CommissionRate': '5.0',
+                           'CommissionAmount': '100.0', 'CommissionAmountType': 'BRK'}
+        self.java_api_manager.compare_values(expected_result,
+                                             compute_reply["ClientCommissionList"]["ClientCommissionBlock"][0],
+                                             "Compare ClientCommission")
         # endregion
-
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
