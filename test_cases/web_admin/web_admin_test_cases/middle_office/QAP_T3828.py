@@ -41,19 +41,17 @@ class QAP_T3828(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_commissions_page()
         main_page = CommissionsPage(self.web_driver_container)
         dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
         main_page.click_on_new()
-        time.sleep(1)
         dimensions_tab.set_instr_type(self.instr_type)
         dimensions_tab.set_venue(self.venue)
         dimensions_tab.set_side(self.side)
         dimensions_tab.set_execution_policy(self.execution_policy)
         dimensions_tab.set_client_list(self.client_list)
-        dimensions_tab.set_commission_amount_type(self.commission_amount_type)
         values_tab = CommissionsValuesSubWizard(self.web_driver_container)
+        values_tab.set_commission_amount_type(self.commission_amount_type)
         values_tab.set_name(self.commission_name)
         values_tab.set_description(self.description)
         wizard = CommissionsWizard(self.web_driver_container)
@@ -68,7 +66,6 @@ class QAP_T3828(CommonTestCase):
             page.set_name(self.commission_name)
             time.sleep(2)
             page.click_on_more_actions()
-            time.sleep(2)
             expected_pdf = [self.instr_type,
                             self.venue,
                             self.side,

@@ -8,8 +8,9 @@ from test_framework.web_admin_core.pages.middle_office.commissions.commissions_c
     CommissionsCommissionProfilesSubWizard
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
     CommissionsCommissionProfilePointsSubWizard
-from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
-    CommissionsDimensionsSubWizard
+
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_values_sub_wizard \
+    import CommissionsValuesSubWizard
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -32,10 +33,10 @@ class QAP_T3628(CommonTestCase):
         time.sleep(2)
         side_menu.open_commissions_page()
         main_page = CommissionsPage(self.web_driver_container)
-        dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        value_tab = CommissionsValuesSubWizard(self.web_driver_container)
         main_page.click_on_new()
         time.sleep(1)
-        dimensions_tab.click_on_manage_commission_profile()
+        value_tab.click_on_manage_commission_profile()
         time.sleep(1)
         commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
         commissions_profiles.click_on_plus()

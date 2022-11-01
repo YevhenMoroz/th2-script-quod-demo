@@ -56,7 +56,7 @@ class QAP_T7930(CommonTestCase):
             lit_dark_block.click_on_plus_button()
             lit_dark_block.set_parameter(self.parameter)
             lit_dark_block.set_value_by_dropdown_list_at_sub_wizard(self.parameter_mode)
-            lit_dark_block.click_on_checkmark_at_actions_sub_wizard()
+            lit_dark_block.click_on_checkmark_button()
             lit_dark_block.click_on_go_back_button()
             strategies_wizard.click_on_save_changes()
 
@@ -70,12 +70,12 @@ class QAP_T7930(CommonTestCase):
             lit_dark_block.click_on_plus_button()
             lit_dark_block.set_parameter(self.parameter)
             lit_dark_block.set_value_by_dropdown_list_at_sub_wizard(self.parameter_mode)
-            lit_dark_block.click_on_checkmark_at_actions_sub_wizard()
+            lit_dark_block.click_on_checkmark_button()
 
             lit_dark_block.click_on_plus_button()
             lit_dark_block.set_parameter(self.second_parameter)
             lit_dark_block.set_value(self.qty)
-            lit_dark_block.click_on_checkmark_at_actions_sub_wizard()
+            lit_dark_block.click_on_checkmark_button()
 
             lit_dark_block.click_on_go_back_button()
             strategies_wizard.click_on_save_changes()

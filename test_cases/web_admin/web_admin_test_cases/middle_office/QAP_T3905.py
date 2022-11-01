@@ -50,8 +50,8 @@ class QAP_T3905(CommonTestCase):
         dimensions_tab.set_side(self.side)
         dimensions_tab.set_execution_policy(self.execution_policy)
         dimensions_tab.set_client(self.client)
-        dimensions_tab.set_commission_amount_type(self.commission_amount_type)
-        dimensions_tab.set_commission_profile(self.commission_profile)
+        values_tab.set_commission_amount_type(self.commission_amount_type)
+        values_tab.set_commission_profile(self.commission_profile)
         values_tab.set_name(self.name)
         values_tab.set_description(self.description)
 

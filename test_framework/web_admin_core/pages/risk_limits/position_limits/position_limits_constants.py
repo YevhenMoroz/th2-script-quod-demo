@@ -1,5 +1,5 @@
 class PositionsLimitsConstants:
-    POSITIONS_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='PositionLimits ']"
+    POSITIONS_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Position Limits ']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"

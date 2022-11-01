@@ -1,5 +1,5 @@
 class CumTrdLmtCounterConstants:
-    CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='CumTrdLmt Counter ']"
+    CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Cum Trading Limit Counters ']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -14,7 +14,7 @@ class CumTrdLmtCounterConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[normalize-space()="CumTrdLmt Counter"]//..//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Cum Trading Limit Counters"]//..//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"

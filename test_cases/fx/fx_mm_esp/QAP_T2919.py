@@ -55,7 +55,7 @@ class QAP_T2919(TestCase):
 
         self.no_md_entries = [
             {"MDEntryType": "0",
-             "MDEntryPx": 118.172,
+             "MDEntryPx": 118.174,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
@@ -68,15 +68,15 @@ class QAP_T2919(TestCase):
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
         self.ask_spot_without_int = 118.186
-        self.bid_spot_without_int = 118.172
-        self.ask_pts = 0.03001
-        self.bid_pts = -0.01495
-        self.expected_ask_px = str(round(float(self.ask_spot_without_int + self.ask_pts), 5))
-        self.expected_bid_px = str(round(float(self.bid_spot_without_int + self.bid_pts), 5))
+        self.bid_spot_without_int = 118.174
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition
+        #  subscribing to marketdata in order to be able to set new marketdata for the instrument:
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
@@ -88,11 +88,15 @@ class QAP_T2919(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        ask_pts = float(response[-1].get_parameters()["NoMDEntries"][1]["MDEntryForwardPoints"])
+        bid_pts = float(response[-1].get_parameters()["NoMDEntries"][0]["MDEntryForwardPoints"])
+        expected_ask_px = str(round(float(self.ask_spot_without_int + ask_pts), 5))
+        expected_bid_px = str(round(float(self.bid_spot_without_int + bid_pts), 5))
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.expected_bid_px)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.expected_ask_px)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=expected_bid_px)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=expected_ask_px)
+
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

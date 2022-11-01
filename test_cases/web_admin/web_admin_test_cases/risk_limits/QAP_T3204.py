@@ -116,8 +116,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         risk_limit_dimension_page.click_on_more_actions()
         risk_limit_dimension_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
@@ -163,8 +163,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         trading_limits_page.click_on_more_actions()
         trading_limits_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         wizard.click_on_revert_changes()
@@ -176,7 +176,7 @@ class QAP_T3204(CommonTestCase):
         trading_limits_page.click_on_delete(True)
         trading_limits_page.set_description(self.name)
         time.sleep(1)
-        self.verify("Risk Limit Dimension entity deleted", False,
+        self.verify("Trading Limit entity deleted", False,
                     trading_limits_page.is_searched_entity_found_by_description(self.name))
 
     def cum_trading_limits(self):
@@ -208,8 +208,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         cum_trading_page.click_on_more_actions()
         cum_trading_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
@@ -222,7 +222,7 @@ class QAP_T3204(CommonTestCase):
         cum_trading_page.click_on_delete(True)
         cum_trading_page.set_description(self.name)
         time.sleep(1)
-        self.verify("Risk Limit Dimension entity deleted", False,
+        self.verify("Cum Trading Limits entity deleted", False,
                     cum_trading_page.is_searched_cum_trading_limits_found(self.name))
 
     def position_limits(self):
@@ -253,8 +253,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         position_limits_page.click_on_more_actions()
         position_limits_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
@@ -267,12 +267,14 @@ class QAP_T3204(CommonTestCase):
         position_limits_page.click_on_delete(True)
         position_limits_page.set_description(self.name)
         time.sleep(1)
-        self.verify("Risk Limit Dimension entity deleted", False,
+        self.verify("Position Limits entity deleted", False,
                     position_limits_page.is_searched_entity_found(self.name))
 
     def price_tolerance_control(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_price_tolerance_control_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         price_tolerance_page = PriceToleranceLimitPage(self.web_driver_container)
         price_tolerance_page.click_on_new()
         value_tab = PriceToleranceControlSubWizard(self.web_driver_container)
@@ -299,8 +301,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         price_tolerance_page.click_on_more_actions()
         price_tolerance_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
@@ -313,7 +315,7 @@ class QAP_T3204(CommonTestCase):
         price_tolerance_page.click_on_delete(True)
         price_tolerance_page.set_name(self.name)
         time.sleep(1)
-        self.verify("Risk Limit Dimension entity deleted", False,
+        self.verify("Price Tolerance Control entity deleted", False,
                     price_tolerance_page.is_searched_entity_found_by_name(self.name))
 
     def order_velocity_limits(self):
@@ -346,8 +348,8 @@ class QAP_T3204(CommonTestCase):
         time.sleep(1)
         order_velocity_limit_page.click_on_more_actions()
         order_velocity_limit_page.click_on_edit()
-
-        self.verify("Institutions has been cleared", "", assignments_tab.get_institution())
+        actual_result = False if self.institution in assignments_tab.get_institution() else True
+        self.verify("Institutions has been cleared", True, actual_result)
 
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
@@ -360,7 +362,7 @@ class QAP_T3204(CommonTestCase):
         order_velocity_limit_page.click_on_delete(True)
         order_velocity_limit_page.set_name(self.name)
         time.sleep(1)
-        self.verify("Risk Limit Dimension entity deleted", False,
+        self.verify("Order Velocity Limits entity deleted", False,
                     order_velocity_limit_page.is_searched_entity_found_by_name(self.name))
 
     def test_context(self):
@@ -373,7 +375,7 @@ class QAP_T3204(CommonTestCase):
             self.position_limits()
             time.sleep(2)
             self.price_tolerance_control()
-            time.sleep(1)
+            time.sleep(2)
             self.order_velocity_limits()
 
         except Exception:
