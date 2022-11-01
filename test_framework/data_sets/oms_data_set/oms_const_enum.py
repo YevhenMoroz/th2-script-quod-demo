@@ -59,7 +59,7 @@ class OmsJavaApiInstruments(Enum):
     instrument_2 = dict(
         InstrSymbol='ISI3',
         SecurityID='ISI3',
-        SecurityIDSource='4',
+        SecurityIDSource='ISI',
         InstrType="Equity",
         SecurityExchange="XEUR"
     )
@@ -284,6 +284,7 @@ class OMSCommissionProfiles(Enum):
     abs_amt_2 = 8
     abs_amt_3 = 9
     commission_with_minimal_value = 600018
+    client_commission_percentage = 15
 
 
 class OMSFeeType(Enum):
