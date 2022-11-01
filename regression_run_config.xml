@@ -855,6 +855,9 @@
                         <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                         <trading_rest_api_environments>
                             <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>

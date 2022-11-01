@@ -24,6 +24,7 @@ from test_cases.ret.REST_API.Web_Admin_REST.Client_Accounts_API.QAP_T3804 import
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3139 import QAP_T3139
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3140 import QAP_T3140
 from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3353 import QAP_T3353
+from test_cases.ret.REST_API.Web_Admin_REST.Positions_API.QAP_T3413 import QAP_T3413
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3128 import QAP_T3128
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3159 import QAP_T3159
 from test_cases.ret.REST_API.Web_Admin_REST.Risk_Limits_API.QAP_T3203 import QAP_T3203
@@ -193,8 +194,10 @@ def test_run():
         #           configuration_admin_api_positions.environment).execute()
         # QAP_T3140(report_id, configuration_admin_api_positions.data_set,
         #           configuration_admin_api_positions.environment).execute()
-        QAP_T3353(report_id, configuration_admin_api_positions.data_set,
-                  configuration_admin_api_positions.environment).execute()
+        # QAP_T3353(report_id, configuration_admin_api_positions.data_set,
+        #           configuration_admin_api_positions.environment).execute()
+        QAP_T3413(report_id, configuration_admin_api_positions.data_set,
+                           configuration_admin_api_positions.environment).execute()
         # endregion
 
         # region Admin API __Client/Accounts__ block
