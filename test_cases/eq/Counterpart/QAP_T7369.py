@@ -1,5 +1,6 @@
 import logging
 import time
+from copy import deepcopy
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
@@ -135,8 +136,10 @@ class QAP_T7369(TestCase):
              "Account": self.account})
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
+
         # region Check ExecutionReports
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
+        parties['NoPartyIDs'][-1] = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
 
