@@ -2,19 +2,27 @@ import logging
 import time
 
 from pathlib import Path
-from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import AllocationInstructionConst, OrderReplyConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
+    ComputeBookingFeesCommissionsRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns, AllocationsColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,6 +39,8 @@ class QAP_T7180(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.qty = '7180'
         self.price = '10'
         self.rule_manager = RuleManager(sim=Simulators.equity)
@@ -38,12 +48,16 @@ class QAP_T7180(TestCase):
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')  # MOClient_EUREX
         self.venue = self.data_set.get_mic_by_name('mic_2')  # XEUR
         self.client = self.data_set.get_client('client_com_1')  #
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.comp_comm = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
+        self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.trade_entry_request = TradeEntryOMS(self.data_set)
+        self.dfd_manage = DFDManagementBatchOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -63,124 +77,116 @@ class QAP_T7180(TestCase):
                 self.venue_client_names,
                 self.venue,
                 float(self.price))
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                            self.venue_client_names,
-                                                                                            self.venue,
-                                                                                            float(self.price),
-                                                                                            int(self.qty), 0)
             self.fix_message.set_default_dma_limit(instr='instrument_3')
             self.fix_message.change_parameters(
                 {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
                  'Currency': self.currency, 'ExDestination': 'XEUR'})
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
             order_id = response[0].get_parameters()['OrderID']
+            cl_order_id  = response[0].get_parameters()['ClOrdID']
 
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(new_order_single)
-            self.rule_manager.remove_rule(trade_rule)
+        # endregion
+
+        # region  execute DMA order (precondition)
+        self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
+        self.__return_result(responses, ORSMessageType.ExecutionReport.value)
+        exec_id = self.result.get_parameter('ExecutionReportBlock')['ExecID']
+        # endregion
+
+        # region  complete DMA order (precondition)
+        self.dfd_manage.set_default_complete(order_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.dfd_manage)
+        self.__return_result(responses, ORSMessageType.ExecutionReport.value)
+        calc_id = self.result.get_parameter('ExecutionReportBlock')['ExecID']
         # endregion
 
         # region check expected result from precondition
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        dict_of_extraction = {OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value,
-                              OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value}
-        expected_result = {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
-                           OrderBookColumns.exec_sts.value: ExecSts.filled.value}
-        message = "Comparing expected and actual result from precondition"
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
+        # execution_report = FixMessageExecutionReportOMS(self.data_set)
+        # execution_report.set_default_filled(self.fix_message)
+        # self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
 
         # region step 1
-        filter_list = [MiddleOfficeColumns.order_id.value, order_id]
-        self.middle_office.book_order(filter_list)
+        instrument_id = self.data_set.get_instrument_id_by_name('instrument_3')
+        listing_id = self.data_set.get_listing_id_by_name("listing_2")
+        commission = '1.5'
+        fee_rate = '0.01'
+        commission_rate = '0.5'
+        gross_currency_amt = str(int(self.qty) * int(self.price))
+        self.allocation_instruction.set_default_book(order_id)
+        post_trade_sts = OrderReplyConst.PostTradeStatus_RDY.value
+        self.comp_comm.set_list_of_order_alloc_block(cl_order_id, order_id, post_trade_sts)
+        self.comp_comm.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trade_sts)
+        self.comp_comm.set_default_compute_booking_request(self.qty)
+        self.comp_comm.update_fields_in_component('ComputeBookingFeesCommissionsRequestBlock', {'AccountGroupID': self.client, 'AvgPx': '0.100000000'})
+        responses = self.java_api_manager.send_message_and_receive_response(self.comp_comm)
+        # self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        currency_GBP = self.data_set.get_currency_by_name('currency_2')
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
+                                                               {
+                                                                   'GrossTradeAmt': gross_currency_amt,
+                                                                   'AvgPx': self.price,
+                                                                   'Qty': self.qty,
+                                                                   'InstrID': instrument_id,
+                                                                   "Currency": self.data_set.get_currency_by_name(
+                                                                       "currency_3"),
+                                                                   "AccountGroupID": self.client,
+                                                                   'ClientCommissionList': {
+                                                                       'ClientCommissionBlock': [{
+                                                                           'CommissionAmountType': AllocationInstructionConst.CommissionAmountType_BRK.value,
+                                                                           'CommissionAmount': commission,
+                                                                           'CommissionBasis': AllocationInstructionConst.COMM_AND_FEES_BASIS_UNI.value,
+                                                                           'CommissionCurrency': currency_GBP,
+                                                                           'CommissionRate': commission_rate
+                                                                       }]
+                                                                   }
+                                                               })
+        # responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        # self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        # alloc_id = self.result.get_parameter('AllocationReportBlock')['ClientAllocID']
         # endregion
 
         # region check actual result from step 1
-        expected_result = {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value}
-        dict_of_extraction = {OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value}
-        message = "Comparing expected and actual values after book of order(step 1)"
-        self.__check_expected_result_from_order_book(filter_list, expected_result, dict_of_extraction, message)
-        list_of_column = [MiddleOfficeColumns.conf_service.value]
-        expected_result.clear()
-        filter_list = [MiddleOfficeColumns.order_id.value, order_id]
-        expected_result.update({MiddleOfficeColumns.conf_service.value: MiddleOfficeColumns.manual.value})
-        message = message.replace('order', 'block')
-        self.__extract_and_check_value_from_block(list_of_column, filter_list, expected_result, message)
+
         # endregion
 
         # region step 2
-        self.middle_office.approve_block()
+        # self.approve_message.set_default_approve(alloc_id)
+        # self.java_api_manager.send_message_and_receive_response(self.approve_message)
         # endregion
 
         # region check actual result from step 2
-        expected_result.clear()
-        expected_result.update({MiddleOfficeColumns.sts.value: MiddleOfficeColumns.accepted_sts.value,
-                                MiddleOfficeColumns.match_status.value: MiddleOfficeColumns.matched_sts.value})
-        list_of_column.clear()
-        list_of_column.extend([MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value])
-        message = "Comparing value after approve(step 2)"
-        self.__extract_and_check_value_from_block(list_of_column, filter_list, expected_result, message)
-        filter_dict = {filter_list[0]: filter_list[1]}
+
         # endregion
 
         # region step 3 and step 4
-        values = self.middle_office.extracting_values_from_allocation_ticket([PanelForExtraction.COMMISSION],
-                                                                             filter_dict)
-        values_splited = self.middle_office.split_fees(values)
-        expected_result_for_fees = {'Basis': 'Absolute,', 'Rate': '100,', 'Amount': '100,', 'Currency': 'GBP'}
-        self.middle_office.compare_values(expected_result_for_fees, values_splited[0],
-                                          'Comparing minimum Client commission from allovation Ticket')
+
         # endregion
 
         # region step 5
-        allocation_param = [
-            {AllocationsColumns.security_acc.value: self.data_set.get_account_by_name("client_com_1_acc_1"),
-             AllocationsColumns.alloc_qty.value: self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
-        self.middle_office.allocate_block(filter_list)
+
         # endregion
 
         # check result after step 5
-        expected_result.update({MiddleOfficeColumns.sts.value: MiddleOfficeColumns.accepted_sts.value,
-                                MiddleOfficeColumns.match_status.value: MiddleOfficeColumns.matched_sts.value,
-                                MiddleOfficeColumns.summary_status.value: MiddleOfficeColumns.matched_agreed_sts.value})
-        list_of_column.append(MiddleOfficeColumns.summary_status.value)
-        message = "Comparing expected and actual values after allocation for block (step 5)"
-        self.__extract_and_check_value_from_block(list_of_column, filter_list, expected_result, message)
-        actually_result_from_allocation = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value],
-            filter_dict_block=filter_dict,
-            clear_filter_from_block=True)
-        self.middle_office.compare_values({AllocationsColumns.sts.value: AllocationsColumns.affirmed_sts.value,
-                                           AllocationsColumns.match_status.value: AllocationsColumns.matced_sts.value},
-                                          actually_result_from_allocation,
-                                          'Comparing actual and expected result from allocation (step 5)')
+
         # endregion
 
         # region step 6
-        values = self.middle_office.extract_values_from_amend_allocation_ticket([PanelForExtraction.COMMISSION],
-                                                                                block_filter_dict=filter_dict)
-        result = self.middle_office.split_fees(values)
-        self.middle_office.compare_values(expected_result_for_fees, result[0],
-                                          'Comparing minimum Client commission from amend allocation Ticket')
+
         # endregion
 
-    def __check_expected_result_from_order_book(self, filter_list, expected_result, dict_of_extraction, message):
-        self.order_book.set_filter(filter_list=filter_list)
-        actual_result = self.order_book.extract_fields_list(
-            dict_of_extraction)
-        self.order_book.compare_values(expected_result, actual_result,
-                                       message)
-
-    def __extract_and_check_value_from_block(self, list_of_column, filter_list, expected_result, message):
-        self.middle_office.clear_filter()
-        actual_result = self.middle_office.extract_list_of_block_fields(list_of_column=list_of_column,
-                                                                        filter_list=filter_list)
-        self.middle_office.compare_values(expected_result, actual_result, message)
-
     @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_commissions()
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response
+
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_commissions()

@@ -63,7 +63,8 @@ class QAP_T8791(TestCase):
         self.aggressive_pov_qty_7 = 14223
         self.aggressive_pov_qty_8 = 16223
         self.aggressive_pov_qty_9 = 18223
-        self.aggressive_pov_qty_10 = 20223
+        self.aggressive_pov_qty_10_par = 20000
+        self.aggressive_pov_qty_10_trqx = 223
 
         self.check_order_sequence = False
         # endregion
@@ -250,9 +251,9 @@ class QAP_T8791(TestCase):
 
         # region Send MarketData to trigger the POV SOR Aggressive order creation
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger the POV Aggressive order creation", self.test_id))
-        market_data_incremental_trqx = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
-        market_data_incremental_trqx.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
-        self.fix_manager_feed_handler.send_message(market_data_incremental_trqx)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
+        self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
         time.sleep(20)
         # endregion
@@ -661,7 +662,7 @@ class QAP_T8791(TestCase):
         # region Check of 10st aggressive SOR order
         # region Aggressive XPAR order
         ioc_child_order_par_10 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        ioc_child_order_par_10.change_parameters(dict(Account=self.account_xpar, OrderQty=self.aggressive_pov_qty_10, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
+        ioc_child_order_par_10.change_parameters(dict(Account=self.account_xpar, OrderQty=self.aggressive_pov_qty_10_par, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
 
         pending_ioc_child_order_par_10_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_10, self.gateway_side_buy, self.status_pending)
 
@@ -672,7 +673,7 @@ class QAP_T8791(TestCase):
 
         # region Aggressive TRQX order
         ioc_child_order_trqx_10 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        ioc_child_order_trqx_10.change_parameters(dict(Account=self.account_trqx, OrderQty=self.aggressive_pov_qty_10, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
+        ioc_child_order_trqx_10.change_parameters(dict(Account=self.account_trqx, OrderQty=self.aggressive_pov_qty_10_trqx, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
 
         pending_ioc_child_order_trqx_10_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_10, self.gateway_side_buy, self.status_pending)
 

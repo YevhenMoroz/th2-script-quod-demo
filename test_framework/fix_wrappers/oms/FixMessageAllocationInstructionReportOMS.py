@@ -19,7 +19,7 @@ class FixMessageAllocationInstructionReportOMS(FixMessageAllocationInstructionRe
 
     def set_default_ready_to_book(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
-            'Account': new_order_single.get_parameter('Account'),
+            # 'Account': new_order_single.get_parameter('Account'),
             'NoParty': '*',
             'AllocInstructionMiscBlock1': '*',
             'Quantity': new_order_single.get_parameter("OrderQtyData")['OrderQty'],

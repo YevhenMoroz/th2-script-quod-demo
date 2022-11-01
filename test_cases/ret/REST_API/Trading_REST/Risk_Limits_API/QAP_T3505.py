@@ -24,7 +24,7 @@ class QAP_T3505(TestCase):
         self.wa_api_manager = WebAdminRestApiManager(session_alias=self.web_admin, case_id=self.test_id)
         self.nos_message = ApiMessageNewOrderSingle(data_set=self.data_set)
         self.cum_trading_limit_counter = RestApiCumTradingLimitCounter(data_set=data_set)
-        self.error_message = "11824 &apos;Calculated CumLeavesOrdAmt&apos; (200) greater than MaxCumLeavesOrdAmt (100)"
+        self.error_message = "11824 &apos;Calculated CumLeavesOrdAmt&apos; (300) greater than MaxCumLeavesOrdAmt (100)"
         self.client = self.data_set.get_client_by_name('client_7')
         self.account = self.data_set.get_account_by_name('account_7')
         self.cash_account = self.data_set.get_cash_account_by_name('cash_account_4')
@@ -34,6 +34,7 @@ class QAP_T3505(TestCase):
         # region Send new order and verify result
         self.nos_message.set_default_request()
         self.nos_message.change_parameter(parameter_name='OrdQty', new_parameter_value=100)
+        self.nos_message.change_parameter(parameter_name='Price', new_parameter_value=3)
         self.nos_message.change_parameter_in_component(component_name='PreTradeAllocations',
                                                        fields={'AllocQty': 100})
         self.nos_message.change_parameter_in_component(component_name='PreTradeAllocations',
