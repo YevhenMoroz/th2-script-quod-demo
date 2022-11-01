@@ -30,6 +30,14 @@ class ClientsVenuesSubWizard(CommonPage):
     def get_venue(self):
         return self.get_text_by_xpath(ClientsConstants.VENUES_TAB_VENUE_XPATH)
 
+    def get_all_venue_from_drop_menu(self):
+        self.click_on_plus()
+        self.set_text_by_xpath(ClientsConstants.VENUES_TAB_VENUE_XPATH, "")
+        time.sleep(1)
+        available_venues = self.get_all_items_from_drop_down(ClientsConstants.VENUES_TAB_VENUE_XPATH)
+        self.click_on_cancel()
+        return available_venues
+
     def set_venue_filter(self, value):
         self.set_text_by_xpath(ClientsConstants.VENUES_TAB_VENUE_FILTER_XPATH, value)
 

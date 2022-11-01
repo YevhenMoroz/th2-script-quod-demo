@@ -112,6 +112,12 @@ class ListingsValuesSubWizard(CommonPage):
     def get_instr_settl_date(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_SETTL_DATE_XPATH)
 
+    def set_opt_attr(self, value):
+        self.set_text_by_xpath(ListingsConstants.VALUES_TAB_OPT_ATTR_XPATH, value)
+
+    def get_opt_attr(self):
+        return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_OPT_ATTR_XPATH)
+
     def is_tenor_field_required(self):
         return "ng-invalid" in self.find_by_xpath(ListingsConstants.VALUES_TAB_TENOR_XPATH).get_attribute("class")
 

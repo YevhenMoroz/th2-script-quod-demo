@@ -19,6 +19,7 @@ class ListingCumTradingLimitCountersConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     MAIN_PAGE_DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
 
     # Main page
     MAIN_PAGE_LISTING_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -34,5 +35,5 @@ class ListingCumTradingLimitCountersConstants:
     WIZARD_CUM_ORD_AMT_XPATH = '//*[@formcontrolname="cumOrdAmt"]'
     WIZARD_CUM_SELL_ORD_QTY_XPATH = '//*[@formcontrolname="cumSellOrdQty"]'
     WIZARD_CUM_BUY_ORD_AMT_XPATH = '//*[@formcontrolname="cumBuyOrdAmt"]'
-    WIZARD_ORD_QTY_XPATH = '//*[@formcontrolname="cumOrdQty"]'
+    WIZARD_CUM_ORD_QTY_XPATH = '//*[@formcontrolname="cumOrdQty"]'
     WIZARD_CUM_SELL_ORD_AMT_XPATH = '//*[@formcontrolname="cumSellOrdAmt"]'

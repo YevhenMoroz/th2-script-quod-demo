@@ -59,6 +59,7 @@ class ListingsConstants:
     VALUES_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]'
     VALUES_TAB_CALL_PUT_XPATH = '//*[@id="callPut"]'
     VALUES_TAB_INSTR_SETTL_DATE_XPATH = '//*[@formcontrolname="instrSettlDate"]'
+    VALUES_TAB_OPT_ATTR_XPATH = '//*[@formcontrolname="optAttr"]'
 
     # Translation tab
     TRANSLATION_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
