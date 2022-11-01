@@ -164,12 +164,12 @@ class QAP_T4128(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params.add_tag(dict(SettlType='*', SettlDate='*'))
+        replaced_multilisting_order_params.add_tag(dict(SettlType='*', SettlDate='*')).remove_parameter('ExpireDate')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
         replaced_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
-        replaced_dma_order_params.change_parameters(dict(TimeInForce=self.tif_day))
+        replaced_dma_order_params.change_parameters(dict(TimeInForce=self.tif_day)).remove_parameter('ExpireDate')
         self.fix_verifier_buy.check_fix_message(replaced_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy Side ExecReport Replace Request')
         # endregion
 
@@ -181,7 +181,7 @@ class QAP_T4128(TestCase):
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
         cancel_request_multilisting_order = FixMessageOrderCancelRequest(self.multilisting_order)
-
+        cancel_request_multilisting_order.remove_parameter('ExpireDate')
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 

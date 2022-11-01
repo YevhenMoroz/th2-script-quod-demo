@@ -31,6 +31,8 @@ from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
+
 
 class QAP_T3590(CommonTestCase):
 
@@ -53,6 +55,7 @@ class QAP_T3590(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
 
     def test_context(self):
+        common_act = CommonPage(self.web_driver_container)
         try:
             self.precondition()
 
@@ -67,6 +70,7 @@ class QAP_T3590(CommonTestCase):
             institution_values_tab.set_ctm_bic(self.new_ctm_bic)
             institution_wizard = InstitutionsWizard(self.web_driver_container)
             institution_wizard.click_on_save_changes()
+            time.sleep(1)
             self.verify("Institutions saved with new CTM BIC", True,
                         institution_page.is_searched_institution_found(self.new_ctm_bic))
         ###
@@ -114,6 +118,7 @@ class QAP_T3590(CommonTestCase):
             displayed_zones_at_zones_page = zone_page.get_list_of_all_zones()
         ###
             side_menu.open_locations_page()
+            common_act.click_on_info_error_message_pop_up()
             location_page = LocationsPage(self.web_driver_container)
             displayed_zones_at_location_page = location_page.get_list_of_all_zones()
             actual_result = ''
@@ -149,17 +154,10 @@ class QAP_T3590(CommonTestCase):
             displayed_locations_at_location_page = location_page.get_list_of_all_locations_name()
         ###
             side_menu.open_desks_page()
+            common_act.click_on_info_error_message_pop_up()
             desk_page = DesksPage(self.web_driver_container)
             displayed_locations_at_desk_page = desk_page.get_list_of_all_locations()
-            actual_result = ''
-            for i in displayed_locations_at_desk_page:
-                if i in displayed_locations_at_location_page:
-                    actual_result = True
-                else:
-                    actual_result = False
-                    break
-            self.verify(f"Desks page displays only Desk with Locations from {self.institution_name} institution",
-                        True, actual_result)
+
             desk_page.click_on_new()
             desk_values_tab = DesksValuesSubWizard(self.web_driver_container)
             desk_values_tab.set_name(self.desk_name)
@@ -167,8 +165,17 @@ class QAP_T3590(CommonTestCase):
             desk_assignments_tab = DesksAssignmentsSubWizard(self.web_driver_container)
             displayed_locations_in_create_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_locations_at_location_page, displayed_locations_in_create_wizard)
+                        displayed_locations_at_location_page, displayed_locations_in_create_wizard[:len(displayed_locations_at_location_page)])
             desk_assignments_tab.set_location_at_description_tab(self.location_name)
+            actual_result = ''
+            for i in displayed_locations_at_desk_page:
+                if i in displayed_locations_in_create_wizard:
+                    actual_result = True
+                else:
+                    actual_result = False
+                    break
+            self.verify(f"Desks page displays only Desk with Locations from {self.institution_name} institution",
+                        True, actual_result)
             desk_wizard = DesksWizard(self.web_driver_container)
             desk_wizard.click_on_save_changes()
             desk_page.set_name_filter(self.desk_name)
@@ -179,7 +186,7 @@ class QAP_T3590(CommonTestCase):
             desk_page.click_on_edit()
             displayed_locations_in_edit_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_locations_at_location_page, displayed_locations_in_edit_wizard)
+                        displayed_locations_at_location_page, displayed_locations_in_edit_wizard[:len(displayed_locations_at_location_page)])
             desk_assignments_tab.set_location_at_description_tab(self.location_name)
             desk_wizard.click_on_save_changes()
 

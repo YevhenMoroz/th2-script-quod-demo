@@ -17,9 +17,8 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.parameters = {
             'URI':
                 {
-                    'clientTierID': client_tier_id,
-                    'currency1': instrument.split('/')[0],
-                    'currency2': instrument.split('/')[1],
+                    'tier_id': client_tier_id,
+                    'symbol': instrument
                 }
         }
         self.message_type = 'FindClientTierInstrSymbol'

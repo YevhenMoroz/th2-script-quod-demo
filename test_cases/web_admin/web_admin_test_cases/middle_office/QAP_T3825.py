@@ -10,8 +10,8 @@ from test_framework.web_admin_core.pages.middle_office.commissions.commissions_c
     CommissionsCommissionProfilesSubWizard
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commission_profile_points_sub_wizard import \
     CommissionsCommissionProfilePointsSubWizard
-from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
-    CommissionsDimensionsSubWizard
+from test_framework.web_admin_core.pages.middle_office.commissions.commissions_values_sub_wizard import \
+    CommissionsValuesSubWizard
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -36,45 +36,31 @@ class QAP_T3825(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_commissions_page()
         main_page = CommissionsPage(self.web_driver_container)
-        dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        values_tab = CommissionsValuesSubWizard(self.web_driver_container)
         main_page.click_on_new()
-        time.sleep(1)
-        dimensions_tab.click_on_manage_commission_profile()
-        time.sleep(1)
+        values_tab.click_on_manage_commission_profile()
         commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
         ###
         commissions_profiles.click_on_plus()
-        time.sleep(2)
         commissions_profiles.set_commission_profile_name(self.commission_profile_name)
-        time.sleep(1)
         commissions_profiles.set_comm_xunit(self.comm_xunit)
-        time.sleep(1)
         commissions_profiles.set_comm_algorithm(self.comm_algorithm)
-        time.sleep(1)
         commission_profile_points = CommissionsCommissionProfilePointsSubWizard(self.web_driver_container)
         commission_profile_points.click_on_plus()
-        time.sleep(1)
         commission_profile_points.set_base_value(self.base_value)
-        time.sleep(1)
         commission_profile_points.click_on_checkmark()
-        time.sleep(1)
         commissions_profiles.click_on_checkmark()
-        time.sleep(2)
         commissions_profiles.set_commission_profile_name_filter(self.commission_profile_name)
-        time.sleep(2)
+        time.sleep(1)
         commissions_profiles.click_on_edit()
         self.commission_profile_name_buffer_to_delete = commissions_profiles.get_commission_profile_name()
-        time.sleep(2)
         commissions_profiles.click_on_checkmark()
-        time.sleep(2)
+        time.sleep(1)
         commissions_profiles.click_on_delete()
-        time.sleep(2)
         wizard = CommissionsWizard(self.web_driver_container)
         wizard.click_on_ok()
-        time.sleep(2)
 
     def test_context(self):
 
@@ -82,7 +68,6 @@ class QAP_T3825(CommonTestCase):
             self.precondition()
             commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
             commissions_profiles.set_commission_profile_name_filter(self.commission_profile_name_buffer_to_delete)
-            time.sleep(2)
             try:
                 commissions_profiles.click_on_edit()
                 self.verify("Commission profile name didn't delete", True, False)
