@@ -163,6 +163,7 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
+    # It is draft
     def correct_expire_date_if_it_is_on_weekend(day: int) -> int:
         shift = 0
         if day == 5:
