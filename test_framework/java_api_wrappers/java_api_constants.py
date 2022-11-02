@@ -4,6 +4,7 @@ from enum import Enum
 class ExecutionReportConst(Enum):
     TransExecStatus_FIL = 'FIL'
     TransExecStatus_PFL = 'PFL'
+    ExecType_TRD = 'TRD'
 
 
 class BasketMessagesConst(Enum):
@@ -147,6 +148,13 @@ class JavaApiFields(Enum):
     RootMiscFeeAmt = 'RootMiscFeeAmt'
     RootMiscFeesBlock = 'RootMiscFeesBlock'
     RootMiscFeesList = 'RootMiscFeesList'
+    CommissionBasis = 'CommissionBasis'
+    CommissionAmountType = 'CommissionAmountType'
+    CommissionRate = 'CommissionRate'
+    CommissionCurrency = 'CommissionCurrency'
+    CommissionAmount = 'CommissionAmount'
+    ClientCommissionList = 'ClientCommissionList'
+    ClientCommissionBlock = 'ClientCommissionBlock'
 
 
 class JavaApiPartyRoleConstants(Enum):
