@@ -91,9 +91,8 @@ class QAP_T5008(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         self.nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price, self.price, self.display_qty, self.display_qty, self.delay_for_trade)
-        nos__rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, True)
-        self.rule_list = [nos__rule, ocr_rule]
+        self.rule_list = [ocr_rule]
         # endregion
 
         # region Send_MarketData
@@ -130,8 +129,11 @@ class QAP_T5008(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
         rule_manager.remove_rule(self.nos_trade_rule)
+        rule_manager.print_active_rules()
+        self.nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price)
 
         time.sleep(3)
+
         # endregion
 
         # region Check Sell side
@@ -176,7 +178,7 @@ class QAP_T5008(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check childs", self.test_id))
 
         self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order_params, er_pending_new_dma_2_order_params, er_new_dma_2_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order_params, er_pending_new_dma_2_order_params, er_new_dma_2_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
         # endregion
 
         time.sleep(10)
@@ -202,3 +204,4 @@ class QAP_T5008(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
+        rule_manager.remove_rule(self.nos_rule)
