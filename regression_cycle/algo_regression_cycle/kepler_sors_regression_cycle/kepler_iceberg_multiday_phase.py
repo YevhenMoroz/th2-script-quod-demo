@@ -3,6 +3,9 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4182 import QAP_T4182
 from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4183 import QAP_T4183
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T5007 import QAP_T5007
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T5008 import QAP_T5008
+from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T5040 import QAP_T5040
 from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T5041 import QAP_T5041
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -20,6 +23,9 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfiguration("Lit_dark_iceberg")
         QAP_T4182(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4183(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5007(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5008(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5040(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5041(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
