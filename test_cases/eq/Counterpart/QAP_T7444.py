@@ -65,12 +65,13 @@ class QAP_T7444(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields = ['Account', 'PartyRoleQualifier']
+        list_of_ignored_fields = ['Account', 'PartyRoleQualifier', "PtysSubGrp"]
         party_stub_dict = {'PartyRole': "*",
                            'PartyID': "*",
                            'PartyIDSource': "*"}
         parties = {
             'NoPartyIDs': [
+                party_stub_dict,
                 party_stub_dict,
                 party_stub_dict,
                 party_stub_dict,

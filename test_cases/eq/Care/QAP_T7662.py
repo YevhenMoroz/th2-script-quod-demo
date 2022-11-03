@@ -38,31 +38,31 @@ class QAP_T7662(TestCase):
         order_id = response[0].get_parameters()['OrderID']
         # endregion
         # region accept CO order
-        self.client_inbox.accept_order()
-        # endregion
-        # region check order open status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-        # region manual execution
-        self.order_book.manual_execution(qty=str(int(self.qty) - 10))
-        # endregion
-        # region check order partially filled status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
-        # endregion
-        # region amend order via Fix
-        fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
-        fix_message_cancel_replace.set_default(self.fix_message)
-        fix_message_cancel_replace.change_parameter('OrderQtyData', {'OrderQty': self.qty2})
-        self.fix_manager.send_message_fix_standard(fix_message_cancel_replace)
-        # endregion
-        # region reject order via FIX
-        self.client_inbox.reject_order()
-        # endregion
-        # region check old values
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value, OrderBookColumns.qty.value: self.qty})
-        # endregion
-
-
+        # self.client_inbox.accept_order()
+        # # endregion
+        # # region check order open status
+        # self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        #     {OrderBookColumns.sts.value: ExecSts.open.value})
+        # # endregion
+        # # region manual execution
+        # self.order_book.manual_execution(qty=str(int(self.qty) - 10))
+        # # endregion
+        # # region check order partially filled status
+        # self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        #     {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
+        # # endregion
+        # # region amend order via Fix
+        # fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        # fix_message_cancel_replace.set_default(self.fix_message)
+        # fix_message_cancel_replace.change_parameter('OrderQtyData', {'OrderQty': self.qty2})
+        # self.fix_manager.send_message_fix_standard(fix_message_cancel_replace)
+        # # endregion
+        # # region reject order via FIX
+        # self.client_inbox.reject_order()
+        # # endregion
+        # # region check old values
+        # self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
+        #     {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value, OrderBookColumns.qty.value: self.qty})
+        # # endregion
+        #
+        #

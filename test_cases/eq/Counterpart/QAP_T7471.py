@@ -72,6 +72,9 @@ class QAP_T7471(TestCase):
             {'PartyRole': "*",
              'PartyID': "*",
              'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"},
         ]
         # endregion
         # region Execute Order
@@ -156,9 +159,6 @@ class QAP_T7471(TestCase):
 
         # region Check AllocationReport
         parties[1] = self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm_2')
-        parties.append({'PartyRole': "*",
-                        'PartyID': "*",
-                        'PartyIDSource': "*"})
         self.alloc_report.add_tag(
             {"NoParty": {"NoParty": parties}, "RootCommTypeClCommBasis": "*", "tag5120": "*",
              "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", })

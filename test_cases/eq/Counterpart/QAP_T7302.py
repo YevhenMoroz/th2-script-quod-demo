@@ -49,6 +49,7 @@ class QAP_T7302(TestCase):
             self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
             self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
         ]}}
         self.exec_report.add_tag(party)
         self.exec_report.add_tag({"ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
