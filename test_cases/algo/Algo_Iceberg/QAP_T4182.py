@@ -140,9 +140,8 @@ class QAP_T4182(TestCase):
 
         # region Send_MarkerData Close
         market_data_inc_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
-        market_data_inc_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask, TradingSessionSubID='4', SecurityTradingStatus='2')
+        market_data_inc_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask, TradingSessionSubID='1', SecurityTradingStatus='2')
         self.fix_manager_feed_handler.send_message(market_data_inc_par)
-        time.sleep(3)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
