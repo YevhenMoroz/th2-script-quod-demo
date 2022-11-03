@@ -69,9 +69,8 @@ class QAP_T2734(TestCase):
                                                                         {"InstrSymbol": self.eur_usd,
                                                                          "ClientTierID": self.silver_id})
         self.quote_adjustment.disable_pricing_by_index(2).disable_pricing_by_index(3)
-        self.sleep(2)
         self.java_manager.send_message(self.quote_adjustment)
-        time.sleep(1)
+        time.sleep(2)
         # endregion
 
         # region Step 2
@@ -84,7 +83,6 @@ class QAP_T2734(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, QuoteCondition="B")
-        self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # region Step 3
         self.new_order_single.set_default().change_parameters(
