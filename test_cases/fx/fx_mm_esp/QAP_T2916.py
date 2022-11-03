@@ -43,11 +43,11 @@ class QAP_T2916(TestCase):
         self.no_related_symbols_spot = [{
             'Instrument': self.instrument_spot,
             'SettlType': self.settle_type_spot}]
-        self.md_eur_gbp_spo = "EUR/CAD:SPO:REG:HSBC"
+        self.md_eur_gbp_spo = "USD/PHP:SPO:REG:HSBC"
         self.md_entry_px_0 = 1.1815
         self.md_entry_px_1 = 1.18151
-        self.mm_md_entry_px_0 = 1.1854
-        self.mm_md_entry_px_1 = 1.19539
+        self.mm_md_entry_px_0 = 1.18537
+        self.mm_md_entry_px_1 = 1.19536
         self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
         self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
         self.no_md_entries = [
@@ -75,7 +75,7 @@ class QAP_T2916(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step Precondition
-        #  subscribing to marketdata in order to be able to set new marketdata for the instrument:
+        #  subscribing to md to be able to set new md for the instrument:
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.platinum)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
