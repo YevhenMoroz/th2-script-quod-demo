@@ -57,7 +57,7 @@ class QAP_T2460(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.manual_settings_request.set_default_params()
-        self.manual_settings_request.set_pricing_off()
+        self.manual_settings_request.set_executable_off()
         self.java_manager.send_message(self.manual_settings_request)
         time.sleep(1)
         # endregion
