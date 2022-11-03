@@ -54,13 +54,13 @@ class QAP_T2404(TestCase):
         self.time_instr_2 = (datetime.now() - timedelta(hours=1))
         self.timestamp_instr_1 = str(datetime.timestamp(self.time_instr_1)).replace(".", "")[:13]
         self.timestamp_instr_2 = str(datetime.timestamp(self.time_instr_2)).replace(".", "")[:13]
-        self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.time_instr_2})"
+        # self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.time_instr_2})"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.modify_client_tier.find_all_client_tier()
-        self.msg_prams_client = self.rest_manager.send_get_request(self.modify_client_tier)
+        self.modify_client_tier.find_client_tier(self.client_id)
+        self.msg_prams_client = self.rest_manager.send_get_request_filtered(self.modify_client_tier)
         self.msg_prams_client = self.rest_manager.parse_response_details(self.msg_prams_client,
                                                                          {"clientTierID": self.client_id})
         self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams_client) \
@@ -68,8 +68,8 @@ class QAP_T2404(TestCase):
         self.rest_manager.send_post_request(self.modify_client_tier)
         # endregion
         # region Step 2
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.symbol)
+        self.msg_prams_instr = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr = self.rest_manager. \
             parse_response_details(self.msg_prams_instr, {"clientTierID": self.client_id, "instrSymbol": self.symbol})
         self.modify_instrument.clear_message_params().modify_client_tier_instrument().set_params(self.msg_prams_instr) \
@@ -87,7 +87,8 @@ class QAP_T2404(TestCase):
         self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region Step 4
-        self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
+        # self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
+        self.quote_reject.set_quote_reject_params(self.quote_request)
         self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
         self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
         # endregion
