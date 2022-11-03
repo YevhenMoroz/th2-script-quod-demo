@@ -46,7 +46,10 @@ class AllocationInstructionConst(Enum):
     RootMiscFeeType_EXC = 'EXC'
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
+    COMM_AND_FEES_BASIS_P = 'P'
     COMM_AND_FEES_BASIS_UNI = 'UNI'
+    COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
+    COMM_AND_FEES_TYPE_AGE = "AGE"
 
 
 class ConfirmationReportConst(Enum):
@@ -155,6 +158,10 @@ class JavaApiFields(Enum):
     CommissionAmount = 'CommissionAmount'
     ClientCommissionList = 'ClientCommissionList'
     ClientCommissionBlock = 'ClientCommissionBlock'
+    AllocReportID = 'AllocReportID'
+    AllocInstructionID = 'AllocInstructionID'
+    AllocType = 'AllocType'
+    AllocTransType = 'AllocTransType'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -180,3 +187,11 @@ class PegScopes(Enum):
 
 class PegOffsetTypes(Enum):
     Price = 'PRC'
+
+
+class AllocTransTypes(Enum):
+    AllocTransType_Replace = "R"
+
+
+class AllocTypes(Enum):
+    AllocType_P = 'Preliminary'
