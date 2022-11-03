@@ -24,6 +24,7 @@ class QAP_T8666(TestCase):
         self.venue_d3 = self.data_set.get_venue_by_name("venue_9")
         self.rejected = Status.Reject
         self.text = "11615 'VenueID': D3 not tradable"
+        self.qty = "1000000"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
