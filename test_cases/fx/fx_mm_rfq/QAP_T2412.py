@@ -61,8 +61,8 @@ class QAP_T2412(TestCase):
         # endregion
 
         # region Step 2
-        self.rest_massage.find_all_client_tier_instrument()
-        params_eur_gbp = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.client_tier_iridium, self.eur_gbp)
+        params_eur_gbp = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_eur_gbp = self.rest_manager. \
             parse_response_details(params_eur_gbp,
                                    {'clientTierID': self.client_tier_iridium, 'instrSymbol': self.eur_gbp})

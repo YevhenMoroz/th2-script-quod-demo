@@ -106,12 +106,13 @@ class QAP_T2380(TestCase):
         self.new_order_singe.set_default_SOR().update_repeating_group("NoStrategyParameters",
                                                                       self.no_strategy_parameters)
         self.new_order_singe.change_parameters({"TimeInForce": "3", "OrderQty": "2800000"})
-        self.fix_manager.send_message_and_receive_response(self.new_order_singe)
+        response = self.fix_manager.send_message_and_receive_response(self.new_order_singe)
         # endregion
         # region 3
         gateway_side_sell = GatewaySide.Sell
         status = Status.Fill
-        self.execution_report.set_params_from_new_order_single(self.new_order_singe, gateway_side_sell, status)
+        self.execution_report.set_params_from_new_order_single(self.new_order_singe, gateway_side_sell, status,
+                                                               response[-1])
         self.execution_report.change_parameter("LastQty", "1000000")
         self.fix_verifier.check_fix_message(fix_message=self.execution_report)
         # endregion

@@ -123,6 +123,7 @@ class QAP_T2836(TestCase):
 
         self.quote.set_params_for_quote_swap(self.quote_request, near_leg_bid_px=self.bid_px_ccy1,
                                              far_leg_off_px=self.offer_px_ccy1)
+        self.quote.remove_parameters(["BidSwapPoints", "BidPx"])
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
 
