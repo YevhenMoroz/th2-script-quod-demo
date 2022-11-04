@@ -21,9 +21,19 @@ class QAP_T8378(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_cancel = FixMessageQuoteCancelFX()
+        self.quote_cancel_receive = FixMessageQuoteCancelFX()
         self.quote_reject = FixMessageQuoteRequestRejectFX()
         self.client = self.data_set.get_client_by_name("client_mm_3")
+        self.security_type = self.data_set.get_security_type_by_name("fx_spot")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
         self.wrong_client = "WRONG_CLIENT"
+        self.instrument = {
+            "SecurityType": self.security_type,
+            "Symbol": self.symbol,
+            "SecurityID": self.symbol,
+            "SecurityIDSource": "8",
+            "Product": "4"
+        }
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -31,16 +41,17 @@ class QAP_T8378(TestCase):
         self.quote_request.set_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                                             Account=self.client)
         response: list = self.fix_manager_sell.send_message_and_receive_response(self.quote_request)
+        self.quote_cancel_receive.set_params_for_receive(self.quote_request)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
+                                                           Instrument=self.instrument)
         self.fix_verifier.check_fix_message(self.quote_request)
         # endregion
 
         # region Step 2
-        quote_id = response[0].get_parameter("QuoteID")
         self.quote_cancel.set_params_for_cancel(self.quote_request)
-        # self.quote_cancel.change_parameter("QuoteID", quote_id)
-        # self.quote_cancel.remove_parameter("QuoteReqID")
         self.fix_manager_sell.send_message(self.quote_cancel)
-        self.fix_verifier.check_fix_message(self.quote_cancel)
+
+        self.fix_verifier.check_fix_message(self.quote_cancel_receive)
         # endregion
         # region Step 3
         self.quote_request.set_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
