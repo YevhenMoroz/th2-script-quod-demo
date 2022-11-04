@@ -173,7 +173,7 @@ class AlgoFormulasManager:
         elif day == 6:
             shift += 1
         else:
-            shift = delta
+            shift = 0
         return shift
 
 
