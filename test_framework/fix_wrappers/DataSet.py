@@ -32,6 +32,14 @@ class Instrument(Enum):
         SecurityType='CS',
         SecurityDesc='DREAMNEX'
     )
+    FR0000121121 = dict(
+        Symbol='FR0000121121',
+        SecurityID='FR0000121121',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS',
+        SecurityDesc='EURAZEO'
+    )
     test = dict(
         Symbol='FR0010436000',
         SecurityID='FR0010436000',
@@ -102,6 +110,7 @@ class Connectivity(Enum):
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
     Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
+    Ganymede_316_Buy_Side_Redburn = 'fix-buy-side-316-ganymede-redburn'
     Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
