@@ -37,8 +37,8 @@ class QAP_T8378(TestCase):
         # region Step 2
         quote_id = response[0].get_parameter("QuoteID")
         self.quote_cancel.set_params_for_cancel(self.quote_request)
-        self.quote_cancel.change_parameter("QuoteID", quote_id)
-        self.quote_cancel.remove_parameter("QuoteReqID")
+        # self.quote_cancel.change_parameter("QuoteID", quote_id)
+        # self.quote_cancel.remove_parameter("QuoteReqID")
         self.fix_manager_sell.send_message(self.quote_cancel)
         self.fix_verifier.check_fix_message(self.quote_cancel)
         # endregion
