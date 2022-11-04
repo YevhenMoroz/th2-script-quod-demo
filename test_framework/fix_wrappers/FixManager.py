@@ -28,11 +28,11 @@ class FixManager:
         self.__session_alias = session_alias
         self.__case_id = case_id
 
-    def send_message(self, fix_message: FixMessage, custom_message =None ) -> None:
+    def send_message(self, fix_message: FixMessage, custom_message=None) -> None:
         logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
         # TODO add validation(valid MsgType)
-        if custom_message==None:
-            message="Send "
+        if custom_message == None:
+            message = "Send "
         else:
             message = custom_message
         self.act.sendMessage(
@@ -58,14 +58,13 @@ class FixManager:
             ))
         return response
 
-
     def send_message_and_receive_response(self, fix_message: FixMessage, case_id=None) -> list:
         logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
         if case_id == None:
             case_id = self.__case_id
 
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
-            response = self.act.placeOrderFIX(
+            response = self.act.placeOrderFIXDelay(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
                     self.__session_alias,
@@ -79,7 +78,8 @@ class FixManager:
                     "Send OrderCancelReplaceRequest",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == FIXMessageType.OrderCancelRequest.value:
@@ -88,7 +88,8 @@ class FixManager:
                     "Send OrderCancelRequest",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.OrderCancelRequest.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
@@ -97,7 +98,8 @@ class FixManager:
                     "Send MarketDataSnapshotFullRefresh",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataSnapshotFullRefresh.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataSnapshotFullRefresh.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == FIXMessageType.MarketDataIncrementalRefresh.value:
@@ -106,7 +108,8 @@ class FixManager:
                     "Send MarketDataIncrementalRefresh",
                     self.__session_alias,
                     self.__case_id,
-                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataIncrementalRefresh.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataIncrementalRefresh.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == FIXMessageType.MarketDataRequest.value:
@@ -216,7 +219,7 @@ class FixManager:
 
     def send_message_and_receive_response_fix_standard(self, fix_message: FixMessage) -> PlaceMessageRequest:
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
-            response = self.act.placeOrderFIX(
+            response = self.act.placeOrderFIXDelay(
                 request=basic_custom_actions.convert_to_request(
                     "Send NewOrderSingle",
                     self.__session_alias,

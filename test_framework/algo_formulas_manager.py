@@ -1,4 +1,5 @@
 import math
+from datetime import datetime, timedelta
 from math import ceil
 from functools import wraps
 
@@ -163,15 +164,18 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def correct_expire_date_if_it_is_on_weekend(day: int) -> int:
-        shift = 0
+    # Need to run test and check ExpireDate if it is not weekend, but weekends between now and ExpireDate. For delta <=2
+    def calculate_shift_for_expire_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
+        day = datetime.weekday(expire_date)
+        shift = delta
         if day == 5:
             shift += 2
         elif day == 6:
             shift += 1
         else:
-            shift = 0
+            shift = delta
         return shift
+
 
     @staticmethod
     def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:

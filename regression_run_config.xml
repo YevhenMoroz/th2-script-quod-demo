@@ -614,7 +614,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>
@@ -751,15 +751,18 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                     </environments>
                 </component>
                 <component name="Trading_REST_API_MarketData" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
@@ -767,7 +770,7 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
@@ -775,10 +778,10 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                         <web_admin_rest_api_environments>
-                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
@@ -786,10 +789,10 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                         <web_admin_rest_api_environments>
-                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
@@ -797,13 +800,16 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
                 <component name="WA_REST_API_Site" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                         <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
@@ -813,6 +819,9 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
@@ -820,6 +829,9 @@
                 <component name="WA_REST_API_Client_Accounts" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                         <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
@@ -829,6 +841,9 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
@@ -837,11 +852,17 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
+                        </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="WA_REST_API_Others" run="True">
+                <component name="WA_REST_API_Others_API" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -877,7 +898,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                <component name="WA_Reference_Data" run="True">
+                <component name="WA_Markets" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>

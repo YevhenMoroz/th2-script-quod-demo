@@ -4,9 +4,9 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.risk_limits.cumtrdlmt_counter.cumtrdlmt_counter_page import CumTrdLmtPage
-from test_framework.web_admin_core.pages.risk_limits.cumtrdlmt_counter.cumtrdlmt_counter_wizard \
-    import CumTrdLmtCounterWizard
+from test_framework.web_admin_core.pages.risk_limits.cum_trading_limit_counters.main_page import CumTradingLimitCountersPage
+from test_framework.web_admin_core.pages.risk_limits.cum_trading_limit_counters.wizard \
+    import CumTradingLimitCountersWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -35,16 +35,16 @@ class QAP_T7934(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_cumtrdlmt_counter_page()
+        side_menu.open_cum_trading_limit_counters_page()
 
     def test_context(self):
         try:
             self.precondition()
 
-            main_page = CumTrdLmtPage(self.web_driver_container)
+            main_page = CumTradingLimitCountersPage(self.web_driver_container)
             main_page.click_on_new()
 
-            wizard = CumTrdLmtCounterWizard(self.web_driver_container)
+            wizard = CumTradingLimitCountersWizard(self.web_driver_container)
 
             self.verify("PDF contains all fields name", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(self.fields_name))

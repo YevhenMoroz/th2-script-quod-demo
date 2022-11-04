@@ -6,10 +6,10 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_page \
-    import AllocationMatchingProfilePage
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_wizard \
-    import AllocationMatchingProfileWizard
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.main_page \
+    import AllocationMatchingProfilesPage
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.wizard \
+    import AllocationMatchingProfilesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -31,16 +31,16 @@ class QAP_T3114(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_allocation_matching_profile_page()
+        side_menu.open_allocation_matching_profiles_page()
 
     def test_context(self):
 
         try:
             self.precondition()
 
-            page = AllocationMatchingProfilePage(self.web_driver_container)
+            page = AllocationMatchingProfilesPage(self.web_driver_container)
             page.click_on_new()
-            wizard = AllocationMatchingProfileWizard(self.web_driver_container)
+            wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
             wizard.set_name(self.name)
             wizard.set_avg_price_precision(self.avg_price_precision)
             wizard.set_tolerance_currency(self.tolerance_currency)

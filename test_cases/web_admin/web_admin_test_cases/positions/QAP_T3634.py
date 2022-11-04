@@ -5,10 +5,10 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
     import ClientsAssignmentsSubWizard
 
 from test_framework.web_admin_core.pages.positions.cash_positions.cash_postitions_page import CashPositionsPage

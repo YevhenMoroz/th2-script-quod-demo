@@ -41,12 +41,8 @@ class AllocationInstructionOMS(AllocationInstruction):
                 "ComputeFeesCommissions": "No"
             }}
 
-    def set_default_book(self, ord_id, ord_id_second=None):
+    def set_default_book(self, ord_id):
         self.change_parameters(self.base_parameters)
-        if ord_id_second:
-            list_of_orders = [{"OrdID": ord_id}, {"OrdID": ord_id_second}]
-        else:
-            list_of_orders = [{"OrdID": ord_id}]
         self.update_fields_in_component('AllocationInstructionBlock',
-                                        {"OrdAllocList": {"OrdAllocBlock": list_of_orders}})
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]}})
         return self

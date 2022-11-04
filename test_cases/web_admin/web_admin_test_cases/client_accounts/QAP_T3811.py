@@ -5,8 +5,8 @@ import random
 import string
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_page import ClientListPage
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_wizard import ClientListWizard
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -38,11 +38,11 @@ class QAP_T3811(CommonTestCase):
         try:
             self.precondition()
 
-            client_list_page = ClientListPage(self.web_driver_container)
+            client_list_page = ClientListsPage(self.web_driver_container)
             client_list_page.click_on_new()
             time.sleep(2)
 
-            wizard = ClientListWizard(self.web_driver_container)
+            wizard = ClientListsWizard(self.web_driver_container)
             wizard.set_client_list_name(self.client_list_name)
             wizard.set_client_list_description(self.client_list_description)
             wizard.click_on_plus()

@@ -1,6 +1,8 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T8835 import QAP_T8835
+from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T8836 import QAP_T8836
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T4077 import QAP_T4077
@@ -27,7 +29,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"SynthMinQty" if version is None else f"Synthetic MinQty for th2 integration (cloned) | {version}", parent_id)
+    report_id = bca.create_event(f"SynthMinQty" if version is None else f"Synthetic MinQty | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region SynthMinQty
@@ -48,6 +50,8 @@ def test_run(parent_id=None, version=None):
         QAP_T4064(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4063(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4062(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8835(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8836(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

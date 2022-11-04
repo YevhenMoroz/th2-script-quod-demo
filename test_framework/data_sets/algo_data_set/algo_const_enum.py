@@ -170,6 +170,23 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    # This instrument temporary isn`t working
+    instrument_22 = dict(
+        Symbol='QA_AQ123456789',
+        SecurityID='QA_AQ123456789',
+        SecurityIDSource='8',
+        SecurityExchange='AQXE',
+        SecurityType='CS'
+    )
+
+    instrument_23 = dict(
+        Symbol='QUODTESTQA06',
+        SecurityID='TESTQA06',
+        SecurityIDSource='8',
+        SecurityExchange='QDL11',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -252,6 +269,7 @@ class AlgoMic(Enum):
     mic_29 = "QDL12"  # QUODLIT12
     mic_30 = "CHIX"   # CHIX
     mic_31 = "XAMS"   # Euronext Amsterdam
+    mic_32 = "AQXE"   # AQUIS
 
 
 class AlgoListingId(Enum):
@@ -268,7 +286,7 @@ class AlgoListingId(Enum):
     listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
     listing_13 = "125917202" # JANESTREET for FR0000031577
-    listing_14 = "422226892" # CITADEL for FR0000031577
+    listing_14 = "422225144" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
     listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
