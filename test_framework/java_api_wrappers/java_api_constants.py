@@ -57,6 +57,8 @@ class ConfirmationReportConst(Enum):
 
 class CommissionBasisConst(Enum):
     CommissionBasis_ABS = 'ABS'
+    CommissionBasis_PCT = 'PCT'
+    CommissionBasis_BPS = 'BPS'
 
 
 class CommissionAmountTypeConst(Enum):
