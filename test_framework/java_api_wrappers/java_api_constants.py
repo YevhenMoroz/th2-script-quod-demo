@@ -5,6 +5,7 @@ class ExecutionReportConst(Enum):
     TransExecStatus_FIL = 'FIL'
     TransExecStatus_PFL = 'PFL'
     ExecType_TRD = 'TRD'
+    ExecType_CAL = 'CAL'
 
 
 class BasketMessagesConst(Enum):
@@ -163,6 +164,10 @@ class JavaApiFields(Enum):
     AllocInstructionID = 'AllocInstructionID'
     AllocType = 'AllocType'
     AllocTransType = 'AllocTransType'
+    AllocStatus = 'AllocStatus'
+    ConfirmStatus = 'ConfirmStatus'
+    MatchStatus = 'MatchStatus'
+    AllocSummaryStatus = 'AllocSummaryStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
