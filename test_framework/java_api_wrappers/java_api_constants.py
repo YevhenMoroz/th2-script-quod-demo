@@ -22,6 +22,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
+    TransStatus_CXL = 'CXL'
 
 
 class ExecutionPolicyConst(Enum):
