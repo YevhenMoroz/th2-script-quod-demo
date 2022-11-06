@@ -171,7 +171,7 @@ class QAP_T7241(TestCase):
         misc_fee_amount_compute_reply = str(round(float(misc_fee_amount), 2))
         actual_result = \
             self.java_api_manager.get_last_message(
-                ORSMessageType.Order_ComputeBookingFeesCommissionsReply.value).get_parameters()[
+                ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
                 JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][JavaApiFields.RootMiscFeesList.value][
                 JavaApiFields.RootMiscFeesBlock.value][0]
         misc_fee_block_expected.clear()
