@@ -170,20 +170,11 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
-    # This instrument temporary isn`t working
     instrument_22 = dict(
-        Symbol='QA_AQ123456789',
-        SecurityID='QA_AQ123456789',
-        SecurityIDSource='8',
-        SecurityExchange='AQXE',
-        SecurityType='CS'
-    )
-
-    instrument_23 = dict(
-        Symbol='QUODTESTQA06',
-        SecurityID='TESTQA06',
-        SecurityIDSource='8',
-        SecurityExchange='QDL11',
+        Symbol='QUOD_XPAR_MD_NOT_FOUND',
+        SecurityID='XPAR_MD_NOT_FOUND',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
         SecurityType='CS'
     )
 
