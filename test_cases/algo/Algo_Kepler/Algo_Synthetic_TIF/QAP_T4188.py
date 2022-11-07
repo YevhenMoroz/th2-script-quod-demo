@@ -10,7 +10,6 @@ from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySid
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
@@ -35,9 +34,6 @@ class QAP_T4188(TestCase):
         # region order parameters
         self.qty = 1000
         self.price = 20
-        self.price_ask = 40
-        self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1000000
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
 
         now = datetime.today() - timedelta(hours=3)
@@ -56,7 +52,7 @@ class QAP_T4188(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_23")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_22")
         # endregion
 
         # region Direction
@@ -65,7 +61,7 @@ class QAP_T4188(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_quodlit11 = self.data_set.get_mic_by_name("mic_28")
+        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
         # endregion
@@ -74,7 +70,6 @@ class QAP_T4188(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
-        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
         # endregion
 
         self.rule_list = []
@@ -83,8 +78,8 @@ class QAP_T4188(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit11, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit11, True)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
 
@@ -94,7 +89,7 @@ class QAP_T4188(TestCase):
 
         self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd, Instrument=self.instrument, ExDestination=self.ex_destination_quodlit11)).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd, Instrument=self.instrument, ExDestination=self.ex_destination_xpar)).add_tag(dict(ExpireDate=self.ExpireDate))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
 
@@ -115,7 +110,7 @@ class QAP_T4188(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
