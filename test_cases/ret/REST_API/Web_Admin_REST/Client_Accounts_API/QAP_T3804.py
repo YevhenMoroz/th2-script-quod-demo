@@ -26,7 +26,7 @@ class QAP_T3804(TestCase):
         self.api_client_message.find_all_client()
         tested_client = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request(self.api_client_message),
-            filter_dict={'clientAccountGroupID': self.client})
+            filter_dict={"accountGroupID": self.client})
         data_validation(test_id=self.test_id,
                         event_name=f"Check that '{self.client}' is present",
                         expected_result="true",

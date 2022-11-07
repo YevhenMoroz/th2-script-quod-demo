@@ -183,4 +183,4 @@ class SecurityValuesTab(CommonPage):
         self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FIELD, value)
 
     def get_custom_percentage(self):
-        self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FIELD)
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FIELD)

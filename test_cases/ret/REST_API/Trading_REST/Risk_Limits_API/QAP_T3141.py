@@ -19,16 +19,17 @@ class QAP_T3141(TestCase):
                                                      session_alias_web_socket=self.web_socket,
                                                      case_id=self.test_id)
         self.nos_message = ApiMessageNewOrderSingle(data_set=self.data_set)
-        self.error_message = "11814 &apos;OrdQty&apos; (100) greater than &apos;MaxOrdQty&apos;" \
-                             " (10) / 11810 &apos;OrdAmount&apos; (100) greater than &apos;MaxOrdAmt&apos; (30)"
+        self.error_message = "11814 &apos;OrdQty&apos; (2000000) greater than &apos;MaxOrdQty&apos;" \
+                             " (1000000) / 11810 &apos;OrdAmount&apos; (8000000) greater than &apos;MaxOrdAmt&apos; (3000000)"
 
     @try_except(test_id=os.path.basename(__file__)[:-3])
     def run_pre_conditions_and_steps(self):
         # region Send new order and verify result
         self.nos_message.set_default_request()
-        self.nos_message.change_parameter(parameter_name='OrdQty', new_parameter_value=100)
+        self.nos_message.change_parameter(parameter_name='OrdQty', new_parameter_value=2000000)
+        self.nos_message.change_parameter(parameter_name='Price', new_parameter_value=4)
         self.nos_message.change_parameter_in_component(component_name='PreTradeAllocations',
-                                                       fields={'AllocQty': 100})
+                                                       fields={'AllocQty': 2000000})
         self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Rejected'})
 
         response = self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)

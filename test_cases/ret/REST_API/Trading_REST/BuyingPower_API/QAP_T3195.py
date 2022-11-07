@@ -27,7 +27,7 @@ class QAP_T3195(TestCase):
         self.noss_message = ApiMessageNewOrderSingleSimulate(data_set=data_set)
         self.market_quote_message = ApiMessageMarketQuoteRequest(data_set=data_set)
         self.tested_instrument_tcs_iq = self.data_set.get_trading_api_instrument_by_name("instrument_2")
-        self.tested_instrument_spicejet_iq = self.data_set.get_trading_api_instrument_by_name('instrument_4')
+        self.tested_instrument_spicejet_iq = self.data_set.get_trading_api_instrument_by_name('instrument_5')
         self.bid_tcs_iq = 0
         self.ask_spicejet_iq = 0
 
@@ -80,8 +80,9 @@ class QAP_T3195(TestCase):
         # region, Check that Gross Order Value is calculated correctly with OrderType=Market, side=Buy and ASK value
 
         # SPICEJET-IQ
+        self.nos_message.default_instrument_nos = self.tested_instrument_spicejet_iq
         self.nos_message.set_default_request()
-        self.noss_message.change_parameter(parameter_name='Side', new_parameter_value='Sell')
+        self.nos_message.change_parameter(parameter_name='Side', new_parameter_value='Sell')
         self.nos_message.change_parameter(parameter_name='Price', new_parameter_value=40)
         self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
         self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message)

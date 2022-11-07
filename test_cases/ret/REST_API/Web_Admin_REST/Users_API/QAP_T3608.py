@@ -62,7 +62,7 @@ class QAP_T3608(TestCase):
         # region step 2, Check that user with hierarchical leve - Institution can set Institution level for the user from same hierarchy
         self.user_message.find_user(user_id=self.user_desk)
         user_desk = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         new_user_institution_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_desk,
                                                                      new_hierarchical_assignment=self.institution_id)
         self.user_message.modify_user(custom_params=new_user_institution_parameters)
@@ -70,7 +70,7 @@ class QAP_T3608(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_institution = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Institution"
                                    " can set Institution level for the user from same hierarchy.",
@@ -86,7 +86,7 @@ class QAP_T3608(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_zone = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Institution"
                                    " can set Zone level for the user from same hierarchy.",
@@ -102,7 +102,7 @@ class QAP_T3608(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_location = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Institution"
                                    " can set Location level for the user from same hierarchy.",
@@ -118,10 +118,10 @@ class QAP_T3608(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_desk = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Institution"
                                    " can set Desk level for the user from same hierarchy.",
-                        expected_result=self.desk_id['deskID']['deskUserRole'][0]['deskID'],
+                        expected_result=self.desk_id['deskUserRole'][0]['deskID'],
                         actual_result=int(user_desk[0]['deskUserRole'][0]['deskID']))
         # endregion

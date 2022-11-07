@@ -33,3 +33,11 @@ class DFDManagementBatchOMS(DFDManagementBatch):
                                                               [{"OrdID": ord_id}]
                                                           }, "SetDoneForDay": "N"})
         return self
+
+    def set_notify_DFD(self, ord_id):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('DFDManagementBatchBlock',
+                                        {"DFDOrderList": {"DFDOrderBlock":
+                                                              [{"OrdID": ord_id}]
+                                                          }, "SetDoneForDay": "N", "NotifyDFD": "Y"})
+        return self

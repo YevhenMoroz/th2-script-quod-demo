@@ -48,6 +48,7 @@ class QAP_T4087(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
@@ -135,6 +136,12 @@ class QAP_T4087(TestCase):
         self.fix_verifier_buy.check_fix_message(new_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order')
         # endregion
 
+        # region check eliminate dma child order
+        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_eliminate)
+        cancel_dma_order.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate child DMA order")
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
@@ -144,12 +151,6 @@ class QAP_T4087(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_multilisting_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_multilisting_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel dma child order
-        cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        cancel_dma_order.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc)).remove_parameter('OrigClOrdID')
-        self.fix_verifier_buy.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel child DMA order")
-        # endregion
 
         cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')

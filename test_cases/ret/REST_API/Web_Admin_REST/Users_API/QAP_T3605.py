@@ -54,7 +54,8 @@ class QAP_T3605(TestCase):
         # region step 2, Check that user with hierarchical leve - Zone can set Location level for the user from same hierarchy
         self.user_message.find_user(user_id=self.user_desk)
         user_desk = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
+
         new_user_location_parameters = hierarchical_level_updater(test_id=self.test_id, user_response=user_desk,
                                                                   new_hierarchical_assignment=self.location_id)
         self.user_message.modify_user(custom_params=new_user_location_parameters)
@@ -62,12 +63,12 @@ class QAP_T3605(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_location = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Zone"
                                    " can set Location level for the user from same hierarchy.",
                         expected_result=self.location_id['locationID'],
-                        actual_result=int(user_location[0]['location']))
+                        actual_result=int(user_location[0]['locationID']))
         # endregion
 
         # region step 3, Check that user with hierarchical leve - Zone can set Desk level for the user from same hierarchy
@@ -78,11 +79,11 @@ class QAP_T3605(TestCase):
 
         self.user_message.find_user(user_id=self.user_desk)
         user_desk = self.wa_api_manager_test.parse_response_details(
-            response=self.wa_api_manager_test.send_get_request(self.user_message))
+            response=self.wa_api_manager_test.send_get_request_with_parameters(self.user_message))
         data_validation(test_id=self.test_id,
                         event_name="Check that user with hierarchical leve - Zone"
                                    " can set Desk level for the user from same hierarchy.",
-                        expected_result=self.desk_id['deskID']['deskUserRole'][0]['deskID'],
+                        expected_result=self.desk_id['deskUserRole'][0]['deskID'],
                         actual_result=int(user_desk[0]['deskUserRole'][0]['deskID']))
         # endregion
 

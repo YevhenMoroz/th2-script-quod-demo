@@ -5,9 +5,9 @@ import random
 import string
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_page import ClientListPage
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_wizard import ClientListWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -31,12 +31,12 @@ class QAP_T3549(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_list_page()
-        client_list_page = ClientListPage(self.web_driver_container)
+        client_list_page = ClientListsPage(self.web_driver_container)
         client_list_page.set_name(self.client_list_name)
         time.sleep(1)
         if not client_list_page.is_client_list_found(self.client_list_name):
             client_list_page.click_on_new()
-            wizard = ClientListWizard(self.web_driver_container)
+            wizard = ClientListsWizard(self.web_driver_container)
             wizard.set_client_list_name(self.client_list_name)
             wizard.set_client_list_description(self.client_list_description)
             wizard.click_on_plus()
@@ -51,10 +51,10 @@ class QAP_T3549(CommonTestCase):
         try:
             self.precondition()
 
-            client_list_page = ClientListPage(self.web_driver_container)
+            client_list_page = ClientListsPage(self.web_driver_container)
             client_list_page.click_on_more_actions()
             client_list_page.click_on_edit()
-            wizard = ClientListWizard(self.web_driver_container)
+            wizard = ClientListsWizard(self.web_driver_container)
             wizard.set_client_filter(self.client)
             time.sleep(1)
             wizard.click_on_edit()

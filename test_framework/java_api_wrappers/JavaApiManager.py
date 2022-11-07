@@ -13,6 +13,7 @@ from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionR
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
+from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
@@ -208,7 +209,7 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ORSMessageType.Order_PositionTransferInstruction.value:
+        elif message.get_message_type() == ORSMessageType.PositionTransferInstruction.value:
             response = self.act.submitPositionTransferInstructionRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -221,7 +222,7 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
 
-        elif message.get_message_type() == ORSMessageType.Order_ComputeBookingFeesCommissionsRequest.value:
+        elif message.get_message_type() == ORSMessageType.ComputeBookingFeesCommissionsRequest.value:
             response = self.act.submitComputeBookingFeesCommissionsRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -253,14 +254,19 @@ class JavaApiManager:
                         # Component
                         for component_field in message.fields[main_field].message_value.fields[
                             field].message_value.fields:
-                            if message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value != "":
-                                component_fields.update({component_field: message.fields[main_field].message_value.fields[field].message_value.fields[component_field].simple_value})
+                            if message.fields[main_field].message_value.fields[field].message_value.fields[
+                                component_field].simple_value != "":
+                                component_fields.update({component_field:
+                                                             message.fields[main_field].message_value.fields[
+                                                                 field].message_value.fields[
+                                                                 component_field].simple_value})
                                 fields_content.update({field: component_fields})
                             else:
                                 # Repeating Group
                                 repeating_group_list = list()
                                 for repeating_group in \
-                                message.fields[main_field].message_value.fields[field].message_value.fields[component_field].list_value.values:
+                                        message.fields[main_field].message_value.fields[field].message_value.fields[
+                                            component_field].list_value.values:
                                     repeating_group_list_field = dict()
                                     for repeating_group_field in repeating_group.message_value.fields:
                                         repeating_group_list_field.update({repeating_group_field:
@@ -323,9 +329,9 @@ class JavaApiManager:
                 response_fix_message = OrderBagWaveModificationReply()
             elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
                 response_fix_message = OrderBagWaveCancelReply()
-            elif message_type == ORSMessageType.Order_PositionTransferReport.value:
+            elif message_type == ORSMessageType.PositionTransferReport.value:
                 response_fix_message = PositionTransferReport()
-            elif message_type == ORSMessageType.Order_ComputeBookingFeesCommissionsReply.value:
+            elif message_type == ORSMessageType.ComputeBookingFeesCommissionsReply.value:
                 response_fix_message = ComputeBookingFeesCommissionsReply()
             elif message_type == ORSMessageType.QuoteRequestNotif.value:
                 response_fix_message = QuoteRequestNotifFX()
@@ -333,6 +339,8 @@ class JavaApiManager:
                 response_fix_message = QuoteRequestActionReplyFX()
             elif message_type == PKSMessageType.FixRequestForPositions.value:
                 response_fix_message = FixPositionReportFX()
+            elif message_type == ORSMessageType.BookingCancelReply.value:
+                response_fix_message = BookingCancelReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
@@ -358,7 +366,18 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            print("Element: " + k + " not found")
+            raise KeyError(f"Element: {k} not found")
+        self.verifier.verify()
+        self.verifier = Verifier(self.__case_id)
+
+    def key_is_absent(self, key: str, actual_values: dict, event_name: str):
+        if key in actual_values:
+            self.verifier.success = False
+
+        self.verifier.fields.update(
+            {"Is absent:": {"expected": key, "key": False, "type": "field",
+                            "status": "PASSED" if self.verifier.success else "FAILED"}})
+        self.verifier.set_event_name(event_name)
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
@@ -370,4 +389,4 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise IOError(f"{message_type} not found")
+        raise KeyError(f"{message_type} not found")

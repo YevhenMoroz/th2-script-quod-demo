@@ -32,7 +32,7 @@ class QAP_T4918(TestCase):
         # endregion
 
         # region order parameters
-        self.delay = 10
+        self.delay = 10000
         self.qty = 1000
         self.dec_qty = 60
         self.display_qty = self.dma1_qty = 50

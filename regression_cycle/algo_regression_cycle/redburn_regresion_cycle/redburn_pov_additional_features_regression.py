@@ -6,7 +6,7 @@ from test_cases.algo.Algo_PercentageVolume import QAP_T4573, QAP_T4574, QAP_T458
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8716 import QAP_T8716
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8718 import QAP_T8718
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -16,12 +16,12 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"POV - Additional Features | {version}", parent_id)
+    report_id = bca.create_event(f"POV - Additional Features (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Route/Venue
         # configuration = ComponentConfiguration("Participation")
-        configuration = ComponentConfiguration("Scaling")
+        configuration = ComponentConfigurationAlgo("Participation")
 
         QAP_T8716(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

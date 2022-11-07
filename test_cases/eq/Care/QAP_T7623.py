@@ -1,46 +1,50 @@
 import logging
 from pathlib import Path
-from custom import basic_custom_actions as bca
-from test_framework.core.test_case import TestCase
-from stubs import Stubs
-from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, DiscloseExec, OrderType
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+seconds, nanos = timestamps()
 
-@try_except(test_id=Path(__file__).name[:-3])
+
 class QAP_T7623(TestCase):
-
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.desk = environment.get_list_fe_environment()[0].desk_3
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.price = "10"
-        self.qty = "100"
-        self.client = self.data_set.get_client_by_name('client_co_1')
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.order_type = OrderType.limit.value
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.ord_sub_message = OrderSubmitOMS(self.data_set)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declarations
+        # region Declaration
         # region create order
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty, order_type=self.order_type,
-                                            tif=TimeInForce.DAY.value, is_sell_side=False, instrument=self.lookup,
-                                            recipient=self.desk, disclose_flag=1)
-        self.order_ticket.create_order(self.lookup)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-        # region check disclose execution
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.disclose_exec.value: DiscloseExec.manual.value})
-        # endregion
+        self.ord_sub_message.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                    role=SubmitRequestConst.USER_ROLE_1.value)
+        self.ord_sub_message.update_fields_in_component('NewOrderSingleBlock', {"DiscloseExec": "M"})
+        response = self.java_api_manager.send_message_and_receive_response(self.ord_sub_message)
+        self.return_result(response, ORSMessageType.OrdNotification.value)
+        disclose_exec = self.result.get_parameter('OrdNotificationBlock')['DiscloseExec']
+        self.java_api_manager.compare_values(
+            {OrderBookColumns.disclose_exec.value: OrderReplyConst.DiscloseExec_M.value},
+            {OrderBookColumns.disclose_exec.value: disclose_exec},
+            f'Check Order Disclose Execution')
+
+    def return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response
 

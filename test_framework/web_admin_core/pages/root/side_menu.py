@@ -1,18 +1,18 @@
 import time
 
-from test_framework.web_admin_core.pages.client_accounts.accounts.accounts_constants import AccountsConstants
-from test_framework.web_admin_core.pages.client_accounts.cash_accounts.cash_accounts_constants import \
+from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_constants import AccountsConstants
+from test_framework.web_admin_core.pages.clients_accounts.cash_accounts.cash_accounts_constants import \
     CashAccountsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_client_groups.client_client_groups_constants import \
-    ClientClientGroupsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_constants import \
+from test_framework.web_admin_core.pages.clients_accounts.external_client_groups_ids.constants import \
+    ExternalClientGroupIDsConstants
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_constants import ClientListConstants
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_constants import ClientsConstants
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.constants import ClientListsConstants
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
     CashPositionsConstants
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_constants import \
-    OrderVelocityLimitConstants
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.constants import \
+    OrderVelocityLimitsConstants
 from test_framework.web_admin_core.pages.site.desks.desks_constants import DesksConstants
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_constants import WashBookConstants
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_constants import \
@@ -26,24 +26,24 @@ from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_
     QuotingSessionsConstants
 from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import \
     SystemCommandsConstants
-from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_constants import \
-    MDEntitlementsConstants
+from test_framework.web_admin_core.pages.general.entitlements.constants import \
+    EntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profile.allocation_matching_profile_constants import \
-    AllocationMatchingProfileConstants
-from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_constants import \
-    SettlementModelConstants
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import \
+    AllocationMatchingProfilesConstants
+from test_framework.web_admin_core.pages.middle_office.settlement_models.constants import \
+    SettlementModelsConstants
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
     ExecutionStrategiesConstants
 from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
     OrderManagementRulesConstants
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
 from test_framework.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
-from test_framework.web_admin_core.pages.others.market_data_source.market_data_source_constants import \
-    MarketDataSourceConstants
-from test_framework.web_admin_core.pages.others.routes.routes_constants import RoutesConstants
+from test_framework.web_admin_core.pages.markets.market_data_sources.constants import \
+    MarketDataSourcesConstants
+from test_framework.web_admin_core.pages.markets.routes.constants import RoutesConstants
 from test_framework.web_admin_core.pages.others.user_instr_symb_black_out.user_instr_symb_black_out_constants import \
     UserInstrSymbBlackOutConstants
 from test_framework.web_admin_core.pages.positions.fx_positions.fx_positions_constants import FxPositionsConstants
@@ -56,39 +56,40 @@ from test_framework.web_admin_core.pages.price_cleansing.rates_following_trades.
 from test_framework.web_admin_core.pages.price_cleansing.stale_rates.stale_rates_constants import StaleRatesConstants
 from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbalanced_rates_constants import \
     UnbalancedRatesConstants
-from test_framework.web_admin_core.pages.reference_data.instr_symbol_info.instr_symbol_info_constants import \
-    InstrSymbolInfoConstants
-from test_framework.web_admin_core.pages.reference_data.venue_lists.venue_lists_constants import \
+from test_framework.web_admin_core.pages.markets.instrument_symbols.constants import \
+    InstrumentSymbolsConstants
+from test_framework.web_admin_core.pages.markets.venue_lists.constants import \
     VenueListsConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_group.instrument_group_constants import \
-    InstrumentGroupConstants
-from test_framework.web_admin_core.pages.reference_data.instrument_list.instrument_list_constants import \
-    InstrumentListConstants
-from test_framework.web_admin_core.pages.reference_data.listing_groups.listing_groups_constants import \
+from test_framework.web_admin_core.pages.markets.instrument_groups.constants import \
+    InstrumentGroupsConstants
+from test_framework.web_admin_core.pages.markets.instrument_lists.constants import \
+    InstrumentListsConstants
+from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_constants import \
     ListingGroupsConstants
-from test_framework.web_admin_core.pages.reference_data.listings.listings_constants import ListingsConstants
-from test_framework.web_admin_core.pages.reference_data.recover_historical_volume.recover_historical_volume_constants import \
+from test_framework.web_admin_core.pages.markets.listings.listings_constants import ListingsConstants
+from test_framework.web_admin_core.pages.markets.recover_historical_volume.recover_historical_volume_constants import \
     RecoverHistoricalVolumeConstants
-from test_framework.web_admin_core.pages.reference_data.subvenues.subvenues_constants import SubVenuesConstants
-from test_framework.web_admin_core.pages.reference_data.venues.venues_constants import VenuesConstants
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_constants import SubVenuesConstants
+from test_framework.web_admin_core.pages.markets.venues.venues_constants import VenuesConstants
 from test_framework.web_admin_core.pages.risk_limits.cum_trading_limits.cum_trading_limits_constants import \
     CumTradingLimitsConstants
-from test_framework.web_admin_core.pages.risk_limits.cumtrdlmt_counter.cumtrdlmt_counter_constants import \
-    CumTrdLmtCounterConstants
-from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_constants import \
-    ExternalCheckConstants
+from test_framework.web_admin_core.pages.risk_limits.cum_trading_limit_counters.constants import \
+    CumTradingLimitCountersConstants
+from test_framework.web_admin_core.pages.risk_limits.external_checks.constants import \
+    ExternalChecksConstants
 from test_framework.web_admin_core.pages.risk_limits.fx_position_limits.fx_position_limits_constants import \
     FxPositionsLimitsConstants
-from test_framework.web_admin_core.pages.risk_limits.listing_cumtrdlmt_counter.listing_cumtrdlmt_counter_constants import \
-    ListingCumTrdLmtCounterConstants
+from test_framework.web_admin_core.pages.risk_limits.listing_cum_trading_limit_counters.constants import \
+    ListingCumTradingLimitCountersConstants
 from test_framework.web_admin_core.pages.risk_limits.position_limits.position_limits_constants import \
     PositionsLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.risk_limit_dimensions.constants import Constants \
     as RiskLimitDimensionsConstants
-from test_framework.web_admin_core.pages.risk_limits.price_tolerance_control.price_tolerance_control_constants import \
-    PriceToleranceControlConstants
+from test_framework.web_admin_core.pages.risk_limits.order_tolerance_limits.constants import \
+    OrderToleranceLimitsConstants
 from test_framework.web_admin_core.pages.risk_limits.trading_limits.trading_limits_constants import \
     TradingLimitsConstants
+from test_framework.web_admin_core.pages.risk_limits.buying_power.constants import Constants as BuyingPower
 from test_framework.web_admin_core.pages.root.root_constants import RootConstants
 from test_framework.web_admin_core.pages.site.locations.locations_constants import LocationsConstants
 from test_framework.web_admin_core.pages.site.zones.zones_constants import ZonesConstants
@@ -122,32 +123,32 @@ class SideMenu(CommonPage):
         self.find_by_xpath(page_title_selector)
 
     def open_accounts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ACCOUNTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.ACCOUNTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(AccountsConstants.ACCOUNTS_PAGE_TITLE_XPATH)
 
     def open_cash_accounts_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CASH_ACCOUNTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CASH_ACCOUNTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(CashAccountsConstants.CASH_ACCOUNTS_PAGE_TITLE_XPATH)
 
     def open_client_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(ClientClientGroupsConstants.CLIENT_CLIENT_GROUPS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ExternalClientGroupIDsConstants.EXTERNAL_CLIENT_GROUP_ID_PAGE_TITLE_XPATH)
 
     def open_client_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENT_GROUPS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientGroupsConstants.CLIENT_GROUPS_PAGE_TITLE_CSS_XPATH)
 
     def open_client_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENT_LIST_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENT_LISTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(ClientListConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ClientListsConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
 
     def open_clients_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENT_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ClientsConstants.CLIENTS_PAGE_TITLE_XPATH)
 
@@ -184,7 +185,7 @@ class SideMenu(CommonPage):
     def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(MDEntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(EntitlementsConstants.ENTITLEMENTS_PAGE_TITLE_XPATH)
 
     def open_settings_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
@@ -201,15 +202,15 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(FeesConstants.FEES_PAGE_TITLE_XPATH)
 
-    def open_allocation_matching_profile_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILE_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_allocation_matching_profiles_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILES_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfileConstants.ALLOCATION_MATCHING_PROFILE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfilesConstants.ALLOCATION_MATCHING_PROFILES_PAGE_TITLE_XPATH)
 
-    def open_settlement_model_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.SETTLEMENT_MODEL_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
+    def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(SettlementModelConstants.SETTLEMENT_MODEL_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(SettlementModelsConstants.SETTLEMENT_MODELS_PAGE_TITLE_XPATH)
 
     def open_execution_strategies_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.EXECUTION_STRATEGIES_ITEM_XPATH,
@@ -233,12 +234,12 @@ class SideMenu(CommonPage):
         self.check_is_page_opened(CounterpartsConstants.COUNTERPARTS_PAGE_TITLE_XPATH)
 
     def open_market_data_source_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.MARKET_DATA_SOURCE_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.MARKET_DATA_SOURCE_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(MarketDataSourceConstants.MARKET_DATA_SOURCE_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(MarketDataSourcesConstants.MARKET_DATA_SOURCE_PAGE_TITLE_XPATH)
 
     def open_routes_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.ROUTES_ITEM_XPATH, RootConstants.OTHERS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.ROUTES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(RoutesConstants.ROUTES_PAGE_TITLE_XPATH)
 
@@ -277,48 +278,48 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(UnbalancedRatesConstants.UNBALANCED_RATES_PAGE_TITLE_XPATH)
 
-    def open_instr_symbol_info_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTR_SYMBOL_INFO_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+    def open_instrument_symbols_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INSTRUMENT_SYMBOLS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrSymbolInfoConstants.INSTR_SYMBOL_INFO_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentSymbolsConstants.INSTRUMENT_SYMBOLS_PAGE_TITLE_XPATH)
 
-    def open_instrument_group_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTRUMENT_GROUP_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+    def open_instrument_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INSTRUMENT_GROUPS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrumentGroupConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentGroupsConstants.INSTRUMENT_GROUP_PAGE_TITLE_XPATH)
 
     def open_instrument_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.INSTRUMENT_LIST_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(InstrumentListConstants.INSTRUMENT_LIST_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(InstrumentListsConstants.INSTRUMENT_LIST_PAGE_TITLE_XPATH)
 
     def open_listing_groups_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTING_GROUPS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.LISTING_GROUPS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingGroupsConstants.LISTING_GROUPS_PAGE_TITLE_XPATH)
 
     def open_listings_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.LISTINGS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(ListingsConstants.LISTINGS_PAGE_TITLE_XPATH)
 
     def open_venue_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.VENUE_LISTS_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(VenueListsConstants.MainPage.TITLE_XPATH)
 
     def open_recover_historical_volume_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RECOVER_HISTORICAL_VOLUME_ITEM_XPATH,
-                       RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR, container_expected_state)
+                       RootConstants.MARKETS_TOGGLE_CSS_SELECTOR, container_expected_state)
         self.check_is_page_opened(RecoverHistoricalVolumeConstants.RECOVER_HISTORICAL_VOLUME_PAGE_TITLE_XPATH)
 
     def open_subvenues_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.SUBVENUES_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.SUBVENUES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(SubVenuesConstants.SUBVENUES_PAGE_TITLE_XPATH)
 
     def open_venues_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.VENUES_ITEM_XPATH, RootConstants.REFERENCE_DATA_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.VENUES_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(VenuesConstants.VENUES_PAGE_TITLE_XPATH)
 
@@ -327,25 +328,25 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(CumTradingLimitsConstants.CUM_TRADING_LIMITS_PAGE_TITLE_XPATH)
 
-    def open_cumtrdlmt_counter_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.CUMTRDLMT_COUNTER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+    def open_cum_trading_limit_counters_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.CUM_TRADING_LIMIT_COUNTER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(CumTrdLmtCounterConstants.CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(CumTradingLimitCountersConstants.CUM_TRADING_LIMIT_COUNTERS_PAGE_TITLE_XPATH)
 
     def open_external_check_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.EXTERNAL_CHECK_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+        self.open_page(RootConstants.EXTERNAL_CHECKS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(ExternalCheckConstants.EXTERNAL_CHECK_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ExternalChecksConstants.EXTERNAL_CHECKS_PAGE_TITLE_XPATH)
 
     def open_fx_position_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.FX_POSITION_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(FxPositionsLimitsConstants.FX_POSITIONS_LIMITS_PAGE_TITLE_XPATH)
 
-    def open_listing_cumtrdlmt_counter_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.LISTING_CUMTRDLMT_COUNTER_ITEM_XPATH,
+    def open_listing_cum_trading_limit_counters_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.LISTING_CUM_TRADING_LIMIT_COUNTERS_ITEM_XPATH,
                        RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR, container_expected_state)
-        self.check_is_page_opened(ListingCumTrdLmtCounterConstants.LISTING_CUMTRDLMT_COUNTER_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(ListingCumTradingLimitCountersConstants.LISTING_CUM_TRADING_LIMIT_COUNTERS_PAGE_TITLE_XPATH)
 
     def open_positions_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.POSITION_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
@@ -357,10 +358,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(RiskLimitDimensionsConstants.MainPage.TITLE)
 
-    def open_price_tolerance_control_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
-        self.open_page(RootConstants.PRICE_TOLERANCE_CONTROL_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
+    def open_order_tolerance_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ORDER_TOLERANCE_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(PriceToleranceControlConstants.PRICE_TOLERANCE_CONTROL_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(OrderToleranceLimitsConstants.ORDER_TOLERANCE_LIMITS_PAGE_TITLE_XPATH)
 
     def open_trading_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.TRADING_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
@@ -370,7 +371,7 @@ class SideMenu(CommonPage):
     def open_buying_power_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.BUYING_POWER_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(TradingLimitsConstants.TRADING_LIMITS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(BuyingPower.MainPage.PAGE_TITLE)
 
     def open_institutions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTITUTIONS_ITEM_XPATH, RootConstants.SITE_TOGGLE_CSS_SELECTOR,
@@ -412,7 +413,7 @@ class SideMenu(CommonPage):
     def open_order_velocity_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_VELOCITY_LIMIT_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(OrderVelocityLimitConstants.ORDER_VELOCITY_LIMIT_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(OrderVelocityLimitsConstants.ORDER_VELOCITY_LIMIT_PAGE_TITLE_XPATH)
 
     def open_cash_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CASH_POSITIONS_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,

@@ -92,7 +92,7 @@ class QAP_T3343(TestCase):
                         expected_result=self.venue,
                         actual_result=noss_response['ClientVenueID'])
         data_validation(test_id=self.test_id,
-                        event_name="Check that 'Venue' value is correct",
+                        event_name="Check that 'TimeInForce' value is correct",
                         expected_result=self.noss_message.parameters['TimeInForce'],
                         actual_result=noss_response['TimeInForce'])
         data_validation(test_id=self.test_id,
