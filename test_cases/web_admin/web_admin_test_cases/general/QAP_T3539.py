@@ -3,10 +3,10 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.general.entitlements.dimensions_sub_wizard import \
     EntitlementsDimensionsSubWizard
-from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_page import EntitlementsPage
-from test_framework.web_admin_core.pages.general.mdentitlements.mdentitlements_wizard import EntitlementsWizard
+from test_framework.web_admin_core.pages.general.entitlements.main_page import EntitlementsPage
+from test_framework.web_admin_core.pages.general.entitlements.wizard import EntitlementsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer

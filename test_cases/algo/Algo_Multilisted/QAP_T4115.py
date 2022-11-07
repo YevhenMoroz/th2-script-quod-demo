@@ -78,7 +78,7 @@ class QAP_T4115(TestCase):
         self.ex_destination_2 = self.data_set.get_mic_by_name("mic_2")
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name("account_2")
-        self.account2 = self.data_set.get_account_by_name("account_4")
+        self.account2 = self.data_set.get_account_by_name("account_5")
         self.s_par = self.data_set.get_listing_id_by_name("listing_2")
         self.s_trqx = self.data_set.get_listing_id_by_name("listing_3")
         # endregion
@@ -96,6 +96,7 @@ class QAP_T4115(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules_by_alias("fix-fh-310-columbia")
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         nos1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account2, self.ex_destination_2, True, self.qty_trqx, self.agr_price)
         nos2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty_par, self.mid_price)
@@ -127,8 +128,6 @@ class QAP_T4115(TestCase):
 
         time.sleep(3)
         # endregion
-
-
 
         # region Send_MarketData
         case_id_0 = bca.create_event("Send Market Data", self.test_id)
@@ -212,6 +211,7 @@ class QAP_T4115(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        replaced_multilisting_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -255,12 +255,11 @@ class QAP_T4115(TestCase):
         fill_dma_3_order.change_parameters(dict(CumQty=self.qty_par, LeavesQty=0, LastQty=self.qty_par, LastPx=self.mid_price, AvgPx=self.mid_price))
         self.fix_verifier_buy.check_fix_message(fill_dma_3_order, key_parameters=self.key_params_ER_fill_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
         # endregion
-        # endregion
 
         # region Check Fill Algo order
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         fill_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_fill)
-        fill_multilisted_order.change_parameters(dict(LastPx=21, CumQty=self.qty, LeavesQty=0, LastQty=self.qty_par, LastMkt=self.ex_destination_1, Price=self.agr_price))
+        fill_multilisted_order.change_parameters(dict(LastPx=21, CumQty=self.qty, LeavesQty=0, LastQty=self.qty_par, LastMkt=self.ex_destination_1, Price=self.agr_price, SettlType='*'))
         self.fix_verifier_sell.check_fix_message(fill_multilisted_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 

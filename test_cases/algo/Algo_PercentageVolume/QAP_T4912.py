@@ -38,8 +38,6 @@ class QAP_T4912(TestCase):
         self.order_type = constants.OrderType.Limit.value
         self.qty = 2000
         self.pct = 0.3
-        self.child_min_qty = 10
-        self.child_min_value = 10
         self.aggressivity = 2
         self.price_ask = 40
         self.price = self.price_bid = 30
@@ -95,13 +93,10 @@ class QAP_T4912(TestCase):
         self.rule_list = [ocr_rule, nos_dma_rule]
         # endregion
 
-        now = datetime.today()
-        # start_time = now.strftime("%Y%m%d-%H:%M:%S")
+        now = datetime.utcnow()
         start_time = now.strftime("%Y-%b-%d %H:%M:%S")
         end_time_init = (now + timedelta(minutes=9)).strftime("%Y-%b-%d %H:%M:%S")
-        # end_time_init = (now + timedelta(minutes=9)).strftime("%Y%m%d-%H:%M:%S")
         end_time_mod = (now + timedelta(minutes=30)).strftime("%Y-%b-%d %H:%M:%S")
-        # end_time_mod = (now + timedelta(minutes=30)).strftime("%Y%m%d-%H:%M:%S")
 
         # region Send NewOrderSingle (35=D) for POV order
         case_id_1 = bca.create_event("Create POV Order", self.test_id)
@@ -118,8 +113,7 @@ class QAP_T4912(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().change_parameter('MDReqID', '1015_161')
-        # market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
@@ -127,8 +121,7 @@ class QAP_T4912(TestCase):
 
         # region Set TradingPhase and LTQ for POV
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
-        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().change_parameter('MDReqID', '1015_161')
-        # market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
         self.fix_manager_feed_handler.send_message(market_data_incr_par)
         # endregion

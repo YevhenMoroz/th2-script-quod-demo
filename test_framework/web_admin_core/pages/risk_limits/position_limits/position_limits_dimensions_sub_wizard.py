@@ -44,11 +44,11 @@ class PositionLimitsDimensionsSubWizard(CommonPage):
     def is_account_type_field_displayed(self):
         return self.is_element_present(PositionsLimitsConstants.DIMENSIONS_TAB_ACCOUNT_XPATH)
 
-    def click_on_wild_card_instrument_checkbox(self):
-        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_WILD_CARD_INSTRUMENT_CHECKBOX_XPATH).click()
+    def click_on_per_instrument_checkbox(self):
+        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_PER_INSTRUMENT_CHECKBOX_XPATH).click()
 
-    def click_on_wild_card_instr_group(self):
-        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_WILD_CARD_INSTR_GROUP_CHECKBOX_XPATH).click()
+    def click_on_per_instr_type_checkbox(self):
+        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_PER_INSTR_TYPE_CHECKBOX_XPATH).click()
 
-    def click_on_wild_card_instr_type(self):
-        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_WILD_CARD_INSTR_TYPE_XPATH).click()
+    def click_on_per_instr_group_checkbox(self):
+        self.find_by_xpath(PositionsLimitsConstants.DIMENSIONS_TAB_PER_INSTR_GROUP_CHECKBOX_XPATH).click()

@@ -36,7 +36,7 @@ class QAP_T4889(TestCase):
         self.qty = 2000
         self.price = self.price_ask = 40
         self.price_bid = 30
-        self.mid_price = (self.price_ask + self.price_bid)/2
+        self.mid_price = int(self.price_ask + self.price_bid)/2
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
@@ -156,7 +156,7 @@ class QAP_T4889(TestCase):
         # region Check child DMA order Slice 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
         self.slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        self.slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day))
 
         self.fix_verifier_buy.check_fix_message(self.slice2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 2')
 

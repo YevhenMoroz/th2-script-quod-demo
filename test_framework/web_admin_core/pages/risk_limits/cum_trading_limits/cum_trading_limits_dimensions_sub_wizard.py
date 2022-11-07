@@ -44,8 +44,8 @@ class CumTradingLimitsDimensionsSubWizard(CommonPage):
     def is_listing_field_displayed(self):
         return self.is_element_present(CumTradingLimitsConstants.DIMENSIONS_TAB_LISTING_XPATH)
 
-    def click_on_wildcard_listing(self):
-        self.find_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_WILDCARD_LISTING_CHECKBOX_XPATH).click()
+    def click_on_per_listing(self):
+        self.find_by_xpath(CumTradingLimitsConstants.DIMENSIONS_TAB_PER_LISTING_CHECKBOX_XPATH).click()
 
     def set_user(self, value):
         self.set_combobox_value(CumTradingLimitsConstants.DIMENSIONS_TAB_USER_XPATH, value)

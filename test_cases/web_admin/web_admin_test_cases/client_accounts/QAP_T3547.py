@@ -3,10 +3,10 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_page import ClientListPage
-from test_framework.web_admin_core.pages.client_accounts.client_list.client_list_wizard import ClientListWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
+from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -32,12 +32,12 @@ class QAP_T3547(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_list_page()
-        client_list_page = ClientListPage(self.web_driver_container)
+        client_list_page = ClientListsPage(self.web_driver_container)
         client_list_page.set_name(self.first_client_list_name)
         time.sleep(1)
         if not client_list_page.is_client_list_found(self.first_client_list_name):
             client_list_page.click_on_new()
-            wizard = ClientListWizard(self.web_driver_container)
+            wizard = ClientListsWizard(self.web_driver_container)
             wizard.set_client_list_name(self.first_client_list_name)
             wizard.set_client_list_description(self.client_list_description)
             wizard.click_on_plus()
@@ -53,7 +53,7 @@ class QAP_T3547(CommonTestCase):
         time.sleep(1)
         if not client_list_page.is_client_list_found(self.second_client_list_name):
             client_list_page.click_on_new()
-            wizard = ClientListWizard(self.web_driver_container)
+            wizard = ClientListsWizard(self.web_driver_container)
             wizard.set_client_list_name(self.second_client_list_name)
             wizard.set_client_list_description(self.client_list_description)
             wizard.click_on_plus()
@@ -82,7 +82,7 @@ class QAP_T3547(CommonTestCase):
             self.verify("All assigned Client List displayed", True, actual_result)
 
             client_assignments_tab.click_on_client_list_link(self.second_client_list_name)
-            client_list_wizard = ClientListWizard(self.web_driver_container)
+            client_list_wizard = ClientListsWizard(self.web_driver_container)
             time.sleep(2)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
             side_menu = SideMenu(self.web_driver_container)
@@ -99,7 +99,7 @@ class QAP_T3547(CommonTestCase):
             self.verify("All assigned Client List displayed", True, actual_result)
 
             client_assignments_tab.click_on_client_list_link(self.first_client_list_name)
-            client_list_wizard = ClientListWizard(self.web_driver_container)
+            client_list_wizard = ClientListsWizard(self.web_driver_container)
             time.sleep(2)
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
 

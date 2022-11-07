@@ -163,6 +163,18 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
+    # It is draft
+    def correct_expire_date_if_it_is_on_weekend(day: int) -> int:
+        shift = 0
+        if day == 5:
+            shift += 2
+        elif day == 6:
+            shift += 1
+        else:
+            shift = 0
+        return shift
+
+    @staticmethod
     def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:
         if (percentage_vol > 0 and percentage_vol < 1):
             return min(math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol)), ord_qty)
