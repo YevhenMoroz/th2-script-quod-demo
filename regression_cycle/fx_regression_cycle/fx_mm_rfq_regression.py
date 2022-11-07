@@ -1,7 +1,6 @@
 from test_cases.fx.fx_mm_rfq import  QAP_T2843, QAP_T2629, \
     QAP_T2931, QAP_T2846, QAP_T2817, QAP_T2816,  \
     QAP_T2814, QAP_T2740, QAP_T2731, QAP_2992, QAP_T2715, QAP_T2714, QAP_4748, QAP_T2865
-from test_cases.fx.fx_mm_rfq.QAP_T2390 import QAP_T2390
 from test_cases.fx.fx_mm_rfq.QAP_T2391 import QAP_T2391
 from test_cases.fx.fx_mm_rfq.QAP_T2392 import QAP_T2392
 from test_cases.fx.fx_mm_rfq.QAP_T2393 import QAP_T2393
@@ -33,7 +32,7 @@ from test_cases.fx.fx_mm_rfq.QAP_T2721 import QAP_T2721
 from test_cases.fx.fx_mm_rfq.QAP_T2732 import QAP_T2732
 from test_cases.fx.fx_mm_rfq.QAP_T2739 import QAP_T2739
 from test_cases.fx.fx_mm_rfq.QAP_T2741 import QAP_T2741
-from test_cases.fx.fx_mm_rfq.QAP_T2815 import QAP_T2815
+# from test_cases.fx.fx_mm_rfq.QAP_T2815 import QAP_T2815
 from test_cases.fx.fx_mm_rfq.QAP_T2818 import QAP_T2818
 from test_cases.fx.fx_mm_rfq.QAP_T2819 import QAP_T2819
 from test_cases.fx.fx_mm_rfq.QAP_T2842 import QAP_T2842
@@ -84,10 +83,9 @@ from test_cases.fx.fx_mm_rfq.QAP_T2692 import QAP_T2692
 from test_cases.fx.fx_mm_rfq.QAP_T2691 import QAP_T2691
 from test_cases.fx.fx_mm_rfq.QAP_T2690 import QAP_T2690
 from test_cases.fx.fx_mm_rfq.QAP_T2689 import QAP_T2689
-from test_cases.fx.fx_mm_rfq.QAP_T8008 import QAP_T8008
+# from test_cases.fx.fx_mm_rfq.QAP_T8008 import QAP_T8008
 from test_cases.fx.fx_mm_rfq.QAP_T8032 import QAP_T8032
 from test_cases.fx.fx_mm_rfq.QAP_T8033 import QAP_T8033
-from test_cases.fx.fx_mm_rfq.QAP_T8051 import QAP_T8051
 from test_cases.fx.fx_mm_rfq.QAP_T8169 import QAP_T8169
 from test_cases.fx.fx_mm_rfq.QAP_T8378 import QAP_T8378
 from test_cases.fx.fx_mm_rfq.QAP_T8586 import QAP_T8586
@@ -156,6 +154,7 @@ from test_cases.fx.fx_mm_rfq.rejection.QAP_T2581 import QAP_T2581
 from test_cases.fx.fx_mm_rfq.rejection.QAP_T2593 import QAP_T2593
 from test_cases.fx.fx_mm_rfq.rejection.QAP_T2598 import QAP_T2598
 from test_cases.fx.fx_mm_rfq.rejection.QAP_T2595 import QAP_T2595
+from test_cases.fx.fx_mm_rfq.rejection.QAP_T8051 import QAP_T8051
 from test_cases.fx.fx_mm_rfq.update_quod_settings import update_settings_and_restart_qs
 
 from stubs import Stubs
@@ -287,7 +286,7 @@ def test_run(parent_id=None, version=None):
         #
         QAP_T2817.execute(report_id, session_id)
         QAP_T2816.execute(report_id, session_id)
-        QAP_T2815(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2815(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2814.execute(report_id, session_id)
         QAP_T2740.execute(report_id, session_id)
         QAP_T2732(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -299,7 +298,7 @@ def test_run(parent_id=None, version=None):
 
         # endregion
         # region FIX test
-        QAP_T2390(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2390(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2391(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2392(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2393(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -364,7 +363,7 @@ def test_run(parent_id=None, version=None):
         QAP_T2466(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2480(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2528(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T8008(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T8008(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8051(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8168(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8409(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
