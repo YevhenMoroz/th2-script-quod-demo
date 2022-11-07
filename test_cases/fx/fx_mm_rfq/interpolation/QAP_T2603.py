@@ -38,9 +38,6 @@ class QAP_T2603(TestCase):
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
                                                            Account=self.acc_argentina)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
