@@ -72,7 +72,7 @@ class QAP_T4116(TestCase):
         # region venue param
         self.qty_trqx = 800
         self.qty_par = 400
-        self.qty_last_passive_child = self.qty_par - self.qty_trqx
+        self.qty_last_passive_child = self.qty - self.qty_par - self.qty_trqx
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.ex_destination_2 = self.data_set.get_mic_by_name("mic_2")
         self.client = self.data_set.get_client_by_name("client_2")
@@ -98,6 +98,7 @@ class QAP_T4116(TestCase):
         self.ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         nos1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account2, self.ex_destination_2, True, self.qty_trqx, self.agr_price)
         nos2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty_par, 21)
+        nos3_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account2, self.ex_destination_2, False, 0, 21.95)
         self.rule_list = [nos_1_rule, nos_2_rule, self.ocr_rule, nos1_ioc_rule, nos2_ioc_rule]
         # endregion
 
@@ -126,7 +127,7 @@ class QAP_T4116(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
-        time.sleep(3)
+        time.sleep(2)
         # endregion
 
         # region Check Sell side
@@ -161,12 +162,12 @@ class QAP_T4116(TestCase):
         self.multilisting_order_replace_params.change_parameters(dict(Price=self.agr_price))
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order_replace_params, case_id_2)
 
-        time.sleep(10)
+        time.sleep(2)
 
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params.add_tag(dict(SettlDate='*', SettlType='*'))
+        replaced_multilisting_order_params.add_tag(dict(SettlDate='*', SettlType='*')).remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -187,7 +188,7 @@ class QAP_T4116(TestCase):
         market_data_snap_shot_strqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryType=0, MDEntryPx=21.95, MDEntrySize=10)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_strqx)
 
-        time.sleep(3)
+        time.sleep(2)
         # endregion
 
         # region Agressive Orders

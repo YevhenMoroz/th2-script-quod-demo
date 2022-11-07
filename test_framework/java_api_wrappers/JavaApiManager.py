@@ -357,7 +357,7 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            print("Element: " + k + " not found")
+            raise KeyError(f"Element: {k} not found")
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
@@ -380,4 +380,4 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise IOError(f"{message_type} not found")
+        raise KeyError(f"{message_type} not found")

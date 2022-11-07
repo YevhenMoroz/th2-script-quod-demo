@@ -28,11 +28,11 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
     MAIN_PAGE_CLIENT_TIER_GLOBAL_FILTER_XPATH = '//*[text()="Client Tiers"]/following-sibling::div/input[@placeholder="Filter"]'
     MAIN_PAGE_CLIENT_TIER_EXECUTABLE_XPATH = '//*[normalize-space()="Executable"]//nb-icon'
-    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_ENABLE_TOOLTIP = '//*[@id="cdk-overlay-35"]//ancestor::*//*[@nbtooltip="Executable Enabled, Click to Disable"]'
-    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_DISABLE_TOOLTIP = '//*[@id="cdk-overlay-33"]//ancestor::*//*[@nbtooltip="Executable Disabled, Click to Enable"]'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_ENABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Executable Enabled, Click to Disable"]'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_DISABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Executable Disabled, Click to Enable"]'
     MAIN_PAGE_CLIENT_TIER_PRICING_XPATH = '//*[normalize-space()="Pricing"]//nb-icon'
-    MAIN_PAGE_CLIENT_TIER_PRICING_ENABLE_TOOLTIP = '//*[@id="cdk-overlay-25"]//ancestor::*//*[@nbtooltip="Pricing Enabled, Click to Disable"]'
-    MAIN_PAGE_CLIENT_TIER_PRICING_DISABLE_TOOLTIP = '//*[@id="cdk-overlay-38"]//ancestor::*//*[@nbtooltip="Pricing Disabled, Click to Enable"]'
+    MAIN_PAGE_CLIENT_TIER_PRICING_ENABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Enabled, Click to Disable"]'
+    MAIN_PAGE_CLIENT_TIER_PRICING_DISABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Disabled, Click to Enable"]'
     # region wizard
     # values tab
     CLIENT_TIER_VALUES_TAB_NAME_XPATH = '//*[@id="clientTierName"]'

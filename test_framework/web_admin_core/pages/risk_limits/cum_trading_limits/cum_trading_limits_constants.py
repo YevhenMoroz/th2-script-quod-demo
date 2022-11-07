@@ -1,5 +1,5 @@
 class CumTradingLimitsConstants:
-    CUM_TRADING_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='CumTradingLimits ']"
+    CUM_TRADING_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Cum Trading Limits ']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
@@ -56,7 +56,7 @@ class CumTradingLimitsConstants:
     DIMENSIONS_TAB_SUB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="subVenue"]'
     DIMENSIONS_TAB_LISTING_GROUP_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listingGroup"]'
     DIMENSIONS_TAB_LISTING_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="listing"]'
-    DIMENSIONS_TAB_WILDCARD_LISTING_CHECKBOX_XPATH = '//*[text()="Wildcard Listing"]/preceding-sibling::span'
+    DIMENSIONS_TAB_PER_LISTING_CHECKBOX_XPATH = '//*[text()="Per Listing"]/preceding-sibling::span'
     DIMENSIONS_TAB_USER_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="userBlock"]'
     DIMENSIONS_TAB_DESK_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="desk"]'
     DIMENSIONS_TAB_ROUTE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="route"]'

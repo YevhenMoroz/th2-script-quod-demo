@@ -19,7 +19,7 @@ class QAP_T3353(TestCase):
         self.wa_api_manager = WebAdminRestApiManager(session_alias=self.session_alias_wa, case_id=self.test_id)
         self.cash_account_message = RestApiCashAccountMessages(data_set=data_set)
         self.cash_account_id = self.data_set.get_cash_account_counters_by_name('cash_account_counter_1')
-        self.error_message = "Request fails: TransferAmt inserted must be positive"
+        self.error_message = "Request fails: TransferAmt inserted must be positive."
         self.cash_transfer_types = self.data_set.get_cash_transfer_types_by_name('cash_transfer_types_1')
 
     @try_except(test_id=os.path.basename(__file__)[:-3])

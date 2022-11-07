@@ -23,6 +23,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
+    TransStatus_CXL = 'CXL'
 
 
 class ExecutionPolicyConst(Enum):
@@ -49,7 +50,10 @@ class AllocationInstructionConst(Enum):
     RootMiscFeeType_EXC = 'EXC'
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
+    COMM_AND_FEES_BASIS_P = 'P'
     COMM_AND_FEES_BASIS_UNI = 'UNI'
+    COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
+    COMM_AND_FEES_TYPE_AGE = "AGE"
     ConfirmationService_MAN = 'MAN'
 
 
@@ -62,6 +66,8 @@ class ConfirmationReportConst(Enum):
 
 class CommissionBasisConst(Enum):
     CommissionBasis_ABS = 'ABS'
+    CommissionBasis_PCT = 'PCT'
+    CommissionBasis_BPS = 'BPS'
 
 
 class CommissionAmountTypeConst(Enum):
@@ -96,14 +102,11 @@ class JavaApiFields(Enum):
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
-    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
-    MatchStatus = 'MatchStatus'
-    AllocStatus = 'AllocStatus'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
     OrderListID = 'OrderListID'
     OrderListName = 'OrderListName'
@@ -137,7 +140,6 @@ class JavaApiFields(Enum):
     ExecutionPolicy = 'ExecutionPolicy'
     ManualDayCumAmt = 'ManualDayCumAmt'
     ManualDayCumQty = 'ManualDayCumQty'
-    AllocInstructionID = 'AllocInstructionID'
     AllocReportType = 'AllocReportType'
     RootMiscFeesList = 'RootMiscFeesList'
     """List Wave"""
@@ -155,6 +157,29 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
+
+    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
+    RootMiscFeeBasis = 'RootMiscFeeBasis'
+    RootMiscFeeRate = 'RootMiscFeeRate'
+    RootMiscFeeCurr = 'RootMiscFeeCurr'
+    RootMiscFeeType = 'RootMiscFeeType'
+    RootMiscFeeAmt = 'RootMiscFeeAmt'
+    RootMiscFeesBlock = 'RootMiscFeesBlock'
+    CommissionBasis = 'CommissionBasis'
+    CommissionAmountType = 'CommissionAmountType'
+    CommissionRate = 'CommissionRate'
+    CommissionCurrency = 'CommissionCurrency'
+    CommissionAmount = 'CommissionAmount'
+    ClientCommissionList = 'ClientCommissionList'
+    ClientCommissionBlock = 'ClientCommissionBlock'
+    AllocReportID = 'AllocReportID'
+    AllocInstructionID = 'AllocInstructionID'
+    AllocType = 'AllocType'
+    AllocTransType = 'AllocTransType'
+    AllocStatus = 'AllocStatus'
+    ConfirmStatus = 'ConfirmStatus'
+    MatchStatus = 'MatchStatus'
+    AllocSummaryStatus = 'AllocSummaryStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -180,3 +205,11 @@ class PegScopes(Enum):
 
 class PegOffsetTypes(Enum):
     Price = 'PRC'
+
+
+class AllocTransTypes(Enum):
+    AllocTransType_Replace = "R"
+
+
+class AllocTypes(Enum):
+    AllocType_P = 'Preliminary'

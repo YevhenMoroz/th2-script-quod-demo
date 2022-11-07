@@ -47,12 +47,11 @@ class QAP_T3665(CommonTestCase):
 
         self.venue = "AMEX"
         self.subvenue = "Forward"
-        self.listing = "ACGx1"
 
         self.listing_group = "test"
         self.user = "12"
         self.desk = "Quod Desk"
-        self.route = "Direct"
+        self.route = "Credit Suisse"
         self.instrument_type = "Bond"
         self.client = "CLIENT2"
         self.client_group = "DEMO"
@@ -92,8 +91,7 @@ class QAP_T3665(CommonTestCase):
         dimensions_tab.set_venue(self.venue)
         dimensions_tab.set_sub_venue(self.subvenue)
         dimensions_tab.set_listing_group(self.listing_group)
-        dimensions_tab.set_listing(self.listing)
-        dimensions_tab.click_on_wildcard_listing()
+        dimensions_tab.click_on_per_listing()
         dimensions_tab.set_user(self.user)
         dimensions_tab.set_desk(self.desk)
         dimensions_tab.set_route(self.route)
@@ -114,7 +112,7 @@ class QAP_T3665(CommonTestCase):
                              self.max_buy_qty, self.soft_max_buy_qty, self.max_sell_qty, self.soft_max_sell_qty,
                              self.max_amount, self.soft_max_amt, self.max_buy_amt, self.soft_max_buy_amt,
                              self.max_sell_amt, self.soft_max_sell_amt, self.max_open_order_amount, self.venue,
-                             self.subvenue, self.listing, self.listing_group, self.user, self.desk, self.route,
+                             self.subvenue, self.listing_group, self.user, self.desk, self.route,
                              self.instrument_type, self.client, self.client_group, self.account, self.instr_symbol,
                              self.institution, "true"]
             self.verify("PDF contains all data", True,

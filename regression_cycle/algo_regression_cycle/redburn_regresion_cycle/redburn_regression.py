@@ -15,7 +15,7 @@ def test_run():
         report_id = bca.create_event('Redburn')
         logger.info(f"Root event was created (id = {report_id.id})")
 
-        tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+        tree = ElementTree.parse(f"{ROOT_DIR}/test_framework/configuration_files/regression_run_config_algo.xml")
         root = tree.getroot()
         version = '5.1.132.145'
 

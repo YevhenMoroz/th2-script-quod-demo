@@ -1,11 +1,11 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 176v</name>
-    <version>5.1.163.176</version>
+    <name>Regression 178v</name>
+    <version>5.1.165.178</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
-                <component name="Twap" run="False">
+                <component name="Twap" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -32,7 +32,7 @@
                         </fe_environments>
                     </environments>
                 </component>
-                <component name="Iceberg" run="False">
+                <component name="Iceberg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -40,7 +40,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Multilisted" run="False">
+                <component name="Multilisted" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -64,7 +64,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark" run="True">
+                <component name="Lit_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -96,7 +96,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Mp_dark" run="True">
+                <component name="Mp_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -107,7 +107,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="Synth_min_qty" run="True">
+                <component name="Synth_min_qty" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -115,7 +115,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark_iceberg" run="True">
+                <component name="Lit_dark_iceberg" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -123,7 +123,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Sorping" run="True">
+                <component name="Sorping" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -131,7 +131,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Multiple_emulation" run="True">
+                <component name="Multiple_emulation" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -139,7 +139,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="PreOpen_Auction" run="True">
+                <component name="PreOpen_Auction" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -195,6 +195,15 @@
                         </fix_environments>
                     </environments>
                 </component>
+                <component name="TimeInForce" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+
             </components>
         </product_line>
         <product_line name="fx" run="False">
@@ -605,7 +614,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="False">
+        <product_line name="retail" run="True">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>
@@ -742,15 +751,18 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                     </environments>
                 </component>
                 <component name="Trading_REST_API_MarketData" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
@@ -758,7 +770,7 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
@@ -766,10 +778,10 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                         <web_admin_rest_api_environments>
-                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
@@ -777,10 +789,10 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod320_kuiper_web_trading</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                         <web_admin_rest_api_environments>
-                            <web_admin_rest_api_environment>quod320_kuiper_web_admin</web_admin_rest_api_environment>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
                 </component>
@@ -788,13 +800,16 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <trading_rest_api_environments>
-                            <trading_rest_api_environment>quod315_luna_trading_desktop</trading_rest_api_environment>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
                         </trading_rest_api_environments>
                     </environments>
                 </component>
                 <component name="WA_REST_API_Site" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                         <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
@@ -804,6 +819,9 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
@@ -811,6 +829,9 @@
                 <component name="WA_REST_API_Client_Accounts" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
+                        <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
                         <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
@@ -820,6 +841,9 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
                     </environments>
@@ -828,11 +852,17 @@
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
+                            <web_admin_rest_api_environment>quod315_luna_web_admin_site</web_admin_rest_api_environment>
+                        </web_admin_rest_api_environments>
+                        <web_admin_rest_api_environments>
                             <web_admin_rest_api_environment>quod315_luna_web_admin</web_admin_rest_api_environment>
                         </web_admin_rest_api_environments>
+                        <trading_rest_api_environments>
+                            <trading_rest_api_environment>quod315_luna_web_trading</trading_rest_api_environment>
+                        </trading_rest_api_environments>
                     </environments>
                 </component>
-                <component name="WA_REST_API_Others" run="True">
+                <component name="WA_REST_API_Others_API" run="True">
                     <data_set>RetDataSet</data_set>
                     <environments>
                         <web_admin_rest_api_environments>
@@ -868,7 +898,7 @@
                         </web_admin_environments>
                     </environments>
                 </component>
-                <component name="WA_Reference_Data" run="True">
+                <component name="WA_Markets" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>

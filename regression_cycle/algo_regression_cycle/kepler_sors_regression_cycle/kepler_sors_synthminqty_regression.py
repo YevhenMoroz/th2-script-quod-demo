@@ -27,7 +27,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"SynthMinQty" if version is None else f"Synthetic MinQty for th2 integration (cloned) | {version}", parent_id)
+    report_id = bca.create_event(f"SynthMinQty" if version is None else f"Synthetic MinQty | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region SynthMinQty

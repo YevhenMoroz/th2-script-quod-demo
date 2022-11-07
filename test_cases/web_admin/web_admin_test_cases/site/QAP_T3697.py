@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 import time
 import traceback
 
@@ -16,11 +17,13 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_T3697(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
         self.login = "adm03"
         self.password = "adm03"
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.institution = "LOAD"
         self.new_institution = "QUOD FINANCIAL"
 
@@ -28,76 +31,64 @@ class QAP_T3697(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_zones_page()
-        time.sleep(2)
         page = ZonesPage(self.web_driver_container)
         assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
         values_sub_wizard = ZonesValuesSubWizard(self.web_driver_container)
         wizard = ZonesWizard(self.web_driver_container)
         page.click_on_new()
-        time.sleep(2)
         values_sub_wizard.set_name(self.name)
-        time.sleep(2)
         assignments_sub_wizard.set_institution(self.institution)
-        time.sleep(1)
         wizard.click_on_save_changes()
-        time.sleep(2)
-        page.set_name(self.name)
-        time.sleep(2)
-        page.click_on_more_actions()
-        time.sleep(2)
-        page.click_on_edit()
-        time.sleep(2)
-        assignments_sub_wizard.set_institution(self.new_institution)
-        time.sleep(2)
-        wizard.click_on_save_changes()
-        time.sleep(2)
-        page.set_name(self.name)
-        time.sleep(2)
-        page.click_on_more_actions()
-        time.sleep(2)
-        page.click_on_clone()
-        time.sleep(2)
-        wizard.click_on_close()
-        time.sleep(2)
-        wizard.click_on_ok_button()
-        time.sleep(2)
 
     def test_context(self):
+        page = ZonesPage(self.web_driver_container)
+        assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
+        wizard = ZonesWizard(self.web_driver_container)
+        values_sub_wizard = ZonesValuesSubWizard(self.web_driver_container)
+
         try:
             self.precondition()
-            page = ZonesPage(self.web_driver_container)
-            try:
-                page.click_on_enable_disable_button()
-                time.sleep(2)
-                page.click_on_enable_disable_button()
-                time.sleep(2)
-
-                self.verify("Enable / disable button works correctly", True, True)
-            except Exception as e:
-                self.verify("Enable / disable button works incorrectly", True, e.__class__.__name__)
 
             page.set_name(self.name)
-            time.sleep(2)
+            time.sleep(1)
             page.click_on_more_actions()
-            time.sleep(2)
+            page.click_on_edit()
+            values_sub_wizard.set_name(self.new_name)
+            assignments_sub_wizard.set_institution(self.new_institution)
+            wizard.click_on_save_changes()
+            page.set_name(self.new_name)
+            time.sleep(1)
+            self.verify("Zone has been change", True, page.is_searched_zone_found(self.new_name))
 
-            expected_pdf_content = [self.name,
-                                    self.new_institution]
+            page.click_on_more_actions()
+            page.click_on_clone()
+            values_sub_wizard.set_name(self.name)
+            assignments_sub_wizard.set_institution(self.institution)
+            wizard.click_on_save_changes()
+            page.set_name(self.name)
+            time.sleep(1)
+            self.verify("Zone has been clone", True, page.is_searched_zone_found(self.name))
 
-            self.verify("is pdf contains correctly values", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(
+            page.click_on_enable_disable_button()
+            time.sleep(1)
+            self.verify("Zone disabled", False, page.is_zone_enable())
+            page.click_on_enable_disable_button()
+            time.sleep(1)
+            self.verify("Zone disabled", True, page.is_zone_enable())
+
+            expected_pdf_content = [self.name, self.institution]
+            self.verify("is pdf contains correctly values", True, page.click_download_pdf_entity_button_and_check_pdf(
                             expected_pdf_content))
 
-            try:
-                page.click_on_download_csv()
-                self.verify("Download csv button works correctly", True, True)
+            csv_content = page.click_on_download_csv_button_and_get_content()
+            actual_result = self.name and self.name and self.institution and self.new_institution in csv_content
 
-            except Exception as e:
-                self.verify("Download csv button works incorrectly", True, e.__class__.__name__)
+            self.verify("CSV file contains created and cloned entities", True, actual_result)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

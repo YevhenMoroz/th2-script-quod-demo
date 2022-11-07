@@ -72,6 +72,7 @@ class FxClients(Enum):
     client_mm_9 = "SWEDCUST3"
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
+    client_mm_12 = "Konstantin1"  # For Java API testing
 
 
 class FxAccounts(Enum):
@@ -261,6 +262,7 @@ class FxSymbols(Enum):
     symbol_synth_3 = "EUR/CHF"  # cross thought USD
     symbol_synth_4 = "GBP/NOK"  # cross thought USD
     symbol_synth_5 = "GBP/CAD"  # cross thought USD
+    symbol_synth_6 = "USD/CHF"  # mystery symbol
 
     symbol_ndf_synth_1 = "SGD/RUB"  # cross thought USD
 

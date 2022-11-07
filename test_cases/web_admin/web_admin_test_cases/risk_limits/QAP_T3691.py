@@ -6,12 +6,12 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_dimensions_sub_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.external_checks.dimensions_sub_wizard import \
     ExternalCheckDimensionsSubWizard
-from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_page import ExternalCheckPage
-from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_values_sub_wizard import \
+from test_framework.web_admin_core.pages.risk_limits.external_checks.main_page import ExternalCheckPage
+from test_framework.web_admin_core.pages.risk_limits.external_checks.values_sub_wizard import \
     ExternalCheckValuesSubWizard
-from test_framework.web_admin_core.pages.risk_limits.external_check.external_check_wizard import ExternalCheckWizard
+from test_framework.web_admin_core.pages.risk_limits.external_checks.wizard import ExternalCheckWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase

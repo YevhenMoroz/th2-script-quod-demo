@@ -28,7 +28,7 @@ class QAP_T7473(TestCase):
         self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client = self.data_set.get_client_by_name("client_counterpart_1")
         self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_3")
         self.cur = self.data_set.get_currency_by_name("currency_3")
         self.cur_for_check = self.data_set.get_currency_by_name("currency_2")
         self.change_params = {'Account': self.client,
@@ -68,9 +68,10 @@ class QAP_T7473(TestCase):
         # region Set-up parameters for ExecutionReports
         parties = {
             'NoPartyIDs': [
-                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
+                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4')
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
@@ -81,14 +82,22 @@ class QAP_T7473(TestCase):
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        list_ignored_fields = ['Account', 'NoMiscFees',
+                               'CommissionData', 'MiscFeesGrp']
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
+        party_stub_dict = {'PartyRole': "*",
+                           'PartyRoleQualifier':'*',
+                           'PartyID': "*",
+                           'PartyIDSource': "*"}
         no_party = {
             'NoParty': [
-                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_euro_clear'),
+                party_stub_dict
             ]
         }
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
@@ -96,5 +105,5 @@ class QAP_T7473(TestCase):
             {"NoParty": no_party, "Account": self.client, "tag5120": "*", "AllocAccount": self.account, "Currency": self.cur_for_check, "AvgPx": "*"})
         # endregion
         # region Check Book & Allocation
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_ignored_fields)
         # endregion

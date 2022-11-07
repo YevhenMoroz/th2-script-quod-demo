@@ -50,7 +50,7 @@ class QAP_T3481(TestCase):
         self.api_washbook_message.create_security_account(custom_params=self.washbook_parameters)
         self.api_manager.send_post_request(self.api_washbook_message)
 
-        self.api_washbook_message.find_all_security_account_washBook()
+        self.api_washbook_message.find_all_security_account_wash_book()
         try:
             parsed_response = self.api_manager.parse_response_details(
                 response=self.api_manager.send_get_request(self.api_washbook_message))
@@ -65,7 +65,7 @@ class QAP_T3481(TestCase):
         self.api_washbook_message.create_security_account(custom_params=self.washbook_parameters)
         self.api_manager.send_post_request(self.api_washbook_message)
 
-        self.api_washbook_message.find_all_security_account_washBook()
+        self.api_washbook_message.find_all_security_account_wash_book()
         try:
             parsed_response = self.api_manager.parse_response_details(
                 response=self.api_manager.send_get_request(self.api_washbook_message))
@@ -80,7 +80,7 @@ class QAP_T3481(TestCase):
         self.api_washbook_message.create_security_account(custom_params=self.washbook_parameters)
         self.api_manager.send_post_request(self.api_washbook_message)
 
-        self.api_washbook_message.find_all_security_account_washBook()
+        self.api_washbook_message.find_all_security_account_wash_book()
         try:
             parsed_response = self.api_manager.parse_response_details(
                 response=self.api_manager.send_get_request(self.api_washbook_message))
@@ -95,7 +95,7 @@ class QAP_T3481(TestCase):
         self.api_washbook_message.create_security_account(custom_params=self.washbook_parameters)
         self.api_manager.send_post_request(self.api_washbook_message)
 
-        self.api_washbook_message.find_all_security_account_washBook()
+        self.api_washbook_message.find_all_security_account_wash_book()
         try:
             parsed_response = self.api_manager.parse_response_details(
                 response=self.api_manager.send_get_request(self.api_washbook_message))

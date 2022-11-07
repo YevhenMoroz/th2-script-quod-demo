@@ -12,6 +12,7 @@ class VerificationMethod(Enum):
     EQUALS = "EQUAL"
     NOT_EQUALS = "NOT EQUAL"
     CONTAINS = "CONTAINS"
+    NOT_CONTAINS = "NOT CONTAINS"
 
 
 class Verifier:
@@ -36,6 +37,8 @@ class Verifier:
             passed = expected_value != actual_value
         elif verification_method is VerificationMethod.CONTAINS:
             passed = expected_value in actual_value
+        elif verification_method is VerificationMethod.NOT_CONTAINS:
+            passed = expected_value not in actual_value
         else:
             raise Exception("Unexpected verification method")
 
