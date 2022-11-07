@@ -7,8 +7,8 @@ from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.site.desks.desks_page import DesksPage
 from test_framework.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
 
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
     import ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer

@@ -6,12 +6,12 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_page import \
-    SettlementModelPage
-from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_values_sub_wizard import \
-    SettlementModelValuesSubWizard
-from test_framework.web_admin_core.pages.middle_office.settlement_model.settlement_model_wizard import \
-    SettlementModelWizard
+from test_framework.web_admin_core.pages.middle_office.settlement_models.main_page import \
+    SettlementModelsPage
+from test_framework.web_admin_core.pages.middle_office.settlement_models.values_sub_wizard import \
+    SettlementModelsValuesSubWizard
+from test_framework.web_admin_core.pages.middle_office.settlement_models.wizard import \
+    SettlementModelsWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -34,11 +34,11 @@ class QAP_T3841(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_settlement_model_page()
+        side_menu.open_settlement_models_page()
         time.sleep(2)
-        page = SettlementModelPage(self.web_driver_container)
-        wizard = SettlementModelWizard(self.web_driver_container)
-        values_sub_wizard = SettlementModelValuesSubWizard(self.web_driver_container)
+        page = SettlementModelsPage(self.web_driver_container)
+        wizard = SettlementModelsWizard(self.web_driver_container)
+        values_sub_wizard = SettlementModelsValuesSubWizard(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
         values_sub_wizard.set_name(self.name)
@@ -57,9 +57,9 @@ class QAP_T3841(CommonTestCase):
     def test_context(self):
         try:
             self.precondition()
-            page = SettlementModelPage(self.web_driver_container)
-            wizard = SettlementModelWizard(self.web_driver_container)
-            values_sub_wizard = SettlementModelValuesSubWizard(self.web_driver_container)
+            page = SettlementModelsPage(self.web_driver_container)
+            wizard = SettlementModelsWizard(self.web_driver_container)
+            values_sub_wizard = SettlementModelsValuesSubWizard(self.web_driver_container)
             excepted_values_after_click_on_clone_button = [
                 self.description,
                 self.settl_location]

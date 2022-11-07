@@ -5,12 +5,12 @@ import string
 import random
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_page \
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_page \
     import ClientGroupsPage
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_wizard import ClientGroupsWizard
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_values_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_wizard import ClientGroupsWizard
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_values_sub_wizard \
     import ClientGroupsValuesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.client_groups.client_groups_dimensions_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_dimensions_sub_wizard \
     import ClientGroupsDimensionsSubWizard
 
 from test_framework.web_admin_core.pages.login.login_page import LoginPage

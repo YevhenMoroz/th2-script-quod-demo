@@ -9,21 +9,20 @@ class RestApiClientMessages(WebAdminRestApiMessages):
     def find_all_client(self):
         self.message_type = "FindAllAccountGroup"
 
-    def create_client(self, custom_params=None):
+    def create_client(self, client_name=None,  desk_id=None, custom_params=None):
         self.message_type = "CreateAccountGroup"
         default_parameters = {
-            "accountMgrUserID": self.data_set.get_recipient_by_name('recipient_user_2'),
-            "accountGroupName": self.data_set.get_client_by_name('client_5'),
-            "accountMgrDeskID": 1,
-            "clientAccountGroupID": self.data_set.get_client_by_name('client_5'),
-            "accountGroupID": self.data_set.get_client_by_name('client_5'),
+            "accountGroupName": client_name,
+            "managerDesk": desk_id,
+            "clientAccountGroupID": client_name,
+            "accountGroupID": client_name,
             "accountType": "HT",
             "accountScheme": "S",
             "transactionType": "C",
             "discloseExec": "R",
-            "accountMgrRoleID": "HSD",
             "clearingAccountType": "FIR",
-            "allocationInst": "MAN"
+            "allocationInst": "MAN",
+            "giveUpMatchingID": client_name
         }
         if custom_params is not None:
             self.parameters = custom_params

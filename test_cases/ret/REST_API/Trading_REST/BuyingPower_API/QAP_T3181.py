@@ -32,6 +32,7 @@ class QAP_T3181(TestCase):
         self.noss_message.change_parameter(parameter_name='OrdQty', new_parameter_value=self.tested_qty)
         self.noss_message.change_parameter_in_component(component_name='PreTradeAllocations',
                                                         fields={'AllocQty': self.tested_qty})
+        self.noss_message.change_key_fields_web_socket_response({'OrderStatus': 'Rejected'})
         noss_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_http_response(self.noss_message))
 

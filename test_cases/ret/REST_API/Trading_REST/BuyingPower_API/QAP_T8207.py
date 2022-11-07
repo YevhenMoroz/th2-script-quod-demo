@@ -46,7 +46,6 @@ class QAP_T8207(TestCase):
         booked_amount_before_order_creation = self.wa_api_manager.parse_response_details(
             response=self.wa_api_manager.send_get_request_with_parameters(self.cash_account_message))
         # endregion
-
         # region check BuyingPower updating upon order creation, Buy side
         self.nos_message.default_instrument_nos = self.instrument
         self.nos_message.set_default_request()
@@ -54,11 +53,10 @@ class QAP_T8207(TestCase):
         self.nos_message.change_parameter(parameter_name='OrdQty', new_parameter_value=self.qty)
         self.nos_message.change_parameter_in_component(component_name='PreTradeAllocations',
                                                        fields={'AllocQty': self.qty})
-        self.nos_message.change_key_fields_web_socket_response({})
+        self.nos_message.change_key_fields_web_socket_response({'OrderStatus': 'Open'})
         nos_response = self.trd_api_manager.parse_response_details(
             response=self.trd_api_manager.send_http_request_and_receive_websocket_response(self.nos_message))
-
-        if 'ExecType' in nos_response.keys() and nos_response['ExecType'] == 'Open':
+        if 'ExecType' in nos_response.keys():
             initial_net_order_value = float(nos_response['NetOrdAmt'])
 
             self.cash_account_message.find_cash_account_counters(cash_account_id=self.cash_account_id)
@@ -69,7 +67,6 @@ class QAP_T8207(TestCase):
             position_after_buy_order_creation = self.wa_api_manager.parse_response_details(
                 response=self.wa_api_manager.send_get_request_with_parameters(self.security_position_message),
                 filter_dict={'instrID': self.instrument_id})
-
             calculation_results_buy_side = self.formulas_manager.calc_booked_amount_buy_side(
                 test_id=self.test_id,
                 response_wa_cash_account=

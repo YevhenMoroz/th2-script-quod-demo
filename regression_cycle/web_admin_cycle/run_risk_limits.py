@@ -40,6 +40,8 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3768 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3917 import QAP_T3917
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T4019 import QAP_T4019
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T4020 import QAP_T4020
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7931 import QAP_T7931
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7933 import QAP_T7933
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7934 import QAP_T7934
 
 
@@ -122,6 +124,10 @@ class RunRiskLimits:
             QAP_T4019(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4020(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7931(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7933(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T7934(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
