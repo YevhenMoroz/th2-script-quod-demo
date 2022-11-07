@@ -4,6 +4,8 @@ from enum import Enum
 class ExecutionReportConst(Enum):
     TransExecStatus_FIL = 'FIL'
     TransExecStatus_PFL = 'PFL'
+    ExecType_TRD = 'TRD'
+    ExecType_CAL = 'CAL'
 
 
 class BasketMessagesConst(Enum):
@@ -21,6 +23,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
+    TransStatus_CXL = 'CXL'
 
 
 class ExecutionPolicyConst(Enum):
@@ -45,7 +48,10 @@ class AllocationInstructionConst(Enum):
     RootMiscFeeType_EXC = 'EXC'
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
+    COMM_AND_FEES_BASIS_P = 'P'
     COMM_AND_FEES_BASIS_UNI = 'UNI'
+    COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
+    COMM_AND_FEES_TYPE_AGE = "AGE"
 
 
 class ConfirmationReportConst(Enum):
@@ -149,6 +155,21 @@ class JavaApiFields(Enum):
     RootMiscFeeAmt = 'RootMiscFeeAmt'
     RootMiscFeesBlock = 'RootMiscFeesBlock'
     RootMiscFeesList = 'RootMiscFeesList'
+    CommissionBasis = 'CommissionBasis'
+    CommissionAmountType = 'CommissionAmountType'
+    CommissionRate = 'CommissionRate'
+    CommissionCurrency = 'CommissionCurrency'
+    CommissionAmount = 'CommissionAmount'
+    ClientCommissionList = 'ClientCommissionList'
+    ClientCommissionBlock = 'ClientCommissionBlock'
+    AllocReportID = 'AllocReportID'
+    AllocInstructionID = 'AllocInstructionID'
+    AllocType = 'AllocType'
+    AllocTransType = 'AllocTransType'
+    AllocStatus = 'AllocStatus'
+    ConfirmStatus = 'ConfirmStatus'
+    MatchStatus = 'MatchStatus'
+    AllocSummaryStatus = 'AllocSummaryStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -174,3 +195,11 @@ class PegScopes(Enum):
 
 class PegOffsetTypes(Enum):
     Price = 'PRC'
+
+
+class AllocTransTypes(Enum):
+    AllocTransType_Replace = "R"
+
+
+class AllocTypes(Enum):
+    AllocType_P = 'Preliminary'
