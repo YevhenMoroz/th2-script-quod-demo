@@ -42,6 +42,7 @@ class QAP_T4747(TestCase):
 
         utc = datetime.utcnow()
         release_time = (utc + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+        self.transact_time = (utc + timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S")
 
         self.no_strategy_1 = [
             {'StrategyParameterName': 'ReleaseTime', 'StrategyParameterType': '19',
@@ -118,7 +119,7 @@ class QAP_T4747(TestCase):
 
         self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Intrument=self.instrument, ExDestination=self.ex_destination_quodlit12, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy_1)
+        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_quodlit12, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy_1)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
 
@@ -145,6 +146,7 @@ class QAP_T4747(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
+        er_pending_new_dma_order_params.change_parameters(dict(TransactTime=self.transact_time))
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
         er_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
