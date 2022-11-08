@@ -192,3 +192,11 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_transact_time_for_child(self) -> ReadLogMessage:
+        base_parameters = {
+            "TransactTime": "*",
+            "ClOrdID": '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+

@@ -346,6 +346,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
+    key_params_log_319_check_transact_time_for_child = ['TransactTime']
 
 
 class AlgoPreFilter(Enum):
