@@ -298,6 +298,9 @@ class ReadLogVerifiers(Enum):
     log319_check_tag_1 = "log319-check-tag-1"
     log_319_check_that_is_no_suitablle_liquidity = "log319-check-that-is-no-suitable-liquidity"
     log_319_check_transact_time_for_child = "log319-check-transact-time-for-child"
+    log_319_check_settl_date_part_1 = "log319-check-settl-date-part-1"
+    log_319_check_settl_date_part_2 = "log319-check-settl-date-part-2"
+    log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
 
 
 class WebAdminURL(Enum):
