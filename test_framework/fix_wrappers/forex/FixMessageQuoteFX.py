@@ -39,6 +39,7 @@ class FixMessageQuoteFX(FixMessage):
             QuoteID="*",
             QuoteMsgID="*",
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+            Account=quote_request.get_parameter("NoRelatedSymbols")[0]["Account"],
             OfferPx="*",
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             ValidUntilTime="*",
