@@ -102,7 +102,7 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version="5.1.165.178"):
+def test_run(parent_id=None, version="5.1.167.180"):
     #  !!!START FXFH_Q MDA_Q!!! before running regression
     report_id = bca.create_event(f"FX_MM_ESP" if version is None else f"FX_MM_ESP | {version}", parent_id)
     session_id = set_session_id("amedents")
@@ -147,7 +147,6 @@ def test_run(parent_id=None, version="5.1.165.178"):
         QAP_T2615(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2619(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2622(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2624(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2650(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2652(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2684(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -216,7 +215,7 @@ def test_run(parent_id=None, version="5.1.165.178"):
         # QAP_T2759(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2784(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2792(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2870(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2870(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2898(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2902(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2913(report_id, session_id, configuration.data_set, configuration.environment).execute()
