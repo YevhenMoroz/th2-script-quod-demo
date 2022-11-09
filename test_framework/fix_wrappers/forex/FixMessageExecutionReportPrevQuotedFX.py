@@ -115,7 +115,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx="*",
             ExecID="*",
             LastPx="*",
-            OrdRejReason="99",
             OrderID="*",
             OrderCapacity="A",
             SettlDate="*",
