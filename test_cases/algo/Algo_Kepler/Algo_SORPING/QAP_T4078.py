@@ -119,23 +119,23 @@ class QAP_T4078(TestCase):
         case_id_1 = bca.create_event("Create SynthMinQty Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
-        self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side, TimeInForce=self.tif_ioc))
+        self.Multilisting_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisting_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.Multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side, TimeInForce=self.tif_ioc))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
+        self.fix_manager_sell.send_message_and_receive_response(self.Multilisting_order, case_id_1)
 
         time.sleep(3)
         # endregion
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.synthMinQty_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.Multilisting_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(er_pending_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
+        er_pending_new_Multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Multilisting_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(er_pending_new_Multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
-        er_new_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(er_new_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
+        er_new_Multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Multilisting_order, self.gateway_side_sell, self.status_new)
+        self.fix_verifier_sell.check_fix_message(er_new_Multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check 1st child DMA order
@@ -153,7 +153,7 @@ class QAP_T4078(TestCase):
 
         # region Check 2nd child DMA order
         self.dma_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Kepler_Multilisting_params()
-        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_bid_qdl1, Instrument=self.instrument, TimeInForce=self.tif_ioc))
+        self.dma_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_bid_qdl1, Instrument=self.instrument, TimeInForce=self.tif_ioc, Side=self.side))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         time.sleep(1)
@@ -165,8 +165,8 @@ class QAP_T4078(TestCase):
         # region Check fill parent algo order
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
 
-        er_fill_synthMinQty_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.synthMinQty_order, self.gateway_side_sell, self.status_fill)
-        self.fix_verifier_sell.check_fix_message(er_fill_synthMinQty_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
+        er_fill_Multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Multilisting_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(er_fill_Multilisting_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
         time.sleep(10)
