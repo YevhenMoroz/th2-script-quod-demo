@@ -242,7 +242,6 @@ class QAP_T2466(TestCase):
         reject = Status.Reject
         text = "not a live quote"
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=reject, text=text)
-        self.execution_report.remove_parameters(["Account", "OrdRejReason"])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 
