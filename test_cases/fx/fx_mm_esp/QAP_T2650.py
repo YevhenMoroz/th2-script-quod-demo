@@ -24,6 +24,7 @@ class QAP_T2650(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_snapshot_2 = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.ss_connectivity = self.fix_env.sell_side_esp
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
@@ -51,12 +52,11 @@ class QAP_T2650(TestCase):
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_1w)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
         # region Step 4-5
-        self.rest_massage.find_all_client_tier_instrument()
-        params_gbp_aud = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.client_tier_palladium1, self.gbp_aud)
+        params_gbp_aud = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_gbp_aud = self.rest_manager. \
             parse_response_details(params_gbp_aud,
                                    {'clientTierID': self.client_tier_palladium1, 'instrSymbol': self.gbp_aud})
@@ -71,16 +71,8 @@ class QAP_T2650(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_1w)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigClientVenueID", "OrigMDTime"])
-        self.md_snapshot.remove_values_in_repeating_group_by_index('NoMDEntries', 0,
-                                                                   ("MDEntryPx", "MDEntryForwardPoints",
-                                                                    "MDEntrySize", "MDEntrySpotRate"))
-        self.md_snapshot.remove_values_in_repeating_group_by_index('NoMDEntries', 1,
-                                                                   ("MDEntryPx", "MDEntryForwardPoints",
-                                                                    "MDEntrySize", "MDEntrySpotRate"))
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.md_snapshot_2.set_params_for_empty_md_response(self.md_request, ["*"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
