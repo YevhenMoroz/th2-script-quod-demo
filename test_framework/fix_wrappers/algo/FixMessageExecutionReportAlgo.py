@@ -690,7 +690,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=8,
             Side=new_order_single.get_parameter('Side'),
             Text='QATestReject',
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             OrdRejReason='*',
             ExecType=8,
