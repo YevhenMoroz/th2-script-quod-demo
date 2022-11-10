@@ -55,7 +55,7 @@ class QAP_T4041(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_23")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_24")
         # endregion
 
         # region Direction
@@ -67,7 +67,7 @@ class QAP_T4041(TestCase):
         self.ex_destination_quodlit1 = self.data_set.get_mic_by_name("mic_10")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_38")
+        self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_39")
         # endregion
 
         # region Key parameters
