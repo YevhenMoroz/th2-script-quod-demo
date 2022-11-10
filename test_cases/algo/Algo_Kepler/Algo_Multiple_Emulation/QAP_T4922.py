@@ -57,7 +57,7 @@ class QAP_T4922(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_17")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_12")
         # endregion
 
         # region Direction
@@ -66,11 +66,11 @@ class QAP_T4922(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_quodlit11 = self.data_set.get_mic_by_name("mic_28")
+        self.ex_destination_quodlit4 = self.data_set.get_mic_by_name("mic_16")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl11 = self.data_set.get_listing_id_by_name("listing_27")
-        self.listing_id_qdl12 = self.data_set.get_listing_id_by_name("listing_28")
+        self.listing_id_qdl4 = self.data_set.get_listing_id_by_name("listing_9")
+        self.listing_id_qdl5 = self.data_set.get_listing_id_by_name("listing_10")
         # endregion
 
         # region Key parameters
@@ -85,23 +85,23 @@ class QAP_T4922(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit11, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit11, True)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit4, self.price)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit4, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
 
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl11 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl11, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl11.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_qdl11.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl11)
+        market_data_snap_shot_qdl4 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl4, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl4.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_qdl4.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl4)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl12 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl12, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl12.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_qdl12.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl12)
+        market_data_snap_shot_qdl5 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl5, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl5.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_qdl5.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl5)
 
         time.sleep(3)
         # endregion
@@ -133,7 +133,7 @@ class QAP_T4922(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtc)).add_tag(dict(ExpireDate='*'))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit4, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtc))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
