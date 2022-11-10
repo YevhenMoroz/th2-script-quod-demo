@@ -186,6 +186,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_24 = dict(
+        Symbol='QUODTESTQA07',
+        SecurityID='TESTQA07',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -310,6 +318,7 @@ class AlgoListingId(Enum):
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
     listing_37 = "48"       # Euronext Фьіеуквфь for AXS
     listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
+    listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
 
 
 class AlgoCurrency(Enum):
