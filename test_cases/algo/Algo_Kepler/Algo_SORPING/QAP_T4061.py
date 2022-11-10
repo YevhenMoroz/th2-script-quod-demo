@@ -34,7 +34,7 @@ class QAP_T4061(TestCase):
         self.qty = 100
         self.min_qty = 100
         self.price_ask = 40
-        self.price_bid_qdl1 = 20
+        self.price_bid_qdl1 = 30
         self.price_bid_qdl2_3 = 15
         self.qty_for_md = 1000
         self.px_for_incr = 0
