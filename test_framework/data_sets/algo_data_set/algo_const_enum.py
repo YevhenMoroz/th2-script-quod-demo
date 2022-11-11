@@ -170,12 +170,11 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
-    # This instrument temporary isn`t working
     instrument_22 = dict(
-        Symbol='QA_AQ123456789',
-        SecurityID='QA_AQ123456789',
-        SecurityIDSource='8',
-        SecurityExchange='AQXE',
+        Symbol='QUOD_XPAR_MD_NOT_FOUND',
+        SecurityID='XPAR_MD_NOT_FOUND',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
         SecurityType='CS'
     )
 
@@ -183,7 +182,15 @@ class AlgoFixInstruments(Enum):
         Symbol='QUODTESTQA06',
         SecurityID='TESTQA06',
         SecurityIDSource='8',
-        SecurityExchange='QDL11',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
+
+    instrument_24 = dict(
+        Symbol='QUODTESTQA07',
+        SecurityID='TESTQA07',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
         SecurityType='CS'
     )
 
@@ -310,6 +317,8 @@ class AlgoListingId(Enum):
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
     listing_37 = "48"       # Euronext Фьіеуквфь for AXS
+    listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
+    listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
 
 
 class AlgoCurrency(Enum):
@@ -355,6 +364,8 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
+    key_params_log_319_check_transact_time_for_child = ['TransactTime']
+    key_params_log_319_check_settl_date_part_3 = ['SettlDate']
 
 
 class AlgoPreFilter(Enum):

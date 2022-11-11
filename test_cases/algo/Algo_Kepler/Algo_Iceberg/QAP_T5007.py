@@ -94,8 +94,9 @@ class QAP_T5007(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         self.nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price, self.price, self.display_qty, self.display_qty, self.delay_for_trade)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, True)
-        self.rule_list = [ocr_rule]
+        self.rule_list = [nos_rule, ocr_rule]
         # endregion
 
         # region Send_MarketData
@@ -132,8 +133,6 @@ class QAP_T5007(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
         rule_manager.remove_rule(self.nos_trade_rule)
-        rule_manager.print_active_rules()
-        self.nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl12, self.price)
 
         time.sleep(3)
 
@@ -177,6 +176,8 @@ class QAP_T5007(TestCase):
         er_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
         # endregion
 
+        time.sleep(3)
+
         # region Check childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check childs", self.test_id))
 
@@ -207,4 +208,3 @@ class QAP_T5007(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
-        rule_manager.remove_rule(self.nos_rule)

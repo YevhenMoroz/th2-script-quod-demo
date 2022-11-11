@@ -15,6 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T8913(TestCase):
@@ -41,7 +43,8 @@ class QAP_T8913(TestCase):
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
 
         utc = datetime.utcnow()
-        release_time = (utc + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+        release_time = (utc + timedelta(minutes=1)).strftime("%Y%m%d-%H:%M:%S")
+        self.transact_time_for_check_message = (utc + timedelta(minutes=1)).strftime("%Y-%m-%dT%H:%M:%S")
 
         self.no_strategy_1 = [
             {'StrategyParameterName': 'ReleaseTime', 'StrategyParameterType': '19',
@@ -85,6 +88,16 @@ class QAP_T8913(TestCase):
         self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
         # endregion
 
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_transact_time_for_child.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_transact_time_for_child")
+        # endregion
+
+        # region Compare message parameters
+        self.transact_time = str((utc + timedelta(minutes=1)).strftime("%Y-%b-%d %H:%M:%S"))
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -118,7 +131,7 @@ class QAP_T8913(TestCase):
 
         self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Intrument=self.instrument, ExDestination=self.ex_destination_quodlit11, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy_1)
+        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_quodlit11, TimeInForce=self.tif_gtc)).add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy_1)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
 
@@ -135,13 +148,13 @@ class QAP_T8913(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(300)
+        time.sleep(60)
 
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtc))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -149,6 +162,18 @@ class QAP_T8913(TestCase):
 
         er_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # endregion
+
+        time.sleep(5)
+
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_transact_time_for_child()
+        compare_message.change_parameters(dict(TransactTime=self.transact_time))
+
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_read_log)
         # endregion
 
         time.sleep(10)

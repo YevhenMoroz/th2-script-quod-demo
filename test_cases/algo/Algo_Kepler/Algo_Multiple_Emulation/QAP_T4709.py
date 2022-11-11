@@ -16,6 +16,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T4709(TestCase):
@@ -46,7 +48,6 @@ class QAP_T4709(TestCase):
         expire_date = (now + timedelta(days=delta))
         shift = AlgoFormulasManager.calculate_shift_for_expire_date_if_it_is_on_weekend(expire_date, delta)
         self.ExpireDate = expire_date.strftime("%Y%m%d")
-        self.child_settle_date = (now + timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -81,6 +82,22 @@ class QAP_T4709(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_settl_date_part_1.value
+        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_settl_date_part_2.value
+        self.log_verifier_by_name_3 = constants.ReadLogVerifiers.log_319_check_settl_date_part_3.value
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+        self.read_log_verifier_3 = ReadLogVerifierAlgo(self.log_verifier_by_name_3, report_id)
+        self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_settl_date_part_3")
+        # endregion
+
+        # region Compare message parameters
+        self.child_settle_date_for_read_log = (now + timedelta(days=shift)).strftime("%Y-%b-%d")
+        self.instr_type = 'Equity'
+        self.count_of_days = 2
         # endregion
 
         self.rule_list = []
@@ -137,7 +154,7 @@ class QAP_T4709(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -147,7 +164,29 @@ class QAP_T4709(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        # TODO Need add checking in logs
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_settl_date_part_1()
+        compare_message_1.change_parameters(dict(InstrType=self.instr_type))
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_settl_date_part_2()
+        compare_message_2.change_parameters(dict(CountOfDays=self.count_of_days))
+
+        compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_settl_date_part_3()
+        compare_message_3.change_parameters(dict(SettlDate=self.child_settle_date_for_read_log))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
+
+        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+
+        self.read_log_verifier_3.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier_3.check_read_log_message(compare_message_3, self.key_params_read_log)
+        # endregion
+
+        time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
