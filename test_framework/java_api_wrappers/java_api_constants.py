@@ -170,6 +170,7 @@ class JavaApiFields(Enum):
     ConfirmStatus = 'ConfirmStatus'
     MatchStatus = 'MatchStatus'
     AllocSummaryStatus = 'AllocSummaryStatus'
+    DoneForDay = 'DoneForDay'
 
 
 class JavaApiPartyRoleConstants(Enum):
