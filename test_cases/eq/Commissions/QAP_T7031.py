@@ -238,9 +238,9 @@ class QAP_T7031(TestCase):
             JavaApiFields.RootMiscFeeAmt.value: actual_result[JavaApiFields.MiscFeesList.value][
                 JavaApiFields.MiscFeesBlock.value][0][JavaApiFields.MiscFeeAmt.value]},
                                              'Comparing Fee amount after allocate')
-        print_message('Allocate block step 3', responses)
+        print_message('Allocate block step 4', responses)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
+    def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
