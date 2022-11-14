@@ -21,6 +21,7 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T4016 import QAP_T4016
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4037 import QAP_T4037
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4038 import QAP_T4038
 from test_cases.web_admin.web_admin_test_cases.others.QAP_T4039 import QAP_T4039
+from test_cases.web_admin.web_admin_test_cases.others.QAP_T8930 import QAP_T8930
 
 
 class RunOthers:
@@ -66,6 +67,8 @@ class RunOthers:
             QAP_T4038(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4039(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8930(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 178v</name>
-    <version>5.1.165.178</version>
+    <name>Regression 180v WebAdmin</name>
+    <version>5.1.167.180</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
