@@ -249,7 +249,7 @@ class QAP_T7241(TestCase):
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
+    def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
