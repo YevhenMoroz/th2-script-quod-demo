@@ -68,7 +68,7 @@ class QAP_T6990(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
-        commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
+        commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         fee = self.data_set.get_fee_by_name('fee3')
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
@@ -184,13 +184,13 @@ class QAP_T6990(TestCase):
         # endregion
 
         # region step 4
-        misc_fee_rate = 1
-        amount_of_fees = misc_fee_rate / 100
+        misc_fee_rate = 5
+        amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price)/100
         actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_CAL.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value][JavaApiFields.MiscFeesList.value][
                 JavaApiFields.MiscFeesBlock.value][0]
         expected_result = {JavaApiFields.MiscFeeRate.value: str(float(misc_fee_rate)),
-                           JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value,
+                           JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
                            JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
                            JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEES_TYPE_AGE.value,
                            JavaApiFields.MiscFeeAmt.value: str(amount_of_fees)}
