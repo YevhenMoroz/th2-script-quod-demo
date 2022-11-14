@@ -20,7 +20,7 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"Kepler custom tags" if version is None else f"Kepler custom tags | {version}", parent_id)
+    report_id = bca.create_event(f"Kepler custom tags" if version is None else f"Kepler custom tags (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
         # region Iceberg: Check PartyInfo
@@ -35,7 +35,7 @@ def test_run(parent_id=None, version=None):
         QAP_T5025(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5026(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5027(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
+        # # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

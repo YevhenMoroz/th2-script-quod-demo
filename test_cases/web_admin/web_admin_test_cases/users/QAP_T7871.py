@@ -48,7 +48,7 @@ class QAP_T7871(CommonTestCase):
             value_tab.set_ext_id_client(self.test_data)
             value_tab.set_ext_id_venue(self.test_data)
             time.sleep(1)
-            self.verify("[REVERT CHANGES] btn become disable after click", True,
+            self.verify("[REVERT CHANGES] btn become enable", True,
                         wizard.is_revert_changes_button_enabled())
 
             wizard.click_on_clear_changes()
@@ -63,7 +63,7 @@ class QAP_T7871(CommonTestCase):
             value_tab.set_ext_id_venue(self.test_data)
             time.sleep(1)
             wizard = UsersWizard(self.web_driver_container)
-            self.verify("[REVERT CHANGES] btn become disable after click", True,
+            self.verify("[REVERT CHANGES] btn become enable", True,
                         wizard.is_revert_changes_button_enabled())
 
             wizard.click_on_clear_changes()

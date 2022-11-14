@@ -114,7 +114,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.is_parameter_exist('NoStrategyParameters'):
             temp.update(NoStrategyParameters='*')
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')) or new_order_single.is_parameter_exist('NoParty'):
             temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
@@ -200,13 +200,17 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or ('ClientAlgoPolicyID' not in new_order_single.get_parameters() and new_order_single.get_parameter('TargetStrategy') != '1004'):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') or ('ClientAlgoPolicyID' not in new_order_single.get_parameters() and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003']):
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 NoParty='*'
             )
+        if new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
+            temp.update(SecondaryAlgoPolicyID='*')
+        if new_order_single.get_parameter('TargetStrategy') == '1003' or new_order_single.is_parameter_exist('NoParty'):
+            temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         if new_order_single.is_parameter_exist('ExpireTime'):
@@ -382,6 +386,13 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     ExDestination='*',
                     SecondaryAlgoPolicyID='*',
                     ChildOrderID='*',
+                )
+            elif new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
+                temp.update(
+                    LastExecutionPolicy='*',
+                    LastMkt='*',
+                    ExDestination='*',
+                    ChildOrderID='*'
                 )
             else:
                 temp.update(
@@ -679,7 +690,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=8,
             Side=new_order_single.get_parameter('Side'),
             Text='QATestReject',
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             OrdRejReason='*',
             ExecType=8,
@@ -820,13 +831,17 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') or ('ClientAlgoPolicyID' not in new_order_single.get_parameters() and 'StrategyName' not in new_order_single.get_parameters()):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') or ('ClientAlgoPolicyID' not in new_order_single.get_parameters() and 'StrategyName' not in new_order_single.get_parameters() and new_order_single.get_parameter('TargetStrategy') != '1003'):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 SecondaryAlgoPolicyID='*',
+                NoParty='*'
+            )
+        if new_order_single.get_parameter('TargetStrategy') == '1003':
+            temp.update(
                 NoParty='*'
             )
         if new_order_single.is_parameter_exist('ExpireDate'):
@@ -1072,6 +1087,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TransactTime='*',
             ExecType=4,
             LeavesQty='*',
+            Text='*'
         )
         super().change_parameters(temp)
         return self
