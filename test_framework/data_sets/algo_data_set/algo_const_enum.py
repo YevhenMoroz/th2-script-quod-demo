@@ -319,6 +319,7 @@ class AlgoListingId(Enum):
     listing_37 = "48"       # Euronext Фьіеуквфь for AXS
     listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
     listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
+    listing_40 = "1825020508"       # QUODLIT1 for QUODTESTQA07
 
 
 class AlgoCurrency(Enum):
