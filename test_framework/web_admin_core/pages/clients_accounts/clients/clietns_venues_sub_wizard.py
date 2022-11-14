@@ -34,7 +34,7 @@ class ClientsVenuesSubWizard(CommonPage):
         self.click_on_plus()
         self.set_text_by_xpath(ClientsConstants.VENUES_TAB_VENUE_XPATH, "")
         time.sleep(1)
-        available_venues = self.get_all_items_from_drop_down(ClientsConstants.VENUES_TAB_VENUE_XPATH)
+        available_venues = self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
         self.click_on_cancel()
         return available_venues
 

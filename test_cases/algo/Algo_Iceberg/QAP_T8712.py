@@ -84,9 +84,9 @@ class QAP_T8712(TestCase):
     def run_pre_conditions_and_steps(self):
         # TODO Need rewrite
         # region Rule creation
-        # rule_manager = RuleManager(Simulators.algo)
-        # # nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.reason)
-        # # self.rule_list = [nos_reject_rule]
+        rule_manager = RuleManager(Simulators.algo)
+        nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.reason)
+        self.rule_list = [nos_reject_rule]
         # # endregion
         #
         # self.ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
@@ -185,8 +185,8 @@ class QAP_T8712(TestCase):
 
         time.sleep(10)
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
     #     # region Cancel Algo Order
     #     case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
     #     self.fix_verifier_sell.set_case_id(case_id_3)
@@ -204,5 +204,5 @@ class QAP_T8712(TestCase):
     #     self.fix_verifier_buy.check_fix_message(cancel_dma_2_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
     #     # endregion
     #
-    #     rule_manager = RuleManager(Simulators.algo)
-    #     rule_manager.remove_rule(self.nos_rule)
+          rule_manager = RuleManager(Simulators.algo)
+          rule_manager.remove_rule(self.rule_list)

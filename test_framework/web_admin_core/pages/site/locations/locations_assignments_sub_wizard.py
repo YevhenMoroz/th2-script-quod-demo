@@ -22,7 +22,7 @@ class LocationsAssignmentsSubWizard(CommonPage):
         self.find_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_USERS_LINK_XPATH.format(user_name)).click()
 
     def clear_zone_field(self):
-        self.find_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_ZONE_XPATH).clear()
+        self.set_text_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_ZONE_XPATH, "")
 
     def click_on_zone(self, zone_name):
         self.find_by_xpath(LocationsConstants.ASSIGNMENTS_TAB_ZONE_LINK_XPATH.format(zone_name)).click()

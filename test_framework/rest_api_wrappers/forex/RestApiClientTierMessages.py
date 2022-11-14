@@ -11,6 +11,20 @@ class RestApiClientTierMessages(RestApiMessages):
         self.message_type = 'FindAllClientTier'
         return self
 
+    def find_client_tier(self, client_tier_id):
+        self.clear_message_params()
+        self.message_type = 'FindClientTier'
+        self.parameters = {
+            'URI':
+                {
+                    'queryID': client_tier_id
+                }
+        }
+        return self
+
+
+
+
     def modify_client_tier(self):
         self.message_type = 'ModifyClientTier'
         return self

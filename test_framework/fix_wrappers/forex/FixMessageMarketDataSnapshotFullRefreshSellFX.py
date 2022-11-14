@@ -136,6 +136,7 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                         "MDEntrySize": qty,
                         "OrdType": "2",
                         "SettlDate": spo(),
+                        "SettlType": "0",
                         "MDQuoteType": "*",
                         "MDEntryType": "*",
 

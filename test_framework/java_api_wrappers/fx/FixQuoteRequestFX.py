@@ -89,3 +89,6 @@ class FixQuoteRequestFX(JavaApiMessage):
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
         return self
 
+    def change_qty(self, qty):
+        params = self.get_parameters()
+        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["OrdQty"] = qty
