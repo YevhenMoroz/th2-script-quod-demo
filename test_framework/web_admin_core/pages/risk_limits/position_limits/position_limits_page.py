@@ -88,6 +88,7 @@ class PositionLimitsPage(CommonPage):
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_VALUE_XPATH).text
 
     def set_max_qty(self, value):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_FILTER_XPATH)
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_FILTER_XPATH, value)
 
     def get_max_qty(self):
@@ -95,6 +96,7 @@ class PositionLimitsPage(CommonPage):
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_QTY_VALUE_XPATH).text
 
     def set_max_amt(self, value):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_FILTER_XPATH)
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_FILTER_XPATH, value)
 
     def get_max_amt(self):
@@ -102,6 +104,7 @@ class PositionLimitsPage(CommonPage):
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_AMT_VALUE_XPATH).text
 
     def set_currency(self, value):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_CURRENCY_FILTER_XPATH)
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_CURRENCY_FILTER_XPATH, value)
 
     def get_currency(self):

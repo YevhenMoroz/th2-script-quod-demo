@@ -211,15 +211,19 @@ class CommonPage:
 
         action = ActionChains(self.web_driver)
         action.move_to_element_with_offset(scr_elem, 5, 5)
-        action.click()
-        time.sleep(2)
+        action.double_click()
+        action.double_click()
+        time.sleep(1)
 
-        c = 50
-        while elem_size / 1.5 > c:
+        c = 100
+        while elem_size > c:
             action.drag_and_drop_by_offset(scr_elem, c, 0)
             c += 100
             action.perform()
             if self.is_element_present(search_element):
+                c += 200
+                action.drag_and_drop_by_offset(scr_elem, c, 0)
+                action.perform()
                 break
 
     def write_to_file(self, path_to_file, value):

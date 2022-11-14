@@ -11,10 +11,10 @@ class DesksAssignmentsSubWizard(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def set_location_at_description_tab(self, value):
+    def set_location(self, value):
         self.set_combobox_value(DesksConstants.LOCATION_AT_ASSIGNMENTS_TAB_XPATH, value)
 
-    def get_location_at_description_tab(self):
+    def get_location(self):
         return self.get_text_by_xpath(DesksConstants.LOCATION_AT_ASSIGNMENTS_TAB_XPATH)
 
     def click_on_location(self, location_name):

@@ -26,6 +26,10 @@ class InstitutionsConstants:
     DOWNLOAD_CSV_BUTTON_XPATH = '//*[@nbtooltip="Download CSV"]'
     DISPLAYED_INSTITUTIONS_XPATH = '//*[@ref="eCenterContainer"]//*[@role="row"]'
     DROP_DOWN_MENU_XPATH = '//nb-option//span'
+    CROSS_CURRENCY_HAIR_CUT_FILTER = '//*[@style="width: 200px; left: 1000px;"]//*[@class="ag-floating-filter-input"]'
+    CROSS_CURRENCY_HAIR_CUT = '//*[@col-id="settlCurrFxHairCut"]//*[@ref="eValue"]'
+    CASH_ACCOUNT_CURRENCY_RATE_FILTER = '//*[@style="width: 200px; left: 1200px;"]//*[@class="ag-floating-filter-input"]'
+    CASH_ACCOUNT_CURRENCY_RATE = '//*[@col-id="settlCurrFxRateSource"]//*[@ref="eValue"]'
 
     # Main page
 
@@ -51,6 +55,9 @@ class InstitutionsConstants:
     VALUES_TAB_CLIENT_TIME_ZONE_XPATH = '//*[@id="clientTimeZone"]'
     VALUES_TAB_POSITION_FLATTENING_PERIOD = '//*[@id="posFlatteningTime"]'
     VALUES_TAB_UNKNOWN_ACCOUNTS = '//*[@formcontrolname="enableUnknownAccounts"]//*[contains(@class, "custom-checkbox")]'
+    VALUES_TAB_CROSS_CURRENCY_HAIR_CUT = '//*[@id="settlCurrFxHairCut"]'
+    VALUES_TAB_CROSS_CURRENCY_SETTLEMENT_CHECKBOX = '//*[@formcontrolname="crossCurrencySettlement"]//*[contains(@class, "custom-checkbox")]'
+    VALUES_TAB_CASH_ACCOUNT_CURRENCY_RATE_SOURCE = '//*[@id="settlCurrFxRateSource"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_ZONES_LINK_XPATH = '//a[text()=" {} "]'

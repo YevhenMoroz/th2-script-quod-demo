@@ -16,3 +16,6 @@ class CumTradingLimitsAssignmentsSubWizard(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(CumTradingLimitsConstants.INSTITUTION)
+
+    def is_institutions_field_enable(self):
+        return self.is_field_enabled(CumTradingLimitsConstants.INSTITUTION)
