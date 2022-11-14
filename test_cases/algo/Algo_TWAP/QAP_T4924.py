@@ -39,6 +39,7 @@ class QAP_T4924(TestCase):
         self.price_ask = 40
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_day = constants.TimeInForce.Day.value
+        self.waves = 2
         self.slice1_qty = AlgoFormulasManager.get_all_twap_slices(self.qty, 2)[0]
         self.tick = 0.005
         self.slice1_pass_px = self.price - self.tick
@@ -108,7 +109,8 @@ class QAP_T4924(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
-        self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=14, StrategyParameterValue=start_time), dict(StrategyParameterName='EndDate', StrategyParameterType=14, StrategyParameterValue=end_time)])
+        self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=14, StrategyParameterValue=start_time), dict(StrategyParameterName='EndDate', StrategyParameterType=14, StrategyParameterValue=end_time),
+                                                                                 dict(StrategyParameterName='Waves', StrategyParameterType=1, StrategyParameterValue=self.waves)])
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, case_id_1)

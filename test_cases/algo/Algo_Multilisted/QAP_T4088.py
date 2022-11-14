@@ -96,7 +96,7 @@ class QAP_T4088(TestCase):
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_trqx)
 
-        time.sleep(10)
+        time.sleep(15)
         # endregion
 
         # region Send NewOrderSingle (35=D) for Multilisting order
@@ -147,7 +147,7 @@ class QAP_T4088(TestCase):
         # endregion
 
         cancel_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
-        cancel_multilisting_order_params.change_parameter('LastMkt', self.ex_destination_1)
+        cancel_multilisting_order_params.change_parameters(dict(LastMkt=self.ex_destination_1, Text='*'))
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Eliminate')
         # endregion
 

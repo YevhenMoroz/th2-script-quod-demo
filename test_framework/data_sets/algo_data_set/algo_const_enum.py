@@ -170,6 +170,30 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_22 = dict(
+        Symbol='QUOD_XPAR_MD_NOT_FOUND',
+        SecurityID='XPAR_MD_NOT_FOUND',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_23 = dict(
+        Symbol='QUODTESTQA06',
+        SecurityID='TESTQA06',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
+
+    instrument_24 = dict(
+        Symbol='QUODTESTQA07',
+        SecurityID='TESTQA07',
+        SecurityIDSource='8',
+        SecurityExchange='QDL1',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -252,6 +276,7 @@ class AlgoMic(Enum):
     mic_29 = "QDL12"  # QUODLIT12
     mic_30 = "CHIX"   # CHIX
     mic_31 = "XAMS"   # Euronext Amsterdam
+    mic_32 = "AQXE"   # AQUIS
 
 
 class AlgoListingId(Enum):
@@ -268,7 +293,7 @@ class AlgoListingId(Enum):
     listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
     listing_13 = "125917202" # JANESTREET for FR0000031577
-    listing_14 = "422226892" # CITADEL for FR0000031577
+    listing_14 = "422225144" # CITADEL for FR0000031577
     listing_15 = "897588209" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
     listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
@@ -292,6 +317,8 @@ class AlgoListingId(Enum):
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
     listing_37 = "48"       # Euronext Фьіеуквфь for AXS
+    listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
+    listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
 
 
 class AlgoCurrency(Enum):
@@ -337,6 +364,8 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
+    key_params_log_319_check_transact_time_for_child = ['TransactTime']
+    key_params_log_319_check_settl_date_part_3 = ['SettlDate']
 
 
 class AlgoPreFilter(Enum):

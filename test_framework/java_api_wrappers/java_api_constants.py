@@ -57,6 +57,8 @@ class ConfirmationReportConst(Enum):
 
 class CommissionBasisConst(Enum):
     CommissionBasis_ABS = 'ABS'
+    CommissionBasis_PCT = 'PCT'
+    CommissionBasis_BPS = 'BPS'
 
 
 class CommissionAmountTypeConst(Enum):
@@ -139,6 +141,14 @@ class JavaApiFields(Enum):
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
 
+    ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
+    RootMiscFeeBasis = 'RootMiscFeeBasis'
+    RootMiscFeeRate = 'RootMiscFeeRate'
+    RootMiscFeeCurr = 'RootMiscFeeCurr'
+    RootMiscFeeType = 'RootMiscFeeType'
+    RootMiscFeeAmt = 'RootMiscFeeAmt'
+    RootMiscFeesBlock = 'RootMiscFeesBlock'
+    RootMiscFeesList = 'RootMiscFeesList'
 
 
 class JavaApiPartyRoleConstants(Enum):

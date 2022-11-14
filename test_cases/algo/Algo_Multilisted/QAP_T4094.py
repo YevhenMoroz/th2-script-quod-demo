@@ -92,8 +92,6 @@ class QAP_T4094(TestCase):
         self.rule_list = [nos_rule, ocrr_rule, ocr_rule]
         # endregion
 
-        now = datetime.today() - timedelta(hours=3)
-
         # region Send_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
@@ -169,7 +167,7 @@ class QAP_T4094(TestCase):
         # endregion
 
         replaced_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
-        replaced_dma_order_params.change_parameters(dict(TimeInForce=self.tif_day)).remove_parameter('ExpireDate')
+        replaced_dma_order_params.change_parameters(dict(TimeInForce=self.tif_day)).remove_parameters(['NoParty', 'ExpireDate'])
         self.fix_verifier_buy.check_fix_message(replaced_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy Side ExecReport Replace Request')
         # endregion
 

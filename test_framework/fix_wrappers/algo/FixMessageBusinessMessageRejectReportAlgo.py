@@ -14,6 +14,7 @@ class FixMessageBusinessMessageRejectReportAlgo(FixMessageBusinessMessageRejectR
             Text='*',
             RefMsgType='G',
             BusinessRejectReason='5',
+            DefaultApplVerID='*'
         )
         super().change_parameters(temp)
         return self

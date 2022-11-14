@@ -47,6 +47,15 @@ class RestApiMessages:
             self.parameters.pop(par)
         return self
 
+    def add_parameters(self, parameters_dict: dict):
+        """
+        Method for adding new parameters to a message
+        value_list = {'ParameterName_1':'Value',...,'ParameterName_N':'Value'} or
+        value_list = {'ParameterName_1':'Value'} for single value
+        """
+        self.parameters.update(parameters_dict)
+        return self
+
     def add_value_to_component(self, component_name, values_list):
         """
         Method for adding new values to the component of message

@@ -123,7 +123,8 @@ class FxClientTiersID(Enum):
     client_tier_id_6 = "2600010"  # For AutoHedger testing
     client_tier_id_7 = "2600009"  # For MM_Positions testing
     client_tier_id_8 = "2600012"  # For AutoHedger testing
-    client_tier_id_11 = "1200005"  # For Margin Format testing
+    client_tier_id_11 = "3200016"  # For Margin Format testing
+    client_tier_id_12 = "2800013"  # For Margin Format testing
 
 
 class FxSecurityTypes(Enum):
