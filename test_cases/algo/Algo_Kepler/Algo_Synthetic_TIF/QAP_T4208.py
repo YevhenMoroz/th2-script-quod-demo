@@ -17,7 +17,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_T4207(TestCase):
+class QAP_T4208(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -90,7 +90,7 @@ class QAP_T4207(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         # TODO Need to add text in rule
-        self.nos_eliminate_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, self.price)
+        self.nos_eliminate_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, self.price, text=self.text)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, True)
         self.rule_list = [ocr_rule]
         # endregion
