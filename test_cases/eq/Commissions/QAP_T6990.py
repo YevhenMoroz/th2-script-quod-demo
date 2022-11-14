@@ -231,9 +231,13 @@ class QAP_T6990(TestCase):
                                        'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
-                                             'AllocType': '2'})
+                                             'AllocType': '5'})
         allocation_report.change_parameters({'AvgPx': new_avg_px, 'Currency': self.currency_post_trade,
                                              'tag5120': "*",
+                                             })
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
+        allocation_report.change_parameters({'NoMiscFees': '#',
+                                             'AllocType': '2',
                                              'NoAllocs': [{'AllocAccount': self.alloc_account,
                                                            'AllocQty': self.qty,
                                                            'IndividualAllocID': '*',
@@ -242,9 +246,6 @@ class QAP_T6990(TestCase):
                                                            'AllocInstructionMiscBlock2': '*'
                                                            }]
                                              })
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
-        allocation_report.change_parameters({'NoMiscFees': '#',
-                                             'AllocType': '2'})
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
