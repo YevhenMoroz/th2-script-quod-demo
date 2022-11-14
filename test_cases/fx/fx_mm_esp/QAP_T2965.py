@@ -120,7 +120,7 @@ class QAP_T2965(TestCase):
         # endregion
 
         # region Step 2
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
+        self.md_request.set_md_req_parameters_maker()
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
