@@ -11,17 +11,17 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.message_type = 'FindAllClientTierInstrSymbol'
         return self
 
-    def find_all_client_tier_instrument_filtered(self, client_tier_id: str, instrument: str):
+    def find_client_tier_instrument(self, client_tier_id: str, instrument: str):
         self.clear_message_params()
-        search = f"findClientTierInstrSymbol?queryID={client_tier_id}&#38;queryID2={instrument}"
+        self.message_type = 'FindClientTierInstrSymbol'
         self.parameters = {
             'URI':
                 {
-                    'tier_id': client_tier_id,
-                    'symbol': instrument
+                    'queryID': client_tier_id,
+                    'curr1': instrument.split('/')[0],
+                    'curr2': instrument.split('/')[1],
                 }
         }
-        self.message_type = 'FindClientTierInstrSymbol'
         return self
 
     def modify_client_tier_instrument(self):
@@ -103,12 +103,24 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         }
         return self
 
+    def sort_bands_by_indice_upper_quantity(self):
+        for_sort = dict()
+        bands = list()
+        for band in self.parameters["clientTierInstrSymbolQty"]:
+            index = band.get("indiceUpperQty")
+            for_sort.update({index: band})
+        for i in range(len(for_sort)):
+            a = for_sort.get(str(i))
+            bands.append(for_sort.get(str(i)))
+        self.parameters["clientTierInstrSymbolQty"] = bands
+        return self
+
     def add_sweepable_qty(self, sweepable_qty, default_bid_margin=None, default_offer_margin=None):
         qty_list = self.get_parameter('clientTierInstrSymbolQty')
         parent_indice_upper_qty = str(int(len(qty_list)) + int(1))
         qty_list.append({
             "upperQty": str(sweepable_qty),
-            "indiceUpperQty": str(int(len(qty_list)) + int(1)),
+            "indiceUpperQty": parent_indice_upper_qty,
             "publishPrices": "true"
         })
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
@@ -116,7 +128,7 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         for tenor in tenors:
-            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"]) + 1
             tenor["clientTierInstrSymbolTenorQty"].append({
                 "upperQty": str(sweepable_qty),
                 "MDQuoteType": "TRD",
@@ -214,14 +226,13 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
         self.update_parameters({'clientTierInstrSymbolQty': sweepable, 'clientTierInstrSymbolTenor': tenors})
         return self
 
-
     def add_tenor_qty(self, qty, default_bid_margin=None, default_offer_margin=None):
         tenors = self.get_parameter('clientTierInstrSymbolTenor')
         timestamp = str(datetime.now().timestamp())
         timestamp = timestamp.split(".", 1)
         timestamp = timestamp[0]
         for tenor in tenors:
-            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"])+1
+            indiceUpperQty = len(tenor["clientTierInstrSymbolTenorQty"]) + 1
             tenor["clientTierInstrSymbolTenorQty"].append({
                 "upperQty": str(qty),
                 "MDQuoteType": "TRD",

@@ -54,5 +54,5 @@ class QAP_T2716(TestCase):
         # endregion
         # region Step 3
         self.execution_report.set_params_from_new_order_single(self.new_order_single)
-        self.fix_verifier_dc.check_fix_message(self.execution_report, key_parameters=['ClientQuoteID', 'OrdStatus'])
+        self.fix_verifier_dc.check_fix_message(self.execution_report)
         # endregion
