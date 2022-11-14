@@ -52,6 +52,7 @@ class AllocationInstructionConst(Enum):
     COMM_AND_FEES_BASIS_UNI = 'UNI'
     COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
     COMM_AND_FEES_TYPE_AGE = "AGE"
+    COMM_AND_FEE_BASIS_ABS = 'ABS'
 
 
 class ConfirmationReportConst(Enum):
