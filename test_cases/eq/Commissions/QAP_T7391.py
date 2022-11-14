@@ -210,3 +210,6 @@ class QAP_T7391(TestCase):
         confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
         actual_commission = confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
         self.java_api_manager.compare_values(commission_expected, actual_commission, 'Check commission from step 4')
+
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
