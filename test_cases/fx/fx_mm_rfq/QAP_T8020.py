@@ -30,6 +30,7 @@ class QAP_T8020(TestCase):
         self.fix_manager_fh = FixManager(self.fxfh_connectivity, self.test_id)
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request_prepare = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
         self.settle_date_wk2 = self.data_set.get_settle_date_by_name("wk2")
@@ -95,11 +96,13 @@ class QAP_T8020(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.quote_request_prepare.set_deposit_and_loan_param()
+        self.quote_request_prepare.update_repeating_group_by_index("NoRelatedSym", index=0,
+                                                                   SettlDate=self.settle_date_tom,
+                                                                   MaturityDate=self.settle_date_wk2)
+        self.fix_manager_sel.send_message_and_receive_response(self.quote_request_prepare, self.test_id)
         # region prepare MD before sending RFQ
         # send MD to TOM
-        self.quote_request.set_deposit_and_loan_param()
-        self.quote_request.update_repeating_group_by_index("NoRelatedSym", index=0, SettlDate=self.settle_date_tom,
-                                                           MaturityDate=self.settle_date_wk2)
         self.md_snapshot.set_md_for_deposit_and_loan_fwd()
         self.md_snapshot.update_repeating_group("NoMDEntries", self.no_md_entries_tom)
         self.md_snapshot.update_MDReqID(self.md_req_id_tom, self.fxfh_connectivity, "FX")
