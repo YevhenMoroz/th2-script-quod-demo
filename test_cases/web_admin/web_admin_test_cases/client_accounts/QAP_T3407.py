@@ -5,28 +5,28 @@ import string
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_values_sub_wizard import \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_assignments_sub_wizard import \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_external_sources_sub_wizard import \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_external_sources_sub_wizard import \
     ClientsExternalSourcesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_policies_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_policies_sub_wizard \
     import ClientsPoliciesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_managements_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_managements_sub_wizard \
     import ClientsManagementsSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_pos_maintance_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_pos_maintance_sub_wizard \
     import ClientsPosMaintenanceSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_instr_types_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_instr_types_sub_wizard \
     import ClientsInstrTypesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clietns_venues_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clietns_venues_sub_wizard \
     import ClientsVenuesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_routes_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_routes_sub_wizard \
     import ClientsRoutesSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_trade_confirm_sub_wizard \
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_trade_confirm_sub_wizard \
     import ClientsTradeConfirmSubWizard
-from test_framework.web_admin_core.pages.client_accounts.clients.clients_wizard import ClientsWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -149,6 +149,11 @@ class QAP_T3407(CommonTestCase):
         try:
             self.precondition()
 
+            instr_types_tab.click_on_edit()
+            venues_tab.click_on_edit()
+            routes_tab.click_on_edit()
+            trade_confirm_tab.click_on_edit()
+
             actual_result = [values_tab.get_name(),
                              values_tab.get_description(),
                              values_tab.get_disclose_exec(),
@@ -160,16 +165,12 @@ class QAP_T3407(CommonTestCase):
                              policies_tab.get_default_execution_strategies(),
                              pos_maintenance_tab.get_cash_maintenance(),
                              pos_maintenance_tab.is_pnl_maintenance_selected(),
-                             instr_types_tab.click_on_edit(),
                              instr_types_tab.get_instr_type(),
-                             venues_tab.click_on_edit(),
                              venues_tab.get_venue(),
                              venues_tab.get_venue_client_name(),
-                             routes_tab.click_on_edit(),
                              routes_tab.get_route(),
                              routes_tab.get_route_client_name(),
                              trade_confirm_tab.get_trade_confirm_preference(),
-                             trade_confirm_tab.click_on_edit(),
                              trade_confirm_tab.get_email_address(),
                              trade_confirm_tab.get_recipient_types()]
             while None in actual_result:

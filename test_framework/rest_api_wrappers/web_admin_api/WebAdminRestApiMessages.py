@@ -75,10 +75,6 @@ class WebAdminRestApiMessages:
         }
         self.parameters = modify_params
 
-    def create_institution(self, params):
-        self.message_type = "CreateInstitution"
-        self.parameters = params
-
     def modify_venue_status_metric(self, venue,
                                    status: str = 'false',
                                    error_threshold: int = -1,
@@ -98,10 +94,6 @@ class WebAdminRestApiMessages:
         }
         self.parameters = modify_params
 
-    def modify_institution(self, params):
-        self.message_type = "ModifyInstitution"
-        self.parameters = params
-
     def drop_session(self, user_id, role_id, session_key):
         self.message_type = "DropSession"
         drop_session_params = {
@@ -114,10 +106,6 @@ class WebAdminRestApiMessages:
             ]
         }
         self.parameters = drop_session_params
-
-    def modify_user(self, params):
-        self.message_type = "ModifyUser"
-        self.parameters = params
 
     def enable_gating_rule(self, gating_rule_id):
         self.message_type = "EnableGatingRule"
@@ -139,44 +127,12 @@ class WebAdminRestApiMessages:
         self.message_type = "ModifyGatingRule"
         self.parameters = params
 
-    def create_security_account(self, params):
-        self.message_type = "CreateSecurityAccount"
-        self.parameters = params
-
-    def create_client(self, params):
-        self.message_type = "CreateAccountGroup"
-        self.parameters = params
-
-    def modify_client(self, params):
-        self.message_type = "ModifyAccountGroup"
-        self.parameters = params
-
-    def enable_client(self, client_id):
-        self.message_type = "EnableAccountGroup"
-
-        enable_params = {
-            "accountGroupID": client_id,
-        }
-        self.parameters = enable_params
-
-    def disable_client(self, client_id):
-        self.message_type = "DisableAccountGroup"
-
-        disable_params = {
-            "accountGroupID": client_id,
-        }
-        self.parameters = disable_params
-
     def send_user_feedback(self, params):
         self.message_type = 'SendUserFeedback'
         self.parameters = params
 
     def create_wash_book_rule(self, params):
         self.message_type = "CreateWashBookRule"
-        self.parameters = params
-
-    def modify_wash_book_rule(self, params):
-        self.message_type = "ModifyWashBookRule"
         self.parameters = params
 
     def delete_wash_book_rule(self, wash_book_rule_id):
@@ -186,29 +142,8 @@ class WebAdminRestApiMessages:
         }
         self.parameters = delete_params
 
-    def find_all_institution(self):
-        self.message_type = "FindAllInstitution"
-
-    def find_all_zone(self):
-        self.message_type = "FindAllZone"
-
-    def find_all_location(self):
-        self.message_type = "FindAllLocation"
-
-    def find_all_desk(self):
-        self.message_type = "FindAllDesk"
-
-    def find_all_user(self):
-        self.message_type = "FindAllUser"
-
     def find_all_user_session(self):
         self.message_type = "FindAllUserSession"
-
-    def find_all_client(self):
-        self.message_type = "FindAllAccountGroup"
-
-    def find_all_security_account_washBook(self):
-        self.message_type = "FindAllSecurityAccountWashBook"
 
     def find_all_wash_book_rule(self):
         self.message_type = "FindAllWashBookRule"

@@ -128,6 +128,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_POV_Redburn_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name("account_1"),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "2",
+            'QuodFlatParameters': {
+                'MaxPercentageVolume': '10'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP_Navigator_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name("account_1"),
@@ -228,6 +251,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'Waves': '5',
             }
         }
+        super().change_parameters(base_parameters)
         return self
 
     def set_MOO_params(self) -> FixMessageNewOrderSingle:
@@ -530,6 +554,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "DisplayInstruction": {
                 'DisplayQty': '15000'
             }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_TIF_params(self):
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '30000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1003'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1159,6 +1202,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_Child_of_Kepler_Multilisting_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'NoParty': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
 
     def set_Kepler_DMA_child_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
@@ -1223,6 +1289,47 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TimeInForce': '0',
             "TransactTime": '*',
             'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Synthetic_TIF_Kepler(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Account': "KEPLER",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "1",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1003',
+            'ExDestination': 'QDL11',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_Synthetic_TIF_Kepler(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL11",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
         }

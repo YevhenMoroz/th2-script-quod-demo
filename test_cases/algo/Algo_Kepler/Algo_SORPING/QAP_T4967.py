@@ -36,7 +36,7 @@ class QAP_T4967(TestCase):
         self.qty = 1500
         self.min_qty = 700
         self.display_qty = 750
-        self.price = 45
+        self.price = 35
         self.dark_price = 30
         self.traded_qty = 0
         self.qty_for_md = 10000
@@ -57,7 +57,6 @@ class QAP_T4967(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminate = Status.Eliminate
-        self.status_fill = Status.Fill
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -72,7 +71,6 @@ class QAP_T4967(TestCase):
 
         # region venue param
         self.ex_destination_quodlit6 = self.data_set.get_mic_by_name("mic_18")
-        self.ex_destination_quodlit7 = self.data_set.get_mic_by_name("mic_19")
         self.ex_destination_quoddkp1 = self.data_set.get_mic_by_name("mic_14")
         self.ex_destination_quoddkp2 = self.data_set.get_mic_by_name("mic_15")
         self.client = self.data_set.get_client_by_name("client_4")
@@ -88,6 +86,7 @@ class QAP_T4967(TestCase):
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -96,9 +95,7 @@ class QAP_T4967(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp1, False, self.traded_qty, self.dark_price)
         nos_2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp2, False, self.traded_qty, self.dark_price)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, True)
-        self.rule_list = [nos_rule, ocr_rule, nos_1_ioc_rule, nos_2_ioc_rule]
+        self.rule_list = [nos_1_ioc_rule, nos_2_ioc_rule]
         # endregion
 
         # region Send_MarkerData
@@ -174,21 +171,12 @@ class QAP_T4967(TestCase):
         # endregion
         # endregion
 
-        # region Check Lit child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
-
-        self.dma_qdl6_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_qdl6_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit6, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(MinQty=self.min_qty))
-        self.fix_verifier_buy.check_fix_message(self.dma_qdl6_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
-
-        er_pending_new_dma_qdl6_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl6_order, self.gateway_side_buy, self.status_pending)
-        er_pending_new_dma_qdl6_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit6))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_qdl6_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
-
-        er_new_dma_qdl6_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl6_order, self.gateway_side_buy, self.status_new)
-        er_new_dma_qdl6_order_params.change_parameters(dict(ExDestination=self.ex_destination_quodlit6))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_qdl6_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # region Check that are no Lit child DMA orders
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that are no Lit child DMA orders", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_qdpkp1_order, self.dma_qdpkp2_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
+
+        time.sleep(15)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -199,11 +187,6 @@ class QAP_T4967(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel third dma child order
-        er_cancel_dma_qdl6_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl6_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl6_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Lit passive Child DMA order on venue qdl6: OldQty=11000, price=52")
-        # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

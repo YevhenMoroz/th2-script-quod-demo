@@ -83,6 +83,8 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8357 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8423 import QAP_T8423
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8433 import QAP_T8433
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8508 import QAP_T8508
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8813 import QAP_T8813
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8926 import QAP_T8926
 
 
 class RunClientsAccounts:
@@ -251,6 +253,10 @@ class RunClientsAccounts:
             QAP_T8433(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8508(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8813(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8926(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             end_time = time.monotonic()
             print("Run Client/Accounts ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

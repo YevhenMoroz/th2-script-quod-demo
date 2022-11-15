@@ -21,11 +21,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateNewOrdSingleMarketPreviouslyQuoted, \
     TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
-    TemplateExternalExecutionReport
-
-TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
-    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
-    TemplateExternalExecutionReport
+    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -398,12 +394,13 @@ class RuleManager:
                                                               trade=trade
                                                               ))
 
-    def add_OrderCancelReplaceRequest(self, session: str, account: str, exdestination: str, modify=True):
+    def add_OrderCancelReplaceRequest(self, session: str, account: str, exdestination: str, modify=True, delay=0):
         return self.sim.createOrderCancelReplaceRequest(
             request=TemplateOrderCancelReplaceRequest(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
                                                       exdestination=exdestination,
-                                                      modify=modify
+                                                      modify=modify,
+                                                      delay=delay
                                                       ))
 
     def add_OrderCancelReplaceRequest_FIXStandard(self, session: str, account: str, exdestination: str, modify=True):
@@ -591,6 +588,18 @@ class RuleManager:
                                                                        CumQtyBeforeReplace=cumQtyBeforeReplace,
                                                                        tradedQty=tradedQty
                                                               ))
+
+    def add_NewOrdSingleExecutionReportTradeByOrdQtyRBCustom(self, session: str, account: str, exdestination: str, price: float,
+                                                     traded_price: float, qty: int, traded_qty: int, delay: int):
+        return self.sim.createNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
+            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(connection_id=ConnectionID(session_alias=session),
+                                                                     account=account,
+                                                                     exdestination=exdestination,
+                                                                     price=price,
+                                                                     traded_price=traded_price,
+                                                                     qty=qty,
+                                                                     traded_qty=traded_qty,
+                                                                     delay=delay))
 if __name__ == '__main__':
     rule_manager = RuleManager()
     rule_manager.print_active_rules()

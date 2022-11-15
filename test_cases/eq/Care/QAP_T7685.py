@@ -1,44 +1,51 @@
 import logging
-from test_framework.core.test_case import TestCase
-from custom import basic_custom_actions as bca
-from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts, OrderType
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from stubs import Stubs
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 from pathlib import Path
+
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst, SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+seconds, nanos = timestamps()
 
 
 class QAP_T7685(TestCase):
-
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.username = environment.get_list_fe_environment()[0].user_1
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.client = self.data_set.get_client_by_name('client_co_1')
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.order_type = OrderType.limit.value
-        self.qty = "900"
-        self.price = "20"
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.ord_sub_message = OrderSubmitOMS(self.data_set)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declarations
-        # endregion
-        # region Create CO
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty,
-                                            order_type=self.order_type, tif=TimeInForce.DAY.value, is_sell_side=False,
-                                            instrument=self.lookup, recipient=self.username, partial_desk=True)
-        self.order_ticket.create_order(lookup=self.lookup)
-        # endregion
-        # region Check values in OrderBook
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value, OrderBookColumns.qty.value: self.qty,
-             OrderBookColumns.client_name.value: self.client, OrderBookColumns.limit_price.value: self.price})
-        # endregion
+        # region Declaration
+        # region create order
+        self.ord_sub_message.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                    role=SubmitRequestConst.USER_ROLE_1.value)
+        response = self.java_api_manager.send_message_and_receive_response(self.ord_sub_message)
+        self.return_result(response, ORSMessageType.OrdReply.value)
+        order_id = self.result.get_parameter('OrdReplyBlock')['OrdID']
+        status = self.result.get_parameter('OrdReplyBlock')['TransStatus']
+        self.java_api_manager.compare_values(
+            {OrderBookColumns.sts.value: OrderReplyConst.TransStatus_OPN.value},
+            {OrderBookColumns.sts.value: status},
+            f'Comparing {OrderBookColumns.sts.value}')
+
+    def return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response
+

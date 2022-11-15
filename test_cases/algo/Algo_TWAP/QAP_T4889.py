@@ -36,6 +36,7 @@ class QAP_T4889(TestCase):
         self.qty = 2000
         self.price = self.price_ask = 40
         self.price_bid = 30
+        self.mid_price = int(self.price_ask + self.price_bid)/2
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
@@ -84,7 +85,7 @@ class QAP_T4889(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.mid_price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
@@ -134,7 +135,7 @@ class QAP_T4889(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 1", self.test_id))
 
         slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(slice1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 1')
 
         pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
@@ -155,7 +156,7 @@ class QAP_T4889(TestCase):
         # region Check child DMA order Slice 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
         self.slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        self.slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day))
 
         self.fix_verifier_buy.check_fix_message(self.slice2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 2')
 

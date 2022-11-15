@@ -36,7 +36,7 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10',
                 # 'AllowedVenues': 'XLON',
-                'ForbiddenVenues': 'TRQX/CBOEEU/AQUIS'
+                'ForbiddenVenues': 'TRQX/CBOEEU/AQUIS',
             }
         }
 

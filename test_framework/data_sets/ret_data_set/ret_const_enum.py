@@ -32,6 +32,13 @@ class RetTradingApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XNSE"
     )
+    instrument_5 = dict(
+        InstrSymbol="SPICEJET-IQ[NSE]",
+        SecurityID="11564",
+        SecurityIDSource="ExchSymb",
+        InstrType="Equity",
+        SecurityExchange="XNSE"
+    )
 
 
 class RetInstruments(Enum):
@@ -170,7 +177,7 @@ class RetHierarchicalLevels(Enum):
     hierarchical_level_2 = dict(
         institutionID={'institutionID': 3},
         zoneID={'zoneID': 6},
-        locationID={'location': 6},
+        locationID={'locationID': 6},
         deskID={'deskUserRole': [{'deskID': 5}]}
     )
 

@@ -11,6 +11,7 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3204 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3218 import QAP_T3218
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3230 import QAP_T3230
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3261 import QAP_T3261
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3262 import QAP_T3262
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3264 import QAP_T3264
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3272 import QAP_T3272
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3273 import QAP_T3273
@@ -34,9 +35,13 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3674 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3675 import QAP_T3675
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3676 import QAP_T3676
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3691 import QAP_T3691
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3729 import QAP_T3729
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3768 import QAP_T3768
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3917 import QAP_T3917
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T4019 import QAP_T4019
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T4020 import QAP_T4020
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7931 import QAP_T7931
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7933 import QAP_T7933
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7934 import QAP_T7934
 
 
@@ -61,6 +66,8 @@ class RunRiskLimits:
             QAP_T3230(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3261(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3262(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3264(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
@@ -108,11 +115,19 @@ class RunRiskLimits:
                       environment=configuration.environment).run()
             QAP_T3691(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3729(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3768(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3917(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4019(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4020(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7931(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7933(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T7934(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

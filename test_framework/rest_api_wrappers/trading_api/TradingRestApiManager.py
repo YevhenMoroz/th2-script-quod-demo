@@ -73,10 +73,7 @@ class TradingRestApiManager:
                         for key, value in data['fields'].items():
                             fields_name.append(key)
                             if 'simpleValue' in value.keys():
-                                if value['simpleValue'] == 'PendingOpen':
-                                    pass
-                                else:
-                                    fields_data.update({key: value['simpleValue']})
+                                fields_data.update({key: value['simpleValue']})
                             if 'messageValue' in value.keys():
                                 for message_key, message_value in value['messageValue']['fields'].items():
                                     fields_data.update({message_key: message_value['simpleValue']})

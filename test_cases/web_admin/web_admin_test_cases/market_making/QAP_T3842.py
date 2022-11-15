@@ -22,16 +22,15 @@ class QAP_T3842(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.core_spot_price_strategy = ["MidPoint", "TopOfBook", "VWAPPriceOptimized", "VWAPSpeedOptimized"]
+        self.tod_end_time = "23:59:59"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_client_tier_page()
         client_tiers_main_page = ClientTiersPage(self.web_driver_container)
         client_tiers_main_page.click_on_more_actions()
-        time.sleep(1)
         client_tiers_main_page.click_on_edit()
 
     def test_context(self):
@@ -39,6 +38,7 @@ class QAP_T3842(CommonTestCase):
             self.precondition()
 
             client_tier_wizard_value_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+            client_tier_wizard_value_tab.set_tod_end_time(self.tod_end_time)
             client_tier_wizard_value_tab.clear_field_core_spot_price_strategy()
             time.sleep(1)
             core_spot_price_items = client_tier_wizard_value_tab.get_all_core_spot_price_strategy_from_drop_menu()
@@ -48,21 +48,16 @@ class QAP_T3842(CommonTestCase):
 
             self.verify("Core spot price strategy contains test data", excepted_result, actual_result)
 
-            time.sleep(1)
             new_core_spot_price_strategy = random.choice(self.core_spot_price_strategy)
             client_tier_wizard_value_tab.set_core_spot_price_strategy(new_core_spot_price_strategy)
-            time.sleep(1)
             client_tier_wizard = ClientTiersWizard(self.web_driver_container)
             edited_client_tier = client_tier_wizard_value_tab.get_name()
             client_tier_wizard.click_on_save_changes()
-            time.sleep(2)
             client_tiers_main_page = ClientTiersPage(self.web_driver_container)
             client_tiers_main_page.set_client_tiers_global_filter(edited_client_tier)
             time.sleep(1)
             client_tiers_main_page.click_on_more_actions()
-            time.sleep(1)
             client_tiers_main_page.click_on_edit()
-            time.sleep(2)
 
             self.verify("New Core Spot Price Strategy was save correctly", new_core_spot_price_strategy,
                         client_tier_wizard_value_tab.get_core_spot_price_strategy())

@@ -5,12 +5,12 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_page import \
-    OrderVelocityLimitPage
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_values_sub_wizard import \
-    OrderVelocityLimitValuesSubWizard
-from test_framework.web_admin_core.pages.risk_limits.order_velocity_limit.order_velocity_limit_wizard import \
-    OrderVelocityLimitWizard
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.main_page import \
+    OrderVelocityLimitsPage
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.values_sub_wizard import \
+    OrderVelocityLimitsValuesSubWizard
+from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.wizard import \
+    OrderVelocityLimitsWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -39,13 +39,13 @@ class QAP_T3294(CommonTestCase):
         try:
             self.precondition()
 
-            page = OrderVelocityLimitPage(self.web_driver_container)
+            page = OrderVelocityLimitsPage(self.web_driver_container)
             page.click_on_new()
 
-            wizard = OrderVelocityLimitWizard(self.web_driver_container)
+            wizard = OrderVelocityLimitsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
 
-            values_tab = OrderVelocityLimitValuesSubWizard(self.web_driver_container)
+            values_tab = OrderVelocityLimitsValuesSubWizard(self.web_driver_container)
             values_tab.set_order_velocity_limit_name(self.order_velocity_limit_name)
             values_tab.set_moving_time_window(self.moving_time_window)
             values_tab.set_max_quantity(self.max_quantity)

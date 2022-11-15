@@ -10,7 +10,7 @@ from regression_cycle.web_admin_cycle.run_market_making import RunMarketMaking
 from regression_cycle.web_admin_cycle.run_middle_office import RunMiddleOffice
 from regression_cycle.web_admin_cycle.run_order_management import RunOrderManagement
 from regression_cycle.web_admin_cycle.run_positions import RunPositions
-from regression_cycle.web_admin_cycle.run_reference_data import ReferenceData
+from regression_cycle.web_admin_cycle.run_markets import RunMarkets
 from regression_cycle.web_admin_cycle.run_risk_limits import RunRiskLimits
 from regression_cycle.web_admin_cycle.run_price_cleansing import RunPriceCleansing
 from regression_cycle.web_admin_cycle.run_site import RunSite
@@ -25,9 +25,12 @@ channels = dict()
 
 
 def test_run(parent_id=None):
-    report_id = bca.create_event('Regression 176v | 5.1.163.176', parent_id)
+
     tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
     root = tree.getroot()
+    name = root.find(".//name").text
+    version = root.find(".//version").text
+    report_id = bca.create_event(f'{name} | {version}', parent_id)
     try:
         start_time = time.monotonic()
         if eval(root.find(".//component[@name='WA_General']").attrib["run"]):
@@ -36,8 +39,8 @@ def test_run(parent_id=None):
             RunSite(report_id).execute()
         if eval(root.find(".//component[@name='WA_Users']").attrib["run"]):
             RunUsers(report_id).execute()
-        if eval(root.find(".//component[@name='WA_Reference_Data']").attrib["run"]):
-            ReferenceData(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Markets']").attrib["run"]):
+            RunMarkets(report_id).execute()
         if eval(root.find(".//component[@name='WA_Client_Accounts']").attrib["run"]):
             RunClientsAccounts(report_id).execute()
         if eval(root.find(".//component[@name='WA_Order_Management']").attrib["run"]):

@@ -183,3 +183,42 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_that_is_no_suitablle_liquidity(self) -> ReadLogMessage:
+        base_parameters = {
+            "Time": "*",
+            "ClOrdrId": "*",
+            "Text": "no suitable liquidity"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_transact_time_for_child(self) -> ReadLogMessage:
+        base_parameters = {
+            "TransactTime": "*",
+            "ClOrdID": '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_settl_date_part_1(self) -> ReadLogMessage:
+        base_parameters = {
+            "InstrType": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_settl_date_part_2(self) -> ReadLogMessage:
+        base_parameters = {
+            "CountOfDays": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_settl_date_part_3(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "SettlDate": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+

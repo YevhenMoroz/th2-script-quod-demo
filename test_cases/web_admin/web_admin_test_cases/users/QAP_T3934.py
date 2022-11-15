@@ -28,7 +28,6 @@ class QAP_T3934(CommonTestCase):
         login_page.set_login(self.login)
         login_page.set_password(self.password)
         login_page.click_login_button()
-        login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         time.sleep(2)
         side_menu.open_users_page()

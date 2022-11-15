@@ -1,3 +1,4 @@
+import sys
 import time
 import traceback
 
@@ -15,8 +16,10 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_T3700(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id):
-        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id)
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+
         self.login = "adm03"
         self.password = "adm03"
         self.zone = "NORTH-ZONE"
@@ -25,39 +28,37 @@ class QAP_T3700(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_locations_page()
-        time.sleep(2)
         main_page = LocationsPage(self.web_driver_container)
         main_page.set_enabled("true")
-        time.sleep(2)
-        main_page.click_on_more_actions()
-        time.sleep(2)
-        main_page.click_on_edit()
-        time.sleep(2)
-        assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
-        assignments_sub_wizard.clear_zone_field()
         time.sleep(1)
-        wizard = LocationsWizard(self.web_driver_container)
-        wizard.click_on_save_changes()
 
     def test_context(self):
+        main_page = LocationsPage(self.web_driver_container)
+        wizard = LocationsWizard(self.web_driver_container)
+        assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
+        zone_values_sub_wizard = ZonesValuesSubWizard(self.web_driver_container)
+
         try:
             self.precondition()
-            wizard = LocationsWizard(self.web_driver_container)
-            assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
+
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
+            assignments_sub_wizard.clear_zone_field()
+            time.sleep(1)
+            wizard.click_on_save_changes()
+
             self.verify("Incorrect or missing values message displayed", True,
                         wizard.is_incorrect_or_missing_value_message_displayed())
-            time.sleep(2)
+
             assignments_sub_wizard.set_zone(self.zone)
-            time.sleep(2)
             assignments_sub_wizard.click_on_zone(self.zone)
             time.sleep(2)
-            zone_values_sub_wizard = ZonesValuesSubWizard(self.web_driver_container)
-            self.verify(
-                "Is zone menu displayed after click on hyperlink", True, zone_values_sub_wizard.get_name() == self.zone)
+            self.verify("Zone page opens", True, zone_values_sub_wizard.get_name() == self.zone)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

@@ -259,7 +259,7 @@ class QAP_T5072(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Partial fill Algo Order", self.test_id))
         partially_fill_SORPING_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
-        partially_fill_SORPING_order.change_parameters(dict(Price=self.inc_price, LastPx=self.inc_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty))
+        partially_fill_SORPING_order.change_parameters(dict(Price=self.inc_price, LastPx=self.inc_price, CumQty=self.traded_qty, LeavesQty=self.leaves_after_amend, LastQty=self.traded_qty)).add_tag(dict(SettlType="*"))
         self.fix_verifier_sell.check_fix_message(partially_fill_SORPING_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partially Fill')
         # endregion
 
@@ -280,7 +280,6 @@ class QAP_T5072(TestCase):
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.SORPING_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        er_cancel_SORPING_order_params.change_parameters(dict(CxlQty=self.leaves_after_amend))
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

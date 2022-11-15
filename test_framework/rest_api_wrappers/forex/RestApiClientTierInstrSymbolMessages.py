@@ -241,3 +241,5 @@ class RestApiClientTierInstrSymbolMessages(RestApiMessages):
             tenor.update({'lastUpdateTime': timestamp})
         self.update_parameters({'clientTierInstrSymbolTenor': tenors})
         return self
+
+

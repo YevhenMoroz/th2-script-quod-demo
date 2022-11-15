@@ -6,3 +6,4 @@
 /configs/*.json
 demo.py
 stubs.py
+regression_run_config.xml
