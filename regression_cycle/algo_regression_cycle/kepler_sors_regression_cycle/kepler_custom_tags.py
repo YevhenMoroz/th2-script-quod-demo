@@ -27,11 +27,15 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfiguration("Lit_dark_iceberg")
         QAP_T5015(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5016(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5017(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5018(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5022(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5023(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5024(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # # endregion
+        QAP_T5025(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5026(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T5027(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
