@@ -21,4 +21,8 @@ class RestApiAlgoPolicyMessages(RestApiMessages):
         self.parameters = parameters
         return self
 
+    def find_all_trading_phase_profile(self):
+        self.message_type = 'FindAllTradingPhaseProfile'
+        return self
+
 
