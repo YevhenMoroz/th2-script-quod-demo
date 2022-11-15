@@ -267,6 +267,10 @@ class PartyRole(Enum):
 
 class MiscNumber(Enum):
     ordr_misc_0 = "OrdrMisc0"
+    ordr_misc_1 = "OrdrMisc1"
+    ordr_misc_2 = "OrdrMisc2"
+    ordr_misc_3 = "OrdrMisc3"
+    ordr_misc_5 = "OrdrMisc5"
     ordr_misc_6 = "OrdrMisc6"
     ordr_misc_7 = "OrdrMisc7"
     ordr_misc_8 = "OrdrMisc8"
@@ -302,6 +306,8 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_1 = "log319-check-settl-date-part-1"
     log_319_check_settl_date_part_2 = "log319-check-settl-date-part-2"
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
+    log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
+    log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
 
 
 class WebAdminURL(Enum):

@@ -222,3 +222,20 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_party_info_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "MiscNumber": "OrdrMisc1",
+            "OrdrMisc": "test tag 5001",
+            "ClOrdID": '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_party_info_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "MiscNumber": "OrdrMisc1",
+            "OrdrMisc": "test tag 5001",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
