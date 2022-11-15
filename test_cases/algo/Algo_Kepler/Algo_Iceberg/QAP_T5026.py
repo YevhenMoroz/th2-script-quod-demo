@@ -144,7 +144,7 @@ class QAP_T5026(TestCase):
         self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.ClOrdId = self.Iceberg_order.get_parameter('ClOrdID')
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(IClOrdIdTO="test tag 5003"))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(IClOrdIdTO=self.misc_value))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
         # endregion
