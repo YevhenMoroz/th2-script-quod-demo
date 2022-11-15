@@ -69,10 +69,8 @@ class QAP_T6999(TestCase):
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_3")
         commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         self.rest_commission_sender.clear_commissions()
-        time.sleep(10)
         self.rest_commission_sender.set_modify_client_commission_message(comm_profile=commission_profile)
         self.rest_commission_sender.send_post_request()
-        time.sleep(10)
         # endregion
 
         # region create DMA  orders (precondition)
@@ -218,5 +216,6 @@ class QAP_T6999(TestCase):
                                              'Check AllocationReport statuses (step 4)')
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
