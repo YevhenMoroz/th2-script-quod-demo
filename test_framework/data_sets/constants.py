@@ -15,6 +15,7 @@ class Connectivity(Enum):
     Ganymede_316_Feed_Handler = 'fix-feed-handler-316-ganymede'
     Ganymede_316_Sell_Side = 'fix-sell-side-316-ganymede'
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
+    Ganymede_316_Buy_Side_Redburn = 'fix-buy-side-316-ganymede-redburn'
     Ganymede_316_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'

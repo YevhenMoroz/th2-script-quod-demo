@@ -44,7 +44,7 @@ class FixEnvironment(BaseEnvironment):
                 site_environment = FixEnvironment(
                     environment_type=EnvironmentType.quod316_ganymede_redburn.value,
                     sell_side=Connectivity.Ganymede_316_Redburn.value,
-                    buy_side=Connectivity.Ganymede_316_Buy_Side.value,
+                    buy_side=Connectivity.Ganymede_316_Buy_Side_Redburn.value,
                     feed_handler=Connectivity.Ganymede_316_Feed_Handler.value
                 )
                 FixEnvironment.environment_instances.update(
