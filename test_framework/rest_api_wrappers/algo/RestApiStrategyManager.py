@@ -1,6 +1,5 @@
 import time
-
-from stubs import Stubs
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.algo.RestApiAlgoPolicyMessages import RestApiAlgoPolicyMessages
 
@@ -286,3 +285,29 @@ class RestApiAlgoManager(RestApiManager):
         # endregion
 
         time.sleep(1)
+
+    def modify_trading_phase_profile(self, trading_phase_name: str, trading_phase_sequence: list=[]):
+        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
+        find_all_trading_phase_profile = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
+        grpc_reply = rest_api_manager.send_get_request(find_all_trading_phase_profile)
+        trading_phase_profile = rest_api_manager.parse_response_details(grpc_reply, {"tradPhaseProfileDesc": trading_phase_name})
+        trading_phase_profile.pop("alive")
+        trading_phase_profile["tradingPhaseSequence"] = trading_phase_sequence
+
+
+        for index, phase in enumerate(trading_phase_profile["tradingPhaseSequence"]):
+            trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_time_from_normal_to_epoch(phase['beginTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_time_from_normal_to_epoch(phase['endTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
+
+        modifyTradingPhaseProfile = RestApiAlgoPolicyMessages().modify_trading_phase_profile(parameters=trading_phase_profile)
+        rest_api_manager.send_post_request(modifyTradingPhaseProfile)
+
+        time.sleep(1)
+        find_all_trading_phase_profile2 = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
+        grpc_reply2 = rest_api_manager.send_get_request(find_all_trading_phase_profile2)
+        trading_phase_profile_updated = rest_api_manager.parse_response_details(grpc_reply2, {"tradPhaseProfileDesc": trading_phase_name})
+        trading_phase_profile_updated.pop("alive")
+
+        if not [i for i in trading_phase_profile_updated["tradingPhaseSequence"] if i not in trading_phase_sequence] == []:
+            raise ValueError(f"Trading phase profile doesn't update")
