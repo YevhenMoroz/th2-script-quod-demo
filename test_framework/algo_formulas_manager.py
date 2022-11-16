@@ -1,7 +1,6 @@
 import math
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, time, date, timezone
 from math import ceil
-from functools import wraps
 
 
 class AlgoFormulasManager:
@@ -208,4 +207,4 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_time_from_normal_to_epoch(time: time) -> int:
-        return int(datetime.combine(date.today(), time).timestamp()) * 1000
+        return int(datetime.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000
