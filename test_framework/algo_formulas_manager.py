@@ -1,5 +1,5 @@
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time, date
 from math import ceil
 from functools import wraps
 
@@ -202,3 +202,10 @@ class AlgoFormulasManager:
     def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
 
+    @staticmethod
+    def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
+        return datetime.fromtimestamp(datetime_epoch/1000).time()
+
+    @staticmethod
+    def change_time_from_normal_to_epoch(time: time) -> int:
+        return int(datetime.combine(date.today(), time).timestamp()) * 1000
