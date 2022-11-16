@@ -11,10 +11,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def modify_strategy_parameter(self, strategy_name: str, parameter_name: str, new_parameter_value: str):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         # region modify strategy
@@ -30,13 +29,13 @@ class RestApiAlgoManager(RestApiManager):
         else:
             raise ValueError("No algoPolicyParameter at current strategy")
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
         triggered = False
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] == parameter_name:
@@ -50,10 +49,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def modify_strategy_parameters_list(self, strategy_name: str, parameters: dict):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         # region modify strategy
@@ -69,13 +67,13 @@ class RestApiAlgoManager(RestApiManager):
         else:
             raise ValueError("No algoPolicyParameter at current strategy")
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
         triggered = 0
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] in parameters.keys():
@@ -88,10 +86,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def remove_parameters(self, strategy_name: str, *parameters_name: str):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         # region modification
@@ -105,14 +102,14 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyParameter"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
         for param in strategy_updated["algoPolicyParameter"]:
             if param['scenarioParameterName'] in parameters_name:
                 raise ValueError(f"Not all scenarioParameterName removed")
@@ -121,10 +118,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def add_parameter(self, strategy_name: str, new_parameter: dict):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         for parameter in strategy["algoPolicyParameter"]:
@@ -135,14 +131,14 @@ class RestApiAlgoManager(RestApiManager):
         strategy["algoPolicyParameter"].append(new_parameter)
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
 
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
         triggered = False
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] == new_parameter["scenarioParameterName"]:
@@ -153,10 +149,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def add_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         if "algoPolicyPassCriteria" in strategy:
@@ -187,13 +182,13 @@ class RestApiAlgoManager(RestApiManager):
         strategy.pop("alive")
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
 
         triggered = 0
         if "algoPolicyPassCriteria" in strategy:
@@ -214,10 +209,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def remove_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         # region modification
@@ -237,15 +231,15 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyAggrCriteria"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
 
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
 
         if "algoPolicyPassCriteria" in strategy_updated.keys():
             for param in strategy_updated["algoPolicyPassCriteria"]:
@@ -260,10 +254,9 @@ class RestApiAlgoManager(RestApiManager):
 
     def update_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
         # endregion
 
         # region modification
@@ -281,7 +274,7 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyAggrCriteria"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
