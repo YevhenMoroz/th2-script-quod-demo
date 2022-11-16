@@ -54,8 +54,6 @@ class QAP_T2892(TestCase):
         # region step 3
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
                                                                response=response)
-        self.execution_report.add_tag({"OrdRejReason": "*"})
-        self.execution_report.remove_parameters(["SettlCurrency", "LastMkt", "ExecRestatementReason", "SettlType"])
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
