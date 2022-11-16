@@ -66,6 +66,7 @@ class QAP_T2650(TestCase):
             update_value_in_component('clientTierInstrSymbolFwdVenue', 'excludeWhenUnhealthy',
                                       'true', {'venueID': 'BARX'})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)
         # endregion
         # region Step 6
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
