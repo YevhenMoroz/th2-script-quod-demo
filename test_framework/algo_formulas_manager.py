@@ -204,7 +204,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
-        return datetime.fromtimestamp(datetime_epoch/1000).time()
+        return datetime.fromtimestamp(int(datetime_epoch)/1000).time()
 
     @staticmethod
     def change_time_from_normal_to_epoch(time: time) -> int:

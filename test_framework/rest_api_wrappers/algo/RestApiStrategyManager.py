@@ -287,10 +287,9 @@ class RestApiAlgoManager(RestApiManager):
         time.sleep(1)
 
     def modify_trading_phase_profile(self, trading_phase_name: str, trading_phase_sequence: list=[]):
-        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
         find_all_trading_phase_profile = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
-        grpc_reply = rest_api_manager.send_get_request(find_all_trading_phase_profile)
-        trading_phase_profile = rest_api_manager.parse_response_details(grpc_reply, {"tradPhaseProfileDesc": trading_phase_name})
+        grpc_reply = self.send_get_request(find_all_trading_phase_profile)
+        trading_phase_profile = self.parse_response_details(grpc_reply, {"tradPhaseProfileDesc": trading_phase_name})
         trading_phase_profile.pop("alive")
         trading_phase_profile["tradingPhaseSequence"] = trading_phase_sequence
 
@@ -301,12 +300,12 @@ class RestApiAlgoManager(RestApiManager):
             trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
 
         modifyTradingPhaseProfile = RestApiAlgoPolicyMessages().modify_trading_phase_profile(parameters=trading_phase_profile)
-        rest_api_manager.send_post_request(modifyTradingPhaseProfile)
+        self.send_post_request(modifyTradingPhaseProfile)
 
         time.sleep(1)
         find_all_trading_phase_profile2 = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
-        grpc_reply2 = rest_api_manager.send_get_request(find_all_trading_phase_profile2)
-        trading_phase_profile_updated = rest_api_manager.parse_response_details(grpc_reply2, {"tradPhaseProfileDesc": trading_phase_name})
+        grpc_reply2 = self.send_get_request(find_all_trading_phase_profile2)
+        trading_phase_profile_updated = self.parse_response_details(grpc_reply2, {"tradPhaseProfileDesc": trading_phase_name})
         trading_phase_profile_updated.pop("alive")
 
         if not [i for i in trading_phase_profile_updated["tradingPhaseSequence"] if i not in trading_phase_sequence] == []:
