@@ -38,9 +38,11 @@ class QAP_T2964(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region 1-2
-        self.adjustment_request.set_empty_params()
+        self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.eur_usd)
-        self.adjustment_request.set_specific_bands_and_margins(3, "0", "0")
+        self.adjustment_request.update_margins_by_index(1, "0", "0")
+        self.adjustment_request.update_margins_by_index(2, "0", "0")
+        self.adjustment_request.update_margins_by_index(3, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
         self.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
