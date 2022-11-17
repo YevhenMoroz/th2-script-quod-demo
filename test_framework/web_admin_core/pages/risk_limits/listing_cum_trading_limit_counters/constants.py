@@ -29,7 +29,7 @@ class ListingCumTradingLimitCountersConstants:
     MAIN_PAGE_CUM_SELL_ORD_QTY_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
 
     # Wizard
-    WIZARD_LISTING_XPATH = '//*[id="listing"]'
+    WIZARD_LISTING_XPATH = '//*[@id="listing"]'
     WIZARD_CUM_TRADING_LIMIT_XPATH = '//*[@id="cumTradingLimit"]'
     WIZARD_CUM_BUY_ORD_QTY_XPATH = '//*[@formcontrolname="cumBuyOrdQty"]'
     WIZARD_CUM_ORD_AMT_XPATH = '//*[@formcontrolname="cumOrdAmt"]'

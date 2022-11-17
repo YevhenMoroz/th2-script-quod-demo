@@ -47,8 +47,8 @@ class QAP_T2376(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr_gbp_usd = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.gbp_usd)
+        self.msg_prams_instr_gbp_usd = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr_gbp_usd = self.rest_manager. \
             parse_response_details(self.msg_prams_instr_gbp_usd,
                                    {"clientTierID": self.client_id, "instrSymbol": self.gbp_usd})
@@ -57,8 +57,8 @@ class QAP_T2376(TestCase):
             .update_value_in_component("clientTierInstrSymbolTenor", "allowQuoteRequests", "false")
         self.modify_instrument.update_value_in_component("clientTierInstrSymbolTenor", "allowESPSubscriptions", "false")
         self.rest_manager.send_post_request(self.modify_instrument)
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr_usd_cad = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.usd_cad)
+        self.msg_prams_instr_usd_cad = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr_usd_cad = self.rest_manager. \
             parse_response_details(self.msg_prams_instr_usd_cad,
                                    {"clientTierID": self.client_id, "instrSymbol": self.usd_cad})
@@ -83,8 +83,8 @@ class QAP_T2376(TestCase):
         # endregion
 
         # region Step 4
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr_gbp_usd = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.gbp_usd)
+        self.msg_prams_instr_gbp_usd = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr_gbp_usd = self.rest_manager. \
             parse_response_details(self.msg_prams_instr_gbp_usd,
                                    {"clientTierID": self.client_id, "instrSymbol": self.gbp_usd})
@@ -93,8 +93,8 @@ class QAP_T2376(TestCase):
             .update_value_in_component("clientTierInstrSymbolTenor", "allowQuoteRequests", "true")
         self.modify_instrument.update_value_in_component("clientTierInstrSymbolTenor", "allowESPSubscriptions", "true")
         self.rest_manager.send_post_request(self.modify_instrument)
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr_usd_cad = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.usd_cad)
+        self.msg_prams_instr_usd_cad = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr_usd_cad = self.rest_manager. \
             parse_response_details(self.msg_prams_instr_usd_cad,
                                    {"clientTierID": self.client_id, "instrSymbol": self.usd_cad})

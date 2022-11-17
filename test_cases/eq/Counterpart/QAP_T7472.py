@@ -69,10 +69,14 @@ class QAP_T7472(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
+        party_stub_dict = {'PartyRole': "*",
+                           'PartyID': "*",
+                           'PartyIDSource': "*"}
         parties = {
             'NoParty': [self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
                         self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
-                        self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
+                        self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+                        party_stub_dict
                         ]
         }
         ignor_list_new_ord = ['QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker', 'Parties', 'SecondaryOrderID',

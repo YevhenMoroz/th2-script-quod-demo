@@ -113,8 +113,8 @@ class QAP_T2845(TestCase):
         self.sleep(2)
         # endregion
         # region Step 1
-        self.rest_massage.find_all_client_tier_instrument()
-        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.clint_tier_id, self.gbp_usd)
+        params_eur_usd = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_eur_usd = self.rest_manager. \
             parse_response_details(params_eur_usd,
                                    {"clientTierID": self.clint_tier_id, "instrSymbol": self.gbp_usd})

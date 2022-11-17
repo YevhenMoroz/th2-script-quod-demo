@@ -22,12 +22,12 @@ class QAP_T7933(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.listing = 'testX'
         self.cum_trading_limit = ''
-        self.cum_buy_ord_qty = random.randint(1, 100)
-        self.cum_ord_amount = random.randint(1, 100)
-        self.cum_sell_ord_qty = random.randint(1, 100)
-        self.cum_buy_ord_amt = random.randint(1, 100)
-        self.cum_ord_qty = random.randint(1, 100)
-        self.cum_sell_ord_amt = random.randint(1, 100)
+        self.cum_buy_ord_qty = str(random.randint(1, 100))
+        self.cum_ord_amount = str(random.randint(1, 100))
+        self.cum_sell_ord_qty = str(random.randint(1, 100))
+        self.cum_buy_ord_amt = str(random.randint(1, 100))
+        self.cum_ord_qty = str(random.randint(1, 100))
+        self.cum_sell_ord_amt = str(random.randint(1, 100))
 
         self.fields_name = ["Listing", "Cum Trading Limit", "Cum Buy Ord Qty", "Cum Ord Amt", "Cum Sell Ord Qty",
                             "Cum Buy Ord Amt", "Cum Ord Qty", "Cum Sell Ord Amt"]

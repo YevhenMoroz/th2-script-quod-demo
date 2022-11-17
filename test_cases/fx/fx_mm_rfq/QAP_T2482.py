@@ -39,7 +39,7 @@ class QAP_T2482(TestCase):
         self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account"])
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                            OrderQty=self.qty, Instrument=self.instrument)
-        self.fix_manager_sel.send_quote_to_dealer_and_receive_response(self.quote_request)
+        self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region step 2
         self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)

@@ -1,5 +1,4 @@
 import logging
-import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -7,8 +6,8 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields, \
-    ExecutionReportConst
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields,\
+    AllocTransTypes, AllocTypes
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -37,13 +36,13 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-class QAP_T7241(TestCase):
+class QAP_T7031(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.qty = '7241'
+        self.qty = '2104'
         self.price = '10'
         self.currency = self.data_set.get_currency_by_name('currency_3')
         self.venue = self.data_set.get_mic_by_name('mic_2')
@@ -58,7 +57,7 @@ class QAP_T7241(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.order_submit = OrderSubmitOMS(self.data_set)
-        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_connectivity=self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_entry_request = TradeEntryOMS(self.data_set)
         self.compute_booking_fee_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
@@ -71,30 +70,23 @@ class QAP_T7241(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
+        self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
-        agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
-        commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
-        fee = self.data_set.get_fee_by_name('fee3')
+        self.rest_commission_sender.set_modify_client_commission_message(
+            comm_profile=self.data_set.get_comm_profile_by_name('per_u_qty'))
+        self.rest_commission_sender.send_post_request()
+        agent_fee_type = self.data_set.get_misc_fee_type_by_name('value_added_tax')
+        commission_profile = self.data_set.get_comm_profile_by_name('client_commission_percentage')
+        fee = self.data_set.get_fee_by_name('fee_vat')
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
-        route_id = self.data_set.get_route_id_by_name('route_1')
-        comm_order_scope = self.data_set.get_fee_order_scope_by_name('done_for_day')
         self.rest_commission_sender.set_modify_fees_message(comm_profile=commission_profile, fee=fee,
                                                             fee_type=agent_fee_type)
         self.rest_commission_sender.change_message_params({
             'venueID': venue_id,
-            'routeID': route_id,
             'instrType': instr_type,
-            'orderCommissionProfileID': commission_profile,
-            'commOrderScope': comm_order_scope
         })
         self.rest_commission_sender.send_post_request()
-        # endregion
-
-        # region change value in DB (Precondition)
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(80)
         # endregion
 
         # region create CO order (step 1)
@@ -109,7 +101,6 @@ class QAP_T7241(TestCase):
             'AccountGroupID': self.client,
             'OrdQty': self.qty,
             'Price': self.price,
-            'RouteList': {'RouteBlock': [{'RouteID': route_id}]}
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
         print_message('Create CO order', responses)
@@ -125,33 +116,13 @@ class QAP_T7241(TestCase):
             f'Comparing {OrderBookColumns.sts.value}')
         # endregion
 
-        # region trade CO order (step 2, step 3, step 4)
-        counter_part = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
+        # region trade CO order  and book it (step 2)
         self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
-        self.trade_entry_request.update_fields_in_component('TradeEntryRequestBlock',
-                                                            {'CounterpartList': {'CounterpartBlock': [counter_part]}})
         responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
         print_message('Trade CO order', responses)
-        misc_fee_type = 'AGE'
-        misc_fee_basis = 'P'
-        misc_fee_basis_after_compute = 'A'
-        misc_fee_curr = self.data_set.get_currency_by_name('currency_2')
-        misc_fee_rate = '5.0'
-        misc_fee_amount = str(float(self.price) * float(self.qty) / 10000 * float(misc_fee_rate))
-        misc_fee_block_expected = {'MiscFeeType': misc_fee_type, 'MiscFeeBasis': misc_fee_basis,
-                                   'MiscFeeAmt': misc_fee_amount, 'MiscFeeRate': misc_fee_rate,
-                                   'MiscFeeCurr': misc_fee_curr}
         message = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters() \
             [JavaApiFields.ExecutionReportBlock.value]
-        actually_result = message[JavaApiFields.TransExecStatus.value]
         exec_id = message[JavaApiFields.ExecID.value]
-        misc_fee_block = message[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0]
-        self.java_api_manager.compare_values(
-            {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value},
-            {OrderBookColumns.exec_sts.value: actually_result},
-            f'Comparing {OrderBookColumns.exec_sts.value}')
-        self.java_api_manager.compare_values(misc_fee_block_expected, misc_fee_block,
-                                             f'Comparing Fee of Execution {exec_id}')
         # endregion
 
         # region check miscFee in ComputeBookingMiscFeeCommissionsRequest (step 5)
@@ -168,25 +139,19 @@ class QAP_T7241(TestCase):
             'ComputeBookingFeesCommissionsRequestBlock', {'AvgPx': new_avg_px, 'AccountGroupID': self.client})
         responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         print_message('Send ComputeBookingFeesCommissionsRequest', responses)
-        misc_fee_amount_compute_reply = str(round(float(misc_fee_amount), 2))
-        actual_result = \
-            self.java_api_manager.get_last_message(
-                ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
-                JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][JavaApiFields.RootMiscFeesList.value][
-                JavaApiFields.RootMiscFeesBlock.value][0]
-        misc_fee_block_expected.clear()
-        misc_fee_block_expected = {JavaApiFields.RootMiscFeeBasis.value: misc_fee_basis_after_compute,
-                                   JavaApiFields.RootMiscFeeRate.value: misc_fee_amount_compute_reply,
-                                   JavaApiFields.RootMiscFeeCurr.value: misc_fee_curr,
-                                   JavaApiFields.RootMiscFeeType.value: misc_fee_type,
-                                   JavaApiFields.RootMiscFeeAmt.value: misc_fee_amount_compute_reply}
-
-        self.java_api_manager.compare_values(misc_fee_block_expected, actual_result,
-                                             'Comparing Value after ComputeFeesCommissionRequest')
-        # endregion
 
         # region create block
+        root_misc_fees = \
+            self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
+                get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
+                JavaApiFields.RootMiscFeesList.value]
+        client_commission = \
+            self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
+                get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
+                JavaApiFields.ClientCommissionList.value]
+        misc_fee_curr = root_misc_fees[JavaApiFields.RootMiscFeesBlock.value][0][JavaApiFields.RootMiscFeeCurr.value]
         gross_currency_amt = str(float(self.qty) * float(new_avg_px))
+        fee_amount = str(float(self.qty) * 0.5 * 0.02)
         self.allocation_instruction_message.set_default_book(order_id)
         self.allocation_instruction_message.update_fields_in_component('AllocationInstructionBlock',
                                                                        {
@@ -197,17 +162,12 @@ class QAP_T7241(TestCase):
                                                                            'Currency': misc_fee_curr,
                                                                            "InstrID": instrument_id,
                                                                            'RootCommissionDataBlock': {
-                                                                               'RootCommission': misc_fee_amount_compute_reply,
+                                                                               'RootCommission': fee_amount,
                                                                                'RootCommType': 'A',
                                                                                'RootCommCurrency': misc_fee_curr
                                                                            },
-                                                                           'RootMiscFeesList': {'RootMiscFeesBlock': [{
-                                                                               JavaApiFields.RootMiscFeeType.value: 'AGE',
-                                                                               JavaApiFields.RootMiscFeeAmt.value: misc_fee_amount_compute_reply,
-                                                                               JavaApiFields.RootMiscFeeBasis.value: misc_fee_basis_after_compute,
-                                                                               JavaApiFields.RootMiscFeeRate.value: misc_fee_amount_compute_reply,
-                                                                               JavaApiFields.RootMiscFeeCurr.value: misc_fee_curr
-                                                                           }]},
+                                                                           JavaApiFields.RootMiscFeesList.value: root_misc_fees,
+                                                                           JavaApiFields.ClientCommissionList.value: client_commission,
                                                                            'ExecAllocList': {
                                                                                'ExecAllocBlock': [{'ExecQty': self.qty,
                                                                                                    'ExecID': exec_id,
@@ -218,11 +178,44 @@ class QAP_T7241(TestCase):
         print_message('Create Block', responses)
         actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
         alloc_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
-        self.java_api_manager.compare_values(misc_fee_block_expected,
-                                             actual_result[JavaApiFields.AllocationReportBlock.value][
-                                                 JavaApiFields.RootMiscFeesList.value]
-                                             [JavaApiFields.RootMiscFeesBlock.value][0],
-                                             'Comparing value after Allocation Instruction')
+        block_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.AllocReportID.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            {JavaApiFields.PostTradeStatus.value:
+                 self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).
+                     get_parameters()[JavaApiFields.OrdUpdateBlock.value][JavaApiFields.PostTradeStatus.value]},
+            'Comparing value after Allocation Instruction (step 2)')
+        # endregion
+
+        # region amend vat fees
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
+        print_message('Create Block', responses)
+        new_misc_fee_rate = '3'
+        fee_amount_new = str((float(fee_amount) / 2) * float(new_misc_fee_rate))
+        root_misc_fees[JavaApiFields.RootMiscFeesBlock.value][0][JavaApiFields.RootMiscFeeAmt.value] = fee_amount_new
+        root_misc_fees[JavaApiFields.RootMiscFeesBlock.value][0][
+            JavaApiFields.RootMiscFeeRate.value] = new_misc_fee_rate
+        self.allocation_instruction_message.update_fields_in_component("AllocationInstructionBlock",
+                                                                       {
+                                                                           'RootCommissionDataBlock': {
+                                                                               'RootCommission': fee_amount_new,
+                                                                               'RootCommType': 'A',
+                                                                               'RootCommCurrency': misc_fee_curr
+                                                                           },
+                                                                           JavaApiFields.RootMiscFeesList.value: root_misc_fees,
+                                                                           JavaApiFields.AllocInstructionID.value: block_id,
+                                                                           JavaApiFields.AllocTransType.value: AllocTransTypes.AllocTransType_Replace.value,
+                                                                           JavaApiFields.AllocType.value: AllocTypes.AllocType_P.value
+                                                                       })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
+        print_message('Amend Block', responses)
+        fee_amount_actually = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value). \
+            get_parameters()[JavaApiFields.AllocationReportBlock.value][JavaApiFields.RootMiscFeesList.value][
+            JavaApiFields.RootMiscFeesBlock.value][0][JavaApiFields.RootMiscFeeAmt.value]
+        fee_amount_expected = {JavaApiFields.RootMiscFeeAmt.value: fee_amount_new}
+        self.java_api_manager.compare_values(fee_amount_expected,
+                                             {JavaApiFields.RootMiscFeeAmt.value: fee_amount_actually},
+                                             'Comparing Fee amount after modify fee (step3)')
         # endregion
 
         # region allocate block
@@ -237,22 +230,17 @@ class QAP_T7241(TestCase):
             "InstrID": instrument_id
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        actual_result = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
-            JavaApiFields.ConfirmationReportBlock.value]
-        misc_fee_block_expected = {'MiscFeeType': misc_fee_type, 'MiscFeeBasis': misc_fee_basis_after_compute,
-                                   'MiscFeeAmt': misc_fee_amount_compute_reply, 'MiscFeeRate': misc_fee_amount_compute_reply,
-                                   'MiscFeeCurr': misc_fee_curr}
-        self.java_api_manager.compare_values(misc_fee_block_expected, actual_result[JavaApiFields.MiscFeesList.value][
-            JavaApiFields.MiscFeesBlock.value][0],
-                                             'Comparing Fee after allocate')
-        print_message('Allocate block', responses)
+        actual_result = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+
+        self.java_api_manager.compare_values(fee_amount_expected, {
+            JavaApiFields.RootMiscFeeAmt.value: actual_result[JavaApiFields.MiscFeesList.value][
+                JavaApiFields.MiscFeesBlock.value][0][JavaApiFields.MiscFeeAmt.value]},
+                                             'Comparing Fee amount after allocate')
+        print_message('Allocate block step 4', responses)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(80)
-
-
