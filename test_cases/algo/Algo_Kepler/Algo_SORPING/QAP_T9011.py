@@ -41,11 +41,11 @@ class QAP_T9011(TestCase):
         self.price_bid_qdl1 = 20
         self.price_ask_qdl2_3 = 36
         self.price_bid_qdl2_3 = 22
-        self.new_best_bid = 28
+        self.new_best_bid = 24
         self.new_best_ask = 30
         self.px_for_incr = 0
         self.qty_for_incr = 0
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_6.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_12.value
         # endregion
 
         # region Gateway Side
@@ -172,10 +172,10 @@ class QAP_T9011(TestCase):
 
         # region Update MD
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data. Send new BestBid", self.test_id))
-        market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.new_best_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl1, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
+        market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.new_best_bid, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2_3, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
         # endregion
 
         time.sleep(5)
