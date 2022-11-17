@@ -149,6 +149,11 @@ class QAP_T3407(CommonTestCase):
         try:
             self.precondition()
 
+            instr_types_tab.click_on_edit()
+            venues_tab.click_on_edit()
+            routes_tab.click_on_edit()
+            trade_confirm_tab.click_on_edit()
+
             actual_result = [values_tab.get_name(),
                              values_tab.get_description(),
                              values_tab.get_disclose_exec(),
@@ -160,16 +165,12 @@ class QAP_T3407(CommonTestCase):
                              policies_tab.get_default_execution_strategies(),
                              pos_maintenance_tab.get_cash_maintenance(),
                              pos_maintenance_tab.is_pnl_maintenance_selected(),
-                             instr_types_tab.click_on_edit(),
                              instr_types_tab.get_instr_type(),
-                             venues_tab.click_on_edit(),
                              venues_tab.get_venue(),
                              venues_tab.get_venue_client_name(),
-                             routes_tab.click_on_edit(),
                              routes_tab.get_route(),
                              routes_tab.get_route_client_name(),
                              trade_confirm_tab.get_trade_confirm_preference(),
-                             trade_confirm_tab.click_on_edit(),
                              trade_confirm_tab.get_email_address(),
                              trade_confirm_tab.get_recipient_types()]
             while None in actual_result:

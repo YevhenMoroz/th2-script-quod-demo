@@ -56,10 +56,9 @@ class QAP_T8813(CommonTestCase):
         values_sub_wizard.set_ext_id_client(self.ext_id_client)
 
         self.venues = venues_sub_wizard.get_all_venue_from_drop_menu()
-
         venues_sub_wizard.create_new_venue(self.venues[0], self.venue_client_name[0], self.venue_client_account_group_name[0])
-        venues_sub_wizard.create_new_venue(self.venues[0], self.venue_client_name[0], self.venue_client_account_group_name[0])
-        venues_sub_wizard.create_new_venue(self.venues[0], self.venue_client_name[0], self.venue_client_account_group_name[0])
+        venues_sub_wizard.create_new_venue(self.venues[1], self.venue_client_name[1], self.venue_client_account_group_name[1])
+        venues_sub_wizard.create_new_venue(self.venues[2], self.venue_client_name[2], self.venue_client_account_group_name[2])
         wizard.click_on_save_changes()
 
     def test_context(self):
