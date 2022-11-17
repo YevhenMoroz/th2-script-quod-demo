@@ -215,6 +215,7 @@ class QAP_T8718(TestCase):
 
         cancel_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
         cancel_ioc_child_order_2.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        cancel_ioc_child_order_2.remove_parameter('ExDestination')
         self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
         # endregion
 
@@ -231,7 +232,6 @@ class QAP_T8718(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.remove_parameter('ExDestination')
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 
