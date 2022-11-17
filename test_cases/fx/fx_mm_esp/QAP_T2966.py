@@ -95,7 +95,6 @@ class QAP_T2966(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
-        self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
@@ -139,7 +138,6 @@ class QAP_T2966(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDQuoteType="0")
-        self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
