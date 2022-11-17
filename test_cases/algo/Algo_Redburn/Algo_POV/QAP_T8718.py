@@ -105,7 +105,7 @@ class QAP_T8718(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.executed_aggressive_qty, self.price_ltq)
         nos_ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price_ask_2)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos_ioc_rule, nos_ioc_rule_1, ocr_rule]
         # endregion
 
