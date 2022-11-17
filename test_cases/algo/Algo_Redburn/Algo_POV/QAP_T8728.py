@@ -106,7 +106,7 @@ class QAP_T8728(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.executed_aggressive_qty, self.price_ltq)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos_rule, nos_ioc_rule, ocr_rule]
         # endregion
 
@@ -169,6 +169,8 @@ class QAP_T8728(TestCase):
 
         ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_1.change_parameters(dict(OrderQty=self.qty_aggressive_child_1, Price=self.price_ask_1, Instrument='*', TimeInForce=self.tif_ioc))
+        ioc_child_order_1.add_tag(dict(Parties='*', QtyType=0))
+        ioc_child_order_1.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
@@ -202,6 +204,8 @@ class QAP_T8728(TestCase):
 
         ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_2.change_parameters(dict(OrderQty=self.qty_aggressive_child_2, Price=self.price_ask_1, Instrument='*', TimeInForce=self.tif_ioc))
+        ioc_child_order_2.add_tag(dict(Parties='*', QtyType=0))
+        ioc_child_order_2.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 2')
 
         pending_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)

@@ -644,7 +644,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ChildOrderID': '*'
+            'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -708,6 +709,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': 'QDL1',
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -730,6 +732,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -795,7 +798,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
-            'ChildOrderID': '*'
+            'ChildOrderID': '*',
+            'misc5': '*',
         }
         super().change_parameters(base_parameters)
         return self
@@ -849,7 +853,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdCO': 'OD_5fgfDXg-00',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'IClOrdIdTO': '19864'
+            'IClOrdIdTO': '19864',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -899,6 +904,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdCO': 'OD_5fgfDXg-00',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -974,7 +980,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "QDL1",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
-            'NoParty': [
+            'misc5': '*',
+                     'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
                     'PartyIDSource': 'D',
@@ -1036,7 +1043,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'NoParty': [
+            'misc5': '*',
+                     'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
                     'PartyIDSource': 'D',
@@ -1089,7 +1097,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'AlgoCst01': 'firm-up',
             'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
             'QuoteID': '*',
-            'ChildOrderID': '*'
+            'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1111,7 +1120,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536'
+            'ShortCode': '17536',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1150,7 +1160,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'ExDestination': 'QDL1',
             'OrderCapacity': 'A',
-            'ChildOrderID': '*'
+            'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1194,7 +1205,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536'
+            'ShortCode': '17536',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1248,11 +1260,11 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'NoParty': '*'
+            'NoParty': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
-
 
     def set_Kepler_DMA_child_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
@@ -1273,7 +1285,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdCO': 'OD_5fgfDXg-00',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'IClOrdIdTO': '19864'
+            'IClOrdIdTO': '19864',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1319,6 +1332,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1360,6 +1374,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "QDL11",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
+            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self
