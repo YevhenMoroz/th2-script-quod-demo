@@ -41,7 +41,7 @@ class QAP_MD(TestCase):
                 'Product': '4', },
             'SettlType': '0', }]
         self.bands_eur_usd = ["2000000", '6000000', '12000000']
-        self.md_req_id = "GBP/USD:SPO:REG:MS"
+        self.md_req_id = "GBP/USD:SPO:REG:BNP"
         # self.md_req_id = "GBP/USD:FXF:WK1:HSBC"
 
     @try_except(test_id=Path(__file__).name[:-3])
