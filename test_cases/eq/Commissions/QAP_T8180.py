@@ -87,7 +87,6 @@ class QAP_T8180(TestCase):
             'commissionProfileID': commission_profile,
             'recomputeInConfirmation': 'false',
             'clientListID': client_list,
-            'commExecScope': self.data_set.get_fee_exec_scope_by_name("all_exec"),
             'venueListID': venue_list,
             'settlCurrency': self.settl_currency
         }

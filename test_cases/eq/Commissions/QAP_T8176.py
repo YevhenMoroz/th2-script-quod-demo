@@ -87,7 +87,6 @@ class QAP_T8176(TestCase):
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
             'commissionAmountType': "BRK",
-            'commExecScope': self.data_set.get_fee_exec_scope_by_name("all_exec"),
             'commissionProfileID': commission_profile,
             'recomputeInConfirmation': 'false',
             'clientListID': client_list,
