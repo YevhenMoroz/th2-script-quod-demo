@@ -32,7 +32,7 @@ from test_cases.fx.fx_mm_esp.QAP_T2734 import QAP_T2734
 from test_cases.fx.fx_mm_esp.QAP_T2735 import QAP_T2735
 from test_cases.fx.fx_mm_esp.QAP_T2742 import QAP_T2742
 from test_cases.fx.fx_mm_esp.QAP_T2751 import QAP_T2751
-from test_cases.fx.fx_mm_esp.QAP_T2801_in_progress import QAP_T2801
+from test_cases.fx.fx_mm_esp.QAP_T2801 import QAP_T2801
 from test_cases.fx.fx_mm_esp.QAP_T2838 import QAP_T2838
 from test_cases.fx.fx_mm_esp.QAP_T2892 import QAP_T2892
 from test_cases.fx.fx_mm_esp.QAP_T2896 import QAP_T2896
@@ -178,7 +178,6 @@ def test_run(parent_id=None, version="5.1.167.180"):
         QAP_T2897(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2902(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2911.execute(report_id, session_id)
-        QAP_T2912.execute(report_id, session_id)
         QAP_T2915(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2916(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2917(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
