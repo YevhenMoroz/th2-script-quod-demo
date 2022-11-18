@@ -223,7 +223,7 @@ class RunMarkets:
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
-            print("Reference data ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
+            print("Markets ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))
 
         except Exception:
             print(traceback.format_exc() + " Execute ERROR !->  " + self.__class__.__name__)

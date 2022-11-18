@@ -37,9 +37,8 @@ class QAP_T2694(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-2
-        self.rest_massage.find_all_client_tier_instrument()
-        time.sleep(1)
-        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.client_tier_argentina, self.eur_usd)
+        params_eur_usd = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_eur_usd = self.rest_manager. \
             parse_response_details(params_eur_usd,
                                    {'clientTierID': self.client_tier_argentina, 'instrSymbol': self.eur_usd})

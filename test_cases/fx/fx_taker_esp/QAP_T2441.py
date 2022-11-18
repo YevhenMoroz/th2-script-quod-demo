@@ -35,13 +35,12 @@ class QAP_T2441(TestCase):
         # region Step 1
         new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set).set_default_SOR().change_parameters(
             {'TimeInForce': "3", "OrderQty": self.qty, "Account": self.account})
-        self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
+        response=self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
         # endregion
         # region Step 2
         execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \
-            set_params_from_new_order_single(new_order_sor, self.side, self.status)
+            set_params_from_new_order_single(new_order_sor, self.side, self.status, response=response[-1])
         execution_report_filled_1.change_parameter("LastQty", "*")
-        execution_report_filled_1.remove_parameter("Account")
         execution_report_filled_1.update_repeating_group("NoStrategyParameters", "*")
         time.sleep(5)
         self.fix_verifier.check_fix_message(fix_message=execution_report_filled_1,

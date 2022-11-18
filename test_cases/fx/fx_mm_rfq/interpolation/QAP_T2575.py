@@ -51,9 +51,6 @@ class QAP_T2575(TestCase):
         self.quote_request.update_near_leg(leg_symbol=self.eur_gbp, leg_side=self.buy_side)
         self.quote_request.update_far_leg(leg_symbol=self.eur_gbp, leg_side=self.sell_side, leg_qty=self.qty_2m)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion

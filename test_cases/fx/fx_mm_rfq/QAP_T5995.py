@@ -82,21 +82,12 @@ class QAP_T5995(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
-                                                           Instrument=self.instrument_swap,
-                                                           Account=self.acc_argentina)
-        self.fix_manager.send_message_and_receive_response(self.quote_request,
-                                                           self.test_id)
         # region Step 1
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-
-        self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
 
         self.quote_request.set_swap_rfq_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
@@ -109,9 +100,9 @@ class QAP_T5995(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.sleep(2)
         self.fix_manager_fh_314.send_message(self.fix_md)
         time.sleep(10)
-
         self.quote_cancel.set_params_for_receive(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote_cancel, key_parameters=["QuoteReqID"])
 

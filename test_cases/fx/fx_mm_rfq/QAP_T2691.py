@@ -44,8 +44,8 @@ class QAP_T2691(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-2
-        self.rest_massage.find_all_client_tier_instrument()
-        params_eur_usd = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.client_tier_argentina, self.eur_usd)
+        params_eur_usd = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_eur_usd = self.rest_manager. \
             parse_response_details(params_eur_usd,
                                    {'clientTierID': self.client_tier_argentina, 'instrSymbol': self.eur_usd})
@@ -53,6 +53,7 @@ class QAP_T2691(TestCase):
             .set_params(params_eur_usd). \
             update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'false', {'tenor': 'WK1'})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(3)
         # endregion
 
         # region Step 3
@@ -60,7 +61,7 @@ class QAP_T2691(TestCase):
                                                                                  Account=self.client_argentina)
         self.quote_request.update_near_leg(leg_qty=self.qty)
         self.quote_request.update_far_leg(leg_qty=self.qty)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.fix_manager.send_message(self.quote_request)
 
         self.dealer_intervention.set_list_filter(
             [self.qty_column, self.expected_qty, self.client_column, self.client_argentina])

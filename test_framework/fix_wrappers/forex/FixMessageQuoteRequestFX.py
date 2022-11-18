@@ -212,6 +212,7 @@ class FixMessageQuoteRequestFX(FixMessage):
             "QuoteReqID": bca.client_orderid(9),
             "ClOrdID": bca.client_orderid(14),
             "NumOfCompetitors": "1",
+            "VenueType": "M",
             "InCompetition": "N",
             "NoRelatedSym": [{
                 "Instrument": {

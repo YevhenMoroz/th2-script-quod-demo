@@ -73,7 +73,7 @@ class RootConstants:
     FX_POSITION_LIMITS_ITEM_XPATH = "//span[text()='FX Position Limits']"
     ORDER_TOLERANCE_LIMITS_ITEM_XPATH = "//span[text()='Order Tolerance Limits']"
     EXTERNAL_CHECKS_ITEM_XPATH = "//span[text()='External Checks']"
-    ORDER_VELOCITY_LIMIT_ITEM_XPATH = "//span[text()='Order Tolerance Limits']"
+    ORDER_VELOCITY_LIMIT_ITEM_XPATH = "//span[text()='Order Velocity Limits']"
 
     POSITIONS_TOGGLE_CSS_SELECTOR = "a[title='Positions']"
     SECURITY_POSITIONS_ITEM_XPATH = "//span[text()='Security Positions']"

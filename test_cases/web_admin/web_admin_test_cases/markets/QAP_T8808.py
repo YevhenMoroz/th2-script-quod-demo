@@ -21,7 +21,7 @@ class QAP_T8808(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.opt_attr = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.opt_attr = '1'
         self.listing = 'ALDAR'
 
     def precondition(self):

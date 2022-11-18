@@ -132,6 +132,8 @@ class ResAPIMessageType(Enum):
 class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
+    FixRequestForPositions = "Fix_RequestForPositions"
+    FixPositionReport = "Fix_PositionReport"
 
 
 class QSMessageType(Enum):

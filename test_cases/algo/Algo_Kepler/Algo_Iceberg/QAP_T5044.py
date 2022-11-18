@@ -16,7 +16,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 
 
-class QAP_T5053(TestCase):
+class QAP_T5044(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -33,7 +33,6 @@ class QAP_T5053(TestCase):
 
         # region order parameters
         self.qty = 400
-        self.dec_qty = 300
         self.price = 20
         self.inc_price = 25
         self.display_qty = 50
@@ -151,7 +150,7 @@ class QAP_T5053(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.Iceberg_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.Iceberg_order)
-        self.Iceberg_order_replace_params.change_parameters(dict(Price=self.inc_price, OrderQty=self.dec_qty, DisplayInstruction=dict(DisplayQty=self.dec_display_qty)))
+        self.Iceberg_order_replace_params.change_parameters(dict(Price=self.inc_price, DisplayInstruction=dict(DisplayQty=self.dec_display_qty)))
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order_replace_params, case_id_2)
 
         er_replaced_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Iceberg_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)

@@ -86,7 +86,7 @@ class QAP_T2966(TestCase):
             {"Tenor": self.settle_type_1w_java})
         self.manual_settings_request.set_executable_off()
         self.java_manager.send_message(self.manual_settings_request)
-        time.sleep(15)
+        time.sleep(2)
         # endregion
 
         # region Step 2
@@ -98,7 +98,7 @@ class QAP_T2966(TestCase):
         self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_gtw.send_message(self.md_request)
         # endregion
 
         # region Step 3
@@ -142,7 +142,7 @@ class QAP_T2966(TestCase):
         self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_gtw.send_message(self.md_request)
 
         # region Step 3
         self.new_order_single.set_default().change_parameters(
@@ -183,8 +183,7 @@ class QAP_T2966(TestCase):
         self.java_manager.send_message(self.quote_adjustment)
         # endregion
         self.md_request.set_md_uns_parameters_maker()
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_gtw.send_message(self.md_request)
         # region Step 5
         self.manual_settings_request.set_default_params().update_fields_in_component(
             "QuoteManualSettingsRequestBlock",
