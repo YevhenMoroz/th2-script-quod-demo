@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -37,7 +38,7 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-class QAP_T8180(TestCase):
+class QAP_T8176(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -80,19 +81,23 @@ class QAP_T8180(TestCase):
         commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         commission = self.data_set.get_commission_by_name("commission1")
         self.rest_commission_sender.clear_commissions()
+        time.sleep(10)
+
         params = {
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
             'commissionAmountType': "BRK",
+            'commExecScope': self.data_set.get_fee_exec_scope_by_name("all_exec"),
             'commissionProfileID': commission_profile,
             'recomputeInConfirmation': 'false',
             'clientListID': client_list,
-            'commExecScope': self.data_set.get_fee_exec_scope_by_name("all_exec"),
             'venueListID': venue_list,
-            'settlCurrency': self.settl_currency
+            'settlCurrency': self.settl_currency,
+            'instrType': self.data_set.get_instr_type('equity')
         }
         self.rest_commission_sender.set_modify_client_commission_message(params)
         self.rest_commission_sender.send_post_request()
+        time.sleep(10)
 
         # endregion
 
@@ -227,3 +232,4 @@ class QAP_T8180(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
+        time.sleep(10)
