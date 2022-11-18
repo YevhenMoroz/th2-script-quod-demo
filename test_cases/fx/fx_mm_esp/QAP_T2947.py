@@ -60,8 +60,8 @@ class QAP_T2947(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        modified_bid_px_3 = float(default_bid_px_3) + 0.00002
-        modified_ask_px_3 = float(default_ask_px_3)
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00002, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3), 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px_3)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px_3)
@@ -82,12 +82,12 @@ class QAP_T2947(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        modified_bid_px_1 = float(default_bid_px_1) + 0.00003
-        modified_ask_px_1 = float(default_ask_px_1)
-        modified_bid_px_2 = float(default_bid_px_2) + 0.00003
-        modified_ask_px_2 = float(default_ask_px_2)
-        modified_bid_px_3 = float(default_bid_px_3) + 0.00003
-        modified_ask_px_3 = float(default_ask_px_3)
+        modified_bid_px_1 = round(float(default_bid_px_1) + 0.00003, 5)
+        modified_ask_px_1 = round(float(default_ask_px_1), 5)
+        modified_bid_px_2 = round(float(default_bid_px_2) + 0.00003, 5)
+        modified_ask_px_2 = round(float(default_ask_px_2), 5)
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00003, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3), 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
@@ -110,8 +110,8 @@ class QAP_T2947(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        modified_bid_px_1 = float(default_bid_px_1) + 0.00003
-        modified_ask_px_1 = float(default_ask_px_1) + 0.00003
+        modified_bid_px_1 = round(float(default_bid_px_1) + 0.00003, 5)
+        modified_ask_px_1 = round(float(default_ask_px_1) + 0.00003, 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
@@ -129,8 +129,8 @@ class QAP_T2947(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        modified_bid_px_3 = float(default_bid_px_3) + 0.00003
-        modified_ask_px_3 = float(default_ask_px_3) + 0.00001
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00003, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3) + 0.00001, 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px_3)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px_3)
@@ -146,3 +146,4 @@ class QAP_T2947(TestCase):
         self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.eur_usd)
         self.java_manager.send_message(self.adjustment_request)
+        self.sleep(2)
