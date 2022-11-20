@@ -102,7 +102,6 @@ class QAP_T6981(TestCase):
         self.rest_commission_sender.send_post_request()
         self.manage_security_block.set_fee_exemption(True, True, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)
-        time.sleep(10)
         # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
@@ -136,7 +135,6 @@ class QAP_T6981(TestCase):
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
-        print(execution_report)
         actually_trans_exec_status = execution_report[JavaApiFields.TransExecStatus.value]
         exec_id = execution_report[JavaApiFields.ExecID.value]
         expected_result.clear()
@@ -212,11 +210,13 @@ class QAP_T6981(TestCase):
         # endregion
 
         # region step 4
+        gross_amt = float(new_avg_px) * float(self.qty)
         self.alloc_instr.set_default_book(order_id)
         self.alloc_instr.update_fields_in_component("AllocationInstructionBlock",
                                                     {"RootMiscFeesList": compute_reply["RootMiscFeesList"],
                                                      "AccountGroupID": self.client,
                                                      "AvgPx": new_avg_px,
+                                                     'GrossTradeAmt': gross_amt,
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
@@ -255,7 +255,7 @@ class QAP_T6981(TestCase):
                                              'Check that PerTransac Fee properly calculated for AllocInstruction (part of step 4)')
         # endregion
 
-        # region step 4
+        # region step 5
         self.force_alloc.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.force_alloc)
         print_message('Approve Block', responses)
@@ -269,12 +269,13 @@ class QAP_T6981(TestCase):
         actually_result.update({JavaApiFields.AllocStatus.value: alloc_report[JavaApiFields.AllocStatus.value],
                                 JavaApiFields.MatchStatus.value: alloc_report[JavaApiFields.MatchStatus.value]})
         self.java_api_manager.compare_values(expected_result, actually_result,
-                                             'Check Middle Office Statuses (part of step 4)')
+                                             'Check Middle Office Statuses (part of step 5)')
         # endregion
 
-        # region step 5
+        # region step 6
         self.confirm.set_default_allocation(alloc_id)
         self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.client_acc,
+                                                                      'AvgPx': new_avg_px,
                                                                       "InstrID": self.data_set.get_instrument_id_by_name(
                                                                           "instrument_3")})
         responses = self.java_api_manager.send_message_and_receive_response(self.confirm)
@@ -294,8 +295,15 @@ class QAP_T6981(TestCase):
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
                                              "Check Per Transac", VerificationMethod.CONTAINS)
-
-        # region step 6
+        gross_amt = float(new_avg_px) * float(self.qty)
+        net_amt = gross_amt + fee_amount
+        expected_result.clear()
+        expected_result = {'NetAmount': str(net_amt), "NetPrice": str(float(net_amt) / float(self.qty))}
+        actually_result = {'NetAmount': confirm_report[JavaApiFields.NetMoney.value],
+                           "NetPrice": confirm_report[JavaApiFields.NetPrice.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Check NetAmt and NetPrice of allocation (part of step 6)')
+        # region step 7
         fee_amount_fix = str(int(fee_amount))
         fee_rate_fix = str(int(fee_rate))
         no_misc_fee = [{'MiscFeeAmt': fee_amount_fix, 'MiscFeeCurr': self.currency, 'MiscFeeType': '10'}]
@@ -313,6 +321,7 @@ class QAP_T6981(TestCase):
                                                      'NoMiscFees': no_misc_fee})
         self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_report,
                                                          ignored_fields=list_of_ignored_fields)
+
         # end region
         # pre step check 35=J message (626 = 5)
         list_of_ignored_fields.extend(['RootCommTypeClCommBasis', 'AllocID',
@@ -355,7 +364,7 @@ class QAP_T6981(TestCase):
                                                          ignored_fields=list_of_ignored_fields)
         # end region
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_pre_conditions_and_steps(self):
-    #     self.rest_commission_sender.clear_fees()
-    #     self.rest_api_manager.send_post_request(self.manage_security_block)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_api_manager.send_post_request(self.manage_security_block)
