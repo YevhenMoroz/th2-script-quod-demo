@@ -30,7 +30,7 @@ class QAP_T2652(TestCase):
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.palladium2 = self.data_set.get_client_by_name("client_mm_5")
+        self.palladium2 = self.data_set.get_client_by_name("client_mm_1")
         self.gbp_usd = self.data_set.get_symbol_by_name('symbol_2')
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
@@ -83,8 +83,8 @@ class QAP_T2652(TestCase):
             },
         ]
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
-        self.fwd_pts_offer = 0.00021
-        self.fwd_pts_bid = 0.00019
+        self.fwd_pts_offer = 0.00032
+        self.fwd_pts_bid = 0.0001
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -117,3 +117,5 @@ class QAP_T2652(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.fix_md.update_MDReqID(self.md_gbp_usd_fwd, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+
+        self.sleep(2)
