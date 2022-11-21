@@ -55,7 +55,7 @@ class QAP_T2947(TestCase):
         self.adjustment_request.update_margins_by_index(3, "-0.2", "0")
         self.adjustment_request.update_instrument(self.eur_usd)
         self.java_manager.send_message(self.adjustment_request)
-        time.sleep(2)
+        time.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
