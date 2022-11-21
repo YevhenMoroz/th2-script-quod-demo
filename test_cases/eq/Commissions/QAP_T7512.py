@@ -8,6 +8,10 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst, JavaApiFields
@@ -30,10 +34,12 @@ class QAP_T7512(TestCase):
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
+        self.dc_connectivity = self.fix_env.drop_copy
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.client = self.data_set.get_client_by_name('client_com_1')  # CLIENT_COMM
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
         self.cur = self.data_set.get_currency_by_name('currency_3')  # GBp
+        self.com_cur = self.data_set.get_currency_by_name('currency_2')
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.venue = self.data_set.get_venue_id('eurex')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_3')
@@ -49,6 +55,9 @@ class QAP_T7512(TestCase):
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.comp_comm = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.fix_alloc_report = FixMessageAllocationInstructionReportOMS()
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -61,6 +70,17 @@ class QAP_T7512(TestCase):
         order_id = responses[0].get_parameter("OrderID")
         cl_order_id = responses[0].get_parameter("ClOrdID")
         exec_id = responses[2].get_parameters()["ExecID"]
+        # endregion
+
+        # region check execution report
+        no_misc = {"MiscFeeAmt": '1', "MiscFeeCurr": self.com_cur,
+                   "MiscFeeType": "4"}
+        execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
+        execution_report.change_parameters(
+            {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
+             "Account": self.client, "MiscFeesGrp": {"NoMiscFees": [no_misc]}})
+        self.fix_verifier.check_fix_message_fix_standard(execution_report,
+                                                         ignored_fields=['SettlCurrency', 'CommissionData'])
         # endregion
 
         # region get values from booking ticket
@@ -99,6 +119,16 @@ class QAP_T7512(TestCase):
         self.java_api_manager.compare_values({'NetPrice': '21.0'},
                                              alloc_report,
                                              "Check fees in the Alloc Report")
+        # endregion
+
+        # region check alloc report
+        ignored_fields = ['Account', 'RootCommTypeClCommBasis', 'tag5120', 'RootOrClientCommission',
+                          'RootOrClientCommissionCurrency', 'RootSettlCurrAmt']
+        self.fix_alloc_report.set_default_ready_to_book(self.fix_message)
+        self.fix_alloc_report.change_parameters({"NoRootMiscFeesList": {'NoRootMiscFeesList': [
+            {'RootMiscFeeBasis': '2', 'RootMiscFeeType': '4', 'RootMiscFeeRate': '5', 'RootMiscFeeAmt': '1',
+             'RootMiscFeeCurr': 'GBP'}]}})
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.fix_alloc_report, ignored_fields=ignored_fields)
         # endregion
 
         # region amend booking
