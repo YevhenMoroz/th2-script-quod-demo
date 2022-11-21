@@ -1,5 +1,4 @@
 import logging
-import os
 import time
 from pathlib import Path
 
@@ -36,6 +35,7 @@ class QAP_T7512(TestCase):
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
         self.cur = self.data_set.get_currency_by_name('currency_3')  # GBp
         self.mic = self.data_set.get_mic_by_name("mic_2")
+        self.venue = self.data_set.get_venue_id('eurex')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_3')
         self.qty = self.fix_message.get_parameter("OrderQtyData")['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
@@ -44,6 +44,8 @@ class QAP_T7512(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
+        self.fee = self.data_set.get_fee_by_name('fee1')
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.comp_comm = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
@@ -51,28 +53,28 @@ class QAP_T7512(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_fees()
-        self.rest_commission_sender.send_default_fee()
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee,
+                                                            comm_profile=self.comm_profile).change_message_params(
+            {'venueID': self.venue}).send_post_request()
         responses = self.__send_fix_orders()
         order_id = responses[0].get_parameter("OrderID")
         cl_order_id = responses[0].get_parameter("ClOrdID")
-        exec_id = responses[1].get_parameters()["ExecID"]
+        exec_id = responses[2].get_parameters()["ExecID"]
         # endregion
 
         # region get values from booking ticket
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_3')
         gross_currency_amt = str(int(self.qty) * int(self.price))
+        new_avg_px = str(float(self.price) / 100)
         post_trade_sts = OrderReplyConst.PostTradeStatus_RDY.value
         self.comp_comm.set_list_of_order_alloc_block(cl_order_id, order_id, post_trade_sts)
         self.comp_comm.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trade_sts)
-        self.comp_comm.set_default_compute_booking_request(self.qty)
-        self.comp_comm.update_fields_in_component(JavaApiFields.ComputeBookingFeesCommissionsRequestBlock.value,
-                                                  {'AccountGroupID': self.client, 'AvgPx': '0.100000000'})
+        self.comp_comm.set_default_compute_booking_request(self.qty, new_avg_px, self.client)
         responses = self.java_api_manager.send_message_and_receive_response(self.comp_comm)
         self.__return_result(responses, ORSMessageType.ComputeBookingFeesCommissionsReply.value)
-        fee_list_exp = None
         fee_list = self.result.get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
             'RootMiscFeesList']
-        print(fee_list)
         # endregion
 
         # region book order
@@ -94,16 +96,39 @@ class QAP_T7512(TestCase):
         self.__return_result(responses, ORSMessageType.AllocationReport.value)
         alloc_report = self.result.get_parameter('AllocationReportBlock')
         alloc_inst_id = alloc_report['ClientAllocID']
-        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value: fee_list_exp}, alloc_report,
-                                             "Check values in the Alloc Report")
+        self.java_api_manager.compare_values({'NetPrice': '21.0'},
+                                             alloc_report,
+                                             "Check fees in the Alloc Report")
         # endregion
 
         # region amend booking
-        self.allocation_instruction.set_amend_book(alloc_inst_id, exec_id, self.qty, self.price)
+        self.allocation_instruction.set_amend_book(alloc_inst_id, exec_id, self.qty, new_avg_px)
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {
                                                                    'GrossTradeAmt': gross_currency_amt,
-                                                                   'AvgPx': self.price,
+                                                                   'AvgPx': new_avg_px,
+                                                                   'Qty': self.qty,
+                                                                   'InstrID': instrument_id,
+                                                                   "Currency": self.cur,
+                                                                   "AccountGroupID": self.client
+                                                               })
+        self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock', ['RootMiscFeesList'])
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        # endregion
+
+        # region check block values
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        self.java_api_manager.compare_values({'NetMoney': "20.0"}, alloc_report,
+                                             "Check fees in the Alloc Report")
+        # endregion
+
+        # region second amend booking without fees deleting
+        self.allocation_instruction.set_amend_book(alloc_inst_id, exec_id, self.qty, new_avg_px)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
+                                                               {
+                                                                   'GrossTradeAmt': gross_currency_amt,
+                                                                   'AvgPx': new_avg_px,
                                                                    'Qty': self.qty,
                                                                    'InstrID': instrument_id,
                                                                    "Currency": self.cur,
@@ -112,8 +137,12 @@ class QAP_T7512(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         # endregion
 
-
-
+        # region check block values
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        self.java_api_manager.compare_values({'NetMoney': "20.0"}, alloc_report,
+                                             "Check fees in the Alloc Report")
+        # endregion
 
     def __send_fix_orders(self):
         try:
@@ -139,4 +168,3 @@ class QAP_T7512(TestCase):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
-
