@@ -35,6 +35,7 @@ class QAP_T2891(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_eur")
         self.status_fill = Status.Fill
         self.qty = "123532"
+        self.bands_eur_usd = []
         self.instrument = {
             'Symbol': self.eur_usd,
             'SecurityType': self.security_type,
@@ -49,9 +50,12 @@ class QAP_T2891(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands_eur_usd.append("*")
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # endregion
 
@@ -72,3 +76,5 @@ class QAP_T2891(TestCase):
     def run_post_conditions(self):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
+
+        self.sleep(2)
