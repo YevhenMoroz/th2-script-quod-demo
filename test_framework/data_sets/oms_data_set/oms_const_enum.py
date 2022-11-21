@@ -285,7 +285,9 @@ class OMSCommissionProfiles(Enum):
     abs_amt_3 = 9
     commission_with_minimal_value = 600018
     client_commission_percentage = 15
-
+    abs_amt_gbp = 12
+    perc_rounding_to_whole_number = 800020
+    abs_amt_gbp_small = 800021
 
 class OMSFeeType(Enum):
     agent = "AGE"
