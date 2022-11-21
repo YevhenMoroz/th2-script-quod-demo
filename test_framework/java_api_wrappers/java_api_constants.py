@@ -65,6 +65,7 @@ class CommissionBasisConst(Enum):
     CommissionBasis_ABS = 'ABS'
     CommissionBasis_PCT = 'PCT'
     CommissionBasis_BPS = 'BPS'
+    CommissionBasis_UNI = 'UNI'
 
 
 class CommissionAmountTypeConst(Enum):
