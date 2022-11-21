@@ -41,6 +41,8 @@ class AllocationReportConst(Enum):
     MatchStatus_MAT = 'MAT'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
+    AllocStatus_CXL = 'CXL'
+    AllocReportType_ACC = 'ACC'
 
 
 class AllocationInstructionConst(Enum):
@@ -52,6 +54,7 @@ class AllocationInstructionConst(Enum):
     COMM_AND_FEES_BASIS_UNI = 'UNI'
     COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
     COMM_AND_FEES_TYPE_AGE = "AGE"
+    ConfirmationService_MAN = 'MAN'
     COMM_AND_FEE_BASIS_ABS = 'ABS'
     COMM_AND_FEE_BASIS_BPS = 'BPS'
     COMM_AND_FEE_TYPE_TRA = 'TRA'  # PerTransac
@@ -102,9 +105,12 @@ class JavaApiFields(Enum):
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
+    AffirmStatus = 'AffirmStatus'
+    ConfirmationService = 'ConfirmationService'
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
     OrdUpdateBlock = 'OrdUpdateBlock'
+    ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     OrdStatus = 'OrdStatus'
@@ -139,6 +145,10 @@ class JavaApiFields(Enum):
     MiscFeeRate = 'MiscFeeRate'
     MiscFeeCurr = 'MiscFeeCurr'
     ExecutionPolicy = 'ExecutionPolicy'
+    ManualDayCumAmt = 'ManualDayCumAmt'
+    ManualDayCumQty = 'ManualDayCumQty'
+    AllocReportType = 'AllocReportType'
+    RootMiscFeesList = 'RootMiscFeesList'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"

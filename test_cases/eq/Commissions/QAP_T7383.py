@@ -9,6 +9,8 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, MiddleOfficeColumns
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
@@ -26,12 +28,12 @@ class QAP_T7383(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.client = self.data_set.get_client_by_name("client_com_1")
@@ -50,10 +52,11 @@ class QAP_T7383(TestCase):
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
         self.comm = self.data_set.get_commission_by_name("commission1")
         self.fee = self.data_set.get_fee_by_name('fee1')
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
+        # region send commissions
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(fee=self.fee,
                                                             comm_profile=self.comm_profile).change_message_params(
@@ -61,6 +64,9 @@ class QAP_T7383(TestCase):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm,
                                                                          comm_profile=self.comm_profile).send_post_request()
+        # endregion
+
+        # region send order
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
                                                                                                   self.client_for_rule,
@@ -71,12 +77,14 @@ class QAP_T7383(TestCase):
                                                                                             self.mic, int(self.price),
                                                                                             int(self.qty), 2)
 
-            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            order_id = responses[0].get_parameter("OrderID")
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
         # endregion
+
         # region check exec
         no_misc = {"MiscFeeAmt": '1', "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "4"}
@@ -89,22 +97,39 @@ class QAP_T7383(TestCase):
             ['SettlCurrency'])
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
+
         # region check ready_to_book order sts
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value})
+
         # endregion
+
         # region book order
-        self.mid_office.set_modify_ticket_details(remove_comm=True, remove_fee=True)
-        self.mid_office.book_order([OrderBookColumns.cl_ord_id.value, self.cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
+        instrument_id = self.data_set.get_instrument_id_by_name('instrument_3')
+        gross_currency_amt = str(int(self.qty) * int(self.price))
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
+                                                               {
+                                                                   'GrossTradeAmt': gross_currency_amt,
+                                                                   'AvgPx': self.price,
+                                                                   'Qty': self.qty,
+                                                                   'InstrID': instrument_id,
+                                                                   "Currency": self.cur,
+                                                                   "AccountGroupID": self.client
+                                                               })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         # endregion
+
         # region check total fees
         total_fees = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value)
         self.mid_office.compare_values({MiddleOfficeColumns.total_fees.value: ''}, total_fees, "Check Total Fees")
         # endregion
+
         # region check total fees
         total_comm = self.mid_office.extract_block_field(MiddleOfficeColumns.client_comm.value)
         self.mid_office.compare_values({MiddleOfficeColumns.client_comm.value: ''}, total_comm,
                                        "Check Total Comm")
         # endregion
+
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

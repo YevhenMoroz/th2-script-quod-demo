@@ -45,7 +45,7 @@ class QAP_T7247(TestCase):
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.fee = self.data_set.get_fee_by_name("fee1")
         self.fee_type = self.data_set.get_misc_fee_type_by_name("other")
-        self.intr_type = self.data_set.get_instr_type_name('equity')
+        self.intr_type = self.data_set.get_instr_type('equity')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
