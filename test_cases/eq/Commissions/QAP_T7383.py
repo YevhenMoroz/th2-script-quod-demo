@@ -127,7 +127,8 @@ class QAP_T7383(TestCase):
         # region check total fees
         ignored_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt']
         self.fix_alloc_report.set_default_ready_to_book(self.fix_message)
-        self.fix_alloc_report.change_parameters({'NoRootMiscFeesList': '#', 'RootOrClientCommission': '#'})
+        self.fix_alloc_report.change_parameters(
+            {'NoRootMiscFeesList': '#', 'ClientCommissionList': '#', 'RootCommTypeClCommBasis': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.fix_alloc_report, ignored_fields=ignored_fields)
         # endregion
 
