@@ -30,17 +30,20 @@ class QAP_T2892(TestCase):
         self.palladium1 = self.data_set.get_client_by_name("client_mm_4")
         self.status_reject = Status.Reject
         self.qty58m = "58000000"
+        self.bands_eur_usd = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium1)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands_eur_usd.append("*")
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
         # region step 2
@@ -54,7 +57,7 @@ class QAP_T2892(TestCase):
         # region step 3
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
                                                                response=response)
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
