@@ -32,10 +32,10 @@ class QAP_T8667(TestCase):
         # region Step 1
         self.new_order.set_default_SOR().update_repeating_group("NoStrategyParameters", self.no_strategy_parameters)
         self.new_order.change_parameter("OrderQty", self.qty)
-        self.fix_manager.send_message_and_receive_response(self.new_order)
+        response = self.fix_manager.send_message_and_receive_response(self.new_order)
         # endregion
         # regions Step 2
-        self.execution_report.set_params_from_new_order_single(self.new_order)
+        self.execution_report.set_params_from_new_order_single(self.new_order, response=response[-1])
         self.execution_report.change_parameters({"LastMkt": self.market_citi})
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

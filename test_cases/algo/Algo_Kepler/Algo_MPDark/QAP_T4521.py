@@ -172,6 +172,12 @@ class QAP_T4521(TestCase):
         self.dma_1_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
         self.dma_1_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_1_itg_child, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 1st child DMA order on ITG')
+
+        er_pending_new_dma_1_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_itg_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_1_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew 1st child DMA order on ITG')
+
+        er_new_dma_1_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_itg_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_1_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New 1st child DMA order on ITG')
         # endregion
 
         # region Modify parent MP Dark order
@@ -193,14 +199,9 @@ class QAP_T4521(TestCase):
 
         time.sleep(3)
 
-        # region Check fill 1st child DMA order on the venue ITG
-        er_fill_dma_1_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_itg_order, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_1_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill 1st child DMA order on ITG')
-        # endregion
-
-        # region check cancel first dma child order
-        er_cancel_dma_1_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_chix_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel 1st child DMA order on CHIXDELTA")
+        # region Check fill 1st child DMA order on the venue CHIX DARKPOOL EU
+        er_fill_dma_1_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_chix_order, self.gateway_side_buy, self.status_fill)
+        self.fix_verifier_buy.check_fix_message(er_fill_dma_1_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill 1st child DMA order on CHIX DARKPOOL EU')
         # endregion
 
         # region check cancel second dma child order
@@ -211,6 +212,11 @@ class QAP_T4521(TestCase):
         # region check cancel third dma child order
         er_cancel_dma_1_cboe_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_cboe_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_cboe_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel 1st child DMA order on CBOE DARKPOOL EU")
+        # endregion
+
+        # region check cancel fourth dma child order
+        er_cancel_dma_1_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_itg_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_itg_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel 1st child DMA order on ITG")
         # endregion
 
         # region Check child DMA order on venue CHIX DARKPOOL UK

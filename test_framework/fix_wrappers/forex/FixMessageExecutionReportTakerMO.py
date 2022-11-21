@@ -113,7 +113,7 @@ class FixMessageExecutionReportTakerMO(FixMessageExecutionReport):
     # CHECKED
     def __set_fill_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
-            Account=new_order_single.get_parameter('Account'),
+            Account=(new_order_single.get_parameter('Account'), new_order_single.get_parameter('Account') + "_1"),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),
             CumQty=new_order_single.get_parameter('OrderQty'),
             Currency=new_order_single.get_parameter('Currency'),

@@ -120,6 +120,6 @@ class QAP_T4825(TestCase):
 
         # region Check Eliminate Algo order
         er_eliminate_SORPING_STL_GTC_Iceberg_MinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_STL_GTC_Iceberg_MinQty_order, self.gateway_side_sell, self.status_eliminate)
-        er_eliminate_SORPING_STL_GTC_Iceberg_MinQty_order_params.add_tag(dict(Text='Multi-day expiry adjustment forbidden by algorithm parameters - child order blocked by internal validation'))
+        er_eliminate_SORPING_STL_GTC_Iceberg_MinQty_order_params.add_tag(dict(Text='Multi-day validity synthesisation forbidden by algorithm parameters - child order blocked by internal validation'))
         self.fix_verifier_sell.check_fix_message(er_eliminate_SORPING_STL_GTC_Iceberg_MinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion

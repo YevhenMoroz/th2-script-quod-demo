@@ -97,6 +97,9 @@ class QAP_T8020(TestCase):
     def run_pre_conditions_and_steps(self):
         # region prepare MD before sending RFQ
         # send MD to TOM
+        self.quote_request.set_deposit_and_loan_param()
+        self.quote_request.update_repeating_group_by_index("NoRelatedSym", index=0, SettlDate=self.settle_date_tom,
+                                                           MaturityDate=self.settle_date_wk2)
         self.md_snapshot.set_md_for_deposit_and_loan_fwd()
         self.md_snapshot.update_repeating_group("NoMDEntries", self.no_md_entries_tom)
         self.md_snapshot.update_MDReqID(self.md_req_id_tom, self.fxfh_connectivity, "FX")

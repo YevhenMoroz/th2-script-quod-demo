@@ -55,6 +55,14 @@ class AllocationInstructionConst(Enum):
     COMM_AND_FEES_BASIS_PERCENTAGE = 'PCT'
     COMM_AND_FEES_TYPE_AGE = "AGE"
     ConfirmationService_MAN = 'MAN'
+    COMM_AND_FEE_BASIS_ABS = 'ABS'
+    COMM_AND_FEE_BASIS_BPS = 'BPS'
+    COMM_AND_FEE_TYPE_TRA = 'TRA'  # PerTransac
+    COMM_AND_FEE_TYPE_LEV = 'LEV'  # Levy
+    COMM_AND_FEE_TYPE_STA = 'STA'  # STA
+    COMM_AND_FEE_BASIS_PCT = 'PCT'
+    ComputeFeesCommissions_Y = 'Y'
+    ComputeFeesCommissions_N = 'N'
 
 
 class ConfirmationReportConst(Enum):
@@ -129,7 +137,6 @@ class JavaApiFields(Enum):
     PositionList = 'PositionList'
     PositionBlock = 'PositionBlock'
     PositQty = 'PositQty'
-    ExecCommission = 'ExecCommission'
     MiscFeesList = 'MiscFeesList'
     MiscFeesBlock = 'MiscFeesBlock'
     MiscFeeType = 'MiscFeeType'
@@ -165,6 +172,7 @@ class JavaApiFields(Enum):
     RootMiscFeeType = 'RootMiscFeeType'
     RootMiscFeeAmt = 'RootMiscFeeAmt'
     RootMiscFeesBlock = 'RootMiscFeesBlock'
+    RootMiscFeesList = 'RootMiscFeesList'
     CommissionBasis = 'CommissionBasis'
     CommissionAmountType = 'CommissionAmountType'
     CommissionRate = 'CommissionRate'
@@ -180,6 +188,9 @@ class JavaApiFields(Enum):
     ConfirmStatus = 'ConfirmStatus'
     MatchStatus = 'MatchStatus'
     AllocSummaryStatus = 'AllocSummaryStatus'
+    DoneForDay = 'DoneForDay'
+    NetMoney = 'NetMoney'
+    NetPrice = 'NetPrice'
 
 
 class JavaApiPartyRoleConstants(Enum):
