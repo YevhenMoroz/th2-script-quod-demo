@@ -2,8 +2,11 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from pathlib import Path
@@ -12,9 +15,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -53,6 +53,7 @@ class QAP_T7383(TestCase):
         self.comm = self.data_set.get_commission_by_name("commission1")
         self.fee = self.data_set.get_fee_by_name('fee1')
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.fix_alloc_report = FixMessageAllocationInstructionReportOMS()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -98,18 +99,15 @@ class QAP_T7383(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
 
-        # region check ready_to_book order sts
-
-        # endregion
-
         # region book order
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_3')
         gross_currency_amt = str(int(self.qty) * int(self.price))
+        new_avg_px = str(float(self.price) / 100)
         self.allocation_instruction.set_default_book(order_id)
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {
                                                                    'GrossTradeAmt': gross_currency_amt,
-                                                                   'AvgPx': self.price,
+                                                                   'AvgPx': new_avg_px,
                                                                    'Qty': self.qty,
                                                                    'InstrID': instrument_id,
                                                                    "Currency": self.cur,
@@ -118,18 +116,27 @@ class QAP_T7383(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         # endregion
 
-        # region check total fees
-        total_fees = self.mid_office.extract_block_field(MiddleOfficeColumns.total_fees.value)
-        self.mid_office.compare_values({MiddleOfficeColumns.total_fees.value: ''}, total_fees, "Check Total Fees")
+        # region check block values
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        self.java_api_manager.compare_values({'NetMoney': '20.0'},
+                                             alloc_report,
+                                             "Check NetMoney in the Alloc Report")
         # endregion
 
         # region check total fees
-        total_comm = self.mid_office.extract_block_field(MiddleOfficeColumns.client_comm.value)
-        self.mid_office.compare_values({MiddleOfficeColumns.client_comm.value: ''}, total_comm,
-                                       "Check Total Comm")
+        ignored_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt']
+        self.fix_alloc_report.set_default_ready_to_book(self.fix_message)
+        self.fix_alloc_report.change_parameters({'NoRootMiscFeesList': '#', 'RootOrClientCommission': '#'})
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.fix_alloc_report, ignored_fields=ignored_fields)
         # endregion
 
     def __return_result(self, responses, message_type):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
