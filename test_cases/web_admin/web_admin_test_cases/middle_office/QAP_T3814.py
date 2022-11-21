@@ -41,12 +41,13 @@ class QAP_T3814(CommonTestCase):
             self.precondition()
             page = AllocationMatchingProfilesPage(self.web_driver_container)
             page.set_name(self.fix_matching_profile_name)
+            time.sleep(1)
             page.click_on_more_actions()
             page.click_on_delete(True)
 
             page.set_name(self.fix_matching_profile_name)
             time.sleep(1)
-            self.verify("Allocation Matching Profile deleted", True,
+            self.verify("Allocation Matching Profile deleted", False,
                         page.is_searched_entity_found_by_name(self.fix_matching_profile_name))
 
         except Exception:

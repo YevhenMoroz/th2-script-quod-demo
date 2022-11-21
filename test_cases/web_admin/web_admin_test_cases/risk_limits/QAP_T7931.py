@@ -31,7 +31,7 @@ class QAP_T7931(CommonTestCase):
 
         self.fields_name = ["Moving Time Window", "Max Amount", "Max Order Actions", "Max Quantity", "Auto Reset",
                             "Client", "Side", "Instr Symbol", "Listing", "All Orders", "Institution"]
-        self.max_amount = random.randint(1, 100)
+        self.max_amount = str(random.randint(1, 100))
         self.institution = 'QUOD FINANCIAL'
         self.client = 'CLIENT2'
         self.instr_symbol = 'AUD/HUF'
@@ -40,7 +40,7 @@ class QAP_T7931(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_listing_cum_trading_limit_counters_page()
+        side_menu.open_order_velocity_page()
 
     def test_context(self):
         try:

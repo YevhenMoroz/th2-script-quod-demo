@@ -21,6 +21,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixRequestForPositionsFX import FixRequestForPositionsFX
 from test_framework.java_api_wrappers.fx.RequestForFXPositions import RequestForFXPositions
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -38,34 +39,15 @@ class QAP_T8544(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.position_request = RequestForFXPositions(data_set=self.data_set)
         self.act_java_api = Stubs.act_java_api
+        self.request = FixRequestForPositionsFX()
 
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.position_request.set_default_params()
-        # self.position_request.change_subject("CLIENT1")
-        self.java_api_manager.send_message(self.position_request)
-
-        self.sleep(10)
-        self.position_request.set_unsubscribe()
-        self.java_api_manager.send_message(self.position_request)
-        # params_for_request = {
-        #         "SEND_SUBJECT": "QUOD.CLIENT1_1.POSIT",
-        #         "REPLY_SUBJECT": "QUOD.POSIT.CLIENT1_1",
-        #         "RequestForFXPositionsBlock": {
-        #             # "ClientPosReqID": "1234561",
-        #             "PosReqType": "Positions",
-        #             "AccountID": "CLIENT1",
-        #             "Currency": "USD",
-        #             "SubscriptionRequestType": "Subscribe",
-        #         }
+        # self.position_request.set_default_params()
+        # # self.position_request.change_subject("CLIENT1")
+        # self.java_api_manager.send_message(self.position_request)
         #
-        # }
-        # #
-        # self.act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-        #     message=bca.message_to_grpc('Order_RequestForFXPositions', params_for_request, self.java_api_env)))
-
-        # ja_connectivity = "314_java_api"
-        # ja_manager = JavaApiManager(ja_connectivity, bca.create_event(Path(__file__).name[:-3]))
-        # ord_submit = OrderSubmitOMS(OmsDataSet()).set_default_dma_market()
-        # ja_manager.send_message(ord_submit)
+        self.request.set_default_params()
+        response: list = self.java_api_manager.send_message_and_receive_response(self.request)
+        print(response[0].get_parameters())

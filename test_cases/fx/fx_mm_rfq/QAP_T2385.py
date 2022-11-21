@@ -45,8 +45,8 @@ class QAP_T2385(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.gbp_usd)
+        self.msg_prams_instr = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr = self.rest_manager. \
             parse_response_details(self.msg_prams_instr, {"clientTierID": self.client_id, "instrSymbol": self.gbp_usd})
         self.modify_instrument.clear_message_params().modify_client_tier_instrument().set_params(self.msg_prams_instr) \
