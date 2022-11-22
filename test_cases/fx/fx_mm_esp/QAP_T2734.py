@@ -10,14 +10,11 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
-from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
 class QAP_T2734(TestCase):
@@ -26,13 +23,10 @@ class QAP_T2734(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
-        self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
-        self.manual_settings_request = QuoteManualSettingsRequestFX(data_set=self.data_set)
         self.quote_adjustment = QuoteAdjustmentRequestFX(data_set=self.data_set)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
@@ -60,7 +54,6 @@ class QAP_T2734(TestCase):
             'SettlType': self.settle_type_1w}]
         self.sts_filled = Status.Fill
         self.sts_rejected = Status.Reject
-        self.md_req_id = 'EUR/USD:SPO:REG:HSBC'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -83,7 +76,7 @@ class QAP_T2734(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, QuoteCondition="B")
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # region Step 3
         self.new_order_single.set_default().change_parameters(
             {"Account": self.silver,
@@ -94,7 +87,7 @@ class QAP_T2734(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_filled,
                                                                response=response[-1])
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 
         # region Step 4
@@ -109,7 +102,7 @@ class QAP_T2734(TestCase):
         self.execution_report_doubler.set_params_from_new_order_single(self.new_order_single_doubler, self.sts_rejected,
                                                                        response=response[-1])
         self.execution_report_doubler.change_parameter("Text", "not enough quantity in book")
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report_doubler, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report_doubler)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -119,4 +112,5 @@ class QAP_T2734(TestCase):
                                                                         {"InstrSymbol": self.eur_usd,
                                                                          "ClientTierID": self.silver_id})
         self.java_manager.send_message(self.quote_adjustment)
+        self.sleep(2)
         # endregion
