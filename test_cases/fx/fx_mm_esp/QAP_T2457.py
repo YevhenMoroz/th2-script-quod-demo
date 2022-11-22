@@ -1,7 +1,6 @@
 import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -22,7 +21,6 @@ class QAP_T2457(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
-        self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.rest_env = self.environment.get_list_web_admin_rest_api_environment()[0]
@@ -68,9 +66,7 @@ class QAP_T2457(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -82,3 +78,4 @@ class QAP_T2457(TestCase):
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
+        self.sleep(2)
