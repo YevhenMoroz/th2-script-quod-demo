@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
     FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -66,6 +67,7 @@ class QAP_T7048(TestCase):
         self.force_alloc_instr = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirmation = ConfirmationOMS(self.data_set)
         self.alloc_report = FixMessageAllocationInstructionReportOMS()
+        self.conf_report = FixMessageConfirmationReportOMS(self.data_set)
         self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -83,7 +85,7 @@ class QAP_T7048(TestCase):
         response = self.__send_fix_orders()
         order_id = response[0].get_parameter("OrderID")
         cl_order_id = response[0].get_parameter("ClOrdID")
-        exec_id = response[2].get_parameters()["ExecID"]
+        exec_id = response[5].get_parameters()["ExecID"]
         # endregion
 
         # region get values from booking ticket
@@ -98,7 +100,6 @@ class QAP_T7048(TestCase):
         self.__return_result(responses, ORSMessageType.ComputeBookingFeesCommissionsReply.value)
         fee_list = self.result.get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
             'RootMiscFeesList']
-        print(fee_list)
         # endregion
 
         # region book order
@@ -127,7 +128,8 @@ class QAP_T7048(TestCase):
 
         # region check ready to book message
         no_misc_fees = {'NoRootMiscFeesList': [{"RootMiscFeeBasis": '2', "RootMiscFeeCurr": self.com_cur,
-                                        "RootMiscFeeType": "22", 'RootMiscFeeRate': '10', 'RootMiscFeeAmt': '10'}]}
+                                                "RootMiscFeeType": "22", 'RootMiscFeeRate': '10',
+                                                'RootMiscFeeAmt': '10'}]}
         alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'RootCommTypeClCommBasis',
                                 'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt']
         self.alloc_report.set_default_ready_to_book(self.fix_message)
@@ -136,9 +138,8 @@ class QAP_T7048(TestCase):
         # endregion
 
         # region amend booking
-        fee_list['RootMiscFeesBlock'][0]['RootMiscFeeRate'] = '2.0'
-        fee_list['RootMiscFeesBlock'][0]['RootMiscFeeAmt'] = '2.0'
-        print(fee_list)
+        fee_list['RootMiscFeesBlock'][0]['RootMiscFeeRate'] = '5.0'
+        fee_list['RootMiscFeesBlock'][0]['RootMiscFeeAmt'] = '5.0'
         self.allocation_instruction.set_amend_book(alloc_inst_id, exec_id, self.qty, new_avg_px)
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {
@@ -151,17 +152,18 @@ class QAP_T7048(TestCase):
                                                                    'RootMiscFeesList': fee_list
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        # endregion
-
-        # region check ready to book message
-        no_misc_fees = {'NoRootMiscFeesList': [{"RootMiscFeeBasis": '2', "RootMiscFeeCurr": self.com_cur,
-                                                "RootMiscFeeType": "22", 'RootMiscFeeRate': '10',
-                                                'RootMiscFeeAmt': '10'}]}
-        alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'RootCommTypeClCommBasis',
-                                'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt']
-        self.alloc_report.set_default_ready_to_book(self.fix_message)
-        self.alloc_report.change_parameters({"NoRootMiscFeesList": no_misc_fees})
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=alloc_ignored_fields)
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        self.java_api_manager.compare_values({'RootMiscFeeRate':
+                                                  fee_list['RootMiscFeesBlock'][0]['RootMiscFeeRate']},
+                                              {'RootMiscFeeRate': alloc_report['RootMiscFeesList']['RootMiscFeesBlock'][0][
+                                                   'RootMiscFeeRate']},
+                                             'Check fees after amending booking')
+        self.java_api_manager.compare_values({'RootMiscFeeAmt':
+                                                  fee_list['RootMiscFeesBlock'][0]['RootMiscFeeRate']},
+                                              {'RootMiscFeeAmt': alloc_report['RootMiscFeesList']['RootMiscFeesBlock'][0][
+                                                   'RootMiscFeeAmt']},
+                                             'Check fees after amending booking')
         # endregion
 
         # region approve block
@@ -173,12 +175,18 @@ class QAP_T7048(TestCase):
         self.confirmation.set_default_allocation(alloc_inst_id)
         self.confirmation.update_fields_in_component('ConfirmationBlock',
                                                      {'AllocAccountID': self.client_acc, "InstrID": instrument_id,
-                                                      "AvgPx": self.price})
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation)
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
-        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value: fee_list_exp}, alloc_report,
-                                             "Check fees in the Alloc Report after allocation")
+                                                      "AvgPx": new_avg_px})
+        self.java_api_manager.send_message(self.confirmation)
+        # endregion
+
+        time.sleep(8)
+        # region check ready to book message
+        no_misc_fees = {'NoMiscFees': [{"MiscFeeAmt": '5', "MiscFeeCurr": self.com_cur,
+                                                "MiscFeeType": "22"}]}
+        alloc_ignored_fields = ['AvgPx', 'tag5120', 'CommissionData']
+        self.conf_report.set_default_confirmation_new(self.fix_message)
+        self.conf_report.change_parameters({'NoMiscFees': no_misc_fees})
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.conf_report, ignored_fields=alloc_ignored_fields)
         # endregion
 
     def __send_fix_orders(self):
@@ -206,7 +214,7 @@ class QAP_T7048(TestCase):
             if response.get_message_type() == message_type:
                 self.result = response
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_fees()
-    #     self.rest_commission_sender.clear_commissions()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
