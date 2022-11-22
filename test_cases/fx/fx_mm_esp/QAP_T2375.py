@@ -9,7 +9,6 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
     RestApiClientTierInstrSymbolMessages
@@ -22,7 +21,6 @@ class QAP_T2375(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_esp_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.modify_instrument = RestApiClientTierInstrSymbolMessages()
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
@@ -83,7 +81,7 @@ class QAP_T2375(TestCase):
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.md_request, self.bands_gbp_usd)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot, key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager.send_message(self.md_request, "Unsubscribe")
         # endregion
@@ -117,8 +115,8 @@ class QAP_T2375(TestCase):
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.md_request, self.bands_gbp_usd)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot, key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager.send_message(self.md_request, "Unsubscribe")
         # endregion
-
+        self.sleep(2)
