@@ -8,7 +8,6 @@ from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
-from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import (
     OrderReplyConst,
@@ -26,7 +25,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T7229(TestCase):
+class QAP_T8726(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -34,13 +33,10 @@ class QAP_T7229(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.client = self.data_set.get_client_by_name("client_com_1")  # CLIENT_COMM_1
-        self.currency = self.data_set.get_currency_by_name("currency_3")  # GBp
-        self.comm_currency = self.data_set.get_currency_by_name("currency_2")  # GBP
         self.qty = "100"
-        self.price = "20"
-        self.abs_amt_gbp = self.data_set.get_comm_profile_by_name("abs_amt_gbp")
+        self.price = "123.45"
+        self.commission = self.data_set.get_comm_profile_by_name("perc_rounding_to_whole_number")
         self.commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.order_submit = OrderSubmitOMS(data_set)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -50,15 +46,12 @@ class QAP_T7229(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        class_name = QAP_T7229
+        class_name = QAP_T8726
         # region Send commission
         self.commission_sender.clear_commissions()
         self.commission_sender.clear_fees()
-        self.commission_sender.set_modify_client_commission_message(
-            comm_profile=self.abs_amt_gbp, client=self.client
-        ).change_message_params(
-            {"accountGroupID": self.client, "venueID": self.data_set.get_venue_by_name("venue_2")}
-        ).send_post_request()
+        self.commission_sender.set_modify_client_commission_message(comm_profile=self.commission, client=self.client)
+        self.commission_sender.send_post_request()
         time.sleep(3)
         # endregion
 
@@ -70,9 +63,6 @@ class QAP_T7229(TestCase):
                 "OrdQty": self.qty,
                 "AccountGroupID": self.client,
                 "Price": self.price,
-                "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"),
-                "SettlCurrency": self.currency,
-                "ListingList": {"ListingBlock": [{"ListingID": self.data_set.get_listing_id_by_name("listing_2")}]},
             },
         )
         responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
@@ -83,9 +73,9 @@ class QAP_T7229(TestCase):
         ord_id = order_reply["OrdID"]
         cl_ord_id = order_reply["ClOrdID"]
         self.java_api_manager.compare_values(
-            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value, "Currency": self.currency},
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
             order_reply,
-            "Comparing Status and Currency of DMA order",
+            "Comparing Status of DMA order",
         )
         # endregion
 
@@ -93,11 +83,7 @@ class QAP_T7229(TestCase):
         self.execution_report.set_default_trade(ord_id)
         self.execution_report.update_fields_in_component(
             "ExecutionReportBlock",
-            {
-                "InstrumentBlock": self.data_set.get_java_api_instrument("instrument_3"),
-                "LastMkt": self.data_set.get_mic_by_name("mic_2"),
-                "Currency": self.currency,
-            },
+            {"Price": self.price, "AvgPrice": self.price, "LastPx": self.price},
         )
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         class_name.print_message("TRADE", responses)
@@ -106,14 +92,14 @@ class QAP_T7229(TestCase):
         ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
             {
-                JavaApiFields.CommissionRate.value: "10.0",
-                JavaApiFields.CommissionAmount.value: "10.0",
-                JavaApiFields.CommissionCurrency.value: self.comm_currency,
+                JavaApiFields.CommissionRate.value: "617.0",
+                JavaApiFields.CommissionAmount.value: "617.0",
+                JavaApiFields.CommissionCurrency.value: "EUR",
                 JavaApiFields.CommissionAmountType.value: CommissionAmountTypeConst.CommissionAmountType_BRK.value,
                 JavaApiFields.CommissionBasis.value: CommissionBasisConst.CommissionBasis_ABS.value,
             },
             execution_report_message["ClientCommissionList"]["ClientCommissionBlock"][0],
-            "Comparing Commissions, that CommissionCurrency=GBP",
+            "Comparing Commissions",
         )
         # endregion
 
