@@ -188,3 +188,4 @@ class QAP_T2966(TestCase):
             {"Tenor": self.settle_type_1w_java})
         self.java_manager.send_message(self.manual_settings_request)
         # endregion
+        self.sleep(2)
