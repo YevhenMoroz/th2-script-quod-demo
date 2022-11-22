@@ -106,3 +106,4 @@ class QAP_T2921(TestCase):
         self.rest_message.clear_message_params().modify_client_tier_instrument().set_params(
             self.params).set_sweepable_qty(self.qty_list_default)
         self.rest_manager.send_post_request(self.rest_message)
+        self.sleep(2)
