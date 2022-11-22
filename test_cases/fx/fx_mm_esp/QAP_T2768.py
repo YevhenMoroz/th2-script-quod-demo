@@ -21,7 +21,6 @@ class QAP_T2768(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fx_fh_connectivity = self.fix_env.feed_handler
-        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
@@ -117,7 +116,6 @@ class QAP_T2768(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition
-        #  !subscribing to MD in order to modify it!
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium2)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
@@ -149,7 +147,6 @@ class QAP_T2768(TestCase):
                                                          SettlDate="*")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryForwardPoints=self.offer_fwd_pts,
                                                          SettlDate="*")
-        self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, key_parameters=["MDReqID"])
         # endregion
 
@@ -163,3 +160,4 @@ class QAP_T2768(TestCase):
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_eur_usd_fwd, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
