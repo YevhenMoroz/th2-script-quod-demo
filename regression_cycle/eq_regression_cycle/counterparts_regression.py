@@ -41,7 +41,7 @@ def test_run(parent_id=None, version='5.1.167.180'):
     layout_name = "all_columns_layout.xml"
 
     try:
-        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
         # base_main_window.import_layout(layout_path, layout_name)
         QAP_T7471(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
