@@ -144,3 +144,4 @@ class QAP_T2883(TestCase):
             self.params).set_sweepable_qty(self.qty_list_default)
         self.rest_manager.send_post_request(self.rest_message)
         # endregion
+        self.sleep(2)
