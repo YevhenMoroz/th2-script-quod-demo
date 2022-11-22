@@ -2,17 +2,13 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -23,12 +19,10 @@ class QAP_T2413(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
-        self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_esp_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.modify_client_tier = RestApiClientTierMessages()
         self.rest_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
@@ -71,9 +65,7 @@ class QAP_T2413(TestCase):
         # endregion
         # region Step 3
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
 
         # endregion
 
@@ -83,3 +75,4 @@ class QAP_T2413(TestCase):
         self.fix_manager_gtw.send_message(self.fix_subscribe, "Unsubscribe")
         self.modify_client_tier.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_client_tier)
+        self.sleep(2)
