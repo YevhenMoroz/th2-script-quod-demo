@@ -63,3 +63,4 @@ class QAP_T2957(TestCase):
         self.rest_manager.send_post_request(self.rest_massage)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_mm.send_message(self.md_request)
+        self.sleep(2)
