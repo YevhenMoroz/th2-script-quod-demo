@@ -73,6 +73,13 @@ class QAP_T7917(TestCase):
         self.listing_id_trqx = self.data_set.get_listing_id_by_name("listing_44")
         # endregion
 
+        # region Instrument parameters
+        self.symbol = constants.Symbol.symbol_1.value
+        self.sid = constants.SecurityID.security_id_2.value
+        self.sids = constants.SecurityIDSource.sids_8.value
+        self.sec_type = constants.SecurityType.cs.value
+        # endregion
+
         # region Key parameters
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
@@ -122,7 +129,7 @@ class QAP_T7917(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xfra, DisplayInstruction=dict(DisplayQty=self.display_qty), Side=self.side))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=dict(Symbol=self.symbol, SecurityID=self.sid, SecurityIDSource=self.sids, SecurityType=self.sec_type), ExDestination=self.ex_destination_xfra, DisplayInstruction=dict(DisplayQty=self.display_qty), Side=self.side))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
