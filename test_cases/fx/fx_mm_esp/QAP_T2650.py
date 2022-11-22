@@ -84,3 +84,4 @@ class QAP_T2650(TestCase):
                                       'false', {'venueID': 'BARX'})
         self.rest_manager.send_post_request(self.rest_massage)
         # endregion
+        self.sleep(2)
