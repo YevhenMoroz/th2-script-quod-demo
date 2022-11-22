@@ -279,6 +279,24 @@ class MiscNumber(Enum):
     ordr_misc_8 = "OrdrMisc8"
 
 
+class Symbol(Enum):
+    symbol_1 = 'DE0005489561'
+
+
+class SecurityID(Enum):
+    security_id_1 = 'DE0005489561'
+    security_id_2 = '2681'
+
+
+class SecurityIDSource(Enum):
+    sids_4 = 4
+    sids_8 = 8
+
+
+class SecurityType(Enum):
+    cs = 'CS'
+
+
 class TransactionStatus(Enum):
     new = "New"
     open = "Open"

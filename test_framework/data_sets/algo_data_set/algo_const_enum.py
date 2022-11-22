@@ -293,8 +293,9 @@ class AlgoMic(Enum):
     mic_30 = "CHIX"   # CHIX
     mic_31 = "XAMS"   # Euronext Amsterdam
     mic_32 = "AQXE"   # AQUIS
-    mic_33 = "XETR"   # AQUIS
-    mic_34 = "XFRA"   # AQUIS
+    mic_33 = "XETR"   # XETRA
+    mic_34 = "XFRA"   # FRANKFURT
+    mic_35 = "XBRU"   # Euronext Brussels
 
 
 class AlgoListingId(Enum):
