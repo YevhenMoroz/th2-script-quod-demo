@@ -76,5 +76,3 @@ class QAP_T2891(TestCase):
     def run_post_conditions(self):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
-
-        self.sleep(2)
