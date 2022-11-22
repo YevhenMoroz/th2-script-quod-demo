@@ -14,7 +14,8 @@ from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS im
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst, \
+    AllocationReportConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
@@ -68,7 +69,7 @@ class QAP_T6991(TestCase):
         # region set agent fees precondition
 
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
-        commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
+        commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         fee = self.data_set.get_fee_by_name('fee3')
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
@@ -122,7 +123,8 @@ class QAP_T6991(TestCase):
                                                              "LeavesQty": half_qty,
                                                              "CumQty": half_qty,
                                                              "AvgPrice": self.price,
-                                                             "LastMkt": self.venue_mic
+                                                             "LastMkt": self.venue_mic,
+                                                             "OrdQty": self.qty
                                                          })
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         print_message('Trade DMA  order (Partially filled)', responses)
@@ -134,6 +136,10 @@ class QAP_T6991(TestCase):
         # endregion
 
         # region step 3
+        self.execution_report.update_fields_in_component('ExecutionReportBlock', {
+            "LeavesQty": '0',
+            "VenueExecID": bca.client_orderid(9),
+        })
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
 
         print_message('Trade DMA  order (Fully Filled)', responses)
@@ -166,6 +172,39 @@ class QAP_T6991(TestCase):
                                             f'Check that Agent fee doesn`t apply to {ORSMessageType.ConfirmationReport.value}')
         # endregion
 
+        # comparing statuses of Allocation Report (step 2)
+        allocation_message = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        actually_result.clear()
+        actually_result.update({JavaApiFields.AllocStatus.value: allocation_message[JavaApiFields.AllocStatus.value]})
+        actually_result.update({JavaApiFields.MatchStatus.value: allocation_message[JavaApiFields.MatchStatus.value]})
+        actually_result.update(
+            {JavaApiFields.AllocSummaryStatus.value: allocation_message[JavaApiFields.AllocSummaryStatus.value]})
+
+        self.java_api_manager.compare_values(
+            {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+             JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value,
+             JavaApiFields.AllocSummaryStatus.value: AllocationReportConst.AllocSummaryStatus_MAG.value},
+            actually_result,
+            'Compare actually and expected results  from step 2 for Allocation Report')
+
+        # endregion
+
+        # comparing statuses of confirmation report
+        actually_result.clear()
+        confirmation_message = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        actually_result.update(
+            {JavaApiFields.ConfirmStatus.value: confirmation_message[JavaApiFields.ConfirmStatus.value]})
+        actually_result.update({JavaApiFields.MatchStatus.value: confirmation_message[JavaApiFields.MatchStatus.value]})
+
+        self.java_api_manager.compare_values(
+            {JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+             JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value}, actually_result,
+            'Compare actually and expected results  from step 2 for Confirmation')
+
         # region check 35=8 message step 4
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'TransactTime', 'GrossTradeAmt',
                                   'ExDestination',
@@ -180,11 +219,12 @@ class QAP_T6991(TestCase):
             "ExecType": "B",
             "OrdStatus": "B"
         })
-        amoun_of_fees = 1 / 100
+        misc_fee_rate = 5
+        amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price) / 100
         execution_report.change_parameters({'Currency': self.currency, 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
                                             'NoMiscFees': [{
-                                                'MiscFeeAmt': amoun_of_fees,
+                                                'MiscFeeAmt': amount_of_fees,
                                                 'MiscFeeCurr': self.currency_post_trade,
                                                 'MiscFeeType': '12'
                                             }]})
