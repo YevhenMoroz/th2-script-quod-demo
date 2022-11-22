@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
@@ -6,19 +5,11 @@ from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import DirectionEnum, Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
-    FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
-from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
 
 
 class QAP_T2911(TestCase):
@@ -28,16 +19,11 @@ class QAP_T2911(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.verifier = Verifier(self.test_id)
-        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fx_fh_connectivity = self.fix_env.feed_handler
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
-        self.adjustment_request = QuoteAdjustmentRequestFX(data_set=self.data_set)
-        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
-        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.silver = self.data_set.get_client_by_name("client_mm_1")
         self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
         self.hsbc = self.data_set.get_venue_by_name("venue_2")
@@ -110,3 +96,4 @@ class QAP_T2911(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
