@@ -47,11 +47,10 @@ def test_run():
         kepler_multilisting.test_run(parent_id=report_id, version=version)
         # # if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
         kepler_iceberg_modify.test_run(parent_id=report_id, version=version)
-        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
-        kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
         # if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
         kepler_instrument_identification.test_run(parent_id=report_id, version=version)
-
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
