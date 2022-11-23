@@ -210,6 +210,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_27 = dict(
+        Symbol='BE0020575115',
+        SecurityID='BE0020575115',
+        SecurityIDSource='4',
+        SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -343,6 +351,11 @@ class AlgoListingId(Enum):
     listing_42 = "1825020511"       # FRANKFURT for DE0005489561
     listing_43 = "125918312"       # JANESTREET for DE0005489561
     listing_44 = "897585784"       # TRQX for DE0005489561
+    listing_45 = "1925020510"      # Euronext Brussels for BE0020575115
+    listing_46 = "125921468"       # JANESTREET for BE0020575115
+    listing_47 = "1859667"         # CHIX for BE0020575115
+    listing_48 = "1872056"         # BATS for BE0020575115
+    listing_49 = "897585397"       # TRQX for BE0020575115
 
 
 class AlgoCurrency(Enum):
