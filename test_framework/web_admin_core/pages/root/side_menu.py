@@ -51,6 +51,8 @@ from test_framework.web_admin_core.pages.positions.security_positions.security_p
     SecurityPositionsConstants
 from test_framework.web_admin_core.pages.price_cleansing.crossed_venue_rates.crossed_venue_rates_constants import \
     CrossedVenueRatesConstants
+from test_framework.web_admin_core.pages.price_cleansing.crossed_reference_rates.constants \
+    import Constants as CrossedReferenceRatesConstant
 from test_framework.web_admin_core.pages.price_cleansing.rates_following_trades.rates_following_trades_constants import \
     RatesFollowingTradesConstants
 from test_framework.web_admin_core.pages.price_cleansing.stale_rates.stale_rates_constants import StaleRatesConstants
@@ -262,6 +264,11 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.CROSSED_VENUE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(CrossedVenueRatesConstants.CROSSED_VENUE_RATES_PAGE_TITLE_XPATH)
+
+    def open_crossed_reference_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.CROSSED_REFERENCE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(CrossedReferenceRatesConstant.MainPage.PAGE_TITLE)
 
     def open_rates_following_trades_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RATES_FOLLOWING_TRADES_ITEM_XPATH,
