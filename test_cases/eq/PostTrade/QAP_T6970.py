@@ -75,9 +75,9 @@ class QAP_T6970(TestCase):
         # region Checking Execution report
         self.execution_report.set_default_filled(self.fix_message)
         self.execution_report.change_parameters(
-            {'ReplyReceivedTime': '*', 'LastMkt': '*', 'Text': '*', 'Account': self.venue_client_names})
+            {'ReplyReceivedTime': '*', 'LastMkt': '*', 'Text': '*', 'Account': self.client})
         self.execution_report.remove_parameter('SettlCurrency')
-        self.fix_verifier.check_fix_message_fix_standard(self.execution_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=['SecurityDesc'])
         # endregion
 
         # region Checking statuses in OrderBook
