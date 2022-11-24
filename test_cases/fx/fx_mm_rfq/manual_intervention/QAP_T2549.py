@@ -73,7 +73,7 @@ class QAP_T2549(TestCase):
         quote_response = next(response)
         quote_from_di = self.fix_manager_sel.parse_response(quote_response)[0]
         self.fix_verifier.check_fix_message(fix_message=self.quote)
-        self.new_order_single.set_default_prev_quoted(self.quote_request, quote_from_di)
+        self.new_order_single.set_default_for_dealer(self.quote_request, quote_from_di)
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         # endregion
         # region Step 4

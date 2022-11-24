@@ -122,15 +122,15 @@ class RoutesConstants:
     SUPPORT_DISPLAY_QUANTITY_VALUE_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-row ng-star-inserted"]//td[4]//div[@class="ng-star-inserted"]'
 
     # --Instr Symbols--
-    PLUS_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
-    CHECK_MARK_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="checkmark"]'
-    CLOSE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="close"]'
-    EDIT_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="edit"]'
-    DELETE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space(text())="Instr Symbols"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="trash-2"]'
-    INSTR_SYMBOL_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@placeholder="Instr Symbol *"]'
+    PLUS_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space()="Instrument Symbols"]//..//button[@nbtooltip="Add"]'
+    CHECK_MARK_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space()="Instrument Symbols"]//..//*[@data-name="checkmark"]'
+    CLOSE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space()="Instrument Symbols"]//..//*[@data-name="close"]'
+    EDIT_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space()="Instrument Symbols"]//..//*[@data-name="edit"]'
+    DELETE_BUTTON_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[normalize-space()="Instrument Symbols"]//..//*[@data-name="trash-2"]'
+    INSTR_SYMBOL_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@id="instrSymbol"]'
     PRICE_MULTIPLIER_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@placeholder="Price Multiplier"]'
-    INSTR_SYMBOL_FILTER_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@class="instrSymbol ng2-smart-th ng-star-inserted"]//input'
-    PRICE_MULTIPLIER_FILTER_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@class="ng2-smart-th priceMultiplier ng-star-inserted"]//input'
+    INSTR_SYMBOL_FILTER_AT_INSTR_SYMBOLS_TAB_XPATH = '(//*[normalize-space()="Instrument Symbols"]//..//input[@placeholder="Filter"])[1]'
+    PRICE_MULTIPLIER_FILTER_AT_INSTR_SYMBOLS_TAB_XPATH = '(//*[normalize-space()="Instrument Symbols"]//..//input[@placeholder="Filter"])[2]'
     INSTR_SYMBOL_VALUE_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@class="ng-tns-c93-1533 ng-star-inserted"]//*[@class="ng2-smart-row ng-star-inserted selected"]//td[2]//div[@class="ng-star-inserted"]'
     PRICE_MULTIPLIER_VALUE_AT_INSTR_SYMBOLS_TAB_XPATH = '//*[@class="ng-tns-c93-1533 ng-star-inserted"]//*[@class="ng2-smart-row ng-star-inserted selected"]//td[3]//div[@class="ng-star-inserted"]'
 

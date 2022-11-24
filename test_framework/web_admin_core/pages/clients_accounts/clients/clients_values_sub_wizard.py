@@ -113,7 +113,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_COUNTERPART_XPATH)
 
     def click_on_manage_counterpart(self):
-        self.find_by_xpath(ClientsConstants.VALUES_TAB_COUNTERPART_XPATH).click()
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_COUNTERPART_XPATH).click()
 
     def set_price_precision(self, value):
         self.set_text_by_xpath(ClientsConstants.VALUES_TAB_PRICE_PRECISION_XPATH, value)

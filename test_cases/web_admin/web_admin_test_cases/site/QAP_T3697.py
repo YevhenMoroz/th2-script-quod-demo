@@ -11,6 +11,7 @@ from test_framework.web_admin_core.pages.site.zones.zones_assignments_sub_wizard
 from test_framework.web_admin_core.pages.site.zones.zones_page import ZonesPage
 from test_framework.web_admin_core.pages.site.zones.zones_values_sub_wizard import ZonesValuesSubWizard
 from test_framework.web_admin_core.pages.site.zones.zones_wizard import ZonesWizard
+from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
@@ -78,11 +79,14 @@ class QAP_T3697(CommonTestCase):
             self.verify("Zone disabled", True, page.is_zone_enable())
 
             expected_pdf_content = [self.name, self.institution]
+            page.click_on_more_actions()
             self.verify("is pdf contains correctly values", True, page.click_download_pdf_entity_button_and_check_pdf(
                             expected_pdf_content))
 
+            common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_info_error_message_pop_up()
             csv_content = page.click_on_download_csv_button_and_get_content()
-            actual_result = self.name and self.name and self.institution and self.new_institution in csv_content
+            actual_result = self.name in csv_content[0].values()
 
             self.verify("CSV file contains created and cloned entities", True, actual_result)
 

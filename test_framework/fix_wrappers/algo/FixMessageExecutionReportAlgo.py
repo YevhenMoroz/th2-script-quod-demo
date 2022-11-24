@@ -415,6 +415,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
+        # The next parameter maybe will remove (see PALGO-547)
+        if new_order_single.get_parameter('Account') == 'KEPLER':
+            temp.update(misc5='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -526,6 +529,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty='*')
         if new_order_single.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
+        # The next parameter maybe will remove (see PALGO-547)
+        if new_order_single.get_parameter('Account') == 'KEPLER':
+            temp.update(misc5='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -557,7 +563,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             QtyType=0,
             SecondaryClOrdID='*',
             Instrument='*',
-            SecondaryExecID='*'
+            SecondaryExecID='*',
         )
         if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010']:
             [temp.pop(key, None) for key in ['SecAltIDGrp', 'SecondaryClOrdID']]
@@ -1615,6 +1621,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
         if order_cancel_replace.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
+        # The next parameter maybe will remove (see PALGO-547)
+        if order_cancel_replace.get_parameter('Account') == 'KEPLER':
+            temp.update(misc5='*')
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',

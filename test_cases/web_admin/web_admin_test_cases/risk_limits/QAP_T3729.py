@@ -30,7 +30,7 @@ class QAP_T3729(CommonTestCase):
         self.external_id = '11'
         self.currency = "EUR"
         self.max_amount = "150000000"
-        self.user = "QA3"
+        self.user = "acameron"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

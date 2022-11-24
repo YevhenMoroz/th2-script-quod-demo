@@ -5,6 +5,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -15,7 +16,10 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 
 
-# Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
+
+
 class QAP_T5027(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
@@ -38,6 +42,7 @@ class QAP_T5027(TestCase):
         self.qty_for_md = 1000
         self.price_ask = 44
         self.price_bid = 30
+        self.misc_value = "test tag 5001"
         # endregion
 
         # region Gateway Side
@@ -75,6 +80,18 @@ class QAP_T5027(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_party_info_sell_side.value
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+        
+        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_party_info_buy_side.value
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.misc_number = constants.MiscNumber.ordr_misc_1.value
         # endregion
 
         self.rule_list = []
@@ -126,14 +143,29 @@ class QAP_T5027(TestCase):
 
         self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(IClOrdIdCO="test tag 5001"))
+        self.ClOrdId = self.Iceberg_order.get_parameter('ClOrdID')
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(IClOrdIdCO=self.misc_value))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
-
-        time.sleep(3)
         # endregion
 
-        # region Check Sell side and PartyInfo in ERs PendingNew -> New
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_sell_side()
+        compare_message_1.change_parameters(dict(MiscNumber=self.misc_number, OrdrMisc=self.misc_value, ClOrdID=self.ClOrdId))
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_party_info_buy_side()
+        compare_message_2.change_parameters(dict(MiscNumber=self.misc_number, OrdrMisc=self.misc_value))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog Sell-side", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
+
+        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog Buy-side", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+        # endregion
+
+        # region Check ERs
         self.fix_verifier_sell.check_fix_message(self.Iceberg_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_pending)

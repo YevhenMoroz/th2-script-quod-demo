@@ -115,7 +115,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx="*",
             ExecID="*",
             LastPx="*",
-            OrdRejReason="99",
             OrderID="*",
             OrderCapacity="A",
             SettlDate="*",
@@ -567,6 +566,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         temp = dict(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty="0",
+            Account="*",
             Currency=new_order_single.get_parameter("Currency"),
             HandlInst=new_order_single.get_parameter("HandlInst"),
             LastQty="0",

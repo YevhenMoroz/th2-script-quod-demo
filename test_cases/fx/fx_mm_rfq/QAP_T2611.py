@@ -54,8 +54,6 @@ class QAP_T2611(TestCase):
         # endregion
 
         # region Step 2
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion

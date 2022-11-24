@@ -151,7 +151,6 @@ class QAP_T2419(TestCase):
         # endregion
         # region step 2
         self.quote_request.set_swap_rfq_params()
-        self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
         self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol,
                                            leg_sec_type=self.security_type_fwd,
                                            settle_date=self.settle_date_wk1, settle_type=self.settle_type_wk1)
