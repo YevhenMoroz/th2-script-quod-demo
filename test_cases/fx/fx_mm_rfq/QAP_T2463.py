@@ -102,3 +102,4 @@ class QAP_T2463(TestCase):
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.velocity_rule.clear_message_params().set_params(self.rest_message_params).delete_limit()
         self.rest_manager.send_post_request(self.velocity_rule)
+        self.sleep(2)
