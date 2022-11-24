@@ -56,6 +56,7 @@ from test_cases.fx.fx_mm_rfq.QAP_T8168 import QAP_T8168
 from test_cases.fx.fx_mm_rfq.QAP_T8378 import QAP_T8378
 from test_cases.fx.fx_mm_rfq.QAP_T8409 import QAP_T8409
 from test_cases.fx.fx_mm_rfq.QAP_T8636 import QAP_T8636
+from test_cases.fx.fx_mm_rfq.QAP_T8697 import QAP_T8697
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2444 import QAP_T2444
 
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2448 import QAP_T2448
@@ -78,8 +79,20 @@ from test_cases.fx.fx_mm_rfq.rejection.QAP_T2593 import QAP_T2593
 from test_cases.fx.fx_mm_rfq.rejection.QAP_T2595 import QAP_T2595
 from test_cases.fx.fx_mm_rfq.rejection.QAP_T2598 import QAP_T2598
 from test_cases.fx.fx_price_cleansing.QAP_T2637 import QAP_T2637
-from test_cases.fx.fx_taker_esp import QAP_T2487, QAP_T2488
+from test_cases.fx.fx_price_cleansing.QAP_T5124 import QAP_T5124
+from test_cases.fx.fx_price_cleansing.QAP_T5126 import QAP_T5126
+from test_cases.fx.fx_price_cleansing.QAP_T5127 import QAP_T5127
+from test_cases.fx.fx_taker_esp import QAP_T2487, QAP_T2488, QAP_T2489, QAP_T2496
+from test_cases.fx.fx_taker_esp.QAP_T2429 import QAP_T2429
+from test_cases.fx.fx_taker_esp.QAP_T2456 import QAP_T2456
+from test_cases.fx.fx_taker_esp.QAP_T2490 import QAP_T2490
+from test_cases.fx.fx_taker_esp.QAP_T2491 import QAP_T2491
+from test_cases.fx.fx_taker_esp.QAP_T2493 import QAP_T2493
+from test_cases.fx.fx_taker_esp.QAP_T2640 import QAP_T2640
+from test_cases.fx.fx_taker_esp.QAP_T2642 import QAP_T2642
+from test_cases.fx.fx_taker_esp.QAP_T2643 import QAP_T2643
 from test_cases.fx.fx_taker_esp.QAP_T8666 import QAP_T8666
+from test_cases.fx.fx_taker_esp.QAP_T8667 import QAP_T8667
 
 from test_cases.fx.send_md import QAP_MD
 
@@ -108,13 +121,8 @@ def test_run():
 
     try:
 
-        # QAP_MD(report_id, data_set=configuration.data_set).execute()
-        QAP_T2679.execute(report_id, session_id)
-        # Send_RFQ(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # Test_UI(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_MD(report_id, data_set=configuration.data_set).execute()
 
-        # QAP_T2697.execute(report_id, session_id)
-        # QAP_T2719(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
         # rm = RuleManager()
