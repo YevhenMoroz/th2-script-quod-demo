@@ -10,7 +10,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -45,13 +44,13 @@ class QAP_T7302(TestCase):
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
-        party = {"Parties": {'NoPartyIDs': [
+        party = {'NoPartyIDs': [
             self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
             self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
             self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4')
-        ]}}
-        self.exec_report.add_tag(party)
-        self.exec_report.add_tag({"ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
+        ]}
+        self.exec_report.change_parameters(
+            {"Parties": party, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
         # endregion
