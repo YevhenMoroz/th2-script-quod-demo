@@ -99,4 +99,5 @@ class QAP_T2404(TestCase):
         self.rest_manager.send_post_request(self.modify_client_tier)
         self.modify_instrument.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_instrument)
+        self.sleep(2)
 
