@@ -83,4 +83,5 @@ class QAP_T2395(TestCase):
             update_value_in_component('clientTierInstrSymbolVenue', 'excludeWhenUnhealthy',
                                       'false', {'venueID': 'BARX'})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)
         # endregion
