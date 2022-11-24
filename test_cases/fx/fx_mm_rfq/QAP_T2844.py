@@ -172,3 +172,4 @@ class QAP_T2844(TestCase):
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
