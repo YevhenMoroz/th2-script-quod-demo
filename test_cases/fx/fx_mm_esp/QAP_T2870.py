@@ -284,3 +284,4 @@ class QAP_T2870(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.manual_settings_request.set_default_params()
         self.java_manager.send_message(self.manual_settings_request)
+        self.sleep(2)
