@@ -218,6 +218,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_28 = dict(
+        Symbol='NEX',
+        SecurityID='FR0000044448,',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -250,6 +258,8 @@ class AlgoAccounts(Enum):
     account_13 = "CHIX_KEPLER"
     account_14 = "XAMS_KEPLER"
     account_15 = "XAMS_CLIENT1"
+    account_16 = "QDL_CLIENT2"
+    account_17 = "QDL2_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -356,7 +366,9 @@ class AlgoListingId(Enum):
     listing_47 = "1859667"         # CHIX for BE0020575115
     listing_48 = "1872056"         # BATS for BE0020575115
     listing_49 = "897585397"       # TRQX for BE0020575115
-
+    listing_50 = "982"       # Euronext Paris for FR0000044448
+    listing_qdl_1 = "9400000036" # QUODLIT1 for QUODTESTQA00 @ Columbia
+    listing_qdl_2 = "9400000038" # QUODLIT2 for QUODTESTQA00 @ Columbia
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
