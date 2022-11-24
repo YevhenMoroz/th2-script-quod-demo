@@ -25,6 +25,9 @@ class QAP_T2518(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_manager_mm = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
@@ -50,47 +53,61 @@ class QAP_T2518(TestCase):
             "SettlType": self.settle_type,
         }]
         self.params = {}
+        self.instrument_spot_md = {"Symbol": self.aud_usd,
+                                   "SecurityType": self.security_type}
         self.hsbc = self.data_set.get_venue_by_name("venue_2")
-        self.md_req_id = f"{self.aud_usd}:SPO:REG:{self.hsbc}"
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
-        self.no_md_entries = [
+        self.params = {}
+        self.md_req_id = f"{self.aud_usd}:SPO:REG:{self.hsbc}"
+        self.new_no_md_entries = [
             {"MDEntryType": "0",
-             "MDEntryPx": 1.18,
-             "MDEntrySize": 1000000,
+             "MDEntryPx": 1.1795,
+             "MDEntrySize": 2000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": 1.182,
-             "MDEntrySize": 1000000,
+             "MDEntryPx": 1.18151,
+             "MDEntrySize": 2000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "0",
-             "MDEntryPx": 1.175,
-             "MDEntrySize": 5000000,
-             "MDEntryPositionNo": 2,
+             "MDEntryPx": 1.1785,
+             "MDEntrySize": 4000000,
+             "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": 1.19,
-             "MDEntrySize": 5000000,
-             "MDEntryPositionNo": 2,
+             "MDEntryPx": 1.18161,
+             "MDEntrySize": 4000000,
+             "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "0",
-             "MDEntryPx": 1.17,
-             "MDEntrySize": 10000000,
-             "MDEntryPositionNo": 3,
+             "MDEntryPx": 1.1775,
+             "MDEntrySize": 6000000,
+             "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": 1.195,
-             "MDEntrySize": 10000000,
-             "MDEntryPositionNo": 3,
+             "MDEntryPx": 1.18171,
+             "MDEntrySize": 6000000,
+             "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}
-        ]
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "0",
+             "MDEntryPx": 1.1765,
+             "MDEntrySize": 8000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "1",
+             "MDEntryPx": 1.18181,
+             "MDEntrySize": 8000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -98,7 +115,7 @@ class QAP_T2518(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md.set_market_data()
-        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
+        self.fix_md.update_repeating_group("NoMDEntries", self.new_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
 
