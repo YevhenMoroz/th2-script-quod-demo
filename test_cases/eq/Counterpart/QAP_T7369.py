@@ -112,7 +112,6 @@ class QAP_T7369(TestCase):
             class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
             self.__return_result(responses, ORSMessageType.PositionReport.value)
             exec_id = self.result.get_parameters()['PositionReportBlock']['PositionList']['PositionBlock'][0]['LastPositUpdateEventID']
-            print(exec_id)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
