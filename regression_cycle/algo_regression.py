@@ -21,6 +21,8 @@ def test_run(parent_id=None):
             pass
         if eval(root.find(".//component[@name='Participation']").attrib["run"]):
             participation_regression.test_run(report_id, version)
+        if eval(root.find(".//component[@name='TimeInForce']").attrib["run"]):
+            tif_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Iceberg']").attrib["run"]):
             iceberg_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Multilisted']").attrib["run"]):
@@ -63,8 +65,6 @@ def test_run(parent_id=None):
             pass
         if eval(root.find(".//component[@name='Pair_trading']").attrib["run"]):
             pass
-        if eval(root.find(".//component[@name='TimeInForce']").attrib["run"]):
-            tif_regression.test_run(report_id, version)
 
         #RB
         #twap_regression_rb.test_run(report_id)

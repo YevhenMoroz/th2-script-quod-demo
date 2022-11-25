@@ -1621,6 +1621,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
         if order_cancel_replace.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
+        # The next parameter maybe will remove (see PALGO-547)
+        if order_cancel_replace.get_parameter('Account') == 'KEPLER':
+            temp.update(misc5='*')
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
