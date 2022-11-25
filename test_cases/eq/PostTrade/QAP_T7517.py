@@ -56,6 +56,7 @@ class QAP_T7517(TestCase):
         # endregion
 
         # region create order
+        order_id = None
         try:
             new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, account, exec_destination, float(price))
