@@ -18,7 +18,6 @@ from test_framework.java_api_wrappers.java_api_constants import AllocationInstru
     OrderReplyConst, JavaApiFields, AllocationReportConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
