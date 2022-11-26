@@ -133,6 +133,7 @@ class QAP_T7105(TestCase):
             'Compare actually and expected results  from step 3')
         # endregion
         # region check 35 = J message
+        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(
             self.fix_message)
         no_root_misc = {"RootMiscFeeBasis": "2", "RootMiscFeeCurr": self.com_cur,
@@ -143,7 +144,7 @@ class QAP_T7105(TestCase):
              'RootOrClientCommission': comm_data['Commission'], 'RootCommTypeClCommBasis': comm_data['CommType'],
              "RootOrClientCommissionCurrency": self.com_cur,
              'NoRootMiscFeesList': {"NoRootMiscFeesList": [no_root_misc]}, "RootSettlCurrAmt": "*"})
-        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
     def __send_fix_orders(self):
