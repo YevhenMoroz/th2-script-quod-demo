@@ -178,14 +178,14 @@ class QAP_T7132(TestCase):
         # region step 2
         expected_client_commission.pop(JavaApiFields.CommissionRate.value)
         expected_client_commission.update(
-            {JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_ABS.value})
+            {JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value})
         expected_fee.clear()
         expected_fee = {
             JavaApiFields.RootMiscFeeAmt.value: commission_amount,
             JavaApiFields.RootMiscFeeRate.value: commission_rate,
             JavaApiFields.RootMiscFeeCurr.value: self.currency_post_trade,
             JavaApiFields.RootMiscFeeType.value: AllocationInstructionConst.RootMiscFeeType_EXC.value,
-            JavaApiFields.RootMiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_ABS.value
+            JavaApiFields.RootMiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value
         }
         new_avg_px = str(float(self.price) / 100)
         for order_id in list_of_order_ids:
