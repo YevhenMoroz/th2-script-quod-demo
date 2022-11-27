@@ -217,5 +217,5 @@ class QAP_T7180(TestCase):
             if response.get_message_type() == message_type:
                 self.result = response
 
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_commissions()
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
