@@ -178,7 +178,7 @@ class QAP_T7132(TestCase):
         # region step 2
         expected_client_commission.pop(JavaApiFields.CommissionRate.value)
         expected_client_commission.update(
-            {JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value})
+            {JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_ABS.value})
         expected_fee.clear()
         expected_fee = {
             JavaApiFields.RootMiscFeeAmt.value: commission_amount,
