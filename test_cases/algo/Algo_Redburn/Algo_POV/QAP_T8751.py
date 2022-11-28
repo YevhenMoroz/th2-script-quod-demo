@@ -155,9 +155,9 @@ class QAP_T8751(TestCase):
         new_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 1')
 
-        cancel_ioc_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
-        cancel_ioc_child_order_1.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 1")
+        eliminate_ioc_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
+        eliminate_ioc_child_order_1.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 1")
         # endregion
 
         # region Send Market Data to trigger an MinParticipation behavior
@@ -186,9 +186,9 @@ class QAP_T8751(TestCase):
         new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 2')
 
-        cancel_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
-        cancel_ioc_child_order_2.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
+        eliminate_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
+        eliminate_ioc_child_order_2.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
