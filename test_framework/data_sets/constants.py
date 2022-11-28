@@ -354,3 +354,15 @@ class SshClientEnv(Enum):
     PASSWORD_317 = ""
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
+
+
+class FreeNotesReject(Enum):
+    MissWouldPriceReference = "missing WouldPriceReference"
+    MissLimitPriceReference = "missing LimitPriceReference"
+    MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+    MissNavigatorLimitPrice = "missing Limit price for Navigator"
+    InvalidMaxParticipation = "invalid value for MaxParticipation"
+    InvalidPercentageOfVolume = "invalid value for percentage of volume"
+    InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
+    InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
+    ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
