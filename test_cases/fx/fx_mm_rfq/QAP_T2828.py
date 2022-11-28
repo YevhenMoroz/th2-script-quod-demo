@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -39,6 +40,7 @@ class QAP_T2828(TestCase):
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote_cancel = FixMessageQuoteCancelFX()
 
         self.status = Status.Fill
         self.acc_argentina = self.data_set.get_client_by_name("client_mm_2")
@@ -230,3 +232,8 @@ class QAP_T2828(TestCase):
             {"OfferSpotRate": self.offer_spot_rate, "BidSpotRate": self.bid_spot_rate})
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.fix_manager_sel.send_message(self.quote_cancel)
