@@ -174,7 +174,8 @@ class QAP_T7180(TestCase):
         self.confirmation.set_default_allocation(alloc_instr_id)
         self.confirmation.update_fields_in_component('ConfirmationBlock', {"AllocAccountID": self.client_acc,
                                                                            "InstrID": instrument_id,
-                                                                           "AllocQty": self.qty})
+                                                                           "AllocQty": self.qty,
+                                                                           })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation)
         # endregion
 
@@ -199,7 +200,8 @@ class QAP_T7180(TestCase):
         # region step 6
         self.confirmation.set_default_amend_allocation(conf_id, alloc_instr_id, '15', self.qty)
         self.confirmation.update_fields_in_component('ConfirmationBlock', {"AllocAccountID": self.client_acc,
-                                                                           "InstrID": instrument_id})
+                                                                           "InstrID": instrument_id,
+                                                                           JavaApiFields.ClientCommissionList.value:comm_list})
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation)
         self.__return_result(responses, ORSMessageType.ConfirmationReport.value)
         self.java_api_manager.compare_values(

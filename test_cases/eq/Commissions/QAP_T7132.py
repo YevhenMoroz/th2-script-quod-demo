@@ -185,7 +185,7 @@ class QAP_T7132(TestCase):
             JavaApiFields.RootMiscFeeRate.value: commission_rate,
             JavaApiFields.RootMiscFeeCurr.value: self.currency_post_trade,
             JavaApiFields.RootMiscFeeType.value: AllocationInstructionConst.RootMiscFeeType_EXC.value,
-            JavaApiFields.RootMiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_ABS.value
+            JavaApiFields.RootMiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value
         }
         new_avg_px = str(float(self.price) / 100)
         for order_id in list_of_order_ids:
