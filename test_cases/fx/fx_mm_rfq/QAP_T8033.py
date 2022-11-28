@@ -73,3 +73,4 @@ class QAP_T8033(TestCase):
         self.modify_instrument.clear_message_params().modify_client_tier_instrument().set_params(self.params_eur_usd) \
             .update_value_in_component("clientTierInstrSymbolTenor", "MDQuoteType", "TRD")
         self.rest_manager.send_post_request(self.modify_instrument)
+        self.sleep(2)

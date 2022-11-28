@@ -36,7 +36,7 @@ class QAP_T2437(TestCase):
                 "SettlType": self.settle_type_spot,
             }
         ]
-        self.bands = ["1000000", "3000000"]
+        self.bands = ["*", "*"]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

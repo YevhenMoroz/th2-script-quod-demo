@@ -39,19 +39,22 @@ class QAP_T2957(TestCase):
             .set_update_type_incremental() \
             .update_parameters({"updateInterval": 30})
         self.rest_manager.send_post_request(self.rest_massage)
-
+        self.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameter("MDUpdateType", '1')
         self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, ['*', '*', '*'])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
-        sleep(5)
-        self.md_snapshot_inc.set_params_for_md_response(self.md_request, ['*', '*', '*'])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_inc,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.md_snapshot_inc.set_params_for_md_response(self.md_request)
+        self.fix_verifier.check_fix_message(self.md_snapshot_inc)
+
+        self.rest_massage.set_default_params_esp().enable_always_new_mdentryid().set_update_type_fullrefresh()
+        self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)
+
+        self.md_request.set_md_req_parameters_maker()
+        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+
+        self.md_snapshot_full.set_params_for_md_response(self.md_request)
+        self.fix_verifier.check_fix_message(self.md_snapshot_full)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -60,3 +63,4 @@ class QAP_T2957(TestCase):
         self.rest_manager.send_post_request(self.rest_massage)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_mm.send_message(self.md_request)
+        self.sleep(2)

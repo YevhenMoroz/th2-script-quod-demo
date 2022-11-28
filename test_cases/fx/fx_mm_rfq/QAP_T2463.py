@@ -91,6 +91,7 @@ class QAP_T2463(TestCase):
         text = f"17568 Accumulated quantity of order creation/modification reached " \
                f"the limit 1000000 of 'OrderVelocityLimit' {limit_id}"
         self.execution_report_rej.set_params_from_new_order_single(self.new_order_single, status=rejected, text=text)
+        self.execution_report_rej.add_tag({"OrdRejReason": "99"})
         self.execution_report_rej.remove_parameters(["LastMkt", "ExecRestatementReason", "SettlType", "SettlCurrency"])
         self.fix_verifier.check_fix_message(self.execution_report_rej)
         # endregion
@@ -101,3 +102,4 @@ class QAP_T2463(TestCase):
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.velocity_rule.clear_message_params().set_params(self.rest_message_params).delete_limit()
         self.rest_manager.send_post_request(self.velocity_rule)
+        self.sleep(2)

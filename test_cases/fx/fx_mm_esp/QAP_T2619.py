@@ -35,7 +35,6 @@ class QAP_T2619(TestCase):
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
             'SettlType': self.settle_type_spot, }]
-        self.bands = ["1000000", '3000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -43,15 +42,12 @@ class QAP_T2619(TestCase):
         self.rest_massage.set_default_params_esp().enable_always_new_mdentryid()
         self.rest_manager.send_post_request(self.rest_massage)
         # endregion
-
         time.sleep(2)
-
         # region Step 4
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         # endregion
-
         # region Step 5
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         time.sleep(3)
@@ -72,3 +68,4 @@ class QAP_T2619(TestCase):
         self.rest_manager.send_post_request(self.rest_massage)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
+        self.sleep(2)

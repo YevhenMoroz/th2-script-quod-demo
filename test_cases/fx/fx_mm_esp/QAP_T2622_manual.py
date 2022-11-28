@@ -48,7 +48,7 @@ class QAP_T2622(TestCase):
         # endregion
         # region Step 2
         self.fix_subscribe.set_md_req_parameters_maker(). \
-            change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_5')}). \
+            change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_1')}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
@@ -71,8 +71,4 @@ class QAP_T2622(TestCase):
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
-
-
-
-
-
+        self.sleep(2)

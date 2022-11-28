@@ -6,11 +6,6 @@ from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 class RestApiClientTierInstrSymbolMessages(RestApiMessages):
 
-    def find_all_client_tier_instrument(self):
-        self.clear_message_params()
-        self.message_type = 'FindAllClientTierInstrSymbol'
-        return self
-
     def find_client_tier_instrument(self, client_tier_id: str, instrument: str):
         self.clear_message_params()
         self.message_type = 'FindClientTierInstrSymbol'

@@ -39,13 +39,13 @@ class QAP_T2459(TestCase):
                 'Product': '4', },
             'SettlType': self.settle_type_spot, }]
         self.bands_nok_sek = []
+        self.bands_eur_usd = []
         self.no_related_symbols_eur_usd = [{
             'Instrument': {
                 'Symbol': self.eur_usd,
                 'SecurityType': self.security_type_spot,
                 'Product': '4', },
             'SettlType': self.settle_type_spot, }]
-        self.bands_eur_usd = ["1000000", '5000000', '10000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -54,11 +54,14 @@ class QAP_T2459(TestCase):
             update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0').\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD IND")
-        time.sleep(2)
+        time.sleep(4)
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands_eur_usd.append("*")
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, published=False)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
@@ -78,7 +81,6 @@ class QAP_T2459(TestCase):
             self.bands_nok_sek.append("*")
         # endregion
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False)
-        # self.fix_md_snapshot.update_fields_in_component("NoMDEntries", {"MDEntryPositionNo": "*"})
         self.fix_md_snapshot.update_value_in_repeating_group("NoMDEntries", "MDEntryPositionNo", "*")
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
@@ -91,10 +93,16 @@ class QAP_T2459(TestCase):
         self.fix_md.set_market_data().\
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")
-        time.sleep(2)
+        time.sleep(4)
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        # region adapting for flexible market data
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        self.bands_eur_usd.clear()
+        for i in range(int(number_of_bands)):
+            self.bands_eur_usd.append("*")
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
@@ -116,6 +124,3 @@ class QAP_T2459(TestCase):
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
-
-
-
