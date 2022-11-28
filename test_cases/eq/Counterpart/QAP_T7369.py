@@ -1,5 +1,6 @@
 import logging
 import time
+from copy import deepcopy
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
@@ -36,7 +37,7 @@ class QAP_T7369(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit("instrument_3")
         self.client = self.data_set.get_client_by_name("client_counterpart_1")
-        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_1")
+        self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
@@ -61,7 +62,7 @@ class QAP_T7369(TestCase):
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_backend.xml")
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         self.result = None
 
@@ -121,8 +122,8 @@ class QAP_T7369(TestCase):
         list_of_counterparts = [
                 self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
+                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
             ]
         parties = {
             'NoPartyIDs': list_of_counterparts
@@ -135,14 +136,16 @@ class QAP_T7369(TestCase):
              "Account": self.account})
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
+
         # region Check ExecutionReports
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
+        parties['NoPartyIDs'][-1] = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region unmatch and transfer
         self.unmatch_transfer.set_default(self.data_set, exec_id)
-        self.unmatch_transfer.set_default_unmatch_and_transfer(self.data_set.get_account_by_name('client_pos_3_acc_1'))
+        self.unmatch_transfer.set_default_unmatch_and_transfer(self.data_set.get_account_by_name('client_pos_3_acc_3'))
         self.java_api_manager.send_message(self.unmatch_transfer)
         class_name.__print_message(f"{class_name} - After UNMATCH_AND_TRANSFER", responses)
         # endregion

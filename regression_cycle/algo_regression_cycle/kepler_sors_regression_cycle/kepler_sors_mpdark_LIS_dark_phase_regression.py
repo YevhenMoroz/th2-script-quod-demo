@@ -150,6 +150,16 @@ def test_run(parent_id=None, version=None):
         QAP_T4782(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
+        # The next tests has problem with RestApi so run it at the end
+
+        # region Part Execution (LIS order)
+        QAP_T4789(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Part Execution (Dark order)
+        QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
         logging.error("Error execution", exc_info=True)

@@ -154,7 +154,7 @@ class QAP_T5056(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Iceberg_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_reject_replaced_Iceberg_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_new)
-        er_reject_replaced_Iceberg_order_params.change_parameters(dict(CxlRejResponseTo='2', Text="11605 'DisplayQty' (600) greater than 'OrdQty' (400)"))
+        er_reject_replaced_Iceberg_order_params.change_parameters(dict(CxlRejResponseTo='2', Text="11605 'DisplayQty' (600) greater than 'OrdQty' (400)")).add_tag(dict(Account=self.account))
         self.fix_verifier_sell.check_fix_message(er_reject_replaced_Iceberg_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell Side OrderCancelRejectReport')
         # endregion
 
