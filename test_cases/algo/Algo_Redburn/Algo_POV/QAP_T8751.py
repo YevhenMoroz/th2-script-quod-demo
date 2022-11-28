@@ -46,7 +46,7 @@ class QAP_T8751(TestCase):
 
         self.price_ltq = 130
         self.qty_ltq_1 = 10_000
-        self.qty_ltq_2 = 20_000
+        self.qty_ltq_2 = 15_000
         
         self.qty_child_1 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
         self.qty_child_2 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_2, self.qty)
@@ -123,7 +123,7 @@ class QAP_T8751(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Redburn_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, Underparticipation='Y'))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
         #time.sleep(3)
