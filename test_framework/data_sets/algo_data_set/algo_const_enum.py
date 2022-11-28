@@ -417,17 +417,6 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
 
-class FreeNotesReject(Enum):
-    MissWouldPriceReference = "missing WouldPriceReference"
-    MissLimitPriceReference = "missing LimitPriceReference"
-    MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
-    MissNavigatorLimitPrice = "missing Limit price for Navigator"
-    InvalidMaxParticipation = "invalid value for MaxParticipation"
-    InvalidPercentageOfVolume = "invalid value for percentage of volume"
-    InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
-    InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
-    ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
-
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
                 'header': {
