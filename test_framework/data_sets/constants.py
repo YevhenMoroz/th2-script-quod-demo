@@ -281,11 +281,13 @@ class MiscNumber(Enum):
 
 class Symbol(Enum):
     symbol_1 = 'DE0005489561'
+    symbol_2 = 'BE0020575115'
 
 
 class SecurityID(Enum):
     security_id_1 = 'DE0005489561'
     security_id_2 = '2681'
+    security_id_3 = 'BE0020575115'
 
 
 class SecurityIDSource(Enum):
