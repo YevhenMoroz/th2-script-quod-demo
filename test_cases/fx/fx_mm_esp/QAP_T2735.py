@@ -11,14 +11,11 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
-from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
 class QAP_T2735(TestCase):
@@ -27,16 +24,10 @@ class QAP_T2735(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
-
-        self.fx_fh_connectivity = self.fix_env.feed_handler
-        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
-        self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
-        self.manual_settings_request = QuoteManualSettingsRequestFX(data_set=self.data_set)
         self.quote_adjustment = QuoteAdjustmentRequestFX(data_set=self.data_set)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
@@ -52,66 +43,6 @@ class QAP_T2735(TestCase):
         self.settle_type_1w = self.data_set.get_settle_type_by_name('wk1')
         self.md_entry_date = datetime.utcnow().strftime('%Y%m%d')
         self.md_entry_time = datetime.utcnow().strftime('%H:%M:%S')
-        self.md_eur_usd_wk1 = "EUR/USD:FXF:WK1:HSBC"
-        self.no_md_entries = [
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.1815,
-                "MDEntrySize": 1000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.18151,
-                "MDEntrySize": 1000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 1,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            }, {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.1814,
-                "MDEntrySize": 5000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.1816,
-                "MDEntrySize": 5000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 2,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            }, {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.1813,
-                "MDEntrySize": 10000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 3,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.1817,
-                "MDEntrySize": 10000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 3,
-                "SettlDate": self.settle_date_1w,
-                "MDEntryDate": self.md_entry_date,
-                "MDEntryTime": self.md_entry_time
-            }]
         self.bands_eur_usd = ["1000000", '5000000', '10000000']
         self.quote_adjustmentent_entry_list = {
             "QuoteAdjustmentEntryBlock":
@@ -138,25 +69,17 @@ class QAP_T2735(TestCase):
             'SettlType': self.settle_type_1w}]
         self.sts_filled = Status.Fill
         self.sts_rejected = Status.Reject
-        self.md_req_id = 'EUR/USD:SPO:REG:HSBC'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
-        # self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        # self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        # self.fix_md.set_market_data().update_MDReqID(self.md_eur_usd_wk1, self.fx_fh_connectivity, "FX")
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
         # region Step 1
-        self.quote_adjustment.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
-                                                                        {"InstrSymbol": self.eur_usd,
-                                                                         "ClientTierID": self.silver_id,
-                                                                         "QuoteAdjustmentEntryList": self.quote_adjustmentent_entry_list})
-
-        self.sleep(2)
+        self.quote_adjustment.set_defaults().update_fields_in_component(
+            "QuoteAdjustmentRequestBlock",
+            {"InstrSymbol": self.eur_usd,
+             "ClientTierID": self.silver_id,
+             "QuoteAdjustmentEntryList": self.quote_adjustmentent_entry_list})
         self.java_manager.send_message(self.quote_adjustment)
-        time.sleep(1)
+        time.sleep(2)
         # endregion
 
         # region Step 2
@@ -169,8 +92,7 @@ class QAP_T2735(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDQuoteType="0")
-        self.sleep(4)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot)
 
         # region Step 3
         self.new_order_single.set_default().change_parameters(
@@ -182,7 +104,7 @@ class QAP_T2735(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single, self.test_id)
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.sts_filled,
                                                                response=response[-1])
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 
         # region Step 4
@@ -209,3 +131,4 @@ class QAP_T2735(TestCase):
         self.java_manager.send_message(self.quote_adjustment)
         # endregion
         self.md_request.set_md_uns_parameters_maker()
+        self.sleep(2)

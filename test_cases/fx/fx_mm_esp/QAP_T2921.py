@@ -52,8 +52,8 @@ class QAP_T2921(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Set params for client tier
-        self.rest_message.find_all_client_tier_instrument()
-        self.params = self.rest_manager.send_get_request(self.rest_message)
+        self.rest_message.find_client_tier_instrument(self.client_tier_silver, self.aud_usd)
+        self.params = self.rest_manager.send_get_request_filtered(self.rest_message)
         self.params = self.rest_manager. \
             parse_response_details(self.params,
                                    {'clientTierID': self.client_tier_silver, 'instrSymbol': self.aud_usd})
@@ -103,3 +103,7 @@ class QAP_T2921(TestCase):
         self.fix_manager_mm.send_message(self.md_request)
         # endregion
 
+        self.rest_message.clear_message_params().modify_client_tier_instrument().set_params(
+            self.params).set_sweepable_qty(self.qty_list_default)
+        self.rest_manager.send_post_request(self.rest_message)
+        self.sleep(2)

@@ -1,7 +1,6 @@
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, time, date, timezone
 from math import ceil
-from functools import wraps
 
 
 class AlgoFormulasManager:
@@ -164,8 +163,7 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    # Need to run test and check ExpireDate if it is not weekend, but weekends between now and ExpireDate. For delta <=2
-    def calculate_shift_for_expire_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
+    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
         day = datetime.weekday(expire_date)
         shift = delta
         if day == 5:
@@ -174,6 +172,18 @@ class AlgoFormulasManager:
             shift += 1
         else:
             shift = delta
+        return shift
+
+    @staticmethod
+    def make_expire_date_friday_if_it_is_on_weekend(expire_date: datetime) -> int:
+        day = datetime.weekday(expire_date)
+        shift = 0
+        if day == 5:
+            shift += 1
+        elif day == 6:
+            shift += 2
+        else:
+            shift = 0
         return shift
 
 
@@ -202,3 +212,10 @@ class AlgoFormulasManager:
     def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
 
+    @staticmethod
+    def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
+        return datetime.fromtimestamp(int(datetime_epoch)/1000).time()
+
+    @staticmethod
+    def change_time_from_normal_to_epoch(time: time) -> int:
+        return int(datetime.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000

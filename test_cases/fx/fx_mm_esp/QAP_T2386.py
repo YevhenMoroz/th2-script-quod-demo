@@ -43,20 +43,20 @@ class QAP_T2386(TestCase):
                 "Product": "4", },
             "SettlType": self.settle_type, }]
         self.bands_gbp_usd = ["1000000"]
-        self.text = "subscriptions on this tier/tenor is not currently allowed"
+        self.text = "subscriptions on this tier/tenor not currently allowed"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.modify_instrument.find_all_client_tier_instrument()
-        self.msg_prams_instr = self.rest_manager.send_get_request(self.modify_instrument)
+        self.modify_instrument.find_client_tier_instrument(self.client_id, self.gbp_usd)
+        self.msg_prams_instr = self.rest_manager.send_get_request_filtered(self.modify_instrument)
         self.msg_prams_instr = self.rest_manager. \
             parse_response_details(self.msg_prams_instr, {"clientTierID": self.client_id, "instrSymbol": self.gbp_usd})
         self.modify_instrument.clear_message_params().modify_client_tier_instrument().set_params(self.msg_prams_instr) \
             .update_value_in_component("clientTierInstrSymbolTenor", "allowESPSubscriptions", "false")
 
         self.rest_manager.send_post_request(self.modify_instrument)
-        self.sleep(5)
+        self.sleep(2)
         # endregion
         # region Step 2
         self.md_request.set_md_req_parameters_maker(). \
@@ -74,7 +74,7 @@ class QAP_T2386(TestCase):
         # region Step 4
         self.modify_instrument.update_value_in_component("clientTierInstrSymbolTenor", "allowESPSubscriptions", "true")
         self.rest_manager.send_post_request(self.modify_instrument)
-        self.sleep(5)
+        self.sleep(2)
         # endregion
         # region Step 5
         self.md_request.set_md_req_parameters_maker(). \

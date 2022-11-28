@@ -50,8 +50,7 @@ class QAP_T2893(TestCase):
                                                                self.status_fill,
                                                                response=response[-1]).remove_parameter("Price").add_tag(
             {"LastMkt": "*"})
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod,
-                                            key_parameters=['ExecType'])
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

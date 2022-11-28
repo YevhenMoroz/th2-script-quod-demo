@@ -136,8 +136,6 @@ class QAP_T8835(TestCase):
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
-
         responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
         parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
         self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")

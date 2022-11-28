@@ -50,8 +50,8 @@ class QAP_T2410(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.modify_client_tier.find_all_client_tier()
-        self.msg_prams = self.rest_manager.send_get_request(self.modify_client_tier)
+        self.modify_client_tier.find_client_tier(self.client_id)
+        self.msg_prams = self.rest_manager.send_get_request_filtered(self.modify_client_tier)
         self.msg_prams = self.rest_manager.parse_response_details(self.msg_prams, {"clientTierID": self.client_id})
         self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams) \
             .change_params({"TODStartTime": self.timestamp_2, "TODEndTime": self.timestamp_1})
@@ -76,4 +76,4 @@ class QAP_T2410(TestCase):
     def run_post_conditions(self):
         self.modify_client_tier.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_client_tier)
-
+        self.sleep(2)

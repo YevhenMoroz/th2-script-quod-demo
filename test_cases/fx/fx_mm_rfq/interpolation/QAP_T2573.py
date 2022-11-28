@@ -51,9 +51,6 @@ class QAP_T2573(TestCase):
         self.quote_request.update_far_leg(settle_type=self.settle_type_broken, settle_date=self.settle_date_broken2,
                                           leg_qty=self.qty_2m)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap_ccy2(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
