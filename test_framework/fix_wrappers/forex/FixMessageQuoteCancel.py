@@ -12,7 +12,6 @@ class FixMessageQuoteCancelFX(FixMessage):
     def set_params_for_cancel(self, quote_request: FixMessageQuoteRequestFX):
         temp = dict(
             QuoteReqID=quote_request.get_parameter("QuoteReqID"),
-            QuoteID="*",
             QuoteCancelType="5"
         )
         super().change_parameters(temp)
