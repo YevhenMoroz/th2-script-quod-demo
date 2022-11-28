@@ -59,6 +59,7 @@ class QAP_T8637(TestCase):
         # endregion
         # region Step 4
         self.execution_report.set_params_from_new_order_single_synergy(self.order)
+        self.execution_report.add_tag({"SecondaryClOrdID": "*"})
         self.execution_report.update_fields_in_component("Instrument", self.instrument)
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

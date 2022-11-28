@@ -61,3 +61,4 @@ class QAP_T2693(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
         self.fix_manager.send_message(self.quote_cancel)
+        self.sleep(2)

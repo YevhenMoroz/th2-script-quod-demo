@@ -109,3 +109,4 @@ class QAP_T2953(TestCase):
         self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.eur_usd)
         self.java_manager.send_message(self.adjustment_request)
+        self.sleep(2)

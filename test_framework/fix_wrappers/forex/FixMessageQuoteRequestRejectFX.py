@@ -19,6 +19,29 @@ class FixMessageQuoteRequestRejectFX(FixMessageQuoteRequestReject):
         super().change_parameters(quote_reject_params)
         return self
 
+    def set_quote_reject_swap(self, quote_request: FixMessageQuoteRequestFX, text: str = None):
+        no_related_symbols = [{
+            "Side": quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
+            "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            "QuoteType": "1",
+            "Instrument": {
+                "SecurityType": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["SecurityType"],
+                "Symbol": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+            }}]
+        quote_reject_params = {
+            "QuoteReqID": quote_request.get_parameter("QuoteReqID"),
+            "QuoteRequestRejectReason": "99",
+            "NoRelatedSymbols": no_related_symbols,
+            "Text": text if text is not None else "*",
+        }
+        instrument = dict(
+            SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["SecurityType"],
+            Symbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
+        )
+        quote_reject_params["NoRelatedSymbols"][0].update({"Instrument": instrument})
+        super().change_parameters(quote_reject_params)
+        return self
+
     def set_deposit_reject_params(self, quote_request: FixMessageQuoteRequestFX, text: str = None):
         quote_reject_params = {
             "QuoteReqID": quote_request.get_parameter("QuoteReqID"),

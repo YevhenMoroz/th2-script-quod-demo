@@ -22,7 +22,6 @@ class QAP_T2543(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.web_adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
         self.gbp_xxx = "GBP/XXX"
         self.security_type_spot = self.data_set.get_security_type_by_name('fx_spot')
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
@@ -44,3 +43,4 @@ class QAP_T2543(TestCase):
         self.md_reject.set_md_reject_params(self.md_request, text="no active client tier")
         self.fix_verifier.check_fix_message(fix_message=self.md_reject)
         # endregion
+        self.sleep(2)
