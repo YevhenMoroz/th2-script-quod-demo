@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
@@ -32,6 +33,7 @@ class QAP_T8168(TestCase):
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_request_2 = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
         self.quote_2 = FixMessageQuoteFX()
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
@@ -48,6 +50,15 @@ class QAP_T8168(TestCase):
             "SecurityType": self.security_type_fwd
         }
         self.instrument_2 = copy.deepcopy(self.instrument)
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.usd_nok_spot = {
+            'Symbol': self.symbol,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.usd_nok_spot,
+            'SettlType': self.settle_type_spot}]
         self.md_req_id = "USD/NOK:SPO:REG:HSBC"
         self.no_md_entries_spot = [
             {
@@ -77,6 +88,11 @@ class QAP_T8168(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Prepare MD
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
