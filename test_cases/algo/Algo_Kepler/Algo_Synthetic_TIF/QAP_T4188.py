@@ -14,6 +14,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_T4188(TestCase):
@@ -37,7 +38,10 @@ class QAP_T4188(TestCase):
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
 
         now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate = (now + timedelta(days=2)).strftime("%Y%m%d")
+        expire_date = (now + timedelta(days=2))
+        self.ExpireDate_for_sending = (now + timedelta(days=2)).strftime("%Y%m%d")
+        shift = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(expire_date)
+        self.ExpireDate = (expire_date - timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -89,7 +93,7 @@ class QAP_T4188(TestCase):
 
         self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd, Instrument=self.instrument, ExDestination=self.ex_destination_xpar)).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd, Instrument=self.instrument, ExDestination=self.ex_destination_xpar)).add_tag(dict(ExpireDate=self.ExpireDate_for_sending))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
 
@@ -100,9 +104,11 @@ class QAP_T4188(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_pending)
+        er_pending_new_Synthetic_TIF_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_new)
+        er_new_Synthetic_TIF_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -137,6 +143,7 @@ class QAP_T4188(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
 
         er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_Synthetic_TIF_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

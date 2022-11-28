@@ -101,12 +101,12 @@ class QAP_T4521(TestCase):
         nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, self.price)
         nos_4_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, self.price)
         nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix,  self.price, self.price, self.qty_1_chix_child, self.qty_1_chix_child, self.delay_for_fill)
-        ocr_1_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, False, self.qty_1_chix_child, self.delay_for_cancel)
+        self.ocr_1_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, False, self.qty_1_chix_child, self.delay_for_cancel)
         ocr_2_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty_2_chix_child, self.delay_for_cancel)
         ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True, self.delay_for_cancel)
         ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_cboe, True, self.delay_for_cancel)
         ocr_5_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_itg_cboe_tqdarkeu, self.ex_destination_itg, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_trade_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule]
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_trade_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -268,6 +268,13 @@ class QAP_T4521(TestCase):
         er_new_dma_2_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_itg_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New 2nd child DMA order on ITG')
         # endregion
+
+        time.sleep(5)
+
+        rule_manager.remove_rule(self.ocr_1_rule)
+        self.ocr_4_rule = rule_manager.add_OrderCancelRequestWithQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True, self.qty_1_chix_child, self.delay_for_cancel)
+
+        time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

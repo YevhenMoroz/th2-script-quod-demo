@@ -163,8 +163,7 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    # Need to run test and check ExpireDate if it is not weekend, but weekends between now and ExpireDate. For delta <=2
-    def calculate_shift_for_expire_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
+    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
         day = datetime.weekday(expire_date)
         shift = delta
         if day == 5:
@@ -173,6 +172,18 @@ class AlgoFormulasManager:
             shift += 1
         else:
             shift = delta
+        return shift
+
+    @staticmethod
+    def make_expire_date_friday_if_it_is_on_weekend(expire_date: datetime) -> int:
+        day = datetime.weekday(expire_date)
+        shift = 0
+        if day == 5:
+            shift += 1
+        elif day == 6:
+            shift += 2
+        else:
+            shift = 0
         return shift
 
 
