@@ -6,6 +6,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -21,6 +22,7 @@ class QAP_T2519(TestCase):
 
         self.quote = FixMessageQuoteFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote_cancel = FixMessageQuoteCancelFX()
 
         self.eur_jpy = self.data_set.get_symbol_by_name("symbol_4")
         self.qty_300m = "300000000"
@@ -43,3 +45,8 @@ class QAP_T2519(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.quote,
                                             key_parameters=["QuoteReqID"])
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.fix_manager.send_message(self.quote_cancel)
