@@ -426,6 +426,7 @@ class FreeNotesReject(Enum):
     InvalidPercentageOfVolume = "invalid value for percentage of volume"
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
+    ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
