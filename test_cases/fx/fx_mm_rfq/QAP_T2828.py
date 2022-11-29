@@ -25,11 +25,13 @@ class QAP_T2828(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
+        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.fix_manager_esp = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_rfq, self.test_id)
@@ -191,15 +193,21 @@ class QAP_T2828(TestCase):
         # region Precondition
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.acc_argentina)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_esp.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.acc_argentina)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_wk1)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_esp.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.acc_argentina)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_wk2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_manager_esp.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
