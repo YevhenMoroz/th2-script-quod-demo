@@ -171,23 +171,20 @@ class QAP_T2418(TestCase):
         self.fix_manager_fh.send_message(self.fix_md)
         # endregion
         # region step 2
-        self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol,
-                                           leg_sec_type=self.security_type_fwd,
-                                           settle_date=self.settle_date_wk1, settle_type=self.settle_type_wk1)
-        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
-                                          settle_date=self.settle_date_wk2, settle_type=self.settle_type_wk2)
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+        self.quote_request.set_swap_fwd_fwd()
+        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account,
                                                            Currency="GBP", Instrument=self.instrument)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 3
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side="1")
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_swap(self.new_order_single, self.status)
-        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
