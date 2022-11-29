@@ -24,6 +24,7 @@ class QAP_T2481(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
+        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
@@ -54,6 +55,7 @@ class QAP_T2481(TestCase):
         }
         # region MarketData
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.fix_manager_esp = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.gbp_usd_spot = {
@@ -197,9 +199,9 @@ class QAP_T2481(TestCase):
         # region Step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
-        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_manager_esp.send_message(self.md_request)
         self.md_request.set_md_uns_parameters_maker()
-        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data()
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_0)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
