@@ -24,6 +24,7 @@ class OrderReplyConst(Enum):
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
+    TransStatus_TER = 'TER'
 
 
 class ExecutionPolicyConst(Enum):
@@ -95,6 +96,7 @@ class QtyPercentageProfile(Enum):
 
 
 class JavaApiFields(Enum):
+    ExecCommission = 'ExecCommission'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
     ExecutionReportBlock = 'ExecutionReportBlock'
@@ -150,6 +152,8 @@ class JavaApiFields(Enum):
     ManualDayCumQty = 'ManualDayCumQty'
     AllocReportType = 'AllocReportType'
     RootMiscFeesList = 'RootMiscFeesList'
+    DayCumQty = 'DayCumQty'
+    DayCumAmt = 'DayCumAmt'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -173,7 +177,6 @@ class JavaApiFields(Enum):
     RootMiscFeeType = 'RootMiscFeeType'
     RootMiscFeeAmt = 'RootMiscFeeAmt'
     RootMiscFeesBlock = 'RootMiscFeesBlock'
-    RootMiscFeesList = 'RootMiscFeesList'
     CommissionBasis = 'CommissionBasis'
     CommissionAmountType = 'CommissionAmountType'
     CommissionRate = 'CommissionRate'
@@ -192,6 +195,7 @@ class JavaApiFields(Enum):
     DoneForDay = 'DoneForDay'
     NetMoney = 'NetMoney'
     NetPrice = 'NetPrice'
+
 
 
 class JavaApiPartyRoleConstants(Enum):
