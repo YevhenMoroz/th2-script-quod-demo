@@ -195,6 +195,7 @@ class JavaApiFields(Enum):
     DoneForDay = 'DoneForDay'
     NetMoney = 'NetMoney'
     NetPrice = 'NetPrice'
+    AllocQty = 'AllocQty'
 
 
 
