@@ -230,47 +230,42 @@ def clear_position():
             print("PostgreSQL connection is closed")
 
 
+def login_and_execute(script: str):
+    commands = ['su - quod314', 'quod314', script]
+    ssh = paramiko.SSHClient()  # client
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
+    channel = ssh.invoke_shell()
+    for command in commands:
+        channel.send(command + '\n')
+        while not channel.recv_ready():
+            time.sleep(0.1)
+        time.sleep(0.1)
+        output = channel.recv(9999)
+        print(output.decode('utf-8'))
+        time.sleep(0.2)
+    channel.close()
+
+
 def restart_qs_rfq_fix_th2():
     """
     Restart QUOD.QS_RFQ_FIX_TH2 component on quod314 backend
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
-    ssh.exec_command("su - quod314")
-    ssh.exec_command("quod314")
-    stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.QS_RFQ_FIX_TH2")
-    for line in stdout.read().splitlines():
-        print(line)
-    stdin.close()
+    login_and_execute('qrestart QUOD.QS_RFQ_FIX_TH2')
 
 
 def restart_pks():
     """
     Restart QS_RFQ_STANDARD_SELL component on quod314 backend
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
-
-    stdin, stdout, stderr = ssh.exec_command("qrestart QUOD.PKS")
-    for line in stdout.read().splitlines():
-        print(line)
-    stdin.close()
+    login_and_execute("qrestart QUOD.PKS")
 
 
 def stop_fxfh():
     """
     Restart QS_RFQ_STANDARD_SELL component on quod314 backend
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
-
-    stdin, stdout, stderr = ssh.exec_command("qstop -id QUOD.FXFH")
-    for line in stdout.read().splitlines():
-        print(line)
-    stdin.close()
+    login_and_execute("qstop -id QUOD.FXFH")
     time.sleep(10)
 
 
@@ -278,18 +273,12 @@ def start_fxfh():
     """
     Restart QS_RFQ_STANDARD_SELL component on quod314 backend
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.22.34", 22, "quod314", "quod314")
-
-    stdin, stdout, stderr = ssh.exec_command("qstart FXFH")
-    for line in stdout.read().splitlines():
-        print(line)
-    stdin.close()
+    login_and_execute("qstart FXFH")
     time.sleep(10)
 
 
 def read_median_file():
+    # TODO refactor method
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect("10.0.22.34", 22, "quod314", "quod314")
