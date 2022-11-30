@@ -1,6 +1,22 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7894 import QAP_T7894
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7895 import QAP_T7895
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7896 import QAP_T7896
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7897 import QAP_T7897
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7898 import QAP_T7898
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7899 import QAP_T7899
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7900 import QAP_T7900
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7901 import QAP_T7901
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7902 import QAP_T7902
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7903 import QAP_T7903
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7904 import QAP_T7904
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7905 import QAP_T7905
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7906 import QAP_T7906
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7907 import QAP_T7907
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7908 import QAP_T7908
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7909 import QAP_T7909
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7910 import QAP_T7910
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7911 import QAP_T7911
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7912 import QAP_T7912
@@ -32,6 +48,14 @@ def test_run(parent_id=None, version=None):
     try:
         # region Instrument identification
         configuration = ComponentConfiguration("Sorping")
+        QAP_T7898(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7899(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7900(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7901(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7906(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7907(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7908(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7909(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7914(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7915(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7916(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
