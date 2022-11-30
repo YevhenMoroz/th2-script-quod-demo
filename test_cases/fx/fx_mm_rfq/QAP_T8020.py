@@ -32,7 +32,6 @@ class QAP_T8020(TestCase):
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
         self.quote_request_prepare = FixMessageQuoteRequestFX(data_set=self.data_set)
-        self.quote_cancel = FixMessageQuoteCancelFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
         self.settle_date_wk2 = self.data_set.get_settle_date_by_name("wk2")
@@ -103,8 +102,6 @@ class QAP_T8020(TestCase):
                                                                    SettlDate=self.settle_date_tom,
                                                                    MaturityDate=self.settle_date_wk2)
         self.fix_manager_sel.send_message_and_receive_response(self.quote_request_prepare, self.test_id)
-        self.quote_cancel.set_params_for_cancel(self.quote_request_prepare)
-        self.fix_manager_sel.send_message(self.quote_cancel)
         # region prepare MD before sending RFQ
         # send MD to TOM
         self.md_snapshot.set_md_for_deposit_and_loan_fwd()
