@@ -166,7 +166,7 @@ class QAP_T3590(CommonTestCase):
             displayed_locations_in_create_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
                         displayed_locations_at_location_page, displayed_locations_in_create_wizard[:len(displayed_locations_at_location_page)])
-            desk_assignments_tab.set_location_at_description_tab(self.location_name)
+            desk_assignments_tab.set_location(self.location_name)
             actual_result = ''
             for i in displayed_locations_at_desk_page:
                 if i in displayed_locations_in_create_wizard:
@@ -187,7 +187,7 @@ class QAP_T3590(CommonTestCase):
             displayed_locations_in_edit_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
                         displayed_locations_at_location_page, displayed_locations_in_edit_wizard[:len(displayed_locations_at_location_page)])
-            desk_assignments_tab.set_location_at_description_tab(self.location_name)
+            desk_assignments_tab.set_location(self.location_name)
             desk_wizard.click_on_save_changes()
 
         except Exception:

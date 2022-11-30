@@ -1473,7 +1473,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity='A',
             QtyType='0',
             OrderID='*',
-            SettlDate='*',
             LeavesQty=new_order_single.get_parameter("OrderQty"),
             Instrument='*',
             NoStrategyParameters='*',

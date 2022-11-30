@@ -57,3 +57,6 @@ class DesksPage(CommonPage):
 
     def get_list_of_all_desks_name(self):
         return self._get_all_items_from_table_column(DesksConstants.DESKS_NAME_COLUMN_XPATH)
+
+    def get_ctm_bic(self):
+        return self.find_by_xpath(DesksConstants.CTM_BIC_AT_MAIN_PAGE).text

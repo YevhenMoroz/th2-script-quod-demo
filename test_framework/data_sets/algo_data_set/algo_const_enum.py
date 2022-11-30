@@ -319,8 +319,8 @@ class AlgoMic(Enum):
 
 class AlgoListingId(Enum):
     listing_1 = "1015"
-    listing_2 = "734"
-    listing_3 = "3416"
+    listing_2 = "734"       # EuronextParis for FR0000121121
+    listing_3 = "3416"      # TURQUOISE for FR0000121121
     listing_4 = "107617192" # QUODLIT1 for QUODTESTQA00
     listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
     listing_6 = "1805006" # Euronext Paris for FR0010411884
@@ -416,7 +416,6 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
-
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
