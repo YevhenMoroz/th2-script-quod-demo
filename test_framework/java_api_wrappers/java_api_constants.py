@@ -196,6 +196,8 @@ class JavaApiFields(Enum):
     NetMoney = 'NetMoney'
     NetPrice = 'NetPrice'
     AllocQty = 'AllocQty'
+    BookingAllocInstructionID = 'BookingAllocInstructionID'
+    ClBookingRefID = 'ClBookingRefID'
 
 
 
