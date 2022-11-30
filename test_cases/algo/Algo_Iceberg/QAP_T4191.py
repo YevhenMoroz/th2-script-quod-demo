@@ -171,7 +171,7 @@ class QAP_T4191(TestCase):
 
         # region Check that child has new Price and old Qty, LeavesQty
         er_replaced_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
-        er_replaced_dma_order.change_parameters(dict(LeavesQty=self.child_leaves_qty))
+        er_replaced_dma_order.change_parameters(dict(LeavesQty=self.child_leaves_qty, Price=self.inc_price))
         self.fix_verifier_buy.check_fix_message(er_replaced_dma_order, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Replaced DMA child')
         # endregion
 
