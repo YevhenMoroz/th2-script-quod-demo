@@ -75,7 +75,7 @@ class QAP_T3579(CommonTestCase):
             self.verify(f"Locations field in the create wizard contains only {self.location} entity",
                         True, actual_result)
 
-            desk_assignment_tab.set_location_at_description_tab(self.location)
+            desk_assignment_tab.set_location(self.location)
             desk_wizard = DesksWizard(self.web_driver_container)
             desk_wizard.click_on_save_changes()
             time.sleep(2)
@@ -96,7 +96,7 @@ class QAP_T3579(CommonTestCase):
                     actual_result = True
             self.verify(f"Locations field in the edit wizard contains only {self.location} entity",
                         True, actual_result)
-            desk_assignment_tab.set_location_at_description_tab(self.location)
+            desk_assignment_tab.set_location(self.location)
             desk_wizard = DesksWizard(self.web_driver_container)
             desk_wizard.click_on_save_changes()
             time.sleep(2)

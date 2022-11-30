@@ -58,7 +58,9 @@ class RootConstants:
 
     PRICE_CLEANSING_TOGGLE_CSS_SELECTOR = "a[title='Price Cleansing']"
     CROSSED_VENUE_RATES_ITEM_XPATH = "//span[text()='Crossed Venue Rates']"
+    CROSSED_REFERENCE_RATES_ITEM_XPATH = "//span[text()='Crossed Reference Rates']"
     STALE_RATES_ITEM_XPATH = "//span[text()='Stale Rates']"
+    RATE_DEVIATION_ITEM_XPATH = "//span[text()='Rate Deviation']"
     RATES_FOLLOWING_TRADES_ITEM_XPATH = "//span[text()='Rates Following Trades']"
     UNBALANCED_RATES_ITEM_XPATH = "//span[text()='Unbalanced Rates']"
 

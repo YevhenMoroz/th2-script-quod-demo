@@ -17,3 +17,6 @@ class PositionLimitsAssignmentsSubWizardPage(CommonPage):
     def get_institution(self):
         return self.get_text_by_xpath(PositionsLimitsConstants.ASSIGNMENTS_TAB_INSTITUTIONS)
 
+    def is_institutions_field_disabled(self):
+        return self.is_field_enabled(PositionsLimitsConstants.ASSIGNMENTS_TAB_INSTITUTIONS)
+
