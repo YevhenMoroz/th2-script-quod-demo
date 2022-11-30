@@ -144,7 +144,7 @@ class QAP_T7035(TestCase):
         actually_result = order_reply_message[JavaApiFields.TransStatus.value]
         self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: expected_result},
                                              {JavaApiFields.TransStatus.value: actually_result},
-                                             'Comparing value from step 2')
+                                             'Comparing value from step 3')
         # endregion
 
         # region check 35=8 150 = B message
