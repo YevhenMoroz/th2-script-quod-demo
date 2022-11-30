@@ -63,3 +63,22 @@ class InstitutionsValuesSubWizard(CommonPage):
 
     def is_select_unknown_accounts_selected(self):
         return self.is_checkbox_selected(InstitutionsConstants.VALUES_TAB_UNKNOWN_ACCOUNTS)
+
+    def set_cross_currency_hair_cut(self, value):
+        self.set_text_by_xpath(InstitutionsConstants.VALUES_TAB_CROSS_CURRENCY_HAIR_CUT, value)
+
+    def get_cross_currency_hair_cut(self):
+        return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_CROSS_CURRENCY_HAIR_CUT)
+
+    def click_at_cross_currency_settlement_checkbox(self):
+        self.find_by_xpath(InstitutionsConstants.VALUES_TAB_CROSS_CURRENCY_SETTLEMENT_CHECKBOX).click()
+
+    def is_cross_currency_settlement_checkbox_selected(self):
+        return self.is_checkbox_selected(InstitutionsConstants.VALUES_TAB_CROSS_CURRENCY_SETTLEMENT_CHECKBOX)
+
+    def set_cash_account_currency_rate_source(self, value):
+        self.set_combobox_value(InstitutionsConstants.VALUES_TAB_CASH_ACCOUNT_CURRENCY_RATE_SOURCE, value)
+
+    def get_cash_account_currency_rate_source(self):
+        return self.get_text_by_xpath(InstitutionsConstants.VALUES_TAB_CASH_ACCOUNT_CURRENCY_RATE_SOURCE)
+

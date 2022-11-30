@@ -16,6 +16,7 @@ class DesksConstants:
     LOCATIONS_COLUMN_XPATH = '//*[@col-id="location.locationName"][@tabindex="-1"]//span[@ref="eValue"]'
     DESKS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    CTM_BIC_AT_MAIN_PAGE = '//*[@col-id="BIC"]//*[@class="ag-group-value"]'
 
     # Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[1]"
@@ -23,8 +24,9 @@ class DesksConstants:
     LOCATION_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[3]"
 
     # Values tab
-    NAME_AT_VALUES_TAB_XPATH = '//*[text()="Name *"]/preceding-sibling::input'
-    DESK_MODE_AT_VALUES_TAB_XPATH = '//*[text()="Desk mode *"]/preceding-sibling::input'
+    NAME_AT_VALUES_TAB_XPATH = '//*[@id="deskName"]'
+    DESK_MODE_AT_VALUES_TAB_XPATH = '//*[@id="deskMode"]'
+    CTM_BIC_AT_VALUES_TAB = '//*[@id="BIC"]'
 
     LOCATION_AT_ASSIGNMENTS_TAB_XPATH = '//*[@id="location"]'
     ASSIGNMENTS_TAB_LOCATION_LINK_XPATH = '//*[normalize-space(text())="{}"]'

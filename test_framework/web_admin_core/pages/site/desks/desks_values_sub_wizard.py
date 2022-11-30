@@ -18,3 +18,9 @@ class DesksValuesSubWizard(CommonPage):
 
     def get_desk_mode(self):
         return self.get_text_by_xpath(DesksConstants.DESK_MODE_AT_VALUES_TAB_XPATH)
+
+    def set_ctm_bic(self, value):
+        self.set_text_by_xpath(DesksConstants.CTM_BIC_AT_VALUES_TAB, str(value))
+
+    def get_ctm_bic(self):
+        return self.get_text_by_xpath(DesksConstants.CTM_BIC_AT_VALUES_TAB)

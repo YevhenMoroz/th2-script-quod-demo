@@ -61,13 +61,13 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T3204(CommonTestCase):
+class QAP_T3205(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = self.data_set.get_user("user_1")
-        self.password = self.data_set.get_password("password_1")
+        self.login = 'adm_inst'
+        self.password = 'adm_inst'
 
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
@@ -80,12 +80,11 @@ class QAP_T3204(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
 
     def risk_limits_dimension_page(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_risk_limit_dimension_page()
-
+        self.verify("Risk Limit Dimensions page testing", True, True)
         risk_limit_dimension_page = MainPage(self.web_driver_container)
         risk_limit_dimension_page.click_on_new_button()
         values_tab = ValuesTab(self.web_driver_container)
@@ -96,7 +95,7 @@ class QAP_T3204(CommonTestCase):
         dimensions_tab.set_desks(self.desk)
 
         assignments_tab = AssignmentsTab(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institution field disabled", False, assignments_tab.is_institution_field_enable())
 
         wizard = MainWizard(self.web_driver_container)
         wizard.click_on_save_changes()
@@ -108,21 +107,10 @@ class QAP_T3204(CommonTestCase):
         risk_limit_dimension_page.click_on_more_actions()
         risk_limit_dimension_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institution field disabled", False, assignments_tab.is_institution_field_enable())
+        self.verify("Institution has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        risk_limit_dimension_page.set_name_filter(self.name)
-        time.sleep(1)
-        risk_limit_dimension_page.click_on_more_actions()
-        risk_limit_dimension_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         risk_limit_dimension_page.set_name_filter(self.name)
         time.sleep(1)
@@ -136,17 +124,17 @@ class QAP_T3204(CommonTestCase):
     def trading_limits_page(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_trading_limits_page()
+        self.verify("Trading Limits page testing", True, True)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         trading_limits_page = TradingLimitsPage(self.web_driver_container)
         trading_limits_page.click_on_new()
-
         values_tab = TradingLimitsValuesSubWizardPage(self.web_driver_container)
         values_tab.set_description(self.name)
         dimensions_tab = TradingLimitsDimensionsSubWizardPage(self.web_driver_container)
         dimensions_tab.set_desk(self.desk)
         assignments_tab = TradingLimitsAssignmentsSubWizardPage(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institution field disabled", False, assignments_tab.is_institutions_field_enable())
         wizard = TradingLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         trading_limits_page.set_description(self.name)
@@ -157,20 +145,10 @@ class QAP_T3204(CommonTestCase):
         trading_limits_page.click_on_more_actions()
         trading_limits_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institution field disabled", False, assignments_tab.is_institutions_field_enable())
+        self.verify("Institution has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        trading_limits_page.set_description(self.name)
-        time.sleep(1)
-        trading_limits_page.click_on_more_actions()
-        trading_limits_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         trading_limits_page.set_description(self.name)
         time.sleep(1)
@@ -184,6 +162,7 @@ class QAP_T3204(CommonTestCase):
     def cum_trading_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_cum_trading_limits_page()
+        self.verify("Cum Trading Limit page testing", True, True)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         cum_trading_page = CumTradingLimitsPage(self.web_driver_container)
@@ -193,7 +172,7 @@ class QAP_T3204(CommonTestCase):
         dimensions_tab = CumTradingLimitsDimensionsSubWizard(self.web_driver_container)
         dimensions_tab.set_desk(self.desk)
         assignments_tab = CumTradingLimitsAssignmentsSubWizard(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institution field disabled", False, assignments_tab.is_institutions_field_enable())
         wizard = CumTradingLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         cum_trading_page.set_description(self.name)
@@ -204,21 +183,10 @@ class QAP_T3204(CommonTestCase):
         cum_trading_page.click_on_more_actions()
         cum_trading_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institution field disabled", False, assignments_tab.is_institutions_field_enable())
+        self.verify("Institution has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        cum_trading_page.set_description(self.name)
-        time.sleep(1)
-        cum_trading_page.click_on_more_actions()
-        cum_trading_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         cum_trading_page.set_description(self.name)
         time.sleep(1)
@@ -232,6 +200,7 @@ class QAP_T3204(CommonTestCase):
     def position_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_positions_limits_page()
+        self.verify("Position Limits page testing", True, True)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         position_limits_page = PositionLimitsPage(self.web_driver_container)
@@ -240,7 +209,7 @@ class QAP_T3204(CommonTestCase):
         value_tab.set_description(self.name)
 
         assignments_tab = PositionLimitsAssignmentsSubWizardPage(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_disabled())
         wizard = PositionLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         position_limits_page.set_description(self.name)
@@ -251,21 +220,10 @@ class QAP_T3204(CommonTestCase):
         position_limits_page.click_on_more_actions()
         position_limits_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_disabled())
+        self.verify("Institutions field has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        position_limits_page.set_description(self.name)
-        time.sleep(1)
-        position_limits_page.click_on_more_actions()
-        position_limits_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         position_limits_page.set_description(self.name)
         time.sleep(1)
@@ -279,6 +237,7 @@ class QAP_T3204(CommonTestCase):
     def price_tolerance_control(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_order_tolerance_limits_page()
+        self.verify("Price Tolerance Control page testing", True, True)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         price_tolerance_page = OrderToleranceLimitsPage(self.web_driver_container)
@@ -288,7 +247,7 @@ class QAP_T3204(CommonTestCase):
         value_tab.set_external_id(self.external_id)
 
         assignments_tab = OrderToleranceLimitsAssignmentsSubWizardPage(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_enable())
         wizard = OrderToleranceLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         price_tolerance_page.set_name(self.name)
@@ -299,21 +258,10 @@ class QAP_T3204(CommonTestCase):
         price_tolerance_page.click_on_more_actions()
         price_tolerance_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_enable())
+        self.verify("Institutions field has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        price_tolerance_page.set_name(self.name)
-        time.sleep(1)
-        price_tolerance_page.click_on_more_actions()
-        price_tolerance_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         price_tolerance_page.set_name(self.name)
         time.sleep(1)
@@ -327,6 +275,7 @@ class QAP_T3204(CommonTestCase):
     def order_velocity_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_order_velocity_page()
+        self.verify("Order Velocity limits page testing", True, True)
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_info_error_message_pop_up()
         order_velocity_limit_page = OrderVelocityLimitsPage(self.web_driver_container)
@@ -337,7 +286,7 @@ class QAP_T3204(CommonTestCase):
         values_sub_wizard.set_moving_time_window(self.moving_time_window)
 
         assignments_tab = OrderVelocityLimitsAssignmentsSubWizardPage(self.web_driver_container)
-        assignments_tab.set_institution(self.institution)
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_enable())
         wizard = OrderVelocityLimitsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
         order_velocity_limit_page.set_name(self.name)
@@ -348,21 +297,10 @@ class QAP_T3204(CommonTestCase):
         order_velocity_limit_page.click_on_more_actions()
         order_velocity_limit_page.click_on_edit()
 
-        assignments_tab.clear_institution_field()
+        self.verify("Institutions field disabled", False, assignments_tab.is_institutions_field_enable())
+        self.verify("Institutions has been auto filled", self.institution, assignments_tab.get_institution())
 
         wizard.click_on_save_changes()
-
-        order_velocity_limit_page.set_name(self.name)
-        time.sleep(1)
-        order_velocity_limit_page.click_on_more_actions()
-        order_velocity_limit_page.click_on_edit()
-        actual_result = False if self.institution in assignments_tab.get_institution() else True
-        self.verify("Institutions has been cleared", True, actual_result)
-
-        common_act = CommonPage(self.web_driver_container)
-        common_act.click_on_info_error_message_pop_up()
-        wizard.click_on_revert_changes()
-        wizard.click_on_close()
 
         order_velocity_limit_page.set_name(self.name)
         time.sleep(1)
