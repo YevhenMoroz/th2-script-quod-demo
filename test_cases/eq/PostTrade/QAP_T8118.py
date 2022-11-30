@@ -63,10 +63,7 @@ class QAP_T8118(TestCase):
     def run_pre_conditions_and_steps(self):
         # region precondition
         self.order_submit.set_default_dma_limit()
-        instrument_id = self.data_set.get_instrument_id_by_name("instrument_3")
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
-            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
-            'InstrID': instrument_id,
             'AccountGroupID': self.client,
             'OrdQty': self.qty,
             'Price': self.price,
@@ -107,7 +104,6 @@ class QAP_T8118(TestCase):
             "AllocAccountID": self.alloc_account,
             'AllocQty': self.qty,
             'AvgPx': self.price,
-            "InstrID": instrument_id
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         print_message(f'Allocate block ', responses)
