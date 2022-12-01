@@ -248,8 +248,6 @@ class QAP_T8749(TestCase):
         self.fix_verifier_buy.check_fix_message_sequence([eliminate_ioc_child_order_1, eliminate_ioc_child_order_2, eliminate_ioc_child_order_3], [self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Eliminate parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -261,4 +259,6 @@ class QAP_T8749(TestCase):
         self.fix_verifier_sell.check_fix_message(eliminate_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Eliminate')
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         RuleManager(Simulators.algo).remove_rules(self.rule_list)

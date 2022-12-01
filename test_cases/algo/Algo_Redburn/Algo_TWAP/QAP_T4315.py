@@ -16,6 +16,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets import constants
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -56,7 +57,7 @@ class QAP_T4315(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 
         # region Status
@@ -72,8 +73,8 @@ class QAP_T4315(TestCase):
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
 
-        self.text_reject_navigator_limit_price = DataSet.FreeNotesReject.MissNavigatorLimitPrice.value
-        self.text_reject_navigator_limit_price_reference = DataSet.FreeNotesReject.MissNavigatorLimitPriceReference.value
+        self.text_reject_navigator_limit_price = constants.FreeNotesReject.MissNavigatorLimitPrice.value
+        self.text_reject_navigator_limit_price_reference = constants.FreeNotesReject.MissNavigatorLimitPriceReference.value
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Send_MarkerData
@@ -99,20 +100,14 @@ class QAP_T4315(TestCase):
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, self.gateway_side_sell, self.status_pending).remove_parameter("Account").add_tag(dict(NoStrategyParameters="*", NoParty="*", SecAltIDGrp="*"))
+        pending_twap_nav_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(pending_twap_nav_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew Parent')
 
-
         reject_moc_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_nav_order, self.gateway_side_sell, self.status_reject)
-        reject_moc_order_params.change_parameters(dict(Text=self.text_reject_navigator_limit_price_reference, Account=self.client, NoStrategyParameters="*",
-                                                       LastQty=0, SettlDate="*", Currency="EUR", HandlInst=2, NoParty="*", LastPx=0, OrderCapacity="A",
-                                                       SecAltIDGrp="*", QtyType=0, ExecRestatementReason=4, TargetStrategy="*", Instrument="*"))
-        reject_moc_order_params.remove_parameter("ExDestination")
+        reject_moc_order_params.change_parameters(dict(Text=self.text_reject_navigator_limit_price_reference))
         self.fix_verifier_sell.check_fix_message(reject_moc_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Reject')
 
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
