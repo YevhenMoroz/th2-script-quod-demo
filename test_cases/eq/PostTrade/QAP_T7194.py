@@ -4,23 +4,32 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, ExecutionReportConst, \
+    OrderReplyConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7194(TestCase):
@@ -36,117 +45,85 @@ class QAP_T7194(TestCase):
         self.price = '1.12345678'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = 'CLIENT_MANTONOV'  # Precondition: Client has price precision = 4, rounding direction = RoundUp
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.trades = OMSTradesBook(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_message1 = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_message2 = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.client = self.data_set.get_client(
+            'client_pt_4')  # Precondition: Client has price precision = 4, rounding direction = RoundUp
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.trade_entry = TradeEntryOMS(self.data_set)
+        self.complete_request = DFDManagementBatchOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create first CO order via FIX
-        self.fix_message1.set_default_care_limit()
-        self.fix_message1.change_parameters(
-            {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
-        response = self.fix_manager.send_message_and_receive_response(self.fix_message1)
-        # get Client Order ID and Order ID
-        cl_ord_id = response[0].get_parameters()['ClOrdID']
-        order_id = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order()
+        order_ids_list = []
+        # region create CO orders
+        for i in range(2):
+            self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                     desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                     role=SubmitRequestConst.USER_ROLE_1.value)
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+                'AccountGroupID': self.client,
+                'OrdQty': self.qty,
+                "ClOrdID": bca.client_orderid(9),
+                'Price': self.price,
+            })
+            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            print_message('Create CO order', responses)
+            order_ids_list.append(
+                self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                    JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value])
+            cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value][JavaApiFields.ClOrdID.value]
         # endregion
 
-        # region Set-up parameters for ExecutionReports
-        self.exec_report.set_default_new(self.fix_message1)
+        # region trade CO orders step 2
+        list_of_exec_id = []
+        for order_id in order_ids_list:
+            self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+            self.trade_entry.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.venue})
+            responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+            print_message(f'Trade CO  order {order_id}', responses)
+            actually_result = \
+                self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                    JavaApiFields.ExecutionReportBlock.value]
+            list_of_exec_id.append(actually_result[JavaApiFields.ExecID.value])
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, actually_result,
+                f'Compare actually and expected results for order {order_id} (part of step 2)',
+                VerificationMethod.CONTAINS)
         # endregion
 
-        # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
-        # endregion
+        # region complete CO orders step 3
+        for order_id in order_ids_list:
+            self.complete_request.set_default_complete(order_id)
+            responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
+            print_message(f'Complete CO  order {order_id}', responses)
+            # endregion
 
-        # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        # region step 4 Mass Book orders
+        gross_trade_amt = str(float(self.qty) * float(self.price))
+        for order_id in order_ids_list:
+            self.allocation_instruction.set_default_book(order_id)
+            self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+                "AccountGroupID": self.client,
+                "SettlCurrAmt": gross_trade_amt,
+                'Qty': self.qty,
+                'ExecAllocList': {
+                    'ExecAllocBlock': [{'ExecQty': self.qty,
+                                        'ExecID': list_of_exec_id[order_ids_list.index(order_id)],
+                                        'ExecPrice': self.price}]},
+            })
+            self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock', ['AvgPx'])
+            responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+            print_message(f'Book {order_id} order', responses)
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: '1.1234'},
+                                                 allocation_report, 'Check rounding of AvgPrice (step 4)',
+                                                 VerificationMethod.CONTAINS)
         # endregion
-
-        # region Check values in OrderBook
-        self.order_book.check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-
-        # region Execute first CO
-        self.order_book.manual_execution(qty=self.qty)
-        # endregion
-
-        # region Create second CO order via FIX
-        self.fix_message2.set_default_care_limit()
-        self.fix_message2.change_parameters(
-            {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
-        response2 = self.fix_manager.send_message_and_receive_response(self.fix_message2)
-        # get Client Order ID and Order ID
-        cl_ord_id2 = response2[0].get_parameters()['ClOrdID']
-        order_id2 = response2[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order()
-        # endregion
-
-        # region Set-up parameters for ExecutionReports
-        self.exec_report.set_default_new(self.fix_message2)
-        # endregion
-
-        # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
-        # endregion
-
-        # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id2])
-        # endregion
-
-        # region Check values in OrderBook
-        self.order_book.check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-
-        # region Execute second CO
-        self.order_book.manual_execution(qty=self.qty)
-        # endregion
-
-        # region Check ExecSts after Executions
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id2]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
-        # endregion
-
-        # region Complete orders
-        self.order_book.complete_order(filter_list=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.complete_order(filter_list=[OrderBookColumns.cl_ord_id.value, cl_ord_id2])
-        # endregion
-
-        # region Mass Book orders
-        self.order_book.mass_book([1, 2])
-        # endregion
-
-        # region Checking the values after the Mass Book in the Middle Office
-        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value,
-                                                          [MiddleOfficeColumns.order_id.value, order_id])
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.price.value, MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value],
-            [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]])
-        self.middle_office.compare_values({MiddleOfficeColumns.price.value: '1.1235',
-                                           MiddleOfficeColumns.sts.value: 'ApprovalPending',
-                                           MiddleOfficeColumns.match_status.value: 'Unmatched'}, values_after_book,
-                                          'Comparing values in the MiddleOffice after the Book of the first order')
-        block_id2 = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value,
-                                                           [MiddleOfficeColumns.order_id.value, order_id2])
-        values_after_book2 = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.price.value, MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value],
-            [MiddleOfficeColumns.block_id.value, block_id2[MiddleOfficeColumns.block_id.value]])
-        self.middle_office.compare_values({MiddleOfficeColumns.price.value: '1.1235',
-                                           MiddleOfficeColumns.sts.value: 'ApprovalPending',
-                                           MiddleOfficeColumns.match_status.value: 'Unmatched'}, values_after_book2,
-                                          'Comparing values in the MiddleOffice after the Book of the second order')
-        # endregion
-
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
