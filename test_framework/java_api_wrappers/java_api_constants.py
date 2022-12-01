@@ -198,6 +198,8 @@ class JavaApiFields(Enum):
     AllocQty = 'AllocQty'
     BookingAllocInstructionID = 'BookingAllocInstructionID'
     ClBookingRefID = 'ClBookingRefID'
+    AvgPrice = 'AvgPrice'
+    AvgPx = 'AvgPx'
 
 
 

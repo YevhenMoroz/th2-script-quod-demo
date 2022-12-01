@@ -92,8 +92,7 @@ class QAP_T7194(TestCase):
             list_of_exec_id.append(actually_result[JavaApiFields.ExecID.value])
             self.java_api_manager.compare_values(
                 {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, actually_result,
-                f'Compare actually and expected results for order {order_id} (part of step 2)',
-                VerificationMethod.CONTAINS)
+                f'Compare actually and expected results for order {order_id} (part of step 2)')
         # endregion
 
         # region complete CO orders step 3
@@ -115,15 +114,17 @@ class QAP_T7194(TestCase):
                     'ExecAllocBlock': [{'ExecQty': self.qty,
                                         'ExecID': list_of_exec_id[order_ids_list.index(order_id)],
                                         'ExecPrice': self.price}]},
+                "ComputeFeesCommissions": "Yes"
             })
-            self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock', ['AvgPx'])
+            if order_ids_list.index(order_id) == 0:
+                self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock',
+                                                                     [JavaApiFields.AvgPx.value])
             responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
             print_message(f'Book {order_id} order', responses)
             allocation_report = \
                 self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                     JavaApiFields.AllocationReportBlock.value]
-            self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: '1.1234'},
-                                                 allocation_report, 'Check rounding of AvgPrice (step 4)',
-                                                 VerificationMethod.CONTAINS)
+            self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: '1.1235'},
+                                                 allocation_report, 'Check rounding of AvgPrice (step 4)')
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
