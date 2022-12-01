@@ -3,7 +3,6 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -72,8 +71,6 @@ class QAP_T8118(TestCase):
         print_message("Creating DMA order ", responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
-        cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value][JavaApiFields.ClOrdID.value]
         self.execution_report.set_default_trade(order_id)
         self.execution_report.update_fields_in_component('ExecutionReportBlock', {
             "InstrumentBlock": self.data_set.get_java_api_instrument("instrument_2"),
@@ -96,6 +93,7 @@ class QAP_T8118(TestCase):
             JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
         self.approve_block.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
+        print_message('Approve Block', responses)
         # the end
 
         # allocate order (part of step 1)
@@ -111,8 +109,7 @@ class QAP_T8118(TestCase):
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.AllocQty.value: '1.0E8'}, confirmation_report,
-                                             'Check that allocation has AllocQty > 999999999, (step 1)',
-                                             VerificationMethod.CONTAINS)
+                                             'Check that allocation has AllocQty > 999999999, (step 1)')
         # the end
 
         # endregion
