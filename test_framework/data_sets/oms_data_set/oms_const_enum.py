@@ -290,6 +290,7 @@ class OMSCommissionProfiles(Enum):
     perc_rounding_to_whole_number = 800020
     abs_amt_gbp_small = 800021
 
+
 class OMSFeeType(Enum):
     agent = "AGE"
     exch_fees = "EXC"
@@ -346,6 +347,7 @@ class OmsQtyTypes(Enum):
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+    pset_by_id_1 = ('4', '2')
 
 
 class OMSCommissionAndFeeBasis(Enum):
@@ -545,8 +547,8 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                          'PartyID': "EURO_CLEAR",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "EURO_CLEAR",
+                                 'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):

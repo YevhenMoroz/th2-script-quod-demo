@@ -200,6 +200,8 @@ class JavaApiFields(Enum):
     ClBookingRefID = 'ClBookingRefID'
     AvgPrice = 'AvgPrice'
     AvgPx = 'AvgPx'
+    SettlLocationID = 'SettlLocationID'
+    SettlementModelID = 'SettlementModelID'
 
 
 
