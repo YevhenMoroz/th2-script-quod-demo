@@ -42,7 +42,7 @@ class QAP_T7494(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration2
+        # region Declaration
         client = self.data_set.get_client_by_name('client_pt_1')
         exec_destination = self.data_set.get_mic_by_name('mic_1')
         # endregion
@@ -168,7 +168,6 @@ class QAP_T7494(TestCase):
 
         allocation_instruction_qty_list = allocation_report[JavaApiFields.AllocationInstructionQtyList.value][JavaApiFields.AllocationInstructionQtyBlock.value]
         for split_group in allocation_instruction_qty_list:
-            print(first_booking_qty)
             if split_group[JavaApiFields.BookingQty.value] == first_booking_qty:
                 self.java_api_manager.compare_values({JavaApiFields.BookingQty.value: first_booking_qty}, split_group,
                                                      f'Check that allocation report has  block with qty {first_booking_qty}')
