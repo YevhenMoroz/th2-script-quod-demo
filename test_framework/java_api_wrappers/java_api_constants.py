@@ -35,6 +35,8 @@ class ExecutionPolicyConst(Enum):
 class SubmitRequestConst(Enum):
     USER_ROLE_1 = "TRA"
     OrdCapacity_Agency = 'Agency'
+    Side_Buy = 'Buy'
+    Side_B_aka_Buy = 'B'
 
 
 class AllocationReportConst(Enum):
@@ -64,6 +66,9 @@ class AllocationInstructionConst(Enum):
     COMM_AND_FEE_BASIS_PCT = 'PCT'
     ComputeFeesCommissions_Y = 'Y'
     ComputeFeesCommissions_N = 'N'
+    COMM_AMD_FEE_TYPE_REG = "REG"
+    CommissionAmountSubType_OTH = 'OTH'
+    RootMiscFeeCategory_OTH = 'OTH'
 
 
 class ConfirmationReportConst(Enum):
@@ -202,6 +207,8 @@ class JavaApiFields(Enum):
     AvgPx = 'AvgPx'
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
+    Qty = 'Qty'
+    Side = 'Side'
 
 
 
