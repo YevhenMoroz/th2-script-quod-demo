@@ -1,25 +1,29 @@
 import logging
 import os
-import time
+from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns,BookingBlotterColumns, \
-    AllocInstructionQties, SecondLevelTabs
-from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubmitRequestConst, \
+    AllocationInstructionConst, OrderReplyConst, ExecutionReportConst, AllocationReportConst, ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7494(TestCase):
@@ -30,96 +34,145 @@ class QAP_T7494(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.booking_blotter = OMSBookingWindow(self.test_id, self.session_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.qty = str(float(200))
+        self.price = str(float(10))
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        qty = '200'
-        price = '10'
-        account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', price)
+        # region Declaration2
+        client = self.data_set.get_client_by_name('client_pt_1')
         exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', exec_destination)
-        rule_manager = RuleManager(Simulators.equity)
-        trade_rule = None
-        new_order_single_rule = None
         # endregion
 
-        # region create order
-        try:
-            new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-                self.fix_env.buy_side, account, exec_destination, float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side, account,
-                                                                                       exec_destination, float(price),
-                                                                                       int(qty), 0)
-            self.fix_manager.send_message_fix_standard(self.fix_message)
-        except Exception as ex:
-            logger.exception(f'{ex} - your exception')
+        # region precondition
+        # create DMA order (part of precondition)
+        self.order_submit.set_default_dma_limit()
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+            'AccountGroupID': client,
+            'OrdQty': self.qty,
+            'Price': self.price})
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message('Create DMA  order', responses)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
+        # the end
 
-        finally:
-            time.sleep(5)
-            rule_manager.remove_rule(trade_rule)
-            rule_manager.remove_rule(new_order_single_rule)
+        # trade DMA order (part of precondition)
+        self.execution_report.set_default_trade(order_id)
+        self.execution_report.update_fields_in_component('ExecutionReportBlock',
+                                                         {
+                                                             "InstrumentBlock": self.data_set.get_java_api_instrument(
+                                                                 "instrument_2"),
+                                                             "Side": SubmitRequestConst.Side_Buy.value,
+                                                             "LastTradedQty": self.qty,
+                                                             "LastPx": self.price,
+                                                             "OrdType": "Limit",
+                                                             "Price": self.price,
+                                                             "LeavesQty": self.qty,
+                                                             "CumQty": self.qty,
+                                                             "AvgPrice": self.price,
+                                                             "LastMkt": exec_destination,
+                                                             "OrdQty": self.qty
+                                                         })
+        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        print_message('Trade DMA  order ', responses)
+        # the end
 
+        # check PostTrade Status and ExecSts (part of precondition)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        execution_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                   ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        exec_id = execution_report[JavaApiFields.ExecID.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
+             JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
+            order_reply,
+            'Check expected and actually PostTradeStatus and DoneForDay values (part of precondition)')
+        # the end
         # endregion
 
-        # region verify value of fields after trade
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.fix_message.get_parameter('ClOrdID')])
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-        post_trade_status = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
-        self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-        value_exec_sts = self.order_book.extract_field(OrderBookColumns.exec_sts.value)
-        self.order_book.compare_values(
-            {OrderBookColumns.post_trade_status.value: 'ReadyToBook', OrderBookColumns.done_for_day.value: 'Filled'},
-            {OrderBookColumns.post_trade_status.value: post_trade_status,
-             OrderBookColumns.done_for_day.value: value_exec_sts}, 'Comparing values after trade')
-        # endregion
+        # region step 1 , step 2 and step 3 step 4 and step 5
+        gross_trade_amt = float(self.price) * float(self.qty)
+        self.allocation_instruction.set_default_book(order_id)
+        first_booking_qty = str(float(self.qty) * 0.75)
+        second_booking_qty = str(float(self.qty) * 0.25)
+        currency = self.data_set.get_currency_by_name('currency_1')
+        give_up_contra_firm = self.data_set.get_counterpart_id_java_api('counterpart_give_up_broker')
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+            "AccountGroupID": client,
+            "GrossTradeAmt": gross_trade_amt,
+            'Qty': self.qty,
+            'BookingType': AllocationInstructionConst.BookingType_CFD.value,
+            'CounterpartList': {'CounterpartBlock': [give_up_contra_firm]},
+            'AllocationInstructionQtyList': {'AllocationInstructionQtyBlock': [{
+                'BookingQty': first_booking_qty,
+                'NetGrossInd': AllocationInstructionConst.NetGrossInd_N.value,
+                'CounterpartList': {'CounterpartBlock': [give_up_contra_firm]},
+                'BookingType': AllocationInstructionConst.BookingType_CFD.value,
+                'SettlDate': datetime.utcnow().isoformat(),
+                'GrossTradeAmt': str(float(first_booking_qty) * float(self.price)),
+                'NetMoney': str(float(first_booking_qty) * float(self.price))},
+                {'BookingQty': second_booking_qty,
+                 'CounterpartList': {'CounterpartBlock': [give_up_contra_firm]},
+                 'NetGrossInd': AllocationInstructionConst.NetGrossInd_N.value,
+                 'BookingType': AllocationInstructionConst.BookingType_CFD.value,
+                 'SettlDate': datetime.utcnow().isoformat(),
+                 'GrossTradeAmt': str(float(second_booking_qty) * float(self.price)),
+                 'NetMoney': str(float(second_booking_qty) * float(self.price))}
+            ]},
+            'ExecAllocList': {
+                'ExecAllocBlock': [{'ExecQty': self.qty,
+                                    'ExecID': exec_id,
+                                    'ExecPrice': self.price}]},
+            "ComputeFeesCommissions": AllocationInstructionConst.ComputeFeesCommissions_Y.value,
+            'Currency': currency,
+            'AvgPx': self.price,
+            "TradeDate": datetime.utcnow().isoformat(),
+            "SettlDate": datetime.utcnow().isoformat(),
+            'RootMiscFeesList': {'RootMiscFeesBlock': [{
+                'RootMiscFeeType': AllocationInstructionConst.COMM_AMD_FEE_TYPE_REG.value,
+                'RootMiscFeeAmt': '5',
+                'RootMiscFeeCurr': currency,
+                'RootMiscFeeBasis': AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value,
+                'RootMiscFeeRate': '5',
+                'RootMiscFeeCategory': AllocationInstructionConst.RootMiscFeeCategory_OTH.value}]},
+            'ClientCommissionList': {'ClientCommissionBlock': [
+                {'CommissionAmountType': AllocationInstructionConst.CommissionAmountType_BRK.value,
+                 'CommissionAmount': '5',
+                 'CommissionAmountSubType': AllocationInstructionConst.CommissionAmountSubType_OTH.value,
+                 'CommissionBasis': AllocationInstructionConst.COMM_AND_FEE_BASIS_ABS.value,
+                 'CommissionCurrency': currency,
+                 'CommissionRate': '5'}]}
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message('Split Booking', responses)
+        list_of_records = [f"'Qty': '{first_booking_qty}'", f"'Qty': '{second_booking_qty}'"]
+        list_of_qty = [first_booking_qty, second_booking_qty]
+        allocation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.AllocationInstructionQtyList.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.AllocReportType.value: AllocationReportConst.AllocReportType_ACC.value,
+             JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value},
+        allocation_report, 'Check Status and MatchStatus (part of step 5)')
+        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
+                                            'Check that SummaryStatus is empty (part of step 5)')
+        self.java_api_manager.compare_values(give_up_contra_firm, allocation_report[JavaApiFields.CounterpartList.value][JavaApiFields.CounterpartBlock.value][0],
+                                             "Check that Give Up broker present (part of step 5)")
 
-        # region step 1, step 2, step 3, step 4(split booking)
-        commission_basis = self.data_set.get_commission_basis('comm_basis_1')
-        fee_type = self.data_set.get_fee_type_from_booking_ticket('fee_type_in_booking_ticket_1')
-        give_up_broker = self.data_set.get_give_up_broker('give_up_broker_1')
-        net_gross_ind = self.data_set.get_net_gross_ind_type('net_ind')
-        qty_of_split = str(int((int(qty) / 2)))
-        self.order_book.set_filter([OrderBookColumns.order_id.value, self.fix_message.get_parameter('ClOrdID')])
-        split_param_1 = self.order_book.create_split_booking_parameter(split_qty=qty_of_split,
-                                                                       comm_basis=commission_basis, comm_rate='5',
-                                                                       fee_type=fee_type, fee_rate='5',
-                                                                       give_up_broker=give_up_broker,
-                                                                       net_gross_ind=net_gross_ind)
-        split_param_2 = self.order_book.create_split_booking_parameter(split_qty=qty_of_split)
-        self.order_book.split_book([split_param_1, split_param_2], row_numbers=[1], error_expected=False)
-
-        self.booking_blotter.set_extraction_details([BookingBlotterColumns.status.value,
-                                                     BookingBlotterColumns.match_status.value,
-                                                     BookingBlotterColumns.summary_status.value],
-                                                    filter_dict={
-                                                        BookingBlotterColumns.order_id.value: order_id})
-        result = self.booking_blotter.extract_from_booking_window()
-        self.booking_blotter.compare_values(
-            {BookingBlotterColumns.status.value: self.data_set.get_middle_office_status('status_1'),
-             BookingBlotterColumns.match_status.value: self.data_set.get_middle_office_match_status('match_status_1'),
-             BookingBlotterColumns.summary_status.value: ''},
-            result, 'Comparing values from booking blotter')
-        self.booking_blotter.set_extraction_details([AllocInstructionQties.booking_qty.value,
-                                                     AllocInstructionQties.give_up_broker.value],
-                                                    filter_dict={
-                                                        BookingBlotterColumns.order_id.value: order_id})
-        result = self.booking_blotter.extract_from_second_level_tab(SecondLevelTabs.alloc_instruction_qties.value, 2)
-        format_tuple = (AllocInstructionQties.booking_qty.value, qty_of_split, AllocInstructionQties.give_up_broker.value,give_up_broker)
-        self.booking_blotter.compare_values({
-            '1': '{%s=%s, %s=%s}' % format_tuple,
-            '2': '{%s=%s, %s=%s}' % format_tuple},
-                                            result, 'Comparing second level values(last step)')
+        allocation_instruction_qty_list = allocation_report[JavaApiFields.AllocationInstructionQtyList.value][JavaApiFields.AllocationInstructionQtyBlock.value]
+        for split_group in allocation_instruction_qty_list:
+            print(first_booking_qty)
+            if split_group[JavaApiFields.BookingQty.value] == first_booking_qty:
+                self.java_api_manager.compare_values({JavaApiFields.BookingQty.value: first_booking_qty}, split_group,
+                                                     f'Check that allocation report has  block with qty {first_booking_qty}')
+            else:
+                self.java_api_manager.compare_values({JavaApiFields.BookingQty.value: second_booking_qty}, split_group,
+                                                     f'Check that allocation report has  block with qty {second_booking_qty}')
         # endregion

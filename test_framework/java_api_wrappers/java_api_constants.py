@@ -69,6 +69,9 @@ class AllocationInstructionConst(Enum):
     COMM_AMD_FEE_TYPE_REG = "REG"
     CommissionAmountSubType_OTH = 'OTH'
     RootMiscFeeCategory_OTH = 'OTH'
+    BookingType_CFD = 'CFD'
+    NetGrossInd_N = 'N'
+
 
 
 class ConfirmationReportConst(Enum):
@@ -209,6 +212,11 @@ class JavaApiFields(Enum):
     SettlementModelID = 'SettlementModelID'
     Qty = 'Qty'
     Side = 'Side'
+    AllocationInstructionQtyList='AllocationInstructionQtyList'
+    AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
+    BookingQty = 'BookingQty'
+
+
 
 
 

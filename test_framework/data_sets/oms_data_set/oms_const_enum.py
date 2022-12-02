@@ -555,3 +555,4 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
+    counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
