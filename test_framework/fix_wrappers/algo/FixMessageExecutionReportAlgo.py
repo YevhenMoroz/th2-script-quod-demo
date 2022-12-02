@@ -1349,6 +1349,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             "IClOrdIdAO": "*",
             "GrossTradeAmt": "*",
             "SecondaryExecID": "*",
+            "misc5": '*'
         }
         super().change_parameters(temp)
         return self
@@ -1778,6 +1779,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty='*')
         if order_cancel_replace.is_parameter_exist('TargetStrategy'):
             temp.update(TargetStrategy='*')
+        if order_cancel_replace.get_parameter('Account') == 'KEPLER':
+            temp.update(misc5='*')
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
