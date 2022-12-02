@@ -73,7 +73,6 @@ class AllocationInstructionConst(Enum):
     NetGrossInd_N = 'N'
 
 
-
 class ConfirmationReportConst(Enum):
     ConfirmStatus_AFF = 'AFF'
     MatchStatus_MAT = 'MAT'
@@ -212,12 +211,10 @@ class JavaApiFields(Enum):
     SettlementModelID = 'SettlementModelID'
     Qty = 'Qty'
     Side = 'Side'
-    AllocationInstructionQtyList='AllocationInstructionQtyList'
+    AllocationInstructionQtyList = 'AllocationInstructionQtyList'
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
     BookingQty = 'BookingQty'
-
-
-
+    WashBookAccountID = 'WashBookAccountID'
 
 
 class JavaApiPartyRoleConstants(Enum):
