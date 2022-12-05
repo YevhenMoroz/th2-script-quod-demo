@@ -232,7 +232,7 @@ def clear_position():
 
 def login_and_execute(script: str):
     commands = ['su - quod314', 'quod314', script]
-    ssh = paramiko.SSHClient()  # client
+    ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
     channel = ssh.invoke_shell()
@@ -241,9 +241,15 @@ def login_and_execute(script: str):
         while not channel.recv_ready():
             time.sleep(0.1)
         time.sleep(0.1)
-        output = channel.recv(9999)
-        print(output.decode('utf-8'))
-        time.sleep(0.2)
+        if commands.index(command) != 2:
+            output = channel.recv(9999)
+            print(output.decode('utf-8'))
+            time.sleep(0.4)
+        else:
+            for i in range(3):
+                output = channel.recv(9999)
+                print(output.decode('utf-8'))
+                time.sleep(0.4)
     channel.close()
 
 
