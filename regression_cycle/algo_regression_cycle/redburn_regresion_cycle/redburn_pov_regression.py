@@ -6,6 +6,10 @@ from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8792 import QAP_T8792
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8796 import QAP_T8796
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T9056 import QAP_T9056
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8749 import QAP_T8749
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8751 import QAP_T8751
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8752 import QAP_T8752
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8845 import QAP_T8845
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -19,14 +23,19 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"POV (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region Iceberg: Route/Venue
-        # configuration = ComponentConfiguration("Participation")
         configuration = ComponentConfigurationAlgo("Participation")
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8792(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8796(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9056(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8845(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8751(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8752(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        # region config change sats -> maxChildren = 3
+        QAP_T8749(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
         pass
 
