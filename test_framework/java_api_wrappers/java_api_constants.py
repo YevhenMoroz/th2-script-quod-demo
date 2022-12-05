@@ -70,6 +70,7 @@ class ConfirmationReportConst(Enum):
     MatchStatus_MAT = 'MAT'
     ConfirmStatus_CXL = 'CXL'
     MatchStatus_UNM = 'UNM'
+    AffirmStatus_AFF = 'AFF'
 
 
 class CommissionBasisConst(Enum):
