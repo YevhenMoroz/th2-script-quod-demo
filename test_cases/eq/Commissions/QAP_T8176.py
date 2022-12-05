@@ -76,12 +76,11 @@ class QAP_T8176(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set client_commission precondition
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_3")
-        client_list = self.data_set.get_client_list('cl_list_comm_1')
+        client_list = self.data_set.get_cl_list_id('cl_list_comm_1')
         venue_list = self.data_set.get_venue_list('venue_list_1')
         commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         commission = self.data_set.get_commission_by_name("commission1")
         self.rest_commission_sender.clear_commissions()
-        time.sleep(10)
 
         params = {
             'clCommissionID': commission.value,
@@ -96,7 +95,6 @@ class QAP_T8176(TestCase):
         }
         self.rest_commission_sender.set_modify_client_commission_message(params)
         self.rest_commission_sender.send_post_request()
-        time.sleep(10)
 
         # endregion
 
@@ -231,4 +229,3 @@ class QAP_T8176(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
-        time.sleep(10)
