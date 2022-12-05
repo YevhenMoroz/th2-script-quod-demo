@@ -46,6 +46,8 @@ class AllocationReportConst(Enum):
     AllocStatus_APP = 'APP'
     AllocStatus_CXL = 'CXL'
     AllocReportType_ACC = 'ACC'
+    ConfirmationService_EXT = 'EXT'
+    ConfirmationService_MAN = 'MAN'
 
 
 class AllocationInstructionConst(Enum):

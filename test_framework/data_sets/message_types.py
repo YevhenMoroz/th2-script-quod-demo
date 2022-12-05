@@ -81,6 +81,8 @@ class ORSMessageType(Enum):
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
     BookingCancelReply = "Order_BookingCancelReply"
+    BlockChangeConfirmationServiceRequest = 'Order_BlockChangeConfirmationServiceRequest'
+    BlockUnallocateBatchRequest = 'Order_BlockUnallocateBatchRequest'
 
 
 class TradingRestApiMessageType(Enum):
