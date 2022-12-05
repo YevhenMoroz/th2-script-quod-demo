@@ -158,8 +158,8 @@ class QAP_T4919(TestCase):
 
         # region check modification of DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order modification", self.test_id))
-        self.dma_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.dma_1_order).set_DMA_params()
-        self.dma_order_replace_params.change_parameters(dict(OrderQty=self.inc_dma1_qty, Instrument='*', OrderID='*')).remove_parameter('SettlDate')
+        self.dma_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.dma_1_order)
+        self.dma_order_replace_params.change_parameters(dict(OrderQty=self.inc_dma1_qty, Instrument='*', OrderID='*', NoParty='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order_replace_params, direction=self.FromQuod, message_name='Buy side OrderCancelReplaceRequest')
 
         modify_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel_replace)

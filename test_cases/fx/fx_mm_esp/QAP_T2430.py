@@ -20,6 +20,7 @@ from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages
 
 
 class QAP_T2430(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -51,8 +52,8 @@ class QAP_T2430(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Set params for client tier
-        self.rest_message.find_all_client_tier_instrument()
-        self.params = self.rest_manager.send_get_request(self.rest_message)
+        self.rest_message.find_client_tier_instrument(self.client_tier_silver, self.aud_usd)
+        self.params = self.rest_manager.send_get_request_filtered(self.rest_message)
         self.params = self.rest_manager. \
             parse_response_details(self.params,
                                    {'clientTierID': self.client_tier_silver, 'instrSymbol': self.aud_usd})
@@ -89,7 +90,7 @@ class QAP_T2430(TestCase):
             }
         )
         self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list[:3])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -106,4 +107,3 @@ class QAP_T2430(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_mm.send_message(self.md_request)
         # endregion
-

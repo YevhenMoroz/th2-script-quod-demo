@@ -6,21 +6,30 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
     FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import AllocationInstructionConst, ExecutionReportConst, \
+    OrderReplyConst, JavaApiFields, AllocationReportConst, ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@try_except(test_id=Path(__file__).name[:-3])
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
+
+
 class QAP_T7105(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -42,17 +51,16 @@ class QAP_T7105(TestCase):
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.fee = self.data_set.get_fee_by_name('fee1')
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
-        self.fee_type = self.data_set.get_misc_fee_type_by_name('agent')
-        self.fee_route_id = self.data_set.get_route_id_by_name('route_1')
         self.exec_scope = self.data_set.get_fee_exec_scope_by_name('all_exec')
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -69,11 +77,13 @@ class QAP_T7105(TestCase):
         # region send order
         self.__send_fix_orders()
         order_id = self.response[0].get_parameter("OrderID")
+        comm_rate = '5'
+        misc_fee_amt = str(int(int(self.price) * int(self.qty) / 10000 * int(comm_rate)))
         # endregion
         # region check order ExecutionReports
-        no_misc = {"MiscFeeAmt": '1', "MiscFeeCurr": self.com_cur,
+        no_misc = {"MiscFeeAmt": misc_fee_amt, "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "4"}
-        comm_data = {"Commission": "1", "CommType": "3"}
+        comm_data = {"Commission": misc_fee_amt, "CommType": "3"}
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
             {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
@@ -82,10 +92,47 @@ class QAP_T7105(TestCase):
             ['SettlCurrency'])
         self.fix_verifier.check_fix_message_fix_standard(execution_report)
         # endregion
+
         # region book order
-        self.mid_office.book_order([OrderBookColumns.order_id.value, order_id])
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+            'ClientCommissionList': {'ClientCommissionBlock': [
+                {'CommissionAmountType': AllocationInstructionConst.CommissionAmountType_BRK.value,
+                 'CommissionAmount': misc_fee_amt,
+                 'CommissionBasis': AllocationInstructionConst.COMM_AND_FEES_BASIS_PERCENTAGE.value,
+                 'CommissionCurrency': self.com_cur,
+                 'CommissionRate': comm_rate}]},
+            'RootMiscFeesList': {'RootMiscFeesBlock': [{'RootMiscFeeType': "EXC",
+                                                        'RootMiscFeeAmt': misc_fee_amt,
+                                                        'RootMiscFeeCurr': self.com_cur,
+                                                        'RootMiscFeeBasis': AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
+                                                        'RootMiscFeeRate': comm_rate}]},
+            "AccountGroupID": self.client,
+            "InstrID": self.data_set.get_instrument_id_by_name(
+                "instrument_3")
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message("Message on booking", responses)
+        ord_update_message = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value]
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        actually_result = {JavaApiFields.PostTradeStatus.value: ord_update_message[JavaApiFields.PostTradeStatus.value],
+                           JavaApiFields.DoneForDay.value: ord_update_message[JavaApiFields.DoneForDay.value],
+                           JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value],
+                           JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value]}
+
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
+             JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+             JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
+             JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
+            actually_result,
+            'Compare actually and expected results  from step 3')
         # endregion
-        # region book order
+        # region check 35 = J message
+        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(
             self.fix_message)
         no_root_misc = {"RootMiscFeeBasis": "2", "RootMiscFeeCurr": self.com_cur,
@@ -96,7 +143,7 @@ class QAP_T7105(TestCase):
              'RootOrClientCommission': comm_data['Commission'], 'RootCommTypeClCommBasis': comm_data['CommType'],
              "RootOrClientCommissionCurrency": self.com_cur,
              'NoRootMiscFeesList': {"NoRootMiscFeesList": [no_root_misc]}, "RootSettlCurrAmt": "*"})
-        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
     def __send_fix_orders(self):
@@ -115,3 +162,8 @@ class QAP_T7105(TestCase):
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()

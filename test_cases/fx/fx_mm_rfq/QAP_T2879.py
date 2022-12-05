@@ -27,9 +27,8 @@ class QAP_T2879(TestCase):
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
 
-        self.acc_palladium = self.data_set.get_client_by_name("client_mm_4")
+        self.acc_palladium = self.data_set.get_client_by_name("client_mm_3")
         self.usd = self.data_set.get_currency_by_name("currency_usd")
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -40,8 +39,6 @@ class QAP_T2879(TestCase):
                                                            Currency=self.usd)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap_ccy2(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion

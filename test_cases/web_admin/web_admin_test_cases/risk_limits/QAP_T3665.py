@@ -91,7 +91,7 @@ class QAP_T3665(CommonTestCase):
         dimensions_tab.set_venue(self.venue)
         dimensions_tab.set_sub_venue(self.subvenue)
         dimensions_tab.set_listing_group(self.listing_group)
-        dimensions_tab.click_on_wildcard_listing()
+        dimensions_tab.click_on_per_listing()
         dimensions_tab.set_user(self.user)
         dimensions_tab.set_desk(self.desk)
         dimensions_tab.set_route(self.route)

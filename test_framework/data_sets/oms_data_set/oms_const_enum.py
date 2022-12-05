@@ -56,6 +56,14 @@ class OmsJavaApiInstruments(Enum):
         SecurityExchange='XEUR'
     )
 
+    instrument_2 = dict(
+        InstrSymbol='ISI3',
+        SecurityID='ISI3',
+        SecurityIDSource='ISI',
+        InstrType="Equity",
+        SecurityExchange="XEUR"
+    )
+
 
 class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
@@ -113,6 +121,7 @@ class OmsClients(Enum):
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
+    сlient_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
@@ -187,11 +196,11 @@ class OmsAccounts(Enum):
     client_com_1_acc_1 = "CLIENT_COMM_1_SA1"
     client_com_1_acc_2 = "CLIENT_COMM_1_SA2"
     client_com_1_acc_3 = "CLIENT_COMM_1_SA3"
-    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions
+    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions and Agent Fees
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_1_acc_2 = "CLIENT_COUNTERPART_SA2"
@@ -276,6 +285,10 @@ class OMSCommissionProfiles(Enum):
     abs_amt_2 = 8
     abs_amt_3 = 9
     commission_with_minimal_value = 600018
+    client_commission_percentage = 15
+    abs_amt_gbp = 12
+    perc_rounding_to_whole_number = 800020
+    abs_amt_gbp_small = 800021
 
 
 class OMSFeeType(Enum):
@@ -334,6 +347,7 @@ class OmsQtyTypes(Enum):
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+    pset_by_id_1 = ('4', '2')
 
 
 class OMSCommissionAndFeeBasis(Enum):
@@ -533,11 +547,12 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                          'PartyID': "EURO_CLEAR",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "EURO_CLEAR",
+                                 'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
+    counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}

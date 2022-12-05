@@ -16,11 +16,18 @@ from test_cases.eq.Care.QAP_T7689 import QAP_T7689
 from test_cases.eq.Care.QAP_T7626 import QAP_T7626
 from test_cases.eq.Commissions.QAP_T7534 import QAP_T7534
 from test_cases.eq.Commissions.QAP_T7497 import QAP_T7497
+from test_cases.eq.DMA.QAP_T7549 import QAP_T7549
 from test_cases.eq.DMA.QAP_T7615 import QAP_T7615
 from test_cases.eq.DMA.QAP_T7610 import QAP_T7610
+from test_cases.eq.Gateway.QAP_T7507 import QAP_T7507
+from test_cases.eq.GatingRules.QAP_T4928 import QAP_T4928
+from test_cases.eq.GatingRules.QAP_T4929 import QAP_T4929
+from test_cases.eq.GatingRules.QAP_T4930 import QAP_T4930
+from test_cases.eq.GatingRules.QAP_T4931 import QAP_T4931
+from test_cases.eq.Position.QAP_T7598 import QAP_T7598
+from test_cases.eq.PositionsMgt.QAP_T7606 import QAP_T7606
 from test_cases.eq.PostTrade.QAP_T7552 import QAP_T7552
 from test_cases.eq.PostTrade.QAP_T7517 import QAP_T7517
-from test_cases.eq.PostTrade.QAP_T7507 import QAP_T7507
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
@@ -32,8 +39,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None):
-    report_id = bca.create_event('Acceptance list ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'), parent_id)
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event(f"PEQ Acceptance v.180" if version is None else f"PEQ Acceptance v.180 | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("AcceptanceList")
     data_set = configuration.data_set
@@ -46,10 +53,18 @@ def test_run(parent_id=None):
 
     try:
         base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
-        base_main_window.import_layout(layout_path, layout_name)
-        QAP_T7689(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        # base_main_window.import_layout(layout_path, layout_name)
+        QAP_T4930(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7634(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        QAP_T4931(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T4928(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T4929(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7549(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7689(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7626(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
@@ -71,8 +86,8 @@ def test_run(parent_id=None):
         #     .execute()
         # QAP_T7549(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
-        QAP_T7541(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        # QAP_T7541(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
         QAP_T8159(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7497(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -85,9 +100,15 @@ def test_run(parent_id=None):
             .execute()
         QAP_T7453(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7447(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
         QAP_T7433(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7598(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7606(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        # QAP_T7447(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        #     .execute()
+        QAP_T7634(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
 
 

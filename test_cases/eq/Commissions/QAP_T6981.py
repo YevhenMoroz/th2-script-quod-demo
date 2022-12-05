@@ -9,8 +9,13 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, OrderReplyConst, \
+    ExecutionReportConst, AllocationInstructionConst, AllocationReportConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -28,7 +33,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@try_except(test_id=Path(__file__).name[:-3])
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
+
+
 class QAP_T6981(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -40,11 +51,10 @@ class QAP_T6981(TestCase):
         self.dc_connectivity = self.fix_env.drop_copy
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.cur = self.data_set.get_currency_by_name('currency_1')
+        self.currency = self.data_set.get_currency_by_name('currency_2')
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.qty = "100"
         self.price = "20"
-        self.qty_to_display = '50'
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
@@ -58,16 +68,9 @@ class QAP_T6981(TestCase):
         self.fee_type1 = self.data_set.get_misc_fee_type_by_name('stamp')
         self.fee_type2 = self.data_set.get_misc_fee_type_by_name('levy')
         self.fee_type3 = self.data_set.get_misc_fee_type_by_name('per_transac')
-        self.params = {"Account": self.client,
-                       'DisplayInstruction': {'DisplayQty': self.qty_to_display},
-                       'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.client_acc,
-                                                     'AllocQty': self.qty}]}}
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_request = TradeEntryOMS(self.data_set)
-        self.trade_request = TradeEntryOMS(self.data_set)
-        self.submit_request = OrderSubmitOMS(self.data_set)
-        self.complete_message = DFDManagementBatchOMS(self.data_set)
         self.submit_request = OrderSubmitOMS(self.data_set)
         self.complete_message = DFDManagementBatchOMS(self.data_set)
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
@@ -75,141 +78,293 @@ class QAP_T6981(TestCase):
         self.force_alloc = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirm = ConfirmationOMS(self.data_set)
         self.manage_security_block = RestApiManageSecurityBlock(self.data_set)
+        self.pertransac_commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
+        self.bas_amt = self.data_set.get_comm_profile_by_name('bas_amt')
+        self.fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
+        self.allocation_instruction_fix = FixMessageAllocationInstructionReportOMS()
+        self.confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region send fees
-        # self.rest_commission_sender.clear_fees()
-        self.rest_commission_sender.set_modify_fees_message(fee=self.fee1, fee_type=self.fee_type1)
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee1, fee_type=self.fee_type1,
+                                                            comm_profile=self.bas_amt)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
-        self.rest_commission_sender.set_modify_fees_message(fee=self.fee2, fee_type=self.fee_type2)
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee2, fee_type=self.fee_type2,
+                                                            comm_profile=self.bas_amt)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
-        self.rest_commission_sender.set_modify_fees_message(fee=self.fee3, fee_type=self.fee_type3)
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee3, fee_type=self.fee_type3,
+                                                            comm_profile=self.pertransac_commission_profile)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
-        self.manage_security_block.set_fee_exemption(False, False, True)
+        self.manage_security_block.set_fee_exemption(True, True, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)
-        time.sleep(3)
         # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                    role=SubmitRequestConst.USER_ROLE_1.value)
-        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {
-            "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"), 'AccountGroupID': self.client,
-            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]}})
-
-        self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        instrument_id = self.data_set.get_instrument_id_by_name("instrument_3")
+        self.submit_request.update_fields_in_component('NewOrderSingleBlock', {
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
+            'InstrID': instrument_id,
+            'AccountGroupID': self.client,
+            'OrdQty': self.qty,
+            'Price': self.price,
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        print_message("Create CO order", responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["OrdID"]
         cl_order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["ClOrdID"]
-
+        actual_status = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameter(
+            JavaApiFields.OrdReplyBlock.value)[JavaApiFields.TransStatus.value]
+        actually_result = {JavaApiFields.TransStatus.value: actual_status}
+        expected_result = {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}
+        self.java_api_manager.compare_values(expected_result, actually_result, "Check results from step 1")
         # endregion
+
         # region step 2
-        self.trade_request.set_default_trade(order_id)
-        self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
-        expected_levy = {'ExpectedFee': 'LEV'}
-        expected_stamp = {'ExpectedFee': 'STA'}
-        expected_per_trans = {'ExpectedFee': 'TRA'}
-        self.java_api_manager.compare_values(expected_levy,
-                                             {"ExpectedFee": str(
-                                                 exec_reply["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.CONTAINS)
+        self.trade_request.set_default_trade(order_id, self.price, self.qty)
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        print_message('Execute CO order', responses)
+        execution_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        actually_trans_exec_status = execution_report[JavaApiFields.TransExecStatus.value]
+        exec_id = execution_report[JavaApiFields.ExecID.value]
+        expected_result.clear()
+        expected_result = {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}
+        self.java_api_manager.compare_values(expected_result,
+                                             {JavaApiFields.TransExecStatus.value: actually_trans_exec_status},
+                                             'Check ExecSts from step 2')
+        self.java_api_manager.compare_values({'Count of Fee group': 1}, {'Count of Fee group': len(
+            execution_report['MiscFeesList'][JavaApiFields.MiscFeesBlock.value])},
+                                             'Check that execution has unique commission')
+        actually_result = execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0]
+        expected_result.clear()
+        fee_rate = float(5)
+        fee_amount = float(fee_rate * float(self.qty) * float(self.price) / 10000)
+        expected_result = {
+            JavaApiFields.MiscFeeRate.value: str(fee_rate),
+            JavaApiFields.MiscFeeAmt.value: str(fee_amount),
+            JavaApiFields.MiscFeeCurr.value: self.currency,
+            JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_TRA.value
+        }
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Check that Fee is PerTransac for execution from step 2',
+                                             VerificationMethod.CONTAINS)
 
-        self.java_api_manager.compare_values(expected_stamp,
-                                             {"ExpectedFee": str(
-                                                 exec_reply["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.CONTAINS)
-        self.java_api_manager.compare_values(expected_per_trans,
-                                             {"ExpectedFee": str(
-                                                 exec_reply["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
-        # endregion
-        # region step 3
+        # subregion complete CO order step 2
         self.complete_message.set_default_complete(order_id)
-        self.java_api_manager.send_message_and_receive_response(self.complete_message)
-        exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
-        post_trd_sts = exec_reply["PostTradeStatus"]
-        exec_id = exec_reply["ExecID"]
+        responses = self.java_api_manager.send_message_and_receive_response(self.complete_message)
+        print_message('Complete CO order', responses)
+        # end subregion
         # endregion
-        # region step 4
+
+        # region step 3
+        new_avg_px = float(self.price) / 100
+        post_trd_sts = OrderReplyConst.PostTradeStatus_RDY.value
         self.compute_request.set_list_of_order_alloc_block(cl_order_id, order_id, post_trd_sts)
         self.compute_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trd_sts)
-        self.compute_request.set_default_compute_booking_request(self.qty, self.price, self.client)
-        self.java_api_manager.send_message_and_receive_response(self.compute_request)
+        self.compute_request.set_default_compute_booking_request(self.qty, new_avg_px, self.client)
+        responses = self.java_api_manager.send_message_and_receive_response(self.compute_request)
+        print_message("ComputeRequest", responses)
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
+        expected_levy = {'ExpectedFee': AllocationInstructionConst.COMM_AND_FEE_TYPE_LEV.value}
+        expected_stamp = {'ExpectedFee': AllocationInstructionConst.COMM_AND_FEE_TYPE_STA.value}
+        expected_per_trans = {'ExpectedFee': AllocationInstructionConst.COMM_AND_FEE_TYPE_TRA.value}
+
+        expected_result_calculated = {
+            JavaApiFields.RootMiscFeeRate.value: str(fee_rate),
+            JavaApiFields.RootMiscFeeAmt.value: str(fee_amount),
+            JavaApiFields.RootMiscFeeCurr.value: self.currency,
+            JavaApiFields.RootMiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_TRA.value
+        }
         self.java_api_manager.compare_values(expected_levy,
                                              {"ExpectedFee": str(
-                                                 compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.CONTAINS)
+                                                 compute_reply[JavaApiFields.RootMiscFeesList.value][
+                                                     JavaApiFields.RootMiscFeesBlock.value])},
+                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
 
         self.java_api_manager.compare_values(expected_stamp,
                                              {"ExpectedFee": str(
-                                                 compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.CONTAINS)
+                                                 compute_reply[JavaApiFields.RootMiscFeesList.value][
+                                                     JavaApiFields.RootMiscFeesBlock.value])},
+                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
-                                                 compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
+                                                 compute_reply[JavaApiFields.RootMiscFeesList.value][
+                                                     JavaApiFields.RootMiscFeesBlock.value])},
+                                             "Check Per Transac", VerificationMethod.CONTAINS)
+        self.java_api_manager.compare_values(expected_result_calculated,
+                                             compute_reply[JavaApiFields.RootMiscFeesList.value][
+                                                 JavaApiFields.RootMiscFeesBlock.value][0],
+                                             'Check that PerTransac Fee properly calculated for ComputeMiscFeeCommissionReply (part of step 3)')
         # endregion
-        # region step 5
+
+        # region step 4
+        gross_amt = float(new_avg_px) * float(self.qty)
         self.alloc_instr.set_default_book(order_id)
         self.alloc_instr.update_fields_in_component("AllocationInstructionBlock",
                                                     {"RootMiscFeesList": compute_reply["RootMiscFeesList"],
                                                      "AccountGroupID": self.client,
+                                                     "AvgPx": new_avg_px,
+                                                     'GrossTradeAmt': gross_amt,
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
-            JavaApiFields.AllocationReportBlock.value]
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+            JavaApiFields.AllocationReportBlock.value)
         self.java_api_manager.compare_values(expected_levy,
                                              {"ExpectedFee": str(
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.CONTAINS)
+                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_stamp,
                                              {"ExpectedFee": str(
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.CONTAINS)
+                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
+                                             "Check Per Transac", VerificationMethod.CONTAINS)
         alloc_id = alloc_report["AllocInstructionID"]
+        order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value]
+        expected_result = {
+            JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
+            JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
+            JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value
+        }
+        actually_result = {JavaApiFields.AllocStatus.value: alloc_report[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: alloc_report[JavaApiFields.MatchStatus.value],
+                           JavaApiFields.PostTradeStatus.value: order_update[JavaApiFields.PostTradeStatus.value],
+                           JavaApiFields.DoneForDay.value: order_update[JavaApiFields.DoneForDay.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Check  Middle Office Statuses (part os step 3)')
+        self.java_api_manager.compare_values(expected_result_calculated,
+                                             alloc_report[JavaApiFields.RootMiscFeesList.value][
+                                                 JavaApiFields.RootMiscFeesBlock.value][0],
+                                             'Check that PerTransac Fee properly calculated for AllocInstruction (part of step 4)')
         # endregion
-        # region step 6
+
+        # region step 5
         self.force_alloc.set_default_approve(alloc_id)
-        self.java_api_manager.send_message(self.force_alloc)
+        responses = self.java_api_manager.send_message_and_receive_response(self.force_alloc)
+        print_message('Approve Block', responses)
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+            JavaApiFields.AllocationReportBlock.value)
+        expected_result.pop(JavaApiFields.DoneForDay.value)
+        expected_result.pop(JavaApiFields.PostTradeStatus.value)
+        expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value})
+        actually_result.clear()
+        actually_result.update({JavaApiFields.AllocStatus.value: alloc_report[JavaApiFields.AllocStatus.value],
+                                JavaApiFields.MatchStatus.value: alloc_report[JavaApiFields.MatchStatus.value]})
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Check Middle Office Statuses (part of step 5)')
+        # endregion
+
+        # region step 6
         self.confirm.set_default_allocation(alloc_id)
         self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.client_acc,
+                                                                      'AvgPx': new_avg_px,
                                                                       "InstrID": self.data_set.get_instrument_id_by_name(
                                                                           "instrument_3")})
-        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        responses = self.java_api_manager.send_message_and_receive_response(self.confirm)
+        print_message('Confirmation', responses)
         confirm_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values(expected_levy,
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.CONTAINS)
+                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_stamp,
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.CONTAINS)
+                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
+                                             "Check Per Transac", VerificationMethod.CONTAINS)
+        gross_amt = float(new_avg_px) * float(self.qty)
+        net_amt = gross_amt + fee_amount
+        expected_result.clear()
+        expected_result = {'NetAmount': str(net_amt), "NetPrice": str(float(net_amt) / float(self.qty))}
+        actually_result = {'NetAmount': confirm_report[JavaApiFields.NetMoney.value],
+                           "NetPrice": confirm_report[JavaApiFields.NetPrice.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Check NetAmt and NetPrice of allocation (part of step 6)')
+        # region step 7
+        fee_amount_fix = str(int(fee_amount))
+        fee_rate_fix = str(int(fee_rate))
+        no_misc_fee = [{'MiscFeeAmt': fee_amount_fix, 'MiscFeeCurr': self.currency, 'MiscFeeType': '10'}]
+        # pre step check 35 = 8 message
+        list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty',
+                                  'OrderID', 'TransactTime', 'Side', 'AvgPx',
+                                  'QuodTradeQualifier', 'BookID', 'SettlCurrency',
+                                  'SettlDate', 'Currency', 'TimeInForce', 'PositionEffect',
+                                  'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty', 'CumQty', 'LastPx',
+                                  'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
+                                  'ExecBroker', 'Price', 'VenueType', 'Instrument',
+                                  'ExDestination', 'GrossTradeAmt', 'CommissionData']
+
+        self.fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_order_id,
+                                                     'NoMiscFees': no_misc_fee})
+        self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_report,
+                                                         ignored_fields=list_of_ignored_fields)
+
+        # end region
+        # pre step check 35=J message (626 = 5)
+        list_of_ignored_fields.extend(['RootCommTypeClCommBasis', 'AllocID',
+                                       'NetMoney', 'BookingType', 'AllocInstructionMiscBlock1',
+                                       'Quantity', 'RootOrClientCommission', 'AllocTransType',
+                                       'ReportedPx', 'ConfirmStatus', 'MatchStatus', 'ConfirmID',
+                                       'RootOrClientCommissionCurrency',
+                                       'RootSettlCurrAmt'])
+        self.allocation_instruction_fix.change_parameters(
+            {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '5',
+             'NoRootMiscFeesList': [{
+                 'RootMiscFeeBasis': '2',
+                 'RootMiscFeeCurr': self.currency,
+                 'RootMiscFeeType': '10',
+                 'RootMiscFeeRate': fee_rate_fix,
+                 'RootMiscFeeAmt': fee_amount_fix
+             }]})
+        self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ignored_fields=list_of_ignored_fields)
+        # end region
+        # pre step check 35=J message (626 = 2)
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice'])
+        self.allocation_instruction_fix.remove_parameter('NoRootMiscFeesList')
+        self.allocation_instruction_fix.change_parameters({'NoAllocs': [{
+            'NoMiscFees': no_misc_fee,
+            'AllocAccount': self.client_acc
+        }]})
+        self.allocation_instruction_fix.change_parameters(
+            {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '2'})
+        self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ignored_fields=list_of_ignored_fields)
+        # end region
+        # pre step check 35=AK message
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount'])
+        self.confirmation_report.change_parameters(
+            {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
+             'ConfirmTransType': "0",
+             'NoMiscFees': no_misc_fee})
+        self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report,
+                                                         ignored_fields=list_of_ignored_fields)
+        # end region
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.manage_security_block.set_fee_exemption(False, False, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)

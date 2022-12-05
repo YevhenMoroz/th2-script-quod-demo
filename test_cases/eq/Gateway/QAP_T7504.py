@@ -21,7 +21,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import Orde
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
-from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)

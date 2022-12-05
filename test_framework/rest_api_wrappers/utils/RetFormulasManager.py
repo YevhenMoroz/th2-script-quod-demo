@@ -9,7 +9,6 @@ class RetFormulasManager:
         cash_position = response_wa_cash_account.keys()
 
         initial_balance = 0
-        sell_amount = 0
         buy_amount = 0
         cash_deposited = 0
         cash_withdrawn = 0
@@ -18,8 +17,6 @@ class RetFormulasManager:
 
         if 'initialBalance' in cash_position:
             initial_balance = float(response_wa_cash_account['initialBalance'])
-        if 'amountSoldIn' in cash_position:
-            sell_amount = float(response_wa_cash_account['amountSoldIn'])
         if 'amountBought' in cash_position:
             buy_amount = float(response_wa_cash_account['amountBought'])
         if 'cashDeposited' in cash_position:
@@ -31,7 +28,7 @@ class RetFormulasManager:
         if 'reservedAmt' in cash_position:
             reserved_amount = float(response_wa_cash_account['reservedAmt'])
 
-        return initial_balance + sell_amount - buy_amount + cash_deposited - cash_withdrawn - booked_amount - reserved_amount
+        return initial_balance - buy_amount + cash_deposited - cash_withdrawn - booked_amount - reserved_amount
 
     @staticmethod
     def calc_security_value(test_id, response_wa_security_account):
@@ -84,6 +81,7 @@ class RetFormulasManager:
             booked_temporary_cash = 0
             collateral_cash = 0
             booked_collateral_cash = 0
+            sell_amount = 0
             available_balance = self.calc_available_balance(response_wa_cash_account)
             security_value = self.calc_security_value(test_id, response_wa_security_account)
 
@@ -99,9 +97,12 @@ class RetFormulasManager:
                 collateral_cash = float(response_wa_cash_account['collateralCash'])
             if 'bookedCollateralCash' in cash_position:
                 booked_collateral_cash = float(response_wa_cash_account['bookedCollateralCash'])
+            if 'amountSoldIn' in cash_position:
+                sell_amount = float(response_wa_cash_account['amountSoldIn'])
 
-            buying_power = available_balance + (cash_loan - booked_cash_loan) + (temporary_cash - booked_temporary_cash) \
-                           + (collateral_cash - booked_collateral_cash) + security_value['securityValueSum']
+            buying_power = available_balance + sell_amount + (cash_loan - booked_cash_loan) + \
+                           (temporary_cash - booked_temporary_cash) + (collateral_cash - booked_collateral_cash) + \
+                           security_value['securityValueSum']
             return buying_power
         except(ValueError, IndexError, TypeError):
             bca.create_event(f'BuyingPower was not calculated', status='FAILED', parent_id=test_id)

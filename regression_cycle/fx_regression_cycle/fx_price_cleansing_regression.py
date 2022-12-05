@@ -18,7 +18,7 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version=None, session=None):
+def test_run(parent_id=None, version="5.1.163.176", session=None):
     report_id = bca.create_event(f"FX_PRICE_CLEANSING" if version is None else f"FX_PRICE_CLEANSING | {version}", parent_id)
     session_id = session if session is not None else set_session_id(target_server_win="ashcherb")
     main_window_name = "Quod Financial - Quod site 314"
@@ -31,16 +31,16 @@ def test_run(parent_id=None, version=None, session=None):
             get_opened_fe(report_id, session_id, main_window_name)
         QAP_T2637(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
                   environment=configuration.environment).execute()
-        QAP_T5124(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
-        QAP_T5126(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
-        QAP_T5127(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
-        QAP_T5128(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
-        QAP_T5129(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
+        # QAP_T5124(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        #           environment=configuration.environment).execute()
+        # QAP_T5126(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        #           environment=configuration.environment).execute()
+        # QAP_T5127(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        #           environment=configuration.environment).execute()
+        # QAP_T5128(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        #           environment=configuration.environment).execute()
+        # QAP_T5129(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+        #           environment=configuration.environment).execute()
 
 
     except Exception:
