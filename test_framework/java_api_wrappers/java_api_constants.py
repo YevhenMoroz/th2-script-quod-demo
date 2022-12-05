@@ -24,6 +24,7 @@ class OrderReplyConst(Enum):
     OrdStatus_HLD = 'HLD'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
+    TransStatus_TER = 'TER'
 
 
 class ExecutionPolicyConst(Enum):
@@ -34,6 +35,8 @@ class ExecutionPolicyConst(Enum):
 class SubmitRequestConst(Enum):
     USER_ROLE_1 = "TRA"
     OrdCapacity_Agency = 'Agency'
+    Side_Buy = 'Buy'
+    Side_B_aka_Buy = 'B'
 
 
 class AllocationReportConst(Enum):
@@ -43,6 +46,8 @@ class AllocationReportConst(Enum):
     AllocStatus_APP = 'APP'
     AllocStatus_CXL = 'CXL'
     AllocReportType_ACC = 'ACC'
+    ConfirmationService_EXT = 'EXT'
+    ConfirmationService_MAN = 'MAN'
 
 
 class AllocationInstructionConst(Enum):
@@ -63,6 +68,11 @@ class AllocationInstructionConst(Enum):
     COMM_AND_FEE_BASIS_PCT = 'PCT'
     ComputeFeesCommissions_Y = 'Y'
     ComputeFeesCommissions_N = 'N'
+    COMM_AMD_FEE_TYPE_REG = "REG"
+    CommissionAmountSubType_OTH = 'OTH'
+    RootMiscFeeCategory_OTH = 'OTH'
+    BookingType_CFD = 'CFD'
+    NetGrossInd_N = 'N'
 
 
 class ConfirmationReportConst(Enum):
@@ -95,6 +105,7 @@ class QtyPercentageProfile(Enum):
 
 
 class JavaApiFields(Enum):
+    ExecCommission = 'ExecCommission'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
     ExecutionReportBlock = 'ExecutionReportBlock'
@@ -150,6 +161,8 @@ class JavaApiFields(Enum):
     ManualDayCumQty = 'ManualDayCumQty'
     AllocReportType = 'AllocReportType'
     RootMiscFeesList = 'RootMiscFeesList'
+    DayCumQty = 'DayCumQty'
+    DayCumAmt = 'DayCumAmt'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -173,7 +186,6 @@ class JavaApiFields(Enum):
     RootMiscFeeType = 'RootMiscFeeType'
     RootMiscFeeAmt = 'RootMiscFeeAmt'
     RootMiscFeesBlock = 'RootMiscFeesBlock'
-    RootMiscFeesList = 'RootMiscFeesList'
     CommissionBasis = 'CommissionBasis'
     CommissionAmountType = 'CommissionAmountType'
     CommissionRate = 'CommissionRate'
@@ -192,6 +204,19 @@ class JavaApiFields(Enum):
     DoneForDay = 'DoneForDay'
     NetMoney = 'NetMoney'
     NetPrice = 'NetPrice'
+    AllocQty = 'AllocQty'
+    BookingAllocInstructionID = 'BookingAllocInstructionID'
+    ClBookingRefID = 'ClBookingRefID'
+    AvgPrice = 'AvgPrice'
+    AvgPx = 'AvgPx'
+    SettlLocationID = 'SettlLocationID'
+    SettlementModelID = 'SettlementModelID'
+    Qty = 'Qty'
+    Side = 'Side'
+    AllocationInstructionQtyList = 'AllocationInstructionQtyList'
+    AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
+    BookingQty = 'BookingQty'
+    WashBookAccountID = 'WashBookAccountID'
 
 
 class JavaApiPartyRoleConstants(Enum):

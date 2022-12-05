@@ -5,13 +5,17 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, AllocationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
@@ -19,6 +23,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7141(TestCase):
@@ -41,11 +52,15 @@ class QAP_T7141(TestCase):
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message_first = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_message_second = FixMessageNewOrderSingleOMS(self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.un_book_orders = BookingCancelRequest()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create DMA order via FIX
+        # region Create DMA orders via FIX (part of precondition)
         try:
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.venue_client_names,
@@ -58,7 +73,6 @@ class QAP_T7141(TestCase):
                 {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
             response_first = self.fix_manager.send_message_and_receive_response(self.fix_message_first)
             # get Client Order ID and Order ID
-            cl_ord_id_first = response_first[0].get_parameters()['ClOrdID']
             order_id_first = response_first[0].get_parameters()['OrderID']
 
             # second order
@@ -67,51 +81,58 @@ class QAP_T7141(TestCase):
                 {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
             response_second = self.fix_manager.send_message_and_receive_response(self.fix_message_second)
             # get Client Order ID and Order ID
-            cl_ord_id_second = response_second[0].get_parameters()['ClOrdID']
             order_id_second = response_second[0].get_parameters()['OrderID']
-
-        except Exception:
-            logger.error('Error execution', exc_info=True)
         finally:
-            time.sleep(2)
             self.rule_manager.remove_rule(trade_rule)
         # endregion
 
-        # region Mass Book orders and checking PostTradeStatus in the Order book
-        self.order_book.mass_book([1, 2])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_first])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Mass Book of the first order')
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_second])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Mass Book of the second order')
+        # region book DMA orders precondtidion and step 1
+        list_of_alloc_instruction_ids = []
+        list_of_order_ids = [order_id_first, order_id_second]
+        gross_trade_amt = str(float(self.qty) * float(self.price))
+        instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
+        for order_id in list_of_order_ids:
+            self.allocation_instruction.set_default_book(order_id)
+            self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+                "AvgPx": self.price,
+                "AccountGroupID": self.client,
+                "SettlCurrAmt": gross_trade_amt,
+                'Side': 'Sell',
+                'InstrID': instrument_id
+            })
+            responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+            print_message(f'Book {order_id} order', responses)
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            list_of_alloc_instruction_ids.append(allocation_report[JavaApiFields.ClBookingRefID.value])
+            order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+                JavaApiFields.OrdUpdateBlock.value]
+            expected_result = {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value}
+            self.java_api_manager.compare_values(expected_result, order_update,
+                                                 'Check expected and actually results from step 1',
+                                                 VerificationMethod.CONTAINS)
         # endregion
 
-        # region Mass Unbook and checking PostTradeStatus in the Order book
-        self.order_book.mass_unbook([1, 2])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_first])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
-            'Comparing PostTradeStatus after Mass Unbook of the first order')
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_second])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
-            'Comparing PostTradeStatus after Mass Unbook of the second order')
+        # region step 2 and step 3
+        for alloc_id_instruction in list_of_alloc_instruction_ids:
+            self.un_book_orders.set_default(alloc_id_instruction)
+            responses = self.java_api_manager.send_message_and_receive_response(self.un_book_orders)
+            print_message(
+                f'Unbook {list_of_order_ids[list_of_alloc_instruction_ids.index(alloc_id_instruction)]} order',
+                responses)
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+                JavaApiFields.OrdUpdateBlock.value]
+            expected_result = {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value}
+            self.java_api_manager.compare_values(expected_result, order_update,
+                                                 f'Check PostTradeStatus for '
+                                                 f'{list_of_order_ids[list_of_alloc_instruction_ids.index(alloc_id_instruction)]} '
+                                                 f'(part of step 3)',
+                                                 VerificationMethod.CONTAINS)
+            self.java_api_manager.compare_values(
+                {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_CXL.value},
+                allocation_report, 'Check AllocStatus (part of step 3)')
         # endregion
-
-        # region Checking the Status after the Mass Unbook in the Middle Office
-        status_after_unbook = self.middle_office.extract_block_field(MiddleOfficeColumns.sts.value,
-                                                                     [MiddleOfficeColumns.order_id.value,
-                                                                      order_id_first])
-        self.middle_office.compare_values({MiddleOfficeColumns.sts.value: 'Canceled'}, status_after_unbook,
-                                          'Comparing Status in the MiddleOffice after the Unbook of the second block')
-        status_after_unbook2 = self.middle_office.extract_block_field(MiddleOfficeColumns.sts.value,
-                                                                      [MiddleOfficeColumns.order_id.value,
-                                                                       order_id_second])
-        self.middle_office.compare_values({MiddleOfficeColumns.sts.value: 'Canceled'}, status_after_unbook2,
-                                          'Comparing Status in the MiddleOffice after the Unbook of the second block')
-        # endregion
-
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

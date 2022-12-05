@@ -139,14 +139,26 @@ class QAP_T7035(TestCase):
 
         # region check expected result from step 3
         expected_result = OrderReplyConst.TransStatus_CXL.value
-        actually_result = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value][JavaApiFields.TransStatus.value]
+        order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
+        cl_ord_id = order_reply_message[JavaApiFields.ClOrdID.value]
+        actually_result = order_reply_message[JavaApiFields.TransStatus.value]
         self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: expected_result},
                                              {JavaApiFields.TransStatus.value: actually_result},
-                                             'Comparing value from step 2')
+                                             'Comparing value from step 3')
         # endregion
 
         # region check 35=8 150 = B message
+        list_of_ignore_fields = ['SecondaryOrderID', 'LastExecutionPolicy', 'TradeDate', 'SecondaryExecID', 'OrderID',
+                                 'ExDestination', 'GrossTradeAmt', 'SettlCurrency', 'Instrument', 'TimeInForce',
+                                 'OrdType', "TradeReportingIndicator", 'SettlDate', 'Side', 'HandlInst', 'OrderQtyData',
+                                 'SecondaryExecID', 'ExecID', 'LastQty', 'TransactTime', 'AvgPx', 'QuodTradeQualifier',
+                                 'BookID', 'Currency', 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty', 'CumQty',
+                                 'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity''QtyType', 'ExecBroker',
+                                 'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData', 'Text',
+                                 'AllocQty', 'ConfirmType', 'ConfirmID','Account',
+                                 'AllocID', 'NetMoney', 'MatchStatus',
+                                 'ConfirmStatus', 'AllocInstructionMiscBlock1',
+                                 'CpctyConfGrp', 'ReportedPx']
         self.fix_message_execution_report.change_parameters({
             "ExecType": "B",
             "OrdStatus": "B",
@@ -161,8 +173,7 @@ class QAP_T7035(TestCase):
                                                                  'MiscFeeCurr': self.currency_major,
                                                                  'MiscFeeType': '1'
                                                              }]})
-
-        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report, ignored_fields=list_of_ignore_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
