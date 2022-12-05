@@ -178,7 +178,7 @@ class QAP_T8716(TestCase):
         pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
 
-        new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
+        new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  Passive Child 1')
 
         partial_fill_passive_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_partial_fill)
@@ -213,7 +213,7 @@ class QAP_T8716(TestCase):
         pending_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 1')
 
-        new_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
+        new_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 1')
 
         cancel_ioc_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
@@ -248,7 +248,7 @@ class QAP_T8716(TestCase):
         pending_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 2')
 
-        new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
+        new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 2')
 
         cancel_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
@@ -256,13 +256,11 @@ class QAP_T8716(TestCase):
         self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
         # endregion
-        
+
         cancel_request_pov_order = FixMessageOrderCancelRequest(self.pov_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
@@ -277,4 +275,6 @@ class QAP_T8716(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
