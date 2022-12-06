@@ -53,9 +53,16 @@ class Connectivity(Enum):
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
     Kuiper_319_web_admin_site = 'rest_wa319kuiper'
     Kratos_309_ss_rfq = 'fix-sell-rfq-m-309kratos-stand'
+    Kratos_309_bs_md = 'fix-sell-md-t-309-stand'
     Kratos_309_ss_esp = 'fix-sell-esp-m-309kratos-stand'
     Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
-
+    Kratos_309_Feed_Handler_Q = 'fix-fh-q-309-kratos'
+    Kratos_309_ss_esp_t = 'fix-sell-esp-t-309-stand'
+    Kratos_309_dc = 'fix-sell-m-309kratos-drop'
+    Kratos_309_cnx = 'fix-sell-rfq-m-309-cnx'
+    Kratos_309_wa = "rest_wa309kratos"
+    Kratos_309_ja = "309_java_api"
+    Kratos_309_ev = "fix-buy-extern-309-stand"
 
 
 class FrontEnd(Enum):

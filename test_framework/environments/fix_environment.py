@@ -73,7 +73,13 @@ class FixEnvironment(BaseEnvironment):
                     environment_type=EnvironmentType.quod309_kratos_standard.value,
                     sell_side_esp=Connectivity.Kratos_309_ss_esp.value,
                     sell_side_rfq=Connectivity.Kratos_309_ss_rfq.value,
+                    buy_side_esp=Connectivity.Kratos_309_ss_esp_t.value,
                     feed_handler=Connectivity.Kratos_309_Feed_Handler.value,
+                    feed_handler2=Connectivity.Kratos_309_Feed_Handler_Q.value,
+                    drop_copy=Connectivity.Kratos_309_dc.value,
+                    buy_side_md=Connectivity.Kratos_309_bs_md.value,
+                    sell_side_cnx=Connectivity.Kratos_309_cnx.value,
+                    external_validation=Connectivity.Kratos_309_ev.value
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod309_kratos_standard.value: site_environment})
