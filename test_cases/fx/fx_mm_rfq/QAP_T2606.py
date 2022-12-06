@@ -84,6 +84,7 @@ class QAP_T2606(TestCase):
         self.new_order_single.set_default_for_dealer(self.quote_request, quote_from_di)
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_single(self.new_order_single)
+        self.execution_report.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
 
