@@ -113,7 +113,7 @@ class QAP_T8020(TestCase):
         self.md_snapshot.update_repeating_group("NoMDEntries", self.no_md_entries_wk2)
         self.md_snapshot.update_MDReqID(self.md_req_id_wk2, self.fxfh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.md_snapshot)
-        self.sleep(2)
+        self.sleep(10)
         # endregion
         # region Step 1
         self.quote_request.set_deposit_and_loan_param()
