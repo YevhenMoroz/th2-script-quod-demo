@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -33,6 +34,7 @@ class QAP_T7028(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
+        self.response = None
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -73,10 +75,14 @@ class QAP_T7028(TestCase):
         # region send fees
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
-        self.rest_commission_sender.set_modify_fees_message(fee=self.fee1, fee_type=self.fee_type1)
+        commission_profile_stamp = self.data_set.get_comm_profile_by_name('perc_amt')
+        commission_profile_vat = self.data_set.get_comm_profile_by_name('bas_qty')
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee1, fee_type=self.fee_type1,
+                                                            comm_profile=commission_profile_stamp)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
-        self.rest_commission_sender.set_modify_fees_message(fee=self.fee2, fee_type=self.fee_type2)
+        self.rest_commission_sender.set_modify_fees_message(fee=self.fee2, fee_type=self.fee_type2,
+                                                            comm_profile=commission_profile_vat)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
         # endregion
@@ -93,19 +99,22 @@ class QAP_T7028(TestCase):
                                                                                             int(self.price),
                                                                                             int(self.qty), 2)
             self.fix_message.change_parameters(self.params)
-            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
         time.sleep(5)
-        order_id = response[0].get_parameter("OrderID")
-        cl_order_id = response[0].get_parameter("ClOrdID")
-        exec_report = response[1].get_parameters()
+        exec_report = self.__get_fix_message({'ExecType': 'F'})
+        order_id = exec_report["OrderID"]
+        cl_order_id = exec_report['ClOrdID']
+        vat_amt = str(float(self.qty)/10000)
+        stamp_rate = str(5)
+        stamp_amount = str(int((float(self.qty) * float(self.price) * float(stamp_rate) / 10000)))
         exec_id = exec_report["ExecID"]
         self.java_api_manager.compare_values(
             {'ExecType': exec_report["ExecType"], 'OrdStatus': exec_report["OrdStatus"],
-             'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '0.01', 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
+             'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
             exec_report,
             "Check the execution of order")
         # endregion
@@ -123,18 +132,18 @@ class QAP_T7028(TestCase):
         self.__return_result(responses, ORSMessageType.ComputeBookingFeesCommissionsReply.value)
         fee_list_exp = {"RootMiscFeesBlock": [
             {
-                "RootMiscFeeBasis": "A",
-                "RootMiscFeeAmt": "1.0",
+                "RootMiscFeeAmt": str(float(stamp_amount)),
+                "RootMiscFeeRate": str(float(stamp_rate)),
+                "RootMiscFeeCurr": "GBP",
+                "RootMiscFeeType": "STA",
+                "RootMiscFeeBasis": "P"
+            },
+            {
+                "RootMiscFeeBasis": "B",
+                "RootMiscFeeAmt": vat_amt,
                 "RootMiscFeeCurr": "GBP",
                 "RootMiscFeeType": "VAT",
                 "RootMiscFeeRate": "1.0"
-            },
-            {
-                "RootMiscFeeAmt": "1.0",
-                "RootMiscFeeRate": "1.0",
-                "RootMiscFeeCurr": "GBP",
-                "RootMiscFeeBasis": "A",
-                "RootMiscFeeType": "STA"
             }
         ]}
         fee_list = self.result.get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
@@ -155,18 +164,20 @@ class QAP_T7028(TestCase):
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        common_fee_amount = str(float(vat_amt) + float(stamp_amount))
         alloc_report = self.result.get_parameter('AllocationReportBlock')
-        total_fee = {'RootCommission': '2.0', 'RootCommType': 'A', 'RootCommCurrency': 'GBP'}
-        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value: fee_list_exp, 'RootCommissionDataBlock': total_fee}, alloc_report,
-                                             "Check values in the Alloc Report")
+        total_fee = {'RootCommission': common_fee_amount, 'RootCommCurrency': 'GBP'}
+        self.java_api_manager.compare_values(
+            {JavaApiFields.RootMiscFeesList.value: fee_list_exp, 'RootCommissionDataBlock': total_fee}, alloc_report,
+            "Check values in the Alloc Report")
         # endregion
 
         # region check 35=J message
         no_misc_list = {'NoRootMiscFeesList': [
-            {'RootMiscFeeBasis': '0', 'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '22', 'RootMiscFeeRate': '1',
-             'RootMiscFeeAmt': '1'},
-            {'RootMiscFeeBasis': '0', 'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '5', 'RootMiscFeeRate': '1',
-             'RootMiscFeeAmt': '1'}]}
+            {'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '22', 'RootMiscFeeRate': '1',
+             'RootMiscFeeAmt': vat_amt},
+            {'RootMiscFeeBasis': '2', 'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '5', 'RootMiscFeeRate': stamp_rate,
+             'RootMiscFeeAmt': stamp_amount}]}
         ignored_list = ["AvgPx", "Currency", 'tag5120', 'RootSettlCurrAmt', 'RootOrClientCommission',
                         'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', "AllocInstructionMiscBlock1",
                         'RootSettlCurrAmt', 'SettlType', 'Account']
@@ -180,3 +191,9 @@ class QAP_T7028(TestCase):
         for response in responses:
             if response.get_message_type() == message_type:
                 self.result = response
+
+    def __get_fix_message(self, parameter: dict):
+        for i in range(len(self.response)):
+            for j in parameter.keys():
+                if self.response[i].get_parameters()[j] == parameter[j]:
+                    return self.response[i].get_parameters()
