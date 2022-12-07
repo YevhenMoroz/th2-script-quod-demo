@@ -57,7 +57,7 @@ class JavaApiManager:
                                                          message.get_parameters(), self.get_session_alias()),
                 parent_event_id=self.get_case_id()))
 
-    def send_message_and_receive_response(self, message: JavaApiMessage):
+    def send_message_and_receive_response(self, message: JavaApiMessage, filter_dict=None):
         logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
@@ -83,7 +83,7 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value:
+        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value and filter_dict is None:
             response = self.act.submitDFDManagementBatch(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -230,6 +230,18 @@ class JavaApiManager:
                     parent_event_id=self.get_case_id()))
         elif message.get_message_type() == PKSMessageType.FixRequestForPositions.value:
             response = self.act.submitFixRequestForPositions(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value and filter_dict is not None:
+            response = self.act.submitMassDFDManagementBatch(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.BlockChangeConfirmationServiceRequest.value:
+            response = self.act.submitBlockChangeConfirmationServiceRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),

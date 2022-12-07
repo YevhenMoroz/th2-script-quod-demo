@@ -1,24 +1,37 @@
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses, \
-    MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import (
+    JavaApiFields,
+    ExecutionReportConst,
+    OrderReplyConst,
+    CommissionAmountTypeConst,
+    CommissionBasisConst,
+)
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7498(TestCase):
@@ -28,124 +41,231 @@ class QAP_T7498(TestCase):
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.ss_connectivity = self.fix_env.sell_side
-        self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '100'
-        self.price = '10'
-        self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
-        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.settl_date = datetime.strftime(datetime.now(), '%#m/%#d/%Y')
+        self.qty = "100"
+        self.price = "20"
+        self.client = self.data_set.get_client("client_pt_1")  # MOClient
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.abs_amt = self.data_set.get_comm_profile_by_name("abs_amt")
+        self.perc_amt = self.data_set.get_comm_profile_by_name("perc_amt")
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create DMA order via FIX
-        try:
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                            self.venue_client_names,
-                                                                                            self.venue,
-                                                                                            float(self.price),
-                                                                                            int(self.qty), 0)
-            self.fix_message.set_default_dma_limit()
-            self.fix_message.change_parameters(
-                {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
-            response = self.fix_manager.send_message_and_receive_response(self.fix_message)
-            # get Client Order ID and Order ID
-            cl_ord_id = response[0].get_parameters()['ClOrdID']
-            order_id = response[0].get_parameters()['OrderID']
+        # region Precondition - Send commission
+        self.rest_commission_sender.clear_commissions()
+        self.rest_commission_sender.clear_fees()
+        # send commission
+        self.rest_commission_sender.set_modify_client_commission_message(client=self.client, comm_profile=self.abs_amt)
+        self.rest_commission_sender.send_post_request()
+        time.sleep(3)
 
-        except Exception:
-            logger.error('Error execution', exc_info=True)
-        finally:
-            time.sleep(2)
-            self.rule_manager.remove_rule(trade_rule)
+        # send fees
+        self.rest_commission_sender.set_modify_fees_message(comm_profile=self.perc_amt)
+        self.rest_commission_sender.change_message_params({"venueID": self.data_set.get_venue_by_name("venue_1")})
+        self.rest_commission_sender.send_post_request()
+        time.sleep(3)
         # endregion
 
-        # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        # region Precondition - Create DMA order
+        self.order_submit.set_default_dma_limit()
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {
+                "OrdQty": self.qty,
+                "AccountGroupID": self.client,
+                "Price": self.price,
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message("CREATE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id = order_reply["OrdID"]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+            order_reply,
+            "Comparing Status of DMA order",
+        )
         # endregion
 
-        # region Check values in OrderBook
-        self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
-                                                 OrderBookColumns.done_for_day.value: 'Yes'},
-                                                'Comparing values after trading')
+        # region Precondition - Trade DMA order and checking statuses
+        self.execution_report.set_default_trade(ord_id)
+        self.execution_report.update_fields_in_component(
+            "ExecutionReportBlock",
+            {
+                "Price": self.price,
+                "AvgPrice": self.price,
+                "LastPx": self.price,
+                "OrdQty": self.qty,
+                "LastTradedQty": self.qty,
+                "CumQty": self.qty,
+            },
+        )
+        # Checking Order_ExecutionReport
+        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        print_message("TRADE", responses)
+        execution_report_message = self.java_api_manager.get_last_message(
+            ORSMessageType.ExecutionReport.value
+        ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
+                JavaApiFields.TransStatus.value: "TER",
+                JavaApiFields.PostTradeStatus.value: "RDY",
+            },
+            execution_report_message,
+            "Comparing Statuses after Execute DMA",
+        )
         # endregion
 
-        # region Book order and checking values after it in the Order book
-        self.middle_office.set_modify_ticket_details(settl_type='Regular', settl_date=self.settl_date,
-                                                     settl_currency='UAH', exchange_rate='2',
-                                                     exchange_rate_calc='Multiply', pset='CREST')
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Book')
+        # region Step 1 - Book order
+        self.allocation_instruction.set_default_book(ord_id)
+
+        expected_commissions: dict = {
+            JavaApiFields.CommissionRate.value: "1.0",
+            JavaApiFields.CommissionAmount.value: "1.0",
+            JavaApiFields.CommissionCurrency.value: "EUR",
+            JavaApiFields.CommissionAmountType.value: CommissionAmountTypeConst.CommissionAmountType_BRK.value,
+            JavaApiFields.CommissionBasis.value: CommissionBasisConst.CommissionBasis_ABS.value,
+        }
+        expected_fees: dict = {
+            JavaApiFields.RootMiscFeeType.value: "EXC",
+            JavaApiFields.RootMiscFeeAmt.value: "100.0",
+            JavaApiFields.RootMiscFeeBasis.value: "P",
+            JavaApiFields.RootMiscFeeCurr.value: "EUR",
+            JavaApiFields.RootMiscFeeRate.value: "5.0",
+        }
+
+        self.allocation_instruction.update_fields_in_component(
+            "AllocationInstructionBlock",
+            {
+                "Qty": self.qty,
+                "AccountGroupID": self.client,
+                "GrossTradeAmt": "2000",
+                "AvgPx": self.price,
+                "SettlCurrAmt": "4202",
+                "SettlType": "REG",
+                "SettlCurrFxRate": "2",
+                "SettlCurrFxRateCalc": "M",
+                "SettlCurrency": "UAH",
+                "ClientCommissionList": {"ClientCommissionBlock": [expected_commissions]},
+                "RootMiscFeesList": {"RootMiscFeesBlock": [expected_fees]},
+            },
+        )
+
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message("BOOK", responses)
+
+        # Checking Order_OrdUpdate
+        order_update_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            order_update_reply,
+            "Comparing PostTradeStatus after Book",
+        )
+
+        # Checking AllocationReportBlock
+        alloc_report_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        alloc_id = alloc_report_reply["ClientAllocID"]
+        alloc_instr_id = alloc_report_reply["AllocInstructionID"]
+        exec_id = alloc_report_reply["ExecAllocList"]["ExecAllocBlock"][0]["ExecID"]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.AllocStatus.value: "APP",
+                JavaApiFields.MatchStatus.value: "UNM",
+                "SettlCurrFxRate": "2.0",
+                "SettlCurrFxRateCalc": "M",
+                "SettlCurrency": "UAH",
+                "NetMoney": "2101.0",
+                "AvgPrice": "20.0",
+                "SettlType": "REG",
+                "NetPrice": "21.01",
+                "SettlCurrAmt": "4202.0",
+                "GrossTradeAmt": "2000.0",
+            },
+            alloc_report_reply,
+            "Comparing values in MO after Book",
+        )
+
+        # Comparing Client Commission
+        self.java_api_manager.compare_values(
+            expected_commissions,
+            alloc_report_reply["ClientCommissionList"]["ClientCommissionBlock"][0],
+            "Comparing Client Commission after Book",
+        )
+
+        # Comparing Fees
+        self.java_api_manager.compare_values(
+            expected_fees,
+            alloc_report_reply["RootMiscFeesList"]["RootMiscFeesBlock"][0],
+            "Comparing Fees after Book",
+        )
         # endregion
 
-        # region Checking values after the Book in Middle Office
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            ['SettlDate', MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value, MiddleOfficeColumns.settltype.value,
-             MiddleOfficeColumns.settl_currency.value, MiddleOfficeColumns.exchange_rate.value,
-             MiddleOfficeColumns.settl_curr_fx_rate_calc.value, MiddleOfficeColumns.pset.value,
-             MiddleOfficeColumns.pset_bic.value], [OrderBookColumns.order_id.value, order_id])
-        self.middle_office.compare_values(
-            {'SettlDate': self.settl_date, MiddleOfficeColumns.sts.value: 'ApprovalPending',
-             MiddleOfficeColumns.match_status.value: 'Unmatched', MiddleOfficeColumns.summary_status.value: '',
-             MiddleOfficeColumns.settltype.value: 'Regular', MiddleOfficeColumns.settl_currency.value: 'UAH',
-             MiddleOfficeColumns.exchange_rate.value: '2', MiddleOfficeColumns.settl_curr_fx_rate_calc.value: 'M',
-             MiddleOfficeColumns.pset.value: 'CREST', MiddleOfficeColumns.pset_bic.value: 'TESTBIC'}, values_after_book,
-            'Comparing values after Book for block of MiddleOffice')
-        # endregion
+        # region Step 3 - Amend block
+        self.allocation_instruction.set_amend_book(alloc_instr_id, exec_id, self.qty, self.price)
+        settl_date_new = (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()
+        self.allocation_instruction.remove_fields_from_component(
+            "AllocationInstructionBlock", ["ClientCommissionList", "RootMiscFeesList"]
+        )
+        self.allocation_instruction.update_fields_in_component(
+            "AllocationInstructionBlock",
+            {
+                "GrossTradeAmt": "2000",
+                "AvgPx": self.price,
+                "SettlCurrAmt": "500",
+                "SettlType": "REG",
+                "SettlCurrFxRate": "4",
+                "SettlCurrFxRateCalc": "D",
+                "SettlCurrency": "USD",
+                "SettlDate": settl_date_new,
+            },
+        )
 
-        # region Amend block and checking values after it in the Amend ticket
-        settl_date_amend = datetime.strftime(datetime.now() + timedelta(days=1), '%#m/%#d/%Y')
-        self.middle_office.set_modify_ticket_details(settl_type='Regular', settl_date=settl_date_amend,
-                                                     settl_currency='USD', exchange_rate='4',
-                                                     exchange_rate_calc='Divide', pset='EURO_CLEAR', toggle_manual=True,
-                                                     remove_comm=True, remove_fee=True, extract_book=True)
-        extract_amend = self.middle_office.amend_block([OrderBookColumns.order_id.value, order_id])
-        # endregion
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message("AMEND", responses)
 
-        # region Checking values in the Amend ticket
-        actual_values = {'Net Price': extract_amend.get('book.netPrice'),
-                         'Net Amount': extract_amend.get('book.netAmount'),
-                         MiddleOfficeColumns.client_comm.value: extract_amend.get('book.totalComm'),
-                         MiddleOfficeColumns.total_fees.value: extract_amend.get('book.totalFees'),
-                         'Gross amount': extract_amend.get('book.grossAmount'),
-                         MiddleOfficeColumns.pset_bic.value: extract_amend.get('book.psetBic'),
-                         MiddleOfficeColumns.exchange_rate.value: extract_amend.get('book.exchangeRate'),
-                         MiddleOfficeColumns.settltype.value: extract_amend.get('book.settlementType')}
-        expected_values = {'Net Price': '10', 'Net Amount': '1,000', MiddleOfficeColumns.client_comm.value: '0',
-                           MiddleOfficeColumns.total_fees.value: '0', 'Gross amount': '1,000',
-                           MiddleOfficeColumns.pset_bic.value: 'MGTCBEBE',
-                           MiddleOfficeColumns.exchange_rate.value: '4', MiddleOfficeColumns.settltype.value: 'Regular'}
-        self.middle_office.compare_values(expected_values, actual_values, 'Comparing values in Amend ticket')
-        # endregion
+        # Checking AllocationReportBlock
+        alloc_report_reply_amend = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%#m-%d") + "T12:00"
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.AllocStatus.value: "APP",
+                JavaApiFields.MatchStatus.value: "UNM",
+                "SettlCurrFxRate": "4.0",
+                "SettlCurrFxRateCalc": "D",
+                "SettlCurrency": "USD",
+                "NetMoney": "2000.0",
+                "AvgPrice": "20.0",
+                "SettlType": "REG",
+                "NetPrice": "20.0",
+                "SettlCurrAmt": "500.0",
+                "GrossTradeAmt": "2000.0",
+                "SettlDate": settl_date_expected,
+            },
+            alloc_report_reply_amend,
+            "Comparing values in MO after Amend",
+        )
 
-        # region Checking values after the Amend in Middle Office
-        values_after_amend = self.middle_office.extract_list_of_block_fields(
-            ['SettlDate', MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value, MiddleOfficeColumns.settltype.value,
-             MiddleOfficeColumns.settl_currency.value, MiddleOfficeColumns.exchange_rate.value,
-             MiddleOfficeColumns.settl_curr_fx_rate_calc.value, MiddleOfficeColumns.total_fees.value, 'Net Amt',
-             'Net Price', MiddleOfficeColumns.pset.value, MiddleOfficeColumns.pset_bic.value],
-            [OrderBookColumns.order_id.value, order_id])
-        self.middle_office.compare_values(
-            {'SettlDate': settl_date_amend, MiddleOfficeColumns.sts.value: 'ApprovalPending',
-             MiddleOfficeColumns.match_status.value: 'Unmatched', MiddleOfficeColumns.summary_status.value: '',
-             MiddleOfficeColumns.settltype.value: 'Regular', MiddleOfficeColumns.settl_currency.value: 'USD',
-             MiddleOfficeColumns.exchange_rate.value: '4', MiddleOfficeColumns.settl_curr_fx_rate_calc.value: 'D',
-             'Net Amt': '1,000', 'Net Price': '10', MiddleOfficeColumns.pset.value: 'EURO_CLEAR',
-             MiddleOfficeColumns.pset_bic.value: 'MGTCBEBE'}, values_after_amend,
-            'Comparing values after Amend for block of MiddleOffice')
+        self.java_api_manager.key_is_absent(
+            "ClientCommissionList", alloc_report_reply_amend, "Checking that ClientCommissionList is absent"
+        )
+        self.java_api_manager.key_is_absent(
+            "RootMiscFeesList", alloc_report_reply_amend, "Checking that RootMiscFeesList is absent"
+        )
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
