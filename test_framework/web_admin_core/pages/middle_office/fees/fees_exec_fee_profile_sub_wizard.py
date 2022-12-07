@@ -23,6 +23,9 @@ class FeesExecFeeProfileSubWizard(CommonPage):
     def click_on_delete(self):
         self.find_by_xpath(FeesConstants.EXEC_FEE_PROFILE_DELETE_BUTTON_XPATH).click()
 
+    def set_commission_profile_name_filter(self, value):
+        self.set_text_by_xpath(FeesConstants.EXEC_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH, value)
+
     def set_commission_profile_name(self, value):
         self.set_text_by_xpath(FeesConstants.EXEC_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH, value)
 
@@ -40,6 +43,9 @@ class FeesExecFeeProfileSubWizard(CommonPage):
 
     def get_comm_xunit(self):
         return self.get_text_by_xpath(FeesConstants.EXEC_FEE_PROFILE_COMM_XUNIT_XPATH)
+
+    def is_comm_xunit_enabled(self):
+        return self.is_field_enabled(FeesConstants.EXEC_FEE_PROFILE_COMM_XUNIT_XPATH)
 
     def set_venue_commission_profile_id(self, value):
         self.set_text_by_xpath(FeesConstants.EXEC_FEE_PROFILE_VENUE_COMMISSION_PROFILE_ID_XPATH, value)
@@ -88,3 +94,6 @@ class FeesExecFeeProfileSubWizard(CommonPage):
 
     def get_rounding_modulus(self):
         return self.get_text_by_xpath(FeesConstants.EXEC_FEE_PROFILE_ROUNDING_PRECISION_XPATH)
+
+    def is_searched_commission_profile_found(self, value):
+        return self.is_element_present(FeesConstants.EXEC_FEE_PROFILE_DISPLAYED_PROFILE_XPATH.format(value))
