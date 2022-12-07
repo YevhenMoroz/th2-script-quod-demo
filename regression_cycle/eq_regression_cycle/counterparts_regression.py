@@ -7,6 +7,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
 from test_cases.eq.Counterpart.QAP_T6996 import QAP_T6996
+from test_cases.eq.Counterpart.QAP_T7135 import QAP_T7135
 from test_cases.eq.Counterpart.QAP_T7155 import QAP_T7155
 from test_cases.eq.Counterpart.QAP_T7302 import QAP_T7302
 from test_cases.eq.Counterpart.QAP_T7369 import QAP_T7369
@@ -16,8 +17,6 @@ from test_cases.eq.Counterpart.QAP_T7471 import QAP_T7471
 from test_cases.eq.Counterpart.QAP_T7472 import QAP_T7472
 from test_cases.eq.Counterpart.QAP_T7473 import QAP_T7473
 from test_cases.eq.Counterpart.QAP_T7474 import QAP_T7474
-# from test_cases.eq.Counterpart.QAP_T7302 import QAP_T7302
-# from test_cases.eq.Counterpart.QAP_T7155 import QAP_T7155
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
@@ -29,7 +28,7 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version=None):
+def test_run(parent_id=None, version='5.1.167.180'):
     report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterpart Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Counterparts")
@@ -42,19 +41,11 @@ def test_run(parent_id=None, version=None):
     layout_name = "all_columns_layout.xml"
 
     try:
-        base_main_window.open_fe(test_id, fe_env=fe_env, is_open=False)
-        base_main_window.import_layout(layout_path, layout_name)
-        QAP_T7474(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
-        QAP_T7473(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
-        QAP_T7472(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        # base_main_window.import_layout(layout_path, layout_name)
         QAP_T7471(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        QAP_T7444(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
-        QAP_T7394(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+        QAP_T7135(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7369(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
@@ -62,7 +53,17 @@ def test_run(parent_id=None, version=None):
             .execute()
         QAP_T7155(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
+        QAP_T7444(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7474(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7473(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7472(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         QAP_T6996(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7394(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
