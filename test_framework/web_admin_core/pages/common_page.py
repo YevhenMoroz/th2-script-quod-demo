@@ -256,7 +256,7 @@ class CommonPage:
         items_list = [_.text.strip() for _ in items]
         return items_list
 
-    def _get_all_items_from_table_column(self, xpath) -> list:
+    def get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
         items_list = [_.text.strip() for _ in items]
         return items_list
