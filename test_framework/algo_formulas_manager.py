@@ -238,8 +238,8 @@ class AlgoFormulasManager:
             tm = dt.now()
             pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
-            pcl_start = opn_start - timedelta(minutes=5)
-            pcl_end = pcl_start - timedelta(minutes=5)
+            pcl_start = opn_start + timedelta(minutes=5)
+            pcl_end = pcl_start + timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.PreClosed:
             tm = dt.now()
@@ -251,6 +251,69 @@ class AlgoFormulasManager:
         elif phase == TradingPhases.Open:
             tm = dt.now()
             opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=4)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+
+        return [
+            {
+                "beginTime": pop_start,
+                "endTime": opn_start,
+                "submitAllowed": "True",
+                "tradingPhase": "POP",
+                "standardTradingPhase": "PRE",
+            },
+            {
+                "beginTime": opn_start,
+                "endTime": pcl_start,
+                "submitAllowed": "True",
+                "tradingPhase": "OPN",
+                "standardTradingPhase": "OPN",
+            },
+            {
+                "beginTime": pcl_start,
+                "endTime": pcl_end,
+                "submitAllowed": "True",
+                "tradingPhase": "PCL",
+                "standardTradingPhase": "PCL",
+            },
+            {
+                "beginTime": pcl_end,
+                "endTime": clo_start,
+                "submitAllowed": "True",
+                "tradingPhase": "TAL",
+                "standardTradingPhase": "TAL",
+            },
+            {
+                "beginTime": clo_start,
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                "submitAllowed": "True",
+                "tradingPhase": "CLO",
+                "standardTradingPhase": "CLO",
+            }
+        ]
+
+    @staticmethod
+    def get_timestamps_for_next_phase(phase: TradingPhases):
+        tm = dt.now()
+        if phase == TradingPhases.PreOpen:
+            tm = dt.now()
+            pop_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = pop_start + timedelta(minutes=4)
+            pcl_start = opn_start + timedelta(minutes=5)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.PreClosed:
+            tm = dt.now()
+            pcl_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = pcl_start + timedelta(minutes=4)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.Open:
+            tm = dt.now()
+            opn_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_start = opn_start + timedelta(minutes=4)
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
