@@ -1,7 +1,10 @@
+import datetime
 import math
-from datetime import datetime, time, date, timezone
+from datetime import time, date, timezone, timedelta
+from datetime import datetime as dt
 from math import ceil
 
+from test_framework.data_sets.constants import TradingPhases
 
 class AlgoFormulasManager:
     # region offset calculation
@@ -163,8 +166,8 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
-        day = datetime.weekday(expire_date)
+    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: dt, delta: int) -> int:
+        day = dt.weekday(expire_date)
         shift = delta
         if day == 5:
             shift += 2
@@ -175,8 +178,8 @@ class AlgoFormulasManager:
         return shift
 
     @staticmethod
-    def make_expire_date_friday_if_it_is_on_weekend(expire_date: datetime) -> int:
-        day = datetime.weekday(expire_date)
+    def make_expire_date_friday_if_it_is_on_weekend(expire_date: dt) -> int:
+        day = dt.weekday(expire_date)
         shift = 0
         if day == 5:
             shift += 1
@@ -214,8 +217,79 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
-        return datetime.fromtimestamp(int(datetime_epoch)/1000).time()
+        return dt.fromtimestamp(int(datetime_epoch)/1000).time()
 
     @staticmethod
     def change_time_from_normal_to_epoch(time: time) -> int:
-        return int(datetime.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000
+        return int(dt.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000
+
+    @staticmethod
+    def change_datetime_from_normal_to_epoch(date: dt) -> int:
+        return int(date.replace(tzinfo=timezone.utc).timestamp()) * 1000
+
+    @staticmethod
+    def change_time_from_normal_to_epoch_without_milisec(time: time) -> int:
+        return int(dt.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp())
+
+    @staticmethod
+    def get_timestamps_for_current_phase(phase: TradingPhases):
+        tm = dt.now()
+        if phase == TradingPhases.PreOpen:
+            tm = dt.now()
+            pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = pop_start + timedelta(minutes=4)
+            pcl_start = opn_start - timedelta(minutes=5)
+            pcl_end = pcl_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.PreClosed:
+            tm = dt.now()
+            pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = pcl_start + timedelta(minutes=4)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.Open:
+            tm = dt.now()
+            opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=4)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+
+        return [
+            {
+                "beginTime": pop_start,
+                "endTime": opn_start,
+                "submitAllowed": "True",
+                "tradingPhase": "POP",
+                "standardTradingPhase": "PRE",
+            },
+            {
+                "beginTime": opn_start,
+                "endTime": pcl_start,
+                "submitAllowed": "True",
+                "tradingPhase": "OPN",
+                "standardTradingPhase": "OPN",
+            },
+            {
+                "beginTime": pcl_start,
+                "endTime": pcl_end,
+                "submitAllowed": "True",
+                "tradingPhase": "PCL",
+                "standardTradingPhase": "PCL",
+            },
+            {
+                "beginTime": pcl_end,
+                "endTime": clo_start,
+                "submitAllowed": "True",
+                "tradingPhase": "TAL",
+                "standardTradingPhase": "TAL",
+            },
+            {
+                "beginTime": clo_start,
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                "submitAllowed": "True",
+                "tradingPhase": "CLO",
+                "standardTradingPhase": "CLO",
+            }
+        ]
