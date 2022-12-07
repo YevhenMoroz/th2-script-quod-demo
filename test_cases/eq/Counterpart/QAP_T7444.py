@@ -65,21 +65,35 @@ class QAP_T7444(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields = ['Account', 'PartyRoleQualifier', "PtysSubGrp"]
+        list_of_ignored_fields = ['Account', 'PartyRoleQualifier', 'ReplyReceivedTime']
         party_stub_dict = {'PartyRole': "*",
                            'PartyID': "*",
                            'PartyIDSource': "*"}
         parties = {
             'NoPartyIDs': [
+                {'PartyRole': "67",
+                 'PartyID': "InvestmentFirm - ClCounterpart_3",
+                 'PartyIDSource': "C"},
+                 party_stub_dict,
                 party_stub_dict,
                 party_stub_dict,
-                party_stub_dict,
-                party_stub_dict,
-                party_stub_dict,
+                party_stub_dict
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
+        parties = {
+            'NoPartyIDs': [
+                {'PartyRole': "67",
+                 'PtysSubGrp': '*',
+                 'PartyID': "InvestmentFirm - ClCounterpart_3",
+                 'PartyIDSource': "C"},
+                party_stub_dict,
+                party_stub_dict,
+                party_stub_dict,
+                party_stub_dict
+            ]
+        }
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": parties,
@@ -91,6 +105,7 @@ class QAP_T7444(TestCase):
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
+        time.sleep(6)
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
         self.fix_verifier.check_fix_message_fix_standard(exec_report2,ignored_fields=list_of_ignored_fields)
         # endregion
@@ -101,6 +116,19 @@ class QAP_T7444(TestCase):
             party_stub_dict,
             party_stub_dict,
             party_stub_dict]
+        no_party_alloc = [
+            party_stub_dict,
+            party_stub_dict,
+            party_stub_dict,
+            {'PartyRole': "*",
+             'NoPartySubIDs': "*",
+            'PartyID': "*",
+            'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'NoPartySubIDs': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"}
+        ]
         alloc_grp = {'NoAllocs': [{'IndividualAllocID': "*",
                                    'AllocNetPrice': self.price,
                                    'AllocPrice': self.price,
@@ -108,7 +136,7 @@ class QAP_T7444(TestCase):
                                    'AllocQty': "100"}]}
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_preliminary(
             self.fix_message).change_parameters(
-            {"NoParty": no_party, "Account": self.client, "tag5120": "*", 'NoAllocs': alloc_grp})
+            {"NoParty": no_party_alloc, "Account": self.client, "tag5120": "*", 'NoAllocs': alloc_grp})
         # endregion
         # region Check Book & Allocation
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report,ignored_fields=list_of_ignored_fields)
