@@ -87,6 +87,8 @@ class QAP_T9156(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -141,7 +143,7 @@ class QAP_T9156(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_POV_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check first child DMA order based on LTQ
+        # region Check first child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
@@ -153,6 +155,11 @@ class QAP_T9156(TestCase):
 
         er_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        # endregion
+
+        # region Check that is only one child DMA order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that is only one child DMA order", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [None], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(15)
