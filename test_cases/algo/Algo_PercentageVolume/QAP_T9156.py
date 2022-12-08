@@ -40,7 +40,7 @@ class QAP_T9156(TestCase):
         self.md_entry_px_incr_r = 0
         self.md_entry_size_incr_r = 0
         self.price_bid_1 = 22.005
-        self.price_bid_2 = 21.8
+        self.price_bid_2 = 20
         self.qty_bid = 1000
         self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r, self.qty)
 
@@ -48,7 +48,7 @@ class QAP_T9156(TestCase):
             {'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': '6',
              'StrategyParameterValue': '0.1'},
             {'StrategyParameterName': 'AnticipativePostingOffset', 'StrategyParameterType': '1',
-             'StrategyParameterValue': '50'}
+             'StrategyParameterValue': '60'}
         ]
         # endregion
 
