@@ -76,6 +76,13 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_rep_fill_sell(order_cancel_replace)
             else:
                 raise Exception(f'Incorrect Status')
+        elif side is GatewaySide.RBSell:
+            if status is Status.CancelReplace:
+                self.__set_cancel_replace_rb_sell(order_cancel_replace)
+            elif status is Status.Cancel:
+                self.__set_cancel_rep_rb_sell(order_cancel_replace)
+            else:
+                raise Exception(f'Incorrect Status')
         return self
 
     def set_params_from_new_order_single_for_DMA(self, new_order_single: FixMessageNewOrderSingle, status: Status):
@@ -790,6 +797,43 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def __set_cancel_replace_rb_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if order_cancel_replace.get_parameter('OrdType') == '2':
+            temp.update(Price = order_cancel_replace.get_parameter("Price"))
+        temp.update(
+            Account=order_cancel_replace.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            CumQty='*',
+            Currency=order_cancel_replace.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=order_cancel_replace.get_parameter('HandlInst'),
+            LastPx='*',
+            LastQty='*',
+            OrderID='*',
+            OrderQty=order_cancel_replace.get_parameter('OrderQty'),
+            OrdStatus=0,
+            OrdType=order_cancel_replace.get_parameter('OrdType'),
+            OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            Price=order_cancel_replace.get_parameter('Price'),
+            Side=order_cancel_replace.get_parameter('Side'),
+            TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
+            TransactTime='*',
+            ExecType=5,
+            LeavesQty='*',
+            OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
+            TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
+            QtyType='*',
+            ExecRestatementReason='*',
+            Instrument='*',
+            SettlDate='*',
+            NoParty='*',
+            NoStrategyParameters='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def __set_cancel_replace_dma(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
         temp = dict()
         if order_cancel_replace.get_parameter('OrdType') == '2':
@@ -986,6 +1030,43 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument='*',
             SettlDate='*',
             SettlType='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rep_rb_sell(self, new_order_single: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
+            QtyType='*',
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*'
         )
         super().change_parameters(temp)
         return self
