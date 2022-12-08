@@ -385,8 +385,8 @@ class RestApiAlgoManager(RestApiManager):
 
 
         for index, phase in enumerate(trading_phase_profile["tradingPhaseSequence"]):
-            trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch(phase['beginTime']))
-            trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch(phase['endTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['beginTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['endTime']))
             trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
 
         modifyTradingPhaseProfile = RestApiAlgoPolicyMessages().modify_trading_phase_profile(parameters=trading_phase_profile)
