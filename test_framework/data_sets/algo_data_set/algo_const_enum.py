@@ -487,3 +487,7 @@ class AlgoPreFilter(Enum):
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
     }
+
+class AlgoTradingPhaseProfile(Enum):
+    trading_phase_profile1 = "PreClose Auction Phase (QA)"
+    trading_phase_profile2 = "Auction Phase QA2"
