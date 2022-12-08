@@ -45,6 +45,8 @@ class QAP_T9156(TestCase):
         self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.volume, self.md_entry_size_incr_r, self.qty)
 
         self.no_strategy = [
+            {'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': '6',
+             'StrategyParameterValue': '0.1'},
             {'StrategyParameterName': 'AnticipativePostingOffset', 'StrategyParameterType': '1',
              'StrategyParameterValue': '50'}
         ]
@@ -104,6 +106,10 @@ class QAP_T9156(TestCase):
         market_data_snap_shot_qdl1.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid, MDEntryPositionNo=2)])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
+        market_data_snap_shot_qdl6 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=0, MDEntrySize=0)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl6)
+
         time.sleep(3)
 
         # region Send NewOrderSingle (35=D) for POV order
@@ -112,7 +118,7 @@ class QAP_T9156(TestCase):
 
         self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
         self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1, NoStrategyParameters=[dict(dict(PercentageVolume=self.volume))])).add_fields_into_repeating_group('NoStrategyParameters', self.no_strategy)
+        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1)).update_repeating_group('NoStrategyParameters', self.no_strategy)
 
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
 
