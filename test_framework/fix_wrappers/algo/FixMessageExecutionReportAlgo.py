@@ -499,11 +499,16 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010'] and new_order_single.is_parameter_exist('ClientAlgoPolicyID'):
-            temp.update(
-                IClOrdIdAO='*',
-                ShortCode='*'
-            )
+        if new_order_single.is_parameter_exist('IClOrdIdAO'):
+            temp.update(IClOrdIdAO=new_order_single.get_parameter('IClOrdIdAO'))
+        if new_order_single.is_parameter_exist('ShortCode'):
+            temp.update(ShortCode=new_order_single.get_parameter('ShortCode'))
+        if new_order_single.is_parameter_exist('IClOrdIdCO'):
+            temp.update(IClOrdIdCO=new_order_single.get_parameter('IClOrdIdCO'))
+        if new_order_single.is_parameter_exist('IClOrdIdTO'):
+            temp.update(IClOrdIdTO=new_order_single.get_parameter('IClOrdIdTO'))
+        if new_order_single.is_parameter_exist('ExDestination'):
+            temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.get_parameter('TargetStrategy') == '1008':
             if new_order_single.is_parameter_exist('MinQty'):
                 temp.update(
@@ -520,7 +525,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     TradeReportingIndicator='*',
                     ExDestination='*'
                 )
-        if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010', '1004'] and new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
                 SecondaryAlgoPolicyID='*',
                 LastExecutionPolicy='*',
@@ -569,7 +574,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument='*',
             SecondaryExecID='*',
         )
-        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010', '1004']:
             [temp.pop(key, None) for key in ['SecAltIDGrp', 'SecondaryClOrdID']]
         super().change_parameters(temp)
         return self
