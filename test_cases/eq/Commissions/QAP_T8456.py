@@ -280,7 +280,8 @@ class QAP_T8456(TestCase):
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'CumQty', 'LastPx',
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
-                                  'Instrument', 'NoParty','ExDestination', 'GrossTradeAmt','AllocInstructionMiscBlock2']
+                                  'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
+                                  'AllocInstructionMiscBlock2', 'OrderAvgPx']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
