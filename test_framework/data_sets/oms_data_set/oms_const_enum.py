@@ -547,8 +547,11 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                 'PartyID': "EURO_CLEAR",
-                                 'PartyIDSource': "D"}
+                                          'PartyID': "EURO_CLEAR",
+                                          'PartyIDSource': "D"}
+    counterpart_java_api_user = {'PartyRole': '36',
+                                          'PartyID': "JavaApiUser",
+                                          'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):

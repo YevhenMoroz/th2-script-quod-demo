@@ -39,8 +39,8 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"GatingRules" if version is None else f"GatingRules | {version}", parent_id)
+def test_run(parent_id=None, version='5.1.167.180'):
+    report_id = bca.create_event(f"GatingRules Analysis" if version is None else f"GatingRules Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Gating_rules")
     data_set = configuration.data_set
@@ -103,7 +103,7 @@ def test_run(parent_id=None, version=None):
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        logger.info(f"Acceptance list was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+        logger.info(f"GatingRules was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
         Stubs.win_act.unregister(session_id)
         base_main_window.close_fe()
 
