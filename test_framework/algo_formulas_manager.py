@@ -1,5 +1,6 @@
 import datetime
 import math
+from copy import deepcopy
 from datetime import time, date, timezone, timedelta
 from datetime import datetime as dt
 from math import ceil
@@ -215,21 +216,48 @@ class AlgoFormulasManager:
     def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
 
-    @staticmethod
-    def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
-        return dt.fromtimestamp(int(datetime_epoch)/1000).time()
+    # @staticmethod
+    # def change_datetime_from_epoch_to_normal(datetime_epoch) -> datetime:
+    #     return dt.fromtimestamp(int(datetime_epoch)/1000).replace(tzinfo=timezone.utc)
+    #
+    # @staticmethod
+    # def change_time_from_normal_to_epoch(time: datetime) -> int:
+    #     return int(time.replace(tzinfo=timezone.utc).timestamp()) * 1000
+    #
+    # @staticmethod
+    # def change_datetime_from_normal_to_epoch(date: dt) -> int:
+    #     return int(date.replace(tzinfo=timezone.utc).timestamp()) * 1000
+    #
+    # @staticmethod
+    # def change_time_from_normal_to_epoch_without_milisec(time: datetime) -> int:
+    #     return int(time.replace(tzinfo=timezone.utc).timestamp())
 
     @staticmethod
-    def change_time_from_normal_to_epoch(time: time) -> int:
-        return int(dt.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000
+    def change_datetime_local_to_UTC(local_date: dt):
+        copy_local_date = deepcopy(local_date)
+        return copy_local_date.replace(tzinfo=datetime.timezone.utc)
 
     @staticmethod
-    def change_datetime_from_normal_to_epoch(date: dt) -> int:
-        return int(date.replace(tzinfo=timezone.utc).timestamp()) * 1000
+    def change_datetime_UTC_to_local(utc_dt: dt):
+        copy_utc_dt = deepcopy(utc_dt)
+        return copy_utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
 
     @staticmethod
-    def change_time_from_normal_to_epoch_without_milisec(time: time) -> int:
-        return int(dt.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp())
+    def change_datetime_from_epoch_to_normal(datetime_epoch) -> dt:
+        return datetime.datetime.fromtimestamp(int(datetime_epoch))
+
+    @staticmethod
+    def change_datetime_from_epoch_to_normal_with_milisec(datetime_epoch) -> dt:
+        return datetime.datetime.fromtimestamp(int(datetime_epoch)/1000)
+
+
+    @staticmethod
+    def change_datetime_from_normal_to_epoch(datetime: dt) -> int:
+        return int(AlgoFormulasManager.change_datetime_local_to_UTC(datetime).timestamp())
+
+    @staticmethod
+    def change_datetime_from_normal_to_epoch_with_milisecs(datetime: dt) -> int:
+        return int(datetime.timestamp()) * 1000
 
     @staticmethod
     def get_timestamps_for_current_phase(phase: TradingPhases):
