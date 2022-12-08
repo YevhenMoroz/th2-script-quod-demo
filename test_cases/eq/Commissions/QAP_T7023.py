@@ -292,7 +292,7 @@ class QAP_T7023(TestCase):
                                  'AllocQty','ConfirmType','ConfirmID',
                                  'AllocID','NetMoney','MatchStatus',
                                  'ConfirmStatus','AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp','ReportedPx']
+                                 'CpctyConfGrp','ReportedPx', 'OrderAvgPx']
         params = {'ConfirmTransType': "0",
                   'AllocAccount': self.client_acc1,
                   'NoOrders': [{
