@@ -574,7 +574,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument='*',
             SecondaryExecID='*',
         )
-        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010', '1004']:
             [temp.pop(key, None) for key in ['SecAltIDGrp', 'SecondaryClOrdID']]
         super().change_parameters(temp)
         return self
