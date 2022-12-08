@@ -18,7 +18,7 @@ from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
-class QAP_T9156(TestCase):
+class QAP_T9157(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -48,7 +48,7 @@ class QAP_T9156(TestCase):
             {'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': '6',
              'StrategyParameterValue': '0.1'},
             {'StrategyParameterName': 'AnticipativePostingOffset', 'StrategyParameterType': '1',
-             'StrategyParameterValue': '60'}
+             'StrategyParameterValue': '0'}
         ]
         # endregion
 
@@ -87,8 +87,6 @@ class QAP_T9156(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
-
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -96,8 +94,9 @@ class QAP_T9156(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price_bid_1)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price_bid_2)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, True)
-        self.rule_list = [nos_1_rule, ocr_rule]
+        self.rule_list = [nos_1_rule, nos_2_rule, ocr_rule]
         # endregion
 
         # region Send_MarkerData
@@ -157,12 +156,19 @@ class QAP_T9156(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        # region Check that is only one child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check that is only one child DMA order", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [None], self.FromQuod, pre_filter=self.pre_filter)
+        # region Check second child DMA order
+        self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price_bid_2, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
+
+        er_pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(er_pending_dma_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
+
+        er_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
 
-        time.sleep(15)
+        time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -177,6 +183,11 @@ class QAP_T9156(TestCase):
         # region check cancel second dma child order
         cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        # endregion
+
+        # region check cancel second dma child order
+        cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
         # endregion
 
         cancel_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)

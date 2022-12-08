@@ -87,8 +87,6 @@ class QAP_T9156(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
-
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])

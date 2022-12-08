@@ -367,3 +367,12 @@ class FreeNotesReject(Enum):
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
+
+class TradingPhases(Enum):
+    Auction = "AUC"
+    Closed = "CLO"
+    Open = "OPN"
+    PreClosed = "PCL"
+    PreOpen = "POP"
+    Expiry = "EXA"
+    AtLast = "TAL"

@@ -827,6 +827,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'AlgoCst02': 'KEPLER07',
             'AlgoCst03': 'KEPLER10',
             'ExDestination': 'QDL1',
+            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
