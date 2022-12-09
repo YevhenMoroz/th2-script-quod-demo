@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -276,7 +277,7 @@ class QAP_T7023(TestCase):
                 self.java_api_manager.compare_values(
                     {JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_STA.value},
                     commission,
-                    'Check that fee isn`t Stamp')
+                    'Check that fee isn`t Stamp', VerificationMethod.NOT_CONTAINS)
         # endregion
         time.sleep(10)
 
@@ -291,7 +292,7 @@ class QAP_T7023(TestCase):
                                  'AllocQty', 'ConfirmType', 'ConfirmID',
                                  'AllocID', 'NetMoney', 'MatchStatus',
                                  'ConfirmStatus', 'AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp', 'ReportedPx']
+                                 'CpctyConfGrp', 'ReportedPx','OrderAvgPx']
         params = {'ConfirmTransType': "0",
                   'AllocAccount': self.client_acc1,
                   'NoOrders': [{
@@ -299,7 +300,7 @@ class QAP_T7023(TestCase):
                       'OrderID': '*'
                   }],
                   'NoMiscFees': [
-                      {'MiscFeeAmt': float(perc_fee_amount) / 2,
+                      {'MiscFeeAmt': int(int(perc_fee_amount) / 2),
                        'MiscFeeCurr': '*',
                        'MiscFeeType': '10'}]
                   }
@@ -312,7 +313,7 @@ class QAP_T7023(TestCase):
         # region step 7 - Verify that 35 = AK of second account doesn`t have Stamp fees
         fix_confirmation_report.change_parameters({'AllocAccount': self.client_acc2,
                                                    'NoMiscFees': [
-                                                       {'MiscFeeAmt': float(perc_fee_amount) / 2,
+                                                       {'MiscFeeAmt': int(int(perc_fee_amount) / 2),
                                                         'MiscFeeCurr': '*',
                                                         'MiscFeeType': '10'},
                                                        {'MiscFeeAmt': float(basis_fee_amount) / 2,
@@ -369,3 +370,7 @@ class QAP_T7023(TestCase):
             for j in parameter.keys():
                 if self.response[i].get_parameters()[j] == parameter[j]:
                     return self.response[i].get_parameters()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
