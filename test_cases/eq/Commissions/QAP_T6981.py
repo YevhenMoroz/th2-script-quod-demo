@@ -156,8 +156,7 @@ class QAP_T6981(TestCase):
             JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_TRA.value
         }
         self.java_api_manager.compare_values(expected_result, actually_result,
-                                             'Check that Fee is PerTransac for execution from step 2',
-                                             VerificationMethod.CONTAINS)
+                                             'Check that Fee is PerTransac for execution from step 2')
 
         # subregion complete CO order step 2
         self.complete_message.set_default_complete(order_id)
@@ -315,7 +314,7 @@ class QAP_T6981(TestCase):
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty', 'CumQty', 'LastPx',
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
                                   'ExecBroker', 'Price', 'VenueType', 'Instrument',
-                                  'ExDestination', 'GrossTradeAmt', 'CommissionData']
+                                  'ExDestination', 'GrossTradeAmt', 'CommissionData','OrderAvgPx']
 
         self.fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_order_id,
                                                      'NoMiscFees': no_misc_fee})
@@ -367,4 +366,5 @@ class QAP_T6981(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
+        self.manage_security_block.set_fee_exemption(False, False, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)
