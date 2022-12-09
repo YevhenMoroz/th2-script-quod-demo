@@ -54,7 +54,7 @@ class QAP_T7485(TestCase):
         price = '10'
         client = self.data_set.get_client_by_name('client_pt_1')
         account = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        new_price = '11'
+        new_price = '11.0'
         no_allocs: typing.Dict[str, list] = {'NoAllocs': [
             {
                 'AllocAccount': self.data_set.get_account_by_name('client_pt_1_acc_1'),
@@ -71,13 +71,13 @@ class QAP_T7485(TestCase):
         rule_manager = RuleManager(Simulators.equity)
         trade_rule = None
         new_order_single_rule = None
-        cl_ord_id = self.fix_message.get_parameter('ClOrdID')
         # endregion
         # region create order
         try:
             new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, account_ven, exec_destination, float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side, account_ven,
+            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                       account_ven,
                                                                                        exec_destination, float(price),
                                                                                        int(qty), 0)
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
@@ -99,7 +99,7 @@ class QAP_T7485(TestCase):
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         expected_result = ({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
-                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value})
+                            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value})
         actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
                            JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
         self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking')
@@ -110,7 +110,6 @@ class QAP_T7485(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.approve)
         expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
                                 JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value})
-        expected_result.pop(JavaApiFields.PostTradeStatus.value)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
@@ -137,5 +136,18 @@ class QAP_T7485(TestCase):
                                              f'Check statuses of confirmation of {account}')
         # endregion
         # region amend allocate
-
+        conf_id = confirm_report['ConfirmationID']
+        self.confirm.set_default_amend_allocation(conf_id, alloc_id, new_price, qty)
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        confirm_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        expected_result_confirmation = {
+            "ConfirmTransType": "REP",
+            JavaApiFields.AvgPx.value: new_price}
+        actually_result = {
+            "ConfirmTransType": confirm_report["ConfirmTransType"],
+            JavaApiFields.AvgPx.value: confirm_report[JavaApiFields.AvgPx.value]}
+        self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
+                                             f'Check statuses of modified confirmation of {account}')
         # endregion
