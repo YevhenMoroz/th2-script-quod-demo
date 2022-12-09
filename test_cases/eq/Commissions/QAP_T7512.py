@@ -123,7 +123,7 @@ class QAP_T7512(TestCase):
 
         # region check alloc report
         ignored_fields = ['Account', 'RootCommTypeClCommBasis', 'tag5120', 'RootOrClientCommission',
-                          'RootOrClientCommissionCurrency', 'RootSettlCurrAmt']
+                          'RootOrClientCommissionCurrency', 'RootSettlCurrAmt','OrderAvgPx']
         self.fix_alloc_report.set_default_ready_to_book(self.fix_message)
         self.fix_alloc_report.change_parameters({"NoRootMiscFeesList": {'NoRootMiscFeesList': [
             {'RootMiscFeeBasis': '2', 'RootMiscFeeType': '4', 'RootMiscFeeRate': '5', 'RootMiscFeeAmt': '1',
