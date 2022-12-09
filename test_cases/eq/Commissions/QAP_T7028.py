@@ -3,7 +3,6 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -180,7 +179,7 @@ class QAP_T7028(TestCase):
              'RootMiscFeeAmt': stamp_amount}]}
         ignored_list = ["AvgPx", "Currency", 'tag5120', 'RootSettlCurrAmt', 'RootOrClientCommission',
                         'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', "AllocInstructionMiscBlock1",
-                        'RootSettlCurrAmt', 'SettlType', 'Account']
+                        'RootSettlCurrAmt', 'SettlType', 'Account','OrderAvgPx']
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'NoRootMiscFeesList': no_misc_list})
@@ -197,3 +196,7 @@ class QAP_T7028(TestCase):
             for j in parameter.keys():
                 if self.response[i].get_parameters()[j] == parameter[j]:
                     return self.response[i].get_parameters()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_fees()
