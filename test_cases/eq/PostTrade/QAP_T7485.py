@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 import typing
 from pathlib import Path
 
@@ -10,10 +9,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
-    FixMessageAllocationInstructionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
@@ -22,9 +17,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS i
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -37,10 +29,8 @@ class QAP_T7485(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.all_instr = AllocationInstructionOMS(self.data_set)
@@ -88,7 +78,6 @@ class QAP_T7485(TestCase):
             rule_manager.remove_rule(trade_rule)
             rule_manager.remove_rule(new_order_single_rule)
         # endregion
-
         # region book order
         self.all_instr.set_default_book(order_id)
         self.all_instr.update_fields_in_component("AllocationInstructionBlock",
@@ -104,7 +93,6 @@ class QAP_T7485(TestCase):
                            JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
         self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking')
         # endregion
-
         # region approve block
         self.approve.set_default_approve(alloc_id)
         self.java_api_manager.send_message_and_receive_response(self.approve)
