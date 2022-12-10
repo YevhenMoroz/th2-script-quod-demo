@@ -1,5 +1,4 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -15,10 +14,6 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
     ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses, \
-    MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -68,25 +63,35 @@ class QAP_T7176(TestCase):
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
-            time.sleep(2)
             self.rule_manager.remove_rule(trade_rule)
-        # endregion
+            # endregion
 
             # region book order
             self.all_instr.set_default_book(order_id)
             self.all_instr.update_fields_in_component("AllocationInstructionBlock",
                                                       {"InstrID": self.data_set.get_instrument_id_by_name(
-                                                          "instrument_2")})
+                                                          "instrument_2"), "Side": "Sell", "ClientCommissionList": {
+                                                          "ClientCommissionBlock": [{"CommissionAmountType": "Broker",
+                                                                                     "CommissionAmount": "1",
+                                                                                     "CommissionBasis": "Absolute",
+                                                                                     "CommissionCurrency": "EUR",
+                                                                                     "CommissionRate": "1"}]}})
             self.java_api_manager.send_message_and_receive_response(self.all_instr)
             allocation_report = \
                 self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                     JavaApiFields.AllocationReportBlock.value]
             alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
-            expected_result = ({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
-                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value})
+            expected_result = {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+                               JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value}
             actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
                                JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
             self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking')
+            expected_comm = {"ClientCommissionCurrency": "EUR",
+                             "ClientCommission": "1.0",
+                             "ClientCommissionBasis": "ABS"
+                             }
+            self.java_api_manager.compare_values(expected_comm, allocation_report["ClientCommissionDataBlock"],
+                                                 'Check booking commission')
             # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
