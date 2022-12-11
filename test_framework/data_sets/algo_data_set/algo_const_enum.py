@@ -220,7 +220,7 @@ class AlgoFixInstruments(Enum):
 
     instrument_28 = dict(
         Symbol='NEX',
-        SecurityID='FR0000044448,',
+        SecurityID='FR0000044448',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
