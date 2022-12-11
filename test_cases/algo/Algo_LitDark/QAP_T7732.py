@@ -63,7 +63,6 @@ class QAP_T7732(TestCase):
         # endregion
 
         # region venue param
-        # self.s_lit = "1115"
         self.s_lit = self.data_set.get_listing_id_by_name("listing_qdl_2")
         self.ex_destination_lit = self.data_set.get_mic_by_name("mic_10")
         self.account_lit = self.data_set.get_account_by_name("account_16")
