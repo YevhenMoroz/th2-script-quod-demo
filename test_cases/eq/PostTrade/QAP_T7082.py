@@ -77,9 +77,6 @@ class QAP_T7082(TestCase):
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         self.all_instr.set_default_book(order_id)
-        # self.all_instr.update_fields_in_component("AllocationInstructionBlock",
-        #                                           {"InstrID": self.data_set.get_instrument_id_by_name(
-        #                                               "instrument_2")})
         self.java_api_manager.send_message_and_receive_response(self.all_instr)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
