@@ -4,6 +4,8 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8792 import QAP_T8792
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8793 import QAP_T8793
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8795 import QAP_T8795
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8796 import QAP_T8796
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T9056 import QAP_T9056
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8749 import QAP_T8749
@@ -27,6 +29,8 @@ def test_run(parent_id=None, version=None):
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8792(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8793(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8795(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8796(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9056(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8845(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
