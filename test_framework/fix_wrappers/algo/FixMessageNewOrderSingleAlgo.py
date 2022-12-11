@@ -1316,6 +1316,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_LitDark_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'InternalQuodQa_SORPING',
+            'NoStrategyParameters': [
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_DMA_child_of_Iceberg_Kepler(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
