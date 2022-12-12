@@ -89,8 +89,8 @@ class QAP_T7363(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         print_message("TRADE", responses)
         execution_report_message = self.java_api_manager.get_last_message(
-            ORSMessageType.ExecutionReport.value
-        ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+            ORSMessageType.OrdReply.value
+        ).get_parameters()[JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
