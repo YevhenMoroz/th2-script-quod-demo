@@ -48,6 +48,8 @@ class AllocationReportConst(Enum):
     AllocReportType_ACC = 'ACC'
     ConfirmationService_EXT = 'EXT'
     ConfirmationService_MAN = 'MAN'
+    SettlCurrFxRateCalc_Multiply = 'Multiply'
+    SettlCurrFxRateCalc_Devide = 'Devide'
 
 
 class AllocationInstructionConst(Enum):
@@ -73,6 +75,8 @@ class AllocationInstructionConst(Enum):
     RootMiscFeeCategory_OTH = 'OTH'
     BookingType_CFD = 'CFD'
     NetGrossInd_N = 'N'
+    SettlCurrFxRateCalc_M = 'M'
+    SettlCurrFxRateCalc_D = 'D'
 
 
 class ConfirmationReportConst(Enum):
@@ -218,6 +222,9 @@ class JavaApiFields(Enum):
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
+    SettlCurrency = 'SettlCurrency'
+    SettlCurrFxRate = 'SettlCurrFxRate'
+    SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
 
 
 class JavaApiPartyRoleConstants(Enum):
