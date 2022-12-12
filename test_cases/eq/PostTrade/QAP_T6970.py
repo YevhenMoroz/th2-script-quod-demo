@@ -9,7 +9,7 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
-    AllocationInstructionConst
+    AllocationInstructionConst, OrderReplyConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
@@ -92,15 +92,19 @@ class QAP_T6970(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         print_message("TRADE", responses)
         execution_report_message = self.java_api_manager.get_last_message(
-            ORSMessageType.ExecutionReport.value
+            ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value
         ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values(
-            {
-                JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
-                JavaApiFields.PostTradeStatus.value: "RDY",
-            },
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value, },
             execution_report_message,
-            "Comparing Statuses after Execute DMA (part of precondition)",
+            "Comparing ExecSts after Execute DMA (part of precondition)",
+            )
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value, },
+            order_reply,
+            "Comparing PostTradeStatus after Execute DMA (part of precondition)",
         )
         exec_id = execution_report_message[JavaApiFields.ExecID.value]
         # end of part
@@ -122,8 +126,8 @@ class QAP_T6970(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Book order", responses)
         allocation_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
-            JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(settl_dict, allocation_report,
                                              'Check expected and actually results from step 2')
@@ -132,7 +136,7 @@ class QAP_T6970(TestCase):
         # region step 3 (Amend Block)
         self.allocation_instruction.set_amend_book(alloc_id, exec_id, self.qty, self.price)
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        print_message("Book order", responses)
+        print_message("Amend order", responses)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
@@ -143,7 +147,7 @@ class QAP_T6970(TestCase):
         # region step 4 and step 5 (approve block)
         # part 1 - Approve block
         self.approve_request.set_default_approve(alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve_request)
         print_message("Approve block", responses)
         # end of part
 
