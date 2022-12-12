@@ -52,7 +52,7 @@ class QAP_T7510(TestCase):
         qty = '300'
         price = '10'
         client = self.data_set.get_client("client_pt_2")  # MOClient2
-        alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        alloc_account = self.data_set.get_account_by_name('client_pt_2_acc_1')
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_1")
         # endregion
 
