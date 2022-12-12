@@ -187,6 +187,7 @@ class QAP_T2481(TestCase):
             }
         ]
         # endregion
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -213,7 +214,7 @@ class QAP_T2481(TestCase):
                                                            Currency=self.currency_gbp,
                                                            Instrument=self.instrument)
         self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
-        self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.response = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
         self.quote.set_params_for_quote(self.quote_request)
         self.sleep(3)
         # endregion
@@ -265,7 +266,7 @@ class QAP_T2481(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")

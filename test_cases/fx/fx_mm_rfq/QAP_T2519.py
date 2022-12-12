@@ -30,6 +30,7 @@ class QAP_T2519(TestCase):
         self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         self.instr_eur_jpy = {"Symbol": self.eur_jpy,
                            "SecurityType": self.security_type_swap}
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -40,7 +41,7 @@ class QAP_T2519(TestCase):
                                                            Instrument=self.instr_eur_jpy)
         self.quote_request.update_near_leg(leg_qty=self.qty_300m, leg_symbol=self.eur_jpy)
         self.quote_request.update_far_leg(leg_qty=self.qty_300m, leg_symbol=self.eur_jpy)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote,
                                             key_parameters=["QuoteReqID"])
@@ -48,5 +49,5 @@ class QAP_T2519(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)

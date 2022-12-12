@@ -47,12 +47,12 @@ class QAP_T2978(TestCase):
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                            OrderQty=self.qty, Account=self.account,
                                                            Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request)
+        response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request)
         self.quote.set_params_for_quote(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
         # region Step 2
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager_sel.send_message(self.quote_cancel)
         # endregion
         # region Step 3

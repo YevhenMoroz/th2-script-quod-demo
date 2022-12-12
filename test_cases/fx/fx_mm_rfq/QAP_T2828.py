@@ -184,6 +184,7 @@ class QAP_T2828(TestCase):
                 "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
             },
         ]
+        self.response = None
 
         # offer_spot_rate = '1.1986'
         # bid_spot_rate = '1.19498'
@@ -231,7 +232,7 @@ class QAP_T2828(TestCase):
                                                            Account=self.acc_argentina)
         self.quote_request.update_near_leg(leg_side=self.buy_side)
         self.quote_request.update_far_leg(leg_qty=self.qty_3m, leg_side=self.sell_side)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
 
         # region Step 2
@@ -243,5 +244,5 @@ class QAP_T2828(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager_sel.send_message(self.quote_cancel)

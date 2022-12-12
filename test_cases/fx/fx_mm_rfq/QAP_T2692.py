@@ -22,6 +22,7 @@ class QAP_T2692(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_cancel = FixMessageQuoteCancelFX()
+        self.quote = FixMessageQuoteFX()
 
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
@@ -34,6 +35,7 @@ class QAP_T2692(TestCase):
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.client_tier_argentina = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
         self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -53,14 +55,14 @@ class QAP_T2692(TestCase):
         # region Step 3
         self.quote_request.set_swap_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
                                                                                  Account=self.client_argentina)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        quote = FixMessageQuoteFX().set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=quote)
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)
         self.rest_massage.modify_client_tier_instrument(). \
             update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'true', {'tenor': 'SPO'})
