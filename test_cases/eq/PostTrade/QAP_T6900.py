@@ -55,12 +55,12 @@ class QAP_T6900(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region update Institution via RestApi(Precondition)
-        rest_api_message = RestApiModifyInstitutionMessage(self.data_set)
-        rest_api_message.set_default_param()
-        rest_api_message.modify_enable_unknown_accounts(True)
-        self.rest_api_manager.send_post_request(rest_api_message)
-        # endregion
+        # # region update Institution via RestApi(Precondition)
+        # rest_api_message = RestApiModifyInstitutionMessage(self.data_set)
+        # rest_api_message.set_default_param()
+        # rest_api_message.modify_enable_unknown_accounts(True)
+        # self.rest_api_manager.send_post_request(rest_api_message)
+        # # endregion
 
         # region create  DMA order via fix and trade it (step 1 and step 2)
         self.fix_message.set_default_dma_limit()

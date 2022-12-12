@@ -32,7 +32,7 @@ class QAP_T7532(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
@@ -46,7 +46,8 @@ class QAP_T7532(TestCase):
         # region Declaration
         qty = '200'
         price = '10'
-        client = self.data_set.get_client_by_name('client_pt_8')
+        client = self.data_set.get_client_by_name('client_pt_4')
+        client_acc1 = self.data_set.get_account_by_name("client_pt_4_acc_1")
         exec_destination = self.data_set.get_mic_by_name('mic_1')
         # endregion
 
@@ -56,7 +57,9 @@ class QAP_T7532(TestCase):
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'AccountGroupID': client,
             'OrdQty': qty,
-            'Price': price})
+            'Price': price,
+            'PreTradeAllocationBlock': {"PreTradeAllocationList": {"PreTradeAllocAccountBlock":[{'AllocAccountID': client_acc1, 'AllocQty': qty}]}},
+        })
         responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
         print_message('Create DMA  order', responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
