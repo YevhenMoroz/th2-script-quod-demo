@@ -39,7 +39,6 @@ class QAP_T7510(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
-        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.order_submit = OrderSubmitOMS(data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.execution_report = ExecutionReportOMS(self.data_set)
