@@ -186,6 +186,7 @@ class QAP_T9274(TestCase):
 
         # region check eliminate parent algo order
         er_eliminate_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_eliminate)
+        er_eliminate_SORPING_order_params.add_tag(dict(LastMkt='*', Text='no pool available for best execution'))
         self.fix_verifier_sell.check_fix_message(er_eliminate_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
 
