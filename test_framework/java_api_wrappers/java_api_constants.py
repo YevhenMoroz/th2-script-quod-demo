@@ -6,6 +6,7 @@ class ExecutionReportConst(Enum):
     TransExecStatus_PFL = 'PFL'
     ExecType_TRD = 'TRD'
     ExecType_CAL = 'CAL'
+    ExecType_CAN = 'CAN'
 
 
 class BasketMessagesConst(Enum):
