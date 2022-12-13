@@ -114,6 +114,7 @@ class QAP_T9274(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
+        time.sleep(1)
         # endregion
 
         # region Check Sell side
