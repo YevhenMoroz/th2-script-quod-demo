@@ -71,6 +71,7 @@ class QAP_T9274(TestCase):
         # endregion
 
         # region Key parameters
+        self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
@@ -116,7 +117,7 @@ class QAP_T9274(TestCase):
         # endregion
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.SORPING_order, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(er_pending_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
@@ -180,12 +181,14 @@ class QAP_T9274(TestCase):
         self.fix_verifier_buy.check_fix_message_sequence([er_eliminate_dma_1_qdl1_order_params, er_eliminate_dma_2_qdl1_order_params, er_eliminate_dma_3_qdl1_order_params, er_eliminate_dma_1_qdl2_order_params, er_eliminate_dma_2_qdl2_order_params, er_eliminate_dma_3_qdl2_order_params], [None, None, None, None, None, None], self.ToQuod, pre_filter=None)
         # endregion
 
+        time.sleep(3)
+
         # region check eliminate parent algo order
         er_eliminate_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(er_eliminate_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
         # endregion
 
-        time.sleep(20)
+        time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
