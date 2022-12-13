@@ -316,6 +316,7 @@ class AlgoMic(Enum):
     mic_34 = "XFRA"   # FRANKFURT
     mic_35 = "XBRU"   # Euronext Brussels
     mic_36 = "QDL3"   # QUODLIT3
+    mic_37 = "TQEL"   # TQEULIS
 
 
 class AlgoListingId(Enum):
