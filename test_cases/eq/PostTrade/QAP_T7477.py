@@ -192,7 +192,7 @@ class QAP_T7477(TestCase):
             'Check expected and actually results (part of step 7)')
         # endregion
 
-        # region step 8 Check ALS logs Status Canceled
+        # region step 8 Check ALS logs Status "Replace"
         als_message.update({"ConfirmStatus": "Replace"})
         self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
                                                       timeout=60000)
