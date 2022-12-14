@@ -1,7 +1,9 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_POV import QAP_T4287, QAP_T4288, QAP_T4289
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4287 import QAP_T4287
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4288 import QAP_T4288
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4289 import QAP_T4289
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -18,9 +20,9 @@ def test_run(parent_id=None, version=None):
         # region Iceberg: Route/Venue
         configuration = ComponentConfigurationAlgo("POV_Scaling")
 
-        # QAP_T4287.execute(report_id)
-        # QAP_T4288.execute(report_id)
-        # QAP_T4289.execute(report_id)
+        QAP_T4287(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4288(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4289(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
