@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -169,21 +170,25 @@ class QAP_T7481(TestCase):
         list_of_account = [self.alloc_account_1, self.alloc_account_2]
         for account in list_of_account:
             self.confirmation_request.set_default_allocation(alloc_id)
-            self.confirmation_request.update_fields_in_component('ConfirmationBlock', {"AllocQty": str(float(self.qty)/2),
-                                                                                       "Side": "B",
-                                                                                       "AvgPx": self.price,
-                                                                                       "AllocAccountID": account})
+            self.confirmation_request.update_fields_in_component('ConfirmationBlock',
+                                                                 {"AllocQty": str(float(self.qty) / 2),
+                                                                  "Side": "B",
+                                                                  "AvgPx": self.price,
+                                                                  "AllocAccountID": account})
             self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         # endregion
 
         # region step 6 Check ALS logs Status New
         als_message = AlsMessages.execution_report.value
         trade_date = datetime.now().strftime('%Y-%m-%d')
-        als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": "100", 'TradeDate':trade_date})
-        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=50000)
+        als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": "100",
+                            'TradeDate': trade_date})
+        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
+                                                      timeout=50000)
         # endregion
 
         # region step 7 (unallocate block)
+        time.sleep(3)
         self.unallocate_request.set_default(alloc_id)
         self.java_api_manager.send_message_and_receive_response(self.unallocate_request)
         allocation_report = \
@@ -195,12 +200,14 @@ class QAP_T7481(TestCase):
             allocation_report,
             'Check expected and actually results (part of step 7)')
         self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
-                                            f'Check that {JavaApiFields.AllocSummaryStatus.value} is empty (part of step 7)')
+                                            f'Check that {JavaApiFields.AllocSummaryStatus.value}'
+                                            f' is empty (part of step 7)')
         # endregion
 
         # region step 8 Check ALS logs Status Canceled
         als_message.update({"ConfirmStatus": "Cancel"})
-        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=60000)
+        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
+                                                      timeout=60000)
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

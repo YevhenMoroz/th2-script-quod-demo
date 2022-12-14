@@ -227,6 +227,7 @@ class JavaApiFields(Enum):
     SettlCurrFxRate = 'SettlCurrFxRate'
     SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
     CommissionAmountSubType = 'CommissionAmountSubType'
+    ConfirmationID = 'ConfirmationID'
 
 
 class JavaApiPartyRoleConstants(Enum):
