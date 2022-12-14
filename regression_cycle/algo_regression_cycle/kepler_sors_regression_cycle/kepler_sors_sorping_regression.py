@@ -20,14 +20,12 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4877 import QAP_T4877
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4905 import QAP_T4905
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4906 import QAP_T4906
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4932 import QAP_T4932
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9198 import QAP_T4938
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9198 import QAP_T9198
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4939 import QAP_T4939
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4940 import QAP_T4940
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4941 import QAP_T4941
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4944 import QAP_T4944
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4958 import QAP_T4958
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4963 import QAP_T4963
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4964 import QAP_T4964
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4966 import QAP_T4966
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4967 import QAP_T4967
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4969 import QAP_T4969
@@ -64,7 +62,6 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5073 import QAP_T5073
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5074 import QAP_T5074
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5076 import QAP_T5076
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T5075 import QAP_T5075
-from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8641 import QAP_T8641
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8704 import QAP_T8704
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8706 import QAP_T8706
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T8788 import QAP_T8788
@@ -107,14 +104,11 @@ def test_run(parent_id=None, version=None):
         QAP_T4905(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4906(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4932(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4938(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4939(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4940(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4941(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4944(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4958(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4963(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4964(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4969(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -151,7 +145,6 @@ def test_run(parent_id=None, version=None):
         QAP_T5074(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T8641(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8704(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8706(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8788(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -164,6 +157,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8863(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8878(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8879(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9198(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9274(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
