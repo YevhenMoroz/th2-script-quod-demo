@@ -178,7 +178,8 @@ class QAP_T7481(TestCase):
 
         # region step 6 Check ALS logs Status New
         als_message = AlsMessages.execution_report.value
-        als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": "100"})
+        trade_date = datetime.now().strftime('%Y-%m-%d')
+        als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": "100", 'TradeDate':trade_date})
         self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus"], timeout=50000)
         # endregion
 
