@@ -51,7 +51,6 @@ class QAP_T7007(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
-        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.order_submit = OrderSubmitOMS(data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.execution_report = ExecutionReportOMS(self.data_set)

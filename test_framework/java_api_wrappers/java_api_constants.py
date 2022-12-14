@@ -226,6 +226,7 @@ class JavaApiFields(Enum):
     SettlCurrency = 'SettlCurrency'
     SettlCurrFxRate = 'SettlCurrFxRate'
     SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
+    CommissionAmountSubType = 'CommissionAmountSubType'
 
 
 class JavaApiPartyRoleConstants(Enum):
