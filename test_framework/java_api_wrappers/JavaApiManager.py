@@ -42,6 +42,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
+from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
 
 class JavaApiManager:
@@ -147,7 +148,7 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.UnMatchRequest.value:
-            response = self.act.submitUnmatchAndTransferRequest(
+            response = self.act.submitOrderUnMatchRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(), message.get_parameters(),
                                                              self.get_session_alias()),
@@ -373,6 +374,8 @@ class JavaApiManager:
                 response_fix_message = ForceAllocInstructionStatusBatchReply()
             elif message_type == ORSMessageType.BlockUnallocateBatchReply.value:
                 response_fix_message = BlockUnallocateBatchReply()
+            elif message_type == ORSMessageType.OrderUnMatchReply.value:
+                response_fix_message = UnMatchReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

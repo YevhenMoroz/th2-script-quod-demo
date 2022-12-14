@@ -86,6 +86,7 @@ class ORSMessageType(Enum):
     BlockUnallocateBatchRequest = 'Order_BlockUnallocateBatchRequest'
     ForceAllocInstructionStatusBatchReply = 'Order_ForceAllocInstructionStatusBatchReply'
     BlockUnallocateBatchReply = 'Order_BlockUnallocateBatchReply'
+    OrderUnMatchReply = 'Order_UnMatchReply'
 
 
 class TradingRestApiMessageType(Enum):
