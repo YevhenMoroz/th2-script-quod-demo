@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from pkg_resources import resource_filename
@@ -9,7 +10,6 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
-import xml.etree.ElementTree as ET
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -21,7 +21,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import Con
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
@@ -47,8 +46,6 @@ class QAP_T6950(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.ors_report = self.environment.get_list_read_log_environment()[0].read_log_conn_ors
-        self.read_log_verifier = ReadLogVerifier(self.ors_report, self.test_id)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
