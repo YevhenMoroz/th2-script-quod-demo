@@ -8,17 +8,14 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
-from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.CancelOrderRequest import CancelOrderRequest
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 
 logger = logging.getLogger(__name__)
@@ -139,7 +136,8 @@ class QAP_T7035(TestCase):
 
         # region check expected result from step 3
         expected_result = OrderReplyConst.TransStatus_CXL.value
-        order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
+        order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
         cl_ord_id = order_reply_message[JavaApiFields.ClOrdID.value]
         actually_result = order_reply_message[JavaApiFields.TransStatus.value]
         self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: expected_result},
@@ -155,10 +153,10 @@ class QAP_T7035(TestCase):
                                  'BookID', 'Currency', 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty', 'CumQty',
                                  'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity''QtyType', 'ExecBroker',
                                  'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData', 'Text',
-                                 'AllocQty', 'ConfirmType', 'ConfirmID','Account',
+                                 'AllocQty', 'ConfirmType', 'ConfirmID', 'Account',
                                  'AllocID', 'NetMoney', 'MatchStatus',
                                  'ConfirmStatus', 'AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp', 'ReportedPx']
+                                 'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx']
         self.fix_message_execution_report.change_parameters({
             "ExecType": "B",
             "OrdStatus": "B",
@@ -173,7 +171,8 @@ class QAP_T7035(TestCase):
                                                                  'MiscFeeCurr': self.currency_major,
                                                                  'MiscFeeType': '1'
                                                              }]})
-        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report, ignored_fields=list_of_ignore_fields)
+        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report,
+                                                         ignored_fields=list_of_ignore_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
