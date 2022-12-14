@@ -220,7 +220,7 @@ class AlgoFixInstruments(Enum):
 
     instrument_28 = dict(
         Symbol='NEX',
-        SecurityID='FR0000044448,',
+        SecurityID='FR0000044448',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
@@ -315,6 +315,8 @@ class AlgoMic(Enum):
     mic_33 = "XETR"   # XETRA
     mic_34 = "XFRA"   # FRANKFURT
     mic_35 = "XBRU"   # Euronext Brussels
+    mic_36 = "QDL3"   # QUODLIT3
+    mic_37 = "TQEL"   # TQEULIS
 
 
 class AlgoListingId(Enum):

@@ -38,7 +38,7 @@ class QAP_T4207(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 10000
-        self.delay = 5000
+        self.delay = 10000
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         now = datetime.utcnow()
         self.ExpireDate = (now + timedelta(days=4)).strftime("%Y%m%d")
@@ -134,7 +134,7 @@ class QAP_T4207(TestCase):
 
         er_new_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
 
-        time.sleep(2)
+        time.sleep(12)
 
         er_eliminate_dma_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_order)
         # endregion

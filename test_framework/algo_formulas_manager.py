@@ -31,8 +31,8 @@ class AlgoFormulasManager:
     # endregion
 
     @staticmethod
-    def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.floor(remaining_ord_qty / remaining_waves)
+    def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int, round_lot: int = 1) -> int:
+        return math.floor(remaining_ord_qty / remaining_waves/round_lot) * round_lot
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
@@ -384,3 +384,18 @@ class AlgoFormulasManager:
                 "standardTradingPhase": "CLO",
             }
         ]
+
+    @staticmethod
+    def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
+                                    comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
+        lit_touch = bid_price
+        giveup_cost = cost_per_trade / parent_qty
+        if is_comm_per_unit == False:
+            commission = comm_basis_point / 10000 * lit_touch
+        else:
+            commission = comm_per_unit
+        custom_adjustement = (ask_price - bid_price) * spread_disc_proportion
+        if ord_side == 1:
+            return round((lit_touch + giveup_cost + commission + custom_adjustement), 3)
+        else:
+            return round((lit_touch - giveup_cost - commission - custom_adjustement), 3)
