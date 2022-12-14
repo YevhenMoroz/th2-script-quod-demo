@@ -119,7 +119,6 @@ class QAP_T7476(TestCase):
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
-        alloc_instr_id = allocation_report[JavaApiFields.ClBookingRefID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value},
