@@ -1,5 +1,4 @@
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -14,7 +13,6 @@ from test_cases.eq.PostTrade.QAP_T6970 import QAP_T6970
 from test_cases.eq.PostTrade.QAP_T6972 import QAP_T6972
 from test_cases.eq.PostTrade.QAP_T6983 import QAP_T6983
 from test_cases.eq.PostTrade.QAP_T7007 import QAP_T7007
-from test_cases.eq.PostTrade.QAP_T7034 import QAP_T7034
 from test_cases.eq.PostTrade.QAP_T7062 import QAP_T7062
 from test_cases.eq.PostTrade.QAP_T7080 import QAP_T7080
 from test_cases.eq.PostTrade.QAP_T7082 import QAP_T7082
@@ -41,7 +39,6 @@ from test_cases.eq.PostTrade.QAP_T7282 import QAP_T7282
 from test_cases.eq.PostTrade.QAP_T7297 import QAP_T7297
 from test_cases.eq.PostTrade.QAP_T7305 import QAP_T7305
 from test_cases.eq.PostTrade.QAP_T7306 import QAP_T7306
-from test_cases.eq.PostTrade.QAP_T7359 import QAP_T7359
 from test_cases.eq.PostTrade.QAP_T7360 import QAP_T7360
 from test_cases.eq.PostTrade.QAP_T7362 import QAP_T7362
 from test_cases.eq.PostTrade.QAP_T7363 import QAP_T7363
@@ -260,8 +257,6 @@ def test_run(parent_id=None, version='5.1.167.180'):
         QAP_T7533(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7385(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-            .execute()
-        QAP_T7034(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
         QAP_T7190(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
