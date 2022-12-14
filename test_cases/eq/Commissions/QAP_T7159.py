@@ -1,9 +1,6 @@
 import logging
-import os
 import time
 from pathlib import Path
-
-from pkg_resources import resource_filename
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -17,14 +14,6 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-import xml.etree.ElementTree as ET
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -63,7 +52,7 @@ class QAP_T7159(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
-        new_order_single = trade_rule = order_id = cancel_rule = None
+        new_order_single = trade_rule =  cancel_rule = None
         fee_type = self.data_set.get_misc_fee_type_by_name('regulatory')
         commission_profile = self.data_set.get_comm_profile_by_name('bas_amt')
         fee = self.data_set.get_fee_by_name('fee3')
