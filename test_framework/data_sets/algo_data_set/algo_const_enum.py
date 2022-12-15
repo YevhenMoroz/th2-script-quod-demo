@@ -419,6 +419,8 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
+    key_params_log_319_check_crossing_mid_price_or_not = ['OrderId', 'MidPrice']
+    key_params_log_319_check_market_data_events = ['OrderId', 'Text', 'AdditionalParameter']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -489,6 +491,10 @@ class AlgoPreFilter(Enum):
         },
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
+    }
+
+    pre_filter_order_id = {
+        'OrderId': ('*', "EQUAL")
     }
 
 class AlgoTradingPhaseProfile(Enum):

@@ -333,6 +333,9 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
+    log_319_check_not_crossing_mid_price = "log319-check-not-crossing-mid-price"
+    log_319_check_starting_mid_price_monitoring = "log319-check-starting-mid-price-monitoring"
+    log_319_check_market_event_for_venue = "log319-check-market-event-for-venue"
 
 
 class WebAdminURL(Enum):

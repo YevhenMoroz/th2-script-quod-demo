@@ -15,6 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T9011(TestCase):
@@ -70,7 +72,7 @@ class QAP_T9011(TestCase):
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
 
-        # region venue param
+        # region AdditionalParameter param
         self.ex_destination_quodlit1 = self.data_set.get_mic_by_name("mic_10")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
@@ -84,6 +86,30 @@ class QAP_T9011(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        self.key_params_for_read_log_1 = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_crossing_mid_price_or_not")
+        self.key_params_for_read_log_2 = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_market_data_events")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_not_crossing_mid_price.value
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+
+        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_starting_mid_price_monitoring.value
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+
+        self.log_verifier_by_name_3 = constants.ReadLogVerifiers.log_319_check_market_event_for_venue.value
+        self.read_log_verifier_3 = ReadLogVerifierAlgo(self.log_verifier_by_name_3, report_id)
+        # endregion
+
+        # region Compare message parameters
+        self.venue_qdl1 = 'QUODLIT1'
+        self.venue_qdl2 = 'QUODLIT2'
+        self.text_for_market_event = 'market event for'
+        self.text_for_checking_mid_price = 'checking mid-price after update on'
+        self.text_for_found_new_agregated_best_bid = 'found new aggregated best bid'
+        self.text_for_found_new_agregated_best_ask = 'found new aggregated best ask'
+        self.mid_price_27 = 27
+        self.mid_price_28 = 28
         # endregion
 
         self.rule_list = []
@@ -139,7 +165,17 @@ class QAP_T9011(TestCase):
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+
+        # region Additional params for ReadLog
+        parent_SORPING_order_id = responce[0].get_parameter('ExecID')
+        parent_SORPING_order_id_list = list(parent_SORPING_order_id)
+        parent_SORPING_order_id_list[-1] = 2
+        multilisted_algo_child_order_id = "".join(map(str, parent_SORPING_order_id_list))
+
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_order_id")
+        self.pre_filter['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
+        # endregion
 
         time.sleep(3)
         # endregion
@@ -174,7 +210,7 @@ class QAP_T9011(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data. Send new BestBid", self.test_id))
         market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.new_best_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2_3, MDEntrySize=self.qty_for_md)
+        # market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2_3, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
         # endregion
 
@@ -183,12 +219,54 @@ class QAP_T9011(TestCase):
         # region Update MD
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data. Send new BestAsk", self.test_id))
         market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.new_best_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.new_best_ask, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
+        # market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.new_best_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
         # endregion
 
-        time.sleep(5)
+        # region Check ReadLog
+        time.sleep(70)
+
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
+        compare_message_1.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_27))
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_starting_mid_price_monitoring()
+        compare_message_2.change_parameters(dict(OrderId=multilisted_algo_child_order_id))
+
+        compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_3.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_market_event, AdditionalParameter=self.venue_qdl2))
+
+        compare_message_4 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_4.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_checking_mid_price, AdditionalParameter=self.venue_qdl2))
+
+        compare_message_5 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
+        compare_message_5.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_28))
+
+        compare_message_6 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_6.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_found_new_agregated_best_bid, AdditionalParameter=self.new_best_bid))
+
+        compare_message_7 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_7.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_market_event, AdditionalParameter=self.venue_qdl1))
+
+        compare_message_8 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_8.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_checking_mid_price, AdditionalParameter=self.venue_qdl1))
+
+        compare_message_9 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
+        compare_message_9.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_27))
+
+        compare_message_8 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
+        compare_message_8.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_found_new_agregated_best_ask, AdditionalParameter=self.new_best_ask))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog Not crossing MidPrice", self.test_id))
+        self.read_log_verifier_1.check_read_log_message_sequence([compare_message_1, compare_message_5, compare_message_9], [self.key_params_for_read_log_1, self.key_params_for_read_log_1, self.key_params_for_read_log_1], pre_filter=self.pre_filter)
+
+        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog Starting MidPrice monitoring", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+
+        # Need to separate on some events
+        self.read_log_verifier_3.set_case_id(bca.create_event("ReadLog Check MarketData events", self.test_id))
+        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_3, compare_message_4, compare_message_6, compare_message_7, compare_message_8], [self.key_params_for_read_log_2, self.key_params_for_read_log_2, self.key_params_for_read_log_2, self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -202,7 +280,7 @@ class QAP_T9011(TestCase):
 
         # region check cancel third dma child order
         er_cancel_dma_qdl2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl2_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl2_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Lit passive Child DMA order on venue qdl1: OldQty=11000, price=52")
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_qdl2_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Lit passive Child DMA order on AdditionalParameter qdl1: OldQty=11000, price=52")
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
