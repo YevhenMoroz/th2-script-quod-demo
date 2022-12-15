@@ -127,7 +127,7 @@ class QAP_T7015(TestCase):
         class_name.print_message('Messages after ALLOCATE', responses)
 
         # region Set-up parameters and check Allocation Report after Allocate
-        list_of_ignored_fields = ['Account']
+        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity']
         pre_alloc_grp: dict = {
             'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty}]}}
         self.fix_message.change_parameters(pre_alloc_grp)
