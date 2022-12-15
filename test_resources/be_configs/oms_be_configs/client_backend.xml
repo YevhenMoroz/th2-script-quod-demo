@@ -42,4 +42,5 @@
         <eventType>ALLEXEC</eventType><!-- supported values: DFD, ALLEXEC -->
     </clientCommissions>
 	<entitiesCtrptToExec>true</entitiesCtrptToExec> <!-- [PEQ-1931] additional execution counterparts -->
+    <automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>
 </quod>
