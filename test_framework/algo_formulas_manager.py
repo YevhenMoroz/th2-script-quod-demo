@@ -386,6 +386,16 @@ class AlgoFormulasManager:
         ]
 
     @staticmethod
+    def get_timestamp_from_list(phases, phase: TradingPhases, start_time: bool = True):
+
+        for i in phases:
+            if i['tradingPhase'] == phase.value:
+                if start_time:
+                    return int(i['beginTime'])
+                else:
+                    return int(i['endTime'])
+
+    @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
                                     comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
         lit_touch = bid_price

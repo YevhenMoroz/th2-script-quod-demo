@@ -261,6 +261,7 @@ class AlgoAccounts(Enum):
     account_16 = "QDL_CLIENT2"
     account_17 = "QDL2_CLIENT2"
     account_18 = "XAMS_CLIENT2"
+    account_19 = "XAMS_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -356,7 +357,7 @@ class AlgoListingId(Enum):
     listing_34 = "125911519"       # JANESTREET for FR0010411884
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
-    listing_37 = "48"       # Euronext Фьіеуквфь for AXS
+    listing_37 = "48"       # Euronext Amsterdam for AXS
     listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
     listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
     listing_40 = "1825020508"       # QUODLIT1 for QUODTESTQA07

@@ -650,6 +650,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_Auction_Child_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'CLIENT1',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_21'),
+            'TimeInForce': '2',
+            "TransactTime": '*',
+            'ExDestination': 'XAMS',
+            'OrderCapacity': 'A',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_SynthMinQty_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
