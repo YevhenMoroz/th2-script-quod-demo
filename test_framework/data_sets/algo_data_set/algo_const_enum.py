@@ -493,8 +493,9 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('4', 'EQUAL')
     }
 
-    pre_filter_order_id = {
-        'OrderId': ('*', "EQUAL")
+    pre_filter_check_market_data_events = {
+        'OrderId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
     }
 
 class AlgoTradingPhaseProfile(Enum):
