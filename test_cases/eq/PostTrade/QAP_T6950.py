@@ -201,3 +201,4 @@ class QAP_T6950(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart FIXBACKOFFICE_TH2")
         time.sleep(70)
+        self.ssh_client.close()
