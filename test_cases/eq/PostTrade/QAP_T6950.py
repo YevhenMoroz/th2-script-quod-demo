@@ -33,8 +33,6 @@ class QAP_T6950(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
         self.order_submit = OrderSubmitOMS(data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.execution_report = ExecutionReportOMS(self.data_set)
