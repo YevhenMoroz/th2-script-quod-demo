@@ -38,7 +38,9 @@ class QAP_T9332(TestCase):
 
         # region order parameters
         self.qty = 1000000
-        self.child_qty = 112
+        self.indicative_volume = 1000
+        self.percentage = 10
+        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
         self.price = 30
         # endregion
 
@@ -72,8 +74,6 @@ class QAP_T9332(TestCase):
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
-        self.key_params_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
-        self.key_params_RFQ_MO = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_RFQ")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
@@ -106,7 +106,7 @@ class QAP_T9332(TestCase):
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -117,7 +117,7 @@ class QAP_T9332(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOC_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=10))
+        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage))
         responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
 
         # region Check Sell side
