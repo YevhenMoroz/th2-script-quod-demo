@@ -263,3 +263,11 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_skipping_dark_phase_when_primary_suspended(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+

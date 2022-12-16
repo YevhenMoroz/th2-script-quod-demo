@@ -336,6 +336,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_not_crossing_mid_price = "log319-check-not-crossing-mid-price"
     log_319_check_starting_mid_price_monitoring = "log319-check-starting-mid-price-monitoring"
     log_319_check_market_event_for_venue = "log319-check-market-event-for-venue"
+    log_319_check_skipping_dark_phase_when_primary_suspended = "log319-check-skipping-dark-phase-when-primary-suspended"
 
 
 class WebAdminURL(Enum):
