@@ -67,6 +67,7 @@ class QAP_T7253(TestCase):
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'AccountGroupID': self.client,
             'OrdQty': self.qty,
+            'TimeInForce': 'GTC',
             'Price': self.price,
         })
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
@@ -84,7 +85,7 @@ class QAP_T7253(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
             execution_report,
-            'Check that order Partially Filled (step 2)')
+            'Checking that order Partially Filled (step 2)')
         exec_id = execution_report[JavaApiFields.ExecID.value]
         # endregion
 
@@ -96,7 +97,7 @@ class QAP_T7253(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
              JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
-            order_reply, 'Check that order completed (step 3)')
+            order_reply, 'Checking that order completed (step 3)')
         # endregion
 
         # region book order (step 4)
@@ -124,7 +125,7 @@ class QAP_T7253(TestCase):
         cl_booking_ref_id = allocation_report[JavaApiFields.ClBookingRefID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value}, allocation_report,
-            'Check that block created (step 4)')
+            'Checking that block created (step 4)')
         # endregion
 
         # region Setup ORS config step 5
@@ -146,7 +147,7 @@ class QAP_T7253(TestCase):
                 JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value},
-            allocation_report, 'Check that block doesn`t cancel, step 5')
+            allocation_report, 'Checking that block doesn`t cancel, step 5')
         self.order_modification_request.set_default(self.data_set, order_id)
         self.order_modification_request.update_fields_in_component('OrderModificationRequestBlock',
                                                              {'Price': self.price,
@@ -160,7 +161,7 @@ class QAP_T7253(TestCase):
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.DoneForDay.value, order_reply,
-                                            'Check that order is uncomplete (step 5)')
+                                            'Checking that order is uncomplete (step 5)')
         # endregion
 
         # region step 6
@@ -205,11 +206,10 @@ class QAP_T7253(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_2)
         alloc_report_2 = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
-        alloc_id_second = alloc_report_2[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value},
             alloc_report_2,
-            'Check that second block created (step 8)')
+            'Checking that second block created (step 8)')
         # endregion
 
         # region step 9
@@ -220,7 +220,7 @@ class QAP_T7253(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_CXL.value},
             alloc_report,
-            'Check that first block canceled (step 9)')
+            'Checking that first block canceled (step 9)')
         # endregion
 
         # region step 10
@@ -249,7 +249,7 @@ class QAP_T7253(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value},
             alloc_report,
-            'Check that third block created (step 10)')
+            'Checking that third block created (step 10)')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
