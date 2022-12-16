@@ -34,7 +34,15 @@ class QAP_T4929(TestCase):
         modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
         modify_rule_message.set_default_param()
         param = modify_rule_message.get_parameter("gatingRuleCondition")
-        param[0]["holdOrder"] = "true"
+        set_value_params: dict = {"alive": 'true',
+                                  "gatingRuleResultIndice": 1,
+                                  "splitRatio": 0,
+                                  "holdOrder": 'true',
+                                  "gatingRuleResultProperty": "APP",
+                                  "gatingRuleResultAction": "VAL",
+                                  "gatingRuleResultRejectType": "HRD"}
+        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
+        param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
         param[0]["gatingRuleCondExp"] = "AND(ExecutionPolicy=Care,OrdQty<1000)"
         modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(modify_rule_message)
