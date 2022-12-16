@@ -188,6 +188,9 @@ class QAP_T9305(TestCase):
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message)
+
+        # TODO add check skip DarkPhase in the ReadLog
+        # 2022-12-16 14:44:12.752601497/1/13^28 QUOD.SORS [3108032] INFO  sats / algorithm (litdark.cpp:1509) - AO1221216144412001001 - suspended on primary, sending lit
         # endregion
 
         # region Check Lit child DMA order
@@ -202,6 +205,11 @@ class QAP_T9305(TestCase):
 
         er_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+        # endregion
+
+        # region Check these are no dark childs
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check these are no dark childs", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_xpar_order], [None], self.FromQuod)
         # endregion
 
         time.sleep(10)
