@@ -37,8 +37,8 @@ class QAP_T9332(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 1000000
-        self.indicative_volume = 1000
+        self.qty = 1000
+        self.indicative_volume = 2000
         self.percentage = 10
         self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
         self.price = 30
