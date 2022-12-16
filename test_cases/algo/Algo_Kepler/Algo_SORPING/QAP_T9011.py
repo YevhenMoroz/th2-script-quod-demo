@@ -173,16 +173,19 @@ class QAP_T9011(TestCase):
         parent_SORPING_order_id_list[-1] = 2
         multilisted_algo_child_order_id = "".join(map(str, parent_SORPING_order_id_list))
 
-        self.pre_filter_1 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
+        self.pre_filter_1 = self.data_set.get_pre_filter("pre_filter_with_the_order_id")
         self.pre_filter_1['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
-        self.pre_filter_1['Text'] = (self.text_for_market_event, "EQUAL")
 
         self.pre_filter_2 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
         self.pre_filter_2['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
-        self.pre_filter_2['Text'] = (self.text_for_checking_mid_price, "EQUAL")
+        # self.pre_filter_2['Text'] = (self.text_for_market_event, "EQUAL")
 
         self.pre_filter_3 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
         self.pre_filter_3['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
+        # self.pre_filter_3['Text'] = (self.text_for_checking_mid_price, "EQUAL")
+
+        self.pre_filter_4 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
+        self.pre_filter_4['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
         # endregion
 
         time.sleep(3)
@@ -273,9 +276,9 @@ class QAP_T9011(TestCase):
 
         # Need to separate on some events with the separate prefilters
         self.read_log_verifier_3.set_case_id(bca.create_event("ReadLog Check MarketData events", self.test_id))
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_3, compare_message_7], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_1)
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_4, compare_message_8], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_2)
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_6, compare_message_10], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_3)
+        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_3, compare_message_7], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_2)
+        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_4, compare_message_8], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_3)
+        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_6, compare_message_10], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_4)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

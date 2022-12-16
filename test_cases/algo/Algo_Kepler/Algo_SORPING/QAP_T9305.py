@@ -87,8 +87,11 @@ class QAP_T9305(TestCase):
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
-        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
+        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
+
+        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_skipping_dark_phase_when_primary_suspended.value
+        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
         # endregion
 
         # region Compare message parameters
@@ -165,7 +168,8 @@ class QAP_T9305(TestCase):
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algopolicy))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        parent_SORPING_order_id = responce[0].get_parameter('ExecID')
 
         time.sleep(3)
         # endregion
@@ -183,11 +187,17 @@ class QAP_T9305(TestCase):
         # region Check Read log
         # time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
-        compare_message.change_parameters(dict(VenueName=self.venue))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
+        compare_message_1.change_parameters(dict(VenueName=self.venue))
 
-        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(compare_message)
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_skipping_dark_phase_when_primary_suspended()
+        compare_message_2.change_parameters(dict(OrderId=parent_SORPING_order_id))
+
+        self.read_log_verifier_1.set_case_id(bca.create_event("Check that primary venue suspended", self.test_id))
+        self.read_log_verifier_1.check_read_log_message(compare_message_1)
+
+        self.read_log_verifier_2.set_case_id(bca.create_event("Check skipping DarkPhase", self.test_id))
+        self.read_log_verifier_2.check_read_log_message(compare_message_2)
         # endregion
 
         # region Check Lit child DMA order
@@ -202,6 +212,11 @@ class QAP_T9305(TestCase):
 
         er_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+        # endregion
+
+        # region Check these are no dark childs
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check these are no dark childs", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_xpar_order], [None], self.FromQuod)
         # endregion
 
         time.sleep(10)
