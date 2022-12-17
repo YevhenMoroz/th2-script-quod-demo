@@ -48,6 +48,7 @@ class AllocationReportConst(Enum):
     AllocReportType_ACC = 'ACC'
     ConfirmationService_EXT = 'EXT'
     ConfirmationService_MAN = 'MAN'
+    ConfirmationService_INT = 'INT'
 
 
 class AllocationInstructionConst(Enum):
