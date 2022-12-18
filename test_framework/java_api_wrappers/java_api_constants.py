@@ -215,6 +215,7 @@ class JavaApiFields(Enum):
     BookingAllocInstructionID = 'BookingAllocInstructionID'
     ClBookingRefID = 'ClBookingRefID'
     AvgPrice = 'AvgPrice'
+    GrossTradeAmt = 'GrossTradeAmt'
     AvgPx = 'AvgPx'
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
@@ -230,6 +231,7 @@ class JavaApiFields(Enum):
     CommissionAmountSubType = 'CommissionAmountSubType'
     ConfirmationID = 'ConfirmationID'
     RootMiscFeeCategory = 'RootMiscFeeCategory'
+    ClAllocID = 'ClAllocID'
 
 
 class JavaApiPartyRoleConstants(Enum):
