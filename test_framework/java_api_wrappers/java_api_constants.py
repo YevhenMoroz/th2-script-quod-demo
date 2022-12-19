@@ -227,6 +227,7 @@ class JavaApiFields(Enum):
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
     SettlCurrency = 'SettlCurrency'
+    SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
     SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
     CommissionAmountSubType = 'CommissionAmountSubType'
