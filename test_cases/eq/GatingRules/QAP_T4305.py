@@ -49,7 +49,15 @@ class QAP_T4305(TestCase):
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         # Set "Not In" to the condition of GatingRule
         param[0]["gatingRuleCondExp"] = "VenueID NOT IN(CHIX)"
-        param[0]["holdOrder"] = "true"
+        set_value_params: dict = {"alive": 'true',
+                                  "gatingRuleResultIndice": 1,
+                                  "splitRatio": 0,
+                                  "holdOrder": 'true',
+                                  "gatingRuleResultProperty": "APP",
+                                  "gatingRuleResultAction": "VAL",
+                                  "gatingRuleResultRejectType": "HRD"}
+        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
+        param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion

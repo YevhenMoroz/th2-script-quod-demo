@@ -111,7 +111,7 @@ class QAP_T7358(TestCase):
         alloc_id = alloc_report[JavaApiFields.AllocInstructionID.value]
         # endregion
         # region check alloc instr
-        all_ignore_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt']
+        all_ignore_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt','OrderAvgPx']
         alloc_instr_report = FixMessageAllocationInstructionReportOMS()
         alloc_instr_report.set_default_ready_to_book(self.fix_message)
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_instr_report, ignored_fields=all_ignore_fields)
@@ -149,7 +149,8 @@ class QAP_T7358(TestCase):
             'Check allocation')
         # endregion
         # region check confirmation report
-        conf_ignore_fields = ["CommissionData", 'Account', "AvgPx", "Currency", "tag5120"]
+        conf_ignore_fields = ["CommissionData", 'Account', "AvgPx", "Currency", "tag5120",
+                              'OrderAvgPx']
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters(

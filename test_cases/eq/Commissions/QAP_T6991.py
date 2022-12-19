@@ -81,7 +81,6 @@ class QAP_T6991(TestCase):
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
         # endregion
-        #
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
@@ -237,7 +236,7 @@ class QAP_T6991(TestCase):
                                        'BookingType', 'RootSettlCurrency', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'AllocTransType', 'RootSettlCurrFxRate', 'RootSettlCurrAmt',
                                        'GrossTradeAmt', 'AllocSettlCurrAmt', 'AllocSettlCurrency',
-                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx'])
+                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx','OrderAvgPx'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
                                              'AllocType': '2'})
@@ -275,3 +274,4 @@ class QAP_T6991(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
+        self.ssh_client.close()

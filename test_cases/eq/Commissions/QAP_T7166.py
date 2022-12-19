@@ -160,7 +160,7 @@ class QAP_T7166(TestCase):
                                              execution_report_dma[JavaApiFields.MiscFeesList.value][
                                                  JavaApiFields.MiscFeesBlock.value][0],
                                              'Check expected and actually fee for EX execution (part of step 3)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         # endregion
 
         # region step 3 - Checking Commissions and Fees for EV Execution
@@ -205,7 +205,7 @@ class QAP_T7166(TestCase):
         self.java_api_manager.compare_values({JavaApiFields.PostTradeStatus.value: post_trade_status,
                                               JavaApiFields.DoneForDay.value: done_for_day},
                                              order_reply, 'Check expected and actually result from step 5',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         # endregion
 
         # region step 6 (check that calculated execution)
@@ -217,12 +217,12 @@ class QAP_T7166(TestCase):
                                              execution_report_care[JavaApiFields.ClientCommissionList.value][
                                                  JavaApiFields.ClientCommissionBlock.value][0],
                                              'Check expected and actually commission for EV execution (part of step 6)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         self.java_api_manager.compare_values(fees_expected,
                                              execution_report_care[JavaApiFields.MiscFeesList.value][
                                                  JavaApiFields.MiscFeesBlock.value][0],
                                              'Check expected and actually fee for EV Calculated execution (step 6)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         # endregion
 
         # region step 7
@@ -290,7 +290,7 @@ class QAP_T7166(TestCase):
         }
         self.java_api_manager.compare_values(expected_result_for_block, allocation_report,
                                              'Check Status and MatchStatus (part of step 8)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         self.java_api_manager.compare_values(root_fee_expected, allocation_report[JavaApiFields.RootMiscFeesList.value][
             JavaApiFields.RootMiscFeesBlock.value][0], 'Check that block has correctly fee (part of step 8)')
         self.java_api_manager.compare_values(client_commission_expected,
@@ -308,7 +308,7 @@ class QAP_T7166(TestCase):
                                           JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value})
         self.java_api_manager.compare_values(expected_result_for_block, allocation_report,
                                              'Check Status and MatchStatus (step 9)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         # endregion
 
         # region step 10 - Allocate block
@@ -325,16 +325,16 @@ class QAP_T7166(TestCase):
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values(client_commission_expected, confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0],
-                                             'Check client commission (part of step 10)', VerificationMethod.CONTAINS)
+                                             'Check client commission (part of step 10)', VerificationMethod.EQUALS)
 
         self.java_api_manager.compare_values(fees_expected, confirmation_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
-                                             'Check fee (part of step 10)', VerificationMethod.CONTAINS)
+                                             'Check fee (part of step 10)', VerificationMethod.EQUALS)
         expected__statuses_for_confirmation = {
             JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
             JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value}
         self.java_api_manager.compare_values(expected__statuses_for_confirmation, confirmation_report,
                                              'Check ConfirmStatus and MatchStatus (part of step 10)',
-                                             VerificationMethod.CONTAINS)
+                                             VerificationMethod.EQUALS)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

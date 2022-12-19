@@ -132,7 +132,7 @@ class QAP_T7105(TestCase):
             'Compare actually and expected results  from step 3')
         # endregion
         # region check 35 = J message
-        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account']
+        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account', 'OrderAvgPx']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(
             self.fix_message)
         no_root_misc = {"RootMiscFeeBasis": "2", "RootMiscFeeCurr": self.com_cur,

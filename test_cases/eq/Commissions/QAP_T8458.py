@@ -15,7 +15,7 @@ from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixM
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
-    OrderReplyConst, SubmitRequestConst, ConfirmationReportConst
+    OrderReplyConst, SubmitRequestConst, ConfirmationReportConst, AllocationInstructionConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -50,7 +50,7 @@ class QAP_T8458(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.bs_connectivity = self.fix_env.buy_side
         self.ss_connectivity = self.fix_env.sell_side
-        self.qty = '999'
+        self.qty = '1000'
         self.price = '99'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.currency = self.data_set.get_currency_by_name('currency_3')
@@ -151,12 +151,13 @@ class QAP_T8458(TestCase):
             'Comparing expected and actually results from step 2')
         # endregion
 
-
         # region complete CO order (step 3)
         self.complete_request.set_default_complete(order_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
         print_message('Completing CO order', responses)
-        execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        execution_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
         order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         actually_post_trade_status = order_reply_message[JavaApiFields.PostTradeStatus.value]
@@ -166,12 +167,24 @@ class QAP_T8458(TestCase):
              JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
             {JavaApiFields.PostTradeStatus.value: actually_post_trade_status,
              JavaApiFields.DoneForDay.value: actually_done_for_day},
-            'Comparing expected and actually results (step 4)')
+            'Comparing expected and actually results (step 3)')
         # endregion
 
         # region check that execution doesn`t have Agent Fee (step 4)
-        self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value, execution_report,
-                                            f'Check that Execution({exec_id}) doesn`t have Agent fee (step 3)')
+        misc_fee_rate = '5'
+        execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
+            JavaApiFields.MiscFeeAmt.value] = str(round(float(
+            execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
+                JavaApiFields.MiscFeeAmt.value]), 4))
+        misc_fee_amount = float(misc_fee_rate) * float(self.qty) * float(self.price) / 10000
+        self.java_api_manager.compare_values(
+            {JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEES_TYPE_AGE.value,
+             JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
+             JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
+             JavaApiFields.MiscFeeRate.value: str(float(misc_fee_rate)),
+             JavaApiFields.MiscFeeAmt.value: str(misc_fee_amount)
+             }, execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
+            'Check that Agent fee presents in Execution Report (step 4)')
         # endregion
 
         # region step 5
@@ -186,7 +199,7 @@ class QAP_T8458(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         print_message("send ComputeBookingCommissionFeesRequest (part of step 5)", responses)
         compute_booking_misc_fee_response = self.java_api_manager.get_last_message(
-            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()
+            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, compute_booking_misc_fee_response,
                                             'Check that ComputeMiscFeeCommissionReply doesn`t have Agent Fees')
         # the end
@@ -271,10 +284,13 @@ class QAP_T8458(TestCase):
         # region step 8
         # check that execution report doesn`t have Agent fee(part of step 8)
         params_of_execution_report_message = {
-            "ExecType": "F",
-            "OrdStatus": "2",
+            "ExecType": "B",
+            "OrdStatus": "B",
             "ClOrdID": cl_ord_id,
-            'NoMiscFees': '#'
+            'NoMiscFees': [
+                {'MiscFeeAmt': str(round(misc_fee_amount, 4)),
+                 'MiscFeeCurr': self.currency_post_trade,
+                 'MiscFeeType': '12'}]
         }
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'OrderID',
                                   'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier', 'BookID',
@@ -282,7 +298,9 @@ class QAP_T8458(TestCase):
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'CumQty', 'LastPx',
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
-                                  'Instrument', 'NoParty','ExDestination', 'GrossTradeAmt','AllocInstructionMiscBlock2']
+                                  'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
+                                  'AllocInstructionMiscBlock2',
+                                  'OrderAvgPx', 'CommissionData']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
@@ -322,7 +340,8 @@ class QAP_T8458(TestCase):
 
         # check that 35 = AK messages (part of step 8)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
-                                       'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType', 'AllocAccount', 'AllocQty'])
+                                       'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType', 'AllocAccount', 'AllocQty',
+                                       'OrderAvgPx'])
         params_of_allocation.pop('AllocType')
         params_of_allocation.update({'ConfirmTransType': "0"})
         fix_confirmation = FixMessageConfirmationReportOMS(self.data_set, params_of_allocation)

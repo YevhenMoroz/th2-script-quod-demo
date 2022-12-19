@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -18,6 +19,7 @@ class RestCommissionsSender(RestApiManager):
         for fee in fees:
             self.set_clear_fees_message(fee)
             self.send_post_request(self.message)
+        time.sleep(2)
         return self
 
     def send_default_fee(self):
@@ -35,6 +37,7 @@ class RestCommissionsSender(RestApiManager):
         if api_message is None:
             api_message = self.message
         super().send_post_request(api_message)
+        time.sleep(2)
 
     def set_clear_fees_message(self, fee: Enum):
         self.message.clear_fees_request(fee)

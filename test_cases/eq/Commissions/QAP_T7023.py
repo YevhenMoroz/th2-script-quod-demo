@@ -10,8 +10,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
-    FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
@@ -110,8 +108,7 @@ class QAP_T7023(TestCase):
         expected_result = {'OrdStatus': '0'}
         last_response = self.__get_fix_message(expected_result)
         self.java_api_manager.compare_values(expected_result, last_response,
-                                             'Check actually and expected result from step 1',
-                                             VerificationMethod.CONTAINS)
+                                             'Check actually and expected result from step 1')
         expected_result.clear()
         expected_result.update({'ExecType': 'F'})
         last_response = self.__get_fix_message(expected_result)
@@ -132,13 +129,19 @@ class QAP_T7023(TestCase):
             JavaApiFields.MiscFeeType.value: '10'
         }
         exec_id = last_response['ExecID']
-        print(last_response)
         list_of_expected_fees = [expected_levy_fee_dimensions, expected_per_transac_fee_dimensions]
-        for expected_result in list_of_expected_fees:
-            self.java_api_manager.compare_values(expected_result, last_response['NoMiscFees']['NoMiscFees'][
-                list_of_expected_fees.index(expected_result)],
-                                                 f'Check expected and actually results of fees with FeeType {expected_result[JavaApiFields.MiscFeeType.value]}',
-                                                 VerificationMethod.CONTAINS)
+        for index in range(2):
+            if last_response['NoMiscFees']['NoMiscFees'][index][
+                JavaApiFields.MiscFeeType.value] == '6':
+                self.java_api_manager.compare_values(expected_levy_fee_dimensions,
+                                                     last_response['NoMiscFees']['NoMiscFees'][index],
+                                                     f'Check expected and actually results of fees with FeeType '
+                                                     f'{expected_levy_fee_dimensions[JavaApiFields.MiscFeeType.value]}')
+            else:
+                self.java_api_manager.compare_values(expected_per_transac_fee_dimensions,
+                                                     last_response['NoMiscFees']['NoMiscFees'][index],
+                                                     f'Check expected and actually results of fees with FeeType '
+                                                     f'{expected_per_transac_fee_dimensions[JavaApiFields.MiscFeeType.value]}')
 
         self.java_api_manager.compare_values({'Count groups of fees': len(list_of_expected_fees)},
                                              {'Count groups of fees': len(last_response['NoMiscFees']['NoMiscFees'])},
@@ -225,11 +228,9 @@ class QAP_T7023(TestCase):
         expected_result_for_order = {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
                                      JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value}
         self.java_api_manager.compare_values(expected_result_for_block, allocation_report,
-                                             'Check Status and MatchStatus (part of step 3)',
-                                             VerificationMethod.CONTAINS)
+                                             'Check Status and MatchStatus (part of step 3)')
         self.java_api_manager.compare_values(expected_result_for_order, order_update,
-                                             'Check PostTradeStatus and DoneForDay(part of step 3)',
-                                             VerificationMethod.CONTAINS)
+                                             'Check PostTradeStatus and DoneForDay(part of step 3)')
         # the end
 
         # endregion
@@ -244,8 +245,7 @@ class QAP_T7023(TestCase):
         expected_result_for_block.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
                                           JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value})
         self.java_api_manager.compare_values(expected_result_for_block, allocation_report,
-                                             'Check Status and MatchStatus (step 4)',
-                                             VerificationMethod.CONTAINS)
+                                             'Check Status and MatchStatus (step 4)')
         # endregion
 
         # region step 5 - Allocate block
@@ -272,7 +272,7 @@ class QAP_T7023(TestCase):
                 net_price = str(float(net_amt) / float(half_qty))
             self.java_api_manager.compare_values({JavaApiFields.NetMoney.value: net_amt,
                                                   JavaApiFields.NetPrice.value: net_price}, confirmation_report,
-                                                 f'Check that confirmation with {sec_account} has properly NetMoney and NetPrice', VerificationMethod.CONTAINS)
+                                                 f'Check that confirmation with {sec_account} has properly NetMoney and NetPrice')
             for commission in confirmation_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value]:
                 self.java_api_manager.compare_values(
                     {JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_STA.value},
@@ -288,11 +288,11 @@ class QAP_T7023(TestCase):
                                  'SecondaryExecID', 'ExecID', 'LastQty', 'TransactTime', 'AvgPx', 'QuodTradeQualifier',
                                  'BookID', 'Currency', 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty', 'CumQty',
                                  'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity''QtyType', 'ExecBroker',
-                                 'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData','Text',
-                                 'AllocQty','ConfirmType','ConfirmID',
-                                 'AllocID','NetMoney','MatchStatus',
-                                 'ConfirmStatus','AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp','ReportedPx']
+                                 'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData', 'Text',
+                                 'AllocQty', 'ConfirmType', 'ConfirmID',
+                                 'AllocID', 'NetMoney', 'MatchStatus',
+                                 'ConfirmStatus', 'AllocInstructionMiscBlock1',
+                                 'CpctyConfGrp', 'ReportedPx','OrderAvgPx']
         params = {'ConfirmTransType': "0",
                   'AllocAccount': self.client_acc1,
                   'NoOrders': [{
@@ -300,19 +300,20 @@ class QAP_T7023(TestCase):
                       'OrderID': '*'
                   }],
                   'NoMiscFees': [
-                      {'MiscFeeAmt': float(perc_fee_amount)/2,
+                      {'MiscFeeAmt': int(int(perc_fee_amount) / 2),
                        'MiscFeeCurr': '*',
                        'MiscFeeType': '10'}]
                   }
         fix_confirmation_report = FixMessageConfirmationReportOMS(self.data_set, params)
         self.fix_verifier.check_fix_message_fix_standard(fix_confirmation_report,
-                                                         ['ConfirmTransType', 'NoOrders', 'AllocAccount'], ignored_fields=list_of_ignore_fields)
+                                                         ['ConfirmTransType', 'NoOrders', 'AllocAccount'],
+                                                         ignored_fields=list_of_ignore_fields)
         # endregion
 
         # region step 7 - Verify that 35 = AK of second account doesn`t have Stamp fees
         fix_confirmation_report.change_parameters({'AllocAccount': self.client_acc2,
                                                    'NoMiscFees': [
-                                                       {'MiscFeeAmt': float(perc_fee_amount) / 2,
+                                                       {'MiscFeeAmt': int(int(perc_fee_amount) / 2),
                                                         'MiscFeeCurr': '*',
                                                         'MiscFeeType': '10'},
                                                        {'MiscFeeAmt': float(basis_fee_amount) / 2,
@@ -321,7 +322,8 @@ class QAP_T7023(TestCase):
                                                    ]
                                                    })
         self.fix_verifier.check_fix_message_fix_standard(fix_confirmation_report,
-                                                         [['ConfirmTransType', 'NoOrders', 'AllocAccount']], ignored_fields=list_of_ignore_fields)
+                                                         [['ConfirmTransType', 'NoOrders', 'AllocAccount']],
+                                                         ignored_fields=list_of_ignore_fields)
         # endregion
 
         # region step 8
@@ -368,3 +370,7 @@ class QAP_T7023(TestCase):
             for j in parameter.keys():
                 if self.response[i].get_parameters()[j] == parameter[j]:
                     return self.response[i].get_parameters()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
