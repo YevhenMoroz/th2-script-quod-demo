@@ -115,6 +115,7 @@ class OmsClients(Enum):
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
     client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
+    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"

@@ -262,12 +262,12 @@ class QAP_T7437(TestCase):
                 "AllocAccountID": self.alloc_account,
                 "AllocQty": self.qty,
                 "AvgPx": "20",
-                "ConfirmationMiscBlock": {
-                    "ConfirmationMisc0": "11",
-                    "ConfirmationMisc1": "22",
-                    "ConfirmationMisc2": "33",
-                    "ConfirmationMisc3": "44",
-                    "ConfirmationMisc4": "55",
+                "AllocInstructionMiscBlock": {
+                    "AllocInstructionMisc0": "11",
+                    "AllocInstructionMisc1": "22",
+                    "AllocInstructionMisc2": "33",
+                    "AllocInstructionMisc3": "44",
+                    "AllocInstructionMisc4": "55",
                 },
             },
         )
@@ -291,13 +291,13 @@ class QAP_T7437(TestCase):
 
         self.java_api_manager.compare_values(
             {
-                "ConfirmationMisc0": "11",
-                "ConfirmationMisc1": "22",
-                "ConfirmationMisc2": "33",
-                "ConfirmationMisc3": "44",
-                "ConfirmationMisc4": "55",
+                "AllocInstructionMisc0": "11",
+                "AllocInstructionMisc1": "22",
+                "AllocInstructionMisc2": "33",
+                "AllocInstructionMisc3": "44",
+                "AllocInstructionMisc4": "55",
             },
-            conf_report_message["ConfirmationMiscBlock"],
+            conf_report_message["AllocInstructionMiscBlock"],
             "Comparing BO fields for Allocation",
         )
         # endregion

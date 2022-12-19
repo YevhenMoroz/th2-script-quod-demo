@@ -52,6 +52,7 @@ class AllocationReportConst(Enum):
     ConfirmationService_MAN = 'MAN'
     SettlCurrFxRateCalc_Multiply = 'Multiply'
     SettlCurrFxRateCalc_Devide = 'Devide'
+    ConfirmationService_INT = 'INT'
 
 
 class AllocationInstructionConst(Enum):
