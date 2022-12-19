@@ -171,6 +171,7 @@ class JavaApiFields(Enum):
     RootMiscFeesList = 'RootMiscFeesList'
     DayCumQty = 'DayCumQty'
     DayCumAmt = 'DayCumAmt'
+    UnsolicitedOrder = "UnsolicitedOrder"
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
