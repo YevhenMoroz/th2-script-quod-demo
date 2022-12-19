@@ -170,21 +170,6 @@ class QAP_T4776(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_bats_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel first DMA 2 order")
         # endregion
 
-        # region check cancel third dma child order
-        er_cancel_dma_cboe_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboe_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_cboe_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 3 order")
-        # endregion
-
-        # region check cancel fourth dma child order
-        er_cancel_dma_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_itg_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 4 order")
-        # endregion
-
-        # region check cancel fifth dma child order
-        er_cancel_dma_tqdarkeu_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqdarkeu_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_tqdarkeu_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 5 order")
-        # endregion
-
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
