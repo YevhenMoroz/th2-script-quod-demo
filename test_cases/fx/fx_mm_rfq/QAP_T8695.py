@@ -23,9 +23,11 @@ class QAP_T8695(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote_request_for_reject = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_reject = FixMessageQuoteRequestRejectFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
-        self.account = self.data_set.get_client_by_name("client_mm_4")
+        self.quote_2 = FixMessageQuoteFX()
+        self.account = self.data_set.get_client_by_name("client_mm_3")
         self.text_1 = "11613 'Side': undefined error, according to 'LegSide' presence"
         self.text_2 = "11613 'Side': B error, according to 'LegSide' presence"
 
@@ -33,49 +35,47 @@ class QAP_T8695(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account,
                                                            Side="1")
         self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 2
         self.quote_request.set_swap_rfq_params()
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].pop('LegSide')
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].pop('LegSide')
         self.quote_request.get_parameter("NoRelatedSymbols")[0].pop('Side')
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account)
         self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].update({'LegSide': "#"})
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].update({'LegSide': "#"})
-        self.quote_request.change_parameters({"BidSwapPoints": "*",
-                                              "BidPx": "*",
-                                              "Side": "#"})
-        self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.quote_2.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(self.quote_2)
         # endregion
         # region Step 3
         self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_near_leg(leg_side="2")
-        self.quote_request.update_far_leg(leg_side="1")
         self.quote_request.get_parameter("NoRelatedSymbols")[0].pop('Side')
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account)
         self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
-        self.quote_request.change_parameters({"QuoteType": "1"})
+        # self.quote_request_for_reject = self.quote_request.get_parameters_2(
+        #     ["QuoteReqID",
+        #     "NoRelatedSymbols"])
         self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text_1)
-        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
-        self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
+        self.quote_reject.get_parameter("NoRelatedSymbols")[0].update({"QuoteType": "1"})
+        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty", "Side", "NoLegs"])
+        self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion
         # region Step 4
         self.quote_request.set_swap_rfq_params()
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].pop('LegSide')
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].pop('LegSide')
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account)
         self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].update({'LegSide': "#"})
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].update({'LegSide': "#"})
-        self.quote_request.change_parameters({"QuoteType": "1"})
         self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text_2)
-        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
-        self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
+        self.quote_reject.get_parameter("NoRelatedSymbols")[0].update({"QuoteType": "1"})
+        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty", "NoLegs"])
+        self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion
