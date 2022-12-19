@@ -455,4 +455,4 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_child_qty_for_auction_first_child(indicative_volume, percentage, parent_qty, initial_slice_multiplier):
-        return ceil(AlgoFormulasManager.get_child_qty_for_auction(indicative_volume,percentage, parent_qty) * (initial_slice_multiplier / 100))
+        return ceil(indicative_volume * percentage / (100 - percentage) * (initial_slice_multiplier / 100))
