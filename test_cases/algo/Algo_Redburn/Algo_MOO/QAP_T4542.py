@@ -104,6 +104,7 @@ class QAP_T4542(TestCase):
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        time.sleep(3)
         # end region
 
 
