@@ -116,8 +116,8 @@ class QAP_T8791(TestCase):
         nos_rule_trqx = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, self.price_bid)
         nos_ioc_rule_xpar = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, 0, self.price_ask)
         nos_ioc_rule_trqx = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, False, 0, self.price_ask)
-        ocr_rule_xpar = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, True)
-        ocr_rule_trqx = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, True)
+        ocr_rule_xpar = rule_manager.add_OCR(self.fix_env1.buy_side)
+        ocr_rule_trqx = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos_rule_xpar, nos_rule_trqx, nos_ioc_rule_xpar, nos_ioc_rule_trqx, ocr_rule_xpar, ocr_rule_trqx]
         # endregion
 

@@ -3,7 +3,6 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -25,6 +24,7 @@ class QAP_T2745(TestCase):
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_snapshot_2 = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.ss_connectivity = self.fix_env.sell_side_esp
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
@@ -53,12 +53,11 @@ class QAP_T2745(TestCase):
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
         # region Step 2-3
-        self.rest_massage.find_all_client_tier_instrument()
-        params_gbp_aud = self.rest_manager.send_get_request(self.rest_massage)
+        self.rest_massage.find_client_tier_instrument(self.client_tier_palladium1, self.gbp_aud)
+        params_gbp_aud = self.rest_manager.send_get_request_filtered(self.rest_massage)
         params_gbp_aud = self.rest_manager. \
             parse_response_details(params_gbp_aud,
                                    {'clientTierID': self.client_tier_palladium1, 'instrSymbol': self.gbp_aud})
@@ -68,13 +67,14 @@ class QAP_T2745(TestCase):
             update_value_in_component('clientTierInstrSymbolVenue', 'excludeWhenUnhealthy',
                                       'true', {'venueID': 'BARX'})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)
         # endregion
         # region Step 4
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_reject.set_md_reject_params(self.md_request)
-        self.fix_verifier.check_fix_message(fix_message=self.md_reject)
+        self.md_snapshot_2.set_params_for_empty_md_response(self.md_request, ["*"])
+        self.fix_verifier.check_fix_message(self.md_snapshot_2)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -85,3 +85,4 @@ class QAP_T2745(TestCase):
                                       'false', {'venueID': 'BARX'})
         self.rest_manager.send_post_request(self.rest_massage)
         # endregion
+        self.sleep(2)

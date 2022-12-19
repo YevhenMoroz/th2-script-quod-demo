@@ -39,8 +39,6 @@ class QAP_T2758(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
 
         self.new_order_single.set_default().change_parameters(
             {"Account": self.palladium1, "OrderQty": self.qty58m})
@@ -49,7 +47,7 @@ class QAP_T2758(TestCase):
 
         # region step 2-3
         self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_reject,
-                                                                   response=response[-1])
+                                                               response=response[-1])
         self.execution_report.add_tag({"LastMkt": "*"})
         self.fix_verifier.check_fix_message(fix_message=self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion
@@ -58,3 +56,5 @@ class QAP_T2758(TestCase):
     def run_post_conditions(self):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
+
+        self.sleep(2)

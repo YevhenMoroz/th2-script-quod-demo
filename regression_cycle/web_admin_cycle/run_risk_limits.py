@@ -8,6 +8,7 @@ from custom import basic_custom_actions as bca
 
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3143 import QAP_T3143
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3204 import QAP_T3204
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3205 import QAP_T3205
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3218 import QAP_T3218
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3230 import QAP_T3230
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3261 import QAP_T3261
@@ -23,6 +24,8 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3335 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3336 import QAP_T3336
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3337 import QAP_T3337
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3339 import QAP_T3339
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3359 import QAP_T3359
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3360 import QAP_T3360
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3414 import QAP_T3414
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3461 import QAP_T3461
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3462 import QAP_T3462
@@ -61,6 +64,8 @@ class RunRiskLimits:
                       environment=configuration.environment).run()
             QAP_T3204(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3205(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3218(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3230(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -90,6 +95,10 @@ class RunRiskLimits:
             QAP_T3337(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3339(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3359(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T3360(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3414(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

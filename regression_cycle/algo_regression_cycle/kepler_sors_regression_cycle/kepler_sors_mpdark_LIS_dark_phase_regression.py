@@ -118,7 +118,6 @@ def test_run(parent_id=None, version=None):
         # region Part Execution (Dark order)
         QAP_T4614(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4589(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4587(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
@@ -148,6 +147,16 @@ def test_run(parent_id=None, version=None):
         # region Cancelation
         QAP_T4781(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4782(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # The next tests has problem with RestApi so run it at the end
+
+        # region Part Execution (LIS order)
+        QAP_T4789(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Part Execution (Dark order)
+        QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

@@ -25,7 +25,6 @@ class QAP_T2411(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
-        self.fix_act = Stubs.fix_act
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_esp_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
@@ -33,7 +32,6 @@ class QAP_T2411(TestCase):
         self.modify_client_tier = RestApiClientTierMessages()
         self.modify_instrument = RestApiClientTierInstrSymbolMessages()
         self.rest_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_gtw = FixManager(self.ss_esp_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_esp_connectivity, self.test_id)
@@ -90,9 +88,7 @@ class QAP_T2411(TestCase):
         # endregion
         # region Step 4
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -103,3 +99,4 @@ class QAP_T2411(TestCase):
         self.rest_manager.send_post_request(self.modify_client_tier)
         self.modify_instrument.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_instrument)
+        self.sleep(2)

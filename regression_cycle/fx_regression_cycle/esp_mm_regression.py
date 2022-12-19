@@ -32,7 +32,7 @@ from test_cases.fx.fx_mm_esp.QAP_T2734 import QAP_T2734
 from test_cases.fx.fx_mm_esp.QAP_T2735 import QAP_T2735
 from test_cases.fx.fx_mm_esp.QAP_T2742 import QAP_T2742
 from test_cases.fx.fx_mm_esp.QAP_T2751 import QAP_T2751
-from test_cases.fx.fx_mm_esp.QAP_T2801_in_progress import QAP_T2801
+from test_cases.fx.fx_mm_esp.QAP_T2801 import QAP_T2801
 from test_cases.fx.fx_mm_esp.QAP_T2838 import QAP_T2838
 from test_cases.fx.fx_mm_esp.QAP_T2892 import QAP_T2892
 from test_cases.fx.fx_mm_esp.QAP_T2896 import QAP_T2896
@@ -102,7 +102,7 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version="5.1.165.178"):
+def test_run(parent_id=None, version="5.1.167.180"):
     #  !!!START FXFH_Q MDA_Q!!! before running regression
     report_id = bca.create_event(f"FX_MM_ESP" if version is None else f"FX_MM_ESP | {version}", parent_id)
     session_id = set_session_id("amedents")
@@ -147,7 +147,6 @@ def test_run(parent_id=None, version="5.1.165.178"):
         QAP_T2615(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2619(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2622(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2624(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2650(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2652(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2684(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -160,7 +159,6 @@ def test_run(parent_id=None, version="5.1.165.178"):
         QAP_T2734(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2735(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2736(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2742(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2745(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2751(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2758(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -180,7 +178,6 @@ def test_run(parent_id=None, version="5.1.165.178"):
         QAP_T2897(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2902(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2911.execute(report_id, session_id)
-        QAP_T2912.execute(report_id, session_id)
         QAP_T2915(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2916(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2917(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -199,7 +196,6 @@ def test_run(parent_id=None, version="5.1.165.178"):
         QAP_T2966(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2968(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2983(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2986(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7936(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8162(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
@@ -216,7 +212,7 @@ def test_run(parent_id=None, version="5.1.165.178"):
         # QAP_T2759(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2784(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2792(report_id, session_id, configuration.data_set, configuration.environment).execute()
-        QAP_T2870(report_id, session_id, configuration.data_set, configuration.environment).execute()
+        # QAP_T2870(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2898(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2902(report_id, session_id, configuration.data_set, configuration.environment).execute()
         # QAP_T2913(report_id, session_id, configuration.data_set, configuration.environment).execute()
