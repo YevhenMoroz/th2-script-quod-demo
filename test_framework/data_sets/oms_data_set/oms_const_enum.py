@@ -114,6 +114,8 @@ class OmsClients(Enum):
     client_pt_8 = "MOClient7"
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
+    client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
+    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -188,6 +190,7 @@ class OmsAccounts(Enum):
     client_pt_7_acc_1 = "MOClient7_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
+    client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
@@ -547,11 +550,11 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                          'PartyID': "EURO_CLEAR",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "EURO_CLEAR",
+                                 'PartyIDSource': "D"}
     counterpart_java_api_user = {'PartyRole': '36',
-                                          'PartyID': "JavaApiUser",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "JavaApiUser",
+                                 'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):

@@ -1,5 +1,4 @@
 import logging
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -8,12 +7,13 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,123 +27,147 @@ class QAP_T7190(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.ss_connectivity = self.fix_env.sell_side
-        self.bs_connectivity = self.fix_env.buy_side
         self.qty = '100'
-        self.price_first = '19.2'
-        self.price_second = '18.89'
-        self.price_third = '19'
+        self.price_first = '19'
+        self.price_second = '19.2'
+        self.price_third = '18.89'
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
-        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_message_first = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_message_second = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_message_third = FixMessageNewOrderSingleOMS(self.data_set)
+        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.un_book_orders = BookingCancelRequest()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create DMA order via FIX
-        try:
-            # first order
-            trade_rule_first = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                                  self.venue_client_names,
-                                                                                                  self.venue,
-                                                                                                  float(
-                                                                                                      self.price_first),
-                                                                                                  int(self.qty), 0)
-            self.fix_message_first.set_default_dma_limit()
-            self.fix_message_first.change_parameters(
-                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client,
-                 'Price': self.price_first})
-            response_first = self.fix_manager.send_message_and_receive_response(self.fix_message_first)
-
-            # second order
-            trade_rule_second = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                                   self.venue_client_names,
-                                                                                                   self.venue,
-                                                                                                   float(
-                                                                                                       self.price_second),
-                                                                                                   int(self.qty), 0)
-            self.fix_message_second.set_default_dma_limit()
-            self.fix_message_second.change_parameters(
-                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client,
-                 'Price': self.price_second})
-            response_second = self.fix_manager.send_message_and_receive_response(self.fix_message_second)
-            # get Client Order ID
-            cl_ord_id_second = response_second[0].get_parameters()['ClOrdID']
-
-            # third order
-            trade_rule_third = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                                  self.venue_client_names,
-                                                                                                  self.venue,
-                                                                                                  float(
-                                                                                                      self.price_third),
-                                                                                                  int(self.qty), 0)
-            self.fix_message_third.set_default_dma_limit()
-            self.fix_message_third.change_parameters(
-                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client,
-                 'Price': self.price_third})
-            response_third = self.fix_manager.send_message_and_receive_response(self.fix_message_third)
-            # get Client Order ID
-            cl_ord_id_third = response_third[0].get_parameters()['ClOrdID']
-
-        except Exception:
-            logger.error('Error execution', exc_info=True)
-        finally:
-            time.sleep(2)
-            self.rule_manager.remove_rule(trade_rule_first)
-            self.rule_manager.remove_rule(trade_rule_second)
-            self.rule_manager.remove_rule(trade_rule_third)
+        # region precondition : Create DMA orders
+        list_of_prices = [self.price_first, self.price_second, self.price_third]
+        list_of_orders_ids = []
+        for price in list_of_prices:
+            self.order_submit.set_default_dma_limit()
+            self.order_submit.update_fields_in_component(
+                "NewOrderSingleBlock",
+                {"OrdQty": self.qty,
+                 "AccountGroupID": self.client,
+                 "Price": price,
+                 "ClOrdID": bca.client_orderid(9)})
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value
+            ]
+            list_of_orders_ids.append(order_reply[JavaApiFields.OrdID.value])
         # endregion
 
-        # region Book of the second and third orders
-        self.middle_office.set_modify_ticket_details(selected_row_count=2, extract_book=True)
-        extract_book = self.middle_office.book_order()
+        # region step 1 , step 2 and step 4 : Fully Filled DMA orders
+        average_price_for_first_block = str((float(self.price_first) + float(self.price_third)) / 2)
+        list_of_exec_id = []
+        for order_id in list_of_orders_ids:
+            price = list_of_prices[list_of_orders_ids.index(order_id)]
+            self.execution_report.set_default_trade(order_id)
+            self.execution_report.update_fields_in_component(
+                "ExecutionReportBlock",
+                {
+                    "Price": price,
+                    "AvgPrice": price,
+                    "LastPx": price,
+                    "OrdQty": self.qty,
+                    "LastTradedQty": self.qty,
+                    "CumQty": self.qty,
+                },
+            )
+            self.java_api_manager.send_message_and_receive_response(self.execution_report)
+            execution_report_message = self.java_api_manager.get_last_message(
+                ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value
+            ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            list_of_exec_id.append(execution_report_message[JavaApiFields.ExecID.value])
+            self.java_api_manager.compare_values({JavaApiFields.TransExecStatus.value:
+                                                      ExecutionReportConst.TransExecStatus_FIL.value},
+                                                 execution_report_message,
+                                                 f'Checking expected and actually results for {order_id} '
+                                                 f'(ExecSts)')
+            self.java_api_manager.compare_values({JavaApiFields.PostTradeStatus.value:
+                                                      OrderReplyConst.PostTradeStatus_RDY.value},
+                                                 order_reply,
+                                                 f'Checking expected and actually results for {order_id} '
+                                                 '(PostTradeStatus)')
         # endregion
 
-        # region Comparing Agreed Price after Book of the second and third orders
-        agreed_price = extract_book.get('book.agreedPrice')
-        self.middle_office.compare_values({'AgreedPrice': '18.945'}, {'AgreedPrice': agreed_price},
-                                          'Comparing Agreed Price in the Booking ticket')
-
-        avg_px = self.middle_office.extract_block_field(column_name=MiddleOfficeColumns.price.value)['AvgPx']
-        self.middle_office.compare_values({MiddleOfficeColumns.price.value: '18.945'},
-                                          {MiddleOfficeColumns.price.value: avg_px},
-                                          'Comparing Agreed Price in the Middle office')
+        # region step 2 : Allocate first and third order
+        orders_id_block = []
+        orders_id_block.append({JavaApiFields.OrdID.value: list_of_orders_ids[0]})
+        orders_id_block.append({JavaApiFields.OrdID.value: list_of_orders_ids[2]})
+        self.allocation_instruction.set_default_book_without_ord_id()
+        self.allocation_instruction.update_fields_in_component("AllocationInstructionBlock",
+                                                               {'Qty': str(float(self.qty) * 2),
+                                                                'AvgPx': '11',
+                                                                'AccountGroupID': self.client,
+                                                                'ExecAllocList': {
+                                                                    'ExecAllocBlock': [{'ExecQty': self.qty,
+                                                                                        'ExecID': list_of_exec_id[0],
+                                                                                        'ExecPrice': list_of_prices[0]},
+                                                                                       {'ExecQty': self.qty,
+                                                                                        'ExecID': list_of_exec_id[2],
+                                                                                        'ExecPrice': list_of_prices[2]}
+                                                                                       ]},
+                                                                "OrdAllocList": {"OrdAllocBlock": orders_id_block}
+                                                                })
+        self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock', ['AvgPx'])
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: average_price_for_first_block},
+                                             allocation_report,
+                                             'Checking actually and  expected results for step 2')
+        allocation_instruction = allocation_report[JavaApiFields.ClBookingRefID.value]
         # endregion
 
-        # region Mass Unbook and checking PostTradeStatus in the Order book
-        self.order_book.mass_unbook([1, 2])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_third])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
-            'Comparing PostTradeStatus after Mass Unbook of the first order')
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id_second])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
-            'Comparing PostTradeStatus after Mass Unbook of the second order')
+        # region step 3: Unbook orders:
+        self.un_book_orders.set_default(allocation_instruction)
+        self.java_api_manager.send_message_and_receive_response(self.un_book_orders)
+        for order_id in orders_id_block:
+            order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value,
+                                                                  order_id[JavaApiFields.OrdID.value]).get_parameters()[
+                JavaApiFields.OrdUpdateBlock.value]
+            self.java_api_manager.compare_values({JavaApiFields.PostTradeStatus.value:
+                                                      OrderReplyConst.PostTradeStatus_RDY.value,
+                                                  JavaApiFields.DoneForDay.value:
+                                                  OrderReplyConst.DoneForDay_YES.value},
+                                                 order_update,
+                                                 f'Checking expected and actually results for {order_id[JavaApiFields.OrdID.value]} (step 3)')
         # endregion
 
-        # region Book of three orders
-        self.middle_office.set_modify_ticket_details(selected_row_count=3, extract_book=True)
-        extract_book2 = self.middle_office.book_order()
+        # region step 5 :
+        average_price_for_first_block = str((float(self.price_first) + float(self.price_second) + float(
+            self.price_third)) / 3)
+        orders_id_block.append({JavaApiFields.OrdID.value: list_of_orders_ids[1]})
+        self.allocation_instruction.update_fields_in_component("AllocationInstructionBlock",
+                                                               {'Qty': str(float(self.qty) * 3),
+                                                                'AccountGroupID': self.client,
+                                                                'ExecAllocList': {
+                                                                    'ExecAllocBlock': [{'ExecQty': self.qty,
+                                                                                        'ExecID': list_of_exec_id[0],
+                                                                                        'ExecPrice': list_of_prices[0]},
+                                                                                       {'ExecQty': self.qty,
+                                                                                        'ExecID': list_of_exec_id[2],
+                                                                                        'ExecPrice': list_of_prices[2]},
+                                                                                       {'ExecQty': self.qty,
+                                                                                        'ExecID': list_of_exec_id[1],
+                                                                                        'ExecPrice': list_of_prices[1]}
+                                                                                       ]},
+                                                                "OrdAllocList": {"OrdAllocBlock": orders_id_block}
+                                                                })
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: average_price_for_first_block},
+                                             allocation_report,
+                                             'Checking actually and  expected results for step 5')
         # endregion
-
-        # region Comparing AgreedPrice after Book of three orders
-        agreed_price2 = extract_book2.get('book.agreedPrice')
-        self.middle_office.compare_values({'AgreedPrice': '19.03'}, {'AgreedPrice': agreed_price2},
-                                          'Comparing Agreed Price in the Booking ticket')
-
-        avg_px2 = self.middle_office.extract_block_field(column_name=MiddleOfficeColumns.price.value)['AvgPx']
-        self.middle_office.compare_values({MiddleOfficeColumns.price.value: '19.03'},
-                                          {MiddleOfficeColumns.price.value: avg_px2},
-                                          'Comparing Agreed Price in the Middle office')
-        # endregion
-
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -6,6 +6,7 @@ class ExecutionReportConst(Enum):
     TransExecStatus_PFL = 'PFL'
     ExecType_TRD = 'TRD'
     ExecType_CAL = 'CAL'
+    ExecType_CAN = 'CAN'
 
 
 class BasketMessagesConst(Enum):
@@ -25,6 +26,7 @@ class OrderReplyConst(Enum):
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
+    TransStatus_ELI = 'ELI'
 
 
 class ExecutionPolicyConst(Enum):
@@ -48,6 +50,9 @@ class AllocationReportConst(Enum):
     AllocReportType_ACC = 'ACC'
     ConfirmationService_EXT = 'EXT'
     ConfirmationService_MAN = 'MAN'
+    SettlCurrFxRateCalc_Multiply = 'Multiply'
+    SettlCurrFxRateCalc_Devide = 'Devide'
+    ConfirmationService_INT = 'INT'
 
 
 class AllocationInstructionConst(Enum):
@@ -73,6 +78,8 @@ class AllocationInstructionConst(Enum):
     RootMiscFeeCategory_OTH = 'OTH'
     BookingType_CFD = 'CFD'
     NetGrossInd_N = 'N'
+    SettlCurrFxRateCalc_M = 'M'
+    SettlCurrFxRateCalc_D = 'D'
 
 
 class ConfirmationReportConst(Enum):
@@ -209,6 +216,7 @@ class JavaApiFields(Enum):
     BookingAllocInstructionID = 'BookingAllocInstructionID'
     ClBookingRefID = 'ClBookingRefID'
     AvgPrice = 'AvgPrice'
+    GrossTradeAmt = 'GrossTradeAmt'
     AvgPx = 'AvgPx'
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
@@ -218,6 +226,13 @@ class JavaApiFields(Enum):
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
+    SettlCurrency = 'SettlCurrency'
+    SettlCurrFxRate = 'SettlCurrFxRate'
+    SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
+    CommissionAmountSubType = 'CommissionAmountSubType'
+    ConfirmationID = 'ConfirmationID'
+    RootMiscFeeCategory = 'RootMiscFeeCategory'
+    ClAllocID = 'ClAllocID'
 
 
 class JavaApiPartyRoleConstants(Enum):

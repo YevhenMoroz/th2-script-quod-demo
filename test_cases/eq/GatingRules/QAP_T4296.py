@@ -52,7 +52,15 @@ class QAP_T4296(TestCase):
             param = modify_rule_message.get_parameter("gatingRuleCondition")
             param[0]["gatingRuleCondExp"] = "AND(VenueID IN(PARIS),VenueID NOT IN(PARIS))"
             param[0]["gatingRuleCondName"] = "Conflicting_rules"
-            param[0]['holdOrder'] = 'true'
+            set_value_params: dict = {"alive": 'true',
+                                      "gatingRuleResultIndice": 1,
+                                      "splitRatio": 0,
+                                      "holdOrder": 'true',
+                                      "gatingRuleResultProperty": "APP",
+                                      "gatingRuleResultAction": "VAL",
+                                      "gatingRuleResultRejectType": "HRD"}
+            param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
+            param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
             modify_rule_message.update_parameters({"gatingRuleCondition": param})
             self.rest_api_manager.send_post_request(modify_rule_message)
             self.send_submit_message_and_check_result(self.order_submit)

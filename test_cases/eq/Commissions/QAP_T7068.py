@@ -55,7 +55,7 @@ class QAP_T7068(TestCase):
         self.__send_fix_orders()
         # endregion
         # region send exec report
-        comm_data = {"Commission": "0.1", "CommType": "3"}
+        comm_data = {"Commission": "1", "CommType": "3"}
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
             {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
