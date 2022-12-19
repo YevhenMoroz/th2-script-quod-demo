@@ -239,3 +239,27 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_not_crossing_mid_price(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*",
+            "MidPrice": "27",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_starting_mid_price_monitoring(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_market_event_for_venue(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrderId": "*",
+            "Text": "27",
+            "AdditionalParameter": "QUODLIT1",
+        }
+        super().change_parameters(base_parameters)
+        return self
+

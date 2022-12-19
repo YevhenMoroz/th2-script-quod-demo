@@ -35,6 +35,7 @@ class EnvironmentType(Enum):
     quod315_luna_web_admin_site = "quod315_luna_web_admin_site"
     quod320_kuiper_web_admin_site = "quod320_kuiper_web_admin_site"
     quod319_kuiper_web_admin_site = "quod319_kuiper_web_admin_site"
+    quod316_ganymede_web_admin_site = "quod316_ganymede_web_admin_site"
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
     quod317_ganymede_web_admin = "quod317_ganymede_web_admin"
     quod314_luna_web_admin = "quod314_luna_web_admin"

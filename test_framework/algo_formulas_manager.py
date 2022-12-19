@@ -1,7 +1,11 @@
+import datetime
 import math
-from datetime import datetime, time, date, timezone
+from copy import deepcopy
+from datetime import time, date, timezone, timedelta
+from datetime import datetime as dt
 from math import ceil
 
+from test_framework.data_sets.constants import TradingPhases
 
 class AlgoFormulasManager:
     # region offset calculation
@@ -27,8 +31,8 @@ class AlgoFormulasManager:
     # endregion
 
     @staticmethod
-    def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int) -> int:
-        return math.floor(remaining_ord_qty / remaining_waves)
+    def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int, round_lot: int = 1) -> int:
+        return math.floor(remaining_ord_qty / remaining_waves/round_lot) * round_lot
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
@@ -163,8 +167,8 @@ class AlgoFormulasManager:
         return res_shift
 
     @staticmethod
-    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: datetime, delta: int) -> int:
-        day = datetime.weekday(expire_date)
+    def calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date: dt, delta: int) -> int:
+        day = dt.weekday(expire_date)
         shift = delta
         if day == 5:
             shift += 2
@@ -175,8 +179,8 @@ class AlgoFormulasManager:
         return shift
 
     @staticmethod
-    def make_expire_date_friday_if_it_is_on_weekend(expire_date: datetime) -> int:
-        day = datetime.weekday(expire_date)
+    def make_expire_date_friday_if_it_is_on_weekend(expire_date: dt) -> int:
+        day = dt.weekday(expire_date)
         shift = 0
         if day == 5:
             shift += 1
@@ -212,10 +216,239 @@ class AlgoFormulasManager:
     def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
 
-    @staticmethod
-    def change_datetime_from_epoch_to_normal(datetime_epoch: int) -> time:
-        return datetime.fromtimestamp(int(datetime_epoch)/1000).time()
+    # @staticmethod
+    # def change_datetime_from_epoch_to_normal(datetime_epoch) -> datetime:
+    #     return dt.fromtimestamp(int(datetime_epoch)/1000).replace(tzinfo=timezone.utc)
+    #
+    # @staticmethod
+    # def change_time_from_normal_to_epoch(time: datetime) -> int:
+    #     return int(time.replace(tzinfo=timezone.utc).timestamp()) * 1000
+    #
+    # @staticmethod
+    # def change_datetime_from_normal_to_epoch(date: dt) -> int:
+    #     return int(date.replace(tzinfo=timezone.utc).timestamp()) * 1000
+    #
+    # @staticmethod
+    # def change_time_from_normal_to_epoch_without_milisec(time: datetime) -> int:
+    #     return int(time.replace(tzinfo=timezone.utc).timestamp())
 
     @staticmethod
-    def change_time_from_normal_to_epoch(time: time) -> int:
-        return int(datetime.combine(date.today(), time).replace(tzinfo=timezone.utc).timestamp()) * 1000
+    def change_datetime_local_to_UTC(local_date: dt):
+        copy_local_date = deepcopy(local_date)
+        return copy_local_date.replace(tzinfo=datetime.timezone.utc)
+
+    @staticmethod
+    def change_datetime_UTC_to_local(utc_dt: dt):
+        copy_utc_dt = deepcopy(utc_dt)
+        return copy_utc_dt.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+
+    @staticmethod
+    def change_datetime_from_epoch_to_normal(datetime_epoch) -> dt:
+        return datetime.datetime.fromtimestamp(int(datetime_epoch))
+
+    @staticmethod
+    def change_datetime_from_epoch_to_normal_with_milisec(datetime_epoch) -> dt:
+        return datetime.datetime.fromtimestamp(int(datetime_epoch)/1000)
+
+
+    @staticmethod
+    def change_datetime_from_normal_to_epoch(datetime: dt) -> int:
+        return int(AlgoFormulasManager.change_datetime_local_to_UTC(datetime).timestamp())
+
+    @staticmethod
+    def change_datetime_from_normal_to_epoch_with_milisecs(datetime: dt) -> int:
+        return int(datetime.timestamp()) * 1000
+
+    @staticmethod
+    def get_timestamps_for_current_phase(phase: TradingPhases):
+        tm = dt.now()
+        if phase == TradingPhases.PreOpen:
+            tm = dt.now()
+            pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = pop_start + timedelta(minutes=4)
+            pcl_start = opn_start + timedelta(minutes=5)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.PreClosed:
+            tm = dt.now()
+            pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = pcl_start + timedelta(minutes=4)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.Open:
+            tm = dt.now()
+            opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=4)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+
+        return [
+            {
+                "beginTime": pop_start,
+                "endTime": opn_start,
+                "submitAllowed": "True",
+                "tradingPhase": "POP",
+                "standardTradingPhase": "PRE",
+            },
+            {
+                "beginTime": opn_start,
+                "endTime": pcl_start,
+                "submitAllowed": "True",
+                "tradingPhase": "OPN",
+                "standardTradingPhase": "OPN",
+            },
+            {
+                "beginTime": pcl_start,
+                "endTime": pcl_end,
+                "submitAllowed": "True",
+                "tradingPhase": "PCL",
+                "standardTradingPhase": "PCL",
+            },
+            {
+                "beginTime": pcl_end,
+                "endTime": clo_start,
+                "submitAllowed": "True",
+                "tradingPhase": "TAL",
+                "standardTradingPhase": "TAL",
+            },
+            {
+                "beginTime": clo_start,
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                "submitAllowed": "True",
+                "tradingPhase": "CLO",
+                "standardTradingPhase": "CLO",
+            }
+        ]
+
+    @staticmethod
+    def get_default_timestamp_for_trading_phase():
+        tm = dt.now()
+        return [
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=6, minute=50, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "POP",
+                "standardTradingPhase": "PRE",
+            },
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "OPN",
+                "standardTradingPhase": "OPN",
+            },
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "PCL",
+                "standardTradingPhase": "PCL",
+            },
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "TAL",
+                "standardTradingPhase": "TAL",
+            },
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=59, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "CLO",
+                "standardTradingPhase": "CLO",
+            }
+        ]
+
+    @staticmethod
+    def get_timestamps_for_next_phase(phase: TradingPhases):
+        tm = dt.now()
+        if phase == TradingPhases.PreOpen:
+            pop_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = pop_start + timedelta(minutes=4)
+            pcl_start = opn_start + timedelta(minutes=5)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.PreClosed:
+            pcl_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = pcl_start + timedelta(minutes=4)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.Open:
+            opn_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=4)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+
+        return [
+            {
+                "beginTime": pop_start,
+                "endTime": opn_start,
+                "submitAllowed": "True",
+                "tradingPhase": "POP",
+                "standardTradingPhase": "PRE",
+            },
+            {
+                "beginTime": opn_start,
+                "endTime": pcl_start,
+                "submitAllowed": "True",
+                "tradingPhase": "OPN",
+                "standardTradingPhase": "OPN",
+            },
+            {
+                "beginTime": pcl_start,
+                "endTime": pcl_end,
+                "submitAllowed": "True",
+                "tradingPhase": "PCL",
+                "standardTradingPhase": "PCL",
+            },
+            {
+                "beginTime": pcl_end,
+                "endTime": clo_start,
+                "submitAllowed": "True",
+                "tradingPhase": "TAL",
+                "standardTradingPhase": "TAL",
+            },
+            {
+                "beginTime": clo_start,
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                "submitAllowed": "True",
+                "tradingPhase": "CLO",
+                "standardTradingPhase": "CLO",
+            }
+        ]
+
+    @staticmethod
+    def get_timestamp_from_list(phases, phase: TradingPhases, start_time: bool = True):
+
+        for i in phases:
+            if i['tradingPhase'] == phase.value:
+                if start_time:
+                    return int(i['beginTime'])
+                else:
+                    return int(i['endTime'])
+
+    @staticmethod
+    def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
+                                    comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
+        lit_touch = bid_price
+        giveup_cost = cost_per_trade / parent_qty
+        if is_comm_per_unit == False:
+            commission = comm_basis_point / 10000 * lit_touch
+        else:
+            commission = comm_per_unit
+        custom_adjustement = (ask_price - bid_price) * spread_disc_proportion
+        if ord_side == 1:
+            return round((lit_touch + giveup_cost + commission + custom_adjustement), 3)
+        else:
+            return round((lit_touch - giveup_cost - commission - custom_adjustement), 3)
+
+    @staticmethod
+    def get_child_qty_for_auction(indicative_volume, percentage, parent_qty):
+        child_qty = ceil(indicative_volume * percentage / (100 - percentage))
+        return min(child_qty, parent_qty)

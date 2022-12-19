@@ -17,6 +17,7 @@ class Connectivity(Enum):
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
     Ganymede_316_Buy_Side_Redburn = 'fix-buy-side-316-ganymede-redburn'
     Ganymede_316_Sell_Side_Redburn = 'fix-sell-side-316-gnmd-rb'
+    Ganymede_316_web_admin_site = 'rest_wa316ganymede'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
@@ -182,6 +183,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
+    qa_mpdark_12 = "QA_Auto_MPDark12"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -331,6 +333,9 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
+    log_319_check_not_crossing_mid_price = "log319-check-not-crossing-mid-price"
+    log_319_check_starting_mid_price_monitoring = "log319-check-starting-mid-price-monitoring"
+    log_319_check_market_event_for_venue = "log319-check-market-event-for-venue"
 
 
 class WebAdminURL(Enum):
@@ -366,3 +371,12 @@ class FreeNotesReject(Enum):
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
+
+class TradingPhases(Enum):
+    Auction = "AUC"
+    Closed = "CLO"
+    Open = "OPN"
+    PreClosed = "PCL"
+    PreOpen = "POP"
+    Expiry = "EXA"
+    AtLast = "TAL"
