@@ -1,142 +1,48 @@
 import logging
-import time
 from getpass import getuser as get_pc_name
 from datetime import datetime
-
-from Test_UI import Test_UI
+from pathlib import Path
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from send_rqf import Send_RFQ
 from stubs import Stubs
-from test_cases.fx.fx_mm_autohedging import QAP_T2697, QAP_T2682, QAP_T2681, QAP_T2713, QAP_T2679
-from test_cases.fx.fx_mm_esp.QAP_T2432 import QAP_T2432
-from test_cases.fx.fx_mm_esp.QAP_T2605 import QAP_T2605
-from test_cases.fx.fx_mm_esp.QAP_T2719 import QAP_T2719
-from test_cases.fx.fx_mm_esp.QAP_T2896 import QAP_T2896
-from test_cases.fx.fx_mm_positions.QAP_T8544 import QAP_T8544
-from test_cases.fx.fx_mm_rfq.QAP_T2376 import QAP_T2376
-from test_cases.fx.fx_mm_rfq.QAP_T2385 import QAP_T2385
-from test_cases.fx.fx_mm_rfq.QAP_T2417 import QAP_T2417
-from test_cases.fx.fx_mm_rfq.QAP_T2418 import QAP_T2418
-from test_cases.fx.fx_mm_rfq.QAP_T2419 import QAP_T2419
-from test_cases.fx.fx_mm_rfq.QAP_T2443 import QAP_T2443
-from test_cases.fx.fx_mm_rfq.QAP_T2454 import QAP_T2454
-from test_cases.fx.fx_mm_rfq.QAP_T2466 import QAP_T2466
-from test_cases.fx.fx_mm_rfq.QAP_T2480 import QAP_T2480
-from test_cases.fx.fx_mm_rfq.QAP_T2481 import QAP_T2481
-from test_cases.fx.fx_mm_rfq.QAP_T2482 import QAP_T2482
-from test_cases.fx.fx_mm_rfq.QAP_T2500 import QAP_T2500
-from test_cases.fx.fx_mm_rfq.QAP_T2519 import QAP_T2519
-from test_cases.fx.fx_mm_rfq.QAP_T2527 import QAP_T2527
-from test_cases.fx.fx_mm_rfq.QAP_T2528 import QAP_T2528
-from test_cases.fx.fx_mm_rfq.QAP_T2546 import QAP_T2546
-from test_cases.fx.fx_mm_rfq.QAP_T2611 import QAP_T2611
-from test_cases.fx.fx_mm_rfq.QAP_T2691 import QAP_T2691
-from test_cases.fx.fx_mm_rfq.QAP_T2694 import QAP_T2694
-from test_cases.fx.fx_mm_rfq.QAP_T2716 import QAP_T2716
-from test_cases.fx.fx_mm_rfq.QAP_T2818 import QAP_T2818
-from test_cases.fx.fx_mm_rfq.QAP_T2828 import QAP_T2828
-from test_cases.fx.fx_mm_rfq.QAP_T2834 import QAP_T2834
-from test_cases.fx.fx_mm_rfq.QAP_T2842 import QAP_T2842
-from test_cases.fx.fx_mm_rfq.QAP_T2844 import QAP_T2844
-from test_cases.fx.fx_mm_rfq.QAP_T2845 import QAP_T2845
-from test_cases.fx.fx_mm_rfq.QAP_T2861 import QAP_T2861
-from test_cases.fx.fx_mm_rfq.QAP_T2878 import QAP_T2878
-from test_cases.fx.fx_mm_rfq.QAP_T2879 import QAP_T2879
-from test_cases.fx.fx_mm_rfq.QAP_T2880 import QAP_T2880
-from test_cases.fx.fx_mm_rfq.QAP_T2886 import QAP_T2886
-from test_cases.fx.fx_mm_rfq.QAP_T2887 import QAP_T2887
-from test_cases.fx.fx_mm_rfq.QAP_T2939 import QAP_T2939
-from test_cases.fx.fx_mm_rfq.QAP_T2940 import QAP_T2940
-from test_cases.fx.fx_mm_rfq.QAP_T5995 import QAP_T5995
-from test_cases.fx.fx_mm_rfq.QAP_T7967 import QAP_T7967
-from test_cases.fx.fx_mm_rfq.QAP_T8011 import QAP_T8011
-from test_cases.fx.fx_mm_rfq.QAP_T8020 import QAP_T8020
-from test_cases.fx.fx_mm_rfq.QAP_T8168 import QAP_T8168
-from test_cases.fx.fx_mm_rfq.QAP_T8378 import QAP_T8378
-from test_cases.fx.fx_mm_rfq.QAP_T8409 import QAP_T8409
-from test_cases.fx.fx_mm_rfq.QAP_T8636 import QAP_T8636
-from test_cases.fx.fx_mm_rfq.QAP_T8697 import QAP_T8697
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2444 import QAP_T2444
-
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2448 import QAP_T2448
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2475 import QAP_T2475
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2537 import QAP_T2537
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2558 import QAP_T2558
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2572 import QAP_T2572
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2573 import QAP_T2573
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2575 import QAP_T2575
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2579 import QAP_T2579
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2603 import QAP_T2603
-from test_cases.fx.fx_mm_rfq.interpolation.QAP_T8015 import QAP_T8015
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2442 import QAP_T2442
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2549 import QAP_T2549
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2550 import QAP_T2550
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2592 import QAP_T2592
-from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2597 import QAP_T2597
-from test_cases.fx.fx_mm_rfq.rejection.QAP_T2581 import QAP_T2581
-from test_cases.fx.fx_mm_rfq.rejection.QAP_T2593 import QAP_T2593
-from test_cases.fx.fx_mm_rfq.rejection.QAP_T2595 import QAP_T2595
-from test_cases.fx.fx_mm_rfq.rejection.QAP_T2598 import QAP_T2598
-from test_cases.fx.fx_price_cleansing.QAP_T2637 import QAP_T2637
-from test_cases.fx.fx_price_cleansing.QAP_T5124 import QAP_T5124
-from test_cases.fx.fx_price_cleansing.QAP_T5126 import QAP_T5126
-from test_cases.fx.fx_price_cleansing.QAP_T5127 import QAP_T5127
-from test_cases.fx.fx_taker_esp import QAP_T2487, QAP_T2488, QAP_T2489, QAP_T2496
-from test_cases.fx.fx_taker_esp.QAP_T2429 import QAP_T2429
-from test_cases.fx.fx_taker_esp.QAP_T2456 import QAP_T2456
-from test_cases.fx.fx_taker_esp.QAP_T2490 import QAP_T2490
-from test_cases.fx.fx_taker_esp.QAP_T2491 import QAP_T2491
-from test_cases.fx.fx_taker_esp.QAP_T2493 import QAP_T2493
-from test_cases.fx.fx_taker_esp.QAP_T2640 import QAP_T2640
-from test_cases.fx.fx_taker_esp.QAP_T2642 import QAP_T2642
-from test_cases.fx.fx_taker_esp.QAP_T2643 import QAP_T2643
-from test_cases.fx.fx_taker_esp.QAP_T8666 import QAP_T8666
-from test_cases.fx.fx_taker_esp.QAP_T8667 import QAP_T8667
-
-from test_cases.fx.send_md import QAP_MD
-
+from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
+from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
+from test_framework.data_sets.algo_data_set.algo_data_set import AlgoDataSet
+from test_framework.data_sets.ret_data_set.ret_data_set import RetDataSet
+from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.WARN)
 
 
 def test_run():
     # Generation id and time for test run
-    report_id = bca.create_event(f'[alexs] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
-    # initializing dataset
+    pc_name = get_pc_name()  # getting PC name
+    report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    logger.info(f"Root event was created (id = {report_id.id})")
     # initializing FE session
-    session_id = set_session_id(target_server_win="ostronov")
-
-    window_name = "Quod Financial - Quod site 309"
+    session_id = set_session_id(pc_name)
+    base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("ESP_MM")  # <--- provide your component from XML (DMA, iceberg, etc)
-    start_time = time.time()
-    print(f"Test start")
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    fe_folder = fe_env.folder
+    fe_user = fe_env.user_1
+    fe_pass = fe_env.password_1
     # endregion
-    Stubs.frontend_is_open = True
 
     try:
-
-        QAP_MD(report_id, data_set=configuration.data_set).execute()
-
-
-
-        # rm = RuleManager()
-        # # rm.remove_rule_by_id(5)
-        # rm.print_active_rules()
-
-
-        end = time.time()
-        print(f"Test duration is {end - start_time} seconds")
-
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
-        pass
+        Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':
