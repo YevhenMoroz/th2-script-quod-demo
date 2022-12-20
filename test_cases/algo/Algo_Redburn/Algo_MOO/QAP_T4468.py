@@ -2,6 +2,7 @@ import os
 import sched
 import time
 import datetime
+from math import ceil
 
 from pathlib import Path
 
@@ -20,7 +21,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4467(TestCase):
+class QAP_T4468(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -43,9 +44,11 @@ class QAP_T4467(TestCase):
         self.indicative_volume = 2000
         self.percentage = 10
         self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
-        self.would_qty = self.qty - self.child_qty
+        self.max_would_shares = 500
+        self.would_qty = self.max_would_shares
         self.price = 30
         self.would_price = 29
+
         # endregion
 
         # region Gateway Side
@@ -123,7 +126,7 @@ class QAP_T4467(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, WouldInAuction=1, TriggerPriceRed=self.would_price))
+        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, WouldInAuction=1, TriggerPriceRed=self.would_price, MaxWouldShares=self.max_would_shares))
         responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
 
         # region Check Sell side
@@ -153,8 +156,6 @@ class QAP_T4467(TestCase):
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child')
         # endregion
-
-
 
         # region check Would child
 
