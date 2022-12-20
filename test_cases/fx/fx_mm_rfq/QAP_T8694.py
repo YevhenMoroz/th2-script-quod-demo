@@ -1,14 +1,22 @@
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import random_qty
+from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, QuoteRequestBookColumns
-from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
+from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
+from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 
 
 class QAP_T8694(TestCase):
@@ -16,37 +24,65 @@ class QAP_T8694(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.iridium = self.data_set.get_client_by_name("client_mm_3")
+        self.iridium_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.adjustment_request = QuoteAdjustmentRequestFX(data_set=self.data_set)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.action_request = QuoteRequestActionRequestFX()
+        self.quote = FixMessageQuoteFX()
+        self.java_quote = OrderQuoteFX()
+        self.instrument_spot = {
+            "Symbol": self.gbp_usd,
+            "SecurityType": self.security_type_spot
+        }
+        self.qty = random_qty(5)
 
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
-
-        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
-        self.free_notes_column = OrderBookColumns.free_notes.value
-        self.qty_column = OrderBookColumns.qty.value
-        self.client_column = QuoteRequestBookColumns.client.value
-        self.presence_event = "Order presence check"
-        self.expected_free_notes = "failed to get forward points through RFQ - manual intervention required"
-
-        self.qty_4m = random_qty(4, 5, 7)
-        self.qty_5m = random_qty(5, 6, 7)
-        self.expected_qty = ""
-        self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.quote_response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Step 1-2
-        self.quote_request.set_swap_fwd_fwd().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                                              Account=self.client_argentina)
-        self.quote_request.update_near_leg(leg_qty=self.qty_4m)
-        self.quote_request.update_far_leg(leg_qty=self.qty_5m)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                                                          {"ClientTierID": self.iridium_id})
+        self.adjustment_request.disable_pricing_by_index(2)
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(2)
 
-        actual_qty = self.dealer_intervention.extract_field_from_unassigned(self.qty_column)
-        self.dealer_intervention.compare_values("", actual_qty, self.presence_event)
-
-        self.dealer_intervention.set_list_filter(
-            [self.qty_column, self.expected_qty, self.client_column, self.client_argentina])
-        actual_free_notes = self.dealer_intervention.extract_field_from_unassigned(self.free_notes_column)
-        self.dealer_intervention.compare_values(self.expected_free_notes, actual_free_notes, self.presence_event)
+        # region Step 1
+        self.quote_request.set_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.iridium,
+                                                           Currency=self.currency, Instrument=self.instrument_spot,
+                                                           OrderQty=self.qty, Side="2")
+        response = self.fix_manager_gtw.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_dealer(self.quote_request)
+        self.sleep(2)
+        req_id = check_quote_request_id(self.quote_request)
         # endregion
+        # region Step 2
+        self.sleep(2)
+        self.action_request.set_default_params(req_id).set_action_assign()
+        self.java_manager.send_message(self.action_request)
+        self.sleep(2)
+        self.action_request.set_action_estimate()
+        estimation_reply = self.java_manager.send_message_and_receive_response(self.action_request)
+        self.java_quote.set_params_for_quote(self.quote_request, estimation_reply[0])
+        self.java_manager.send_message(self.java_quote)
+        self.quote_response = next(response)
+        self.fix_manager_gtw.parse_response(self.quote_response)
+        self.quote.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                                                          {"ClientTierID": self.iridium_id})
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(2)
