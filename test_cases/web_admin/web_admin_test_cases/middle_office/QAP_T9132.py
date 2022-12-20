@@ -68,9 +68,10 @@ class QAP_T9132(CommonTestCase):
             self.verify("Commission amount sub type contains preconditions values",
                         sorted(self.commission_amount_sub_type),
                         sorted(self.actual_com_amt_sub_type))
-
-            value_tab.set_commission_amount_type(random.choice(self.actual_com_amt_type))
-            value_tab.set_commission_amount_sub_type(random.choice(self.actual_com_amt_sub_type))
+            com_amt_type = random.choice(self.actual_com_amt_type)
+            value_tab.set_commission_amount_type(com_amt_type)
+            com_amt_sub_type = random.choice(self.actual_com_amt_sub_type)
+            value_tab.set_commission_amount_sub_type(com_amt_sub_type)
 
             wizard = CommissionsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
@@ -80,7 +81,7 @@ class QAP_T9132(CommonTestCase):
             commission_page.click_on_edit()
 
             actual_result = [value_tab.get_commission_amount_type(), value_tab.get_commission_amount_sub_type()]
-            expected_result = [self.actual_com_amt_type, self.actual_com_amt_sub_type]
+            expected_result = [com_amt_type, com_amt_sub_type]
 
             self.verify("Commission saved", expected_result, actual_result)
 

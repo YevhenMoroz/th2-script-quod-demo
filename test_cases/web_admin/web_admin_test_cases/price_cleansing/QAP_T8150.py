@@ -46,9 +46,13 @@ class QAP_T8150(CommonTestCase):
         try:
             self.precondition()
             main_page = MainPage(self.web_driver_container)
-            main_page.click_on_new()
+            main_page.set_name_filter(self.name[0])
+            time.sleep(1)
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
             values_tab = ValuesTab(self.web_driver_container)
             values_tab.set_name(self.name[1])
+            values_tab.click_on_remove_detected_price_update_checkbox()
             values_tab.click_on_enrich_empty_side_of_book_checkbox()
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_venue(self.venue[1])
@@ -56,7 +60,7 @@ class QAP_T8150(CommonTestCase):
             wizard = MainWizard(self.web_driver_container)
             wizard.click_on_save_changes()
 
-            main_page.set_name_filter(self.name)
+            main_page.set_name_filter(self.name[1])
             time.sleep(1)
             main_page.click_on_more_actions()
             main_page.click_on_edit()

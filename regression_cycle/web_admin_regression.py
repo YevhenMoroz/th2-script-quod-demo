@@ -33,30 +33,30 @@ def test_run(parent_id=None):
     report_id = bca.create_event(f'{name} | {version}', parent_id)
     try:
         start_time = time.monotonic()
-        # if eval(root.find(".//component[@name='WA_General']").attrib["run"]):
-        #     RunGeneral(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Site']").attrib["run"]):
-        #     RunSite(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Users']").attrib["run"]):
-        #     RunUsers(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Markets']").attrib["run"]):
-        #     RunMarkets(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Client_Accounts']").attrib["run"]):
-        #     RunClientsAccounts(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Order_Management']").attrib["run"]):
-        #     RunOrderManagement(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Middle_Office']").attrib["run"]):
-        #     RunMiddleOffice(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Market_Making']").attrib["run"]):
-        #     RunMarketMaking(report_id).execute()
+        if eval(root.find(".//component[@name='WA_General']").attrib["run"]):
+            RunGeneral(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Site']").attrib["run"]):
+            RunSite(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Users']").attrib["run"]):
+            RunUsers(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Markets']").attrib["run"]):
+            RunMarkets(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Client_Accounts']").attrib["run"]):
+            RunClientsAccounts(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Order_Management']").attrib["run"]):
+            RunOrderManagement(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Middle_Office']").attrib["run"]):
+            RunMiddleOffice(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Market_Making']").attrib["run"]):
+            RunMarketMaking(report_id).execute()
         if eval(root.find(".//component[@name='WA_Price_Cleansing']").attrib["run"]):
             RunPriceCleansing(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Risk_Limits']").attrib["run"]):
-        #     RunRiskLimits(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Positions']").attrib["run"]):
-        #     RunPositions(report_id).execute()
-        # if eval(root.find(".//component[@name='WA_Others']").attrib["run"]):
-        #     RunOthers(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Risk_Limits']").attrib["run"]):
+            RunRiskLimits(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Positions']").attrib["run"]):
+            RunPositions(report_id).execute()
+        if eval(root.find(".//component[@name='WA_Others']").attrib["run"]):
+            RunOthers(report_id).execute()
         end_time = time.monotonic()
         print("Test cases completed\n" +
               "~Total elapsed execution time~ = " + str(timedelta(seconds=end_time - start_time)))

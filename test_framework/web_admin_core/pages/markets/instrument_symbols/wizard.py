@@ -36,7 +36,6 @@ class InstrumentSymbolsWizard(CommonPage):
         return self.get_text_by_xpath(InstrumentSymbolsConstants.WIZARD_INSTR_SYMBOL_XPATH)
 
     def get_all_instr_symbols_from_drop_menu(self):
-        self.find_by_xpath(InstrumentSymbolsConstants.WIZARD_INSTR_SYMBOL_XPATH).click()
         self.set_text_by_xpath(InstrumentSymbolsConstants.WIZARD_INSTR_SYMBOL_XPATH, "")
         time.sleep(1)
         return self.get_all_items_from_drop_down(InstrumentSymbolsConstants.DROP_DOWN_MENU_XPATH)

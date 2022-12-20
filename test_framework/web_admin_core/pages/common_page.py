@@ -221,7 +221,7 @@ class CommonPage:
             c += 100
             action.perform()
             if self.is_element_present(search_element):
-                c += 200
+                c += 100
                 action.drag_and_drop_by_offset(scr_elem, c, 0)
                 action.perform()
                 break
