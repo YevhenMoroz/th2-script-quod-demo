@@ -213,7 +213,7 @@ class FxSettleDates(Enum):
     wk1_java_api = wk1_java_api()
     wk1 = wk1()
     wk2 = wk2()
-    wk_java_api = wk2_java_api()
+    wk2_java_api = wk2_java_api()
     wk3 = wk3()
     spo_ndf = spo_ndf()
     wk1_ndf = wk1_ndf()
