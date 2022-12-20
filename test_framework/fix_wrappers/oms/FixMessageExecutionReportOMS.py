@@ -171,6 +171,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
     def set_default_canceled(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
             "ExecType": "4",
+            "OrdStatus": "4",
             "Account": new_order_single.get_parameter("Account"),
             "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
             "ClOrdID": new_order_single.get_parameter("ClOrdID"),
