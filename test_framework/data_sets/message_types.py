@@ -90,6 +90,8 @@ class ORSMessageType(Enum):
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
     NewOrderReply = 'Gateway_NewOrderReply'
+    MarkOrderRequest = 'Order_MarkOrderRequest'
+    MarkOrderReply = 'Order_MarkOrderReply'
 
 
 
