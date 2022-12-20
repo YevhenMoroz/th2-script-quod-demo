@@ -263,21 +263,18 @@ class AlgoFormulasManager:
     def get_timestamps_for_current_phase(phase: TradingPhases):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
-            tm = dt.now()
             pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.PreClosed:
-            tm = dt.now()
             pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = pcl_start + timedelta(minutes=4)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.Open:
-            tm = dt.now()
             opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             pcl_start = opn_start + timedelta(minutes=4)
             pcl_end = pcl_start + timedelta(minutes=5)
@@ -425,13 +422,12 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_timestamp_from_list(phases, phase: TradingPhases, start_time: bool = True):
-
-        for i in phases:
-            if i['tradingPhase'] == phase.value:
+        for phase_from_list in phases:
+            if phase_from_list['tradingPhase'] == phase.value:
                 if start_time:
-                    return int(i['beginTime'])
+                    return int(phase_from_list['beginTime'])
                 else:
-                    return int(i['endTime'])
+                    return int(phase_from_list['endTime'])
 
     @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
