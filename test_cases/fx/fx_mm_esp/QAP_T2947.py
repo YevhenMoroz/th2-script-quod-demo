@@ -1,120 +1,149 @@
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import DirectionEnum, Status
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.win_gui_wrappers.fe_trading_constant import ClientPrisingTileAction, RatesColumnNames
-from test_framework.win_gui_wrappers.forex.client_rates_tile import ClientRatesTile
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
 
 
 class QAP_T2947(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-
-        self.pips_1 = "1"
-        self.pips_2 = "2"
-        self.pips_3 = "3"
-
-        self.ask_base = RatesColumnNames.ask_base
-        self.bid_base = RatesColumnNames.bid_base
-        self.ask_px = RatesColumnNames.ask_px
-        self.bid_px = RatesColumnNames.bid_px
-
-        self.increase_ask = ClientPrisingTileAction.increase_ask
-        self.decrease_ask = ClientPrisingTileAction.decrease_ask
-        self.decrease_bid = ClientPrisingTileAction.decrease_bid
-
-        self.rates_tile = ClientRatesTile(self.test_id, self.session_id)
-
-        self.silver = self.data_set.get_client_tier_by_name("client_tier_1")
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.adjustment_request = QuoteAdjustmentRequestFX(data_set=self.data_set)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
+        self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.execution_report = FixMessageExecutionReportFX()
+        self.konstantin = self.data_set.get_client_by_name("client_mm_12")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
-        self.eur_usd_spot = self.eur_usd + "-Spot"
-        self.base_event = "Base validation"
-        self.px_event = "Px validation"
+        self.verifier = Verifier
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1-2
-        self.rates_tile.crete_tile()
-        self.rates_tile.modify_client_tile(instrument=self.eur_usd_spot, client_tier=self.silver)
-        self.rates_tile.press_use_default()
+        # region 1-2
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        default_bid_px_1 = response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"]
+        default_ask_px_1 = response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"]
+        default_bid_px_2 = response[0].get_parameter("NoMDEntries")[2]["MDEntryPx"]
+        default_ask_px_2 = response[0].get_parameter("NoMDEntries")[3]["MDEntryPx"]
+        default_bid_px_3 = response[0].get_parameter("NoMDEntries")[4]["MDEntryPx"]
+        default_ask_px_3 = response[0].get_parameter("NoMDEntries")[5]["MDEntryPx"]
         # endregion
 
-        # region step 3
-        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.bid_px, row_number=3)
-        bid_base_before = row_values[str(self.bid_base)]
-        bid_px_before = row_values[str(self.bid_px)]
-        expected_bid_base = str(int(bid_base_before) + 2)
-        expected_bid_px = str(int(bid_px_before) - 20)
-        self.rates_tile.modify_client_tile(pips=self.pips_2)
-        self.rates_tile.select_rows([3])
-        self.rates_tile.modify_spread(self.decrease_bid)
-        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.bid_px, row_number=3)
-        actual_bid_base = str(int(row_values[str(self.bid_base)]))
-        actual_bid_px = str(int(row_values[str(self.bid_px)]))
-        self.rates_tile.compare_values(expected_bid_base, actual_bid_base,
-                                       event_name=self.base_event)
-        self.rates_tile.compare_values(expected_bid_px, actual_bid_px,
-                                       event_name=self.px_event)
+        # region 3-4
+        self.adjustment_request.set_defaults()
+        self.adjustment_request.update_margins_by_index(3, "-0.2", "0")
+        self.adjustment_request.update_instrument(self.eur_usd)
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(4)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00002, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3), 5)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px_3)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px_3)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
         # endregion
 
-        # region step 4
-        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.bid_px)
-        bid_base_before = row_values[str(self.bid_base)]
-        bid_px_before = row_values[str(self.bid_px)]
-        expected_bid_base = str(int(bid_base_before) + 1)
-        expected_bid_px = str(int(bid_px_before) - 10)
-        self.rates_tile.deselect_rows()
-        self.rates_tile.modify_client_tile(pips=self.pips_1)
-        self.rates_tile.modify_spread(self.decrease_bid)
-        row_values = self.rates_tile.extract_values_from_rates(self.bid_base, self.bid_px)
-        actual_bid_base = str(int(row_values[str(self.bid_base)]))
-        actual_bid_px = str(int(row_values[str(self.bid_px)]))
-        self.rates_tile.compare_values(expected_bid_base, actual_bid_base,
-                                       event_name=self.base_event)
-        self.rates_tile.compare_values(expected_bid_px, actual_bid_px,
-                                       event_name=self.px_event)
+        # region 4
+        self.adjustment_request.set_defaults()
+        self.adjustment_request.update_instrument("EUR/USD")
+        self.adjustment_request.update_margins_by_index(1, "-0.3", "0")
+        self.adjustment_request.update_margins_by_index(2, "-0.3", "0")
+        self.adjustment_request.update_margins_by_index(3, "-0.3", "0")
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        modified_bid_px_1 = round(float(default_bid_px_1) + 0.00003, 5)
+        modified_ask_px_1 = round(float(default_ask_px_1), 5)
+        modified_bid_px_2 = round(float(default_bid_px_2) + 0.00003, 5)
+        modified_ask_px_2 = round(float(default_ask_px_2), 5)
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00003, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3), 5)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px_2)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px_2)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px_3)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px_3)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
         # endregion
 
-        # region step 5
-        row_values = self.rates_tile.extract_values_from_rates(self.ask_base, self.ask_px, row_number=3)
-        ask_base_before = row_values[str(self.ask_base)]
-        ask_px_before = row_values[str(self.ask_px)]
-        expected_ask_base = str(int(ask_base_before) - 3)
-        expected_ask_px = str(int(ask_px_before) - 30)
-        self.rates_tile.select_rows([3])
-        self.rates_tile.modify_client_tile(pips=self.pips_3)
-        self.rates_tile.modify_spread(self.increase_ask)
-        row_values = self.rates_tile.extract_values_from_rates(self.ask_base, self.ask_px, row_number=3)
-        actual_ask_base = str(int(row_values[str(self.ask_base)]))
-        actual_ask_px = str(int(row_values[str(self.ask_px)]))
-        self.rates_tile.compare_values(expected_ask_base, actual_ask_base,
-                                       event_name=self.base_event)
-        self.rates_tile.compare_values(expected_ask_px, actual_ask_px,
-                                       event_name=self.px_event)
+        # region 5
+        self.adjustment_request.set_defaults()
+        self.adjustment_request.update_instrument(self.eur_usd)
+        self.adjustment_request.update_margins_by_index(1, "-0.3", "0.3")
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        modified_bid_px_1 = round(float(default_bid_px_1) + 0.00003, 5)
+        modified_ask_px_1 = round(float(default_ask_px_1) + 0.00003, 5)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
         # endregion
-
-        # region step 6
-        row_values = self.rates_tile.extract_values_from_rates(self.ask_base, self.ask_px)
-        ask_base_before = row_values[str(self.ask_base)]
-        ask_px_before = row_values[str(self.ask_px)]
-        expected_ask_base = str(int(ask_base_before) + 2)
-        expected_ask_px = str(int(ask_px_before) + 20)
-        self.rates_tile.deselect_rows()
-        self.rates_tile.modify_client_tile(pips=self.pips_2)
-        self.rates_tile.modify_spread(self.decrease_ask)
-        row_values = self.rates_tile.extract_values_from_rates(self.ask_base, self.ask_px)
-        actual_ask_base = str(int(row_values[str(self.ask_base)]))
-        actual_ask_px = str(int(row_values[str(self.ask_px)]))
-        self.rates_tile.compare_values(expected_ask_base, actual_ask_base,
-                                       event_name=self.base_event)
-        self.rates_tile.compare_values(expected_ask_px, actual_ask_px,
-                                       event_name=self.px_event)
+        # region 6
+        self.adjustment_request.set_defaults()
+        self.adjustment_request.update_instrument(self.eur_usd)
+        self.adjustment_request.update_margins_by_index(3, "-0.3", "0.1")
+        self.java_manager.send_message(self.adjustment_request)
+        time.sleep(2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        modified_bid_px_3 = round(float(default_bid_px_3) + 0.00003, 5)
+        modified_ask_px_3 = round(float(default_ask_px_3) + 0.00001, 5)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px_3)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px_3)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
+                                            direction=DirectionEnum.FromQuod,
+                                            key_parameters=["MDReqID"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rates_tile.press_use_default()
-        self.rates_tile.close_tile()
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.adjustment_request.set_defaults()
+        self.adjustment_request.update_instrument(self.eur_usd)
+        self.java_manager.send_message(self.adjustment_request)
+        self.sleep(2)

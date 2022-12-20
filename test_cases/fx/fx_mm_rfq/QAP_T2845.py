@@ -176,3 +176,4 @@ class QAP_T2845(TestCase):
         self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "false",
                                                     {"tenor": "WK1"})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)

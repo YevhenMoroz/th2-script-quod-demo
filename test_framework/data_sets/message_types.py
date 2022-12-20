@@ -89,6 +89,7 @@ class ORSMessageType(Enum):
     OrderUnMatchReply = 'Order_UnMatchReply'
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
+    NewOrderReply = 'Gateway_NewOrderReply'
 
 
 

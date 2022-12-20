@@ -161,6 +161,9 @@
                         <fix_environments>
                             <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Scaling" run="False">

@@ -10,8 +10,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
@@ -25,8 +23,6 @@ class QAP_T2751(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
-        self.fix_manager_fh = FixManager(self.fix_env.feed_handler, self.test_id)
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -49,19 +45,16 @@ class QAP_T2751(TestCase):
         self.no_related_symbols = [{
             'Instrument': self.instrument,
             'SettlType': self.settle_type_1w}]
-        self.sts_filled = Status.Fill
         self.sts_rejected = Status.Reject
-        self.md_req_id = 'EUR/USD:SPO:REG:HSBC'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.manual_settings_request.set_default_params().update_fields_in_component("QuoteManualSettingsRequestBlock",
-                                                                                     {
-                                                                                         "Tenor": self.settle_type_1w_java})
+        self.manual_settings_request.set_default_params().update_fields_in_component(
+            "QuoteManualSettingsRequestBlock", {"Tenor": self.settle_type_1w_java})
         self.manual_settings_request.set_executable_off()
         self.java_manager.send_message(self.manual_settings_request)
-        time.sleep(1)
+        time.sleep(2)
         # endregion
 
         # region Step 2
@@ -70,7 +63,6 @@ class QAP_T2751(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
-        self.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # endregion
 
@@ -90,8 +82,8 @@ class QAP_T2751(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Step 5
-        self.manual_settings_request.set_default_params().update_fields_in_component("QuoteManualSettingsRequestBlock",
-                                                                                     {
-                                                                                         "Tenor": self.settle_type_1w_java})
+        self.manual_settings_request.set_default_params().update_fields_in_component(
+            "QuoteManualSettingsRequestBlock", {"Tenor": self.settle_type_1w_java})
         self.java_manager.send_message(self.manual_settings_request)
         # endregion
+        self.sleep(2)

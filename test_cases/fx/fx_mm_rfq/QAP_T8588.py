@@ -146,3 +146,4 @@ class QAP_T8588(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)

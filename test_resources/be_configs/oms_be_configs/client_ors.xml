@@ -257,6 +257,8 @@ Copyright Quod Financial
 				<lastTimer></lastTimer>
 				<reviewInterval>10</reviewInterval> <!--seconds-->
 			</UnknownInstrument>
+			<orphanTradeUser>JavaApiUser</orphanTradeUser>
+			<orphanTradeRole>TRA</orphanTradeRole>
 		</FrontToBack>
 		<BackToFront>
 			<FIXReportOrdrParties>true</FIXReportOrdrParties>

@@ -59,3 +59,4 @@ class QAP_T2572(TestCase):
         self.rest_massage.modify_client_tier_instrument(). \
             update_value_in_component('clientTierInstrSymbolTenor', 'MDQuoteType', 'TRD', {'tenor': 'SPO'})
         self.rest_manager.send_post_request(self.rest_massage)
+        self.sleep(2)

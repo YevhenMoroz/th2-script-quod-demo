@@ -95,3 +95,4 @@ class QAP_T2915(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data().update_MDReqID(self.md_gbp_usd_spo, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)

@@ -4,7 +4,7 @@ import logging
 from getpass import getuser as get_pc_name
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from test_cases.algo.Algo_TWAP import QAP_T4886
+from test_cases.algo.Algo_TWAP.QAP_T4886 import QAP_T4886
 from test_cases.algo.Algo_TWAP.QAP_T4935 import QAP_T4935
 from test_cases.algo.Algo_TWAP.QAP_T4988 import QAP_T4988
 from test_cases.algo.Algo_TWAP.QAP_T4884 import QAP_T4884
@@ -39,7 +39,7 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     pc_name = get_pc_name()  # getting PC name
-    full_ver = '5.1.165.178' # site version
+    full_ver = '5.1.169.182' # site version
     ver = full_ver[-3:]
     report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver, report_id_main)
@@ -49,7 +49,7 @@ def test_run(parent_id=None, version=None):
     try:
         configuration = ComponentConfiguration("Acceptance_list")
         # TWAP
-        # QAP_T4886.execute(report_id) check rules removing
+        QAP_T4886(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4935(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4988(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4884(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -57,16 +57,16 @@ def test_run(parent_id=None, version=None):
         # POV
         QAP_T4879(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_T5113.execute(report_id, session_id) # session ID error (line 44)
-        # Multilisted
-        QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4106(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4114(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4117(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # Iceberg
         QAP_T4925(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4918(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4919(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # Multilisted
+        QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4106(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4114(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4117(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # TradLim and CumTradLim
         # QAP_T4949.execute(report_id, session_id) # session ID error (line 44)
         # QAP_T4948.execute(report_id, session_id) # session ID error (line 44)

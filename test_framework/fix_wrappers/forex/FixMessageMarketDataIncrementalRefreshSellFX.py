@@ -9,7 +9,8 @@ class FixMessageMarketDataIncrementalRefreshSellFX(FixMessageMarketDataIncrement
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX, no_md_entries_count: list,
+    def set_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX,
+                                   no_md_entries_count: list = ["*", "*", "*"],
                                    published=True, ndf=False,
                                    priced=True, band_not_pub=None, band_not_priced=None):
         self.prepare_params_for_md_response(md_request)
@@ -136,10 +137,8 @@ class FixMessageMarketDataIncrementalRefreshSellFX(FixMessageMarketDataIncrement
     def prepare_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX):
         temp = dict(
             MDReqID=md_request.get_parameter("MDReqID"),
-            OrigMDArrivalTime="*",
-            LastUpdateTime="*",
             OrigClientVenueID="*",
-            OrigMDTime="*",
+            OrigQuoteEntryID="*",
             Instrument=dict(Symbol=md_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"]),
             NoMDEntries=[
                 dict()

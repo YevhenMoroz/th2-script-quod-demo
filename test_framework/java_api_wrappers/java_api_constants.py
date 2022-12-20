@@ -171,6 +171,7 @@ class JavaApiFields(Enum):
     RootMiscFeesList = 'RootMiscFeesList'
     DayCumQty = 'DayCumQty'
     DayCumAmt = 'DayCumAmt'
+    UnsolicitedOrder = "UnsolicitedOrder"
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -227,6 +228,7 @@ class JavaApiFields(Enum):
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
     SettlCurrency = 'SettlCurrency'
+    SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
     SettlCurrFxRateCalc = 'SettlCurrFxRateCalc'
     CommissionAmountSubType = 'CommissionAmountSubType'

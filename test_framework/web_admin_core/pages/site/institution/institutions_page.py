@@ -90,3 +90,15 @@ class InstitutionsPage(CommonPage):
 
     def count_displayed_institutions(self):
         return len(self.find_elements_by_xpath(InstitutionsConstants.DISPLAYED_INSTITUTIONS_XPATH))
+
+    def set_cross_currency_hair_cut_fileter(self, value):
+        self.set_text_by_xpath(InstitutionsConstants.CROSS_CURRENCY_HAIR_CUT_FILTER, value)
+
+    def get_cross_currency_hair_cut(self):
+        return self.find_by_xpath(InstitutionsConstants.CROSS_CURRENCY_HAIR_CUT).text
+
+    def set_cash_account_currency_rate_filter(self, value):
+        self.set_text_by_xpath(InstitutionsConstants.CASH_ACCOUNT_CURRENCY_RATE_FILTER, value)
+
+    def get_cash_account_currency_rate(self):
+        return self.find_by_xpath(InstitutionsConstants.CASH_ACCOUNT_CURRENCY_RATE).text

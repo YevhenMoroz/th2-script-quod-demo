@@ -45,7 +45,7 @@ class QAP_T2598(TestCase):
         # endregion
 
         # region Step 2
-        self.rfq_reject.set_quote_reject_params(self.quote_request)
+        self.rfq_reject.set_quote_reject_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.rfq_reject,
                                             key_parameters=["MDReqID"])
         # endregion

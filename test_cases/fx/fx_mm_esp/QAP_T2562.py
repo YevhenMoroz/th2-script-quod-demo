@@ -21,7 +21,6 @@ class QAP_T2562(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        # self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_esp
         self.gateway_side_sell = GatewaySide.Sell
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
@@ -35,13 +34,13 @@ class QAP_T2562(TestCase):
         self.wrong_settldate = self.data_set.get_settle_date_by_name("tomorrow")
         self.security_type = self.data_set.get_security_type_by_name('fx_spot')
         self.text = "11697 No listing found for order with currency EUR on exchange QUODFX"
+        self.bands = list()
         self.no_related_symbols = [{
             'Instrument': {
                 'Symbol': self.eur_usd,
                 'SecurityType': self.security_type,
                 'Product': '4', },
             'SettlType': '0', }]
-        self.bands_eur_usd = ["2000000", '6000000', '12000000']
         self.status_reject = Status.Reject
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -49,8 +48,11 @@ class QAP_T2562(TestCase):
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameters({"SenderSubID": self.account}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands.append("*")
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

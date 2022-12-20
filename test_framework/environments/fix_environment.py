@@ -43,8 +43,8 @@ class FixEnvironment(BaseEnvironment):
             if EnvironmentType.quod316_ganymede_redburn.value not in FixEnvironment.environment_instances.keys():
                 site_environment = FixEnvironment(
                     environment_type=EnvironmentType.quod316_ganymede_redburn.value,
-                    sell_side=Connectivity.Ganymede_316_Redburn.value,
-                    buy_side=Connectivity.Ganymede_316_Buy_Side.value,
+                    sell_side=Connectivity.Ganymede_316_Sell_Side_Redburn.value,
+                    buy_side=Connectivity.Ganymede_316_Buy_Side_Redburn.value,
                     feed_handler=Connectivity.Ganymede_316_Feed_Handler.value
                 )
                 FixEnvironment.environment_instances.update(
