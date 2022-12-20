@@ -3,6 +3,7 @@ import logging
 from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 
 from custom import basic_custom_actions
+from custom.verifier import Verifier, VerificationMethod
 from test_framework.data_sets.message_types import FIXMessageType
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageBusinessMessageRejectReport import FixMessageBusinessMessageRejectReport
@@ -27,6 +28,8 @@ class FixManager:
         self.act = Stubs.fix_act
         self.__session_alias = session_alias
         self.__case_id = case_id
+        self.verifier = Verifier(self.__case_id)
+        self.response = None
 
     def send_message(self, fix_message: FixMessage, custom_message=None) -> None:
         logging.info(f"Message {fix_message.get_message_type()} sent with params -> {fix_message.get_parameters()}")
@@ -305,6 +308,7 @@ class FixManager:
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
+        self.response = response_messages
         return response_messages
 
     def get_case_id(self):
@@ -318,3 +322,45 @@ class FixManager:
 
     def set_session_alias(self, session_alias):
         self.__session_alias = session_alias
+
+    def compare_values(self, expected_values: dict, actual_values: dict, event_name: str,
+                       verification_method: VerificationMethod = VerificationMethod.EQUALS):
+        self.verifier.set_event_name(event_name)
+        try:
+            for k, v in expected_values.items():
+                self.verifier.compare_values("Compare: " + k, v, actual_values[k],
+                                             verification_method)
+        except KeyError:
+            raise KeyError(f"Element: {k} not found")
+        self.verifier.verify()
+        self.verifier = Verifier(self.__case_id)
+
+    def key_is_absent(self, key: str, actual_values: dict, event_name: str):
+        if key in actual_values:
+            self.verifier.success = False
+
+        self.verifier.fields.update(
+            {"Is absent:": {"expected": key, "key": False, "type": "field",
+                            "status": "PASSED" if self.verifier.success else "FAILED"}})
+        self.verifier.set_event_name(event_name)
+        self.verifier.verify()
+        self.verifier = Verifier(self.__case_id)
+
+    def get_last_message(self, message_type, filter_value=None) -> FixMessage:
+        self.response.reverse()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
+                return res
+        raise KeyError(f"{message_type} not found")
+
+    def get_first_message(self, message_type, filter_value=None) -> FixMessage:
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
+                return res
+        raise KeyError(f"{message_type} not found")

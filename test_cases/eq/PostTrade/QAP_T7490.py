@@ -36,7 +36,7 @@ class QAP_T7490(TestCase):
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.qty = '100'
         self.price = '10'
         self.rule_manager = RuleManager(sim=Simulators.equity)
