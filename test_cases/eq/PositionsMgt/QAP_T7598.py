@@ -100,7 +100,6 @@ class QAP_T7598(TestCase):
         self.fix_message.change_parameters(
             {'Side': '1', 'Account': self.client, 'ClOrdID': bca.client_orderid(9)})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        cl_ord_id = response[0].get_parameters()['ClOrdID']
         order_id = response[0].get_parameters()['OrderID']
 
         # region trade DMA order via JavaApi (Precondition)

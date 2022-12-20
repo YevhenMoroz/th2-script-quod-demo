@@ -357,8 +357,6 @@ class QAP_T9056(TestCase):
         # endregion
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         # region Check eliminated Algo Order
         # time.sleep(15)
         case_id_5 = bca.create_event("Cancel parent Algo Order", self.test_id)
@@ -375,4 +373,6 @@ class QAP_T9056(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         RuleManager(Simulators.algo).remove_rules(self.rule_list)

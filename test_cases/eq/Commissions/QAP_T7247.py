@@ -40,12 +40,12 @@ class QAP_T7247(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.comm_profile = self.data_set.get_comm_profile_by_name("abs_amt_2")
+        self.comm_profile = self.data_set.get_comm_profile_by_name("perc_amt")
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.fee = self.data_set.get_fee_by_name("fee1")
         self.fee_type = self.data_set.get_misc_fee_type_by_name("other")
-        self.intr_type = self.data_set.get_instr_type_name('equity')
+        self.intr_type = self.data_set.get_instr_type('equity')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -61,7 +61,7 @@ class QAP_T7247(TestCase):
         # endregion
         # region Check ExecutionReports
         self.exec_report.set_default_filled(self.fix_message)
-        no_misc = {'NoMiscFees': [{'MiscFeeAmt': '0.00001', 'MiscFeeCurr': self.com_cur, 'MiscFeeType': '7'}]}
+        no_misc = {'NoMiscFees': [{'MiscFeeAmt': '1', 'MiscFeeCurr': self.com_cur, 'MiscFeeType': '7'}]}
         self.exec_report.change_parameters(
             {'Currency': self.cur, 'SecondaryOrderID': '*', "NoMiscFees": no_misc, 'Text': '*', 'LastMkt': self.mic,
              "CommissionData": "*", "ExecBroker": "*", "tag5120": "*", "NoParty": "*", "QuodTradeQualifier": "*",

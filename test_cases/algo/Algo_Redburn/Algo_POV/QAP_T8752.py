@@ -5,7 +5,7 @@ from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -38,22 +38,22 @@ class QAP_T8752(TestCase):
         self.order_type = constants.OrderType.Limit.value
         self.tif_day = constants.TimeInForce.Day.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        
+
         self.percentage_volume = 10
-        
+
         self.qty = 1_000_000
         self.price = 135
 
         self.price_ltq = 130
-        self.qty_ltq_1 = 20_000
-        self.qty_ltq_2 = 10_000
-        
+        self.qty_ltq_1 = 10_000
+        self.qty_ltq_2 = 5_000
+
         self.qty_child_1 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
         self.qty_child_2 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_2, self.qty)
 
         self.price_ask = 135
         self.qty_ask = 10_000
-        
+
         self.price_bid = 0
         self.qty_bid = 0
         # endregion
@@ -67,6 +67,7 @@ class QAP_T8752(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_eliminated = Status.Eliminate
+        self.status_cancel = Status.Cancel
         # endregion
 
         # region instrument
@@ -95,7 +96,7 @@ class QAP_T8752(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager()
+        rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
         self.rule_list = [nos_ioc_rule]
         # endregion
@@ -122,10 +123,10 @@ class QAP_T8752(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Redburn_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, UnderParticipation='Y'))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, Underparticipation='Y'))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
-        time.sleep(3)
+        # time.sleep(3)
         # endregion
 
         # region Check Sell side
@@ -138,21 +139,14 @@ class QAP_T8752(TestCase):
         new_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
-        
-        # region Send Market Data to trigger an aggressive child order
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger an aggressive child order", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
-        self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
-        time.sleep(3)
-        # endregion
-        
         # region Check IOC child order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order - 1", self.test_id))
 
         ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_1.change_parameters(dict(OrderQty=self.qty_child_1, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        ioc_child_order_1.add_tag(dict(Parties='*', QtyType=0))
+        ioc_child_order_1.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
@@ -161,18 +155,20 @@ class QAP_T8752(TestCase):
         new_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 1')
 
-        cancel_ioc_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
-        cancel_ioc_child_order_1.change_parameters(dict(Price=self.price, OrdType=self.order_type, TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 1")
+        eliminate_ioc_child_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
+        eliminate_ioc_child_order_1.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 1")
         # endregion
 
         # region Send Market Data to trigger an MinParticipation behavior
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger a worse price behavior", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo()
+        market_data_incremental_par.set_market_data_incr_refresh_ltq()
+        market_data_incremental_par.update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_2)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
-        time.sleep(3)
+        time.sleep(1)
         # endregion
 
         # region Check IOC child order 1
@@ -180,6 +176,8 @@ class QAP_T8752(TestCase):
 
         ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
         ioc_child_order_2.change_parameters(dict(OrderQty=self.qty_child_2, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        ioc_child_order_2.add_tag(dict(Parties='*', QtyType=0))
+        ioc_child_order_2.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 2')
 
         pending_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
@@ -188,25 +186,25 @@ class QAP_T8752(TestCase):
         new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 2')
 
-        cancel_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
-        cancel_ioc_child_order_2.change_parameters(dict(Price=self.price, OrdType=self.order_type, TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
+        eliminate_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
+        eliminate_ioc_child_order_2.change_parameters(dict(OrdType=self.order_type, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 2")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
         # endregion
-        
+
         cancel_request_pov_order = FixMessageOrderCancelRequest(self.pov_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancellation parent POV order
-        cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_eliminated)
+        cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        RuleManager().remove_rules(self.rule_list)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)

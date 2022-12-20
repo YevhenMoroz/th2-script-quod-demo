@@ -74,7 +74,7 @@ class QAP_T7516(TestCase):
                                  'StrategyParametersGrp', 'ReplyReceivedTime']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
         fix_execution_report.set_default_filled(self.fix_message)
-        fix_execution_report.change_parameters({'StrategyName': self.params["TargetStrategy"]})
+        fix_execution_report.change_parameters({'TargetStrategy': self.params["TargetStrategy"]})
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignore_fields)
         # endregion
 

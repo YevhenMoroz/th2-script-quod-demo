@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<quod>
+    <includes>
+                <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+                <include>${CFG_DEFAULT}/default_middleware_gtw.xml</include>
+                <include>${CFG_DEFAULT}/qfQuod_any_backoffice_sell.xml</include>
+    </includes>
+
+    <middleware>
+                 <subjects>
+            <subscribe>
+                <orsFixReplySubject>${PREFIX}FIX_REPLY.gtwbo</orsFixReplySubject>
+            </subscribe>
+        </subjects>
+    </middleware>
+
+    <quickfixgtw>
+        <pluginPath>${QUOD}/lib/qfQuod_any_backoffice_sell.so</pluginPath>
+        <tsmQuery>TSMQ</tsmQuery>
+        <tsmUpdate>TSMU</tsmUpdate>
+        <sellside>
+            <asynchronousFixRequest>true</asynchronousFixRequest>
+            <userInfo>
+                <querySessionKey>true</querySessionKey>
+                <userId>gtwbo</userId>
+                <userRole>FIX</userRole>
+                <userPassword>gtwbo</userPassword>
+                <sessionKey>2</sessionKey>
+            </userInfo>
+        </sellside>
+    </quickfixgtw>
+    <connectivity>
+        <mapInstrSymbolToTag5120>true</mapInstrSymbolToTag5120>
+                <middleware>
+                        <sessions></sessions>
+                </middleware>
+        <quickfix>
+             <settings>
+                <setting>
+                    <NAME>DEFAULT</NAME>
+                    <ConnectionType>acceptor</ConnectionType>
+                    <SocketAcceptPort>14069</SocketAcceptPort>
+                    <SocketReuseAddress>Y</SocketReuseAddress>
+                    <FileStorePath>store</FileStorePath>
+                    <StartTime>00:00:00</StartTime>
+                    <EndTime>00:00:00</EndTime>
+                    <AppDataDictionary>${CFG_DEFAULT}/spec/FIX50SP2_qfQuod_any_backoffice_sell.xml</AppDataDictionary>
+                    <TransportDataDictionary>${CFG_DEFAULT}/spec/FIXT11_qfQuod_any_backoffice_sell.xml</TransportDataDictionary>
+                    <RefreshOnLogon>Y</RefreshOnLogon>
+                    <ResetOnLogon>Y</ResetOnLogon>
+                    <SocketNodelay>Y</SocketNodelay>
+                    <CheckLatency>N</CheckLatency>
+                </setting>
+                <setting>
+                    <NAME>SESSION</NAME>
+                    <BeginString>FIXT.1.1</BeginString>
+                    <DefaultApplVerID>FIX.5.0SP2</DefaultApplVerID>
+                    <SenderCompID>QUOD_S</SenderCompID>
+            <TargetCompID>QUOD_T</TargetCompID>
+                </setting>
+            </settings>
+
+            <persistence enabled="true"> <!-- turn it off to store FIX messages in QuickFix file store, else will be stored in REDIS DB -->
+                    <dbvendor>MONGO</dbvendor>
+                    <host>${MONGO_HOST}</host> <!-- address where redis server is running -->
+                    <port>${MONGO_PORT}</port> <!-- Port used to communicate with redis server -->
+                    <index>0</index>
+                    <!--sentinels>
+                        <master_name>${MONGO_REPNAME}</master_name>
+                        <sentinel>
+                                <s1 host="${PRIMARY_IP}" port="${MONGO_PORT}"/>
+                                <s2 host="${SECONDARY_IP}" port="${MONGO_PORT}"/>
+                        </sentinel>
+                    </sentinels-->
+            </persistence>
+            <fix_sessions>
+                    <fix_session db_name="BOSELL">FIXT.1.1:QUOD_S->QUOD_T</fix_session>
+            </fix_sessions>
+            <executionReportExecBroker>true</executionReportExecBroker>
+            <acceptor>true</acceptor>
+
+            <!--onBehalfOfCompID>onBehalfOfCompID</onBehalfOfCompID>
+            <onBehalfOfSubID>onBehalfOfSubID</onBehalfOfSubID>
+            <deliverToCompID>deliverToCompID</deliverToCompID>
+            <deliverToSubID>deliverToSubID</deliverToSubID>
+
+            <itg_delivertocompid>some val</itg_delivertocompid-->
+            <ignoreCalculated enabled="false"/>
+            <enableForex>false</enableForex>
+
+            <DefaultSecurityExchange enabled="false">securityExchangeValue</DefaultSecurityExchange>
+            <ExecBrokerDefault>ExecBroker</ExecBrokerDefault>
+            <mapClientAccount enabled="true" toFix='true' fromFix='true'>
+            <defaultValue>DefaultClientID</defaultValue>
+            <tagList>
+                <tag header="false">1</tag>
+            <!--tag header="false">109</tag-->
+            </tagList>
+            </mapClientAccount>
+            <mapAllocAccount enabled="true" toFix='true' fromFix='true'>
+            <tag header='false'>78</tag>
+            </mapAllocAccount>
+            </quickfix>
+
+        <instrument>ISI</instrument>
+        <mapFixConfirmationToMsgType>AK</mapFixConfirmationToMsgType>
+        <mapNoAllocsFromParty>false</mapNoAllocsFromParty>
+        <AccountMappingEnable>false<!--true--></AccountMappingEnable>
+        <mapClientAccountGroupIDForTavira>false</mapClientAccountGroupIDForTavira>
+        <flipTagSide>false</flipTagSide>
+    </connectivity>
+
+    <sessions>
+        <asSessionName>frontend</asSessionName>
+        <orsSessionName>fixCM</orsSessionName>
+        <adminName>admin</adminName>
+    </sessions>
+
+</quod>

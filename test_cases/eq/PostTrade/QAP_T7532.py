@@ -1,143 +1,166 @@
 import logging
 import os
-import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
-    AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.data_sets.message_types import ORSMessageType
+from custom.verifier import VerificationMethod
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, AllocationReportConst, \
+    ConfirmationReportConst, ExecutionReportConst
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
+
+
 class QAP_T7532(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.approve_block = self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '200'
         price = '10'
-        account = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_8'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', price)
+        client = self.data_set.get_client_by_name('client_pt_4')
+        client_acc1 = self.data_set.get_account_by_name("client_pt_4_acc_1")
         exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', exec_destination)
-        rule_manager = RuleManager(Simulators.equity)
-        trade_rule = None
-        new_order_single_rule = None
-        cl_ord_id = self.fix_message.get_parameter('ClOrdID')
         # endregion
 
-        # region create order
-        try:
-            new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-                self.fix_env.buy_side, account, exec_destination, float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side, account,
-                                                                                       exec_destination, float(price),
-                                                                                       int(qty), 0)
-            self.fix_manager.send_message_fix_standard(self.fix_message)
-        except Exception as ex:
-            logger.exception(f'{ex} - your exception')
-            bca.create_event('Exception regarding rules', self.test_id, status='FAIL')
+        # region precondition
+        # create DMA order (part of precondition)
+        self.order_submit.set_default_dma_limit()
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+            'AccountGroupID': client,
+            'OrdQty': qty,
+            'Price': price,
+            'PreTradeAllocationBlock': {"PreTradeAllocationList": {"PreTradeAllocAccountBlock":[{'AllocAccountID': client_acc1, 'AllocQty': qty}]}},
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message('Create DMA  order', responses)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
+        # the end
 
-        finally:
-            time.sleep(10)
-            rule_manager.remove_rule(trade_rule)
-            rule_manager.remove_rule(new_order_single_rule)
+        # trade DMA order (part of precondition)
+        self.execution_report.set_default_trade(order_id)
+        self.execution_report.update_fields_in_component('ExecutionReportBlock',
+                                                         {
+                                                             "InstrumentBlock": self.data_set.get_java_api_instrument(
+                                                                 "instrument_2"),
+                                                             "Side": "Buy",
+                                                             "LastTradedQty": qty,
+                                                             "LastPx": price,
+                                                             "OrdType": "Limit",
+                                                             "Price": price,
+                                                             "LeavesQty": qty,
+                                                             "CumQty": qty,
+                                                             "AvgPrice": price,
+                                                             "LastMkt": exec_destination,
+                                                             "OrdQty": qty
+                                                         })
+        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        print_message('Trade DMA  order ', responses)
+        # the end
+
+        # check PostTrade Status and ExecSts (part of precondition)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        execution_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        exec_id = execution_report[JavaApiFields.ExecID.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
+             JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
+            order_reply,
+            'Check expected and actually PostTradeStatus and DoneForDay values (part of precondition)')
+        # the end
         # endregion
 
-        # region verify value of fields after trade (precondition)
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        post_trade_status = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        value_done_for_day = self.order_book.extract_field(OrderBookColumns.done_for_day.value)
-        expected_result = {OrderBookColumns.post_trade_status.value: 'ReadyToBook',
-                           OrderBookColumns.done_for_day.value: 'Yes'}
-        actually_result = {OrderBookColumns.post_trade_status.value: post_trade_status,
-                           OrderBookColumns.done_for_day.value: value_done_for_day}
-        comparing_message = 'Comparing values after trade'
-        self.__comparing_values(expected_result, actually_result, comparing_message, 'self.order_book.compare_values')
+        # region Book DMA order (step 1)
+        self.allocation_instruction.set_default_book(order_id)
+        gross_trade_amt = str(float(qty) * float(price))
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+            "AccountGroupID": client,
+            "SettlCurrAmt": gross_trade_amt,
+            'Qty': qty,
+            'ExecAllocList': {
+                'ExecAllocBlock': [{'ExecQty': qty,
+                                    'ExecID': exec_id,
+                                    'ExecPrice': price}]},
+            "ComputeFeesCommissions": "Yes"
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message(f'Book {order_id} order', responses)
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value]
+        alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
+
+        # check PostTradeStatus (part of step 1)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            order_update, 'Check PostTradeStatus (part of step 1)')
+        # the end
+
+        # check Status and Match Status and SummaryStatus
+        expected_result = {
+            JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value
+        }
+
+        self.java_api_manager.compare_values(expected_result, allocation_report,
+                                             'Check Status and Match Status (part of step 1)')
+        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
+                                            'Check that AllocSummaryStatus is missed (part of step 1)')
+        # the end
         # endregion
 
-        # region book order and verify values after it at order book
-        self.middle_office.book_order()
-        self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-        value = self.order_book.extract_field(OrderBookColumns.post_trade_status.value)
-        self.order_book.compare_values({OrderBookColumns.post_trade_status.value: 'Booked'},
-                                       {OrderBookColumns.post_trade_status.value: value},
-                                       'Compare PostTradeStatus after Book')
+        # region step 2
+        self.approve_block.set_default_approve(alloc_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
+        print_message('Approve Block', responses)
+        allocation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+                                JavaApiFields.AllocSummaryStatus.value: AllocationReportConst.AllocSummaryStatus_MAG.value})
+        self.java_api_manager.compare_values(expected_result, allocation_report,
+                                             'Check Status, Match Status and Summary Status ( part of step 2)')
+        confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
+        expected_result.clear()
+        expected_result.update({JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+                                JavaApiFields.NetPrice.value: str(float(price)),
+                                JavaApiFields.AllocQty.value: str(float(qty))})
+        self.java_api_manager.compare_values(expected_result, confirmation_report,
+                                             'Check Status , MatchStatus, Qty and Price ( part of step 2)')
         # endregion
-
-        # region check value at middle office
-        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value)
-        list_of_extraction = [MiddleOfficeColumns.conf_service.value, MiddleOfficeColumns.sts.value,
-                              MiddleOfficeColumns.match_status.value]
-        filter_list = [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]]
-        actually_result = self.__extracted_values(list_of_extraction, filter_list,
-                                                  'self.middle_office.extract_list_of_block_fields')
-        expected_result = {MiddleOfficeColumns.conf_service.value: 'Manual',
-                           MiddleOfficeColumns.sts.value: 'ApprovalPending',
-                           MiddleOfficeColumns.match_status.value: 'Unmatched'}
-        self.__comparing_values(expected_result, actually_result,
-                                'Comparing values after book for block of MiddleOffice',
-                                'self.middle_office.compare_values')
-        # endregion
-
-        # region approve block and verifying values after that (step 2)
-        self.middle_office.approve_block()
-        extracted_list = [MiddleOfficeColumns.conf_service.value,
-                          MiddleOfficeColumns.sts.value,
-                          MiddleOfficeColumns.match_status.value,
-                          MiddleOfficeColumns.summary_status.value]
-        actually_result = self.__extracted_values(extracted_list, filter_list,
-                                                  'self.middle_office.extract_list_of_block_fields')
-        expected_result = {MiddleOfficeColumns.summary_status.value: 'MatchedAgreed',
-                           MiddleOfficeColumns.sts.value: 'Accepted',
-                           MiddleOfficeColumns.match_status.value: 'Matched',
-                           MiddleOfficeColumns.conf_service.value: 'Manual'}
-        self.__comparing_values(expected_result, actually_result,
-                                'Comparing values after approve for block of MiddleOffice',
-                                'self.middle_office.compare_values')
-
-        allocation_status = self.middle_office.extract_allocate_value(AllocationsColumns.sts.value)
-        allocation_match_status = self.middle_office.extract_allocate_value(AllocationsColumns.match_status.value)
-        allocation_qty = self.middle_office.extract_allocate_value(AllocationsColumns.alloc_qty.value)
-        allocation_avg_px = self.middle_office.extract_allocate_value(AllocationsColumns.avg_px.value)
-        self.middle_office.compare_values({AllocationsColumns.sts.value: 'Affirmed'}, allocation_status,
-                                          'Comparing allocation status')
-        self.middle_office.compare_values({AllocationsColumns.match_status.value: 'Matched'}, allocation_match_status,
-                                          'Comparing allocation match_status')
-        self.middle_office.compare_values({AllocationsColumns.alloc_qty.value: qty}, allocation_qty,
-                                          'Comparing allocation qty')
-        self.middle_office.compare_values({AllocationsColumns.avg_px.value: price}, allocation_avg_px,
-                                          'Comparing allocation avg_px')
-        # endregion
-
-
-    def __comparing_values(self,expected_result, actually_result, verifier_message: str, eval_str):
-        eval(eval_str)(expected_result, actually_result, verifier_message)
-
-
-    def __extracted_values(self, fields, filter, method_for_eval):
-        return eval(method_for_eval)(fields, filter)

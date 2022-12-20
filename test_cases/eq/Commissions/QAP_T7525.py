@@ -42,7 +42,7 @@ class QAP_T7525(TestCase):
         self.commisison_currency = self.data_set.get_currency_by_name('currency_2')
         self.venue_mic = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client_by_name("client_com_1")
-        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.test_id = create_event(self.__class__.__name__[:-3], self.report_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.commission_profile = self.data_set.get_comm_profile_by_name('per_u_qty')
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)

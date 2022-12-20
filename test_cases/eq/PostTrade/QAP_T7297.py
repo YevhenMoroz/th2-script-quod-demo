@@ -2,22 +2,43 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from pandas import Timestamp as tm
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from rule_management import RuleManager, Simulators
+from datetime import timezone
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, MiddleOfficeColumns, \
-    OrderType, AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_child_order_book import OMSChildOrderBook
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import (
+    SubmitRequestConst,
+    OrderReplyConst,
+    JavaApiFields,
+    ExecutionReportConst,
+    ConfirmationReportConst,
+    AllocationReportConst,
+)
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import (
+    ForceAllocInstructionStatusRequestOMS,
+)
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7297(TestCase):
@@ -27,74 +48,231 @@ class QAP_T7297(TestCase):
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.desk = environment.get_list_fe_environment()[0].desk_2
-        self.ss_connectivity = self.fix_env.sell_side
-        self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '100'
-        self.price = '10'
-        self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')  # MOClient_SA1
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')  # VETO
-        self.username = environment.get_list_fe_environment()[0].user_1
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.settl_date = datetime.strftime(datetime.now() + timedelta(days=2), '%#m/%#d/%Y')
-        self.child_order_book = OMSChildOrderBook(self.test_id, self.session_id)
+        self.qty = "100"
+        self.price = "20"
+        self.client = self.data_set.get_client("client_pt_1")  # MOClient
+        self.alloc_account = self.data_set.get_account_by_name("client_pt_1_acc_1")  # MOClient_SA1
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.submit_request = OrderSubmitOMS(self.data_set)
+        self.trade_request = TradeEntryOMS(self.data_set)
+        self.complete_order = DFDManagementBatchOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.approve_request = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirmation_request = ConfirmationOMS(self.data_set)
+        self.settl_date = (
+            (tm(datetime.now(timezone.utc).isoformat()) + timedelta(days=2)).date().strftime("%Y-%m-%dT%H:%M:%S")
+        )
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create CO order
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty,
-                                            order_type=OrderType.limit.value, recipient=self.username,
-                                            partial_desk=True)
-        self.order_ticket.create_order(self.lookup)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        cl_ord_id = self.order_book.extract_field(OrderBookColumns.cl_ord_id.value)
+        # region Step 1 - Create CO order
+        self.submit_request.set_default_care_limit(
+            recipient=self.environment.get_list_fe_environment()[0].user_1,
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+            role=SubmitRequestConst.USER_ROLE_1.value,
+        )
+        self.submit_request.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"OrdQty": self.qty, "Price": self.price, "SettlDate": self.settl_date},
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        print_message("CREATE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id = order_reply["OrdID"]
+        cl_ord_id = order_reply["ClOrdID"]
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=2), "%Y-%#m-%d") + "T12:00"
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value, "SettlDate": settl_date_expected},
+            order_reply,
+            "Comparing Status and SettlDate of Care order",
+        )
         # endregion
 
-        # region Check status in OrderBook
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
-        self.order_book.check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
+        # region Step 2 - Child Care CO
+        self.submit_request.set_default_child_care(
+            parent_id=ord_id,
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+            recipient=self.environment.get_list_fe_environment()[0].user_1,
+            role=SubmitRequestConst.USER_ROLE_1.value,
+        )
+        self.submit_request.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {
+                "SettlDate": (tm(datetime.now(timezone.utc).isoformat()) + timedelta(days=3))
+                .date()
+                .strftime("%Y-%m-%dT%H:%M:%S")
+            },
+        )
+
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        print_message("CHILD CARE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id_child = order_reply["OrdID"]
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=3), "%Y-%#m-%d") + "T12:00"
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                "SettlDate": settl_date_expected,
+            },
+            order_reply,
+            "Comparing Status and SettlDate of Child Care order",
+        )
         # endregion
 
-        # region Child Care
-        self.settl_date = datetime.strftime(datetime.now() + timedelta(days=3), '%#m/%#d/%Y')
-        self.order_ticket.set_order_details(recipient=self.username, partial_desk=True)
-        self.order_ticket.set_settlement_details(settl_date=self.settl_date)
-        self.order_ticket.child_care(filter_list=[OrderBookColumns.order_id.value, order_id])
+        # region Step 3 - Execute Child Care order
+        self.trade_request.set_default_trade(ord_id_child, self.price, self.qty)
+        self.trade_request.update_fields_in_component(
+            "TradeEntryRequestBlock",
+            {
+                "SettlDate": (tm(datetime.now(timezone.utc).isoformat()) + timedelta(days=4))
+                .date()
+                .strftime("%Y-%m-%dT%H:%M:%S")
+            },
+        )
+
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        print_message("Execute Child Care", responses)
+        exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value
+        ]
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=4), "%Y-%#m-%d") + "T12:00"
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
+                "SettlDate": settl_date_expected,
+            },
+            exec_report,
+            "Comparing Execution status (TransExecStatus) and SettlDate",
+        )
+        settl_date_extract = exec_report["SettlDate"]  # SettlDate for Book
         # endregion
 
-        # region Manual execution Child
-        self.child_order_book.manual_execution(settl_date=4)
+        # region Step 4 - Complete CO
+        self.complete_order.set_default_complete(ord_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.complete_order)
+        print_message("COMPLETE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
+                JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value,
+            },
+            order_reply,
+            "Comparing PostTradeStatus after Complete",
+        )
         # endregion
 
-        # region Complete and Book CO order
-        self.order_book.complete_order(filter_list=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        # region Step 4 - Book order
+        self.allocation_instruction.set_default_book(ord_id)
+        self.allocation_instruction.update_fields_in_component(
+            "AllocationInstructionBlock",
+            {
+                "Qty": self.qty,
+                "AccountGroupID": self.client,
+                "GrossTradeAmt": "2000",
+                "AvgPx": self.price,
+                "SettlCurrAmt": "2000",
+                "SettlDate": settl_date_extract,
+            },
+        )
+
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message("BOOK", responses)
+
+        # Checking Order_OrdUpdate
+        order_update_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            order_update_reply,
+            "Comparing PostTradeStatus after Book",
+        )
+
+        # Checking AllocationReportBlock
+        alloc_report_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        alloc_id = alloc_report_reply["ClientAllocID"]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.AllocStatus.value: "APP",
+                JavaApiFields.MatchStatus.value: "UNM",
+                "SettlDate": settl_date_expected,
+            },
+            alloc_report_reply,
+            "Comparing SettlDate and Statuses after Book",
+        )
         # endregion
 
-        # region Checking Settl Date in Middle Office
-        self.settl_date = datetime.strftime(datetime.now() + timedelta(days=4), '%#m/%#d/%Y')
-        mo_settl_date = self.middle_office.extract_block_field('SettlDate', [OrderBookColumns.order_id.value, order_id])
-        self.middle_office.compare_values({'SettlDate': self.settl_date}, mo_settl_date,
-                                          'Checking Settl Date in Middle Office')
+        # region Step 5 - Approve
+        self.approve_request.set_default_approve(alloc_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve_request)
+        print_message("APPROVE", responses)
+
+        # Checking Order_AllocationReport
+        alloc_report_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.AllocStatus.value: "ACK",
+                JavaApiFields.MatchStatus.value: "MAT",
+                "SettlDate": settl_date_expected,
+            },
+            alloc_report_reply,
+            "Comparing Statuses and SettlDate after Approve",
+        )
         # endregion
 
-        # region Approve and Allocate the block
-        self.middle_office.approve_block()
-        allocation_param = [
-            {AllocationsColumns.security_acc.value: self.alloc_account, AllocationsColumns.alloc_qty.value: self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
-        self.middle_office.allocate_block([MiddleOfficeColumns.order_id.value, order_id])
-        # endregion
+        # region Step 5 - Allocate block
+        self.confirmation_request.set_default_allocation(alloc_id)
+        self.confirmation_request.update_fields_in_component(
+            "ConfirmationBlock",
+            {
+                "AllocAccountID": self.alloc_account,
+                "AllocQty": self.qty,
+                "AvgPx": self.price,
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        print_message("ALLOCATE", responses)
 
-        # region Checking Settl Date in Allocations
-        alloc_settl_date = self.middle_office.extract_allocate_value('SettlDate')
-        self.middle_office.compare_values({'SettlDate': self.settl_date}, alloc_settl_date,
-                                          'Checking Settl Date in Allocations')
+        # Comparing values for Allocation after Allocate block
+        conf_report_message = self.java_api_manager.get_last_message(
+            ORSMessageType.ConfirmationReport.value
+        ).get_parameters()["ConfirmationReportBlock"]
+        self.java_api_manager.compare_values(
+            {
+                "AffirmStatus": ConfirmationReportConst.ConfirmStatus_AFF.value,
+                "MatchStatus": ConfirmationReportConst.MatchStatus_MAT.value,
+                "SettlDate": settl_date_expected,
+            },
+            conf_report_message,
+            "Comparing Statuses and SettlDate for Allocation after Allocate block",
+        )
+
+        # Comparing statuses for Block after Allocate block
+        allocation_report_message = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()["AllocationReportBlock"]
+        self.java_api_manager.compare_values(
+            {
+                "AllocStatus": AllocationReportConst.AllocStatus_ACK.value,
+                "MatchStatus": AllocationReportConst.MatchStatus_MAT.value,
+                "AllocSummaryStatus": AllocationReportConst.AllocSummaryStatus_MAG.value,
+            },
+            allocation_report_message,
+            "Comparing statuses for Block after Allocate block",
+        )
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -13,12 +13,16 @@ from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionR
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
+from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchReply import BlockUnallocateBatchReply
 from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
+from test_framework.java_api_wrappers.ors_messages.FixConfirmation import FixConfirmation
+from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchReply import \
+    ForceAllocInstructionStatusBatchReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
@@ -39,6 +43,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
+from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
 
 class JavaApiManager:
@@ -57,7 +62,7 @@ class JavaApiManager:
                                                          message.get_parameters(), self.get_session_alias()),
                 parent_event_id=self.get_case_id()))
 
-    def send_message_and_receive_response(self, message: JavaApiMessage):
+    def send_message_and_receive_response(self, message: JavaApiMessage, filter_dict=None):
         logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
         if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
             response = self.act.submitFixNewOrderSingle(
@@ -83,7 +88,7 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value:
+        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value and filter_dict is None:
             response = self.act.submitDFDManagementBatch(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -144,7 +149,7 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.UnMatchRequest.value:
-            response = self.act.submitUnmatchAndTransferRequest(
+            response = self.act.submitOrderUnMatchRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(), message.get_parameters(),
                                                              self.get_session_alias()),
@@ -215,7 +220,7 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-        elif message.get_message_type() == ESMessageType.ExecutionReport.value:
+        elif message.get_message_type() == ESMessageType.ExecutionReport.value and filter_dict is None:
             response = self.act.submitExecutionReport(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -234,6 +239,49 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.DFDManagementBatch.value and filter_dict is not None:
+            response = self.act.submitMassDFDManagementBatch(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.BlockChangeConfirmationServiceRequest.value:
+            response = self.act.submitBlockChangeConfirmationServiceRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.ForceAllocInstructionStatusBatchRequest.value:
+            response = self.act.submitForceAllocInstructionStatusBatchRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.BlockUnallocateBatchRequest.value:
+            response = self.act.submitBlockUnallocateBatchRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.ExecutionReport.value:
+            response = self.act.submitExecutionReportWithFilter(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrdReport.value:
+            response = self.act.submitOrdReport(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.MassConfirmation.value:
+            response = self.act.submitMassConfirmation(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+
         else:
             response = None
         return self.parse_response(response)
@@ -341,6 +389,14 @@ class JavaApiManager:
                 response_fix_message = FixPositionReportFX()
             elif message_type == ORSMessageType.BookingCancelReply.value:
                 response_fix_message = BookingCancelReply()
+            elif message_type == ORSMessageType.ForceAllocInstructionStatusBatchReply.value:
+                response_fix_message = ForceAllocInstructionStatusBatchReply()
+            elif message_type == ORSMessageType.BlockUnallocateBatchReply.value:
+                response_fix_message = BlockUnallocateBatchReply()
+            elif message_type == ORSMessageType.OrderUnMatchReply.value:
+                response_fix_message = UnMatchReply()
+            elif message_type == ORSMessageType.FixConfirmation.value:
+                response_fix_message = FixConfirmation()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

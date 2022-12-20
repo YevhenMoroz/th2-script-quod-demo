@@ -650,6 +650,25 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_Auction_Child_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'CLIENT1',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_21'),
+            'TimeInForce': '2',
+            "TransactTime": '*',
+            'ExDestination': 'XAMS',
+            'OrderCapacity': 'A',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_SynthMinQty_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
@@ -827,6 +846,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'AlgoCst02': 'KEPLER07',
             'AlgoCst03': 'KEPLER10',
             'ExDestination': 'QDL1',
+            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
@@ -1312,6 +1332,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_LitDark_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            'TargetStrategy': '1011',
+            'ClientAlgoPolicyID': 'InternalQuodQa_SORPING',
+            'NoStrategyParameters': [
+            ]
         }
         super().change_parameters(base_parameters)
         return self

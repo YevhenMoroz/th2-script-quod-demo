@@ -220,7 +220,7 @@ class AlgoFixInstruments(Enum):
 
     instrument_28 = dict(
         Symbol='NEX',
-        SecurityID='FR0000044448,',
+        SecurityID='FR0000044448',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
@@ -260,6 +260,8 @@ class AlgoAccounts(Enum):
     account_15 = "XAMS_CLIENT1"
     account_16 = "QDL_CLIENT2"
     account_17 = "QDL2_CLIENT2"
+    account_18 = "XAMS_CLIENT2"
+    account_19 = "XAMS_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -314,12 +316,14 @@ class AlgoMic(Enum):
     mic_33 = "XETR"   # XETRA
     mic_34 = "XFRA"   # FRANKFURT
     mic_35 = "XBRU"   # Euronext Brussels
+    mic_36 = "QDL3"   # QUODLIT3
+    mic_37 = "TQEL"   # TQEULIS
 
 
 class AlgoListingId(Enum):
     listing_1 = "1015"
-    listing_2 = "734"
-    listing_3 = "3416"
+    listing_2 = "734"       # EuronextParis for FR0000121121
+    listing_3 = "3416"      # TURQUOISE for FR0000121121
     listing_4 = "107617192" # QUODLIT1 for QUODTESTQA00
     listing_5 = "107617193" # QUODLIT2 for QUODTESTQA00
     listing_6 = "1805006" # Euronext Paris for FR0010411884
@@ -353,7 +357,7 @@ class AlgoListingId(Enum):
     listing_34 = "125911519"       # JANESTREET for FR0010411884
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
-    listing_37 = "48"       # Euronext Фьіеуквфь for AXS
+    listing_37 = "48"       # Euronext Amsterdam for AXS
     listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
     listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
     listing_40 = "1825020508"       # QUODLIT1 for QUODTESTQA07
@@ -415,7 +419,8 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
-
+    key_params_log_319_check_crossing_mid_price_or_not = ['OrderId', 'MidPrice']
+    key_params_log_319_check_market_data_events = ['OrderId', 'Text', 'AdditionalParameter']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -487,3 +492,12 @@ class AlgoPreFilter(Enum):
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
     }
+
+    pre_filter_check_market_data_events = {
+        'OrderId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
+    }
+
+class AlgoTradingPhaseProfile(Enum):
+    trading_phase_profile1 = "PreClose Auction Phase (QA)"
+    trading_phase_profile2 = "Auction Phase QA2"

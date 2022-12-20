@@ -1,131 +1,208 @@
 import logging
 import time
+from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
+from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
-from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import (
+    JavaApiFields,
+    OrderReplyConst,
+    ExecutionReportConst,
+    CommissionAmountTypeConst,
+    CommissionBasisConst,
+)
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import (
+    ForceAllocInstructionStatusRequestOMS,
+)
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns, AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+seconds, nanos = timestamps()  # Test case start time
 
-@try_except(test_id=Path(__file__).name[:-3])
+
 class QAP_T7156(TestCase):
-
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.bs_connectivity = self.fix_env.buy_side
-        self.ss_connectivity = self.fix_env.sell_side
-        self.dc_connectivity = self.fix_env.drop_copy
-        self.client = self.data_set.get_client_by_name("client_com_1")
-        self.client_acc_1 = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.client_acc_2 = self.data_set.get_account_by_name("client_com_1_acc_2")
-        self.cur = self.data_set.get_currency_by_name('currency_3')
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.qty = "20"
-        self.qty_to_alloc = str(int(int(self.qty) / 2))
-        self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.price = self.fix_message.get_parameter("Price")
+        self.price = "20"
+        self.qty_to_alloc = str(int(self.qty) // 2)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.mid_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.client = self.data_set.get_client_by_name("client_com_1")  # CLIENT_COMM_1
+        self.client_acc_1 = self.data_set.get_account_by_name("client_com_1_acc_1")  # CLIENT_COMM_1_SA1
+        self.client_acc_2 = self.data_set.get_account_by_name("client_com_1_acc_2")  # CLIENT_COMM_1_SA2
         self.comm1 = self.data_set.get_commission_by_name("commission1")
         self.comm2 = self.data_set.get_commission_by_name("commission2")
         self.comm_profile1 = self.data_set.get_comm_profile_by_name("perc_amt")
         self.comm_profile2 = self.data_set.get_comm_profile_by_name("perc_qty")
-        self.com_cur = self.data_set.get_currency_by_name('currency_2')
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.approve_request = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirmation_request = ConfirmationOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        class_name = QAP_T7156
+        # region Precondition - Send commission
         self.rest_commission_sender.clear_commissions()
-        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm1,
-                                                                         account=self.client_acc_1,
-                                                                         comm_profile=self.comm_profile1).send_post_request()
-        self.rest_commission_sender.set_modify_client_commission_message(commission=self.comm2,
-                                                                         account=self.client_acc_2,
-                                                                         comm_profile=self.comm_profile2).send_post_request()
-        # endregion
-        # region send order
-        self.__send_fix_orders()
-        # endregion
-        # region Check ExecutionReports
-        self.exec_report.set_default_filled(self.fix_message)
-        self.exec_report.change_parameters(
-            {'Currency': self.cur, 'SecondaryOrderID': '*', "MiscFeesGrp": "*", 'Text': '*', 'LastMkt': '*',
-             "ReplyReceivedTime": "*", "CommissionData": "*"})
-        self.exec_report.remove_parameter('SettlCurrency')
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
-        # endregion
-        # region book order
-        self.mid_office.book_order([OrderBookColumns.order_id.value, self.order_id])
-        self.order_book.set_filter([OrderBookColumns.order_id.value, self.order_id]).check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value})
-        # endregion
-        # region approve and alllocate block
-        self.mid_office.approve_block()
-        param = [{AllocationsColumns.security_acc.value: self.client_acc_1,
-                  AllocationsColumns.alloc_qty.value: self.qty_to_alloc},
-                 {AllocationsColumns.security_acc.value: self.client_acc_2,
-                  AllocationsColumns.alloc_qty.value: self.qty_to_alloc}]
-        self.mid_office.set_modify_ticket_details(is_alloc_amend=True, arr_allocation_param=param)
-        self.mid_office.allocate_block([MiddleOfficeColumns.order_id.value, self.order_id])
-        # endregion
-        # region check allocation commission 1
-        conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
-            self.fix_message)
-        comm_data_1 = {"CommissionType": '3', "Commission": "0.1",
-                       "CommCurrency": self.com_cur}
-        conf_report.change_parameters(
-            {"AllocQty": self.qty_to_alloc, "Account": self.client, "AllocAccount": self.client_acc_1, "AvgPx": "*",
-             "Currency": "*", "tag5120": "*", "NoMiscFees": "*",
-             "CommissionData": comm_data_1})
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ["AllocAccount"])
-        # endregion
-        # region check allocation commission 2
-        comm_data_2 = {"CommissionType": '3', "Commission": "1",
-                       "CommCurrency": self.com_cur}
-        conf_report.change_parameters(
-            {"AllocAccount": self.client_acc_2,
-             "CommissionData": comm_data_2})
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ["AllocAccount"])
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.set_modify_client_commission_message(
+            commission=self.comm1, account=self.client_acc_1, comm_profile=self.comm_profile1
+        ).send_post_request()
+        self.rest_commission_sender.set_modify_client_commission_message(
+            commission=self.comm2, account=self.client_acc_2, comm_profile=self.comm_profile2
+        ).send_post_request()
+        time.sleep(3)
         # endregion
 
-    def __send_fix_orders(self):
-        try:
-            nos_rule = self.rule_manager. \
-                add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(self.bs_connectivity,
-                                                                         self.client_for_rule,
-                                                                         self.mic,
-                                                                         float(self.price), float(self.price),
-                                                                         int(self.qty), int(self.qty), 1)
-            self.fix_message.change_parameters(
-                {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client,
-                 "ExDestination": self.mic,
-                 "Currency": self.data_set.get_currency_by_name("currency_3")})
-            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            self.order_id = self.response[0].get_parameter("OrderID")
-        finally:
-            time.sleep(2)
-            self.rule_manager.remove_rule(nos_rule)
+        # region Step 1 - Create DMA order
+        self.order_submit.set_default_dma_limit()
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {
+                "OrdQty": self.qty,
+                "AccountGroupID": self.client,
+                "Price": self.price,
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        class_name.print_message("CREATE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id = order_reply["OrdID"]
+        cl_ord_id = order_reply["ClOrdID"]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+            order_reply,
+            "Comparing Status of DMA order",
+        )
+        # endregion
+
+        # region Step 1 - Trade DMA order
+        self.execution_report.set_default_trade(ord_id)
+        self.execution_report.update_fields_in_component(
+            "ExecutionReportBlock",
+            {
+                "Price": self.price,
+                "AvgPrice": self.price,
+                "LastPx": self.price,
+                "OrdQty": self.qty,
+                "LastTradedQty": self.qty,
+                "CumQty": self.qty,
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        class_name.print_message("TRADE", responses)
+        execution_report_message = self.java_api_manager.get_last_message(
+            ORSMessageType.ExecutionReport.value
+        ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
+                JavaApiFields.TransStatus.value: "TER",
+            },
+            execution_report_message,
+            "Comparing TransExecStatus after Execute DMA",
+        )
+        # endregion
+
+        # region Step 2 - Book order
+        self.allocation_instruction.set_default_book(ord_id)
+        self.allocation_instruction.update_fields_in_component(
+            "AllocationInstructionBlock",
+            {
+                "Qty": self.qty,
+                "AccountGroupID": self.client,
+                "GrossTradeAmt": "400",
+                "AvgPx": "20",
+                "SettlCurrAmt": "400",
+            },
+        )
+
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        class_name.print_message("BOOK", responses)
+
+        order_update_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+            JavaApiFields.OrdUpdateBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            order_update_reply,
+            "Comparing PostTradeStatus after Book",
+        )
+
+        alloc_report_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        alloc_id = alloc_report_reply["ClientAllocID"]
+        # endregion
+
+        # region Step 3 - Approve block
+        self.approve_request.set_default_approve(alloc_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve_request)
+        class_name.print_message("APPROVE", responses)
+        # endregion
+
+        # region Step 3 - Allocate block
+        self.confirmation_request.set_default_allocation(alloc_id)
+        list_of_security_account = [self.client_acc_1, self.client_acc_2]
+        for account in list_of_security_account:
+            self.confirmation_request.update_fields_in_component(
+                "ConfirmationBlock",
+                {
+                    "AllocAccountID": account,
+                    "AllocQty": self.qty_to_alloc,
+                    "AvgPx": self.price,
+                },
+            )
+            responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+            class_name.print_message(f"CONFIRMATION FOR {account}", responses)
+
+            conf_report_reply = self.java_api_manager.get_last_message(
+                ORSMessageType.ConfirmationReport.value
+            ).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
+
+            expected_commissions: dict = {
+                JavaApiFields.CommissionRate.value: "5.0",
+                JavaApiFields.CommissionAmount.value: "10.0",
+                JavaApiFields.CommissionCurrency.value: "EUR",
+                JavaApiFields.CommissionAmountType.value: CommissionAmountTypeConst.CommissionAmountType_BRK.value,
+                JavaApiFields.CommissionBasis.value: CommissionBasisConst.CommissionBasis_PCT.value,
+            }
+            if conf_report_reply["AllocAccountID"] == "CLIENT_COMM_1_SA2":
+                expected_commissions.update(
+                    {JavaApiFields.CommissionRate.value: "10.0", JavaApiFields.CommissionAmount.value: "1.0"}
+                )
+            self.java_api_manager.compare_values(
+                expected_commissions,
+                conf_report_reply["ClientCommissionList"]["ClientCommissionBlock"][0],
+                f"Comparing Client Commission for {account}",
+            )
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    @staticmethod
+    def print_message(message, responses):
+        logger.info(message)
+        for i in responses:
+            logger.info(i)
+            logger.info(i.get_parameters())

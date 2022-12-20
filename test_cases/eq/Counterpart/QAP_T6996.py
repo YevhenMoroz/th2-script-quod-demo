@@ -54,7 +54,7 @@ class QAP_T6996(TestCase):
         qty = '1000'
         price = '10'
         client = self.data_set.get_client_by_name('client_counterpart_1')
-        self.fix_message.set_default_dma_limit()
+        self.fix_message.set_default_care_limit()
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
         self.fix_message.change_parameter('Account', client)
         self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
@@ -83,8 +83,7 @@ class QAP_T6996(TestCase):
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id_care = response[0].get_parameter("OrderID")
         fix_execution_report.set_default_new(self.fix_message)
-        fix_execution_report.remove_parameter("Parties").add_tag({'QuodTradeQualifier': '*'})
-        fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
+        ignored_fields = ['Parties', 'QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker']
         no_party = {"NoParty": {'NoParty': [
             {'PartyRole': "*",
              'PartyID': "*",
@@ -104,7 +103,8 @@ class QAP_T6996(TestCase):
              'PartyIDSource': "*"},
             counterpart_settl_location]}}
         fix_execution_report.add_tag(no_party)
-        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report)
+        time.sleep(10)
+        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=ignored_fields)
         self.trade_entry_message.set_default_trade(order_id_care, exec_price=price, exec_qty=qty)
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
         result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value)

@@ -36,7 +36,7 @@ class QAP_T7169(TestCase):
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.client = self.data_set.get_client('client_co_1')
+        self.client = self.data_set.get_client('client_counterpart_1')  # CLIENT_COUNTERPART
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
