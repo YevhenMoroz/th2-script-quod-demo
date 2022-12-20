@@ -186,6 +186,8 @@ class QAP_T4181(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_Iceberg_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_Iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
+        time.sleep(3)
+
         # region check cancel 1st child DMA order
         er_cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
