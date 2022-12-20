@@ -47,6 +47,37 @@ class AllocationInstructionOMS(AllocationInstruction):
                                         {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]}})
         return self
 
+    def set_recompute_book(self, ord_id, settl_type="REG", settl_currency="UAH", settl_curr_fx_rate="2",
+                           settl_curr_fx_rate_calc="M"):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('AllocationInstructionBlock',
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]},
+                                         "BookingType": settl_type,
+                                         "SettlCurrFxRate": settl_curr_fx_rate,
+                                         "SettlCurrFxRateCalc": settl_curr_fx_rate_calc,
+                                         "Currency": settl_currency,
+                                         "SettlCurrency": settl_currency,
+                                         "RecomputeInSettlCurrency": "Y"})
+        if settl_curr_fx_rate_calc == "M":
+            self.update_fields_in_component('AllocationInstructionBlock', {"SettlCurrAmt": int(int(
+                self.get_parameter("AllocationInstructionBlock")["SettlCurrAmt"]) * int(settl_curr_fx_rate)),
+                                                                           "GrossTradeAmt": int(int(self.get_parameter(
+                                                                               "AllocationInstructionBlock")
+                                                                                                    [
+                                                                                                        "SettlCurrAmt"]) * int(
+                                                                               settl_curr_fx_rate)), "AvgPx": int(
+                    int(self.get_parameter("AllocationInstructionBlock")["AvgPx"]) * int(settl_curr_fx_rate))})
+        else:
+            self.update_fields_in_component('AllocationInstructionBlock', {"SettlCurrAmt": int(int(
+                self.get_parameter("AllocationInstructionBlock")["SettlCurrAmt"]) / int(settl_curr_fx_rate)),
+                                                                           "GrossTradeAmt": int(int(self.get_parameter(
+                                                                               "AllocationInstructionBlock")
+                                                                                                    [
+                                                                                                        "SettlCurrAmt"]) / int(
+                                                                               settl_curr_fx_rate)), "AvgPx": int(
+                    int(self.get_parameter("AllocationInstructionBlock")["AvgPx"]) / int(settl_curr_fx_rate))})
+        return self
+
     def set_amend_book(self, alloc_instr_id, exec_id, exec_qty, exec_price):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
@@ -68,3 +99,23 @@ class AllocationInstructionOMS(AllocationInstruction):
                                         {'ExecAllocList': {'ExecAllocBlock': list_of_exec_alloc_block},
                                          'AllocInstructionID': alloc_instr_id, 'AllocTransType': 'R', 'AllocType': "P"})
 
+    def set_split_book(self, ord_id, first_booking_qty="50", second_booking_qty="50", avg_px="10"):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('AllocationInstructionBlock',
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]},
+                                         'AllocationInstructionQtyList': {'AllocationInstructionQtyBlock': [{
+                                             'BookingQty': first_booking_qty,
+                                             'NetGrossInd': 'G',
+                                             'BookingType': "REG",
+                                             'SettlDate': datetime.utcnow().isoformat(),
+                                             'GrossTradeAmt': str(float(first_booking_qty) * float(avg_px)),
+                                             'NetMoney': str(float(first_booking_qty) * float(avg_px))},
+                                             {'BookingQty': second_booking_qty,
+                                              'NetGrossInd': 'G',
+                                              'BookingType': "REG",
+                                              'SettlDate': datetime.utcnow().isoformat(),
+                                              'GrossTradeAmt': str(float(second_booking_qty) * float(avg_px)),
+                                              'NetMoney': str(float(second_booking_qty) * float(avg_px))}
+                                         ]}
+                                         })
+        return self
