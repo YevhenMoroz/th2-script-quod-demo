@@ -17,6 +17,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRejectReportAlgo import FixMessageOrderCancelRejectReportAlgo
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
 class QAP_T4182(TestCase):
@@ -46,7 +47,11 @@ class QAP_T4182(TestCase):
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
 
         now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate = (now + timedelta(days=5)).strftime("%Y%m%d")
+        delta = 5
+        expire_date = (now + timedelta(days=delta))
+        self.ExpireDate_for_sending = expire_date.strftime("%Y%m%d")
+        shift = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(expire_date)
+        self.ExpireDate = (expire_date - timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
