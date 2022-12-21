@@ -90,9 +90,9 @@ class QAP_T8835(TestCase):
 
         # region Read log verifier params
         self.rep = report_id
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_is_no_suitablle_liquidity.value
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
-        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_that_is_no_suitablle_liquidity")
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
         self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
         # endregion
 
@@ -176,8 +176,8 @@ class QAP_T8835(TestCase):
 
         time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_that_is_no_suitablle_liquidity()
-        compare_message.change_parameters(dict(Time='*', ClOrdrId=parent_synthMinQty_order_id, Text=self.text))
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text))
 
         self.read_log_verifier_1.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
         self.read_log_verifier_1.check_read_log_message(compare_message, self.key_params_readlog)
