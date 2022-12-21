@@ -93,7 +93,7 @@ class QAP_T4064(TestCase):
         # endregion
 
         # region Compare message params
-        self.text = "no suitable liquidity"
+        self.text = "all solutions empty or discarded, check definitions of amount limits"
         self.pre_filter['Text'] = (self.text, "EQUAL")
         # endregion
 
