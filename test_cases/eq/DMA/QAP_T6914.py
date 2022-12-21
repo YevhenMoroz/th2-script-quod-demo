@@ -70,7 +70,7 @@ class QAP_T6914(TestCase):
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"Account": client, "OrdStatus": "0"}, exec_rep, "Check Client")
+        self.fix_manager.compare_values({"Account": self.venue_client_name, "OrdStatus": "0"}, exec_rep, "Check Client")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
