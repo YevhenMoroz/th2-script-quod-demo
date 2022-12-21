@@ -28,7 +28,7 @@ class QAP_T8329(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
-        self.user_manager = '12'
+        self.user_manager = str
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,6 +50,7 @@ class QAP_T8329(CommonTestCase):
             values_sub_wizard.set_ext_id_client(self.ext_id)
 
             assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+            self.user_manager = random.choice(assignments_tab.get_all_user_manager_from_drop_menu())
             assignments_tab.set_user_manager(self.user_manager)
 
             wizard = ClientsWizard(self.web_driver_container)

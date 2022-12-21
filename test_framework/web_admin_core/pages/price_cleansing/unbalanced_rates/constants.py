@@ -46,7 +46,7 @@ class Constants:
 
         class ValuesTab:
             NAME = '//*[@formcontrolname="priceCleansingRuleName"]'
-            REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX = '//*[normalize-space()="Remove Detected Price Update"]/preceding-sibling::span'
+            REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX = '//*[normalize-space()="Remove Detected Price Updates"]/preceding-sibling::span'
             ENRICH_EMPTY_SIDE_OF_BOOK_XPATH = '//*[normalize-space()="Enrich Empty Side Of Book"]/preceding-sibling::span'
 
         class DimensionsTab:

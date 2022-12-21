@@ -196,6 +196,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(SettingsConstants.SETTINGS_PAGE_TITLE_XPATH)
 
+    def click_on_settings_page_from_side_menu(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+
     def open_commissions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.COMMISSIONS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)

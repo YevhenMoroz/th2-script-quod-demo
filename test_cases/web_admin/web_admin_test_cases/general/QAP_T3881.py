@@ -22,7 +22,6 @@ class QAP_T3881(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
 
     def test_context(self):
 
@@ -32,20 +31,14 @@ class QAP_T3881(CommonTestCase):
             common_page = CommonPage(self.web_driver_container)
             current_url = common_page.get_current_page_url()
             common_page.open_new_browser_tab_and_set_url(current_url)
-            time.sleep(2)
             common_page.click_on_user_icon()
-            time.sleep(1)
             common_page.click_on_logout()
-            time.sleep(2)
             common_page.switch_to_browser_tab(0)
             side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_settings_page()
+            side_menu.click_on_settings_page_from_side_menu()
             time.sleep(2)
-            self.verify("Login error message is appears", True, common_page.is_error_message_displayed())
-
             current_url = common_page.get_current_page_url()
             common_page.open_new_browser_tab_and_set_url(current_url)
-            time.sleep(2)
 
             login_page = LoginPage(self.web_driver_container)
             self.verify("Login page is opened", True, login_page.is_login_page_opened())

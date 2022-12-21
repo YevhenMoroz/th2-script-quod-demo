@@ -21,7 +21,7 @@ class QAP_T3150(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)) for _ in range(2)]
-        self.reference_venue = ''
+        self.reference_venue = []
         self.price_deviation = ["1", "11", "-1"]
         self.price_deviation_format = 'ExactPrice'
         self.reference_price = 'BidAndAsk'
@@ -39,7 +39,7 @@ class QAP_T3150(CommonTestCase):
         main_page.click_on_new()
         values_tab = ValuesTab(self.web_driver_container)
         values_tab.set_name(self.name[0])
-        self.reference_venue = values_tab.get_all_reference_venues_from_drop_menu()
+        self.reference_venue = random.choices(values_tab.get_all_reference_venues_from_drop_menu(), k=3)
         values_tab.set_reference_venues(self.reference_venue)
         values_tab.set_price_deviation(self.price_deviation[0])
         wizard = MainWizard(self.web_driver_container)
@@ -85,13 +85,14 @@ class QAP_T3150(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_edit()
 
-            expected_result = [self.name[1], self.reference_venue, self.price_deviation[1], self.venue, self.listing,
-                               self.instr_type, self.symbol]
-            actual_result = [values_tab.get_name(), values_tab.get_reference_venues(), values_tab.get_price_deviation(),
+            expected_result = [*[self.name[1], self.price_deviation[1], self.venue, self.listing,
+                               self.instr_type, self.symbol], *self.reference_venue]
+            actual_result = [*[values_tab.get_name(), values_tab.get_price_deviation(),
                              dimensions_tab.get_venue(), dimensions_tab.get_listing(), dimensions_tab.get_instr_type(),
-                             dimensions_tab.get_symbol()]
+                             dimensions_tab.get_symbol()],
+                             *[_.strip() for _ in values_tab.get_reference_venues().split(',')]]
 
-            self.verify("New data saved", expected_result, actual_result)
+            self.verify("New data saved", sorted(expected_result), sorted(actual_result))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
