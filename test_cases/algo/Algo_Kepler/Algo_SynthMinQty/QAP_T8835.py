@@ -97,8 +97,9 @@ class QAP_T8835(TestCase):
         # endregion
 
         # region Compare message params
-        self.text = "all solutions empty or discarded, check definitions of amount limits"
-        self.pre_filter['Text'] = (self.text, "EQUAL")
+        self.text_1 = "all solutions empty or discarded, check definitions of amount limits"
+        self.text_2 = "no suitable liquidity"
+        self.pre_filter['Text'] = (self.text_1, "EQUAL")
         # endregion
 
         self.rule_list = []
@@ -176,11 +177,15 @@ class QAP_T8835(TestCase):
 
         time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_1.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text_1))
+
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_2.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text_2))
 
         self.read_log_verifier_1.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
-        self.read_log_verifier_1.check_read_log_message(compare_message, self.key_params_readlog)
+        self.read_log_verifier_1.check_read_log_message(compare_message_1, self.key_params_readlog)
+        self.read_log_verifier_1.check_read_log_message(compare_message_2, self.key_params_readlog)
         # endregion
 
         time.sleep(5)
@@ -198,6 +203,6 @@ class QAP_T8835(TestCase):
         er_cancel_synthMinQty_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.synthMinQty_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_synthMinQty_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-        
+
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
