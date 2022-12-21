@@ -207,6 +207,7 @@ class FixManager:
             for i in response_messages:
                 logging.info(f"Received message is {i.get_message_type()} with params ->"
                              f" {i.get_parameters()}")
+        self.response = response_messages
         return response_messages
 
     def send_message_fix_standard(self, fix_message: FixMessage) -> None:
