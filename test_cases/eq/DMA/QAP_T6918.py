@@ -1,11 +1,11 @@
 import logging
 import os
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from pkg_resources import resource_filename
 
+import xml.etree.ElementTree as ET
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_T6914(TestCase):
+class QAP_T6918(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -26,7 +26,6 @@ class QAP_T6914(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
-        self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
         self.price = self.fix_message.get_parameter("Price")
         self.qty = self.fix_message.get_parameter("OrderQtyData")["OrderQty"]
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
@@ -50,13 +49,11 @@ class QAP_T6914(TestCase):
         time.sleep(40)
         # endregion
         # region Step 1
-        client = self.data_set.get_client_by_name("client_pt_1").upper()
-        account = self.data_set.get_account_by_name('client_pt_1_acc_1').upper()
-        no_allocs = {"NoAllocs":[{'AllocAccount': account, 'AllocQty': self.qty}]}
-        self.fix_message.change_parameters({"Account": client, "PreAllocGrp": no_allocs})
+        client = self.data_set.get_client_by_name("client_1_ext_id")
+        self.fix_message.change_parameters({"Account": client})
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"Account": self.venue_client_name, "OrdStatus": "A"}, exec_rep, "Check Client")
+        self.fix_manager.compare_values({"Account": client, "OrdStatus": "A"}, exec_rep, "Check Client")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
