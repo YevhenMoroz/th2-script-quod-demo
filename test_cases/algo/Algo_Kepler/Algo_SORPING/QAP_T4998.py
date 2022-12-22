@@ -90,8 +90,20 @@ class QAP_T4998(TestCase):
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         # endregion
 
+        # region Read log verifier params
+        # self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_mapping_on_sell_side.value
+        # self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping_on_sell_side")
+        # endregion
+
         # region Compare message parameters
         self.misc_number = constants.MiscNumber.ordr_misc_7.value
+        # endregion
+
+        # region Compare message parameters
+        # self.param1 = constants.ReadLogParams.party_id.value
+        # self.param2 = constants.MiscNumber.ordr_misc_7.value
+        # self.param3 = constants.ReadLogParams.cl_ord_id.value
         # endregion
 
         self.rule_list = []
@@ -141,6 +153,12 @@ class QAP_T4998(TestCase):
 
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message)
+
+        # compare_message = ReadLogMessageAlgo().set_compare_message_for_check_mapping_on_sell_side()
+        # compare_message.change_parameters(dict(Parameter1=self.param1, Value1=self.party_id, Parameter2=self.param2, Value2=self.party_id, Parameter3=self.param3, Value3=self.ClOrdId))
+        #
+        # self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        # self.read_log_verifier.check_read_log_message(compare_message, self.key_params_read_log)
         # endregion
 
         # region Check Sell side

@@ -90,8 +90,19 @@ class QAP_T5026(TestCase):
         self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
         # endregion
 
+        # region Read log verifier params
+        # self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_mapping_on_sell_side.value
+        # self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping_on_sell_side")
+        # endregion
+
         # region Compare message parameters
         self.misc_number = constants.MiscNumber.ordr_misc_2.value
+        # endregion
+
+        # region Compare message parameters
+        # self.param1 = constants.MiscNumber.ordr_misc_2.value
+        # self.param2 = constants.ReadLogParams.cl_ord_id.value
         # endregion
 
         self.rule_list = []

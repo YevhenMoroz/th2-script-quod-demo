@@ -79,18 +79,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_party_info_more_than_one_group(self) -> ReadLogMessage:
-        base_parameters = {
-            "CountOfGroups": "3",
-            "GroupNumber": "1",
-            "PartyID": "TestClientID",
-            "PartyIDSource": "D",
-            "PartyRole": "3",
-            "ClOrdID": "*"
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def set_compare_message_for_check_party_info_for_three_groups_sell_side(self) -> ReadLogMessage:
         base_parameters = {
             "CountOfGroups": "3",
@@ -230,5 +218,20 @@ class ReadLogMessageAlgo(ReadLogMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_compare_message_for_check_mapping_on_sell_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "Parameter1": "*",
+            "Value1": "*",
+            "Parameter2": "*",
+            "Value2": "*",
+            "Parameter3": "*",
+            "Value3": "*",
+            "Parameter4": "*",
+            "Value4": "*",
+        }
+        super().change_parameters(base_parameters)
+        return self
+
 
 

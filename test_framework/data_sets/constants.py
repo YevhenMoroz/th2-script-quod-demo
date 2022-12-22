@@ -254,10 +254,13 @@ class PartyID(Enum):
     party_id_10 = "TestTraderName"
 
 
-
 class PartyIDSource(Enum):
     party_id_source_1 = "D"
     party_id_source_2 = "P"
+
+
+class PartyIDSourceMap(Enum):
+    proprietary = 'Proprietary'
 
 
 class PartyRole(Enum):
@@ -267,6 +270,13 @@ class PartyRole(Enum):
     party_role_24 = "24"
     party_role_58 = "58"
     party_role_55 = "55"
+
+
+class PartyRoleMap(Enum):
+    customer_account = 'CustomerAccount'
+    executing_trader = 'ExecutingTrader'
+    order_originator = 'OrderOriginator'
+    client_id = 'ClientID'
 
 
 class MiscNumber(Enum):
@@ -308,14 +318,12 @@ class TransactionStatus(Enum):
 
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
-    log_319_cancel_child = "log319-cancel-child"
     log_319_check_primary_listing = "log319-check-primary-listing"
     log_319_check_party_info = "log319-check-party-info"
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
     log_319_check_the_lis_amount = "log319-check-the-lis-amount"
-    log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
     log319_check_party_info_for_three_groups_sell_side = "log319-check-party-info-for-three-groups-sell-side"
     log319_check_party_info_for_three_groups_buy_side = "log319-check-party-info-for-three-groups-buy-side"
     log319_check_party_info_for_the_one_group_sell_side = "log319-check-party-info-for-the-one-group-sell-side"
@@ -331,6 +339,20 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
+    log_319_check_mapping_on_sell_side = "log319-check-mapping-on-sell-side"
+
+
+class ReadLogParams(Enum):
+    party_id = 'PartyID'
+    party_id_source = 'PartyIDSource'
+    party_role = 'PartyRole'
+    cl_ord_id = 'ClOrdID'
+    algopolicy_name = 'AlgoPolicyName'
+    security_exchange = 'SecurityExchange'
+    external_strategy_name = 'ExternalStrategyName'
+    cl_algopolicy_id = 'ClientAlgoPolicyID'
+    cl_account_group_id = 'ClientAccountGroupID'
+    parties_block = 'PartiesBlock'
 
 
 class WebAdminURL(Enum):
