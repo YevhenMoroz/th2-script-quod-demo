@@ -313,7 +313,6 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info = "log319-check-party-info"
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
-    log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
     log_319_check_the_lis_amount = "log319-check-the-lis-amount"
     log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
@@ -332,8 +331,6 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
-    log_319_check_not_crossing_mid_price = "log319-check-not-crossing-mid-price"
-    log_319_check_market_event_for_venue = "log319-check-market-event-for-venue"
 
 
 class WebAdminURL(Enum):

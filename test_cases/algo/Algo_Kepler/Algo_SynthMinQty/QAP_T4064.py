@@ -89,7 +89,6 @@ class QAP_T4064(TestCase):
         self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
-        self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
         # endregion
 
         # region Compare message params

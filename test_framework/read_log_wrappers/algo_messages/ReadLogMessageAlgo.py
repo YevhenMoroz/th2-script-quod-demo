@@ -43,14 +43,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_the_skips_lis_phase(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderID": '*',
-            "Text": 'skipping LIS phase'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def set_compare_message_for_check_tags_5052_and_207_mapping(self) -> ReadLogMessage:
         base_parameters = {
             "SecurityExchange": "QDL1",
@@ -235,23 +227,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         base_parameters = {
             "MiscNumber": "OrdrMisc1",
             "OrdrMisc": "test tag 5001",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_not_crossing_mid_price(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*",
-            "MidPrice": "27",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_market_event_for_venue(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*",
-            "Text": "27",
-            "AdditionalParameter": "QUODLIT1",
         }
         super().change_parameters(base_parameters)
         return self
