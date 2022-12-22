@@ -129,8 +129,7 @@ class OmsClients(Enum):
     client_counterpart_2 = "CLIENT_COUNTERPART2"
     client_counterpart_3 = "CLIENT_COUNTERPART_3"
     """ClientAccountGroupID"""
-    client_1_ext_id = "CLIENT1ExtID"
-
+    client_2_ext_id = "CLIENT2ExtID"
 
 class OmsVenueClientNames(Enum):
     """Base"""

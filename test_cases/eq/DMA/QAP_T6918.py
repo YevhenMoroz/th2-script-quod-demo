@@ -49,7 +49,7 @@ class QAP_T6918(TestCase):
         time.sleep(40)
         # endregion
         # region Step 1
-        client = self.data_set.get_client_by_name("client_1_ext_id")
+        client = self.data_set.get_client_by_name("client_2_ext_id")
         self.fix_message.change_parameters({"Account": client})
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
