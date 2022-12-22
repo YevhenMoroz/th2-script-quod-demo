@@ -187,7 +187,7 @@ class QAP_T9305(TestCase):
         # endregion
 
         # region Check Read log
-        # time.sleep(70)
+        time.sleep(70)
 
         compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
         compare_message_1.change_parameters(dict(OrderId=parent_SORPING_order_id, Text=self.text_1))
