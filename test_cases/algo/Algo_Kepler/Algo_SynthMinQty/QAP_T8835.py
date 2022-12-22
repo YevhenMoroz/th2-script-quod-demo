@@ -90,16 +90,15 @@ class QAP_T8835(TestCase):
 
         # region Read log verifier params
         self.rep = report_id
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event_with_time.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
         self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
-        self.pre_filter = self.data_set.get_pre_filter("pre_filter_suitable_liquidity")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_check_events")
         # endregion
 
         # region Compare message params
-        self.text_1 = "all solutions empty or discarded, check definitions of amount limits"
-        self.text_2 = "no suitable liquidity"
-        self.pre_filter['Text'] = (self.text_1, "EQUAL")
+        self.text = "no suitable liquidity"
+        self.pre_filter['Text'] = (self.text, "EQUAL")
         # endregion
 
         self.rule_list = []
@@ -139,7 +138,7 @@ class QAP_T8835(TestCase):
 
         responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
         parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
-        self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")
+        self.pre_filter['OrderId'] = (parent_synthMinQty_order_id, "EQUAL")
 
         time.sleep(3)
         # endregion
@@ -173,19 +172,13 @@ class QAP_T8835(TestCase):
         time.sleep(2)
 
         # region Check Read log
-        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name, self.rep)
-
         time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message_1.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text_1))
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event_with_time()
+        compare_message.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text))
 
-        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message_2.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text_2))
-
-        self.read_log_verifier_1.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
-        self.read_log_verifier_1.check_read_log_message(compare_message_1, self.key_params_readlog)
-        self.read_log_verifier_1.check_read_log_message(compare_message_2, self.key_params_readlog)
+        self.read_log_verifier.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
+        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message], [self.key_params_readlog, self.key_params_readlog], pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(5)

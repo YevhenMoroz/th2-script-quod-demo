@@ -327,6 +327,7 @@ class ReadLogVerifiers(Enum):
     log319_check_tag_5048 = "log319-check-tag-5048"
     log319_check_tag_1 = "log319-check-tag-1"
     log_319_check_order_event = "log319-check-order-event"
+    log_319_check_order_event_with_time = "log319-check-order-event-with-time"
     log_319_check_transact_time_for_child = "log319-check-transact-time-for-child"
     log_319_check_settl_date_part_1 = "log319-check-settl-date-part-1"
     log_319_check_settl_date_part_2 = "log319-check-settl-date-part-2"
@@ -334,7 +335,6 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_not_crossing_mid_price = "log319-check-not-crossing-mid-price"
-    log_319_check_starting_mid_price_monitoring = "log319-check-starting-mid-price-monitoring"
     log_319_check_market_event_for_venue = "log319-check-market-event-for-venue"
     log_319_check_skipping_dark_phase_when_primary_suspended = "log319-check-skipping-dark-phase-when-primary-suspended"
 

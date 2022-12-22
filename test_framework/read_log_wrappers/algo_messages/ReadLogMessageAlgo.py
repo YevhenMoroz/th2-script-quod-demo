@@ -191,6 +191,15 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_order_event_with_time(self) -> ReadLogMessage:
+        base_parameters = {
+            "Time": '*',
+            "OrderId": "*",
+            "Text": "no suitable liquidity"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_compare_message_for_check_transact_time_for_child(self) -> ReadLogMessage:
         base_parameters = {
             "TransactTime": "*",
@@ -242,13 +251,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         base_parameters = {
             "OrderId": "*",
             "MidPrice": "27",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_starting_mid_price_monitoring(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*",
         }
         super().change_parameters(base_parameters)
         return self

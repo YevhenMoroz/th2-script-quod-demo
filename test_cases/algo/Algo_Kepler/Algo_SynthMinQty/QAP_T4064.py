@@ -94,7 +94,6 @@ class QAP_T4064(TestCase):
 
         # region Compare message params
         self.text = "all solutions empty or discarded, check definitions of amount limits"
-        self.pre_filter['Text'] = (self.text, "EQUAL")
         # endregion
 
         self.rule_list = []
@@ -135,7 +134,6 @@ class QAP_T4064(TestCase):
         responce = self.fix_manager_sell.send_message_and_receive_response(self.synthMinQty_order, case_id_1)
 
         parent_synthMinQty_order_id = responce[0].get_parameter('ExecID')
-        self.pre_filter['ClOrdrId'] = (parent_synthMinQty_order_id, "EQUAL")
 
         time.sleep(3)
         # endregion
@@ -231,7 +229,7 @@ class QAP_T4064(TestCase):
         time.sleep(70)
 
         compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message.change_parameters(dict(Time='*', OrderId=parent_synthMinQty_order_id, Text=self.text))
+        compare_message.change_parameters(dict(OrderId=parent_synthMinQty_order_id, Text=self.text))
 
         self.read_log_verifier.set_case_id(bca.create_event("Check that is no child orders", self.test_id))
         self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)

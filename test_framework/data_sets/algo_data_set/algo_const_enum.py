@@ -420,7 +420,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
     key_params_log_319_check_crossing_mid_price_or_not = ['OrderId', 'MidPrice']
     key_params_log_319_check_market_data_events = ['OrderId', 'Text', 'AdditionalParameter']
-    key_params_log_319_check_order_event = ['OrderId']
+    key_params_log_319_check_order_event = ['OrderId', 'Text']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -471,11 +471,6 @@ class AlgoPreFilter(Enum):
         'NewStatus': ('*', "EQUAL")
     }
 
-    pre_filter_suitable_liquidity = {
-        'ClOrdrId': ('*', "EQUAL"),
-        'Text': ('*', "EQUAL")
-    }
-
     pre_filer_equal_ER_pending_new = {
         'header': {
             'MsgType': ('8', 'EQUAL')
@@ -500,7 +495,7 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('4', 'EQUAL')
     }
 
-    pre_filter_check_market_data_events = {
+    pre_filter_check_events = {
         'OrderId': ('*', "EQUAL"),
         'Text': ('*', "EQUAL")
     }
