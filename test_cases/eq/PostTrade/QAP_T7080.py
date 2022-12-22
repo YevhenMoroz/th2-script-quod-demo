@@ -15,6 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.oms.RestApiModifyInstitutionMessage import RestApiModifyInstitutionMessage
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
@@ -29,9 +31,11 @@ class QAP_T7080(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
         self.dc_connectivity = self.fix_env.drop_copy
+        self.api_manager = RestApiManager(self.wa_connectivity, self.test_id)
         self.qty = '500'
         self.price = '20'
         self.rule_manager = RuleManager(sim=Simulators.equity)
@@ -43,6 +47,7 @@ class QAP_T7080(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
         self.confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
+        self.rest_institution_message = RestApiModifyInstitutionMessage(self.data_set)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
@@ -54,6 +59,8 @@ class QAP_T7080(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set up configuration on BackEnd(precondition)
+        self.rest_institution_message.modify_enable_unknown_accounts(True)
+        self.api_manager.send_post_request(self.rest_institution_message)
         tree = ET.parse(self.local_path)
         quod = tree.getroot()
         quod.find("ors/acceptFreeAllocAccountID").text = 'true'
@@ -91,6 +98,8 @@ class QAP_T7080(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        self.rest_institution_message.modify_enable_unknown_accounts(False)
+        self.api_manager.send_post_request(self.rest_institution_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
         os.remove("temp.xml")
