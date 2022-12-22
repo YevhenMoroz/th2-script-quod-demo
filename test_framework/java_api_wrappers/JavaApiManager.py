@@ -9,6 +9,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
+from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
@@ -294,6 +295,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrderCancelReply.value:
+            response = self.act.submitOrderCancelReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
 
         else:
@@ -385,6 +392,8 @@ class JavaApiManager:
                 response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
+            elif message_type == ESMessageType.OrderCancelReply.value:
+                response_fix_message = OrderCancelReply()
             elif message_type == ESMessageType.ExecutionReport.value:
                 response_fix_message = ExecutionReport()
             elif message_type == ESMessageType.OrdReport.value:
