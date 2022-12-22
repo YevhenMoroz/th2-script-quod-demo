@@ -411,7 +411,6 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
-    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
     key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']

@@ -87,15 +87,14 @@ class QAP_T9305(TestCase):
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
-        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
-
-        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_skipping_dark_phase_when_primary_suspended.value
-        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
         # endregion
 
         # region Compare message parameters
-        self.venue = constants.Venues.paris.value
+        self.text_1 = "suspended on primary, sending lit"
+        self.text_2 = "instrument suspended on Euronext Paris"
         # endregion
 
         self.rule_list = []
@@ -170,6 +169,9 @@ class QAP_T9305(TestCase):
 
         responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
         parent_SORPING_order_id = responce[0].get_parameter('ExecID')
+        parent_SORPING_order_id_list = list(parent_SORPING_order_id)
+        parent_SORPING_order_id_list[-1] = 2
+        multilisted_algo_child_order_id = "".join(map(str, parent_SORPING_order_id_list))
 
         time.sleep(3)
         # endregion
@@ -187,17 +189,17 @@ class QAP_T9305(TestCase):
         # region Check Read log
         # time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
-        compare_message_1.change_parameters(dict(VenueName=self.venue))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_1.change_parameters(dict(OrderId=parent_SORPING_order_id, Text=self.text_1))
 
-        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_skipping_dark_phase_when_primary_suspended()
-        compare_message_2.change_parameters(dict(OrderId=parent_SORPING_order_id))
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_2.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_2))
 
-        self.read_log_verifier_1.set_case_id(bca.create_event("Check that primary venue suspended", self.test_id))
-        self.read_log_verifier_1.check_read_log_message(compare_message_1)
+        self.read_log_verifier.set_case_id(bca.create_event("Check skipping DarkPhase", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message_1, self.key_params_readlog)
 
-        self.read_log_verifier_2.set_case_id(bca.create_event("Check skipping DarkPhase", self.test_id))
-        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+        self.read_log_verifier.set_case_id(bca.create_event("Check that primary venue suspended", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message_2, self.key_params_readlog)
         # endregion
 
         # region Check Lit child DMA order

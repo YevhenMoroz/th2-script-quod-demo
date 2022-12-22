@@ -51,14 +51,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_the_venue_was_suspended(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderID": "*",
-            "VenueName": "Euronext Paris",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def set_compare_message_for_check_tags_5052_and_207_mapping(self) -> ReadLogMessage:
         base_parameters = {
             "SecurityExchange": "QDL1",
@@ -260,13 +252,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
             "OrderId": "*",
             "Text": "27",
             "AdditionalParameter": "QUODLIT1",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_skipping_dark_phase_when_primary_suspended(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*"
         }
         super().change_parameters(base_parameters)
         return self
