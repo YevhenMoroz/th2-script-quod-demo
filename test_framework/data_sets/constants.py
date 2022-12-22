@@ -340,6 +340,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_mapping_on_sell_side = "log319-check-mapping-on-sell-side"
+    log_319_check_mapping_on_buy_side = "log319-check-mapping-on-buy-side"
 
 
 class ReadLogParams(Enum):
