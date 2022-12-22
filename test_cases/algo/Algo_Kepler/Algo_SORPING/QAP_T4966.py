@@ -89,7 +89,7 @@ class QAP_T4966(TestCase):
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_ER")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_ER_fill")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -98,9 +98,8 @@ class QAP_T4966(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp1, False, self.traded_qty, self.dark_price)
         nos_2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp2, False, self.traded_qty, self.dark_price)
-        # TODO need to add the new rules (NewOrdSingleIOCTradeOnFullQty)
-        nos_3_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, True, 700, self.price_ask)
-        nos_4_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit7, True, 800, self.price_ask)
+        nos_3_ioc_rule = rule_manager.add_NewOrdSingle_IOCTradeOnFullQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit6, True, self.price_ask)
+        nos_4_ioc_rule = rule_manager.add_NewOrdSingle_IOCTradeOnFullQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit7, True, self.price_ask)
         self.rule_list = [nos_1_ioc_rule, nos_2_ioc_rule, nos_3_ioc_rule, nos_4_ioc_rule]
         # endregion
 
@@ -137,6 +136,8 @@ class QAP_T4966(TestCase):
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument)).add_tag(dict(MinQty=self.min_qty))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+
+        time.sleep(2)
 
         # region Update MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))
@@ -184,11 +185,7 @@ class QAP_T4966(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA orders", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=(self.ex_destination_quodlit6, self.ex_destination_quodlit6), OrderQty=(self.trade_1_qty, self.trade_2_qty), Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc)).add_tag(dict(MinQty=self.min_qty))
-
-        er_pending_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
-
-        er_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_new)
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=(self.ex_destination_quodlit6, self.ex_destination_quodlit7), OrderQty=(self.trade_1_qty, self.trade_2_qty), Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc)).add_tag(dict(MinQty=self.min_qty))
 
         er_fill_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_fill)
         # endregion
@@ -197,16 +194,12 @@ class QAP_T4966(TestCase):
         self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
         self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=(self.ex_destination_quodlit7, self.ex_destination_quodlit6), OrderQty=(self.trade_2_qty, self.trade_1_qty), Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc)).add_tag(dict(MinQty=self.min_qty))
 
-        er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
-
-        er_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
-
         er_fill_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_fill)
         # endregion
 
-        # region Check both childs
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], [None, None], self.FromQuod, pre_filter=None, check_order=False)
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order], [None, None, None, None, None, None], self.ToQuod, pre_filter=self.pre_filter, check_order=False)
+        # region Check all childs
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_qdpkp1_order, self.dma_qdpkp2_order, self.dma_1_order, self.dma_2_order], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.FromQuod, pre_filter=None, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence([er_fill_dma_1_order, er_fill_dma_2_order], [None, None], self.ToQuod, pre_filter=self.pre_filter, check_order=False)
         # endregion
         
         # region Check fill parent order
