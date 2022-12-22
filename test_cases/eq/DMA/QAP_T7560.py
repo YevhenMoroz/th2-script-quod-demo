@@ -45,7 +45,6 @@ class QAP_T7560(TestCase):
                                                                                                   self.venue_client_names,
                                                                                                   self.venue,
                                                                                                   float(self.price))
-            # Creating 30 executions
             self.order_submit.set_default_dma_limit()
             self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'AccountGroupID': self.client})
             responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
