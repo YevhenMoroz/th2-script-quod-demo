@@ -116,7 +116,7 @@ class QAP_T5006(TestCase):
         # region Read log verifier params
         # self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_mapping_on_sell_side.value
         # self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
-        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping_on_sell_side")
+        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping")
         # endregion
 
         # region Compare message parameters
@@ -211,16 +211,16 @@ class QAP_T5006(TestCase):
         self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog: Buy-side", self.test_id))
         self.read_log_verifier_2.check_read_log_message(compare_message_2)
 
-        # compare_message_initial = ReadLogMessageAlgo.set_compare_message_for_check_mapping_on_sell_side()
+        # compare_message_initial = ReadLogMessageAlgo.set_compare_message_for_check_mapping()
         # compare_message_initial.change_parameters(dict(Parameter1=self.initial_param))
 
-        # compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_mapping_on_sell_side()
+        # compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_mapping()
         # compare_message_1.change_parameters(dict(Parameter1=self.param1, Value1=self.party_id_1, Parameter2=self.param2, Value2=self.party_id_source_map_for_group_1, Parameter3=self.param3, Value3=self.party_role_1_map, Parameter4=self.param4, Value4=self.ClOrdId))
         #
-        # compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_mapping_on_sell_side()
+        # compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_mapping()
         # compare_message_2.change_parameters(dict(Parameter1=self.param1, Value1=self.party_id_2, Parameter2=self.param2, Value2=self.party_id_source_map, Parameter3=self.param3, Value3=self.party_role_2, Parameter4=self.param4, Value4=self.ClOrdId))
         #
-        # compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_mapping_on_sell_side()
+        # compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_mapping()
         # compare_message_3.change_parameters(dict(Parameter1=self.param1, Value1=self.party_id_3, Parameter2=self.param2, Value2=self.party_id_source_map, Parameter3=self.param3, Value3=self.party_role_3, Parameter4=self.param4, Value4=self.ClOrdId))
         #
         # self.read_log_verifier.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))

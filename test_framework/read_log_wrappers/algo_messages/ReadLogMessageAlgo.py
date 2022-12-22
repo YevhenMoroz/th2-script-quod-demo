@@ -219,7 +219,7 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_mapping_on_sell_side(self) -> ReadLogMessage:
+    def set_compare_message_for_check_mapping(self) -> ReadLogMessage:
         base_parameters = {
             "Parameter1": "*",
             "Value1": "*",

@@ -93,7 +93,7 @@ class QAP_T5026(TestCase):
         # region Read log verifier params
         # self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_mapping_on_sell_side.value
         # self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
-        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping_on_sell_side")
+        # self.key_params_read_log = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_mapping")
         # endregion
 
         # region Compare message parameters
@@ -174,6 +174,12 @@ class QAP_T5026(TestCase):
 
         self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog Buy-side", self.test_id))
         self.read_log_verifier_2.check_read_log_message(compare_message_2)
+
+        # compare_message = ReadLogMessageAlgo().set_compare_message_for_check_mapping()
+        # compare_message.change_parameters(dict(Parameter1=self.param1, Value1=self.misc_value, Parameter2=self.param2, Value2=self.ClOrdId))
+        #
+        # self.read_log_verifier.set_case_id(bca.create_event("ReadLog: Sell-side", self.test_id))
+        # self.read_log_verifier.check_read_log_message(compare_message, self.key_params_read_log)
         # endregion
 
         # region Check Sell side and PartyInfo in ERs PendingNew -> New
