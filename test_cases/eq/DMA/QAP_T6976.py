@@ -26,7 +26,7 @@ class QAP_T6976(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_3")
         self.mic = self.data_set.get_mic_by_name('mic_2')  # XEUR
         self.minor_currency = self.data_set.get_currency_by_name("currency_3")
-        self.fix_message.change_parameters({"ExDestination": self.mic})
+        self.fix_message.change_parameters({"ExDestination": self.mic, "SettlCurrency": self.minor_currency})
         self.fix_message.remove_parameter("Currency")
         self.price = self.fix_message.get_parameter("Price")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
@@ -60,7 +60,7 @@ class QAP_T6976(TestCase):
             time.sleep(5)
             self.rule_manager.remove_rule(nos_rule)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"Currency": self.currency}, exec_rep, "Check major currency")
+        self.fix_manager.compare_values({"SettlCurrency": self.currency}, exec_rep, "Check major currency")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
