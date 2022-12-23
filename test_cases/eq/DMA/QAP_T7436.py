@@ -1,122 +1,81 @@
 import logging
 import time
-from datetime import datetime
-from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest
+from pathlib import Path
+
 from custom import basic_custom_actions as bca
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_cases.wrapper import eq_fix_wrappers
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from stubs import Stubs
-from win_gui_modules.wrappers import set_base
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
+from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7436"
-    # region Declarations
-    qty = "900"
-    client = "CLIENT1"
-    price = '40'
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    # endregion
-    # region Create order via FIX
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(eq_fix_wrappers.get_buy_connectivity(),
-                                                                             'XPAR_' + client, 'XPAR', float(price))
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 1, 1, client, 2, qty, 0, price)
-        response = fix_message.pop('response')
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
-    # endregion
-    # region JavaApi Amend
-    act_java_api = Stubs.act_java_api
-    connectivity = '317_java_api'
-    params = {
-        'SEND_SUBJECT': 'QUOD.ORS.FE',
-        'OrderModificationRequestBlock': {
-            'CounterpartList': {
-                'CounterpartBlock': [{'PartyRole': 'GiveupClearingFirm',
-                                      'CounterpartID': '200005'}]
-            },
-            'OrdID': response.response_messages_list[0].fields['OrderID'].simple_value,
-            'OrdType': 'LMT',
-            'Price': price + '.000000000',
-            'TimeInForce': 'DAY',
-            'PositionEffect': 'O',
-            'OrdQty': qty + '.000000000',
-            'OrdCapacity': 'A',
-            'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
-            'MaxPriceLevels': '1',
-            'BookingType': 'TRS',
-            'RouteID': '24',
-            'ExecutionPolicy': 'D',
-            'AccountGroupID': client,
-            'WashBookAccountID': "DefaultWashBook"
-        }
-    }
-    try:
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(eq_fix_wrappers.get_buy_connectivity(),
-                                                               'XPAR_' + client, "XPAR", True)
-        act_java_api.sendMessage(request=ActJavaSubmitMessageRequest(
-            message=bca.message_to_grpc('Order_OrderModificationRequest', params, connectivity),
-            parent_event_id=case_id))
-    except Exception:
-        logger.error("Error execution", exc_info=True)
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(ocrr_rule)
-    # endregion
-    # region Check values in OrderBook
-    params = {
-        'ReplyReceivedTime': '*',
-        'Account': client,
-        'OrderQty': qty,
-        'Price': price,
-        'ExecType': '5',
-        'OrdStatus': '0',
-        'Side': 1,
-        'TimeInForce': 0,
-        'OrigClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'ClOrdID': '*',
-        'ExecID': '*',
-        'LastQty': '*',
-        'OrderID': '*',
-        'TransactTime': '*',
-        'AvgPx': '*',
-        'SettlDate': '*',
-        'Currency': '*',
-        'Text': 'order replaced',
-        'HandlInst': '*',
-        'LeavesQty': '*',
-        'CumQty': '*',
-        'LastPx': '*',
-        'OrdType': '*',
-        'LastMkt': '*',
-        'OrderCapacity': '*',
-        'QtyType': '*',
-        'SecondaryOrderID': '*',
-        'NoParty': [{'PartyRole': "14",
-                     'PartyID': "GiveupClearingFirm",
-                     'PartyIDSource': "C"},
-                    {'PartyRole': "38",
-                     'PartyID': "PositionAccount - DMA Washbook",
-                     'PartyIDSource': "C"}
-                    ],
-        'Instrument': '*',
-        'SettlType': '0'
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckExecutionReport(params, response, ['OrigClOrdID', 'ExecType'])
-    # endregion
+class QAP_T7436(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit("instrument_1")
+        self.price = self.fix_message.get_parameter("Price")
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.client = self.data_set.get_client_by_name('client_1')
+        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.bs_connectivity = self.fix_env.buy_side
+        self.new_currency = self.data_set.get_currency_by_name("currency_4")
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.mod_req = OrderModificationRequest()
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_name,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(5)
+            self.rule_manager.remove_rule(nos_rule)
+        ord_id = response[0].get_parameter("OrderID")
+        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+        self.fix_manager.compare_values({"Currency": self.fix_message.get_parameter("Currency")}, exec_rep,
+                                        "Check instrument Currency")
+        # endregion
+        # region Step 2 - Change client of order
+        self.mod_req.set_default(self.data_set, ord_id)
+        self.mod_req.update_fields_in_component(
+            "OrderModificationRequestBlock", {"BookingType": "TotalReturnSwap", "CounterpartList": {
+                "CounterpartBlock": [{"PartyRole": "GIV", "CounterpartID": "200005"}]}}
+        )
+        try:
+            rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
+                                                                               self.venue_client_name, self.mic)
+            response = self.java_api_manager.send_message_and_receive_response(self.mod_req)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            time.sleep(5)
+            self.rule_manager.remove_rule(rule)
+
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        self.java_api_manager.compare_values({"BookingType": "TRS"}, order_reply, "Check new BookingType")
+        self.java_api_manager.compare_values({"PartyRole": "GIV", "CounterpartID": "200005"},
+                                        order_reply["CounterpartList"]["CounterpartBlock"][0], "Check new Counterpart")
+        # endregion
