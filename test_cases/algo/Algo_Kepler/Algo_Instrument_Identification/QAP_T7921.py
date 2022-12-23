@@ -40,6 +40,8 @@ class QAP_T7921(TestCase):
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_13.value
+        self.text1 = constants.RejectMessages.no_listing_1.value
+        self.text2 = constants.RejectMessages.no_listing_2.value
         # endregion
 
         # region Gateway Side
@@ -129,5 +131,5 @@ class QAP_T7921(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_reject_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_reject)
-        er_reject_SORPING_order_params.remove_parameters(['SecondaryAlgoPolicyID', 'ExecRestatementReason']).add_tag(dict(OrdRejReason='*'))
+        er_reject_SORPING_order_params.remove_parameters(['SecondaryAlgoPolicyID', 'ExecRestatementReason']).add_tag(dict(OrdRejReason='*')).change_parameters(dict(Text=(self.text1, self.text2)))
         self.fix_verifier_sell.check_fix_message(er_reject_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
