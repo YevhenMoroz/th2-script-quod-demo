@@ -86,32 +86,27 @@ class QAP_T9011(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
-        self.key_params_for_read_log_1 = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_crossing_mid_price_or_not")
-        self.key_params_for_read_log_2 = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_market_data_events")
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name_1 = constants.ReadLogVerifiers.log_319_check_not_crossing_mid_price.value
-        self.read_log_verifier_1 = ReadLogVerifierAlgo(self.log_verifier_by_name_1, report_id)
-
-        self.log_verifier_by_name_2 = constants.ReadLogVerifiers.log_319_check_starting_mid_price_monitoring.value
-        self.read_log_verifier_2 = ReadLogVerifierAlgo(self.log_verifier_by_name_2, report_id)
-
-        self.log_verifier_by_name_3 = constants.ReadLogVerifiers.log_319_check_market_event_for_venue.value
-        self.read_log_verifier_3 = ReadLogVerifierAlgo(self.log_verifier_by_name_3, report_id)
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_check_events")
         # endregion
 
         # region Compare message parameters
-        self.venue_qdl1 = 'QUODLIT1'
-        self.venue_qdl2 = 'QUODLIT2'
-        self.text_for_market_event = 'market event for'
-        self.text_for_checking_mid_price = 'checking mid-price after update on'
-        self.text_for_found_new_agregated_best_bid = 'found new aggregated best bid'
-        self.text_for_found_new_agregated_best_ask = 'found new aggregated best ask'
-        self.mid_price_27 = 27
-        self.mid_price_28 = 28
+        self.text_1 = 'not crossing MidPrice (27)'
+        self.text_2 = 'starting mid-price monitoring'
+        self.text_3 = 'market event for QUODLIT2'
+        self.text_4 = 'checking mid-price after update on QUODLIT2'
+        self.text_5 = 'not crossing MidPrice (28)'
+        self.text_6 = 'found new aggregated best bid 24'
+        self.text_7 = 'market event for QUODLIT1'
+        self.text_8 = 'checking mid-price after update on QUODLIT1'
+        self.text_9 = 'found new aggregated best ask 30'
         # endregion
-
+        
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -173,19 +168,7 @@ class QAP_T9011(TestCase):
         parent_SORPING_order_id_list[-1] = 2
         multilisted_algo_child_order_id = "".join(map(str, parent_SORPING_order_id_list))
 
-        self.pre_filter_1 = self.data_set.get_pre_filter("pre_filter_with_the_order_id")
-        self.pre_filter_1['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
-
-        self.pre_filter_2 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
-        self.pre_filter_2['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
-        # self.pre_filter_2['Text'] = (self.text_for_market_event, "EQUAL")
-
-        self.pre_filter_3 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
-        self.pre_filter_3['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
-        # self.pre_filter_3['Text'] = (self.text_for_checking_mid_price, "EQUAL")
-
-        self.pre_filter_4 = self.data_set.get_pre_filter("pre_filter_check_market_data_events")
-        self.pre_filter_4['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
+        self.pre_filter['OrderId'] = (multilisted_algo_child_order_id, "EQUAL")
         # endregion
 
         time.sleep(3)
@@ -238,47 +221,39 @@ class QAP_T9011(TestCase):
         # region Check ReadLog
         time.sleep(70)
 
-        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
-        compare_message_1.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_27))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_1.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_1))
 
-        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_starting_mid_price_monitoring()
-        compare_message_2.change_parameters(dict(OrderId=multilisted_algo_child_order_id))
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_2.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_2))
 
-        compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_3.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_market_event, AdditionalParameter=self.venue_qdl2))
+        compare_message_3 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_3.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_3))
 
-        compare_message_4 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_4.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_checking_mid_price, AdditionalParameter=self.venue_qdl2))
+        compare_message_4 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_4.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_4))
 
-        compare_message_5 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
-        compare_message_5.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_28))
+        compare_message_5 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_5.change_parameters(dict(OrderId=multilisted_algo_child_order_id, ext=self.text_5))
 
-        compare_message_6 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_6.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_found_new_agregated_best_bid, AdditionalParameter=self.new_best_bid))
+        compare_message_6 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_6.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_6))
 
-        compare_message_7 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_7.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_market_event, AdditionalParameter=self.venue_qdl1))
+        compare_message_7 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_7.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_7))
 
-        compare_message_8 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_8.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_checking_mid_price, AdditionalParameter=self.venue_qdl1))
+        compare_message_8 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_8.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_8))
 
-        compare_message_9 = ReadLogMessageAlgo().set_compare_message_for_check_not_crossing_mid_price()
-        compare_message_9.change_parameters(dict(OrderId=multilisted_algo_child_order_id, MidPrice=self.mid_price_27))
+        compare_message_9 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_9.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_1))
 
-        compare_message_10 = ReadLogMessageAlgo().set_compare_message_for_check_market_event_for_venue()
-        compare_message_10.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_for_found_new_agregated_best_ask, AdditionalParameter=self.new_best_ask))
-
-        self.read_log_verifier_1.set_case_id(bca.create_event("ReadLog Not crossing MidPrice", self.test_id))
-        self.read_log_verifier_1.check_read_log_message_sequence([compare_message_1, compare_message_5, compare_message_9], [self.key_params_for_read_log_1, self.key_params_for_read_log_1, self.key_params_for_read_log_1], pre_filter=self.pre_filter_1)
-
-        self.read_log_verifier_2.set_case_id(bca.create_event("ReadLog Starting MidPrice monitoring", self.test_id))
-        self.read_log_verifier_2.check_read_log_message(compare_message_2)
+        compare_message_10 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_10.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_9))
 
         # Need to separate on some events with the separate prefilters
-        self.read_log_verifier_3.set_case_id(bca.create_event("ReadLog Check MarketData events", self.test_id))
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_3, compare_message_7], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_2)
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_4, compare_message_8], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_3)
-        self.read_log_verifier_3.check_read_log_message_sequence([compare_message_6, compare_message_10], [self.key_params_for_read_log_2, self.key_params_for_read_log_2], pre_filter=self.pre_filter_4)
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog Check MarketData events", self.test_id))
+        self.read_log_verifier.check_read_log_message_sequence([compare_message_1, compare_message_2, compare_message_3, compare_message_4, compare_message_5, compare_message_6, compare_message_7, compare_message_8, compare_message_9, compare_message_10], [self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog], pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
