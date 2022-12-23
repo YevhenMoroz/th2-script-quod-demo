@@ -129,6 +129,7 @@ class ESMessageType(Enum):
     ExecutionReport = 'Gateway_ExecutionReport'
     NewOrderReply = 'Gateway_NewOrderReply'
     OrderCancelReply = 'Gateway_OrderCancelReply'
+    OrderModificationReply = "Gateway_OrderModificationReply"
 
 
 class ResAPIMessageType(Enum):
