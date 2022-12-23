@@ -42,6 +42,7 @@ class QAP_T7912(TestCase):
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
         self.currency = self.data_set.get_currency_by_name("currency_1")
+        self.text = constants.RejectMessages.no_listing_5.value
         # endregion
 
         # region Gateway Side
@@ -130,5 +131,6 @@ class QAP_T7912(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_reject_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_reject)
+        er_reject_SORPING_order_params.remove_parameters(['SecondaryAlgoPolicyID', 'ExecRestatementReason']).add_tag(dict(OrdRejReason='*')).change_parameters(dict(Text=self.text))
         self.fix_verifier_sell.check_fix_message(er_reject_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
