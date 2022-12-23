@@ -60,6 +60,7 @@ class QAP_T7046(TestCase):
         tree = ET.parse(self.local_path2)
         tree.getroot().find("ors/FIXNotif/mapping/ClientAccountGroupID/OrdReply").text = 'RouteSecActName'
         tree.getroot().find("ors/FIXNotif/mapping/ClientAccountGroupID/ExecutionReport").text = 'RouteSecActName'
+        tree.getroot().find("ors/FIXNotif/mapping/ClientAccountGroupID/default").text = 'RouteSecActName'
         tree.write("temp2.xml")
         self.ssh_client.put_file(self.remote_path2, "temp2.xml")
         self.ssh_client.send_command("qrestart ORS FIXBACKOFFICE_TH2")
@@ -78,14 +79,13 @@ class QAP_T7046(TestCase):
             time.sleep(5)
             self.rule_manager.remove_rule(nos_rule)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        print(exec_rep)
         self.fix_manager.compare_values({"Account": self.client}, exec_rep, "Check Client in sell gtw report")
-        # endregion
-        # region Check ExecutionReports
+
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({"Account": self.venue_client_name})
         self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report)
+        ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker"]
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
