@@ -390,6 +390,7 @@ class FreeNotesReject(Enum):
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
 
+
 class TradingPhases(Enum):
     Auction = "AUC"
     Closed = "CLO"
@@ -398,3 +399,18 @@ class TradingPhases(Enum):
     PreOpen = "POP"
     Expiry = "EXA"
     AtLast = "TAL"
+
+
+class RejectMessages(Enum):
+    no_listing_1 = '11697 No listing found'
+    no_listing_2 = '11697 No listing found for order with currency EUR'
+    no_listing_3 = '11697 No listing found for order with currency USD on exchange FRANKFURT'
+    no_listing_4 = '11697 No listing found for order with currency USD'
+    no_listing_5 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found on exchange BRUSSELS'
+    no_listing_6 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency EUR on exchange BRUSSELS'
+    no_listing_7 = '11752 Instrument not traded at primary FRANKFURT / 11697 No listing found for order with currency USD on exchange FRANKFURT'
+    no_listing_8 = '11752 Instrument not traded at primary PARIS / 11697 No listing found on exchange PARIS'
+    no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
+    no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
+
+
