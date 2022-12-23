@@ -8,7 +8,7 @@ class OmsFixInstruments(Enum):
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='VETOQUINOL'
+        SecurityDesc='DREAMNEX'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
