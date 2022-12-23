@@ -25,8 +25,8 @@ class QAP_T9162(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.new_qty = "200"
-        self.new_price = "30"
+        self.new_qty = "200.0"
+        self.new_price = "30.0"
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
@@ -52,7 +52,7 @@ class QAP_T9162(TestCase):
             JavaApiFields.OrdReplyBlock.value]
         order_id = ord_rep["OrdID"]
         expected_result = {JavaApiFields.TransStatus.value: "OPN", JavaApiFields.UnsolicitedOrder.value: "Y",
-                           "OrdQty": qty, "Price": price}
+                           "OrdQty": qty, "Price": price+".0"}
         self.java_api_manager.compare_values(expected_result, ord_rep, 'Check order status')
         # endregion
         # region

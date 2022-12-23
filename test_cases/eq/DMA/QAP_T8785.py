@@ -26,8 +26,6 @@ class QAP_T8785(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.qty = "100"
-        self.price = "10"
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
@@ -50,11 +48,9 @@ class QAP_T8785(TestCase):
         ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         order_id = ord_rep["OrdID"]
-        cl_ord_id = self.nos.get_parameter("NewOrderReplyBlock")["ClOrdID"]
+        ord_venue_id = self.nos.get_parameter("NewOrderReplyBlock")["LastVenueOrdID"]
         expected_result = {JavaApiFields.TransStatus.value: "OPN", JavaApiFields.UnsolicitedOrder.value: "Y"}
-        actually_result = {JavaApiFields.TransStatus.value: ord_rep[JavaApiFields.TransStatus.value],
-                           JavaApiFields.UnsolicitedOrder.value: ord_rep[JavaApiFields.UnsolicitedOrder.value]}
-        self.java_api_manager.compare_values(expected_result, actually_result, 'Check order status')
+        self.java_api_manager.compare_values(expected_result, ord_rep, 'Check order status')
         # endregion
         # region Step 2
         self.mark_ord.set_default(order_id)
@@ -64,14 +60,13 @@ class QAP_T8785(TestCase):
         self.java_api_manager.compare_values({"Reviewed": "Y"}, ord_notify, "Check Reviewed status")
         # endregion
         # region Step 3
-        self.cancel_rep.set_default(self.data_set, order_id)
-        self.cancel_rep.change_parameters({"VenueAccount": {"VenueActGrpName": self.venue_client_names}})
-        response = self.java_api_manager.send_message(self.cancel_rep)
-        for res in response:
-            print(res.get_message_type())
-            print(res.get_parameters())
-        print("______\n", response)
-        # ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-        #     JavaApiFields.OrdReplyBlock.value]
-        # # endregion
-        # print(ord_rep)
+        self.cancel_rep.set_default(self.data_set, order_id, ord_venue_id)
+        self.cancel_rep.update_fields_in_component("OrderCancelReplyBlock", {"VenueAccount": {
+            "VenueActGrpName": self.venue_client_names}})
+        self.java_api_manager.send_message_and_receive_response(self.cancel_rep)
+        ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        expected_result = {JavaApiFields.TransStatus.value: "ELI", "Reviewed": "N"}
+        self.java_api_manager.compare_values(expected_result, ord_rep, 'Check order status')
+        # endregion
+
