@@ -3,7 +3,7 @@ from enum import Enum
 
 class OmsFixInstruments(Enum):
     instrument_1 = dict(  # without commission/fee
-        Symbol='FR0010436584',  # assigned counterpart_reb_1
+        Symbol='FR0010436584_EUR',  # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
