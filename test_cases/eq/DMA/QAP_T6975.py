@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_T7436(TestCase):
+class QAP_T6975(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -59,8 +59,7 @@ class QAP_T7436(TestCase):
         # region Step 2 - Change client of order
         self.mod_req.set_default(self.data_set, ord_id)
         self.mod_req.update_fields_in_component(
-            "OrderModificationRequestBlock", {"BookingType": "TotalReturnSwap", "CounterpartList": {
-                "CounterpartBlock": [{"PartyRole": "GIV", "CounterpartID": "200005"}]}}
+            "OrderModificationRequestBlock", {"SettlCurrency": self.new_currency}
         )
         try:
             rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
@@ -75,7 +74,5 @@ class QAP_T7436(TestCase):
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value
         ]
-        self.java_api_manager.compare_values({"BookingType": "TRS"}, order_reply, "Check new BookingType")
-        self.java_api_manager.compare_values({"PartyRole": "GIV", "CounterpartID": "200005"},
-                                        order_reply["CounterpartList"]["CounterpartBlock"][0], "Check new Counterpart")
+        self.java_api_manager.compare_values({"SettlCurrency": self.new_currency}, order_reply, "Check new Currency")
         # endregion

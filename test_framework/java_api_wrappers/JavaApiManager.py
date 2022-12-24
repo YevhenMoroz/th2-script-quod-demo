@@ -9,6 +9,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
+from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
@@ -26,6 +27,7 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBa
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
+from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrderReply
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
 from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
@@ -287,6 +289,25 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
+            response = self.act.submitMarkOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrderCancelReply.value:
+            response = self.act.submitOrderCancelReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrderModificationReply.value:
+            response = self.act.submitOrderModificationReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+
 
         else:
             response = None
@@ -377,6 +398,8 @@ class JavaApiManager:
                 response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
+            elif message_type == ESMessageType.OrderCancelReply.value:
+                response_fix_message = OrderCancelReply()
             elif message_type == ESMessageType.ExecutionReport.value:
                 response_fix_message = ExecutionReport()
             elif message_type == ESMessageType.OrdReport.value:
@@ -419,6 +442,8 @@ class JavaApiManager:
                 response_fix_message = UnMatchReply()
             elif message_type == ORSMessageType.FixConfirmation.value:
                 response_fix_message = FixConfirmation()
+            elif message_type == ORSMessageType.MarkOrderReply.value:
+                response_fix_message = MarkOrderReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
