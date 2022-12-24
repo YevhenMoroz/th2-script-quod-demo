@@ -253,6 +253,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
 class OmsCurrency(Enum):

@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_T7073(TestCase):
+class QAP_T7076(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -21,13 +21,15 @@ class QAP_T7073(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.instrument_1 = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.mic_blm = self.data_set.get_mic_by_name('mic_1_blm')  # XPAR_BLM
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.fix_message.change_parameter("ExDestination", self.mic_blm)
-        self.fix_message.remove_fields_from_component("Instrument", ["SecurityExchange"])
+        self.fix_message.remove_parameter("ExDestination")
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic_blm})
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
         self.fix_manager.compare_values({"OrdStatus": "A"}, exec_rep, "Check Status")
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.fix_manager.compare_values(self.instrument_1, exec_rep["Instrument"], "Check instrument")
