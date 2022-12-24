@@ -46,8 +46,11 @@ class QAP_T4709(TestCase):
         now = datetime.today() - timedelta(hours=3)
         delta = 2
         expire_date = (now + timedelta(days=delta))
-        shift = AlgoFormulasManager.calculate_shift_for_expire_date_if_it_is_on_weekend(expire_date, delta)
-        self.ExpireDate = expire_date.strftime("%Y%m%d")
+        shift_1 = AlgoFormulasManager.calculate_shift_for_settl_date_if_it_is_on_weekend(expire_date, delta)
+        self.ExpireDate_for_sending = expire_date.strftime("%Y%m%d")
+        expire_date = (now + timedelta(days=2))
+        shift_2 = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(expire_date)
+        self.ExpireDate = (expire_date - timedelta(days=shift_2)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -95,7 +98,7 @@ class QAP_T4709(TestCase):
         # endregion
 
         # region Compare message parameters
-        self.child_settle_date_for_read_log = (now + timedelta(days=shift)).strftime("%Y-%b-%d")
+        self.child_settle_date_for_read_log = (now + timedelta(days=shift_1)).strftime("%Y-%b-%d")
         self.instr_type = 'Equity'
         self.count_of_days = 2
         # endregion
@@ -133,7 +136,7 @@ class QAP_T4709(TestCase):
 
         self.SORPING_GTD_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
         self.SORPING_GTD_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_GTD_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.SORPING_GTD_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate_for_sending))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_GTD_order, case_id_1)
 
@@ -142,6 +145,8 @@ class QAP_T4709(TestCase):
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.SORPING_GTD_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        self.SORPING_GTD_order.change_parameters(dict(ExpireDate=self.ExpireDate))
 
         er_pending_new_SORPING_GTD_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_GTD_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(er_pending_new_SORPING_GTD_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')

@@ -4,7 +4,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.constants import DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -148,8 +147,7 @@ class QAP_T2605(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=self.md_entry_px_3)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=self.md_entry_px_4)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=self.md_entry_px_5)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
         # region Step 5
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -167,8 +165,7 @@ class QAP_T2605(TestCase):
         "SettlType", "MDEntryPx", "MDEntryTime",
         "MDQuoteType", "MDOriginType", "MDEntryID",
         "MDEntrySize", "QuoteEntryID", "MDEntryDate"))
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -182,3 +179,4 @@ class QAP_T2605(TestCase):
         # endregion
         self.fix_md.set_market_data().update_MDReqID(self.md_eur_usd_spo, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)

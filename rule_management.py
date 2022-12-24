@@ -477,13 +477,14 @@ class RuleManager:
         )
 
     def add_NewOrderSingle_ExecutionReport_Eliminate(self, session: str, account: str, ex_destination: str,
-                                                     price: float, delay: int = 0):
+                                                     price: float, delay: int = 0, text: str = "order eliminated"):
         return self.sim.createNewOrdSingleExecutionReportEliminate(
             request=TemplateNewOrdSingleExecutionReportEliminate(connection_id=ConnectionID(session_alias=session),
                                                                  account=account,
                                                                  exdestination=ex_destination,
                                                                  price=price,
-                                                                 delay=delay
+                                                                 delay=delay,
+                                                                 text=text
                                                                  ))
 
     def add_OrderCancelReplaceRequestWithDelayFixStandard(self, session: str, account: str, ex_destination: str,

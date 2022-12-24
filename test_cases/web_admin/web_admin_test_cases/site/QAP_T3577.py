@@ -41,7 +41,7 @@ class QAP_T3577(CommonTestCase):
             values_sub_wizard.set_name(self.desk_name)
             values_sub_wizard.set_desk_mode(self.desk_mode)
             assignments_sub_wizard = DesksAssignmentsSubWizard(self.web_driver_container)
-            assignments_sub_wizard.set_location_at_description_tab(self.location)
+            assignments_sub_wizard.set_location(self.location)
             wizard = DesksWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(2)

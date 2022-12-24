@@ -159,3 +159,4 @@ class QAP_T2418(TestCase):
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_req_id_fwd_2, self.fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
+        self.sleep(2)

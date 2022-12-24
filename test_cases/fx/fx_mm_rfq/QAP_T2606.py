@@ -90,3 +90,4 @@ class QAP_T2606(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.java_api_manager.send_message(self.pricing_request_on)
+        self.sleep(2)

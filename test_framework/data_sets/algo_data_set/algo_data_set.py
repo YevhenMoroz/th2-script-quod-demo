@@ -1,6 +1,6 @@
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.algo_data_set.algo_const_enum import AlgoFixInstruments, AlgoVenues, AlgoClients, \
-    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients, AlgoMic, AlgoListingId, AlgoCurrency, AlgoVerifierKeyParameters, AlgoPreFilter
+    AlgoAccounts, AlgoWashbookAccounts, AlgoRecipients, AlgoMic, AlgoListingId, AlgoCurrency, AlgoVerifierKeyParameters, AlgoPreFilter, AlgoTradingPhaseProfile
 
 
 class AlgoDataSet(BaseDataSet):
@@ -18,4 +18,5 @@ class AlgoDataSet(BaseDataSet):
     currency = AlgoCurrency
     verifier_key_parameters = AlgoVerifierKeyParameters
     pre_filter = AlgoPreFilter
+    trading_phase_profile = AlgoTradingPhaseProfile
 

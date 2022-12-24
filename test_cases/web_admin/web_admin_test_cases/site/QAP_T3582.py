@@ -109,7 +109,7 @@ class QAP_T3582(CommonTestCase):
             desk_value_tab.set_name(self.desk_name)
             desk_value_tab.set_desk_mode(self.desk_mode)
             desk_assignment_tab = DesksAssignmentsSubWizard(self.web_driver_container)
-            desk_assignment_tab.set_location_at_description_tab(self.location_name)
+            desk_assignment_tab.set_location(self.location_name)
             desk_wizard = DesksWizard(self.web_driver_container)
             desk_wizard.click_on_save_changes()
             time.sleep(2)

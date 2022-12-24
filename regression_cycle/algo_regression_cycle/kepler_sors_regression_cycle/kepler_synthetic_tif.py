@@ -1,6 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_Synthetic_TIF.QAP_T4208 import QAP_T4208
 from test_cases.algo.Algo_Kepler.Algo_Synthetic_TIF.QAP_T8984 import QAP_T8984
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -23,6 +24,7 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfiguration("Sorping")
         QAP_T4188(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4207(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4208(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4747(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8913(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8984(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

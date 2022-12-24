@@ -38,6 +38,7 @@ class QAP_T2920(TestCase):
         self.usd_jpy = self.data_set.get_symbol_by_name('symbol_5')
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.settle_date_2w = self.data_set.get_settle_date_by_name("wk2")
         self.settle_type_2w = self.data_set.get_settle_type_by_name("wk2")
         self.instrument_fwd = {
             'Symbol': self.usd_jpy,
@@ -49,11 +50,15 @@ class QAP_T2920(TestCase):
 
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.ms = self.data_set.get_venue_by_name("venue_3")
-        self.instrument_spot = {"Symbol": self.usd_jpy,
-                                "SecurityType": self.sec_type_spot}
+        self.instrument_spot_md = {"Symbol": self.usd_jpy,
+                                   "SecurityType": self.sec_type_spot}
+        self.instrument_fwd_md = {
+            'Symbol': self.usd_jpy,
+            'SecurityType': self.security_type_fwd}
         self.md_req_id = self.usd_jpy + ':SPO:REG:' + self.ms
+        self.md_req_id_fwd = self.usd_jpy + ":FXF:WK2:" + self.ms
 
-        self.no_md_entries = [
+        self.no_md_entries_spot = [
             {"MDEntryType": "0",
              "MDEntryPx": 118.172,
              "MDEntrySize": 1000000,
@@ -67,6 +72,20 @@ class QAP_T2920(TestCase):
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
+        self.no_md_entries_fwd = [
+            {"MDEntryType": "0",
+             "MDEntryPx": 118.17776,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_2w,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "1",
+             "MDEntryPx": 118.18054,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_2w,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
+
         self.ask_spot_without_int = 118.186
         self.bid_spot_without_int = 118.172
         self.ask_pts = 0.00002
@@ -78,10 +97,17 @@ class QAP_T2920(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Precondition
         self.fix_md.set_market_data()
-        self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
-        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries)
+        self.fix_md.update_fields_in_component("Instrument", self.instrument_spot_md)
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+
+        self.fix_md.set_market_data_fwd()
+        self.fix_md.update_fields_in_component("Instrument", self.instrument_fwd_md)
+        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_fwd)
+        self.fix_md.update_MDReqID(self.md_req_id_fwd, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
         # endregion
 
         # region Step 1-3

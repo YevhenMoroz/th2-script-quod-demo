@@ -38,7 +38,7 @@ class QAP_T4224(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 10000
-        self.delay = 3000
+        self.delay = 10000
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         now = datetime.utcnow()
         self.ExpireDate = (now + timedelta(days=4)).strftime("%Y%m%d")
@@ -139,7 +139,7 @@ class QAP_T4224(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
 
-        time.sleep(2)
+        time.sleep(12)
         
         # region Check eliminate child DMA order
         er_eliminate_dma_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_order)

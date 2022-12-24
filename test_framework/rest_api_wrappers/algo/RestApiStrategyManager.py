@@ -1,9 +1,9 @@
 import time
-
-from stubs import Stubs
+from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.algo.RestApiAlgoPolicyMessages import RestApiAlgoPolicyMessages
-
+from custom import basic_custom_actions as bca
 
 class RestApiAlgoManager(RestApiManager):
 
@@ -12,10 +12,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def modify_strategy_parameter(self, strategy_name: str, parameter_name: str, new_parameter_value: str):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         # region modify strategy
@@ -31,13 +37,20 @@ class RestApiAlgoManager(RestApiManager):
         else:
             raise ValueError("No algoPolicyParameter at current strategy")
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         triggered = False
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] == parameter_name:
@@ -51,10 +64,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def modify_strategy_parameters_list(self, strategy_name: str, parameters: dict):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         # region modify strategy
@@ -70,13 +89,20 @@ class RestApiAlgoManager(RestApiManager):
         else:
             raise ValueError("No algoPolicyParameter at current strategy")
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         triggered = 0
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] in parameters.keys():
@@ -89,10 +115,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def remove_parameters(self, strategy_name: str, *parameters_name: str):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         # region modification
@@ -106,14 +138,21 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyParameter"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         for param in strategy_updated["algoPolicyParameter"]:
             if param['scenarioParameterName'] in parameters_name:
                 raise ValueError(f"Not all scenarioParameterName removed")
@@ -122,10 +161,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def add_parameter(self, strategy_name: str, new_parameter: dict):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         for parameter in strategy["algoPolicyParameter"]:
@@ -136,14 +181,21 @@ class RestApiAlgoManager(RestApiManager):
         strategy["algoPolicyParameter"].append(new_parameter)
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
 
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         triggered = False
         for param in strategy_updated["algoPolicyParameter"]:
             if param["scenarioParameterName"] == new_parameter["scenarioParameterName"]:
@@ -154,10 +206,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def add_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         if "algoPolicyPassCriteria" in strategy:
@@ -188,14 +246,20 @@ class RestApiAlgoManager(RestApiManager):
         strategy.pop("alive")
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
 
         time.sleep(1)
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
-
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         triggered = 0
         if "algoPolicyPassCriteria" in strategy:
             for param in strategy_updated["algoPolicyPassCriteria"]:
@@ -215,10 +279,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def remove_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+            strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         # region modification
@@ -238,16 +308,22 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyAggrCriteria"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
 
         # region check is modify confirmed
         find_all_algo_policy2 = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply2 = rest_manager.send_get_request(find_all_algo_policy2)
-        strategy_updated = rest_manager.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
-
+        grpc_reply2 = self.send_get_request(find_all_algo_policy2)
+        try:
+            strategy_updated = self.parse_response_details(grpc_reply2, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         if "algoPolicyPassCriteria" in strategy_updated.keys():
             for param in strategy_updated["algoPolicyPassCriteria"]:
                 if param["bestExecCriteria"] in passive_criterias:
@@ -261,10 +337,16 @@ class RestApiAlgoManager(RestApiManager):
 
     def update_criteria(self, strategy_name: str, passive_criterias: list = [], aggresive_criterias: list = []):
         # region send get request
-        rest_manager = RestApiManager("rest_wa319kuiper", self.case_id)
         find_all_algo_policy = RestApiAlgoPolicyMessages().find_all_algo_policies()
-        grpc_reply = rest_manager.send_get_request(find_all_algo_policy)
-        strategy = rest_manager.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        grpc_reply = self.send_get_request(find_all_algo_policy)
+        try:
+             strategy = self.parse_response_details(grpc_reply, {"algoPolicyName": strategy_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
         # endregion
 
         # region modification
@@ -282,7 +364,46 @@ class RestApiAlgoManager(RestApiManager):
             strategy["algoPolicyAggrCriteria"] = temp
 
         modify_algo_policy = RestApiAlgoPolicyMessages().modify_algo_policy(strategy)
-        rest_manager.send_post_request(modify_algo_policy)
+        self.send_post_request(modify_algo_policy)
         # endregion
 
         time.sleep(1)
+
+    def modify_trading_phase_profile(self, trading_phase_name: str, trading_phase_sequence: list=[]):
+        find_all_trading_phase_profile = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
+        grpc_reply = self.send_get_request(find_all_trading_phase_profile)
+        try:
+            trading_phase_profile = self.parse_response_details(grpc_reply, {"tradPhaseProfileDesc": trading_phase_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
+        trading_phase_profile.pop("alive")
+        trading_phase_profile["tradingPhaseSequence"] = trading_phase_sequence
+
+
+        for index, phase in enumerate(trading_phase_profile["tradingPhaseSequence"]):
+            trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['beginTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['endTime']))
+            trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
+
+        modifyTradingPhaseProfile = RestApiAlgoPolicyMessages().modify_trading_phase_profile(parameters=trading_phase_profile)
+        self.send_post_request(modifyTradingPhaseProfile)
+
+        time.sleep(1)
+        find_all_trading_phase_profile2 = RestApiAlgoPolicyMessages().find_all_trading_phase_profile()
+        grpc_reply2 = self.send_get_request(find_all_trading_phase_profile2)
+        try:
+            trading_phase_profile_updated = self.parse_response_details(grpc_reply2, {"tradPhaseProfileDesc": trading_phase_name})
+        except Exception as e:
+            bca.create_event(f"Fail test event - can't handle rest api reply",
+                             status='FAILED',
+                             parent_id=self.case_id,
+                             body=str(e))
+            return
+        trading_phase_profile_updated.pop("alive")
+
+        if not [i for i in trading_phase_profile_updated["tradingPhaseSequence"] if i not in trading_phase_sequence] == []:
+            raise ValueError(f"Trading phase profile doesn't update")

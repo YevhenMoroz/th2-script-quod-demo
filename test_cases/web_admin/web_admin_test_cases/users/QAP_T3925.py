@@ -27,6 +27,7 @@ class QAP_T3925(CommonTestCase):
         self.user_for_clone = self.data_set.get_user("user_7")
         self.ext_id_client = ''.join("EID" + str(random.randint(1, 1000)))
         self.new_user_id = ''.join("UID" + str(random.randint(1, 1000)))
+        self.ext_venue_id = ''.join("VID" + str(random.randint(1, 1000)))
         self.perm_role = "Permissions for administrator users"
         self.desk = [self.data_set.get_desk("desk_3"), self.data_set.get_desk("desk_1")]
         self.email = self.data_set.get_email("email_1")
@@ -50,6 +51,7 @@ class QAP_T3925(CommonTestCase):
         login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
         login_sub_wizard.set_user_id(self.new_user_id)
         login_sub_wizard.set_ext_id_client(self.ext_id_client)
+        login_sub_wizard.set_ext_id_venue(self.ext_venue_id)
         login_sub_wizard.set_password_expiration("")
         details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
         details_tab.set_first_name(self.first_name)

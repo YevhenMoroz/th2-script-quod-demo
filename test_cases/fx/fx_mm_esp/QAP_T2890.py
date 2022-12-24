@@ -31,15 +31,18 @@ class QAP_T2890(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_eur")
         self.status_reject = Status.Reject
         self.price = "1.11999"
+        self.bands_eur_usd = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
+        for i in range(int(number_of_bands)):
+            self.bands_eur_usd.append("*")
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 

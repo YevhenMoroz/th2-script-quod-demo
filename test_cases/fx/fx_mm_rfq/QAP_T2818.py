@@ -53,3 +53,4 @@ class QAP_T2818(TestCase):
     def run_post_conditions(self):
         self.manual_request.set_executable_on()
         self.java_api_manager.send_message(self.manual_request)
+        self.sleep(2)

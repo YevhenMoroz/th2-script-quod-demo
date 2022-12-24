@@ -39,7 +39,7 @@ class ClientTierConstants:
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = '//*[@id="pricingMethod"]'
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH = "//*[@class='option-list']//span"
     CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
-    CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[normalize-space()="Schedule"]//following::button[normalize-space()="Manage"]'
+    CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[@id="schedule"]//following::button[normalize-space()="Manage"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX = '//*[normalize-space()="Schedule"]//..//*[@class="custom-checkbox"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES = '//*[@id="schedule"]'
     # schedules

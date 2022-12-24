@@ -96,3 +96,4 @@ class QAP_T2464(TestCase):
         self.fix_manager_gtw.send_message(self.fix_subscribe, "Unsubscribe")
         self.velocity_rule.clear_message_params().set_params(self.rest_message_params).delete_limit()
         self.rest_manager.send_post_request(self.velocity_rule)
+        self.sleep(2)

@@ -35,7 +35,7 @@ def test_run(parent_id=None, version=None):
         QAP_T5025(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5026(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5027(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # # endregion
+        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

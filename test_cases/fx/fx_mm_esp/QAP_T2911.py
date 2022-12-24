@@ -1,245 +1,99 @@
-import logging
-import time
 from datetime import datetime
 from pathlib import Path
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from th2_grpc_common.common_pb2 import ConnectionID
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
 from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ExtractRatesTileTableValuesRequest, ModifyRatesTileRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
-
-timestamp = str(datetime.now().timestamp())
-timestamp = timestamp.split(".", 1)
-timestamp = timestamp[0]
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
 
 
-def set_spread_and_margin(service, case_id, min_spread, max_spread, bid_margin, offer_margin):
-    modify_params = {
-        "instrSymbol": "GBP/USD",
-        "quoteTTL": 120,
-        "clientTierID": 2200009,
-        "alive": "true",
-        "clientTierInstrSymbolQty": [
-            {
-                "upperQty": 1000000,
-                "indiceUpperQty": 1,
-                "publishPrices": "true"
-            }
-        ],
-        "clientTierInstrSymbolTenor": [
-            {
-                "tenor": "SPO",
-                "minSpread": min_spread,
-                "maxSpread": max_spread,
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "priceSlippageRange": 0,
-                "validatePriceSlippage": "false",
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 1,
-                        "defaultBidMargin": bid_margin,
-                        "defaultOfferMargin": offer_margin,
-                    }
-                ]
-            },
-            {
-                "tenor": "WK1",
-                "minSpread": "0.1",
-                "maxSpread": "0.2",
-                "marginPriceType": "PIP",
-                "lastUpdateTime": timestamp,
-                "MDQuoteType": "TRD",
-                "activeQuote": "true",
-                "priceSlippageRange": 0,
-                "validatePriceSlippage": "false",
-                "clientTierInstrSymbolTenorQty": [
-                    {
-                        "MDQuoteType": "TRD",
-                        "activeQuote": "true",
-                        "indiceUpperQty": 1,
-                        "defaultBidMargin": 1,
-                        "defaultOfferMargin": 1.2,
-                    }
-                ]
-            }
-        ],
-        "clientTierInstrSymbolVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ],
-        "clientTierInstrSymbolActGrp": [
-            {
-                "accountGroupID": "Silver1"
-            }
-        ],
-        "clientTierInstrSymbolFwdVenue": [
-            {
-                "venueID": "HSBC"
-            }
-        ]
-    }
-    service.sendMessage(
-        request=SubmitMessageRequest(
-            message=bca.wrap_message(modify_params, 'ModifyClientTierInstrSymbol', 'rest_wa314luna'),
-            parent_event_id=case_id))
+class QAP_T2911(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.verifier = Verifier(self.test_id)
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fx_fh_connectivity = self.fix_env.feed_handler
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
+        self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
+        self.hsbc = self.data_set.get_venue_by_name("venue_2")
+        self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.instrument_spot = {
+            'Symbol': self.gbp_usd,
+            'SecurityType': self.sec_type_spot,
+            'Product': '4'}
+        self.no_related_symbols_spot = [{
+            'Instrument': self.instrument_spot,
+            'SettlType': self.settle_type_spot}]
 
+        self.gbp_usd_spot = {"Symbol": self.gbp_usd,
+                             "SecurityType": self.sec_type_spot}
+        self.md_req_id = f"{self.gbp_usd}:SPO:REG:{self.hsbc}"
 
-def check_base(base_request, service, case_id, bid_base, offer_base):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_ask_extraction_field(ExtractionDetail("rateTile.askBase", "Base"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidBase", "Base"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
+        self.bid_px = 1.18150
+        self.ask_px = 1.1825
+        self.new_no_md_entries = [
+            {"MDEntryType": "0",
+             "MDEntryPx": self.bid_px,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "1",
+             "MDEntryPx": self.ask_px,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check base margins")
-    verifier.compare_values("Base", bid_base, response["rateTile.bidBase"])
-    verifier.compare_values("Base", offer_base, response["rateTile.askBase"])
-    verifier.verify()
+        self.expected_effective_bid_margin = "-4.0"
+        self.expected_effective_ask_margin = "-3.9"
+        self.bid_test = "bid effective margin"
+        self.ask_test = "ask effective margin"
+        self.test = "Verify effective margins"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_repeating_group("NoMDEntries", self.new_no_md_entries)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
 
-def check_effective(base_request, service):
-    extract_table_request = ExtractRatesTileTableValuesRequest(details=base_request)
-    extraction_id = bca.client_orderid(4)
-    extract_table_request.set_extraction_id(extraction_id)
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.bidEffect", "-"))
-    extract_table_request.set_bid_extraction_field(ExtractionDetail("rateTile.askEffect", "+"))
-    response = call(service.extractRatesTileTableValues, extract_table_request.build())
-    return str(response["rateTile.askEffect"])
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        effected_bid_px = float(response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"])
+        effected_ask_px = float(response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"])
+        actual_effective_bid_margin = str(round((self.bid_px - effected_bid_px) * 10000, 1))
+        actual_effective_ask_margin = str(round((effected_ask_px - self.ask_px) * 10000, 1))
+        # region 3-4
+        self.verifier.set_event_name(self.test)
+        self.verifier.compare_values(self.bid_test, self.expected_effective_bid_margin, actual_effective_bid_margin)
+        self.verifier.compare_values(self.ask_test, self.expected_effective_ask_margin, actual_effective_ask_margin)
+        self.verifier.verify()
+        # endregion
 
-
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
-
-
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_client_tier(client)
-    modify_request.set_instrument(instrument)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def check_price(case_id, send_px, effective, actual_px):
-    expected_px = float(send_px) + float(effective) / 10000
-    expected_px = round(expected_px, 5)
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check price calculation")
-    verifier.compare_values("Price", str(expected_px), str(actual_px))
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    simulator = Stubs.simulator
-    act = Stubs.fix_act
-
-    api_service = Stubs.api_service
-    cp_service = Stubs.win_act_cp_service
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-
-    client_tier = "Silver"
-    account = "Silver1"
-    symbol = "GBP/USD"
-    instrument = "GBP/USD-SPOT"
-    security_type_spo = "FXSPOT"
-    settle_date = spo()
-    settle_type = "0"
-    currency = "GBP"
-    settle_currency = "USD"
-    side = "1"
-    qty = "1000000"
-    bid_margin = "2"
-    offer_margin = "3"
-    offer_px = "1.18150"
-    bid_px = "1.1825"
-    try:
-        # Step 1
-        set_spread_and_margin(api_service, case_id, "2", "10", bid_margin, offer_margin)
-        # Step 2
-        mdu_params_spo = {
-            "MDReqID": simulator.getMDRefIDForConnection314(
-                request=RequestMDRefID(
-                    symbol="GBP/USD:SPO:REG:HSBC",
-                    connection_id=ConnectionID(session_alias="fix-fh-314-luna"))).MDRefID,
-            'Instrument': {
-                'Symbol': 'GBP/USD',
-                'SecurityType': 'FXSPOT'
-            },
-            "NoMDEntries": [
-                {
-                    "MDEntryType": "0",
-                    "MDEntryPx": offer_px,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                },
-                {
-                    "MDEntryType": "1",
-                    "MDEntryPx": bid_px,
-                    "MDEntrySize": 1000000,
-                    "MDEntryPositionNo": 1,
-                    'SettlDate': spo(),
-                    "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-                }
-            ]
-        }
-
-        act.sendMessage(
-            bca.convert_to_request(
-                'Send Market Data SPOT',
-                'fix-fh-314-luna',
-                case_id,
-                bca.message_to_grpc('MarketDataSnapshotFullRefresh', mdu_params_spo, 'fix-fh-314-luna')
-            ))
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        check_base(base_details, cp_service, case_id, bid_margin, offer_margin)
-        effective = check_effective(base_details, cp_service)
-        params_spot = CaseParamsSellRfq(account, case_id, orderqty=qty, symbol=symbol,
-                                        securitytype=security_type_spo, settldate=settle_date,
-                                        settltype=settle_type, securityid=symbol,
-                                        currency=currency, side=side, settlcurrency=settle_currency,
-                                        account=account)
-
-        rfq = FixClientSellRfq(params_spot)
-        rfq.send_request_for_quote()
-        rfq.verify_quote_pending()
-        price_from_quote = rfq.extract_filed("OfferPx")
-        check_price(case_id, bid_px, effective, price_from_quote)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)

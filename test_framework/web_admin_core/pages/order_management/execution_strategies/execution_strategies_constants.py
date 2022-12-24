@@ -85,7 +85,7 @@ class ExecutionStrategiesConstants:
     VALUE_FIELD_AT_PARAMETERS_SUB_WIZARD ='//*[@formcontrolname="algoParameterValue" or @id="algoParameterValue"]'
     VALUE_AT_PARAMETERS_SUB_WIZARD ='//*[@class="parameters-settings"]//following::td[last()]'
     VALUE_FILTER_AT_PARAMETERS_SUB_WIZARD ='//*[@class="algoParameterFEValue ng2-smart-th ng-star-inserted"]//input'
-    CHECKBOX_FOR_ALL_PARAMETERS_AT_SUB_WIZARD = "//*[@formcontrolname='algoParameterValue']//*[@class='custom-checkbox']"
+    CHECKBOX_FOR_ALL_PARAMETERS_AT_SUB_WIZARD = "//*[@formcontrolname='algoParameterValue']//*[contains(@class, 'custom-checkbox')]"
 
     START_TIME_AT_SUB_WIZARD = '//*[text()="StartTime *"]/preceding-sibling::input'
     PLUS_AND_MINUS_AT_SUB_WIZARD = '//*[text()="+/-"]/preceding-sibling::input'
@@ -97,7 +97,7 @@ class ExecutionStrategiesConstants:
     PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@nbtooltip="Add"]'
     CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="checkmark"]'
     CANCEL_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="close"]'
-    DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@ddata-name="trash-2"]'
+    DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="trash-2"]'
     VALUE_FIELD_AT_ACTIONS_SUB_WIZARD = "//*[@placeholder='Value *']"
     VALUE_FILTER_AT_ACTIONS_SUB_WIZARD = "//*[@class='ng2-smart-th secondValue ng-star-inserted']//input"
     VENUE_FIELD_AT_ACTIONS_SUB_WIZARD = '//*[@id="algoParameterValue"]'

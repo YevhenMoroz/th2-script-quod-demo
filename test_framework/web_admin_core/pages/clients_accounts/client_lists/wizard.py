@@ -61,7 +61,7 @@ class ClientListsWizard(CommonPage):
         return self.get_text_by_xpath(ClientListsConstants.WIZARD_CLIENT_XPATH)
 
     def get_all_client_from_table(self):
-        return self._get_all_items_from_table_column(ClientListsConstants.WIZARD_DISPLAYED_CLIENTS_AT_TABLE)
+        return self.get_all_items_from_table_column(ClientListsConstants.WIZARD_DISPLAYED_CLIENTS_AT_TABLE)
 
     def set_client_filter(self, value):
         self.set_text_by_xpath(ClientListsConstants.WIZARD_CLIENT_FILTER_XPATH, value)

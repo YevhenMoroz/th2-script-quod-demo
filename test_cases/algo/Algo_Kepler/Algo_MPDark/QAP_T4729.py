@@ -173,8 +173,8 @@ class QAP_T4729(TestCase):
 
         # region Check that 35=F on childs are received
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that 35=F on childs are received", self.test_id))
-        cancel_request_dma_1_chix_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_chix_order)
-        cancel_request_dma_1_bats_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_bats_order)
+        cancel_request_dma_1_chix_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_chix_order).add_tag(dict(misc5='*'))
+        cancel_request_dma_1_bats_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_bats_order).add_tag(dict(misc5='*'))
         self.fix_verifier_buy.check_fix_message_sequence([cancel_request_dma_1_chix_order, cancel_request_dma_1_bats_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
