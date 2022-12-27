@@ -27,7 +27,7 @@ class QAP_T3859(CommonTestCase):
         self.day = "Monday"
         self.from_time = "00:00:00"
         self.to_time = "00:30:00"
-        self.tod_end_time = "01:00:00"
+        self.tod_end_time = "23:59:59"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

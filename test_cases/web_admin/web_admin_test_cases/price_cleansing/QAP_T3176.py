@@ -74,7 +74,7 @@ class QAP_T3176(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_edit()
 
-            expected_result = [self.stale_rate_delay[1], self.venue, self.listing, self.instr_type, self.symbol]
+            expected_result = [str(self.stale_rate_delay[1]), self.venue, self.listing, self.instr_type, self.symbol]
             actual_result = [values_tab.get_stale_rate_delay(), dimensions_tab.get_venue(), dimensions_tab.get_listing(),
                              dimensions_tab.get_instr_type(), dimensions_tab.get_symbol()]
 

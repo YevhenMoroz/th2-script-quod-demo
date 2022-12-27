@@ -96,7 +96,8 @@ class ORSMessageType(Enum):
     CheckInOrderReply = 'Order_CheckInOrderReply'
     HeldOrderAckRequest = 'Order_HeldOrderAck'
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
-
+    MarkOrderRequest = 'Order_MarkOrderRequest'
+    MarkOrderReply = 'Order_MarkOrderReply'
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -132,6 +133,7 @@ class ESMessageType(Enum):
     ExecutionReport = 'Gateway_ExecutionReport'
     NewOrderReply = 'Gateway_NewOrderReply'
     OrderCancelReply = 'Gateway_OrderCancelReply'
+    OrderModificationReply = "Gateway_OrderModificationReply"
 
 
 class ResAPIMessageType(Enum):

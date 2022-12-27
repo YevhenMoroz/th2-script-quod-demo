@@ -181,7 +181,7 @@ class ClientTiersInstrumentTenorsSubWizard(CommonPage):
                                str(value))
 
     def get_all_list_quantity_at_base_margin_tab(self):
-        return self._get_all_items_from_table_column(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_TABLE_ROW_XPATH)
+        return self.get_all_items_from_table_column(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_QUANTITY_TABLE_ROW_XPATH)
 
     def set_bid_margin_at_base_margins_tab(self, value):
         self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_BASE_MARGINS_SUB_TAB_BID_MARGIN_XPATH,value)

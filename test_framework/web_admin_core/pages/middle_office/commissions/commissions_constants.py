@@ -50,6 +50,7 @@ class CommissionsConstants:
     DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'
     DIMENSIONS_TAB_CLIENT_LIST_XPATH = '//*[@id="clientList"]'
     DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH = '//*[@id="commissionAmountType"]'
+    DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH = '//*[@id="commissionAmountSubType"]'
     DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH = '//*[@id="commissionProfile"]'
     DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH = '//*[text()="Manage"]'
 

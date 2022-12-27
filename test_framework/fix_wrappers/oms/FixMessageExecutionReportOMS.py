@@ -1,7 +1,11 @@
+from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
 from test_framework.fix_wrappers.FixMessageNewOrderList import FixMessageNewOrderList
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from pandas import Timestamp as tm
+from pandas.tseries.offsets import BusinessDay as bd
+from datetime import datetime, timedelta
 
 
 class FixMessageExecutionReportOMS(FixMessageExecutionReport):
@@ -279,5 +283,70 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         if new_order_single.get_parameter("OrdType") == "2":
             change_parameters.update({"Price": new_order_single.get_parameter("Price")})
         self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
+
+    # TODO: add parametrization
+    def set_outgoing_trade(self, new_order_single: FixMessageNewOrderSingle, ord_id):
+        change_parameters = {
+            "ExecID": basic_custom_actions.client_orderid(9),
+            "ExecType": "F",
+            "OrdStatus": "2",
+            "Account": new_order_single.get_parameter("Account"),
+            "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
+            "ClOrdID": ord_id,
+            "HandlInst": new_order_single.get_parameter("HandlInst"),
+            "Side": new_order_single.get_parameter("Side"),
+            "OrdType": new_order_single.get_parameter("OrdType"),
+            "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
+            "SettlDate":(tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
+            "SecondaryOrderID": ord_id,
+            "TradeDate": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
+            "SecondaryExecID": basic_custom_actions.client_orderid(9),
+            "ExDestination": "XPAR",
+            "GrossTradeAmt": "1000",
+            "SettlCurrency": "EUR",
+            "AvgPx": "20",
+            "LastQty": "50",
+            "TransactTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+            "OrderID": ord_id,
+            "LeavesQty": "50",
+            "CumQty": "50",
+            "LastPx": "20",
+        }
+        self.change_parameters(change_parameters)
+        return self
+
+    # TODO: add parametrization
+    def set_outgoing_replaced(self, new_order_single: FixMessageNewOrderSingle, ord_id):
+        change_parameters = {
+            "ExecID": basic_custom_actions.client_orderid(9),
+            "ExecType": "5",
+            "OrdStatus": "5",
+            "Account": new_order_single.get_parameter("Account"),
+            "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
+            "ClOrdID": ord_id,
+            "HandlInst": new_order_single.get_parameter("HandlInst"),
+            "Side": new_order_single.get_parameter("Side"),
+            "OrdType": new_order_single.get_parameter("OrdType"),
+            "TimeInForce": new_order_single.get_parameter("TimeInForce"),
+            "Instrument": new_order_single.get_parameter("Instrument"),
+            "AvgPx": "20",
+            "SettlDate": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
+            "ExDestination": "XPAR",
+            "GrossTradeAmt": "1000",
+            "LastQty": "50",
+            "TransactTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+            "OrderID": ord_id,
+            "LeavesQty": "50",
+            "CumQty": "50",
+            "LastPx": "20",
+        }
+        if new_order_single.get_parameter("OrdType") == "2":
+            change_parameters.update({"Price": new_order_single.get_parameter("Price"),
+                                      "AvgPx": new_order_single.get_parameter("Price"),
+                                      "GrossTradeAmt": int(new_order_single.get_parameter("Price")) *
+                                                       int(new_order_single.get_parameter("OrderQtyData")["OrderQty"])})
         self.change_parameters(change_parameters)
         return self
