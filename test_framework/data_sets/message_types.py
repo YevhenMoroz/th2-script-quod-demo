@@ -90,7 +90,12 @@ class ORSMessageType(Enum):
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
     NewOrderReply = 'Gateway_NewOrderReply'
-
+    CheckOutOrderRequest = "Order_CheckOutOrderRequest"
+    CheckOutOrderReply = "Order_CheckOutOrderReply"
+    CheckInOrderRequest = 'Order_CheckInOrderRequest'
+    CheckInOrderReply = 'Order_CheckInOrderReply'
+    HeldOrderAckRequest = 'Order_HeldOrderAck'
+    HeldOrderAckReply = 'Order_HeldOrderAckReply'
 
 
 class TradingRestApiMessageType(Enum):
