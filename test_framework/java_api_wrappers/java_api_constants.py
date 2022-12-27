@@ -130,6 +130,8 @@ class JavaApiFields(Enum):
     PartyRole = "PartyRole"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
+    TimeInForce = 'TimeInForce'
+    ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
@@ -251,6 +253,9 @@ class JavaApiFields(Enum):
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
 
+    # fields of Bag
+    OrderBagStatus = 'OrderBagStatus'
+
 
 class JavaApiPartyRoleConstants(Enum):
     PartyRole_EXF = 'EXF'
@@ -263,6 +268,7 @@ class BagChildCreationPolicy(Enum):
 
 class TimeInForces(Enum):
     DAY = 'DAY'
+    GTD = 'GTD'
 
 
 class OrdTypes(Enum):
@@ -283,3 +289,8 @@ class AllocTransTypes(Enum):
 
 class AllocTypes(Enum):
     AllocType_P = 'Preliminary'
+
+
+class OrderBagConst(Enum):
+    OrderBagStatus_NEW = 'NEW'
+    OrderBagStatus_CXL = 'CXL'

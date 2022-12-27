@@ -7,11 +7,15 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns, BagStatuses, \
-    SecondLevelTabs, TimeInForce, WaveColumns, Status
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, \
+    BagChildCreationPolicy, OrderReplyConst, SubmitRequestConst, OrdTypes, OrderBagConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.OrderBagCancelRequest import OrderBagCancelRequest
+from test_framework.java_api_wrappers.ors_messages.OrderBagCreationRequest import OrderBagCreationRequest
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveRequest import OrderBagWaveRequest
 from test_framework.win_gui_wrappers.oms.oms_bag_order_book import OMSBagOrderBook
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -31,101 +35,146 @@ class QAP_T7630(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.bag_creation_request = OrderBagCreationRequest()
+        self.bag_wave_request = OrderBagWaveRequest()
+        self.bag_cancel_request = OrderBagCancelRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '1399'
-        qty_of_bag = str(int(int(qty) * 2))
-        qty_for_verifying_bag = qty_of_bag[0] + ',' + qty_of_bag[1:4]
+        qty = '1000'
         price = '10'
-        venue_client_account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', price)
-        exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', exec_destination)
-        lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.fix_message.change_parameter("HandlInst", '3')
-        rule_manager = RuleManager(Simulators.equity)
         orders_id = []
         name_of_bag = 'QAP_T7630'
+        qty_of_bag = str(float(qty) * 2)
+        client = self.data_set.get_client_by_name('client_pt_1')
+        venue_client_account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        # endregion
+
+        # region precondition
+        # part 1: Create 2 CO orders
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"OrdQty": qty,
+             "AccountGroupID": client,
+             "Price": price})
+        for counter in range(2):
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                         {
+                                                             "ClOrdID": bca.client_orderid(9)
+                                                         })
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            orders_id.append(order_reply[JavaApiFields.OrdID.value])
+
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply,
+                f'Checking expected and actually results for {orders_id[counter]} (precondition part 1)')
+        # end of part
+
+        # part 2 : create bag
+        self.bag_creation_request.set_default(BagChildCreationPolicy.Split.value, name_of_bag, orders_id)
+        self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
+
+        order_bag_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+                JavaApiFields.OrderBagNotificationBlock.value]
+        bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
+        expected_result = {JavaApiFields.OrderBagName.value: name_of_bag,
+                           JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
+
+        self.java_api_manager.compare_values(expected_result, order_bag_notification,
+                                             'Checking expected and actually results (precondition part 2)')
+        # end of part
 
         # endregion
 
         # region step 1
-        self.fix_message.change_parameter("HandlInst", '3')
-        for i in range(2):
-            self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order(lookup, qty, price)
-            self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-            orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
-        self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-        self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag)
-        self.bag_order_book.create_bag()
-        tif = TimeInForce.DAY.value
-        values = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.ord_bag_name.value,
-                                                                          OrderBagColumn.order_bag_qty.value])
-        expected_result = {OrderBagColumn.order_bag_qty.value: qty_for_verifying_bag,
-                           OrderBagColumn.ord_bag_name.value: name_of_bag}
-        self.bag_order_book.compare_values(values, expected_result, 'Comparing values after creating bag')
-        # endregion
 
-        # region wave bag order
-        new_order_single = cancel_rule = None
+        # part 1: create wave
+        self.bag_wave_request.set_default(bag_order_id, qty_of_bag, OrdTypes.Limit.value)
+        self.bag_wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {
+            "Price": price
+        })
+        self.bag_wave_request.remove_fields_from_component('OrderBagWaveRequestBlock', ['TimeInForce'])
+        new_order_single = None
         try:
-            new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side,
                 venue_client_account, exec_destination,
                 float(price))
-            self.bag_order_book.set_order_bag_wave_details(price=price, qty=str(int(qty) * 2), tif=tif)
-            self.bag_order_book.wave_bag()
+            self.java_api_manager.send_message_and_receive_response(self.bag_wave_request)
         except Exception as e:
             logger.error(f'{e}')
         finally:
             time.sleep(3)
-            rule_manager.remove_rule(new_order_single)
+            self.rule_manager.remove_rule(new_order_single)
+        # end of part
 
-        filter_list = [OrderBagColumn.ord_bag_name.value, name_of_bag]
-        values = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1', [OrderBagColumn.ord_bag_name.value,
-                                                                                     OrderBagColumn.order_bag_qty.value],
-                                                                               [WaveColumns.status.value], filter=filter_list,
-                                                                               table_name=SecondLevelTabs.order_bag_waves.value)
-        expected_result[WaveColumns.status.value] = Status.new.value
-        self.order_book.compare_values(expected_result, values, 'Comparing values after waving')
+        # part 2 : get child`s OrderIDs
+        child_order_ids = []
+        for parent_order in orders_id:
+            order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value,
+                                                                        parent_order).get_parameters()[
+                JavaApiFields.OrderNotificationBlock.value]
+            child_order_ids.append(order_notification[JavaApiFields.OrdID.value])
+        # end of part
+
+        # part 3 : checking results
+        for child_order_id in child_order_ids:
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value, child_order_id). \
+                get_parameters()[JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply,
+                f'Checking expected and actually result for {child_order_id} (step 1 part 3)')
+        # end of part
+
         # endregion
 
-        # region cancel bag
+        # region step 2 : cancel bag
+
+        # part 1: send cancel request via JavaApi
+        cancel_rule = None
+        self.bag_cancel_request.set_default(bag_order_id)
         try:
-            cancel_rule = rule_manager.add_OrderCancelRequest(
+            cancel_rule = self.rule_manager.add_OrderCancelRequest_FIXStandard(
                 self.fix_env.buy_side,
                 venue_client_account, exec_destination, True)
-            self.bag_order_book.cancel_bag(filter_list)
+            self.java_api_manager.send_message_and_receive_response(self.bag_cancel_request)
         except Exception as e:
             logger.error(f'{e}')
         finally:
             time.sleep(3)
-            rule_manager.remove_rule(cancel_rule)
-        values = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.ord_bag_name.value,
-                                                                          OrderBagColumn.bag_status.value])
-        expected_result = {OrderBagColumn.bag_status.value: Status.canceled.value,
-                           OrderBagColumn.ord_bag_name.value: name_of_bag}
-        self.bag_order_book.compare_values(values, expected_result, 'Comparing bag  values after cancel bag')
-        # endregion
+            self.rule_manager.remove_rule(cancel_rule)
+        # end of part
 
-        # region verify child order values
-        for index in range(len(orders_id)):
-            values = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.sts.value],
-                                                         [1],
-                                                         {OrderBookColumns.order_id.value: orders_id[index]})[0]
-            self.order_book.compare_values({OrderBookColumns.sts.value: Status.cancelled.value}, values,
-                                           'Comparing child status')
+        # part 2 :check bag status
+        order_bag_notification = \
+        self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+            JavaApiFields.OrderBagNotificationBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_CXL.value},
+            order_bag_notification, f'Checking {JavaApiFields.OrderBagStatus.value} (step 2)')
+        # end of part
+
+        # part 3: check statuses of child orders
+        for child_order_id in child_order_ids:
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value, child_order_id). \
+                get_parameters()[JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_CXL.value},
+                order_reply,
+                f'Checking {JavaApiFields.TransStatus.value} of {child_order_id} (step 2 part 3)')
+        # end of part
+
         # endregion
