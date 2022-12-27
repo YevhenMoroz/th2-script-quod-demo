@@ -21,7 +21,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateNewOrdSingleMarketPreviouslyQuoted, \
     TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
-    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom
+    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
+    TemplateNewOrdSingleIOCTradeOnFullQty
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -601,6 +602,17 @@ class RuleManager:
                                                                      qty=qty,
                                                                      traded_qty=traded_qty,
                                                                      delay=delay))
+
+    def add_NewOrdSingle_IOCTradeOnFullQty(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
+        return self.sim.createNewOrdSingleIOCTradeOnFullQty(
+            request=TemplateNewOrdSingleIOCTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
+                                            account=account,
+                                            venue=venue,
+                                            trade=trade,
+                                            price=price,
+                                            delay=delay))
+
+
 if __name__ == '__main__':
     rule_manager = RuleManager()
     rule_manager.print_active_rules()

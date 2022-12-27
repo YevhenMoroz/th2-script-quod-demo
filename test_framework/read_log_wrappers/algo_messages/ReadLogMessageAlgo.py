@@ -43,22 +43,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_the_skips_lis_phase(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderID": '*',
-            "Text": 'skipping LIS phase'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_the_venue_was_suspended(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderID": "*",
-            "VenueName": "Euronext Paris",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def set_compare_message_for_check_tags_5052_and_207_mapping(self) -> ReadLogMessage:
         base_parameters = {
             "SecurityExchange": "QDL1",
@@ -91,18 +75,6 @@ class ReadLogMessageAlgo(ReadLogMessage):
         base_parameters = {
             "OrderId": "*",
             "PrimaryListingID": "*"
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_party_info_more_than_one_group(self) -> ReadLogMessage:
-        base_parameters = {
-            "CountOfGroups": "3",
-            "GroupNumber": "1",
-            "PartyID": "TestClientID",
-            "PartyIDSource": "D",
-            "PartyRole": "3",
-            "ClOrdID": "*"
         }
         super().change_parameters(base_parameters)
         return self
@@ -183,10 +155,18 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_that_is_no_suitablle_liquidity(self) -> ReadLogMessage:
+    def set_compare_message_for_check_order_event(self) -> ReadLogMessage:
         base_parameters = {
-            "Time": "*",
-            "ClOrdrId": "*",
+            "OrderId": "*",
+            "Text": "no suitable liquidity"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_compare_message_for_check_order_event_with_time(self) -> ReadLogMessage:
+        base_parameters = {
+            "Time": '*',
+            "OrderId": "*",
             "Text": "no suitable liquidity"
         }
         super().change_parameters(base_parameters)
@@ -239,35 +219,19 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_not_crossing_mid_price(self) -> ReadLogMessage:
+    def set_compare_message_for_check_mapping(self) -> ReadLogMessage:
         base_parameters = {
-            "OrderId": "*",
-            "MidPrice": "27",
+            "Parameter1": "*",
+            "Value1": "*",
+            "Parameter2": "*",
+            "Value2": "*",
+            "Parameter3": "*",
+            "Value3": "*",
+            "Parameter4": "*",
+            "Value4": "*",
         }
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_starting_mid_price_monitoring(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_market_event_for_venue(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*",
-            "Text": "27",
-            "AdditionalParameter": "QUODLIT1",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_compare_message_for_check_skipping_dark_phase_when_primary_suspended(self) -> ReadLogMessage:
-        base_parameters = {
-            "OrderId": "*"
-        }
-        super().change_parameters(base_parameters)
-        return self
 
 

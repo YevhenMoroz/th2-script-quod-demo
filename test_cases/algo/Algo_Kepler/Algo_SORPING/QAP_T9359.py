@@ -19,7 +19,7 @@ from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import Re
 from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
 
 
-class QAP_T9308(TestCase):
+class QAP_T9359(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -36,14 +36,15 @@ class QAP_T9308(TestCase):
 
         # region order parameters
         self.qty = 100
-        self.price = 1
-        self.qty_for_md = 100
+        self.price = 3.2
         self.traded_qty = 0
+        self.qty_for_md = 100
         self.price_ask = 3
         self.price_bid = 2.9
         self.px_for_incr = 0
         self.qty_for_incr = 0
-        self.trading_status = 2
+        self.trading_status = 4
+        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_8.value
         # endregion
 
@@ -55,7 +56,6 @@ class QAP_T9308(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_eliminate = Status.Eliminate
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -101,6 +101,7 @@ class QAP_T9308(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, True)
@@ -215,7 +216,12 @@ class QAP_T9308(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
         # endregion
 
-        time.sleep(5)
+        # region Check these are no dark childs
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check these are no dark childs", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_xpar_order], [None], self.FromQuod)
+        # endregion
+
+        time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -235,6 +241,8 @@ class QAP_T9308(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
+        time.sleep(5)
+
         # region return TradingStatus=T for Paris
         market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
@@ -243,3 +251,4 @@ class QAP_T9308(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
+
