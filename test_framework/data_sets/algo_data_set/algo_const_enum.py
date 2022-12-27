@@ -261,7 +261,8 @@ class AlgoAccounts(Enum):
     account_16 = "QDL_CLIENT2"
     account_17 = "QDL2_CLIENT2"
     account_18 = "XAMS_CLIENT2"
-    account_19 = "DKP1_CLIENT2"
+    account_19 = "XAMS_CLIENT3"
+    account_20 = "DKP1_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -316,6 +317,8 @@ class AlgoMic(Enum):
     mic_33 = "XETR"   # XETRA
     mic_34 = "XFRA"   # FRANKFURT
     mic_35 = "XBRU"   # Euronext Brussels
+    mic_36 = "QDL3"   # QUODLIT3
+    mic_37 = "TQEL"   # TQEULIS
 
 
 class AlgoListingId(Enum):
@@ -355,7 +358,7 @@ class AlgoListingId(Enum):
     listing_34 = "125911519"       # JANESTREET for FR0010411884
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
-    listing_37 = "48"       # Euronext Фьіеуквфь for AXS
+    listing_37 = "48"       # Euronext Amsterdam for AXS
     listing_38 = "1725020509"       # QUODLIT2 for QUODTESTQA06
     listing_39 = "1825020509"       # QUODLIT2 for QUODTESTQA07
     listing_40 = "1825020508"       # QUODLIT1 for QUODTESTQA07
@@ -409,14 +412,13 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
-    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
-    key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
-    key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
+    key_params_log_319_check_order_event = ['OrderId', 'Text']
+    key_params_log_319_check_mapping = ['Parameter1', 'Value1', 'Parameter2', 'Value2', 'Parameter3', 'Value3', 'Parameter4', 'Value4']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -432,6 +434,13 @@ class AlgoPreFilter(Enum):
         'header': {
             'MsgType': ('G', "EQUAL")
         }}
+
+    pre_filer_equal_ER = {
+        'header': {
+            'MsgType': ('8', "EQUAL")
+        }
+    }
+
 
     pre_filer_equal_ER_canceled = {
                 'header': {
@@ -460,11 +469,6 @@ class AlgoPreFilter(Enum):
         'NewStatus': ('*', "EQUAL")
     }
 
-    pre_filter_suitable_liquidity = {
-        'ClOrdrId': ('*', "EQUAL"),
-        'Text': ('*', "EQUAL")
-    }
-
     pre_filer_equal_ER_pending_new = {
         'header': {
             'MsgType': ('8', 'EQUAL')
@@ -487,6 +491,15 @@ class AlgoPreFilter(Enum):
         },
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
+    }
+
+    pre_filter_check_events = {
+        'OrderId': ('*', "EQUAL"),
+        'Text': ('*', "EQUAL")
+    }
+
+    pre_filter_with_the_order_id = {
+        'OrderId': ('*', "EQUAL")
     }
 
 class AlgoTradingPhaseProfile(Enum):

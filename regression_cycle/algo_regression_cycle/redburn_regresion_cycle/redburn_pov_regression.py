@@ -12,6 +12,8 @@ from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8749 import QAP_T8749
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8751 import QAP_T8751
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8752 import QAP_T8752
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8845 import QAP_T8845
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4350 import QAP_T4350
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4351 import QAP_T4351
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -27,6 +29,8 @@ def test_run(parent_id=None, version=None):
     try:
         configuration = ComponentConfigurationAlgo("Participation")
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4350(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4351(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8792(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8793(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

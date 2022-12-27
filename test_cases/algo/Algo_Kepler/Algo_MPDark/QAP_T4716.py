@@ -183,6 +183,8 @@ class QAP_T4716(TestCase):
         self.fix_verifier_buy.check_fix_message(er_reject_dma_trqxlis_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject child DMA order on venue TRQXLIS")
         # endregion
 
+        time.sleep(3)
+
         # region Check that parent order is Eliminated
         er_eliminate_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(er_eliminate_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
