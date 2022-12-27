@@ -17,6 +17,8 @@ from test_framework.java_api_wrappers.ors_messages.AllocationReport import Alloc
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchReply import BlockUnallocateBatchReply
 from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
+from test_framework.java_api_wrappers.ors_messages.CheckInOrderReply import CheckInOrderReply
+from test_framework.java_api_wrappers.ors_messages.CheckOutOrderReply import CheckOutOrderReply
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
@@ -26,6 +28,7 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBa
     ForceAllocInstructionStatusBatchReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
+from test_framework.java_api_wrappers.ors_messages.HeldOrderAckReply import HeldOrderAckReply
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
 from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrderReply
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
@@ -253,6 +256,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.CheckOutOrderRequest.value:
+            response = self.act.submitCheckOutOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.ForceAllocInstructionStatusBatchRequest.value:
             response = self.act.submitForceAllocInstructionStatusBatchRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -289,6 +298,18 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.CheckInOrderRequest.value:
+            response = self.act.submitCheckInOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.HeldOrderAckRequest.value:
+            response = self.act.submitHeldOrderAck(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
             response = self.act.submitMarkOrderRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -434,6 +455,8 @@ class JavaApiManager:
                 response_fix_message = FixPositionReportFX()
             elif message_type == ORSMessageType.BookingCancelReply.value:
                 response_fix_message = BookingCancelReply()
+            elif message_type == ORSMessageType.CheckOutOrderReply.value:
+                response_fix_message = CheckOutOrderReply()
             elif message_type == ORSMessageType.ForceAllocInstructionStatusBatchReply.value:
                 response_fix_message = ForceAllocInstructionStatusBatchReply()
             elif message_type == ORSMessageType.BlockUnallocateBatchReply.value:
@@ -442,6 +465,10 @@ class JavaApiManager:
                 response_fix_message = UnMatchReply()
             elif message_type == ORSMessageType.FixConfirmation.value:
                 response_fix_message = FixConfirmation()
+            elif message_type == ORSMessageType.CheckInOrderReply.value:
+                response_fix_message = CheckInOrderReply()
+            elif message_type == ORSMessageType.HeldOrderAckReply.value:
+                response_fix_message = HeldOrderAckReply()
             elif message_type == ORSMessageType.MarkOrderReply.value:
                 response_fix_message = MarkOrderReply()
             response_fix_message.change_parameters(fields)

@@ -1,7 +1,7 @@
 import time
-from rule_management import RuleManager
+from rule_management import RuleManager, Simulators
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageCancelRejectReportOMS import FixMessageOrderCancelRejectReportOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
     FixMessageOrderCancelReplaceRequestOMS
 import logging
@@ -11,14 +11,14 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import  OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst
+from test_framework.java_api_wrappers.ors_messages.CheckInOrderRequest import CheckInOrderRequest
+from test_framework.java_api_wrappers.ors_messages.CheckOutOrderRequest import CheckOutOrderRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
-
 
 
 class QAP_T7524(TestCase):
@@ -28,15 +28,19 @@ class QAP_T7524(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.rule_manager = RuleManager()
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.client_venue = self.data_set.get_venue_client_names_by_name(
+            "client_pt_1_venue_1")
+        self.venue = self.data_set.get_mic_by_name("mic_1")
         self.new_qty = "4444"
-        self.cancel_reject_report = FixMessageOrderCancelRejectReportOMS()
-
+        self.cancel_replace_report = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        self.check_out = CheckOutOrderRequest()
+        self.check_in = CheckInOrderRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -44,49 +48,47 @@ class QAP_T7524(TestCase):
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
         # endregion
-        # region accept order
-        self.client_inbox.accept_order()
-        # endregion
+
         # region check out order
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_out_order()
+        self.check_out.set_default(order_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.check_out)
+        self.return_result(responses, ORSMessageType.OrdNotification.value)
+        notify_block = self.result.get_parameter('OrdNotificationBlock')
+        self.java_api_manager.compare_values({JavaApiFields.IsLocked.value: OrderReplyConst.IsLocked_Y.value},
+                                             notify_block, "Check order values after check out")
         # endregion
-        # region check order check out status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.is_locked.value: "Yes"})
-        # endregion
+
         # region amend order via FIX
+        cancel_replace_rule = None
         try:
-            cancel_replace_rule  = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.fix_env.buy_side,
-                                                                              self.data_set.get_venue_client_names_by_name(
-                                                                                  "client_pt_1_venue_1"),
-                                                                              self.data_set.get_mic_by_name("mic_1"))
-            cancel_replace_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set, self.fix_message.get_parameters()).set_default(
+            cancel_replace_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.fix_env.buy_side,
+                                                                                              self.client_venue,
+                                                                                              self.venue)
+            cancel_replace_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set).set_default(
                 self.fix_message)
             cancel_replace_request.change_parameter('OrderQtyData', {'OrderQty': self.new_qty})
-            self.fix_manager.send_message_fix_standard(cancel_replace_request)
+            self.fix_manager.send_message_and_receive_response_fix_standard(cancel_replace_request)
         except Exception:
             logger.setLevel(logging.DEBUG)
             logging.debug('RULE WORK CORRECTLY. (: NOT :)')
         finally:
             self.rule_manager.remove_rule(cancel_replace_rule)
 
-        self.cancel_reject_report.set_default(self.fix_message)
-        self.cancel_reject_report.change_parameter("Text", "11629 Order is in locked state")
-        self.fix_verifier.check_fix_message_fix_standard(self.cancel_reject_report)
+        self.cancel_replace_report.set_default(self.fix_message)
+        self.cancel_replace_report.change_parameter("Text", "11629 Order is in locked state")
+        self.fix_verifier.check_fix_message_fix_standard(self.cancel_replace_report)
         # endregion
-        # region check out order
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_in_order()
+
+        # region check in order
+        self.check_in.set_default(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.check_in)
         # endregion
-        # region check order check in status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-                {OrderBookColumns.is_locked.value: ""})
-        # endregion
+
         # region amend order via FIX
         try:
             cancel_replace_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.fix_env.buy_side,
-                                                                              self.data_set.get_venue_client_names_by_name(
-                                                                                  "client_pt_1_venue_1"),
-                                                                              self.data_set.get_mic_by_name("mic_1"))
+                                                                                              self.client_venue,
+                                                                                              self.venue)
             cancel_replace_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set).set_default(
                 self.fix_message).change_parameter('OrderQtyData', {'OrderQty': self.new_qty})
             self.fix_manager.send_message_fix_standard(cancel_replace_request)
@@ -96,16 +98,11 @@ class QAP_T7524(TestCase):
         finally:
             self.rule_manager.remove_rule(cancel_replace_rule)
         # endregion
-        # region accept order
-        self.client_inbox.accept_modify_plus_child()
-        # endregion
-        # ckeck new values
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.qty.value: self.new_qty})
+        self.cancel_replace_report.set_default(self.fix_message)
+        self.fix_verifier.check_fix_message_fix_standard(self.cancel_replace_report)
         # endregion
 
-
-
-
-
-
+    def return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

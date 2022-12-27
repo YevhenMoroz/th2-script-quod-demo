@@ -21,7 +21,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateNewOrdSingleMarketPreviouslyQuoted, \
     TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
-    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom
+    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
+    TemplateNOSExecutionReportTradeWithTradeDateFIXStandard
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -205,6 +206,20 @@ class RuleManager:
                 account=account,
                 venue=venue,
                 price=price))
+
+    def add_NewOrdSingleExecutionReportTradeByOrdQtyWithTradeDate_FIXStandard(self, session: str, account: str,
+                                                                              venue: str,
+                                                                              price: float, traded_qty: int,
+                                                                              tradeDate: str, delay: int):
+        return self.sim.createNOSExecutionReportTradeWithTradeDateFIXStandard(
+            request=TemplateNOSExecutionReportTradeWithTradeDateFIXStandard(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=venue,
+                price=price,
+                tradedQty=traded_qty,
+                tradeDate=tradeDate,
+                delay=delay))
 
     def add_OrderCancelRequest(self, session: str, account: str, venue: str, cancel: bool, delay: int = 0):
         return self.sim.createOrderCancelRequest(
@@ -603,9 +618,10 @@ class RuleManager:
                                                                      delay=delay))
 if __name__ == '__main__':
     rule_manager = RuleManager()
-    rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
-    # rule_manager_eq = RuleManager(Simulators.equity)
+    rule_manager_eq = RuleManager(Simulators.equity)
+    # rule_manager.remove_rule_by_id(33)
+    # rule_manager.print_active_rules()
     # print("_________________________")
-    # rule_manager_eq.print_active_rules()
-    Stubs.factory.close()
+    rule_manager_eq.remove_rules_by_id_range(900, 1194)
+    rule_manager_eq.print_active_rules()

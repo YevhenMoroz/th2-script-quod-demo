@@ -42,8 +42,8 @@ class QAP_T7015(TestCase):
         self.qty = '200'
         self.price = '20'
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_co_1')  # MOClient
-        self.alloc_account = self.data_set.get_account_by_name('client_co_1_acc_1')  # MOClient_SA1
+        self.client = self.data_set.get_client('client_counterpart_1')  # CLIENT_COUNTERPART
+        self.alloc_account = self.data_set.get_account_by_name('client_counterpart_1_acc_1')  # CLIENT_COUNTERPART_SA1
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
@@ -110,15 +110,12 @@ class QAP_T7015(TestCase):
             {'tag5120': '*', 'RootSettlCurrAmt': '*', 'SettlCurrFxRate': '#'})
         self.allocation_message.remove_parameters(["Account"])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
-                                                            ['AllocType', 'Account', 'NoOrders'])
+                                                            ['AllocType', 'Account', 'NoOrders', 'OrderAvgPx'])
         # endregion
 
         # region Approve and Allocate block
         alloc_id = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)[JavaApiFields.ClientAllocID.value]
-        self.approve_message.set_default_approve(alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.approve_message)
-        class_name.print_message('Messages after APPROVE', responses)
         self.confirmation_request.set_default_allocation(alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
             "AllocAccountID": self.alloc_account,
@@ -137,7 +134,7 @@ class QAP_T7015(TestCase):
         self.allocation_message.set_default_preliminary(self.fix_message)
         self.allocation_message.change_parameters({'NoAllocs': '*', 'SettlCurrFxRate': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
-                                                            ['NoOrders', 'AllocType'],
+                                                            ['NoOrders', 'AllocType', 'OrderAvgPx'],
                                                             ignored_fields=list_of_ignored_fields)
         # endregion
 
@@ -146,7 +143,8 @@ class QAP_T7015(TestCase):
         self.confirmation_message.change_parameters(
             {'tag5120': '*', 'AllocAccount': self.alloc_account, 'SettlCurrFxRate': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
-                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
+                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount',
+                                                             'OrderAvgPx'])
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 
