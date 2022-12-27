@@ -17,10 +17,11 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelReplaceRequestWithDelayFIXStandard, \
     TemplateExecutionReportTradeByOrdQtyWithLastLiquidityIndFIXStandard, \
     TemplateNewOrdSingleRQFRestated, TemplateNewOrdSingleMarketAuction, \
-    TemplateOrderCancelRFQRequest, TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
-    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateNewOrdSingleMarketPreviouslyQuoted, \
     TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
+    TemplateOrderCancelRFQRequest, \
+    TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
+    TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
     TemplateNOSExecutionReportTradeWithTradeDateFIXStandard
 
@@ -29,8 +30,6 @@ from th2_grpc_common.common_pb2 import ConnectionID
 
 from stubs import Stubs
 from google.protobuf.empty_pb2 import Empty
-import grpc
-from th2_grpc_sim import sim_pb2_grpc as core_test
 
 
 class Simulators(Enum):
@@ -232,9 +231,9 @@ class RuleManager:
     def add_OrderCancelRequestTradeCancel(self, session: str, account: str, exdestination: str, price: float):
         return self.sim.createTemplateOrderCancelRequestTradeCancel(
             request=TemplateOrderCancelRequestTradeCancel(connection_id=ConnectionID(session_alias=session),
-                                               account=account,
-                                               exdestination=exdestination,
-                                               price=price))
+                                                          account=account,
+                                                          exdestination=exdestination,
+                                                          price=price))
 
     def add_OrderCancelRequestWithQty(self, session: str, account: str, venue: str, cancel: bool, qty: int,
                                       delay: int = 0):
@@ -294,18 +293,21 @@ class RuleManager:
 
     def add_External_Cancel(self, session: str):
         return self.sim.createExternalExecutionReportResponseCancelled(request=
-                                               TemplateExternalExecutionReport(connection_id=
-                                                                        ConnectionID(session_alias=session)))
+                                                                       TemplateExternalExecutionReport(connection_id=
+                                                                                                       ConnectionID(
+                                                                                                           session_alias=session)))
 
     def add_External_Fill(self, session: str):
         return self.sim.createExternalExecutionReportResponseFilled(request=
-                                               TemplateExternalExecutionReport(connection_id=
-                                                                        ConnectionID(session_alias=session)))
+                                                                    TemplateExternalExecutionReport(connection_id=
+                                                                                                    ConnectionID(
+                                                                                                        session_alias=session)))
 
     def add_External_Reject(self, session: str):
         return self.sim.createExternalExecutionReportResponseRejected(request=
-                                               TemplateExternalExecutionReport(connection_id=
-                                                                        ConnectionID(session_alias=session)))
+                                                                      TemplateExternalExecutionReport(connection_id=
+                                                                                                      ConnectionID(
+                                                                                                          session_alias=session)))
 
     def add_SingleExec(self, party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str,
                        mask_as_connectivity: str):
@@ -336,7 +338,8 @@ class RuleManager:
                                                        trade=trade,
                                                        price=price))
 
-    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float, delay: int = 0):
+    def add_NewOrdSingle_IOC(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, price: float,
+                             delay: int = 0):
         return self.sim.createNewOrdSingleIOC(
             request=TemplateNewOrdSingleIOC(connection_id=ConnectionID(session_alias=session),
                                             account=account,
@@ -574,7 +577,8 @@ class RuleManager:
 
         # ------------------------
 
-    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int, reply_delay: int = 0):
+    def add_NewOrderSingle_RFQ_Reject(self, session: str, account: str, ex_destination: str, order_qty: int,
+                                      reply_delay: int = 0):
         return self.sim.createNewOrdSingleRQFRejected(
             request=TemplateNewOrdSingleRQFRejected(
                 connection_id=ConnectionID(session_alias=session),
@@ -585,7 +589,8 @@ class RuleManager:
             )
         )
 
-    def add_NewOrdSingle_MarketPreviouslyQuoted(self, session: str, account: str, venue: str, trade: bool, tradedQty: int, avgPrice: float, delay: int = 0):
+    def add_NewOrdSingle_MarketPreviouslyQuoted(self, session: str, account: str, venue: str, trade: bool,
+                                                tradedQty: int, avgPrice: float, delay: int = 0):
         return self.sim.createNewOrdSingleMarketPreviouslyQuoted(
             request=TemplateNewOrdSingleMarketPreviouslyQuoted(connection_id=ConnectionID(session_alias=session),
                                                                account=account,
@@ -595,33 +600,39 @@ class RuleManager:
                                                                avgPrice=avgPrice,
                                                                delay=delay))
 
-    def add_OrderCancelReplaceRequestExecutionReportWithTrade(self, session: str, account: str, exdestination: str, price: float, cumQtyBeforeReplace: int, tradedQty: int):
+    def add_OrderCancelReplaceRequestExecutionReportWithTrade(self, session: str, account: str, exdestination: str,
+                                                              price: float, cumQtyBeforeReplace: int, tradedQty: int):
         return self.sim.createOrderCancelReplaceExecutionReportWithTrade(
-            request=TemplateOrderCancelReplaceExecutionReportWithTrade(connection_id=ConnectionID(session_alias=session),
-                                                                       account=account,
-                                                                       exdestination=exdestination,
-                                                                       price=price,
-                                                                       CumQtyBeforeReplace=cumQtyBeforeReplace,
-                                                                       tradedQty=tradedQty
-                                                              ))
+            request=TemplateOrderCancelReplaceExecutionReportWithTrade(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                CumQtyBeforeReplace=cumQtyBeforeReplace,
+                tradedQty=tradedQty
+                ))
 
-    def add_NewOrdSingleExecutionReportTradeByOrdQtyRBCustom(self, session: str, account: str, exdestination: str, price: float,
-                                                     traded_price: float, qty: int, traded_qty: int, delay: int):
+    def add_NewOrdSingleExecutionReportTradeByOrdQtyRBCustom(self, session: str, account: str, exdestination: str,
+                                                             price: float,
+                                                             traded_price: float, qty: int, traded_qty: int,
+                                                             delay: int):
         return self.sim.createNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
-            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(connection_id=ConnectionID(session_alias=session),
-                                                                     account=account,
-                                                                     exdestination=exdestination,
-                                                                     price=price,
-                                                                     traded_price=traded_price,
-                                                                     qty=qty,
-                                                                     traded_qty=traded_qty,
-                                                                     delay=delay))
+            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                traded_price=traded_price,
+                qty=qty,
+                traded_qty=traded_qty,
+                delay=delay))
+
+
 if __name__ == '__main__':
     rule_manager = RuleManager()
+    rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
-    rule_manager_eq = RuleManager(Simulators.equity)
-    # rule_manager.remove_rule_by_id(33)
-    # rule_manager.print_active_rules()
+    # rule_manager_eq = RuleManager(Simulators.equity)
     # print("_________________________")
-    rule_manager_eq.remove_rules_by_id_range(900, 1194)
-    rule_manager_eq.print_active_rules()
+    # rule_manager_eq.print_active_rules()
+    Stubs.factory.close()
