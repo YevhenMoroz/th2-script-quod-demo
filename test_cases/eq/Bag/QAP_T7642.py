@@ -37,9 +37,7 @@ class QAP_T7642(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Declaration
         qty = '1000'
-        qty_of_wave = str(int(int(qty) * 2))
         price = '10'
-        exec_destination = self.data_set.get_mic_by_name('mic_1')
         orders_id = []
         client = self.data_set.get_client_by_name('client_pt_1')
         name_of_bag = 'QAP_T7642'
