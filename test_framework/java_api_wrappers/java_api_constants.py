@@ -7,6 +7,7 @@ class ExecutionReportConst(Enum):
     ExecType_TRD = 'TRD'
     ExecType_CAL = 'CAL'
     ExecType_CAN = 'CAN'
+    ExecType_DFD = 'DFD'
 
 
 class BasketMessagesConst(Enum):
@@ -27,6 +28,11 @@ class OrderReplyConst(Enum):
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
     TransStatus_ELI = 'ELI'
+    OrdCapacity_A = 'A'
+    OrdCapacity_P = 'P'
+    OrdCapacity_I = 'I'
+    IsLocked_Y = 'Y'
+    IsLocked_N = 'N'
 
 
 class ExecutionPolicyConst(Enum):
@@ -88,6 +94,8 @@ class ConfirmationReportConst(Enum):
     ConfirmStatus_CXL = 'CXL'
     MatchStatus_UNM = 'UNM'
     AffirmStatus_AFF = 'AFF'
+    ConfirmTransType_NEW = 'NEW'
+    ConfirmTransType_CAN = 'CAN'
 
 
 class CommissionBasisConst(Enum):
@@ -235,6 +243,13 @@ class JavaApiFields(Enum):
     ConfirmationID = 'ConfirmationID'
     RootMiscFeeCategory = 'RootMiscFeeCategory'
     ClAllocID = 'ClAllocID'
+    AccountGroupID = 'AccountGroupID'
+    ConfirmTransType = 'ConfirmTransType'
+    SingleAllocAccountID = 'SingleAllocAccountID'
+    OrdCapacity = 'OrdCapacity'
+    CDOrdFreeNotes = 'CDOrdFreeNotes'
+    VenueClientActGrpName = 'VenueClientActGrpName'
+    IsLocked = 'IsLocked'
 
 
 class JavaApiPartyRoleConstants(Enum):
