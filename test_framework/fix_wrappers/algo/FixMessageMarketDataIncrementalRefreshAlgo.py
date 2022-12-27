@@ -48,6 +48,26 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         super().change_parameters(base_parameters)
         return self
 
+    def set_market_data_incr_refresh_iiv_pop(self) -> FixMessageMarketDataIncrementalRefresh:
+        base_parameters = {
+            'MDReqID': '2754',
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': 'Q',
+                    'MDEntryPx': '40',
+                    'MDEntrySize': '3000',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                    'TradingSessionSubID': '2',
+                    'SecurityTradingStatus': '3',
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+
     def check_MDReqID(self, symbol: str, session_alias: str):
         list_MDRefID = Stubs.simulator_algo.getAllMDRefID(request=RequestMDRefID(
             symbol=symbol,
