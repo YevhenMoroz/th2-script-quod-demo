@@ -388,14 +388,17 @@ class AlgoFormulasManager:
     @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
                                     comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
-        lit_touch = bid_price
+        if ord_side == 1:
+            lit_touch = bid_price
+        else:
+            lit_touch = ask_price
         giveup_cost = cost_per_trade / parent_qty
         if is_comm_per_unit == False:
             commission = comm_basis_point / 10000 * lit_touch
         else:
             commission = comm_per_unit
-        custom_adjustement = (ask_price - bid_price) * spread_disc_proportion
+        custom_adjustment = (ask_price - bid_price) * spread_disc_proportion
         if ord_side == 1:
-            return round((lit_touch + giveup_cost + commission + custom_adjustement), 3)
+            return round((lit_touch + giveup_cost + commission + custom_adjustment), 4)
         else:
-            return round((lit_touch - giveup_cost - commission - custom_adjustement), 3)
+            return round((lit_touch - giveup_cost - commission - custom_adjustment), 4)
