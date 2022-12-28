@@ -266,6 +266,7 @@ class JavaApiPartyRoleConstants(Enum):
 
 class BagChildCreationPolicy(Enum):
     Split = 'SPL'
+    AVP = 'AVP'  # GroupByAvgPx
 
 
 class TimeInForces(Enum):
