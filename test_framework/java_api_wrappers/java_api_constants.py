@@ -255,6 +255,7 @@ class JavaApiFields(Enum):
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
+    OrderWaveStatus = 'OrderWaveStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -294,3 +295,4 @@ class AllocTypes(Enum):
 class OrderBagConst(Enum):
     OrderBagStatus_NEW = 'NEW'
     OrderBagStatus_CXL = 'CXL'
+    OrderWaveStatus_TER = 'TER'
