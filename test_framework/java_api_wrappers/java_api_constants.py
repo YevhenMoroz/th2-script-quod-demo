@@ -182,6 +182,7 @@ class JavaApiFields(Enum):
     DayCumQty = 'DayCumQty'
     DayCumAmt = 'DayCumAmt'
     UnsolicitedOrder = "UnsolicitedOrder"
+    OrdQty = 'OrdQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
