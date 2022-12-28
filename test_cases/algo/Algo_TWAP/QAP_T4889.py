@@ -36,7 +36,7 @@ class QAP_T4889(TestCase):
         self.qty = 2000
         self.price = self.price_ask = 40
         self.price_bid = 30
-        self.mid_price = int(self.price_ask + self.price_bid)/2
+        self.mid_price = int((self.price_ask + self.price_bid)/2)
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value

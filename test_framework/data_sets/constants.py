@@ -46,6 +46,7 @@ class Connectivity(Enum):
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
+    Columbia_310_web_admin_site = 'rest_wa310columbia'
     Kuiper_320_web_admin = 'rest_wa320kuiper'
     Kuiper_320_web_admin_site = 'rest_wa320kuiper_site_admin'
     Kuiper_320_web_trading_http = 'rest_wt320kuiper'

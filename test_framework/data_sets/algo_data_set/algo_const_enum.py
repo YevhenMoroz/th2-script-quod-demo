@@ -262,6 +262,7 @@ class AlgoAccounts(Enum):
     account_17 = "QDL2_CLIENT2"
     account_18 = "XAMS_CLIENT2"
     account_19 = "XAMS_CLIENT3"
+    account_20 = "DKP1_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):

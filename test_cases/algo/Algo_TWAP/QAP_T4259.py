@@ -16,7 +16,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 
-class QAP_T4946(TestCase):
+class QAP_T4259(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -33,22 +33,23 @@ class QAP_T4946(TestCase):
 
         # region order parameters
         self.order_type = constants.OrderType.Limit.value
-        self.qty = 200
-        self.round_lot = 50
-        self.waves = 4 # value assigned by the BE
-        self.aggressivity = 3
+        self.qty = 2000
+        self.price = 1
         self.price_ask = 40
         self.price_bid = 30
-        self.price = 1
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
-        self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves, self.round_lot)
-        self.slice2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-1, self.round_lot)
-        self.slice3_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-2, self.round_lot)
-        self.slice4_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-3, self.round_lot)
-        self.waves = 10 # value sent by the FIX
+        self.waves = 5
+        self.child_min_val = 450
         # endregion
+        
+        # region children parameters
+        self.waves = 4
+        self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
+        self.slice2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-1)
+        self.slice3_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-2)
+        self.slice4_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-3)
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -64,7 +65,7 @@ class QAP_T4946(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_28")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
         # endregion
 
         # region Direction
@@ -76,7 +77,7 @@ class QAP_T4946(TestCase):
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name("account_2")
-        self.s_par = self.data_set.get_listing_id_by_name("listing_50")
+        self.s_par = self.data_set.get_listing_id_by_name("listing_1")
         # endregion
 
         # region Key parameters
@@ -90,13 +91,14 @@ class QAP_T4946(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
-        self.rule_list = [nos_ioc_rule, ocr_rule]
+        self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
         # endregion
 
         now = datetime.utcnow()
-        start_time = (now + timedelta(seconds=5)).strftime("%Y%m%d-%H:%M:%S")
+        start_time = now.strftime("%Y%m%d-%H:%M:%S")
         end_time = (now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
 
         # region Send_MarkerData
@@ -115,12 +117,12 @@ class QAP_T4946(TestCase):
 
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
         self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time), dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time),
-                                                                                 dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves), dict(StrategyParameterName='Aggressivity', StrategyParameterType='1', StrategyParameterValue=self.aggressivity)])
+                                                                                 dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves), dict(StrategyParameterName='ChildMinValue', StrategyParameterType='6', StrategyParameterValue=self.child_min_val)])
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, case_id_1)
 
-        time.sleep(5)
+        time.sleep(3)
         # endregion
 
         # region Check Sell side
@@ -135,79 +137,96 @@ class QAP_T4946(TestCase):
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(5)
-
-        # region Check child DMA order Slice 1
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 1", self.test_id))
+        # region Check child orders (Slice 1 - Slice 4)
+        # region Slice 1
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order Slice 1", self.test_id))
 
         slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        self.fix_verifier_buy.check_fix_message(slice1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Slice 1 DMA order')
+
 
         pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Slice 1 DMA order')
+
         new_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Slice 1 DMA order')
+
+        time.sleep(60)
+
+        replaced_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_cancel_replace)
+        replaced_slice1_order_params.change_parameter('TimeInForce', self.tif_ioc)
+        self.fix_verifier_buy.check_fix_message(replaced_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Replaced Slice 1 DMA order')
+
         eliminate_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_eliminate)
+        eliminate_slice1_order_params.change_parameters(dict(TimeInForce=self.tif_ioc, Price=self.price, OrigClOrdID='*')).remove_parameters(['ExDestination'])
+        self.fix_verifier_buy.check_fix_message(eliminate_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Slice 1 DMA order')
         # endregion
 
-        time.sleep(75)
-
-        # region Check child DMA order Slice 2
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
-
+        # region Slice 2
         slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         pending_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_pending)
+
         new_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_new)
+
+        replaced_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_cancel_replace)
+        replaced_slice2_order_params.change_parameter('TimeInForce', self.tif_ioc)
+
         eliminate_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_eliminate)
+        eliminate_slice2_order_params.change_parameters(dict(TimeInForce=self.tif_ioc, Price=self.price, OrigClOrdID='*')).remove_parameters(['ExDestination'])
         # endregion
 
-        time.sleep(75)
-
-        # region Check child DMA order Slice 3
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 3", self.test_id))
-
+        # region Slice 3
         slice3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice3_order.change_parameters(dict(OrderQty=self.slice3_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        slice3_order.change_parameters(dict(OrderQty=self.slice3_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         pending_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_pending)
+
         new_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_new)
+
+        replaced_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_cancel_replace)
+        replaced_slice3_order_params.change_parameter('TimeInForce', self.tif_ioc)
+
         eliminate_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_eliminate)
+        eliminate_slice3_order_params.change_parameters(dict(TimeInForce=self.tif_ioc, Price=self.price, OrigClOrdID='*')).remove_parameters(['ExDestination'])
         # endregion
 
-        time.sleep(75)
-
-        # region Check child DMA order Slice 4
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 4", self.test_id))
-
+        # region Slice 4
         slice4_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice4_order.change_parameters(dict(OrderQty=self.slice4_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        slice4_order.change_parameters(dict(OrderQty=self.slice4_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         pending_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_pending)
+
         new_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_new)
+
+        replaced_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_cancel_replace)
+        replaced_slice4_order_params.change_parameter('TimeInForce', self.tif_ioc)
+
         eliminate_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_eliminate)
+        eliminate_slice4_order_params.change_parameters(dict(TimeInForce=self.tif_ioc, Price=self.price, OrigClOrdID='*')).remove_parameters(['ExDestination'])
         # endregion
 
-        time.sleep(80)
+        time.sleep(350)
 
-        # region Check that only 4 child orders are generated
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check that there 4 child orders were generated", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_slice1_order_params, new_slice1_order_params, eliminate_slice1_order_params,
-                                                          pending_slice2_order_params, new_slice2_order_params, eliminate_slice2_order_params,
-                                                          pending_slice3_order_params, new_slice3_order_params, eliminate_slice3_order_params,
-                                                          pending_slice4_order_params, new_slice4_order_params, eliminate_slice4_order_params],
-                                                         [None, None, None, None, None, None, None, None, None, None, None, None], self.ToQuod)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that only 4 child orders were released instead of 5", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_slice1_order_params, new_slice1_order_params, replaced_slice1_order_params, eliminate_slice1_order_params,
+                                                          pending_slice2_order_params, new_slice2_order_params, replaced_slice2_order_params,eliminate_slice2_order_params,
+                                                          pending_slice3_order_params, new_slice3_order_params, replaced_slice3_order_params,eliminate_slice3_order_params,
+                                                          pending_slice4_order_params, new_slice4_order_params, replaced_slice4_order_params,eliminate_slice4_order_params],
+                                                         [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], self.ToQuod)
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        # region Cancel Algo Order
+        # region Eliminate Algo Order
         case_id_3 = bca.create_event("Eliminate Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
 
-        # region check elimination parent TWAP order
         eliminate_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_twap_order.change_parameters(dict(NoParty='*', Price=self.price, LastMkt='*', Text='reached end time'))
-        self.fix_verifier_sell.check_fix_message(eliminate_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
-        # endregion
+        eliminate_twap_order.change_parameters(dict(NoParty='*', Text='*'))
 
-        RuleManager().remove_rules(self.rule_list)
+        self.fix_verifier_sell.check_fix_message(eliminate_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)

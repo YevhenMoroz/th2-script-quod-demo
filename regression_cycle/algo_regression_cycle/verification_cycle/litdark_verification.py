@@ -24,7 +24,7 @@ def test_run(parent_id=None, version=None):
 
 
     try:
-        report_id = bca.create_event(f"Algo_LitDark" if version is None else f"Algo_LitDark | {version}", parent_id)
+        report_id = bca.create_event(f"Algo_LitDark (verification) | 5.1.169.182" if version is None else f"Algo_LitDark (verification) | {version}", parent_id)
         configuration = ComponentConfiguration("Lit_dark")
         QAP_T7732(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
