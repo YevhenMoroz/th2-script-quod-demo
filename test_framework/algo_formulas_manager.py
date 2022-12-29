@@ -280,6 +280,18 @@ class AlgoFormulasManager:
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.AtLast:
+            pcl_end = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            clo_start = pcl_end + timedelta(minutes=4)
+            pcl_start = pcl_end - timedelta(minutes=5)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+        elif phase == TradingPhases.Closed:
+            clo_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = clo_start - timedelta(minutes=5)
+            pcl_start = pcl_end - timedelta(minutes=5)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
 
         return [
             {
