@@ -44,6 +44,7 @@ class QAP_T7445(TestCase):
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.alloc_report = FixMessageAllocationInstructionReportOMS()
         self.fix_message.set_default_dma_limit()
+        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter('Price')
         self.fix_message.change_parameters(
@@ -108,6 +109,7 @@ class QAP_T7445(TestCase):
         ignored_list = ['SettlCurrency', 'LastExecutionPolicy', 'TradeDate', 'TradeReportingIndicator', 'LastMkt',
                         'SecurityDesc', 'SecondaryExecID',
                         'ExDestination', 'GrossTradeAmt']
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({"ExecType": '3', "OrdStatus": '1'})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)
