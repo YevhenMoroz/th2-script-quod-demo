@@ -56,17 +56,6 @@ class QAP_T7281(TestCase):
         self.rest_commission_sender.set_modify_client_commission_message()
         self.rest_commission_sender.send_post_request()
         # endregion
-        # region set configuration on backend (precondition)
-        tree = ET.parse(self.local_path)
-        element = ET.fromstring("<automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>")
-        quod = tree.getroot()
-        quod.append(element)
-        tree.write("temp.xml")
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
-        self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(90)
-        # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
@@ -118,7 +107,3 @@ class QAP_T7281(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(120)
-        os.remove("temp.xml")
