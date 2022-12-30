@@ -4,6 +4,8 @@ import time
 
 from pathlib import Path
 
+import pytz
+
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
@@ -145,28 +147,24 @@ class QAP_T4481(TestCase):
         self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
         scheduler.enterabs(end_time, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_close))
 
-        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
-        scheduler.enterabs(end_time + 5, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_close))
-
         self.fix_verifier_buy.set_case_id(case_id_2)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
+        auction_child_time = AFM.change_datetime_from_epoch_to_normal(end_time).astimezone(pytz.utc).isoformat()[:-6]
+
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=7, Parties='*', QtyType='*', SettlDate='*'))
-        # self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order')
+        self.dma_order.change_parameter("TransactTime", ">" + auction_child_time)
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
 
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        # self.fix_verifier_buy.check_fix_message(er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order')
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
-        # self.fix_verifier_buy.check_fix_message(er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order')
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
 
         scheduler.run()
-
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
