@@ -3,6 +3,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from get_project_root import root_path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
@@ -23,7 +25,7 @@ def test_run(parent_id=None, version=None):
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     try:
-        tests = os.listdir('..\\..\\test_cases\\eq\\Bag')
+        tests = os.listdir(root_path(ignore_cwd=True) + '\\test_cases\\eq\\Bag')
         for test in tests:
             exec(f"from test_cases.eq.Bag.{test[:-3]} import {test[:-3]}")
             exec(f"{test[:-3]}(report_id=report_id, session_id=session_id, data_set=data_set,\
