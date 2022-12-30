@@ -208,6 +208,7 @@ class QAP_T7481(TestCase):
         als_message.update({"ConfirmStatus": "Cancel"})
         self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
                                                       timeout=60000)
+        time.sleep(10)
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
