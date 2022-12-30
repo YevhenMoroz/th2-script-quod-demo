@@ -80,9 +80,8 @@ class QAP_T7046(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
         self.fix_manager.compare_values({"Account": self.client}, exec_rep, "Check Client in sell gtw report")
-
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
-        self.exec_report.change_parameters({"Account": self.venue_client_name})
         self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
         ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker"]
         self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_fields)

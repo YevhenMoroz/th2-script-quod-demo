@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from copy import copy
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -78,6 +79,7 @@ class QAP_T8436(TestCase):
                                                                                                   self.venue,
                                                                                                   float(self.price))
             # region create first DMA order
+            instr = copy(self.instrument)
             self.instrument.pop('SecurityExchange')
             self.fix_message.change_parameters({"Instrument": self.instrument, 'ExDestination': self.venue})
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
@@ -88,16 +90,8 @@ class QAP_T8436(TestCase):
         # endregion
 
         # region check exec report
-        instrument_for_check = {
-            'Symbol': 'FR0010436584',
-            'SecurityID': 'FR0010436584',
-            'SecurityIDSource': '4',
-            'SecurityExchange': 'XPAR',
-            'SecurityType': 'CS',
-            'SecurityDesc': 'DREAMNEX'
-        }
         self.exec_report.set_default_new(self.fix_message)
-        self.exec_report.change_parameters({"Instrument": instrument_for_check})
+        self.exec_report.change_parameters({"Instrument": instr})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
                                                          ignored_fields=['ReplyReceivedTime', 'SecondaryOrderID',
                                                                          'LastMkt', 'Text'])
