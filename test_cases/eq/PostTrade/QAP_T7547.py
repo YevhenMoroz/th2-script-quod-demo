@@ -41,7 +41,7 @@ class QAP_T7547(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.qty = "100"
         self.price = "20"
         self.qty_to_alloc: str = str(float(self.qty) // 2)
