@@ -299,3 +299,4 @@ class OrderBagConst(Enum):
     OrderBagStatus_NEW = 'NEW'
     OrderBagStatus_CXL = 'CXL'
     OrderWaveStatus_TER = 'TER'
+    OrderBagStatus_TER = 'TER'

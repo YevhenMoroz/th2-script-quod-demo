@@ -69,6 +69,7 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    OrderBagDissociateReply = 'Order_OrderBagDissociateReply'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
