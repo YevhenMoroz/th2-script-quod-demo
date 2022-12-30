@@ -253,6 +253,7 @@ class JavaApiFields(Enum):
     CDOrdFreeNotes = 'CDOrdFreeNotes'
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
+    Currency = "Currency"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
