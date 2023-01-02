@@ -13,7 +13,7 @@ from test_framework.java_api_wrappers.java_api_constants import (
     OrderReplyConst,
     JavaApiFields,
     CommissionAmountTypeConst,
-    CommissionBasisConst,
+    CommissionBasisConst, ExecutionReportConst,
 )
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
@@ -88,15 +88,15 @@ class QAP_T8726(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         class_name.print_message("TRADE", responses)
         execution_report_message = self.java_api_manager.get_last_message(
-            ORSMessageType.ExecutionReport.value
+            ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value
         ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
             {
-                JavaApiFields.CommissionRate.value: "617.0",
+                JavaApiFields.CommissionRate.value: '5.0',
                 JavaApiFields.CommissionAmount.value: "617.0",
                 JavaApiFields.CommissionCurrency.value: "EUR",
                 JavaApiFields.CommissionAmountType.value: CommissionAmountTypeConst.CommissionAmountType_BRK.value,
-                JavaApiFields.CommissionBasis.value: CommissionBasisConst.CommissionBasis_ABS.value,
+                JavaApiFields.CommissionBasis.value: CommissionBasisConst.CommissionBasis_PCT.value,
             },
             execution_report_message["ClientCommissionList"]["ClientCommissionBlock"][0],
             "Comparing Commissions",

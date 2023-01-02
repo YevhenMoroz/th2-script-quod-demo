@@ -123,7 +123,7 @@ class OmsClients(Enum):
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
-    сlient_com_exempted = "CLIENT_COMM_1_EXEMPTED"
+    client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
@@ -131,11 +131,13 @@ class OmsClients(Enum):
     """ClientAccountGroupID"""
     client_2_ext_id = "CLIENT2ExtID"
 
+
 class OmsVenueClientNames(Enum):
     """Base"""
     client_1_venue_1 = "XPAR_CLIENT1"
     client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
+    client_3_venue_1 = "XPAR_CLIENT3"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"

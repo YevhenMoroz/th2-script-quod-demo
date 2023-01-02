@@ -130,6 +130,8 @@ class JavaApiFields(Enum):
     PartyRole = "PartyRole"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
+    TimeInForce = 'TimeInForce'
+    ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
@@ -180,6 +182,7 @@ class JavaApiFields(Enum):
     DayCumQty = 'DayCumQty'
     DayCumAmt = 'DayCumAmt'
     UnsolicitedOrder = "UnsolicitedOrder"
+    OrdQty = 'OrdQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -250,6 +253,11 @@ class JavaApiFields(Enum):
     CDOrdFreeNotes = 'CDOrdFreeNotes'
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
+    Currency = "Currency"
+
+    # fields of Bag
+    OrderBagStatus = 'OrderBagStatus'
+    OrderWaveStatus = 'OrderWaveStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -259,10 +267,12 @@ class JavaApiPartyRoleConstants(Enum):
 
 class BagChildCreationPolicy(Enum):
     Split = 'SPL'
+    AVP = 'AVP'  # GroupByAvgPx
 
 
 class TimeInForces(Enum):
     DAY = 'DAY'
+    GTD = 'GTD'
 
 
 class OrdTypes(Enum):
@@ -283,3 +293,10 @@ class AllocTransTypes(Enum):
 
 class AllocTypes(Enum):
     AllocType_P = 'Preliminary'
+
+
+class OrderBagConst(Enum):
+    OrderBagStatus_NEW = 'NEW'
+    OrderBagStatus_CXL = 'CXL'
+    OrderWaveStatus_TER = 'TER'
+    OrderBagStatus_TER = 'TER'

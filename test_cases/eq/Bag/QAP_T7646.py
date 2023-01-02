@@ -5,14 +5,14 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, SubmitRequestConst, \
+    BagChildCreationPolicy, ExecutionReportConst, OrderBagConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.ModifyBagOrderRequest import ModifyBagOrderRequest
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_bag_order_book import OMSBagOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.ors_messages.OrderBagCreationRequest import OrderBagCreationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,106 +28,94 @@ class QAP_T7646(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.bag_creation_request = OrderBagCreationRequest()
+        self.trade_entry = TradeEntryOMS(self.data_set)
+        self.bag_modification_request = ModifyBagOrderRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '1090'
+        qty = '1000'
         price = '10'
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', price)
-        exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', exec_destination)
-        lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.fix_message.change_parameter("HandlInst", '3')
-        qty_of_bag = QAP_T7646._adjustment_of_value(str(int(qty) * 2))
-        qty_of_bag_after_modification = QAP_T7646._adjustment_of_value(str(int(qty) * 3))
-        qty_of_bag_leaves_unmatched = QAP_T7646._adjustment_of_value(str(int((int(qty)/2+int(qty)*2))))
+        half_qty = str(int(qty) / 2)
         orders_id = []
         name_of_bag = 'QAP_T7646'
+        last_bag_order_qty = str(float(qty) * 3)
+        client = self.data_set.get_client_by_name('client_pt_1')
         # endregion
 
-        # region create 3 CO order
-        for i in range(3):
-            self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order(lookup, qty, price,
-                                           filter={'ClientName': self.data_set.get_client_by_name('client_pt_1')})
-            if i == 0:
-                self.order_book.manual_execution(str(int(qty) / 2), price)
-            self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-            orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
+        # region precondition
+
+        # part 1: Create 3 CO orders
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"OrdQty": qty,
+             "AccountGroupID": client,
+             "Price": price})
+        for counter in range(3):
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                         {
+                                                             "ClOrdID": bca.client_orderid(9)
+                                                         })
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            orders_id.append(order_reply[JavaApiFields.OrdID.value])
+
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply,
+                f'Checking expected and actually results for {orders_id[counter]} (precondition part 1)')
+        # end of part
+
+        # part 2 : create bag with 2 first orders
+        third_order_id = orders_id.pop(2)
+
+        self.bag_creation_request.set_default(BagChildCreationPolicy.Split.value, name_of_bag, orders_id)
+        self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
+
+        order_bag_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+                JavaApiFields.OrderBagNotificationBlock.value]
+        bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
+        expected_result = {JavaApiFields.OrderBagName.value: name_of_bag,
+                           JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
+
+        self.java_api_manager.compare_values(expected_result, order_bag_notification,
+                                             'Checking expected and actually results (precondition part 2)')
+        # end of part
+
+        # part 3 : Partially filled third CO order
+        self.trade_entry.set_default_trade(third_order_id, price, half_qty)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+
+        execution_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.TransExecStatus.value:
+                                                  ExecutionReportConst.TransExecStatus_PFL.value},
+                                             execution_report,
+                                             'Checking expected and actually results (precondition part 3)')
         # endregion
 
-        # region create Bag and extract values from it
-        self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag, price=price)
-        self.bag_order_book.create_bag()
-        order_bag_id = self.__extracting_and_comparing_value_for_bag_order([OrderBagColumn.order_bag_qty.value,
-                                                                            OrderBagColumn.ord_bag_name.value,
-                                                                            OrderBagColumn.unmatched_qty.value,
-                                                                            OrderBagColumn.leaves_qty.value,
-                                                                            OrderBagColumn.id.value
-                                                                            ],
-                                                                           [
-                                                                               qty_of_bag,
-                                                                               name_of_bag,
-                                                                               qty_of_bag,
-                                                                               qty_of_bag
-                                                                           ], True, 'creation')
-
+        # region step 1 , step 2, step 3 , step 4, step 5 : Modify Bag
+        orders_id.append(third_order_id)
+        self.bag_modification_request.set_default(bag_order_id, price, name_of_bag)
+        self.bag_modification_request.add_components_into_repeating_group('OrderBagOrderList', 'OrderBagOrderBlock',
+                                                                          'OrdID',
+                                                                          orders_id)
+        self.java_api_manager.send_message_and_receive_response(self.bag_modification_request)
         # endregion
 
-        # region modify bag_order and verifying bag_order after modify
-        java_api_message = ModifyBagOrderRequest()
-        java_api_message.set_default(order_bag_id, '10', name_of_bag)
-        java_api_message.add_components_into_repeating_group('OrderBagOrderList', 'OrderBagOrderBlock', 'OrdID',
-                                                             orders_id)
-        self.java_api_manager.send_message(java_api_message)
+        # region step 6 : Checking BagQty
+        order_bag_notification = self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value). \
+            get_parameters()[JavaApiFields.OrderBagNotificationBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.OrderBagQty.value: last_bag_order_qty},
+                                             order_bag_notification,
+                                             'Checking expected and actually results (step 6)')
         # endregion
-
-        # extracting and comparing values after modification
-        self.__extracting_and_comparing_value_for_bag_order([OrderBagColumn.order_bag_qty.value,
-                                                             OrderBagColumn.ord_bag_name.value,
-                                                             OrderBagColumn.unmatched_qty.value,
-                                                             OrderBagColumn.leaves_qty.value
-                                                             ], [
-                                                                qty_of_bag_after_modification,
-                                                                name_of_bag,
-                                                                qty_of_bag_leaves_unmatched,
-                                                                qty_of_bag_leaves_unmatched],
-                                                            False, ' modification')
-        # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __extracting_and_comparing_value_for_bag_order(self, bag_column_extraction: list, expected_values: list,
-                                                       return_order_bag_id: bool, action: str):
-        fields = self.bag_order_book.extract_order_bag_book_details('1', bag_column_extraction)
-        expected_values_bag = dict()
-        order_bag_id = None
-        if return_order_bag_id:
-            order_bag_id = fields.pop(OrderBagColumn.id.value)
-            bag_column_extraction.remove(OrderBagColumn.id.value)
-        for count in range(len(bag_column_extraction)):
-            expected_values_bag.update({bag_column_extraction[count]: expected_values[count]})
-        self.bag_order_book.compare_values(expected_values_bag,
-                                           fields, f'Compare values from bag_book after {action}')
-        if return_order_bag_id:
-            return order_bag_id
-
-    @staticmethod
-    @try_except(test_id=Path(__file__).name[:-3])
-    def _adjustment_of_value(string_value: str):
-        new_value = str()
-        for i in range(len(string_value)):
-            if i is 1:
-                new_value = new_value + ',' + string_value[i]
-            else:
-                new_value = new_value + string_value[i]
-        return new_value

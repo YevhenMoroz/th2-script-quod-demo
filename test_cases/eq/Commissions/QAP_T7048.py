@@ -131,7 +131,7 @@ class QAP_T7048(TestCase):
                                                 "RootMiscFeeType": "22", 'RootMiscFeeRate': '10',
                                                 'RootMiscFeeAmt': '10'}]}
         alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'RootCommTypeClCommBasis',
-                                'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt']
+                                'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt','OrderAvgPx']
         self.alloc_report.set_default_ready_to_book(self.fix_message)
         self.alloc_report.change_parameters({"NoRootMiscFeesList": no_misc_fees})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=alloc_ignored_fields)
@@ -183,7 +183,7 @@ class QAP_T7048(TestCase):
         # region check ready to book message
         no_misc_fees = {'NoMiscFees': [{"MiscFeeAmt": '5', "MiscFeeCurr": self.com_cur,
                                                 "MiscFeeType": "22"}]}
-        alloc_ignored_fields = ['AvgPx', 'tag5120', 'CommissionData']
+        alloc_ignored_fields = ['AvgPx', 'tag5120', 'CommissionData','OrderAvgPx']
         self.conf_report.set_default_confirmation_new(self.fix_message)
         self.conf_report.change_parameters({'NoMiscFees': no_misc_fees})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.conf_report, ignored_fields=alloc_ignored_fields)

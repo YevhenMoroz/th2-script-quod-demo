@@ -32,6 +32,7 @@ class ModifyBagOrderRequest(JavaApiMessage):
         for keys_of_component in parameters.keys():
             if type(parameters[keys_of_component]) is dict:
                 for value in range(len(values_of_repeating_group)):
-
+                    if parameters[keys_of_component][component_name][name_of_repeating_group] is None:
+                        parameters[keys_of_component][component_name][name_of_repeating_group] = []
                     parameters[keys_of_component][component_name][name_of_repeating_group].append({name_of_component_into_repeating_group:values_of_repeating_group[value]})
         super().change_parameters(parameters)
