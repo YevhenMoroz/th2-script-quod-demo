@@ -263,7 +263,7 @@ class AlgoFormulasManager:
     def get_timestamps_for_current_phase(phase: TradingPhases):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
-            pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
@@ -275,19 +275,19 @@ class AlgoFormulasManager:
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.Open:
-            opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_start = opn_start + timedelta(minutes=4)
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.AtLast:
-            pcl_end = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             clo_start = pcl_end + timedelta(minutes=4)
             pcl_start = pcl_end - timedelta(minutes=5)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
         elif phase == TradingPhases.Closed:
-            clo_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            clo_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = clo_start - timedelta(minutes=5)
             pcl_start = pcl_end - timedelta(minutes=5)
             opn_start = pcl_start - timedelta(minutes=5)
