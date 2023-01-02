@@ -38,7 +38,7 @@ class QAP_T4915(TestCase):
         self.pct = 0.1
         self.price_ask = 40
         self.price = self.price_bid = 30
-        self.qty_bid = self.qty_ask = 1_000_000
+        self.qty_bid = self.qty_ask = 1_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
         self.ltq = 1000
@@ -93,18 +93,6 @@ class QAP_T4915(TestCase):
         self.rule_list = [nos_ioc_rule, ocr_rule, nos_dma_rule]
         # endregion
 
-        # region Send NewOrderSingle (35=D) for POV order
-        case_id_1 = bca.create_event("Create POV Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_1)
-
-        self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
-        self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
-        self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': '1', 'StrategyParameterValue': self.aggressivity}])
-        self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
-        # endregion
-
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
@@ -118,6 +106,18 @@ class QAP_T4915(TestCase):
         market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
         self.fix_manager_feed_handler.send_message(market_data_incr_par)
+        # endregion
+
+        # region Send NewOrderSingle (35=D) for POV order
+        case_id_1 = bca.create_event("Create POV Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
+
+        self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
+        self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
+        self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': '1', 'StrategyParameterValue': self.aggressivity}])
+        self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
         # endregion
 
         # region Check Sell side

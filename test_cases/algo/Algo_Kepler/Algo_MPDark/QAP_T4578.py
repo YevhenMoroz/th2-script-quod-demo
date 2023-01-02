@@ -129,7 +129,7 @@ class QAP_T4578(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
-        time.sleep(3)
+        time.sleep(10)
         # endregion
 
         # region Check Sell side
@@ -260,6 +260,8 @@ class QAP_T4578(TestCase):
         er_new_dma_2_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_itg_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New 2nd child DMA order on ITG')
         # endregion
+
+        time.sleep(15)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

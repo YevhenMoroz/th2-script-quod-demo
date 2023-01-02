@@ -62,7 +62,7 @@ class LocationsPage(CommonPage):
         return self.is_element_present(LocationsConstants.DISPLAYED_ENTITY_XPATH.format(value))
 
     def get_list_of_all_zones(self):
-        return self._get_all_items_from_table_column(LocationsConstants.ZONES_NAME_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(LocationsConstants.ZONES_NAME_COLUMN_XPATH)
 
     def get_list_of_all_locations_name(self):
-        return self._get_all_items_from_table_column(LocationsConstants.LOCATIONS_NAME_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(LocationsConstants.LOCATIONS_NAME_COLUMN_XPATH)

@@ -10,11 +10,11 @@ from custom import basic_custom_actions as bca
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
+    ExecutionPolicyConst, SubmitRequestConst, OrdListNotificationConst
 from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveCreationRequest import OrderListWaveCreationRequest
-from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst, OrdListNotificationConst, \
-    JavaApiFields, ExecutionReportConst, ExecutionPolicyConst
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

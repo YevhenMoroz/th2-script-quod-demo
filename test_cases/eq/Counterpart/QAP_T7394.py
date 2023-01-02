@@ -53,9 +53,15 @@ class QAP_T7394(TestCase):
         parties = {
             'NoPartyIDs': [
                 self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
+                {'PartyRole': "34",
+                 'PartyID': "RegulatoryBody - Venue(Paris)",
+                 'PartyIDSource': "C"},
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+                {'PartyRole': "*",
+                 'PartyRoleQualifier': '*',
+                 'PartyID': "*",
+                 'PartyIDSource': "*"}
             ]
         }
         list_of_ignored_fields = ['SettlCurrency', 'LastExecutionPolicy', 'SecondaryOrderID', 'LastMkt', 'VenueType',
@@ -80,8 +86,18 @@ class QAP_T7394(TestCase):
                                                          }})
         responses = self.java_api_manager.send_message_and_receive_response(self.manual_execution)
         class_name.__print_message(f"{class_name}-RESPONSE AFTER MANUAL EXECUTION", responses)
+        parties['NoPartyIDs'].remove({'PartyRole': "*",
+                                       'PartyRoleQualifier': '*',
+                                       'PartyID': "*",
+                                       'PartyIDSource': "*"})
         parties['NoPartyIDs'].extend([self.data_set.get_counterpart_id_fix('counter_part_id_executing_firm'),
-                                      self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm')])
+                                      self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm'),
+                                      self.data_set.get_counterpart_id_fix('counterpart_java_api_user'),
+                                      self.data_set.get_counterpart_id_fix(
+                                          'counterpart_id_regulatory_body_venue_paris')])
+        parties['NoPartyIDs'].remove({'PartyRole': "34",
+           'PartyID': "RegulatoryBody - Venue(Paris)",
+           'PartyIDSource': "C"})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": parties})

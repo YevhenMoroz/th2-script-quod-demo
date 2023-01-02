@@ -18,3 +18,6 @@ class TradingLimitsAssignmentsSubWizardPage(CommonPage):
     def get_institution(self):
         return self.get_text_by_xpath(TradingLimitsConstants.ASSIGNMENTS_TAB_INSTITUTIONS)
 
+    def is_institutions_field_enable(self):
+        return self.is_field_enabled(TradingLimitsConstants.ASSIGNMENTS_TAB_INSTITUTIONS)
+

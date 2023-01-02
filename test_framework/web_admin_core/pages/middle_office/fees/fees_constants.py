@@ -47,6 +47,7 @@ class FeesConstants:
 
     # Order fee profile sub wizard
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
+    ORDER_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH = '//*[normalize-space()="Commission Profile Name"]//*[@placeholder="Filter"]'
     ORDER_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
     ORDER_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
     ORDER_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
@@ -74,15 +75,18 @@ class FeesConstants:
     COMMISSION_PROFILE_BASE_VALUE_XPATH = '//*[@placeholder = "Base Value *"]'
     COMMISSION_PROFILE_MIN_COMMISSION_XPATH = '//*[@placeholder = "Min Commission"]'
     COMMISSION_PROFILE_UPPER_LIMIT_XPATH = '//*[@placeholder = "Upper Limit"]'
+    UPPER_LIMIT_COLUMN_XPATH = '//*[contains(text(), "Commission Profile Points")]//..//td[4]'
     COMMISSION_PROFILE_SLOPE_XPATH = '//*[@placeholder = "Slope"]'
 
     # Exec fee profile
+    EXEC_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH = '//*[normalize-space()="Commission Profile Name"]//*[@placeholder="Filter"]'
     EXEC_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
     EXEC_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
     EXEC_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
     EXEC_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
     EXEC_FEE_PROFILE_EDIT_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="edit"]'
     EXEC_FEE_PROFILE_DELETE_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="trash-2"]'
+    EXEC_FEE_PROFILE_DISPLAYED_PROFILE_XPATH = '//*[normalize-space()="{}"]'
 
     EXEC_FEE_PROFILE_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
     EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'

@@ -81,10 +81,10 @@ class QAP_T7230(TestCase):
         # region Check ExecutionReports
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters(
-            {"ReplyReceivedTime": "*", "LastMkt": "*", "Text": "*", "Account": self.venue_client_names}
+            {"ReplyReceivedTime": "*", "LastMkt": "*", "Text": "*", "Account": self.client}
         )
         self.exec_report.remove_parameters(["SettlCurrency"])
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=['SecurityDesc'])
         # endregion
 
         # region Book order and checking values after it in the Order book

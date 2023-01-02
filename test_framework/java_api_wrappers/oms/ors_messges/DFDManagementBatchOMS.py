@@ -32,6 +32,16 @@ class DFDManagementBatchOMS(DFDManagementBatch):
                                         {"DFDOrderList": {"DFDOrderBlock":
                                                               [{"OrdID": ord_id}]
                                                           }, "SetDoneForDay": "N"})
+
+    def set_default_complete_for_some_orders(self, orders_id: list):
+        list_of_order_id_in_message = []
+        for order_id in orders_id:
+            list_of_order_id_in_message.append({"OrdID": order_id})
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('DFDManagementBatchBlock',
+                                        {"DFDOrderList": {"DFDOrderBlock":
+                                                              list_of_order_id_in_message
+                                                          }})
         return self
 
     def set_notify_DFD(self, ord_id):

@@ -75,6 +75,24 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                 WebAdminRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod319_kuiper_web_admin_site.value: site_environment})
             return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod319_kuiper_web_admin_site.value]
+        elif env.value == EnvironmentType.quod310_columbia_web_admin_site.value:
+            if EnvironmentType.quod310_columbia_web_admin_site.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+                site_environment = WebAdminRestApiEnvironment(
+                    environment_type=EnvironmentType.quod310_columbia_web_admin_site.value,
+                    session_alias_wa=Connectivity.Columbia_310_web_admin_site.value
+                )
+                WebAdminRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod319_kuiper_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod319_kuiper_web_admin_site.value]
+        elif env.value == EnvironmentType.quod316_ganymede_web_admin_site.value:
+            if EnvironmentType.quod316_ganymede_redburn.value not in WebAdminRestApiEnvironment.environment_instances.keys():
+                site_environment = WebAdminRestApiEnvironment(
+                    environment_type=EnvironmentType.quod316_ganymede_web_admin_site.value,
+                    session_alias_wa=Connectivity.Ganymede_316_web_admin_site.value
+                )
+                WebAdminRestApiEnvironment.environment_instances.update(
+                    {EnvironmentType.quod316_ganymede_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod316_ganymede_web_admin_site.value]
         else:
             raise Exception('No such environment')
 

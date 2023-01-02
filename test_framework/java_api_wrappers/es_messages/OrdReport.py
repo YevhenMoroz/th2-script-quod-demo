@@ -16,7 +16,7 @@ class OrdReport(JavaApiMessage):
 
     def set_default(self):
         base_parameters = {
-            'SEND_SUBJECT': 'QUOD.ES.BUYGTW.REPLY',
+            'SEND_SUBJECT': 'QUOD.ES.BUYTH2TEST.REPLY',
             "Header": {
                 "MsgTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 "CreationTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),

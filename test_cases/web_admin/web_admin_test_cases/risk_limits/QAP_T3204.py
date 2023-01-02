@@ -136,6 +136,8 @@ class QAP_T3204(CommonTestCase):
     def trading_limits_page(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_trading_limits_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         trading_limits_page = TradingLimitsPage(self.web_driver_container)
         trading_limits_page.click_on_new()
 
@@ -182,6 +184,8 @@ class QAP_T3204(CommonTestCase):
     def cum_trading_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_cum_trading_limits_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         cum_trading_page = CumTradingLimitsPage(self.web_driver_container)
         cum_trading_page.click_on_new()
         value_tab = CumTradingLimitsValuesSubWizard(self.web_driver_container)
@@ -228,6 +232,8 @@ class QAP_T3204(CommonTestCase):
     def position_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_positions_limits_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         position_limits_page = PositionLimitsPage(self.web_driver_container)
         position_limits_page.click_on_new()
         value_tab = PositionLimitsValuesSubWizard(self.web_driver_container)
@@ -321,6 +327,8 @@ class QAP_T3204(CommonTestCase):
     def order_velocity_limits(self):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_order_velocity_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
         order_velocity_limit_page = OrderVelocityLimitsPage(self.web_driver_container)
         order_velocity_limit_page.click_on_new()
 

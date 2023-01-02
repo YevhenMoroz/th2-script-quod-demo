@@ -46,3 +46,25 @@ class AllocationInstructionOMS(AllocationInstruction):
         self.update_fields_in_component('AllocationInstructionBlock',
                                         {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]}})
         return self
+
+    def set_amend_book(self, alloc_instr_id, exec_id, exec_qty, exec_price):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('AllocationInstructionBlock',
+                                        {'ExecAllocList': {'ExecAllocBlock': [{"ExecQty": exec_qty,
+                                                                               'ExecID': exec_id,
+                                                                               'ExecPrice': exec_price}]},
+                                         'AllocInstructionID': alloc_instr_id, 'AllocTransType': 'R', 'AllocType': "P"})
+
+        return self
+
+    def set_ament_book_with_multiply_execution(self, alloc_instr_id, exec_ids: list, exec_qty, exec_price):
+        self.change_parameters(self.base_parameters)
+        list_of_exec_alloc_block = []
+        for exec_id in exec_ids:
+            list_of_exec_alloc_block.append({"ExecQty": exec_qty,
+                                             'ExecID': exec_id,
+                                             'ExecPrice': exec_price})
+        self.update_fields_in_component('AllocationInstructionBlock',
+                                        {'ExecAllocList': {'ExecAllocBlock': list_of_exec_alloc_block},
+                                         'AllocInstructionID': alloc_instr_id, 'AllocTransType': 'R', 'AllocType': "P"})
+

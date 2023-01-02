@@ -33,3 +33,9 @@ class TradeEntryOMS(TradeEntryRequest):
         self.update_fields_in_component('TradeEntryRequestBlock',
                                         {"OrdID": ord_id, "ExecPrice": exec_price, 'ExecQty': exec_qty})
         return self
+
+    def set_default_cancel_execution(self, order_id, exec_id):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('TradeEntryRequestBlock',
+                                        {"OrdID": order_id, "ExecPrice": '0', 'ExecQty': '0',
+                                         'TradeEntryTransType': 'CAN', 'ExecRefID': exec_id})

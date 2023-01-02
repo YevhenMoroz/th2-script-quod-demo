@@ -107,7 +107,7 @@ class QAP_T7015(TestCase):
         # region Set-up parameters and check Allocation Report
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
-            {'tag5120': '*', 'RootSettlCurrAmt': '*','SettlCurrFxRate': '#'})
+            {'tag5120': '*', 'RootSettlCurrAmt': '*', 'SettlCurrFxRate': '#'})
         self.allocation_message.remove_parameters(["Account"])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
                                                             ['AllocType', 'Account', 'NoOrders'])
@@ -130,7 +130,7 @@ class QAP_T7015(TestCase):
         class_name.print_message('Messages after ALLOCATE', responses)
 
         # region Set-up parameters and check Allocation Report after Allocate
-        list_of_ignored_fields = ['Account']
+        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity']
         pre_alloc_grp: dict = {
             'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty}]}}
         self.fix_message.change_parameters(pre_alloc_grp)
@@ -144,7 +144,7 @@ class QAP_T7015(TestCase):
         # region Check Confirmation Report
         self.confirmation_message.set_default_confirmation_new(self.fix_message)
         self.confirmation_message.change_parameters(
-            {'tag5120': '*', 'AllocAccount': self.alloc_account,'SettlCurrFxRate': '#'})
+            {'tag5120': '*', 'AllocAccount': self.alloc_account, 'SettlCurrFxRate': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
                                                             ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
         # endregion

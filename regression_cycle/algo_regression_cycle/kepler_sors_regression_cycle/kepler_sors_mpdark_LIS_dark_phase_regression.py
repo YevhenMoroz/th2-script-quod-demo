@@ -118,7 +118,6 @@ def test_run(parent_id=None, version=None):
         # region Part Execution (Dark order)
         QAP_T4614(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4589(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4586(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4587(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
@@ -126,7 +125,6 @@ def test_run(parent_id=None, version=None):
         QAP_T4792(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4790(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4789(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Modification

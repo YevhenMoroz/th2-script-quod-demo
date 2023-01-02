@@ -263,6 +263,7 @@ class QAP_T5072(TestCase):
         self.fix_verifier_sell.check_fix_message(partially_fill_SORPING_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partially Fill')
         # endregion
 
+        time.sleep(15)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

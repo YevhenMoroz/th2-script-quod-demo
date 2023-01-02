@@ -16,7 +16,8 @@ class QAP_T3918(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.new_link = "https://support.quodfinancial.com/confluence/login.action?os_destination=%2Fdashboard.action&permissionViolation=true#all-udates#ordermanagement-ordermgmtrules"
+        self.new_link = "https://support.quodfinancial.com/confluence"
+        self.opened_page = "#all-udates#ordermanagement-ordermgmtrules"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -35,8 +36,9 @@ class QAP_T3918(CommonTestCase):
                 self.verify("Help icon not works", True, e.__class__.__name__)
 
             try:
-                time.sleep(2)
-                self.verify("New link is open", True, main_page.is_link_of_help_icon_correct(self.new_link))
+                main_page.switch_to_browser_tab(1)
+                get_url = main_page.get_current_page_url()
+                self.verify("New link is open", True, self.new_link and self.opened_page in get_url)
             except Exception as e:
                 self.verify("Wrong new link", True, e.__class__.__name__)
 

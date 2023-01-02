@@ -68,7 +68,7 @@ class QAP_T6990(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('agent')
-        commission_profile = self.data_set.get_comm_profile_by_name('abs_amt')
+        commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         fee = self.data_set.get_fee_by_name('fee3')
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
@@ -80,11 +80,11 @@ class QAP_T6990(TestCase):
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
         # endregion
-        #
+
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
+        time.sleep(90)
         # endregion
 
         # region create CO  precondition
@@ -184,13 +184,13 @@ class QAP_T6990(TestCase):
         # endregion
 
         # region step 4
-        misc_fee_rate = 1
-        amount_of_fees = misc_fee_rate / 100
+        misc_fee_rate = 5
+        amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price)/100
         actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_CAL.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value][JavaApiFields.MiscFeesList.value][
                 JavaApiFields.MiscFeesBlock.value][0]
         expected_result = {JavaApiFields.MiscFeeRate.value: str(float(misc_fee_rate)),
-                           JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_A.value,
+                           JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
                            JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
                            JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEES_TYPE_AGE.value,
                            JavaApiFields.MiscFeeAmt.value: str(amount_of_fees)}
@@ -204,7 +204,7 @@ class QAP_T6990(TestCase):
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',
                                   'Price', 'Instrument', 'BookID', 'QuodTradeQualifier', 'NoParty', 'ExDestination',
-                                  'Side']
+                                  'Side','OrderAvgPx']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.change_parameters({
             'ClOrdID': cl_ord_id,
@@ -231,9 +231,13 @@ class QAP_T6990(TestCase):
                                        'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
-                                             'AllocType': '2'})
+                                             'AllocType': '5'})
         allocation_report.change_parameters({'AvgPx': new_avg_px, 'Currency': self.currency_post_trade,
                                              'tag5120': "*",
+                                             })
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
+        allocation_report.change_parameters({'NoMiscFees': '#',
+                                             'AllocType': '2',
                                              'NoAllocs': [{'AllocAccount': self.alloc_account,
                                                            'AllocQty': self.qty,
                                                            'IndividualAllocID': '*',
@@ -242,9 +246,6 @@ class QAP_T6990(TestCase):
                                                            'AllocInstructionMiscBlock2': '*'
                                                            }]
                                              })
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
-        allocation_report.change_parameters({'NoMiscFees': '#',
-                                             'AllocType': '2'})
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
@@ -266,3 +267,4 @@ class QAP_T6990(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
+        self.ssh_client.close()
