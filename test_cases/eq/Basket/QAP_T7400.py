@@ -5,13 +5,11 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import PercentageProfile, BasketBookColumns, SecondLevelTabs, \
-    OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, BasketMessagesConst, QtyPercentageProfile
+from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveCreationRequest import OrderListWaveCreationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,76 +21,87 @@ class QAP_T7400(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_env = environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.list_creation_request = NewOrderListOMS(self.data_set)
+        self.wave_creation_request = OrderListWaveCreationRequest()
+        self.per_qty1 = '0.7'
+        self.per_qty2 = '0.9'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Send NewOrderList
-        nol = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
-        self.fix_manager.send_message_and_receive_response_fix_standard(nol)
-        nol_id = nol.get_parameter("ListID")
+        # region Declaration
+        self.list_creation_request.set_default_order_list()
+        responses = self.java_api_manager.send_message_and_receive_response(self.list_creation_request)
+        self.return_result(responses, ORSMessageType.OrdListNotification.value)
+        list_notify_block = self.result.get_parameter('OrdListNotificationBlock')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ListOrderStatus.value: BasketMessagesConst.ListOrderStatus_EXE.value}, list_notify_block,
+            'Check created basket')
         # endregion
-        # region Accept
-        qty1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["OrderQtyData"]["OrderQty"]
-        qty2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["OrderQtyData"]["OrderQty"]
-        cl_ord_id1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["ClOrdID"]
-        cl_ord_id2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["ClOrdID"]
-        self.cl_inbox.accept_order(filter={"ClOrdId": cl_ord_id1})
-        self.cl_inbox.accept_order(filter={"ClOrdId": cl_ord_id2})
-        # endregion
-        # region Wave
-        percent_to_release = "70"
-        self.basket_book.wave_basket(percent_to_release, PercentageProfile.remaining_qty.value,
-                                     self.data_set.get_route("route_1"), basket_filter={
-                BasketBookColumns.cl_basket_id.value: nol_id})
-        # endregion
-        # region Verify wave
-        percent_qty_to_release = self.basket_book.get_basket_sub_lvl_value(1,
-                                                                           BasketBookColumns.percent_qty_to_release.value,
-                                                                           "Waves", basket_book_filter={
-                BasketBookColumns.cl_basket_id.value: nol_id})
 
-        percent_profile = self.basket_book.get_basket_sub_lvl_value(1, BasketBookColumns.percent_profile.value,
-                                                                    "Waves", basket_book_filter={
-                BasketBookColumns.cl_basket_id.value: nol_id})
-        self.basket_book.compare_values({"1": PercentageProfile.remaining_qty.value}, percent_profile,
-                                        "check percent_profile")
-        self.basket_book.compare_values({"1": percent_to_release}, percent_qty_to_release,
-                                        "check percent_qty_to_release")
+        # region get order_id
+        list_id = list_notify_block['OrderListID']
+        ord_id1 = list_notify_block['OrdNotificationElements']['OrdNotificationBlock'][0]['OrdID']
+        ord_id2 = list_notify_block['OrdNotificationElements']['OrdNotificationBlock'][1]['OrdID']
         # endregion
-        # region Verify child orders
-        basket_cl_ord1 = nol.get_parameter("ListOrdGrp")['NoOrders'][0]["ClOrdID"]
-        basket_cl_ord2 = nol.get_parameter("ListOrdGrp")['NoOrders'][1]["ClOrdID"]
-        act_child_qty_1 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [1],
-                                                              {OrderBookColumns.cl_ord_id.value: basket_cl_ord1})
-        act_child_qty_2 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [1],
-                                                              {OrderBookColumns.cl_ord_id.value: basket_cl_ord2})
-        expected_qty1 = str(int(int(qty1) * int(percent_to_release) / 100))
-        expected_qty2 = str(int(int(qty2) * int(percent_to_release) / 100))
-        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty1},  act_child_qty_1[0], "compare ord 1 child 1")
-        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty2}, act_child_qty_2[0], "compare ord 2 child 1")
-        # endregion
+
         # region Wave
-        percent_to_release = "90"
-        self.basket_book.wave_basket(percent_to_release, PercentageProfile.target_basket_qty.value,
-                                    self.data_set.get_route("route_1"), basket_filter={
-                BasketBookColumns.cl_basket_id.value: nol_id})
+        self.wave_creation_request.set_default(list_id, ord_id_list=[ord_id1, ord_id2], percent_qty=self.per_qty1)
+        responses = self.java_api_manager.send_message_and_receive_response(self.wave_creation_request)
+        self.return_result(responses, ORSMessageType.OrderListWaveNotification.value)
+        list_wave_notify_block = self.result.get_parameter('OrderListWaveNotificationBlock')
         # endregion
+
+        # region Verify wave
+        self.java_api_manager.compare_values(
+            {JavaApiFields.QtyPercentageProfile.value: QtyPercentageProfile.RemainingQty.value,
+             JavaApiFields.PercentQtyToRelease.value: self.per_qty1},
+            list_wave_notify_block,
+            'Check created first wave with RemainingQty QtyPercentageProfile')
+        # endregion
+
         # region Verify child orders
-        act_child_qty_1 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [1],
-                                                              {OrderBookColumns.cl_ord_id.value: basket_cl_ord1})
-        act_child_qty_2 = self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value,
-                                                              [OrderBookColumns.qty.value], [1],
-                                                              {OrderBookColumns.cl_ord_id.value: basket_cl_ord2})
-        expected_qty1_2 = str(int((int(qty1)*int(percent_to_release)/100) - (int(qty1)-(int(qty1)-int(expected_qty1)))))
-        expected_qty2_2 = str(int((int(qty2)*int(percent_to_release)/100) - (int(qty2)-(int(qty2)-int(expected_qty2)))))
-        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty1_2},  act_child_qty_1[0], "compare ord 1 child 2")
-        self.order_book.compare_values({OrderBookColumns.qty.value: expected_qty2_2}, act_child_qty_2[0], "compare ord 2 child 2")
+        ord_notify_element = list_wave_notify_block['OrdNotificationElements']['OrdNotificationBlock']
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrdQty.value: '70.0'},
+            ord_notify_element[0],
+            'Check first Child Order after RemainingQty waving')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrdQty.value: '70.0'},
+            ord_notify_element[1],
+            'Check second Child Order after RemainingQty waving')
         # endregion
+
+        # region Wave
+        self.wave_creation_request.set_default(list_id, ord_id_list=[ord_id1, ord_id2], percent_qty=self.per_qty2,
+                                               profile=QtyPercentageProfile.TargetBasketQty.value)
+        responses = self.java_api_manager.send_message_and_receive_response(self.wave_creation_request)
+        self.return_result(responses, ORSMessageType.OrderListWaveNotification.value)
+        list_wave_notify_block = self.result.get_parameter('OrderListWaveNotificationBlock')
+        # endregion
+
+        # region Verify child orders
+        self.java_api_manager.compare_values(
+            {JavaApiFields.QtyPercentageProfile.value: QtyPercentageProfile.TargetBasketQty.value,
+             JavaApiFields.PercentQtyToRelease.value: self.per_qty2},
+            list_wave_notify_block,
+            'Check created second wave with TargetBasketQty QtyPercentageProfile')
+        # endregion
+
+        # region Verify child orders
+        ord_notify_element = list_wave_notify_block['OrdNotificationElements']['OrdNotificationBlock']
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrdQty.value: '20.0'},
+            ord_notify_element[0],
+            'Check first Child Order after RemainingQty waving')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrdQty.value: '20.0'},
+            ord_notify_element[1],
+            'Check second Child Order after RemainingQty waving')
+        # endregion
+
+    def return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response
