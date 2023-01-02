@@ -1,7 +1,5 @@
 import os
-import sched
 import time
-import datetime
 
 from pathlib import Path
 
@@ -20,7 +18,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T9341(TestCase):
+class QAP_T4202(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -41,9 +39,7 @@ class QAP_T9341(TestCase):
         # region order parameters
         self.qty = 1000
         self.indicative_volume = 2000
-        self.percentage = 10
-        self.initial_slice_multiplier = 200
-        self.child_qty = AFM.get_child_qty_for_auction_first_child(self.indicative_volume, self.percentage, self.qty, self.initial_slice_multiplier)
+        self.child_qty = self.qty
         self.price = 30
         # endregion
 
@@ -104,13 +100,12 @@ class QAP_T9341(TestCase):
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        time.sleep(3)
         # end region
 
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase("4")
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -121,7 +116,6 @@ class QAP_T9341(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOC_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, AuctionInitialSliceMultiplier=self.initial_slice_multiplier))
         responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
 
         # region Check Sell side
@@ -142,7 +136,7 @@ class QAP_T9341(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, TimeInForce=7, Price=self.price, Parties='*', QtyType='*', SettlDate='*'))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=7, Parties='*', QtyType='*', SettlDate='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order')
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)

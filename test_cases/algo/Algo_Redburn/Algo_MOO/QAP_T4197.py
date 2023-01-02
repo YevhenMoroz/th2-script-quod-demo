@@ -17,10 +17,13 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T9341(TestCase):
+class QAP_T4197(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -41,9 +44,7 @@ class QAP_T9341(TestCase):
         # region order parameters
         self.qty = 1000
         self.indicative_volume = 2000
-        self.percentage = 10
-        self.initial_slice_multiplier = 200
-        self.child_qty = AFM.get_child_qty_for_auction_first_child(self.indicative_volume, self.percentage, self.qty, self.initial_slice_multiplier)
+        self.child_qty = self.qty
         self.price = 30
         # endregion
 
@@ -102,15 +103,14 @@ class QAP_T9341(TestCase):
         # region Update Trading Phase
 
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        time.sleep(3)
         # end region
 
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase("4")
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase("2")
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -118,21 +118,20 @@ class QAP_T9341(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOC_params()
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, AuctionInitialSliceMultiplier=self.initial_slice_multiplier))
         responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=7, NoParty='*', SecAltIDGrp='*'))
+        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=2, NoParty='*', SecAltIDGrp='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        er_new.change_parameters(dict(TimeInForce=7, NoParty='*', SecAltIDGrp='*')).remove_parameter('TargetStrategy')
+        er_new.change_parameters(dict(TimeInForce=2, NoParty='*', SecAltIDGrp='*')).remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -142,7 +141,7 @@ class QAP_T9341(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, TimeInForce=7, Price=self.price, Parties='*', QtyType='*', SettlDate='*'))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, Parties='*', QtyType='*', SettlDate='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order')
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -164,7 +163,7 @@ class QAP_T9341(TestCase):
         # endregion
 
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=7)).remove_parameters(["CxlQty", 'TargetStrategy'])
+        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
 
