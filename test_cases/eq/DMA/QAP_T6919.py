@@ -37,11 +37,10 @@ class QAP_T6919(TestCase):
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_2')
-        self.client = self.data_set.get_client_by_name('client_pt_1')
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.alloc_account = self.data_set.get_account_by_name('client_pt_2_acc_2')
+        self.client = self.data_set.get_client_by_name('client_pt_2')
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_2_venue_1')
         self.venue = self.data_set.get_mic_by_name('mic_1')
-        self.venue_client_acc_name = 'MOCLIENT_SA2_PARIS'
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
@@ -87,7 +86,6 @@ class QAP_T6919(TestCase):
 
         # region check exec report in BO
         self.exec_report.set_default_new(self.fix_message)
-        self.exec_report.change_parameters({'Account': self.venue_client_acc_name})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
                                                          ignored_fields=['Parties', 'QuodTradeQualifier', 'BookID',
                                                                          'NoParty', 'SecondaryOrderID', 'tag5120',

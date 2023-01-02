@@ -43,6 +43,7 @@ class QAP_T7113(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.fix_message.change_parameters({'Account': self.client})
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.price = self.fix_message.get_parameter('Price')
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
@@ -103,6 +104,7 @@ class QAP_T7113(TestCase):
 
         # region check TradeData in the exec report of the first message
         ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc']
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({'OrderID': ord_id1, 'TradeDate': default_trade_date})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, key_parameters=['OrderID', 'OrdStatus'],

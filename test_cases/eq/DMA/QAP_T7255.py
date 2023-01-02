@@ -3,6 +3,9 @@ import os
 import time
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -45,7 +48,7 @@ class QAP_T7255(TestCase):
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.local_path = os.path.abspath("test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         # endregion
 

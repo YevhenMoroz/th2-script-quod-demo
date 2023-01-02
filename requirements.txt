@@ -23,7 +23,6 @@ pybase64~=1.1.4
 psycopg2~=2.9.1
 paramiko~=2.7.2
 protobuf==3.19.4
-
 Pillow~=8.3.1
 aenum~=3.1.5
 
@@ -32,6 +31,7 @@ selenium
 PyPDF2
 webdriver_manager
 datetimerange
+get-project-root
 
 Appium-Python-Client==2.2.0
 
