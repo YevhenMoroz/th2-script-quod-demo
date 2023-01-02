@@ -94,11 +94,11 @@ class QAP_T7400(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.OrdQty.value: '20.0'},
             ord_notify_element[0],
-            'Check first Child Order after RemainingQty waving')
+            'Check first Child Order after TargetBasketQty waving')
         self.java_api_manager.compare_values(
             {JavaApiFields.OrdQty.value: '20.0'},
             ord_notify_element[1],
-            'Check second Child Order after RemainingQty waving')
+            'Check second Child Order after TargetBasketQty waving')
         # endregion
 
     def return_result(self, responses, message_type):
