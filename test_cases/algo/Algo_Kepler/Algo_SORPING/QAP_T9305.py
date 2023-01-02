@@ -72,9 +72,9 @@ class QAP_T9305(TestCase):
         self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_par = self.data_set.get_listing_id_by_name("listing_6")
+        self.listing_id_xpar = self.data_set.get_listing_id_by_name("listing_6")
         self.listing_id_bats = self.data_set.get_listing_id_by_name("listing_32")
-        self.listing_id_xpar = self.data_set.get_listing_id_by_name("listing_33")
+        self.listing_id_chix = self.data_set.get_listing_id_by_name("listing_33")
         self.listing_id_janestreet = self.data_set.get_listing_id_by_name("listing_34")
         self.listing_id_trqx = self.data_set.get_listing_id_by_name("listing_15")
         # endregion
@@ -87,12 +87,14 @@ class QAP_T9305(TestCase):
         # endregion
 
         # region Read log verifier params
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_venue_was_suspended.value
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
         # endregion
 
         # region Compare message parameters
-        self.venue = constants.Venues.paris.value
+        self.text_1 = "suspended on primary, sending lit"
+        self.text_2 = "instrument suspended on Euronext Paris"
         # endregion
 
         self.rule_list = []
@@ -108,22 +110,22 @@ class QAP_T9305(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=0)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=0)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, SecurityTradingStatus=self.trading_status)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_xpar = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
+        market_data_snap_shot_xpar = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_chix, self.fix_env1.feed_handler)
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_xpar)
 
-        market_data_snap_shot_xpar = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
+        market_data_snap_shot_xpar = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_chix, self.fix_env1.feed_handler)
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_xpar)
 
@@ -165,7 +167,11 @@ class QAP_T9305(TestCase):
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algopolicy))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        parent_SORPING_order_id = responce[0].get_parameter('ExecID')
+        parent_SORPING_order_id_list = list(parent_SORPING_order_id)
+        parent_SORPING_order_id_list[-1] = 2
+        multilisted_algo_child_order_id = "".join(map(str, parent_SORPING_order_id_list))
 
         time.sleep(3)
         # endregion
@@ -181,13 +187,19 @@ class QAP_T9305(TestCase):
         # endregion
 
         # region Check Read log
-        # time.sleep(70)
+        time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_venue_was_suspended()
-        compare_message.change_parameters(dict(VenueName=self.venue))
+        compare_message_1 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_1.change_parameters(dict(OrderId=parent_SORPING_order_id, Text=self.text_1))
 
-        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(compare_message)
+        compare_message_2 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message_2.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_2))
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check skipping DarkPhase", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message_1, self.key_params_readlog)
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check that primary venue suspended", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message_2, self.key_params_readlog)
         # endregion
 
         # region Check Lit child DMA order
@@ -202,6 +214,11 @@ class QAP_T9305(TestCase):
 
         er_new_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Lit Child DMA order')
+        # endregion
+
+        # region Check these are no dark childs
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check these are no dark childs", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_xpar_order], [None], self.FromQuod)
         # endregion
 
         time.sleep(10)
@@ -227,7 +244,7 @@ class QAP_T9305(TestCase):
         time.sleep(5)
 
         # region return TradingStatus=T for Paris
-        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion

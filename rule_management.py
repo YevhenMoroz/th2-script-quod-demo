@@ -21,7 +21,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateNewOrdSingleMarketPreviouslyQuoted, \
     TemplateOrderCancelReplaceExecutionReportWithTrade, TemplateOrderCancelRequestTradeCancel, \
-    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom
+    TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
+    TemplateNewOrdSingleIOCTradeOnFullQty
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -51,15 +52,15 @@ class RuleManager:
     def print_active_rules(self):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
-            active_rules[rule.id.id] = [rule.class_name, rule.alias]
+            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
         for key, value in active_rules.items():
-            print(f'{key} -> {value[0].split(".")[6]} -> {value[1][2:]}')
+            print(f'{key} -> {value[0].split(".")[6]} -> {value[1]}')
 
     def remove_rules_by_alias(self, alias: str):
         active_rules = dict()
         for rule in self.core.getRulesInfo(request=Empty()).info:
-            active_rules[rule.id.id] = [rule.class_name, rule.alias]
-            if rule.alias[2:] == alias and rule.id.id not in self.default_rules_id:
+            active_rules[rule.id.id] = [rule.class_name, rule.connection_id.session_alias]
+            if rule.connection_id.session_alias == alias and rule.id.id not in self.default_rules_id:
                 self.core.removeRule(RuleID(id=rule.id.id))
 
     # --- REMOVE RULES SECTION ---
@@ -601,6 +602,17 @@ class RuleManager:
                                                                      qty=qty,
                                                                      traded_qty=traded_qty,
                                                                      delay=delay))
+
+    def add_NewOrdSingle_IOCTradeOnFullQty(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
+        return self.sim.createNewOrdSingleIOCTradeOnFullQty(
+            request=TemplateNewOrdSingleIOCTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
+                                            account=account,
+                                            venue=venue,
+                                            trade=trade,
+                                            price=price,
+                                            delay=delay))
+
+
 if __name__ == '__main__':
     rule_manager = RuleManager()
     rule_manager.print_active_rules()
