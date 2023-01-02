@@ -45,7 +45,6 @@ class QAP_T7338(TestCase):
         # endregion
 
         # region get orders id
-        list_notify_block = self.result.get_parameter('OrdListNotificationBlock')
         ord_id1 = list_notify_block['OrdNotificationElements']['OrdNotificationBlock'][0]['OrdID']
         # endregion
 
