@@ -15,6 +15,10 @@ class BasketMessagesConst(Enum):
     ListOrderStatus_EXE = 'EXE'
 
 
+class BagMessagesConst(Enum):
+    OrderBagStatus_NEW = 'NEW'
+
+
 class OrderReplyConst(Enum):
     PostTradeStatus_RDY = 'RDY'
     PostTradeStatus_BKD = 'BKD'
@@ -185,6 +189,8 @@ class JavaApiFields(Enum):
     OrderNotificationElements = "OrdNotificationElements"
     OrderListWaveStatus = 'OrderListWaveStatus'
     PercentQtyToRelease = 'PercentQtyToRelease'
+    QtyPercentageProfile = 'QtyPercentageProfile'
+    OrdQty = 'OrdQty'
     RouteID = 'RouteID'
     """External Algo"""
     ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
@@ -250,6 +256,7 @@ class JavaApiFields(Enum):
     CDOrdFreeNotes = 'CDOrdFreeNotes'
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
+    OrderBagStatus = 'OrderBagStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
