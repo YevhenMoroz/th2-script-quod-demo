@@ -106,7 +106,7 @@ class QAP_T4308(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_params()
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOC_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, WouldInAuction=1, WouldPriceOffset=self.offset))
@@ -116,11 +116,11 @@ class QAP_T4308(TestCase):
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=2, NoParty='*', SecAltIDGrp='*'))
+        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=7, NoParty='*', SecAltIDGrp='*'))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_rejected = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
-        er_rejected.change_parameters(dict(TimeInForce=2, NoParty='*', SecAltIDGrp='*',Account=self.client, NoStrategyParameters='*', LastQty=0, SettlDate='*', Currency='EUR', HandlInst=2, LastPx=0, OrderCapacity='A', QtyType=0, ExecRestatementReason=4, Instrument="*", Text='missing WouldPriceReference')).remove_parameter('ExDestination')
+        er_rejected.change_parameters(dict(TimeInForce=7, NoParty='*', SecAltIDGrp='*',Account=self.client, NoStrategyParameters='*', LastQty=0, SettlDate='*', Currency='EUR', HandlInst=2, LastPx=0, OrderCapacity='A', QtyType=0, ExecRestatementReason=4, Instrument="*", Text='missing WouldPriceReference')).remove_parameter('ExDestination')
         self.fix_verifier_sell.check_fix_message(er_rejected, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Rejected')
         # endregion
 
