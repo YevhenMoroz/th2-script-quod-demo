@@ -1,106 +1,138 @@
 import os
-import logging
 import time
-from datetime import datetime, timedelta
+
+from pathlib import Path
+
+from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
+from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.core.test_case import TestCase
+from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
 
-#order param
-qty = 100000
-price = 30
-would_price_offset = 5
-text_reject_would_price_reference = DataSet.FreeNotesReject.MissWouldPriceReference.value
-tif_atc = DataSet.TimeInForce.AtTheClose.value
+class QAP_T4308(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, data_set=None, environment=None):
+        super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-#Key parameters
-key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
-key_params=['OrdStatus', 'ExecType', 'OrderQty', 'Price']
+        self.fix_env1 = self.environment.get_list_fix_environment()[0]
 
-#Gateway Side
-gateway_side_buy = DataSet.GatewaySide.Buy
-gateway_side_sell = DataSet.GatewaySide.Sell
+        # region th2 components
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
 
-#Status
-status_pending = DataSet.Status.Pending
-status_new = DataSet.Status.New
-status_reject = DataSet.Status.Reject
 
-#venue param
-ex_destination_1 = "XPAR"
-client = "CLIENT2"
-account = 'XPAR_CLIENT2'
-currency = 'EUR'
-s_par = '1015'
+        # endregion
 
-#connectivity
-case_name = os.path.basename(__file__)
-instrument = DataSet.Instrument.PAR
-FromQuod = DataSet.DirectionEnum.FromQuod
-ToQuod = DataSet.DirectionEnum.ToQuod
-connectivity_buy_side = DataSet.Connectivity.Ganymede_316_Buy_Side.value
-connectivity_sell_side = DataSet.Connectivity.Ganymede_316_Redburn.value
-connectivity_fh = DataSet.Connectivity.Ganymede_316_Feed_Handler.value
+        # region order parameters
+        self.qty = 1000
+        self.indicative_volume = 2000
+        self.percentage = 10
+        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
+        self.price = 30
+        self.offset = 100
+        # endregion
 
-def rules_creation():
-    rule_manager = RuleManager(Simulators.algo)
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination_1, price)
-    return [nos_rule]
+        # region Gateway Side
+        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_sell = GatewaySide.Sell
+        # endregion
 
-def execute(report_id):
-    try:
-        rules_list = rules_creation()
-        case_id = bca.create_event((os.path.basename(__file__)[:-3]), report_id)
-        # Send_MarkerData
-        fix_manager = FixManager(connectivity_sell_side, case_id)
-        fix_verifier_ss = FixVerifier(connectivity_sell_side, case_id)
-        fix_manager_fh = FixManager(connectivity_fh, case_id)
+        # region Status
+        self.status_pending = Status.Pending
+        self.status_new = Status.New
+        self.status_rejected = Status.Reject
+        self.status_cancel = Status.Cancel
+        # endregion
 
-        # Send_MarkerData
-        fix_manager_fh.set_case_id(bca.create_event("Send Market Data", case_id))
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(s_par, connectivity_fh)
-        fix_manager_fh.send_message(market_data_snap_shot)
+        # region instrument
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        # endregion
 
-        time.sleep(3)
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
 
-        #region Send NewOrderSingle (35=D)
-        case_id_1 = bca.create_event("Create Algo Order", case_id)
-        fix_verifier_ss.set_case_id(case_id_1)
+        # region venue param
+        self.client = self.data_set.get_client_by_name("client_3")
+        self.account = self.data_set.get_account_by_name("account_19")
+        self.mic = self.data_set.get_mic_by_name("mic_31")
+        # endregion
 
-        moc_order = FixMessageNewOrderSingleAlgo().set_MOC_params()
-        moc_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        moc_order.change_parameters(dict(Account= client, OrderQty = qty))
-        moc_order.update_fields_in_component('QuodFlatParameters', dict(WouldPriceOffset=would_price_offset))
+        # region Key parameters
+        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
+        self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
+        self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        # endregion
 
-        fix_manager.send_message_and_receive_response(moc_order, case_id_1)
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.rule_list = []
 
-        time.sleep(3)
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
-        #region Check Sell side
-        fix_verifier_ss.check_fix_message(moc_order, direction=ToQuod, message_name='Sell side NewOrderSingle')
 
-        pending_moc_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(moc_order, gateway_side_sell, status_pending)
-        pending_moc_order_params.change_parameter('TimeInForce', tif_atc)
-        pending_moc_order_params.remove_parameter('TargetStrategy')
-        fix_verifier_ss.check_fix_message(pending_moc_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport PendingNew')
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Update Trading Phase
 
-        reject_moc_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(moc_order, gateway_side_sell, status_reject)
-        reject_moc_order_params.change_parameters(dict(Text=text_reject_would_price_reference, TimeInForce=tif_atc))
-        reject_moc_order_params.remove_parameter('TargetStrategy')
-        fix_verifier_ss.check_fix_message(reject_moc_order_params, key_parameters=key_params_cl, message_name='Sell side ExecReport Reject')
-        #endregion
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # end region
 
-    except:
-        logging.error("Error execution", exc_info=True)
-    finally:
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(rules_list)
+
+        # region Send MarketDate
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
+        # region Send NewOrderSingle (35=D) for MP Dark order
+        case_id_1 = bca.create_event("Create Auction Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
+
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_params()
+        self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
+        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, WouldInAuction=1, WouldPriceOffset=self.offset))
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
+
+        # region Check Sell side
+        self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
+        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=2, NoParty='*', SecAltIDGrp='*'))
+        self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
+
+        er_rejected = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
+        er_rejected.change_parameters(dict(TimeInForce=2, NoParty='*', SecAltIDGrp='*',Account=self.client, NoStrategyParameters='*', LastQty=0, SettlDate='*', Currency='EUR', HandlInst=2, LastPx=0, OrderCapacity='A', QtyType=0, ExecRestatementReason=4, Instrument="*", Text='missing WouldPriceReference')).remove_parameter('ExDestination')
+        self.fix_verifier_sell.check_fix_message(er_rejected, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Rejected')
+        # endregion
+
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+
+        time.sleep(2)
+
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
+        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # end region
