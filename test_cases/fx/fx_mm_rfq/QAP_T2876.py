@@ -41,7 +41,7 @@ class QAP_T2876(TestCase):
         # endregion
         # region Step 2
         text = "11620 Unknown instrument"
-        self.quote_reject.set_quote_reject_params(self.quote_request, text=text)
+        self.quote_reject.set_quote_reject_swap(self.quote_request, text=text)
         self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account"])
         self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion

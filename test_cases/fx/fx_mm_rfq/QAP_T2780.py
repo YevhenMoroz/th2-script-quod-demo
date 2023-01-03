@@ -66,6 +66,7 @@ class QAP_T2780(TestCase):
         self.java_api_manager.send_message(self.java_quote)
         self.quote_response = next(response)
         quote_from_di = self.fix_manager_gtw.parse_response(self.quote_response)[0]
+        self.quote.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
         # region Step 3

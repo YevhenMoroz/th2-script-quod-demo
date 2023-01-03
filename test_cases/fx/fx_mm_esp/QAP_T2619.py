@@ -50,11 +50,14 @@ class QAP_T2619(TestCase):
         # endregion
         # region Step 5
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        time.sleep(3)
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_1 = no_md_entries[0].get("MDEntryID")
+        self.fix_subscribe.set_md_req_parameters_maker(). \
+            change_parameters({"SenderSubID": self.palladium2}). \
+            update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        # endregion
+        # region Step 5
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        time.sleep(3)
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_2 = no_md_entries[0].get("MDEntryID")
         self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2,

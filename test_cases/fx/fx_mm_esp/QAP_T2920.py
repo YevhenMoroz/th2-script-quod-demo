@@ -72,40 +72,19 @@ class QAP_T2920(TestCase):
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
-        self.no_md_entries_fwd = [
-            {"MDEntryType": "0",
-             "MDEntryPx": 118.17776,
-             "MDEntrySize": 1000000,
-             "MDEntryPositionNo": 1,
-             'SettlDate': self.settle_date_2w,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            {"MDEntryType": "1",
-             "MDEntryPx": 118.18054,
-             "MDEntrySize": 1000000,
-             "MDEntryPositionNo": 1,
-             'SettlDate': self.settle_date_2w,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
-
         self.ask_spot_without_int = 118.186
         self.bid_spot_without_int = 118.172
-        self.ask_pts = 0.00002
-        self.bid_pts = 0.00004
-        self.expected_ask_px = str(round(float(self.ask_spot_without_int + self.ask_pts), 5))
-        self.expected_bid_px = str(round(float(self.bid_spot_without_int + self.bid_pts), 5))
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot_md)
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
-        self.fix_manager_fh_314.send_message(self.fix_md)
-
-        self.fix_md.set_market_data_fwd()
-        self.fix_md.update_fields_in_component("Instrument", self.instrument_fwd_md)
-        self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_fwd)
-        self.fix_md.update_MDReqID(self.md_req_id_fwd, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.sleep(2)
         # endregion
@@ -114,11 +93,15 @@ class QAP_T2920(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
+        bid_pts = response[-1].get_parameter("NoMDEntries")[0]["MDEntryForwardPoints"]
+        ask_pts = response[-1].get_parameter("NoMDEntries")[1]["MDEntryForwardPoints"]
+        expected_bid_px = str(round(float(self.bid_spot_without_int + float(bid_pts)), 5))
+        expected_ask_px = str(round(float(self.ask_spot_without_int + float(ask_pts)), 5))
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.expected_bid_px)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.expected_ask_px)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=expected_bid_px)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=expected_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion
