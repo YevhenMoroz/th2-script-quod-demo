@@ -79,13 +79,13 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
                 return field.MDRefID
         return None
 
-    def update_MDReqID(self, symbol: str, session_alias: str, type=None):
+    def update_MDReqID(self, symbol: str, session_alias: str, type=None) -> FixMessageMarketDataIncrementalRefresh:
         md_req_id = self.check_MDReqID(symbol, session_alias)
         if md_req_id is None:
             raise Exception(f'No MDReqID at TH2 simulator for symbol {symbol} at {session_alias}')
         self.change_parameter("MDReqID", md_req_id)
         return self
 
-    def set_phase(self, phase: str):
+    def set_phase(self, phase: str) -> FixMessageMarketDataIncrementalRefresh:
         super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", phase)
         return self

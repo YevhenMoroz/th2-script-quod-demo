@@ -91,7 +91,7 @@ class QAP_T7322(TestCase):
         self.__return_result(responses, ORSMessageType.OrdUpdate.value)
         order_reply = self.result.get_parameter('OrdUpdateBlock')
         self.java_api_manager.compare_values(
-            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the first child order open sts")
         self.__return_result(responses, ORSMessageType.PositionReport.value)
         order_reply = self.result.get_parameter('PositionReportBlock')
@@ -112,7 +112,7 @@ class QAP_T7322(TestCase):
         self.__return_result(responses, ORSMessageType.OrdUpdate.value)
         order_reply = self.result.get_parameter('OrdUpdateBlock')
         self.java_api_manager.compare_values(
-            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the second child order open sts")
         self.__return_result(responses, ORSMessageType.PositionReport.value)
         order_reply = self.result.get_parameter('PositionReportBlock')

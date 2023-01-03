@@ -263,26 +263,35 @@ class AlgoFormulasManager:
     def get_timestamps_for_current_phase(phase: TradingPhases):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
-            tm = dt.now()
-            pop_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.PreClosed:
-            tm = dt.now()
             pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = pcl_start + timedelta(minutes=4)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
         elif phase == TradingPhases.Open:
-            tm = dt.now()
-            opn_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            opn_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_start = opn_start + timedelta(minutes=4)
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.AtLast:
+            pcl_end = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            clo_start = pcl_end + timedelta(minutes=4)
+            pcl_start = pcl_end - timedelta(minutes=5)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+        elif phase == TradingPhases.Closed:
+            clo_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            pcl_end = clo_start - timedelta(minutes=5)
+            pcl_start = pcl_end - timedelta(minutes=5)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
 
         return [
             {
@@ -425,30 +434,36 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_timestamp_from_list(phases, phase: TradingPhases, start_time: bool = True):
-
-        for i in phases:
-            if i['tradingPhase'] == phase.value:
+        for phase_from_list in phases:
+            if phase_from_list['tradingPhase'] == phase.value:
                 if start_time:
-                    return int(i['beginTime'])
+                    return int(phase_from_list['beginTime'])
                 else:
-                    return int(i['endTime'])
+                    return int(phase_from_list['endTime'])
 
     @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
                                     comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
-        lit_touch = bid_price
+        if ord_side == 1:
+            lit_touch = bid_price
+        else:
+            lit_touch = ask_price
         giveup_cost = cost_per_trade / parent_qty
         if is_comm_per_unit == False:
             commission = comm_basis_point / 10000 * lit_touch
         else:
             commission = comm_per_unit
-        custom_adjustement = (ask_price - bid_price) * spread_disc_proportion
+        custom_adjustment = (ask_price - bid_price) * spread_disc_proportion
         if ord_side == 1:
-            return round((lit_touch + giveup_cost + commission + custom_adjustement), 3)
+            return round((lit_touch + giveup_cost + commission + custom_adjustment), 4)
         else:
-            return round((lit_touch - giveup_cost - commission - custom_adjustement), 3)
+            return round((lit_touch - giveup_cost - commission - custom_adjustment), 4)
 
     @staticmethod
     def get_child_qty_for_auction(indicative_volume, percentage, parent_qty):
         child_qty = ceil(indicative_volume * percentage / (100 - percentage))
         return min(child_qty, parent_qty)
+
+    @staticmethod
+    def get_child_qty_for_auction_first_child(indicative_volume, percentage, parent_qty, initial_slice_multiplier):
+        return ceil(indicative_volume * percentage / (100 - percentage) * (initial_slice_multiplier / 100))

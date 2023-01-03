@@ -38,6 +38,7 @@ from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
 from test_framework.java_api_wrappers.ors_messages.OrderBagCancelReply import OrderBagCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationReply import OrderBagCreationReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagDissociateReply import OrderBagDissociateReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagModificationReply import OrderBagModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import OrderBagNotification
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
@@ -480,6 +481,8 @@ class JavaApiManager:
                 response_fix_message = MarkOrderReply()
             elif message_type == ORSMessageType.RemoveOrdersFromOrderListReply.value:
                 response_fix_message = RemoveOrdersFromOrderListReply()
+            elif message_type == ORSMessageType.OrderBagDissociateReply.value:
+                response_fix_message = OrderBagDissociateReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

@@ -69,6 +69,7 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    OrderBagDissociateReply = 'Order_OrderBagDissociateReply'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
     RemoveOrdersFromOrderListRequest = 'Order_RemoveOrdersFromOrderListRequest'
     OrderReply = 'Order_OrdReply'
@@ -153,6 +154,7 @@ class PKSMessageType(Enum):
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
+    FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
 
 
 class QSMessageType(Enum):
