@@ -123,7 +123,7 @@ class OmsClients(Enum):
     client_co_2 = "CLIENT_FIX_CARE_WB"
     """Commissions"""
     client_com_1 = "CLIENT_COMM_1"
-    client_1_venue_1t_com_2 = "CLIENT_COMM_2"
+    client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
     client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
