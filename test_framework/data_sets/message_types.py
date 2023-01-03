@@ -152,6 +152,7 @@ class PKSMessageType(Enum):
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
+    FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
 
 
 class QSMessageType(Enum):

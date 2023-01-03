@@ -91,8 +91,13 @@ class QAP_T4720(TestCase):
         self.rule_list = []
 
         # region Read log verifier params
-        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_that_lis_phase_is_skipping.value
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event.value
         self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
+        # endregion
+
+        # region Compare message params
+        self.text = "skipping LIS phase"
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -120,7 +125,10 @@ class QAP_T4720(TestCase):
         self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, ClientAlgoPolicyID=self.algopolicy))
-        self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
+
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
+
+        parent_MP_Dark_order_id = responce[0].get_parameter('ExecID')
 
         time.sleep(3)
         # endregion
@@ -159,10 +167,11 @@ class QAP_T4720(TestCase):
         # region Check Read log
         time.sleep(70)
 
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_the_skips_lis_phase()
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message.change_parameters(dict(OrderId=parent_MP_Dark_order_id, Text=self.text))
 
-        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
-        self.read_log_verifier.check_read_log_message(compare_message)
+        self.read_log_verifier.set_case_id(bca.create_event("Check that LIS phase is skipping", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)
         # endregion
 
         # region Check 1 child DMA order on venue CHIX DARKPOOL UK
