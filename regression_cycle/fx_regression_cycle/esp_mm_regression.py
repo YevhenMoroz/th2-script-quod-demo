@@ -108,7 +108,7 @@ def test_run(parent_id=None, version=""):
                                  parent_id)
     session_id = set_session_id("amedents")
     main_window_name = "Quod Financial - Quod site 314"
-    configuration = ComponentConfigurationFX("ESP_MM_309")
+    configuration = ComponentConfigurationFX("ESP_MM")
 
     try:
         # if not Stubs.frontend_is_open:
