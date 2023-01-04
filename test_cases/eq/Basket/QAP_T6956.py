@@ -38,12 +38,7 @@ class QAP_T6956(TestCase):
             desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
             role=SubmitRequestConst.USER_ROLE_1.value, external_algo_twap=True)
         self.basket_name = 'QAP_T6956'
-        self.urg = 'LOW'
         self.route = self.data_set.get_route_id_by_name('route_1')
-        self.route = self.data_set.get_route("route_1")
-        self.strategy = "MS TWAP(ASIA)"
-        self.percentage_profile = "RemainingQty"
-        self.str_tag = "TWAP"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -79,7 +74,7 @@ class QAP_T6956(TestCase):
                       "ScenarioIdentifier": "11799",
                       "VenueScenarioID": "TWAP",
                       "VenueScenarioVersionID": "11945",
-                      "VenueScenarioVersionValue": "ATDLEQ5.5"}, 'RouteID': 1}
+                      "VenueScenarioVersionValue": "ATDLEQ5.5"}, 'RouteID': self.route}
         self.wave_creation_request.update_fields_in_component('OrderListWaveCreationRequestBlock', params)
         responses = self.java_api_manager.send_message_and_receive_response(self.wave_creation_request)
         # endregion
