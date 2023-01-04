@@ -44,7 +44,6 @@ class QAP_T7227(TestCase):
             self.fix_message.set_default_dma_limit()
             qty = self.fix_message.get_parameter("OrderQtyData")["OrderQty"]
             cross_rate_price = float(str(float(float(self.fix_message.get_parameter("Price")) / cross_rate))[:5])
-            cl_ord_id = self.fix_message.get_parameter("ClOrdID")
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.venue_client_names,
                                                                                             self.venue,

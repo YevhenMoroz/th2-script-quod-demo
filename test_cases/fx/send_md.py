@@ -61,7 +61,8 @@ class QAP_MD(TestCase):
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
-                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
             }]
         self.no_md_entries_spot_1 = [{
             "MDEntryType": "0",
@@ -70,7 +71,8 @@ class QAP_MD(TestCase):
             "MDQuoteType": 1,
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
-            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -79,7 +81,8 @@ class QAP_MD(TestCase):
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
-                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
             }]
         self.no_md_entries_spot_2 = [{
             "MDEntryType": "0",
@@ -88,7 +91,8 @@ class QAP_MD(TestCase):
             "MDQuoteType": 1,
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
-            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -97,7 +101,8 @@ class QAP_MD(TestCase):
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
-                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
             }]
         self.no_md_entries_spot_3 = [{
             "MDEntryType": "0",
@@ -106,7 +111,8 @@ class QAP_MD(TestCase):
             "MDQuoteType": 1,
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
-            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -115,7 +121,8 @@ class QAP_MD(TestCase):
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
-                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:53:13"
             }]
         self.no_md_entries_spot_4 = [{
             "MDEntryType": "0",
@@ -124,7 +131,8 @@ class QAP_MD(TestCase):
             "MDQuoteType": 1,
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
-            "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+            "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:57:13"
         },
             {
                 "MDEntryType": "1",
@@ -133,16 +141,17 @@ class QAP_MD(TestCase):
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
                 "SettlDate": self.settle_date_spot,
-                "MDEntryTime": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
+                "MDEntryTime": "14:57:13"
             }]
 
-        # self.md_req_id = "GBP/USD:FXF:WK1:HSBC"
-        self.md_req_id = "GBP/USD:SPO:REG:HSBC"
+        self.md_req_id = "EUR/USD:FXF:WK2:HSBC"
+        # self.md_req_id = "EUR/USD:SPO:REG:HSBC"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-3
-        self.fix_md.set_market_data()
+        self.fix_md.set_market_data_fwd()
         # # self.fix_md.change_parameter("MDReqID", self.md_req_id)
         # # self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
@@ -171,8 +180,3 @@ class QAP_MD(TestCase):
         # self.sleep(1)
         # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_3)
         # self.fix_manager_fh_314.send_message(self.fix_md)
-
-
-
-
-

@@ -3,12 +3,12 @@ from enum import Enum
 
 class OmsFixInstruments(Enum):
     instrument_1 = dict(  # without commission/fee
-        Symbol='FR0010436584',  # assigned counterpart_reb_1
+        Symbol='FR0010436584_EUR',  # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='VETOQUINOL'
+        SecurityDesc='DREAMNEX'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
@@ -123,11 +123,13 @@ class OmsClients(Enum):
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
-    сlient_com_exempted = "CLIENT_COMM_1_EXEMPTED"
+    client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
     client_counterpart_3 = "CLIENT_COUNTERPART_3"
+    """ClientAccountGroupID"""
+    client_2_ext_id = "CLIENT2ExtID"
 
 
 class OmsVenueClientNames(Enum):
@@ -135,6 +137,7 @@ class OmsVenueClientNames(Enum):
     client_1_venue_1 = "XPAR_CLIENT1"
     client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
+    client_3_venue_1 = "XPAR_CLIENT3"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
@@ -252,6 +255,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
 class OmsCurrency(Enum):

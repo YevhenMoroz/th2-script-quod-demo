@@ -262,6 +262,8 @@ class QAP_T8879(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
+        time.sleep(3)
+
         # region check cancel third dma child order
         er_cancel_dma_2_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_xpar_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_xpar_order, self.key_params_ER_eliminate_or_cancel_child, self.ToQuod, "Buy Side ExecReport Cancel Lit passive Child DMA order on venue xpar: OldQty=11000, price=52")

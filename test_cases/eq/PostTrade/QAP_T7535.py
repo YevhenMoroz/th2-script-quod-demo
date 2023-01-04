@@ -98,6 +98,7 @@ class QAP_T7535(TestCase):
             "AvgPx": str(new_avg_px),
             "SettlCurrAmt": gross_trade_sett_curr_amt,
             'GrossTradeAmt': gross_trade_sett_curr_amt,
+            "Currency": self.currency,
             "InstrID": self.instr_id,
             'RecomputeInSettlCurrency': 'Yes'
         })
@@ -108,13 +109,16 @@ class QAP_T7535(TestCase):
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
-        self.java_api_manager.compare_values(settl_dict, allocation_report,
-                                             'Check expected and actually results from step 2')
+        self.java_api_manager.compare_values({
+            JavaApiFields.AvgPrice.value: str(float(new_avg_px)),
+            JavaApiFields.Currency.value: self.currency,
+            JavaApiFields.NetMoney.value: str(float(gross_trade_sett_curr_amt))
+        }, allocation_report, 'Checking that values re-computed')
         #  endregion
 
         # region check Alloc Report (step 3)
-        list_of_ignored_fields = ['Account', 'RootSettlCurrFxRateCalc','RootSettlCurrFxRate',
-                                  'OrderAvgPx','AllocInstructionMiscBlock2', 'SettlCurrFxRateCalc',
+        list_of_ignored_fields = ['Account', 'RootSettlCurrFxRateCalc', 'RootSettlCurrFxRate',
+                                  'OrderAvgPx', 'AllocInstructionMiscBlock2', 'SettlCurrFxRateCalc',
                                   'SettlCurrFxRate']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(

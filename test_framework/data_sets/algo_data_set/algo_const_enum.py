@@ -262,6 +262,7 @@ class AlgoAccounts(Enum):
     account_17 = "QDL2_CLIENT2"
     account_18 = "XAMS_CLIENT2"
     account_19 = "XAMS_CLIENT3"
+    account_20 = "DKP1_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -411,16 +412,13 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
     key_params_read_log_check_tags_5052_and_207_mapping = ['SecurityExchange', 'ClOrdID', 'ExternalStrategyName']
-    key_params_read_log_check_that_venue_was_suspended = ['OrderID', 'VenueName']
-    key_params_log_319_check_that_lis_phase_is_skipping = ['OrderID', 'Text']
     key_params_log_319_check_the_currency_rate = ['Currency', 'Rate']
     key_params_log_319_check_the_lis_amount = ['Amount1', 'Amount2', 'Venue']
     key_params_log_319_check_party_info_more_than_one_group = ['GroupNumber']
-    key_params_log_319_check_that_is_no_suitablle_liquidity = ['ClOrdrId']
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
-    key_params_log_319_check_crossing_mid_price_or_not = ['OrderId', 'MidPrice']
-    key_params_log_319_check_market_data_events = ['OrderId', 'Text', 'AdditionalParameter']
+    key_params_log_319_check_order_event = ['OrderId', 'Text']
+    key_params_log_319_check_mapping = ['Parameter1', 'Value1', 'Parameter2', 'Value2', 'Parameter3', 'Value3', 'Parameter4', 'Value4']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
@@ -436,6 +434,13 @@ class AlgoPreFilter(Enum):
         'header': {
             'MsgType': ('G', "EQUAL")
         }}
+
+    pre_filer_equal_ER = {
+        'header': {
+            'MsgType': ('8', "EQUAL")
+        }
+    }
+
 
     pre_filer_equal_ER_canceled = {
                 'header': {
@@ -464,11 +469,6 @@ class AlgoPreFilter(Enum):
         'NewStatus': ('*', "EQUAL")
     }
 
-    pre_filter_suitable_liquidity = {
-        'ClOrdrId': ('*', "EQUAL"),
-        'Text': ('*', "EQUAL")
-    }
-
     pre_filer_equal_ER_pending_new = {
         'header': {
             'MsgType': ('8', 'EQUAL')
@@ -493,9 +493,13 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('4', 'EQUAL')
     }
 
-    pre_filter_check_market_data_events = {
+    pre_filter_check_events = {
         'OrderId': ('*', "EQUAL"),
         'Text': ('*', "EQUAL")
+    }
+
+    pre_filter_with_the_order_id = {
+        'OrderId': ('*', "EQUAL")
     }
 
 class AlgoTradingPhaseProfile(Enum):

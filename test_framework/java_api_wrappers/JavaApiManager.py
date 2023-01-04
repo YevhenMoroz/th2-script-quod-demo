@@ -9,6 +9,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
+from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
@@ -16,6 +17,8 @@ from test_framework.java_api_wrappers.ors_messages.AllocationReport import Alloc
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchReply import BlockUnallocateBatchReply
 from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
 from test_framework.java_api_wrappers.ors_messages.CDNotifDealer import CDNotifDealer
+from test_framework.java_api_wrappers.ors_messages.CheckInOrderReply import CheckInOrderReply
+from test_framework.java_api_wrappers.ors_messages.CheckOutOrderReply import CheckOutOrderReply
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
@@ -25,7 +28,9 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBa
     ForceAllocInstructionStatusBatchReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
+from test_framework.java_api_wrappers.ors_messages.HeldOrderAckReply import HeldOrderAckReply
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
+from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrderReply
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
 from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
@@ -33,6 +38,7 @@ from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
 from test_framework.java_api_wrappers.ors_messages.OrderBagCancelReply import OrderBagCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationReply import OrderBagCreationReply
+from test_framework.java_api_wrappers.ors_messages.OrderBagDissociateReply import OrderBagDissociateReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagModificationReply import OrderBagModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import OrderBagNotification
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
@@ -251,6 +257,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.CheckOutOrderRequest.value:
+            response = self.act.submitCheckOutOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.ForceAllocInstructionStatusBatchRequest.value:
             response = self.act.submitForceAllocInstructionStatusBatchRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -281,6 +293,43 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.NewOrderReply.value:
+            response = self.act.submitNewOrderReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.CheckInOrderRequest.value:
+            response = self.act.submitCheckInOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.HeldOrderAckRequest.value:
+            response = self.act.submitHeldOrderAck(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
+            response = self.act.submitMarkOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrderCancelReply.value:
+            response = self.act.submitOrderCancelReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ESMessageType.OrderModificationReply.value:
+            response = self.act.submitOrderModificationReply(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+
 
         else:
             response = None
@@ -292,37 +341,53 @@ class JavaApiManager:
             fields = dict()
             for main_field in message.fields:
                 fields_content = dict()
-                for field in message.fields[main_field].message_value.fields:
-                    # Field
-                    if message.fields[main_field].message_value.fields[field].simple_value != "":
-                        fields_content.update(
-                            {field: message.fields[main_field].message_value.fields[field].simple_value})
-                    else:
-                        component_fields = dict()
-                        # Component
-                        for component_field in message.fields[main_field].message_value.fields[
-                            field].message_value.fields:
-                            if message.fields[main_field].message_value.fields[field].message_value.fields[
-                                component_field].simple_value != "":
-                                component_fields.update({component_field:
-                                                             message.fields[main_field].message_value.fields[
-                                                                 field].message_value.fields[
-                                                                 component_field].simple_value})
-                                fields_content.update({field: component_fields})
-                            else:
-                                # Repeating Group
-                                repeating_group_list = list()
-                                for repeating_group in \
-                                        message.fields[main_field].message_value.fields[field].message_value.fields[
-                                            component_field].list_value.values:
-                                    repeating_group_list_field = dict()
-                                    for repeating_group_field in repeating_group.message_value.fields:
-                                        repeating_group_list_field.update({repeating_group_field:
-                                                                               repeating_group.message_value.fields[
-                                                                                   repeating_group_field].simple_value})
-                                    repeating_group_list.append(repeating_group_list_field)
-                                fields_content.update({field: {component_field: repeating_group_list}})
-                fields.update({main_field: fields_content})
+                # Simple field
+                if message.fields[main_field].simple_value != "":
+                    fields.update({main_field: message.fields[main_field].simple_value})
+                else:
+                    for field in message.fields[main_field].message_value.fields:
+                        # Field
+                        if message.fields[main_field].message_value.fields[field].simple_value != "":
+                            fields_content.update(
+                                {field: message.fields[main_field].message_value.fields[field].simple_value})
+                        else:
+                            # Simple Repeating Group
+                            repeating_group_list = list()
+                            for repeating_group in message.fields[main_field].message_value.fields[
+                                field].list_value.values:
+                                repeating_group_list_field = dict()
+                                for repeating_group_field in repeating_group.message_value.fields:
+                                    repeating_group_list_field.update({repeating_group_field:
+                                                                           repeating_group.message_value.fields[
+                                                                               repeating_group_field].simple_value})
+                                repeating_group_list.append(repeating_group_list_field)
+                            fields.update({main_field: {field: repeating_group_list}})
+                            fields_content.update({field: repeating_group_list})
+                            # Component
+                            component_fields = dict()
+                            for component_field in message.fields[main_field].message_value.fields[
+                                field].message_value.fields:
+                                if message.fields[main_field].message_value.fields[field].message_value.fields[
+                                    component_field].simple_value != "":
+                                    component_fields.update({component_field:
+                                                                 message.fields[main_field].message_value.fields[
+                                                                     field].message_value.fields[
+                                                                     component_field].simple_value})
+                                    fields_content.update({field: component_fields})
+                                else:
+                                    # Repeating Group
+                                    repeating_group_list = list()
+                                    for repeating_group in \
+                                            message.fields[main_field].message_value.fields[field].message_value.fields[
+                                                component_field].list_value.values:
+                                        repeating_group_list_field = dict()
+                                        for repeating_group_field in repeating_group.message_value.fields:
+                                            repeating_group_list_field.update({repeating_group_field:
+                                                                                   repeating_group.message_value.fields[
+                                                                                       repeating_group_field].simple_value})
+                                        repeating_group_list.append(repeating_group_list_field)
+                                    fields_content.update({field: {component_field: repeating_group_list}})
+                    fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
             if message_type == ORSMessageType.OrdReply.value:
@@ -355,6 +420,8 @@ class JavaApiManager:
                 response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
+            elif message_type == ESMessageType.OrderCancelReply.value:
+                response_fix_message = OrderCancelReply()
             elif message_type == ESMessageType.ExecutionReport.value:
                 response_fix_message = ExecutionReport()
             elif message_type == ESMessageType.OrdReport.value:
@@ -389,6 +456,8 @@ class JavaApiManager:
                 response_fix_message = FixPositionReportFX()
             elif message_type == ORSMessageType.BookingCancelReply.value:
                 response_fix_message = BookingCancelReply()
+            elif message_type == ORSMessageType.CheckOutOrderReply.value:
+                response_fix_message = CheckOutOrderReply()
             elif message_type == ORSMessageType.ForceAllocInstructionStatusBatchReply.value:
                 response_fix_message = ForceAllocInstructionStatusBatchReply()
             elif message_type == ORSMessageType.BlockUnallocateBatchReply.value:
@@ -397,6 +466,14 @@ class JavaApiManager:
                 response_fix_message = UnMatchReply()
             elif message_type == ORSMessageType.FixConfirmation.value:
                 response_fix_message = FixConfirmation()
+            elif message_type == ORSMessageType.CheckInOrderReply.value:
+                response_fix_message = CheckInOrderReply()
+            elif message_type == ORSMessageType.HeldOrderAckReply.value:
+                response_fix_message = HeldOrderAckReply()
+            elif message_type == ORSMessageType.MarkOrderReply.value:
+                response_fix_message = MarkOrderReply()
+            elif message_type == ORSMessageType.OrderBagDissociateReply.value:
+                response_fix_message = OrderBagDissociateReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
@@ -439,6 +516,15 @@ class JavaApiManager:
 
     def get_last_message(self, message_type, filter_value=None) -> JavaApiMessage:
         self.response.reverse()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
+                return res
+        raise KeyError(f"{message_type} not found")
+
+    def get_first_message(self, message_type, filter_value=None) -> JavaApiMessage:
         for res in self.response:
             if res.get_message_type() == message_type:
                 if filter_value and str(res.get_parameters()).find(filter_value) == -1:

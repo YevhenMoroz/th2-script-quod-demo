@@ -42,8 +42,8 @@ class QAP_T7015(TestCase):
         self.qty = '200'
         self.price = '20'
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_co_1')  # MOClient
-        self.alloc_account = self.data_set.get_account_by_name('client_co_1_acc_1')  # MOClient_SA1
+        self.client = self.data_set.get_client('client_pt_1')
+        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
@@ -74,7 +74,9 @@ class QAP_T7015(TestCase):
 
         # region Execute CO
         self.trade_entry_message.set_default_trade(order_id, self.price, self.qty)
-        self.java_api_manager.send_message(self.trade_entry_message)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
+        exec_id = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()\
+            [JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         # endregion
 
         # region Complete order
@@ -92,7 +94,11 @@ class QAP_T7015(TestCase):
             'SettlCurrAmt': amount,
             "InstrID": instr_id,
             "AvgPx": self.price,
-            "AccountGroupID": self.client
+            "AccountGroupID": self.client,
+            'ExecAllocList': {
+                'ExecAllocBlock': [{'ExecQty': self.qty,
+                                    'ExecID': exec_id,
+                                    'ExecPrice': self.price}]}
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         class_name.print_message("Messages after BOOK", responses)
@@ -105,12 +111,13 @@ class QAP_T7015(TestCase):
         # endregion
 
         # region Set-up parameters and check Allocation Report
+        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity', 'OrderAvgPx']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
             {'tag5120': '*', 'RootSettlCurrAmt': '*', 'SettlCurrFxRate': '#'})
         self.allocation_message.remove_parameters(["Account"])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
-                                                            ['AllocType', 'Account', 'NoOrders'])
+                                                            ['AllocType', 'Account', 'NoOrders'], ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region Approve and Allocate block
@@ -130,7 +137,7 @@ class QAP_T7015(TestCase):
         class_name.print_message('Messages after ALLOCATE', responses)
 
         # region Set-up parameters and check Allocation Report after Allocate
-        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity']
+
         pre_alloc_grp: dict = {
             'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.alloc_account, 'AllocQty': self.qty}]}}
         self.fix_message.change_parameters(pre_alloc_grp)
@@ -146,7 +153,7 @@ class QAP_T7015(TestCase):
         self.confirmation_message.change_parameters(
             {'tag5120': '*', 'AllocAccount': self.alloc_account, 'SettlCurrFxRate': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
-                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount'])
+                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount'], ignored_fields=list_of_ignored_fields)
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 

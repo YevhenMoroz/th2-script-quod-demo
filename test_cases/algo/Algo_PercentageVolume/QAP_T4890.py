@@ -172,12 +172,13 @@ class QAP_T4890(TestCase):
         time.sleep(5)
 
         # region Modify parent POV order
-        case_id_2 = bca.create_event("Replace TWAP Order", self.test_id)
+        case_id_2 = bca.create_event("Replace POV Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
         self.POV_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.POV_order)
-        self.POV_order_replace_params.update_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_aggr}])
+        self.POV_order_replace_params.update_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_aggr},
+                                                                                      {'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': 6, 'StrategyParameterValue': self.pct}])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order_replace_params, case_id_2)
 
         time.sleep(1)

@@ -193,5 +193,5 @@ class QAP_T7369(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(60)
 

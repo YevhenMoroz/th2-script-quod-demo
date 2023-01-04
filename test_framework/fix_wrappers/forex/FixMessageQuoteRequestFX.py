@@ -217,7 +217,8 @@ class FixMessageQuoteRequestFX(FixMessage):
             "NoRelatedSym": [{
                 "Instrument": {
                     "Symbol": self.get_data_set().get_currency_by_name("currency_usd"),
-                    "Product": "9"
+                    "Product": "9",
+                    "SecurityType":"FOR"
                 },
                 "NoPartyIDs": [
                     {
