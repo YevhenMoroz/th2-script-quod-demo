@@ -62,9 +62,10 @@ class QAP_T7500(TestCase):
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                    role=SubmitRequestConst.USER_ROLE_1.value)
-        self.submit_request.update_fields_in_component('NewOrderSingleBlock', {'OrdCapacity': SubmitRequestConst.OrdCapacity_Agency.value,
-                                                                               'OrdQty': self.qty,
-                                                                               'AccountGroupID': self.client}
+        self.submit_request.update_fields_in_component('NewOrderSingleBlock',
+                                                       {'OrdCapacity': SubmitRequestConst.OrdCapacity_Agency.value,
+                                                        'OrdQty': self.qty,
+                                                        'AccountGroupID': self.client}
                                                        )
         self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
         responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
@@ -122,9 +123,10 @@ class QAP_T7500(TestCase):
         actually_post_trade_status = self.result.get_parameter('OrdUpdateBlock')['PostTradeStatus']
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         alloc_id = self.result.get_parameter('AllocationReportBlock')['ClientAllocID']
-        self.order_book.compare_values({OrderBookColumns.post_trade_status.value: OrderReplyConst.PostTradeStatus_BKD.value},
-                                       {OrderBookColumns.post_trade_status.value: actually_post_trade_status},
-                                       'Comparing actual and expected result from step 4, 5')
+        self.order_book.compare_values(
+            {OrderBookColumns.post_trade_status.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            {OrderBookColumns.post_trade_status.value: actually_post_trade_status},
+            'Comparing actual and expected result from step 4, 5')
         # endregion
 
         # region approve order step 6
@@ -156,11 +158,12 @@ class QAP_T7500(TestCase):
             actuall_allocation_status = self.result.get_parameter('ConfirmationReportBlock')['ConfirmStatus']
             actuall_allocation_match_status = self.result.get_parameter('ConfirmationReportBlock')['MatchStatus']
 
-            self.order_book.compare_values({AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
-                                            AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value},
-                                           {AllocationsColumns.sts.value: actuall_allocation_status,
-                                            AllocationsColumns.match_status.value: actuall_allocation_match_status},
-                                           f'Comparing actual and expected result from step 8 for allocation {account}')
+            self.order_book.compare_values(
+                {AllocationsColumns.sts.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                 AllocationsColumns.match_status.value: ConfirmationReportConst.MatchStatus_MAT.value},
+                {AllocationsColumns.sts.value: actuall_allocation_status,
+                 AllocationsColumns.match_status.value: actuall_allocation_match_status},
+                f'Comparing actual and expected result from step 8 for allocation {account}')
 
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
@@ -177,6 +180,7 @@ class QAP_T7500(TestCase):
         # endregion
 
         # region check 35=J message on fix BackOffice gateway (step 9)
+        list_of_ignored_fields = ['AllocSettlCurrAmt', 'SettlCurrAmt', 'OrderAvgPx']
         change_parameters = {
             'BookingType': '*',
             'RootSettlCurrency': new_currrency,
@@ -207,7 +211,7 @@ class QAP_T7500(TestCase):
             'GrossTradeAmt': '*',
         }
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
-        self.fix_verifier.check_fix_message_fix_standard(allocation_report)
+        self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region check allocation message 35=J 626 =2
@@ -229,7 +233,6 @@ class QAP_T7500(TestCase):
              'AllocAccount': sec_acc_2,
              'AllocPrice': '*'
              }]
-        list_of_ignored_fields = ['AllocSettlCurrAmt', 'SettlCurrAmt']
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         # endregion

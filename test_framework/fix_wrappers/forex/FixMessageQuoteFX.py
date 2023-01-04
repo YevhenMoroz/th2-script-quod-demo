@@ -20,6 +20,9 @@ class FixMessageQuoteFX(FixMessage):
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             ValidUntilTime="*",
             OfferSpotRate="*",
+            OrigMDArrivalTime="*",
+            OrigMDTime="*",
+            OrigClientVenueID="*",
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
@@ -44,6 +47,9 @@ class FixMessageQuoteFX(FixMessage):
             OfferSize=quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
             ValidUntilTime="*",
             OfferSpotRate="*",
+            OrigMDArrivalTime="*",
+            OrigMDTime="*",
+            OrigClientVenueID="*",
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]["Symbol"],
                             SecurityType=quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                 "SecurityType"],
@@ -237,6 +243,9 @@ class FixMessageQuoteFX(FixMessage):
             BidSpotRate="*",
             QuoteType="1",
             OfferSwapPoints="*",
+            OrigMDArrivalTime="*",
+            OrigMDTime="*",
+            OrigClientVenueID="*",
             NoLegs=quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"],
             Instrument=dict(Symbol=(quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"][
                                         "Symbol"],

@@ -16,30 +16,36 @@ class OrdReportOMS(OrdReport):
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ES.BUYTH2TEST.REPLY',
             'REPLY_SUBJECT': 'QUOD.BUYTH2TEST.ES.REPLY',
+            "Header": {
+                "MsgTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                "CreationTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+            },
             "OrdReportBlock": {
+                "InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
                 "LastVenueOrdID": "*",
-                "SecondaryOrderID": bca.client_orderid(13),
                 "ClOrdID": "*",
                 "ReplySource": "Exchange",
-                "TransactTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
-                "FreeNotes": "reportViaJavaApi",
-                "Side": "Sell",
-                "OrdQty": "100",
-                "Price": "10",
-                "VenueExecID": bca.client_orderid(13),
-                "CumQty": "0.0",
-                "LeavesQty": "100.0",
-                "AvgPrice": "0.0",
+                "TransactTime": datetime.utcnow().isoformat(),
+                "Side": "Buy",
+                "OrdQty": "100.000000000",
+                "Price": "20.000000000",
+                "VenueExecID": bca.client_orderid(9),
+                "CumQty": "0.000000000",
+                "LeavesQty": "100.000000000",
+                "AvgPrice": "20.000000000",
                 "ExecType": "Open",
                 "OrdType": "Limit",
-                "ReplyReceivedTime": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                "TimeInForce": "Day",
+                "ExDestination": data_set.get_mic_by_name("mic_1"),
+                "ReplyReceivedTime": datetime.utcnow().isoformat(),
+                "VenueAccount": {"VenueActGrpName": data_set.get_venue_client_names_by_name("client_1_venue_1")},
             }
         }
 
-    def set_default_open(self, ord_id):
+    def set_default_open(self, ord_id, venue_ord_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('OrdReportBlock',
-                                        {"LastVenueOrdID": ord_id, 'ClOrdID': ord_id})
+                                        {"LastVenueOrdID": venue_ord_id, 'ClOrdID': ord_id})
 
     def set_default_eliminated(self, ord_id, price):
         self.change_parameters(self.base_parameters)

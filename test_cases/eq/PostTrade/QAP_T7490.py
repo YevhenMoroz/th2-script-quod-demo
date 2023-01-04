@@ -36,14 +36,14 @@ class QAP_T7490(TestCase):
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_manager = FixManager(self.ss_connectivity)
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.qty = '100'
         self.price = '10'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.client = self.data_set.get_client('client_pt_8')  # MOClient7 Fully manual with one account
-        self.account1 = self.data_set.get_account_by_name("client_pt_6_acc_1")
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')  # MOClient7_PARIS
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient7 Fully manual with one account
+        self.account1 = self.data_set.get_account_by_name("client_pt_1_acc_1")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient7_PARIS
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)

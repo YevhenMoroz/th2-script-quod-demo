@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -174,4 +175,5 @@ class QAP_T7464(TestCase):
             als_message = dict()
             als_message.update({"ConfirmationID": confirmation_id, "NetGrossInd": indicator})
             self.read_log_verifier.check_read_log_message(als_message, ["ConfirmationID"], timeout=50000)
+            time.sleep(10)
             # endregion

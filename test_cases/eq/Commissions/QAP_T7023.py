@@ -322,7 +322,7 @@ class QAP_T7023(TestCase):
                                                    ]
                                                    })
         self.fix_verifier.check_fix_message_fix_standard(fix_confirmation_report,
-                                                         [['ConfirmTransType', 'NoOrders', 'AllocAccount']],
+                                                         ['ConfirmTransType', 'NoOrders', 'AllocAccount'],
                                                          ignored_fields=list_of_ignore_fields)
         # endregion
 

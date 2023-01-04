@@ -1,96 +1,75 @@
 import logging
-from datetime import datetime
-
-from custom.basic_custom_actions import create_event, timestamps
-from stubs import Stubs
-from win_gui_modules.order_book_wrappers import ExtractionDetail, ExtractionAction, OrderInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails
-from win_gui_modules.order_ticket import OrderTicketDetails
-from win_gui_modules.order_ticket_wrappers import NewOrderDetails
-from win_gui_modules.utils import get_base_request, prepare_fe, call, get_opened_fe
-from win_gui_modules.wrappers import set_base, verification, verify_ent
+import time
+from pathlib import Path
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7564"
-    seconds, nanos = timestamps()  # Store case start tim
-    # region Declarations
-    act = Stubs.win_act_order_book
-    qty = "50"
-    price = "2"
-    client = "SBK"
-    account = "Facilitation"
-    lookup = "VETO"
-    capacity = "Principal"
-    # endregion
+class QAP_T7564(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.client = self.data_set.get_client('client_pos_3')  # SBK
+        self.client_acc = self.data_set.get_account_by_name('client_pos_3_acc_1')  # Facilitation
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pos_3_venue_1')  # SBK_PARIS
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.fix_message.get_parameter('Price')
+        self.fix_message.remove_parameter('OrderCapacity')
+        self.fix_message.change_parameters(
+            {'Account': self.client, 'PreAllocGrp': {'NoAllocs': [{'AllocAccount': self.client_acc,
+                                                                   'AllocQty': self.qty}]}})
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.order_modification_request = OrderModificationRequest()
+        # endregion
 
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        nos_rule = None
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.venue,
+                                                                                                  float(self.price))
 
-    if not Stubs.frontend_is_open:
-        prepare_fe(case_id, session_id, work_dir, username, password)
-    else:
-        get_opened_fe(case_id, session_id)
-    # endregion
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
+        # endregion
 
-    # region Create order via FE
-    order_ticket = OrderTicketDetails()
-    order_ticket.set_quantity(qty)
-    order_ticket.set_limit(price)
-    order_ticket.set_client(client)
-    order_ticket.set_order_type("Limit")
-    order_ticket.set_tif("Day")
-    order_ticket.set_account(account)
+        # region check TradeData in the exec report
+        ignored_list = ['ReplyReceivedTime', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc', 'SecondaryOrderID']
+        self.exec_report.set_default_new(self.fix_message)
+        self.exec_report.change_parameters({'OrderCapacity': 'P', 'Account': self.client})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)
+        # endregion
 
-    new_order_details = NewOrderDetails()
-    new_order_details.set_lookup_instr(lookup)
-    new_order_details.set_order_details(order_ticket)
-    new_order_details.set_default_params(base_request)
-    order_ticket_service = Stubs.win_act_order_ticket
-    order_book_service = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-
-    call(order_ticket_service.placeOrder, new_order_details.build())
-    extraction_id = "order.dma"
-    main_order_details = OrdersDetails()
-    main_order_details.set_default_params(base_request)
-    main_order_details.set_extraction_id(extraction_id)
-
-    call(order_book_service.getOrdersDetails, main_order_details.request())
-
-    # endregion
-    # region Check values in OrderBook
-    before_order_details_id = "before_order_details"
-
-    order_details = OrdersDetails()
-    order_details.set_default_params(base_request)
-    order_details.set_extraction_id(before_order_details_id)
-
-    order_status = ExtractionDetail("order_status", "Sts")
-    order_client = ExtractionDetail("order_client", "Client")
-    order_account = ExtractionDetail("order_account", "Account ID")
-    order_capacity = ExtractionDetail("order_capacity", "Capacity")
-    order_extraction_action = ExtractionAction.create_extraction_action(extraction_details=[order_status,
-                                                                                            order_client,
-                                                                                            order_account,
-                                                                                            order_capacity
-                                                                                            ])
-    order_details.add_single_order_info(OrderInfo.create(action=order_extraction_action))
-
-    call(act.getOrdersDetails, order_details.request())
-    call(common_act.verifyEntities, verification(before_order_details_id, "checking order",
-                                                 [verify_ent("Status", order_status.name, "Open"),
-                                                  verify_ent("Client", order_client.name, client),
-                                                  verify_ent("Account ID", order_account.name, account),
-                                                  verify_ent("Capacity", order_capacity.name, capacity)]))
-    # endregion
-    logger.info(f"Case {case_name} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

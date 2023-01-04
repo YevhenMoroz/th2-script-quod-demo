@@ -238,6 +238,16 @@ Copyright Quod Financial
 			<GatingRules>
 				<enabled>true</enabled>
 			</GatingRules>
+			<instrTypeFilter>false</instrTypeFilter>
+			<currencyFilter>false</currencyFilter>
+			<listingCurrencyFilter>false</listingCurrencyFilter>
+			<exDestinationFilter>false</exDestinationFilter>
+			<venueFilter>true</venueFilter>
+			<isinFilter>true</isinFilter>
+			<enforceRoute>false</enforceRoute>
+			<securityExchangeFilter>
+			     <default>true</default>
+	        </securityExchangeFilter>
 			<acceptUnknownAccountGroup>
 				 <DMA>true</DMA>
 				 <Care>true</Care>

@@ -3,59 +3,65 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.win_gui_wrappers.fe_trading_constant import BasketBookColumns, OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import BasketMessagesConst, JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageListStatusOMS import FixMessageListStatusOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListRequest import \
+    RemoveOrdersFromOrderListRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7405(TestCase):
-
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.list_creation_request = NewOrderListOMS(self.data_set)
+        self.remove_order_from_basket_request = RemoveOrdersFromOrderListRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        # region Send NewOrderList
-        nol = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
-        self.fix_manager.send_message_fix_standard(nol)
-        basket_id = self.basket_book.get_basket_value(BasketBookColumns.id.value)
-        order_id = self.order_book.set_filter([OrderBookColumns.basket_id.value, basket_id]).extract_field(
-            OrderBookColumns.order_id.value, 2)
+        self.list_creation_request.set_default_order_list()
+        responses = self.java_api_manager.send_message_and_receive_response(self.list_creation_request)
+        self.return_result(responses, ORSMessageType.OrdListNotification.value)
+        list_notify_block = self.result.get_parameter('OrdListNotificationBlock')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ListOrderStatus.value: BasketMessagesConst.ListOrderStatus_EXE.value}, list_notify_block,
+            'Check created basket')
         # endregion
-        # region Set-up parameters for ListStatus
-        list_status = FixMessageListStatusOMS().set_default_list_status(nol)
+
+        # region get order_id
+        list_id = list_notify_block['OrderListID']
+        ord_id1 = list_notify_block['OrdNotificationElements']['OrdNotificationBlock'][0]['OrdID']
+        ord_id2 = list_notify_block['OrdNotificationElements']['OrdNotificationBlock'][1]['OrdID']
         # endregion
-        # region Check ListStatus
-        self.fix_verifier.check_fix_message_fix_standard(list_status)
-        # endregion
-        # region Accept orders
-        self.client_inbox.accept_order()
-        self.client_inbox.accept_order()
-        # endregion
+
         # region remove order from basket
-        self.basket_book.remove_from_basket({BasketBookColumns.id.value: basket_id}, [1])
+        self.remove_order_from_basket_request.set_default(ord_id1, list_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.remove_order_from_basket_request)
+        self.return_result(responses, ORSMessageType.OrdListNotification.value)
+        list_notify_block = self.result.get_parameter('OrdListNotificationBlock')
         # endregion
+
         # region check values
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.basket_name.value: "",
-             OrderBookColumns.basket_id.value: ""})
+        self.java_api_manager.compare_values(
+            {'OrdIDList': {'OrdIDBlock': [{'OrdID': ord_id2}]}}, list_notify_block,
+            'Check order in the basket')
         # endregion
+
+    def return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

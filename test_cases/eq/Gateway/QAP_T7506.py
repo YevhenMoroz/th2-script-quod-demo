@@ -9,10 +9,10 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
-from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -42,6 +42,7 @@ class QAP_T7912(TestCase):
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
         self.currency = self.data_set.get_currency_by_name("currency_1")
+        self.text = constants.RejectMessages.no_listing_5.value
         # endregion
 
         # region Gateway Side
@@ -80,7 +81,7 @@ class QAP_T7912(TestCase):
         # endregion
 
         # region Key parameters
-        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_3")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_Reject_Eliminate_child")
@@ -130,5 +131,6 @@ class QAP_T7912(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_reject_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_reject)
+        er_reject_SORPING_order_params.remove_parameters(['SecondaryAlgoPolicyID', 'ExecRestatementReason', 'ExDestination']).add_tag(dict(OrdRejReason='*')).change_parameters(dict(Text=self.text, Price='*'))
         self.fix_verifier_sell.check_fix_message(er_reject_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
