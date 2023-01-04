@@ -66,7 +66,7 @@ class RootConstants:
 
     RISK_LIMITS_TOGGLE_CSS_SELECTOR = "a[title='Risk Limits']"
     TRADING_LIMITS_ITEM_XPATH = "//span[text()='Trading Limits']"
-    BUYING_POWER_ITEM_XPATH = "//span[text()='Buying Power']"
+    BUYING_POWER_ITEM_XPATH = "//a[@title='Buying Power']"
     CUM_TRADING_LIMITS_ITEM_XPATH = "//span[text()='Cum Trading Limits']"
     LISTING_CUM_TRADING_LIMIT_COUNTERS_ITEM_XPATH = "//span[text()='Listing Cum Trading Limit Counters']"
     CUM_TRADING_LIMIT_COUNTER_ITEM_XPATH = "//span[text()='Cum Trading Limit Counters']"
