@@ -94,7 +94,7 @@ class QAP_T7641(TestCase):
             JavaApiFields.OrdUpdateBlock.value)
         ord_update2 = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value, ord_id2).get_parameter(
             JavaApiFields.OrdUpdateBlock.value)
-        expected_result = {"UnmatchedQty": f"{self.qty}.0"}
+        expected_result = {"UnmatchedQty": str(float(self.qty))}
         self.java_api_manager.compare_values(expected_result, ord_update, "UnmatchedQty for order 1")
         self.java_api_manager.compare_values(expected_result, ord_update2, "UnmatchedQty for order 2")
         # endregion

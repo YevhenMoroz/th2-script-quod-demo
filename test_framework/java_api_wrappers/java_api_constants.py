@@ -187,6 +187,8 @@ class JavaApiFields(Enum):
     DayCumAmt = 'DayCumAmt'
     UnsolicitedOrder = "UnsolicitedOrder"
     OrdQty = 'OrdQty'
+    LeavesQty = 'LeavesQty'
+    CumQty = 'CumQty'
     ExecPrice = 'ExecPrice'
     DisclosedExec = 'DisclosedExec'
     """List Wave"""
