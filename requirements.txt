@@ -32,6 +32,8 @@ selenium
 PyPDF2
 webdriver_manager
 datetimerange
+psycopg2==2.9.5
+oracledb==1.2.1
 
 Appium-Python-Client==2.2.0
 
