@@ -268,6 +268,7 @@ class JavaApiFields(Enum):
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'
+    OrderBagExecStatus = 'OrderBagExecStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
