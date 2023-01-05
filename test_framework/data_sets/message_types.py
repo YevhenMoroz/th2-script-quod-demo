@@ -48,6 +48,7 @@ class ORSMessageType(Enum):
     TradeEntryNotif = 'Order_TradeEntryNotif'
     BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
     BookingCancelRequest = 'Order_BookingCancelRequest'
+    ListCancelRequest = 'Order_ListCancelRequest'
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
@@ -100,7 +101,12 @@ class ORSMessageType(Enum):
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
-    RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListRequest'
+    RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListReply'
+    ListCancelReply = 'Order_ListCancelReply'
+    AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
+    OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
+    OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
+
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
