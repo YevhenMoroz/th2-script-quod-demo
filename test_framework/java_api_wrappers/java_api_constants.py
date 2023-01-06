@@ -280,6 +280,7 @@ class JavaApiPartyRoleConstants(Enum):
 
 class BagChildCreationPolicy(Enum):
     Split = 'SPL'
+    Group = "GRP"
     AVP = 'AVP'  # GroupByAvgPx
 
 
