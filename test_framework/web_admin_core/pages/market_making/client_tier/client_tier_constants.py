@@ -38,9 +38,11 @@ class ClientTierConstants:
     CLIENT_TIER_VALUES_TAB_NAME_XPATH = '//*[@id="clientTierName"]'
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = '//*[@id="pricingMethod"]'
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH = "//*[@class='option-list']//span"
+    CLIENT_TIER_VALUES_TAB_TOD_TIME_ZONE = '//*[@id="TODTimeZone"]'
+    CLIENT_TIER_VALUES_TAB_TOD_START_TIME = '//*[@id="TODStartTime_ext"]'
     CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[@id="schedule"]//following::button[normalize-space()="Manage"]'
-    CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX = '//*[normalize-space()="Schedule"]//..//*[@class="custom-checkbox"]'
+    CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX = '//*[@id="schedule"]//ancestor::div//*[contains(@class, "custom-checkbox")]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES = '//*[@id="schedule"]'
     # schedules
     # schedules schedules
@@ -157,6 +159,19 @@ class ClientTierConstants:
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_XPATH = '//*[normalize-space()="Internal Clients"]//..//*[@placeholder ="Client *"]'
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_CLIENT_FILTER_XPATH = "//*[text()=' Internal Clients ']/parent::nb-accordion-item//thead//tr[2]//th[2]//input"
     CLIENT_TIER_INSTRUMENTS_INTERNAL_CLIENTS_TAB_WARNING_ICON = '//*[normalize-space()="Internal Clients"]//..//*[@data-name="alert-triangle"]'
+
+    # client tiers tab
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[@data-name="plus"]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[@data-name="checkmark"]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[@data-name="close"]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[@data-name="edit"]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[@data-name="trash-2"]'
+
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CLIENT_TIERS_FILTER_XPATH = '(//*[normalize-space()="Client Tiers"]//..//*[@placeholder="Filter"])[1]'
+
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CLIENT_TIERS_XPATH = '//*[@id="refClientTierID"]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CRITICAL_CHECKBOX_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[contains(@class, "custom-checkbox")]'
+    CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_DEFAULT_WEIGHT_XPATH = '//*[@placeholder="Default Weight"]'
 
     # sweepable quantities
     CLIENT_TIER_INSTRUMENTS_SWEEPABLE_QUANTITIES_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Sweepable Quantities "]/parent::nb-accordion-item//*[@data-name="plus"]'

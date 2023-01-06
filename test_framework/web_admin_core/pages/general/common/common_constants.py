@@ -27,4 +27,5 @@ class CommonConstants:
     USER_ID_AT_SEND_FEEDBACK_ADDITION_INFORMATION = '//*[@id="userFeedback"]//*[text()="User ID"]/following-sibling::td'
     INFO_MESSAGE_POP_UP = '//nb-toast'
     ERROR_MESSAGE_POP_UP = '//nb-toast[contains(@class, "danger")]'
-    INFO_ERROR_TEXT = '//nb-toast//*[@class="message"]'
+    ERROR_POP_UP_TEXT = '//nb-toast//*[@class="message"]'
+    INFO_POP_UP_TEXT = '//nb-toast//*[@class="title subtitle"]'

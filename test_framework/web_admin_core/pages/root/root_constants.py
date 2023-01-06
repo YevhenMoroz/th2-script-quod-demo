@@ -7,6 +7,7 @@ class RootConstants:
     SETTINGS_ITEM_XPATH = "//span[text()='Settings']"
     ENTITLEMENTS_ITEM_XPATH = "//span[text()='Entitlements']"
     SYSTEM_COMMANDS_ITEM_XPATH = "//span[text()='System Commands']"
+    SYSTEM_COMPONENTS_ITEM_XPATH = '//a[@title="System Components"]'
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
     SITE_TAB_XPATH = '//*[@title="Site"]'
@@ -17,7 +18,7 @@ class RootConstants:
     DESKS_ITEM_XPATH = "//span[text()='Desks']"
 
     USERS_TOGGLE_CSS_SELECTOR = "a[title='Users']"
-    USERS_ITEM_XPATH = "//*[@href='#/pages/users/view']//span[text()='Users']"
+    USERS_ITEM_XPATH = '//a[@title="Users"][@href!="#"]'
     USER_SESSIONS_ITEM_XPATH = "//span[text()='User Sessions']"
 
     MARKETS_TOGGLE_CSS_SELECTOR = "a[title='Markets']"
@@ -35,7 +36,7 @@ class RootConstants:
     ACCOUNTS_ITEM_XPATH = "//span[text()='Accounts']"
     WASHBOOK_ITEM_XPATH = "//span[text()='Wash Books']"
     WASHBOOK_RULES_ITEM_XPATH = "//span[text()='Wash Book Rules']"
-    CLIENTS_ITEM_XPATH = "//span[text()='Clients']"
+    CLIENTS_ITEM_XPATH = "//a[@title='Clients']"
     CLIENT_GROUPS_ITEM_XPATH = "//span[text()='Client Groups']"
     CLIENT_LISTS_ITEM_XPATH = "//span[text()='Client Lists']"
     CASH_ACCOUNTS_ITEM_XPATH = "//span[text()='CashAccounts']"
@@ -53,7 +54,7 @@ class RootConstants:
 
     FX_MARKET_MAKING_TOGGLE_CSS_SELECTOR = "a[title='Market Making']"
     QUOTING_SESSIONS_ITEM_XPATH = "//span[text()='Quoting Sessions']"
-    CLIENT_TIER_ITEM_XPATH = "//span[text()='Client Tiers']"
+    CLIENT_TIER_ITEM_XPATH = "//a[@title='Client Tiers']"
     AUTO_HEDGER_ITEM_XPATH = "//span[text()='Auto Hedgers']"
 
     PRICE_CLEANSING_TOGGLE_CSS_SELECTOR = "a[title='Price Cleansing']"
