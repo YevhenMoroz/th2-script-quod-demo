@@ -132,6 +132,7 @@ class JavaApiFields(Enum):
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
     PartyRole = "PartyRole"
+    CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     TimeInForce = 'TimeInForce'
