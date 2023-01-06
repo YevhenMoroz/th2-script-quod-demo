@@ -162,6 +162,7 @@ class JavaApiFields(Enum):
     OrderBagName = 'OrderBagName'
     OrderBagID = 'OrderBagID'
     OrderBagQty = 'OrderBagQty'
+    ReleasedQty = 'ReleasedQty'
     PegScope = 'PegScope'
     PegOffsetType = 'PegOffsetType'
     PegOffsetValue = 'PegOffsetValue'
