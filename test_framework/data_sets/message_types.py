@@ -101,6 +101,7 @@ class ORSMessageType(Enum):
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
     RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListRequest'
+    DFDManagementBatchReply = 'Order_DFDManagementBatchReply'
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
