@@ -1,7 +1,7 @@
 import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+from custom.verifier import Verifier, VerificationMethod
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -59,7 +59,7 @@ class QAP_T2578(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_2 = no_md_entries[0].get("MDEntryID")
-        self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2)
+        self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2, VerificationMethod.NOT_EQUALS)
         self.verifier.verify()
         # endregion
 
