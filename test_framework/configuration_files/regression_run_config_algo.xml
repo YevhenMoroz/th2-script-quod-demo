@@ -27,9 +27,6 @@
                         <fix_environments>
                             <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
-                        <fe_environments>
-                            <fe_environment>quod310_fe</fe_environment>
-                        </fe_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="False">
@@ -150,7 +147,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="Expity_Auction" run="False">
+                <component name="Expiry_Auction" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -178,22 +175,6 @@
                     </environments>
                 </component>
                 <component name="POV_Scaling" run="False">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_redburn</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="Pair_trading" run="False">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="Acceptance_list" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
