@@ -59,7 +59,7 @@ class QAP_T2578(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_2 = no_md_entries[0].get("MDEntryID")
-        self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2, VerificationMethod.NOT_EQUALS)
+        self.verifier.compare_values(self.mdentryid_event, md_entry_id_1, md_entry_id_2)
         self.verifier.verify()
         # endregion
 
