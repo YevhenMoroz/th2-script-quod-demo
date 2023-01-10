@@ -1,17 +1,14 @@
 from pathlib import Path
-
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.constants import DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
-
 
 
 class QAP_T2462(TestCase):
@@ -32,6 +29,11 @@ class QAP_T2462(TestCase):
                 'Symbol': self.eur_usd,
                 'SecurityType': self.security_type_spot,
                 'Product': '4'}}]
+        self.no_related_symbols_check = [{
+            'Instrument': {
+                'Symbol': self.eur_usd,
+                'SecurityType': self.security_type_spot,
+                'Product': '4'}, 'SettlType': ''}]
         self.bands = ["1000000", '5000000', '10000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -41,13 +43,10 @@ class QAP_T2462(TestCase):
             change_parameters({"SenderSubID": self.silver}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_subscribe.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_check)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         # endregion
-
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
