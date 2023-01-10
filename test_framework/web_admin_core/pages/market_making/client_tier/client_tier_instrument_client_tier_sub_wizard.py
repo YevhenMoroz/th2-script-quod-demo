@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_constants import \
     ClientTierConstants
@@ -33,6 +35,8 @@ class ClientTiersInstrumentClientTierSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CLIENT_TIERS_XPATH)
 
     def get_all_client_tiers_from_drop_menu(self):
+        self.set_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_CLIENT_TIERS_TAB_CLIENT_TIERS_XPATH, '')
+        time.sleep(1)
         return self.get_all_items_from_drop_down(ClientTierConstants.DROP_DOWN_MENU_XPATH)
 
     def select_critical_checkbox(self):

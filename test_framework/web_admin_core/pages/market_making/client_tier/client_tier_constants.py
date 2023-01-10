@@ -33,6 +33,9 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_PRICING_XPATH = '//*[normalize-space()="Pricing"]//nb-icon'
     MAIN_PAGE_CLIENT_TIER_PRICING_ENABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Enabled, Click to Disable"]'
     MAIN_PAGE_CLIENT_TIER_PRICING_DISABLE_TOOLTIP = '//*[contains(@id, "cdk-overlay")]//ancestor::*//*[@nbtooltip="Pricing Disabled, Click to Enable"]'
+    MAIN_PAGE_CLIENT_TIER_EXECUTABLE_TEXT = '//span[normalize-space()="Executable"]'
+    MAIN_PAGE_CLIENT_TIER_PRICING_TEXT = '//span[normalize-space()="Pricing"]'
+
     # region wizard
     # values tab
     CLIENT_TIER_VALUES_TAB_NAME_XPATH = '//*[@id="clientTierName"]'

@@ -23,7 +23,7 @@ from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_i
     ClientTierInstrumentWizard
 
 
-class QAP_T8822(CommonTestCase):
+class QAP_T8823(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
@@ -35,7 +35,9 @@ class QAP_T8822(CommonTestCase):
         self.symbol = self.data_set.get_symbol_by_name("symbol_4")
         self.tod_end_time = "23:59:00"
         self.instrument_client_tier = "Gold"
+        self.new_instrument_client_tier = str
         self.default_weight = str(random.randint(1, 50))
+        self.new_default_weight = str(random.randint(1, 50))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,6 +52,26 @@ class QAP_T8822(CommonTestCase):
         client_tiers_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
+
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.select_client_tier_by_name(self.name)
+
+        instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        instrument_main_page.click_on_new()
+        instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        instrument_values_tab.set_symbol(self.symbol)
+        instrument_values_tab.set_tod_end_time(self.tod_end_time)
+        instrument_client_tiers_tab = ClientTiersInstrumentClientTierSubWizard(self.web_driver_container)
+        instrument_client_tiers_tab.click_on_plus()
+        instrument_client_tiers_tab.set_client_tiers(self.instrument_client_tier)
+        instrument_client_tiers_tab.select_critical_checkbox()
+        instrument_client_tiers_tab.set_default_weight(self.default_weight)
+        instrument_client_tiers_tab.click_on_checkmark()
+
+        instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        instrument_wizard.click_on_save_changes()
 
     def postcondition(self):
         side_menu = SideMenu(self.web_driver_container)
@@ -68,17 +90,18 @@ class QAP_T8822(CommonTestCase):
             client_tiers_main_page.set_name(self.name)
             time.sleep(1)
             client_tiers_main_page.select_client_tier_by_name(self.name)
-
             instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-            instrument_main_page.click_on_new()
-            instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            instrument_values_tab.set_symbol(self.symbol)
-            instrument_values_tab.set_tod_end_time(self.tod_end_time)
+            instrument_main_page.set_symbol(self.symbol)
+            time.sleep(1)
+            instrument_main_page.click_on_more_actions()
+            instrument_main_page.click_on_edit()
             instrument_client_tiers_tab = ClientTiersInstrumentClientTierSubWizard(self.web_driver_container)
-            instrument_client_tiers_tab.click_on_plus()
-            instrument_client_tiers_tab.set_client_tiers(self.instrument_client_tier)
+            instrument_client_tiers_tab.set_client_tiers_filter(self.instrument_client_tier)
+            instrument_client_tiers_tab.click_on_edit()
+            self.new_instrument_client_tier = random.choice(instrument_client_tiers_tab.get_all_client_tiers_from_drop_menu())
+            instrument_client_tiers_tab.set_client_tiers(self.new_instrument_client_tier)
             instrument_client_tiers_tab.select_critical_checkbox()
-            instrument_client_tiers_tab.set_default_weight(self.default_weight)
+            instrument_client_tiers_tab.set_default_weight(self.new_default_weight)
             instrument_client_tiers_tab.click_on_checkmark()
 
             instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
@@ -91,16 +114,16 @@ class QAP_T8822(CommonTestCase):
             time.sleep(1)
             instrument_main_page.click_on_more_actions()
             instrument_main_page.click_on_edit()
-
-            instrument_client_tiers_tab.set_client_tiers_filter(self.instrument_client_tier)
+            instrument_client_tiers_tab.set_client_tiers_filter(self.new_instrument_client_tier)
             instrument_client_tiers_tab.click_on_edit()
+            time.sleep(1)
 
-            expected_result = [self.instrument_client_tier, True, self.default_weight]
+            expected_result = [self.new_instrument_client_tier, False, self.new_default_weight]
             actual_result = [instrument_client_tiers_tab.get_client_tiers(),
                              instrument_client_tiers_tab.is_critical_checkbox_selected(),
                              instrument_client_tiers_tab.get_default_weight()]
 
-            self.verify("Instrument Client Tiers entity displayed saved data", expected_result, actual_result)
+            self.verify("Instrument Client Tiers entity has been changed", expected_result, actual_result)
 
             self.postcondition()
 
