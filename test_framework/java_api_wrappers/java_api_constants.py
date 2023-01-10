@@ -185,6 +185,8 @@ class JavaApiFields(Enum):
     OrdQty = 'OrdQty'
     ExecPrice = 'ExecPrice'
     DisclosedExec = 'DisclosedExec'
+    AccountGroupName = 'AccountGroupName'
+    UnmatchedQty = 'UnmatchedQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
