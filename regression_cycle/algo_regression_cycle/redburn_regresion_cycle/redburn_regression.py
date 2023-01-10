@@ -19,40 +19,40 @@ def test_run():
         root = tree.getroot()
         version = '5.1.132.145'
 
-        # # if eval(root.find(".//component[@name='Twap']").attrib["run"]):
-        # redburn_twap_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Twap']").attrib["run"]):
-        # redburn_twap_navigator_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Twap']").attrib["run"]):
-        # redburn_twap_aution_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Twap']").attrib["run"]):
-        # redburn_twap_additional_features_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
-        # redburn_vwap_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
-        # redburn_vwap_navigator_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
-        # redburn_vwap_aution_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
-        # redburn_vwap_additional_features_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Participation']").attrib["run"]):
-        # redburn_pov_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Participation']").attrib["run"]):
-        # redburn_pov_navigator_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Participation']").attrib["run"]):
-        # redburn_pov_aution_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Participation']").attrib["run"]):
-        # redburn_pov_additional_features_regression.test_run(parent_id=report_id, version=version)
-        # # if eval(root.find(".//component[@name='PreOpen_Auction']").attrib["run"]):
-        redburn_moo_regression.test_run(parent_id=report_id, version=version)
-        # # if eval(root.find(".//component[@name='Expity_Auction']").attrib["run"]):
-        redburn_exa_auction_regression.test_run(parent_id=report_id, version=version)
-        # # if eval(root.find(".//component[@name='PreClose_Auction']").attrib["run"]):
-        redburn_moc_aution_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='Scaling']").attrib["run"]):
-        # redburn_auction_scaling_regression.test_run(parent_id=report_id, version=version)
-        # # # if eval(root.find(".//component[@name='POV_Scaling']").attrib["run"]):
-        # redburn_pov_scaling_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Twap']").attrib["run"]):
+            redburn_twap_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Twap']").attrib["run"]):
+            redburn_twap_navigator_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Twap']").attrib["run"]):
+            redburn_twap_aution_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Twap']").attrib["run"]):
+            redburn_twap_additional_features_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
+            redburn_vwap_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
+            redburn_vwap_navigator_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
+            redburn_vwap_aution_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Vwap']").attrib["run"]):
+            redburn_vwap_additional_features_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Participation']").attrib["run"]):
+            redburn_pov_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Participation']").attrib["run"]):
+            redburn_pov_navigator_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Participation']").attrib["run"]):
+            redburn_pov_aution_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Participation']").attrib["run"]):
+            redburn_pov_additional_features_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='PreOpen_Auction']").attrib["run"]):
+            redburn_moo_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Expiry_Auction']").attrib["run"]):
+            redburn_exa_auction_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='PreClose_Auction']").attrib["run"]):
+            redburn_moc_aution_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Scaling']").attrib["run"]):
+            redburn_auction_scaling_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='POV_Scaling']").attrib["run"]):
+            redburn_pov_scaling_regression.test_run(parent_id=report_id, version=version)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
