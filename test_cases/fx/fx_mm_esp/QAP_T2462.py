@@ -31,8 +31,7 @@ class QAP_T2462(TestCase):
             'Instrument': {
                 'Symbol': self.eur_usd,
                 'SecurityType': self.security_type_spot,
-                'Product': '4'},
-            'SettlType': ''}]
+                'Product': '4'}}]
         self.bands = ["1000000", '5000000', '10000000']
 
     @try_except(test_id=Path(__file__).name[:-3])
