@@ -13,6 +13,7 @@ from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderC
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
+from test_framework.java_api_wrappers.ors_messages.AddOrdersToOrderListReply import AddOrdersToOrderListReply
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchReply import BlockUnallocateBatchReply
 from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
@@ -29,6 +30,7 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBa
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
 from test_framework.java_api_wrappers.ors_messages.HeldOrderAckReply import HeldOrderAckReply
+from test_framework.java_api_wrappers.ors_messages.ListCancelReply import ListCancelReply
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
 from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrderReply
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
@@ -44,6 +46,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import O
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
@@ -336,7 +339,24 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
-
+        elif message.get_message_type() == ORSMessageType.ListCancelRequest.value:
+            response = self.act.submitListCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.AddOrdersToOrderListRequest.value:
+            response = self.act.submitAddOrdersToOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveModificationRequest.value:
+            response = self.act.submitOrderListWaveModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
         else:
             response = None
@@ -483,6 +503,12 @@ class JavaApiManager:
                 response_fix_message = RemoveOrdersFromOrderListReply()
             elif message_type == ORSMessageType.OrderBagDissociateReply.value:
                 response_fix_message = OrderBagDissociateReply()
+            elif message_type == ORSMessageType.ListCancelReply.value:
+                response_fix_message = ListCancelReply()
+            elif message_type == ORSMessageType.AddOrdersToOrderListReply.value:
+                response_fix_message = AddOrdersToOrderListReply()
+            elif message_type == ORSMessageType.OrderListWaveModificationReply.value:
+                response_fix_message = OrderListWaveModificationReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

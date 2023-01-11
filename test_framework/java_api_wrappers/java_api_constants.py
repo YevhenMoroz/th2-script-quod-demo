@@ -8,11 +8,13 @@ class ExecutionReportConst(Enum):
     ExecType_CAL = 'CAL'
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
+    ExecType_ACT = 'ACT'
 
 
 class BasketMessagesConst(Enum):
     ListExecutionPolicy_C = 'C'
     ListOrderStatus_EXE = 'EXE'
+    ListOrderStatus_REJ = 'REJ'
 
 
 class BagMessagesConst(Enum):
@@ -116,6 +118,7 @@ class CommissionAmountTypeConst(Enum):
 class OrdListNotificationConst(Enum):
     ListOrderStatus_EXE = 'EXE'
     OrderListWaveStatus_TER = 'TER'
+    OrderListWaveStatus_NEW = 'NEW'
 
 
 class QtyPercentageProfile(Enum):
@@ -189,12 +192,16 @@ class JavaApiFields(Enum):
     OrdQty = 'OrdQty'
     ExecPrice = 'ExecPrice'
     DisclosedExec = 'DisclosedExec'
+    OrdListNotificationBlock = 'OrdListNotificationBlock'
+    AddOrdersToOrderListReplyBlock = 'AddOrdersToOrderListReplyBlock'
+    RemoveOrdersFromOrderListReplyBlock = 'RemoveOrdersFromOrderListReplyBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
     OrderListWaveStatus = 'OrderListWaveStatus'
     PercentQtyToRelease = 'PercentQtyToRelease'
     QtyPercentageProfile = 'QtyPercentageProfile'
+    RootParentOrdID = 'RootParentOrdID'
     RouteID = 'RouteID'
     """External Algo"""
     ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
@@ -261,6 +268,7 @@ class JavaApiFields(Enum):
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
     Currency = "Currency"
+    FreeNotes = 'FreeNotes'
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'

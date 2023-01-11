@@ -1,58 +1,71 @@
 import logging
 import os
 from pathlib import Path
-from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
+
+from custom import basic_custom_actions as bca, basic_custom_actions
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderListOMS import FixMessageNewOrderListOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, \
-    MenuItemFromOrderBook, BasketBookColumns
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, BasketMessagesConst
+from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
+from test_framework.java_api_wrappers.ors_messages.AddOrdersToOrderListRequest import AddOrdersToOrderListRequest
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7378(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.oms_basket_book = OMSBasketOrderBook(self.test_id, self.session_id)
-        self.fix_message = FixMessageNewOrderListOMS(self.data_set).set_default_order_list()
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.list_creation_request = NewOrderListOMS(self.data_set)
+        self.add_orders_to_orderlist_request = AddOrdersToOrderListRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        # region Send NewOrderList
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        basket_id = self.oms_basket_book.get_basket_value(BasketBookColumns.id.value)
+        # region create first basket
+        self.list_creation_request.set_default_order_list()
+        self.java_api_manager.send_message_and_receive_response(self.list_creation_request)
+        order_list_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrdListNotification.value).get_parameters()[
+                JavaApiFields.OrdListNotificationBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ListOrderStatus.value: BasketMessagesConst.ListOrderStatus_EXE.value},
+            order_list_notification,
+            'Check created first basket')
+        list_id_1 = order_list_notification['OrderListID']
+        ord_id_from_first_basket = order_list_notification['OrdNotificationElements']['OrdNotificationBlock'][0]['OrdID']
         # endregion
-        # region check basket was created
-        self.oms_basket_book.check_basket_field(BasketBookColumns.status.value, BasketBookColumns.exec_sts.value)
+
+        # region create second basket
+        self.list_creation_request.set_default_order_list()
+        self.list_creation_request.update_fields_in_component('NewOrderListBlock',
+                                                              {'OrderListName': basic_custom_actions.client_orderid(9)})
+        self.java_api_manager.send_message_and_receive_response(self.list_creation_request)
+        order_list_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrdListNotification.value).get_parameters()[
+                JavaApiFields.OrdListNotificationBlock.value]
+        list_id_2 = order_list_notification['OrderListID']
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ListOrderStatus.value: BasketMessagesConst.ListOrderStatus_EXE.value},
+            order_list_notification,
+            'Check created second basket')
         # endregion
-        # region accept orders
-        self.client_inbox.accept_order()
-        self.client_inbox.accept_order()
-        # endregion
-        # region check absent of "add to basket" item in orders menu
-        result = self.order_book.is_menu_item_present(MenuItemFromOrderBook.add_to_basket.value, [1],
-                                             filter_dict={OrderBookColumns.order_id.value: order_id})
-        verifier = Verifier(self.test_id)
-        verifier.compare_values("Add to Basket button presence", "false", result)
-        verifier.set_event_name("Check value")
-        verifier.verify()
-        # endregion
+
+        # region add order from first basket to second basket
+        self.add_orders_to_orderlist_request.set_default(ord_id_from_first_basket, list_id_2)
+        self.java_api_manager.send_message_and_receive_response(self.add_orders_to_orderlist_request)
+        add_orders_to_list_reply = \
+            self.java_api_manager.get_last_message(ORSMessageType.AddOrdersToOrderListReply.value).get_parameters()[
+                JavaApiFields.AddOrdersToOrderListReplyBlock.value]
+        self.java_api_manager.compare_values(
+            {'FreeNotes': f'Runtime error (order {ord_id_from_first_basket} belongs to list {list_id_1})'},
+            add_orders_to_list_reply,
+            'Check order from first basket was not add to the second basket')
