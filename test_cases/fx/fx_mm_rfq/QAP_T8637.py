@@ -31,9 +31,9 @@ class QAP_T8637(TestCase):
 
         self.instrument = {
 
-                "Symbol": self.data_set.get_symbol_by_name("symbol_1"),
-                "SecurityType": self.data_set.get_security_type_by_name("fx_fwd"),
-                "Product": "4"
+            "Symbol": self.data_set.get_symbol_by_name("symbol_1"),
+            "SecurityType": self.data_set.get_security_type_by_name("fx_for"),
+            "Product": "4"
         }
 
         self.party = [{
@@ -59,7 +59,8 @@ class QAP_T8637(TestCase):
         # endregion
         # region Step 4
         self.execution_report.set_params_from_new_order_single_synergy(self.order)
-        self.execution_report.add_tag({"SecondaryClOrdID": "*"})
-        self.execution_report.update_fields_in_component("Instrument", self.instrument)
+        self.execution_report.add_tag({"SecondaryClOrdID": "*"}) \
+            .update_fields_in_component("Instrument", self.instrument)\
+            .remove_parameter("LastPx").remove_fields_from_component("Instrument", ["SymbolSfx"])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
