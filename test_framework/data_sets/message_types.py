@@ -71,6 +71,7 @@ class ORSMessageType(Enum):
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
     OrderBagDissociateReply = 'Order_OrderBagDissociateReply'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    RemoveOrdersFromOrderListRequest = 'Order_RemoveOrdersFromOrderListRequest'
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
@@ -99,6 +100,7 @@ class ORSMessageType(Enum):
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
+    RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListRequest'
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -152,6 +154,7 @@ class PKSMessageType(Enum):
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
+    FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
 
 
 class QSMessageType(Enum):

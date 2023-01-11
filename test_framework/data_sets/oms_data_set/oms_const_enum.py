@@ -69,12 +69,14 @@ class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
+    instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
 
 
 class OmsListingId(Enum):
     listing_1 = "1200"
     listing_2 = '9500000049'
     listing_3 = "704"
+    listing_4 = "2259"
 
 
 class OmsVenues(Enum):
@@ -170,6 +172,7 @@ class OmsVenueClientNames(Enum):
 class OmsAccounts(Enum):
     """Base"""
     client_1_acc_1 = "NEWACCOUNT"
+    client_1_acc_2 = "TEST2"
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
@@ -225,6 +228,7 @@ class OmsWashbookAccounts(Enum):
     washbook_account_2 = "CareWB"
     washbook_account_3 = "DefaultWashBook"
     washbook_account_4 = "AlgoWashBook"
+    washbook_account_5 = "EquityWashBook"
 
 
 class OmsRecipients(Enum):

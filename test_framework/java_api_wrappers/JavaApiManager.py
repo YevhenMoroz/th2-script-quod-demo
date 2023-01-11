@@ -48,6 +48,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification imp
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
+from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
@@ -329,6 +330,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.RemoveOrdersFromOrderListRequest.value:
+            response = self.act.submitRemoveOrdersFromOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
 
         else:
@@ -472,6 +479,8 @@ class JavaApiManager:
                 response_fix_message = HeldOrderAckReply()
             elif message_type == ORSMessageType.MarkOrderReply.value:
                 response_fix_message = MarkOrderReply()
+            elif message_type == ORSMessageType.RemoveOrdersFromOrderListReply.value:
+                response_fix_message = RemoveOrdersFromOrderListReply()
             elif message_type == ORSMessageType.OrderBagDissociateReply.value:
                 response_fix_message = OrderBagDissociateReply()
             response_fix_message.change_parameters(fields)

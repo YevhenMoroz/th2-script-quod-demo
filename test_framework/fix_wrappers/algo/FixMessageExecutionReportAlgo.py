@@ -1467,6 +1467,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
+        if new_order_single.is_parameter_exist('DisplayInstruction'):
+            temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         temp.update(
             AvgPx='*',
             ClOrdID='*',

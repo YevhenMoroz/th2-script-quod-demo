@@ -129,7 +129,7 @@ class QAP_T4578(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
-        time.sleep(3)
+        time.sleep(10)
         # endregion
 
         # region Check Sell side
