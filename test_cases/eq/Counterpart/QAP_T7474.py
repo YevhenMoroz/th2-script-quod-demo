@@ -70,12 +70,18 @@ class QAP_T7474(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields = ['NoMiscFees', 'Account', 'CommissionData', 'MiscFeesGrp', 'ReplyReceivedTime','SecurityDesc']
+        list_of_ignored_fields = ['NoMiscFees', 'Account', 'CommissionData', 'MiscFeesGrp', 'ReplyReceivedTime',
+                                  'SecurityDesc']
         list_of_counterparts = [
             self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
             self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
             self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
+            {'PartyRole': '*',
+             'PartyRoleQualifier': '*',
+             'PartyID': '*',
+             'PartyIDSource': '*'}
         ]
         list_of_counterparts_confirmation = deepcopy(list_of_counterparts)
         parties = {
@@ -91,18 +97,40 @@ class QAP_T7474(TestCase):
         # endregion
         # region Check ExecutionReports
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
-        list_of_counterparts.append(self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'))
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
-        counterpart_settlement_location = self.data_set.get_counterpart_id_fix('counterpart_id_settlement_location')
-        list_of_counterparts.append(counterpart_settlement_location)
-        list_of_counterparts_confirmation.append(counterpart_settlement_location)
+        list_of_counterparts_allocation = [
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
+            {'PartyRole': '*',
+             'NoPartySubIDs': '*',
+             'PartyID': '*',
+             'PartyIDSource': '*'},
+            {'PartyRole': '*',
+             'PartyID': '*',
+             'PartyIDSource': '*'},
+        ]
+        list_of_counterparts_confirmation = [
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
+            {'PartyRole': '*',
+             'NoPartySubIDs': '*',
+             'PartyID': '*',
+             'PartyIDSource': '*'},
+            {'PartyRole': '*',
+             'PartyID': '*',
+             'PartyIDSource': '*'},
+        ]
         no_party1 = {
             'NoParty': list_of_counterparts_confirmation
         }
         no_party2 = {
-            'NoParty': list_of_counterparts
+            'NoParty': list_of_counterparts_allocation
         }
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message).change_parameters(

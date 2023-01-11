@@ -17,6 +17,11 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T5089 import QAP_T5089
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
+from rule_management import RuleManager, Simulators
+
+rule_manager = RuleManager(Simulators.algo)
+rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

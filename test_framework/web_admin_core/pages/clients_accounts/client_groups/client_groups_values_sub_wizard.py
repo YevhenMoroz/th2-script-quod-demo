@@ -31,7 +31,7 @@ class ClientGroupsValuesSubWizard(CommonPage):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
 
     def get_confirmation_service(self):
-        self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
+        return self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
 
     def get_all_confirmation_service_from_drop_menu(self):
         self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, "")

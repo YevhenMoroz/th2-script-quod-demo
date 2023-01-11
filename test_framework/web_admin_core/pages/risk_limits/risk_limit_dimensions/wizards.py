@@ -121,7 +121,7 @@ class DimensionsTab(CommonPage):
     def is_accounts_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.ACCOUNTS)
 
-    def set_clients(self, value: list):
+    def set_clients(self, value):
         self.set_checkbox_list(Constants.Wizard.DimensionsTab.CLIENTS, value)
 
     def get_clients(self):
@@ -366,3 +366,6 @@ class AssignmentsTab(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(Constants.Wizard.AssignmentsTab.INSTITUTION)
+
+    def is_institution_field_enable(self):
+        return self.is_field_enabled(Constants.Wizard.AssignmentsTab.INSTITUTION)

@@ -35,7 +35,7 @@ class QAP_T7223(TestCase):
         self.price = '10'
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.venue = self.data_set.get_mic_by_name('mic_1')
-        self.client = self.data_set.get_client('client_co_1')
+        self.client = self.data_set.get_client('client_counterpart_1')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa

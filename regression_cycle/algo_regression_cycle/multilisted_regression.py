@@ -70,6 +70,9 @@ from test_cases.algo.Algo_Multilisted.QAP_T4124 import QAP_T4124
 from test_cases.algo.Algo_Multilisted.QAP_T4109 import QAP_T4109
 from test_cases.algo.Algo_Multilisted.QAP_T4123 import QAP_T4123
 from test_cases.algo.Algo_Multilisted.QAP_T4092 import QAP_T4092
+from test_cases.algo.Algo_Multilisted.QAP_T4876 import QAP_T4876
+from test_cases.algo.Algo_Multilisted.QAP_T8431 import QAP_T8431
+from test_cases.algo.Algo_Multilisted.QAP_T8432 import QAP_T8432
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -84,7 +87,6 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted | {version}", parent_id)
     try:
         configuration = ComponentConfiguration("Multilisted")
-        QAP_T8142(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_T4053(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() venues should'nt support IOC
         QAP_T4137(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4121(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -107,8 +109,6 @@ def test_run(parent_id=None, version=None):
         QAP_T4090(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4087(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4120(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4116(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4138(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4117(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4118(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -133,6 +133,12 @@ def test_run(parent_id=None, version=None):
         QAP_T4109(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4123(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4092(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4116(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4876(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8432(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8431(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8142(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 

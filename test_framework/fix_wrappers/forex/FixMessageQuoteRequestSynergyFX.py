@@ -17,7 +17,7 @@ class FixMessageQuoteRequestSynergyFX(FixMessageQuoteRequestFX):
             "NoRelatedSym": [{
                 "Instrument": {
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
+                    "SecurityType": "FOR",
                     "Product": "4"
                 },
                 "NoPartyIDs": [
@@ -44,8 +44,9 @@ class FixMessageQuoteRequestSynergyFX(FixMessageQuoteRequestFX):
             "VenueType": "M",
             "NoRelatedSym": [{
                 "Instrument": {
+                    "SymbolSfx": "1W",
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_fwd"),
+                    "SecurityType": "FOR",
                     "Product": "4"
                 },
                 "NoPartyIDs": [

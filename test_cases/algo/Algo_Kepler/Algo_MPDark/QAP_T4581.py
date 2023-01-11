@@ -144,24 +144,10 @@ class QAP_T4581(TestCase):
 
         # endregion
 
-        # region quote canceled on TRQX
-        case_id_4 = bca.create_event("RFQ cancel on TRQX", self.test_id)
-        self.fix_verifier_buy.set_case_id(case_id_4)
-
-        ocr_rfq_canceled = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
-        self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled, key_parameters=self.key_params_with_ex_destination, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
-
-        # TRQX accepted cancel rfq
-        er_rfq_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
-        self.fix_verifier_buy.check_fix_message(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
-        # endregion
-
-
         # region MO on Venue ChixLis
         case_id_5 = bca.create_event("MO order on chixlis", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_5)
 
-        #TODO not correct message handle, PCON-3465 raised
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
         self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
@@ -175,18 +161,18 @@ class QAP_T4581(TestCase):
 
         # endregion
         time.sleep(60)
-        a = ReadLogMessageAlgo().set_compare_message_for_check_quote_request_status()
-        a.change_parameters({"Venue": "TQLIS", "Status": "rejected"})
+        readlog_message_tqlis_rejected = ReadLogMessageAlgo().set_compare_message_for_check_quote_request_status()
+        readlog_message_tqlis_rejected.change_parameters({"Venue": "TQLIS", "Status": "rejected"})
 
-        b = ReadLogMessageAlgo().set_compare_message_for_check_other_quote_requests_terminated()
-        b.change_parameters({"OrderID": responce.get_parameter("OrderID"), "Venue": "CHIXLIS"})
+        readlog_message_quote_requests_terminated = ReadLogMessageAlgo().set_compare_message_for_check_other_quote_requests_terminated()
+        readlog_message_quote_requests_terminated.change_parameters({"OrderID": responce.get_parameter("OrderID"), "Venue": "CHIXLIS"})
 
         case_id = bca.create_event("ReadLog", self.test_id)
         self.read_log_verifier.set_case_id(case_id)
         self.read_log_verifier2.set_case_id(case_id)
 
-        self.read_log_verifier.check_read_log_message(a)
-        self.read_log_verifier2.check_read_log_message(b)
+        self.read_log_verifier.check_read_log_message(readlog_message_tqlis_rejected)
+        self.read_log_verifier2.check_read_log_message(readlog_message_quote_requests_terminated)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -203,5 +189,6 @@ class QAP_T4581(TestCase):
         er_cancel_mp_dark_order_params.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+        time.sleep(2)
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

@@ -22,7 +22,7 @@ class QAP_T3704(CommonTestCase):
         self.password = "adm03"
         self.desk_name = "Quod Desk"
         self.location = "EAST-LOCATION-B"
-        self.user = "acameron"
+        self.user = "adm_desk"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

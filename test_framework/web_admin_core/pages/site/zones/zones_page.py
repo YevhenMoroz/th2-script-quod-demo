@@ -75,7 +75,7 @@ class ZonesPage(CommonPage):
         return self.is_element_present(ZonesConstants.DISPLAYED_ENTITY_XPATH.format(value))
 
     def get_list_of_all_institutions(self):
-        return self._get_all_items_from_table_column(ZonesConstants.INSTITUTIONS_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(ZonesConstants.INSTITUTIONS_COLUMN_XPATH)
 
     def get_list_of_all_zones(self):
-        return self._get_all_items_from_table_column(ZonesConstants.ZONES_NAME_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(ZonesConstants.ZONES_NAME_COLUMN_XPATH)

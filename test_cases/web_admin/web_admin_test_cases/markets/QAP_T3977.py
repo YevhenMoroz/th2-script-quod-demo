@@ -36,13 +36,13 @@ class QAP_T3977(CommonTestCase):
         wizard = InstrumentSymbolsWizard(self.web_driver_container)
         page.click_on_new()
         time.sleep(2)
+        all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
         wizard.set_instr_symbol(self.instr_symbol)
         wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
         wizard.click_on_save_changes()
         time.sleep(2)
 
         if wizard.is_error_message_displayed():
-            all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
             while wizard.is_error_message_displayed():
                 wizard.click_on_error_message_pop_up()
                 self.instr_symbol = random.choice(all_instr_symbol)

@@ -114,6 +114,8 @@ class OmsClients(Enum):
     client_pt_8 = "MOClient7"
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
+    client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
+    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -121,6 +123,7 @@ class OmsClients(Enum):
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
+    сlient_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
@@ -187,6 +190,7 @@ class OmsAccounts(Enum):
     client_pt_7_acc_1 = "MOClient7_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
+    client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
@@ -195,11 +199,11 @@ class OmsAccounts(Enum):
     client_com_1_acc_1 = "CLIENT_COMM_1_SA1"
     client_com_1_acc_2 = "CLIENT_COMM_1_SA2"
     client_com_1_acc_3 = "CLIENT_COMM_1_SA3"
-    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions
+    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions and Agent Fees
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_1_acc_2 = "CLIENT_COUNTERPART_SA2"
@@ -285,6 +289,9 @@ class OMSCommissionProfiles(Enum):
     abs_amt_3 = 9
     commission_with_minimal_value = 600018
     client_commission_percentage = 15
+    abs_amt_gbp = 12
+    perc_rounding_to_whole_number = 800020
+    abs_amt_gbp_small = 800021
 
 
 class OMSFeeType(Enum):
@@ -343,6 +350,7 @@ class OmsQtyTypes(Enum):
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+    pset_by_id_1 = ('4', '2')
 
 
 class OMSCommissionAndFeeBasis(Enum):
@@ -542,11 +550,15 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                          'PartyID': "EURO_CLEAR",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "EURO_CLEAR",
+                                 'PartyIDSource': "D"}
+    counterpart_java_api_user = {'PartyRole': '36',
+                                 'PartyID': "JavaApiUser",
+                                 'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
+    counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}

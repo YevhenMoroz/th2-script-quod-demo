@@ -78,9 +78,6 @@ class QAP_T4022(CommonTestCase):
             values_tab.set_user_manager(self.user_manager)
             values_tab.set_price_precision(self.price_precision)
 
-            self.default_execution_strategy_type = random.choice(
-                policies_tab.get_all_default_execution_strategy_type_from_drop_menu())
-            policies_tab.set_default_execution_strategy_type(self.default_execution_strategy_type)
             self.default_execution_strategy = random.choice(
                 policies_tab.get_all_default_execution_strategy_from_drop_menu())
             policies_tab.set_default_execution_strategy(self.default_execution_strategy)
@@ -93,11 +90,9 @@ class QAP_T4022(CommonTestCase):
 
             actual_result = [values_tab.get_name(), values_tab.get_block_approval(),
                              values_tab.get_confirmation_service(), values_tab.get_user_manager(),
-                             values_tab.get_price_precision(), policies_tab.get_default_execution_strategy_type(),
-                             policies_tab.get_default_execution_strategy()]
+                             values_tab.get_price_precision(), policies_tab.get_default_execution_strategy()]
             expected_result = [self.new_name, self.block_approval, self.confirmation_service, self.user_manager,
-                               self.price_precision, self.default_execution_strategy_type,
-                               self.default_execution_strategy]
+                               str(self.price_precision), self.default_execution_strategy]
 
             self.verify("Changed data save correct", expected_result, actual_result)
 

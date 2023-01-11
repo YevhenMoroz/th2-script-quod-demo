@@ -1,198 +1,185 @@
 import logging
-import os
-import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.base_window import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
-    AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
+    ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.MassConfirmationOMS import MassConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchRequest import BlockUnallocateBatchRequest
+from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchRequest import \
+    ForceAllocInstructionStatusBatchRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-ss_connectivity = SessionAliasOMS().ss_connectivity
-bs_connectivity = SessionAliasOMS().bs_connectivity
 
 
 class QAP_T7359(TestCase):
-    def __init__(self, report_id, session_id, data_set):
-        super().__init__(report_id, session_id, data_set)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.mass_single_allocation = MassConfirmationOMS()
+        self.mass_unallocate = BlockUnallocateBatchRequest()
+        self.approve_blocks = ForceAllocInstructionStatusBatchRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        order_book = OMSOrderBook(self.test_id, self.session_id)
-        middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        fix_manager = FixManager(ss_connectivity)
+        fix_manager = FixManager(self.ss_connectivity)
         qty = '5000'
-        fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        fix_message.set_default_dma_limit()
-        fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_8'))
-        change_params = {'PreAllocGrp': {
-            'NoAllocs': [{
-                'AllocAccount': self.data_set.get_account_by_name('client_pt_7_acc_1'),
-                'AllocQty': qty}]}}
-        fix_message.change_parameters(change_params)
-        client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')
-        exec_destination = self.data_set.get_mic_by_name('mic_1')
-        price = fix_message.get_parameter('Price')
-        extract_sts = MiddleOfficeColumns.sts.value
-        extract_sts_match_status = MiddleOfficeColumns.match_status.value
-        extract_summary_status = MiddleOfficeColumns.summary_status.value
-        block_id = MiddleOfficeColumns.block_id.value
-
-        # endregion
-        # region create 2 DMA order
-        try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(bs_connectivity,
-                                                                                             client_for_rule,
-                                                                                             exec_destination,
-                                                                                             float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(bs_connectivity,
-                                                                                       client_for_rule,
-                                                                                       exec_destination, float(price),
-                                                                                       int(qty),
-                                                                                       delay=0)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_id_first = order_book.extract_field(OrderBookColumns.order_id.value)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_id_second = order_book.extract_field(OrderBookColumns.order_id.value)
-        except Exception as e:
-            logger.error(f'{e}')
-        finally:
-            time.sleep(5)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rule)
-        # endregion
-        #
-        # region massbook
-        order_book.mass_book([1, 2])
-        time.sleep(5)
-        # # endregion
-        #
-        # # region mass approve
-        middle_office.mass_approve([1, 2])
+        price = '10'
+        alloc_account = self.data_set.get_account_by_name('client_pt_7_acc_1')
+        client = self.data_set.get_client_by_name('client_pt_8')
         # endregion
 
-        # region  verify values after massbook
-        values_of_first_block = middle_office.extract_list_of_block_fields([extract_sts, extract_sts_match_status,
-                                                                            block_id],
-                                                                           row_number=1)
-        values_of_second_block = middle_office.extract_list_of_block_fields([extract_sts, extract_sts_match_status,
-                                                                             block_id],
-                                                                            row_number=2)
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched', block_id: '*'},
-                                     values_of_first_block, "Compare Block 1")
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched', block_id: '*'},
-                                     values_of_second_block, "Compare Block 2")
+        # region create 2 DMA order and execute them (step 1 step 2 and step 3)
+        # part 1 : Create DMA orders
+        list_of_order_ids = []
+        for i in range(2):
+            self.order_submit.set_default_dma_limit()
+            self.order_submit.update_fields_in_component(
+                "NewOrderSingleBlock",
+                {"OrdQty": qty,
+                 "AccountGroupID": client,
+                 "Price": price,
+                 "ClOrdID": bca.client_orderid(9)})
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value
+            ]
+            list_of_order_ids.append(order_reply[JavaApiFields.OrdID.value])
+        # end of part
+
+        # part 2: Trade DMA orders
+        for ord_id in list_of_order_ids:
+            self.execution_report.set_default_trade(ord_id)
+            self.execution_report.update_fields_in_component(
+                "ExecutionReportBlock",
+                {
+                    "Price": price,
+                    "AvgPrice": price,
+                    "LastPx": price,
+                    "OrdQty": qty,
+                    "LastTradedQty": qty,
+                    "CumQty": qty,
+                },
+            )
+            self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        # end of part
+
         # endregion
 
-        # region mass_allocate
-        middle_office.mass_allocate([1, 2])
-        values_of_first_block_allocate = middle_office.extract_list_of_block_fields(
-            [extract_sts, extract_sts_match_status,
-             extract_summary_status],
-            row_number=1)
-        values_of_second_block_allocate = middle_office.extract_list_of_block_fields(
-            [extract_sts, extract_sts_match_status,
-             extract_summary_status],
-            row_number=2)
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched',
-                                      extract_summary_status: 'MatchedAgreed'},
-                                     values_of_first_block_allocate, "Compare Block 1")
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched',
-                                      extract_summary_status: 'MatchedAgreed'},
-                                     values_of_second_block_allocate, "Compare Block 2")
-        status_1 = middle_office.extract_allocate_value(extract_sts)
-        match_status_1 = middle_office.extract_allocate_value(extract_sts_match_status)
-        alloc_id_1 = middle_office.extract_allocate_value(AllocationsColumns.alloc_id.value)
-        middle_office.compare_values({AllocationsColumns.sts.value: 'Affirmed'}, status_1,
-                                     'Status 2 allocation record', )
-        middle_office.compare_values({AllocationsColumns.match_status.value: 'Matched'}, match_status_1,
-                                     'Match Status 2 allocation record')
-        middle_office.compare_values({AllocationsColumns.alloc_id.value: '*'}, alloc_id_1,
-                                     'Allocation 2 allocation record')
-
-        #  region FALSE WITHDRAWAL
-        middle_office.extract_list_of_block_fields([extract_sts],
-                                                   filter_list=[block_id,
-                                                                values_of_second_block[
-                                                                    block_id]])
-        # endregion
-        status_2 = middle_office.extract_allocate_value(AllocationsColumns.sts.value)
-        match_status_2 = middle_office.extract_allocate_value(AllocationsColumns.match_status.value)
-        alloc_id_2 = middle_office.extract_allocate_value(AllocationsColumns.alloc_id.value)
-        middle_office.compare_values({AllocationsColumns.sts.value: 'Affirmed'}, status_2,
-                                     'Status 2 allocation record', )
-        middle_office.compare_values({AllocationsColumns.match_status.value: 'Matched'}, match_status_2,
-                                     'Match Status 2 allocation record')
-        middle_office.compare_values({AllocationsColumns.alloc_id.value: '*'}, alloc_id_2,
-                                     'Allocation 2 allocation record')
-        #  region FALSE WITHDRAWAL
-        middle_office.extract_list_of_block_fields([extract_sts],
-                                                   filter_list=[extract_sts,
-                                                                values_of_second_block[
-                                                                    extract_sts]])
+        # region mass book orders (step 4)
+        list_of_alloc_instruction_ids = []
+        instrument_id = self.data_set.get_instrument_id_by_name('instrument_1')
+        for order_id in list_of_order_ids:
+            self.allocation_instruction.set_default_book(order_id)
+            self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+                "AccountGroupID": client,
+                'Side': 'Buy',
+                "Qty": qty,
+                'InstrID': instrument_id,
+                "ComputeFeesCommissions": "Yes"
+            })
+            if list_of_order_ids.index(order_id) == 0:
+                self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock',
+                                                                         ["NetGrossInd",
+                                                                          "SettlCurrAmt",
+                                                                          "AvgPx", 'BookingType',
+                                                                          'GrossTradeAmt',
+                                                                          'Currency',
+                                                                          'RecomputeInSettlCurrency'
+                                                                          ])
+            self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            list_of_alloc_instruction_ids.append(allocation_report[JavaApiFields.ClientAllocID.value])
         # endregion
 
-        # region unallocate
-        middle_office.mass_unallocate([1, 2])
+        # region step 5: Mass approve
+        self.approve_blocks.set_default(list_of_alloc_instruction_ids)
+        self.java_api_manager.send_message_and_receive_response(self.approve_blocks,
+                                                                {'AllocID': list_of_alloc_instruction_ids[0],
+                                                                 'AllocID2': list_of_alloc_instruction_ids[1]})
+        for alloc_id in list_of_alloc_instruction_ids:
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                 JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value},
+                allocation_report, f'Checking expected and actually results for {alloc_id} block (step 5)')
         # endregion
 
-        # region extracting verifying of values
-        values_of_first_block_unallocate = middle_office.extract_list_of_block_fields(
-            [extract_sts, extract_sts_match_status,
-             extract_summary_status],
-            row_number=1)
-        values_of_second_block_unallocate = middle_office.extract_list_of_block_fields(
-            [extract_sts, extract_sts_match_status,
-             extract_summary_status],
-            row_number=2)
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched',
-                                      extract_summary_status: ''},
-                                     values_of_first_block_unallocate, "Compare Block 1")
-        middle_office.compare_values({extract_sts: 'Accepted', extract_sts_match_status: 'Matched',
-                                      extract_summary_status: ''},
-                                     values_of_second_block_unallocate, "Compare Block 2")
-
-        status_1_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.sts.value)
-        match_status_1_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.match_status.value)
-        alloc_id_1_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.alloc_id.value)
-        middle_office.compare_values({AllocationsColumns.sts.value: 'Canceled'}, status_1_after_unallocated,
-                                     'Status 2 allocation record (after unallocated)', )
-        middle_office.compare_values({AllocationsColumns.match_status.value: 'Unmatched'},
-                                     match_status_1_after_unallocated,
-                                     'Match Status 2 allocation record (after unallocated)')
-        middle_office.compare_values({AllocationsColumns.alloc_id.value: '*'}, alloc_id_1_after_unallocated,
-                                     'Allocation 2 allocation record (after unallocated)')
-
-        #  region FALSE WITHDRAWAL
-        middle_office.extract_list_of_block_fields([extract_sts],
-                                                   filter_list=[block_id,
-                                                                values_of_second_block[
-                                                                    block_id]])
+        # region step 6: Mass Single Allocate
+        filter_dict = {}
+        net_money = str(float(qty) * float(price))
+        for alloc_id in list_of_alloc_instruction_ids:
+            filter_dict.update({alloc_id: alloc_id})
+            self.mass_single_allocation.set_instance_of_confirmation_list(alloc_id, alloc_account, instrument_id, qty,
+                                                                          net_money, price)
+        self.mass_single_allocation.set_default_confimations_new()
+        self.java_api_manager.send_message_and_receive_response(self.mass_single_allocation, filter_dict)
+        for alloc_id in list_of_alloc_instruction_ids:
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                       alloc_id).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                 JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value,
+                 JavaApiFields.AllocSummaryStatus.value: AllocationReportConst.AllocSummaryStatus_MAG.value},
+                allocation_report,
+                f'Checking expected and actually result for block with {alloc_id} (step 6)')
+            confirmation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
+                                                       alloc_id).get_parameters()[
+                    JavaApiFields.ConfirmationReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                 JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value},
+                confirmation_report,
+                'Checking expected and actually result for allocation of block {alloc_id} (step 6)')
         # endregion
 
-        status_2_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.sts.value)
-        match_status_2_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.match_status.value)
-        alloc_id_2_after_unallocated = middle_office.extract_allocate_value(AllocationsColumns.alloc_id.value)
-        middle_office.compare_values({AllocationsColumns.sts.value: 'Canceled'}, status_2_after_unallocated,
-                                     'Status 2 allocation record (after unallocated)', )
-        middle_office.compare_values({AllocationsColumns.match_status.value: 'Unmatched'},
-                                     match_status_2_after_unallocated,
-                                     'Match Status 2 allocation record (after unallocated)')
-        middle_office.compare_values({AllocationsColumns.alloc_id.value: '*'}, alloc_id_2_after_unallocated,
-                                     'Allocation 2 allocation record (after unallocated)')
+        # region step 7 : Mass Unallocate
+        self.mass_unallocate.set_default(list_of_alloc_instruction_ids)
+        self.java_api_manager.send_message_and_receive_response(self.mass_unallocate, filter_dict)
+        for alloc_id in list_of_alloc_instruction_ids:
+            allocation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                       alloc_id).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                 JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value},
+                allocation_report,
+                f'Checking expected and actually result for block with {alloc_id} (step 7)')
+            confirmation_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
+                                                       alloc_id).get_parameters()[
+                    JavaApiFields.ConfirmationReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_CXL.value,
+                 JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value},
+                confirmation_report,
+                'Checking expected and actually result for allocation of block {alloc_id} (step 7)')
         # endregion

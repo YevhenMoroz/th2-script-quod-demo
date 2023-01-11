@@ -49,6 +49,7 @@ class QAP_T3777(CommonTestCase):
             user_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
             user_login_sub_wizard.set_user_id(self.user_id)
             user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
+            user_login_sub_wizard.set_ext_id_venue("")
             user_login_sub_wizard.set_ping_required_checkbox()
             user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
             user_details_sub_wizard.set_mail(self.email)

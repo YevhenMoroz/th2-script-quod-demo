@@ -51,11 +51,15 @@ from test_framework.web_admin_core.pages.positions.security_positions.security_p
     SecurityPositionsConstants
 from test_framework.web_admin_core.pages.price_cleansing.crossed_venue_rates.crossed_venue_rates_constants import \
     CrossedVenueRatesConstants
+from test_framework.web_admin_core.pages.price_cleansing.crossed_reference_rates.constants \
+    import Constants as CrossedReferenceRatesConstant
 from test_framework.web_admin_core.pages.price_cleansing.rates_following_trades.rates_following_trades_constants import \
     RatesFollowingTradesConstants
-from test_framework.web_admin_core.pages.price_cleansing.stale_rates.stale_rates_constants import StaleRatesConstants
-from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.unbalanced_rates_constants import \
-    UnbalancedRatesConstants
+from test_framework.web_admin_core.pages.price_cleansing.stale_rates.constants import Constants as StaleRatesConstants
+from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.constants \
+    import Constants as UnbalancedRatesConstants
+from test_framework.web_admin_core.pages.price_cleansing.rate_deviation.constants \
+    import Constants as RateDeviationConstants
 from test_framework.web_admin_core.pages.markets.instrument_symbols.constants import \
     InstrumentSymbolsConstants
 from test_framework.web_admin_core.pages.markets.venue_lists.constants import \
@@ -192,6 +196,10 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(SettingsConstants.SETTINGS_PAGE_TITLE_XPATH)
 
+    def click_on_settings_page_from_side_menu(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+
     def open_commissions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.COMMISSIONS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
@@ -263,6 +271,16 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(CrossedVenueRatesConstants.CROSSED_VENUE_RATES_PAGE_TITLE_XPATH)
 
+    def open_crossed_reference_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.CROSSED_REFERENCE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(CrossedReferenceRatesConstant.MainPage.PAGE_TITLE)
+
+    def open_rate_deviation_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.RATE_DEVIATION_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(RateDeviationConstants.MainPage.PAGE_TITLE)
+
     def open_rates_following_trades_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.RATES_FOLLOWING_TRADES_ITEM_XPATH,
                        RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR, container_expected_state)
@@ -271,12 +289,12 @@ class SideMenu(CommonPage):
     def open_stale_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.STALE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(StaleRatesConstants.STALE_RATES_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(StaleRatesConstants.MainPage.PAGE_TITLE)
 
     def open_unbalanced_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.UNBALANCED_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(UnbalancedRatesConstants.UNBALANCED_RATES_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(UnbalancedRatesConstants.MainPage.PAGE_TITLE)
 
     def open_instrument_symbols_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.INSTRUMENT_SYMBOLS_ITEM_XPATH, RootConstants.MARKETS_TOGGLE_CSS_SELECTOR,

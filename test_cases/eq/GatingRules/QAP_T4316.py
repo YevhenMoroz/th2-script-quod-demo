@@ -34,7 +34,15 @@ class QAP_T4316(TestCase):
         modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
         modify_rule_message.set_default_param()
         param = modify_rule_message.get_parameter("gatingRuleCondition")
-        param[0]["holdOrder"] = "true"
+        set_value_params: dict = {"alive": 'true',
+                                  "gatingRuleResultIndice": 1,
+                                  "splitRatio": 0,
+                                  "holdOrder": 'true',
+                                  "gatingRuleResultProperty": "APP",
+                                  "gatingRuleResultAction": "VAL",
+                                  "gatingRuleResultRejectType": "HRD"}
+        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
+        param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
         modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(modify_rule_message)
         self.ja_manager.send_message_and_receive_response(self.order_submit)
@@ -42,17 +50,19 @@ class QAP_T4316(TestCase):
             "OrdNotificationBlock"]
         self.ja_manager.compare_values({"GatingRuleCondName": "Cond1", "OrdStatus": "HLD"}, act_res,
                                        "check GatingRuleCondName")
-        param[0]["holdOrder"] = "false"
+        param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 1
+        del param[0]["gatingRuleResult"][0]  # Delete set_value_params
+        print(param[0]["gatingRuleResult"])
         modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.modify_request.set_default(self.data_set, act_res["OrdID"])
         self.rest_api_manager.send_post_request(modify_rule_message)
         self.ja_manager.send_message_and_receive_response(self.modify_request)
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrderModificationReply.value).get_parameters()[
             "OrderModificationReplyBlock"]
-        self.ja_manager.compare_values({"OrdStatus": "HLD"}, act_res,
+        print(act_res)
+        self.ja_manager.compare_values({"OrdStatus": "HLD"}, act_res["OrdModify"],
                                        "check OrdStatus")
 
-    #
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_api_manager.send_post_request(self.disable_rule_message)

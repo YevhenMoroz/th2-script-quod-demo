@@ -70,6 +70,8 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    OrderReply = 'Order_OrdReply'
+    SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
     PositionTransferReport = 'Order_PositionTransferReport'
     ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
@@ -79,6 +81,15 @@ class ORSMessageType(Enum):
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
     BookingCancelReply = "Order_BookingCancelReply"
+    BlockChangeConfirmationServiceRequest = 'Order_BlockChangeConfirmationServiceRequest'
+    ForceAllocInstructionStatusBatchRequest = 'Order_ForceAllocInstructionStatusBatchRequest'
+    BlockUnallocateBatchRequest = 'Order_BlockUnallocateBatchRequest'
+    ForceAllocInstructionStatusBatchReply = 'Order_ForceAllocInstructionStatusBatchReply'
+    BlockUnallocateBatchReply = 'Order_BlockUnallocateBatchReply'
+    OrderUnMatchReply = 'Order_UnMatchReply'
+    FixConfirmation = 'Fix_Confirmation'
+    MassConfirmation = 'Order_MassConfirmation'
+
 
 
 class TradingRestApiMessageType(Enum):
@@ -132,6 +143,7 @@ class PKSMessageType(Enum):
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
+    FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
 
 
 class QSMessageType(Enum):

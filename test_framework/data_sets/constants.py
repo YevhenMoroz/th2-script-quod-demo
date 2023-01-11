@@ -17,6 +17,7 @@ class Connectivity(Enum):
     Ganymede_316_Buy_Side = 'fix-buy-side-316-ganymede'
     Ganymede_316_Buy_Side_Redburn = 'fix-buy-side-316-ganymede-redburn'
     Ganymede_316_Sell_Side_Redburn = 'fix-sell-side-316-gnmd-rb'
+    Ganymede_316_web_admin_site = 'rest_wa316ganymede'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
@@ -45,6 +46,7 @@ class Connectivity(Enum):
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
+    Columbia_310_web_admin_site = 'rest_wa310columbia'
     Kuiper_320_web_admin = 'rest_wa320kuiper'
     Kuiper_320_web_admin_site = 'rest_wa320kuiper_site_admin'
     Kuiper_320_web_trading_http = 'rest_wt320kuiper'
@@ -189,6 +191,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
+    qa_mpdark_12 = "QA_Auto_MPDark12"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -244,7 +247,6 @@ class AlgoCurrencyRate(Enum):
 
 class Venues(Enum):
     chixlis = "CHIXLIS"
-    paris = "Euronext Paris"
 
 
 class PartyID(Enum):
@@ -260,10 +262,13 @@ class PartyID(Enum):
     party_id_10 = "TestTraderName"
 
 
-
 class PartyIDSource(Enum):
     party_id_source_1 = "D"
     party_id_source_2 = "P"
+
+
+class PartyIDSourceMap(Enum):
+    proprietary = 'Proprietary'
 
 
 class PartyRole(Enum):
@@ -273,6 +278,13 @@ class PartyRole(Enum):
     party_role_24 = "24"
     party_role_58 = "58"
     party_role_55 = "55"
+
+
+class PartyRoleMap(Enum):
+    customer_account = 'CustomerAccount'
+    executing_trader = 'ExecutingTrader'
+    order_originator = 'OrderOriginator'
+    client_id = 'ClientID'
 
 
 class MiscNumber(Enum):
@@ -288,11 +300,13 @@ class MiscNumber(Enum):
 
 class Symbol(Enum):
     symbol_1 = 'DE0005489561'
+    symbol_2 = 'BE0020575115'
 
 
 class SecurityID(Enum):
     security_id_1 = 'DE0005489561'
     security_id_2 = '2681'
+    security_id_3 = 'BE0020575115'
 
 
 class SecurityIDSource(Enum):
@@ -312,16 +326,12 @@ class TransactionStatus(Enum):
 
 class ReadLogVerifiers(Enum):
     log_319_updating_status = "log319-updating-status"
-    log_319_cancel_child = "log319-cancel-child"
     log_319_check_primary_listing = "log319-check-primary-listing"
     log_319_check_party_info = "log319-check-party-info"
     log_319_check_party_info_v2 = "log319-check-party-info-v2"
     log_319_check_tags_5052_and_207_mapping = "log319-check-tags-5052-and-207-mapping"
-    log_319_check_that_venue_was_suspended = "log319-check-that-venue-was-suspended"
-    log_319_check_that_lis_phase_is_skipping = "log319-check-that-lis-phase-is-skipping"
     log_319_check_the_currency_rate = "log319-check-the-currency-rate"
     log_319_check_the_lis_amount = "log319-check-the-lis-amount"
-    log319_check_party_info_more_than_one_group = "log319-check-party-info-more-than-one-group"
     log319_check_party_info_for_three_groups_sell_side = "log319-check-party-info-for-three-groups-sell-side"
     log319_check_party_info_for_three_groups_buy_side = "log319-check-party-info-for-three-groups-buy-side"
     log319_check_party_info_for_the_one_group_sell_side = "log319-check-party-info-for-the-one-group-sell-side"
@@ -329,13 +339,29 @@ class ReadLogVerifiers(Enum):
     log319_check_tag_5047 = "log319-check-tag-5047"
     log319_check_tag_5048 = "log319-check-tag-5048"
     log319_check_tag_1 = "log319-check-tag-1"
-    log_319_check_that_is_no_suitablle_liquidity = "log319-check-that-is-no-suitable-liquidity"
+    log_319_check_order_event = "log319-check-order-event"
+    log_319_check_order_event_with_time = "log319-check-order-event-with-time"
     log_319_check_transact_time_for_child = "log319-check-transact-time-for-child"
     log_319_check_settl_date_part_1 = "log319-check-settl-date-part-1"
     log_319_check_settl_date_part_2 = "log319-check-settl-date-part-2"
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
+    log_319_check_mapping_on_sell_side = "log319-check-mapping-on-sell-side"
+    log_319_check_mapping_on_buy_side = "log319-check-mapping-on-buy-side"
+
+
+class ReadLogParams(Enum):
+    party_id = 'PartyID'
+    party_id_source = 'PartyIDSource'
+    party_role = 'PartyRole'
+    cl_ord_id = 'ClOrdID'
+    algopolicy_name = 'AlgoPolicyName'
+    security_exchange = 'SecurityExchange'
+    external_strategy_name = 'ExternalStrategyName'
+    cl_algopolicy_id = 'ClientAlgoPolicyID'
+    cl_account_group_id = 'ClientAccountGroupID'
+    parties_block = 'PartiesBlock'
 
 
 class WebAdminURL(Enum):
@@ -359,3 +385,41 @@ class SshClientEnv(Enum):
     PASSWORD_317 = ""
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
+
+
+class FreeNotesReject(Enum):
+    MissWouldPriceReference = "missing WouldPriceReference"
+    MissLimitPriceReference = "missing LimitPriceReference"
+    MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
+    MissNavigatorLimitPrice = "missing Limit price for Navigator"
+    InvalidMaxParticipation = "invalid value for MaxParticipation"
+    InvalidPercentageOfVolume = "invalid value for percentage of volume"
+    InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
+    InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
+    ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
+
+
+class TradingPhases(Enum):
+    Auction = "AUC"
+    Closed = "CLO"
+    Open = "OPN"
+    PreClosed = "PCL"
+    PreOpen = "POP"
+    Expiry = "EXA"
+    AtLast = "TAL"
+
+
+class RejectMessages(Enum):
+    no_listing_1 = '11697 No listing found'
+    no_listing_2 = '11697 No listing found for order with currency EUR'
+    no_listing_3 = '11697 No listing found for order with currency USD on exchange FRANKFURT'
+    no_listing_4 = '11697 No listing found for order with currency USD'
+    no_listing_5 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found on exchange BRUSSELS'
+    no_listing_6 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency EUR on exchange BRUSSELS'
+    no_listing_7 = '11752 Instrument not traded at primary FRANKFURT / 11697 No listing found for order with currency USD on exchange FRANKFURT'
+    no_listing_8 = '11752 Instrument not traded at primary PARIS / 11697 No listing found on exchange PARIS'
+    no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
+    no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
+    no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
+
+
