@@ -23,6 +23,7 @@ from test_framework.java_api_wrappers.ors_messages.CheckOutOrderReply import Che
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
+from test_framework.java_api_wrappers.ors_messages.DFDManagementBatchReply import DFDManagementBatchReply
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.FixConfirmation import FixConfirmation
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchReply import \
@@ -503,6 +504,8 @@ class JavaApiManager:
                 response_fix_message = RemoveOrdersFromOrderListReply()
             elif message_type == ORSMessageType.OrderBagDissociateReply.value:
                 response_fix_message = OrderBagDissociateReply()
+            elif message_type == ORSMessageType.DFDManagementBatchReply.value:
+                response_fix_message = DFDManagementBatchReply()
             elif message_type == ORSMessageType.ListCancelReply.value:
                 response_fix_message = ListCancelReply()
             elif message_type == ORSMessageType.AddOrdersToOrderListReply.value:

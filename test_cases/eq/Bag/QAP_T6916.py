@@ -14,9 +14,8 @@ from test_framework.java_api_wrappers.java_api_constants import BagChildCreation
     OrdTypes
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.CancelOrderRequest import CancelOrderRequest
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationRequest import OrderBagCreationRequest
-from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationRequest import \
-    OrderBagWaveModificationRequest
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveRequest import OrderBagWaveRequest
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7637(TestCase):
+class QAP_T6916(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -43,7 +42,7 @@ class QAP_T7637(TestCase):
         self.bag_wave_request = OrderBagWaveRequest()
         self.username = self.data_set.get_recipient_by_name("recipient_user_1")
         self.complete_request = DFDManagementBatchOMS(self.data_set)
-        self.bag_mod_req = OrderBagWaveModificationRequest()
+        self.cancel_ord = CancelOrderRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -68,10 +67,10 @@ class QAP_T7637(TestCase):
             self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
                 JavaApiFields.OrderBagNotificationBlock.value]
         # endregion
-        # region Step 1-3
+        # region Step 1
         bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
-        qty_of_bag = str(int(int(self.qty) * 2))
-        self.bag_wave_request.set_default(bag_order_id, qty_of_bag, OrdTypes.Limit.value)
+
+        self.bag_wave_request.set_default(bag_order_id, self.qty, OrdTypes.Limit.value)
         self.bag_wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {"Price": self.price})
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
@@ -87,29 +86,61 @@ class QAP_T7637(TestCase):
             .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
         expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
         self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave")
-        wave_id = wave_notify["OrderBagWaveID"]
+        child_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id) \
+            .get_parameters()[JavaApiFields.OrderNotificationBlock.value]["OrdID"]
         # endregion
-        # region Step 4
-        new_price = "5.0"
-        self.bag_mod_req.set_default(wave_id, "LMT", "DAY")
-        self.bag_mod_req.update_fields_in_component("OrderBagWaveModificationRequestBlock", {"Price": new_price})
+        # region Step 2
         try:
-            nos_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
-                                                                                                self.venue_client_name,
-                                                                                                self.mic, True)
-            self.java_api_manager.send_message_and_receive_response(self.bag_mod_req)
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_name,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            self.java_api_manager.send_message_and_receive_response(self.bag_wave_request)
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
             self.rule_manager.remove_rule(nos_rule)
-
         wave_notify = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
             .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+        expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
+        self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave2")
+        child_ord_id2 = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id) \
+            .get_parameters()[JavaApiFields.OrderNotificationBlock.value]["OrdID"]
+        # endregion
+        # region Step 3-4
+        try:
+            cancel_rule = self.rule_manager.add_OrderCancelRequest_FIXStandard(self.bs_connectivity,
+                                                                                              self.venue_client_name,
+                                                                                              self.mic, True)
+            self.cancel_ord.set_default(child_ord_id)
+            self.java_api_manager.send_message_and_receive_response(self.cancel_ord)
+            wave_notify = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
+            .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+            self.cancel_ord.set_default(child_ord_id2)
+            self.java_api_manager.send_message_and_receive_response(self.cancel_ord)
+            wave_notify2 = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
+                .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            self.rule_manager.remove_rule(cancel_rule)
+
         expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value,
-                           "Price": new_price}
-        self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave after modification")
-        ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value) \
-            .get_parameters()[JavaApiFields.OrdReplyBlock.value]
-        expected_result = {"Price": new_price}
-        self.java_api_manager.compare_values(expected_result, ord_update, "Check order update")
+                           JavaApiFields.LeavesQty.value: str(float(self.qty)/2)}
+        self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave after cancel child")
+        self.java_api_manager.compare_values(expected_result, wave_notify2, "Check wave2 after cancel child")
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_name,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            self.java_api_manager.send_message_and_receive_response(self.bag_wave_request)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            self.rule_manager.remove_rule(nos_rule)
+        wave_notify = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
+            .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+        expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
+        self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave created on UnmachedQty")
         # endregion
