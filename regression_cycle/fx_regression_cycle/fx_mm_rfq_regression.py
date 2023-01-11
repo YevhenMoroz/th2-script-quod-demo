@@ -171,8 +171,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger().setLevel(logging.INFO)
 
 
-def test_run(parent_id=None, version=None):
-    version = ""
+def test_run(parent_id=None, version=""):
     configuration = ComponentConfiguration("RFQ_MM")
     report_id = bca.create_event(f"FX_MM_RFQ_automation" if version is None else f"FX_MM_RFQ_automation | {version}", parent_id)
     session_id = set_session_id(target_server_win="ostronov")
