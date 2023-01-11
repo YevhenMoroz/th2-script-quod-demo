@@ -200,6 +200,7 @@ class JavaApiFields(Enum):
     OrdListNotificationBlock = 'OrdListNotificationBlock'
     AddOrdersToOrderListReplyBlock = 'AddOrdersToOrderListReplyBlock'
     RemoveOrdersFromOrderListReplyBlock = 'RemoveOrdersFromOrderListReplyBlock'
+    AccountGroupName = 'AccountGroupName'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
