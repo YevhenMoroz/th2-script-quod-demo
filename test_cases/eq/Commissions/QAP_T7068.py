@@ -187,23 +187,5 @@ class QAP_T7068(TestCase):
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def __send_fix_orders(self):
-        try:
-            nos_rule = self.rule_manager. \
-                add_NewOrdSingleExecutionReportTradeByOrdQty_FIXStandard(self.bs_connectivity,
-                                                                         self.client_for_rule,
-                                                                         self.mic,
-                                                                         float(self.price), float(self.price),
-                                                                         int(self.qty), int(self.qty), 1)
-            self.fix_message.change_parameters(
-                {"Account": self.client,
-                 "ExDestination": self.mic,
-                 "Currency": self.cur})
-            self.responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        finally:
-            time.sleep(2)
-            self.rule_manager.remove_rule(nos_rule)
-
-    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
