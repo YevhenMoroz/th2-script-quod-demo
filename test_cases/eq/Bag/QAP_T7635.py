@@ -12,9 +12,11 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import BagChildCreationPolicy, JavaApiFields, OrderBagConst
-from test_framework.java_api_wrappers.ors_messages.CancelOrderRequest import CancelOrderRequest
+from test_framework.java_api_wrappers.java_api_constants import BagChildCreationPolicy, JavaApiFields, OrderBagConst, \
+    OrdTypes
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationRequest import OrderBagCreationRequest
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelRequest import OrderBagWaveCancelRequest
+from test_framework.java_api_wrappers.ors_messages.OrderBagWaveRequest import OrderBagWaveRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -22,7 +24,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7645(TestCase):
+class QAP_T7635(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -40,11 +42,11 @@ class QAP_T7645(TestCase):
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
         self.bag_creation_request = OrderBagCreationRequest()
-        self.ord_cancel = CancelOrderRequest()
+        self.bag_wave_request = OrderBagWaveRequest()
+        self.wave_cancel_request = OrderBagWaveCancelRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Precondition
         resp = self.fix_manager.send_message_and_receive_response_fix_standard(self.nos)
         resp2 = self.fix_manager.send_message_and_receive_response_fix_standard(self.nos2)
 
@@ -55,28 +57,27 @@ class QAP_T7645(TestCase):
         self.bag_creation_request.set_default(BagChildCreationPolicy.Split.value, bag_name, orders_id)
         self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
         order_bag_notification = \
-                self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
                 JavaApiFields.OrderBagNotificationBlock.value]
         bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
-        expected_result = {JavaApiFields.OrderBagName.value: bag_name,
-                           JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
-        self.java_api_manager.compare_values(expected_result, order_bag_notification,
-                                             'Check Bag')
-        # endregion
-        # region Step 1-3
-        self.ord_cancel.set_default(ord_id)
-        self.java_api_manager.send_message_and_receive_response(self.ord_cancel)
-        order_bag_notification = \
-                self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
-                JavaApiFields.OrderBagNotificationBlock.value]
-        qty_of_bag = str(float(self.qty) * 2)
-        expected_result = {
-            JavaApiFields.OrderBagID.value: bag_order_id,
-            JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value,
-            JavaApiFields.OrderBagQty.value: qty_of_bag,
-            JavaApiFields.LeavesQty.value: str(float(self.qty)),
-            JavaApiFields.CumQty.value: "0.0",
-        }
-        self.java_api_manager.compare_values(expected_result, order_bag_notification,
-                                             'Check Bag after cancel order')
-        # endregion
+        qty_of_bag = str(int(int(self.qty) * 2))
+        self.bag_wave_request.set_default(bag_order_id, qty_of_bag, OrdTypes.Limit.value)
+        self.bag_wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {"Price": self.price,
+                                                                                      "DisplayInstructionBlock": {
+                                                                                          "DisplayQty": self.qty,
+                                                                                          "DisplayMethod": "INI"}})
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_name,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            self.java_api_manager.send_message_and_receive_response(self.bag_wave_request)
+        except Exception:
+            logger.error('Error execution', exc_info=True)
+        finally:
+            self.rule_manager.remove_rule(nos_rule)
+        wave_notify = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
+            .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+        expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value,
+                           JavaApiFields.ReleasedQty.value: str(float(self.qty))}
+        self.java_api_manager.compare_values(expected_result, wave_notify, "Check status and qty")

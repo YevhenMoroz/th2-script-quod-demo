@@ -101,6 +101,7 @@ class ORSMessageType(Enum):
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
+    DFDManagementBatchReply = 'Order_DFDManagementBatchReply'
     RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListReply'
     ListCancelReply = 'Order_ListCancelReply'
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
