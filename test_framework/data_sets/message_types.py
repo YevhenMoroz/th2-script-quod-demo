@@ -159,3 +159,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+
+
+class MDAMessageType(Enum):
+    MarketDataRequest = "Market_MarketDataRequest"
+    MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
