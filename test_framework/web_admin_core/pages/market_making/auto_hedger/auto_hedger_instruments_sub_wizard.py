@@ -79,12 +79,11 @@ class AutoHedgerInstrumentsSubWizard(CommonPage):
         return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_SEND_HEDGE_ORDER_FIELD_XPATH)
 
     def set_synthetic_combination_to_auto_hedge(self, value):
-        self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGE_FIELD_XPATH,
-                                value)
+        self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGER, value)
 
     def get_synthetic_combination_to_auto_hedge(self):
         return self.get_text_by_xpath(
-            AutoHedgerConstants.INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGE_FIELD_XPATH)
+            AutoHedgerConstants.INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGER)
 
     def set_hedging_execution_strategy(self, value):
         self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH, value)
@@ -99,21 +98,34 @@ class AutoHedgerInstrumentsSubWizard(CommonPage):
         return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_TYPE_XPATH)
 
     def set_hedging_execution_strategy_tif(self, value):
-        self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH, value)
+        self.set_combobox_value(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_TIF, value)
 
     def get_hedging_execution_strategy_tif(self):
-        return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH)
+        return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_TIF)
 
     def set_hedging_execution_strategy_max_duration(self, value):
-        self.set_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH,
-                               value)
+        self.set_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_MAX_DURATION, value)
 
     def get_hedging_execution_strategy_max_duration(self):
-        return self.get_text_by_xpath(
-            AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH)
+        return self.get_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_MAX_DURATION)
 
     def is_default_execution_strategy_has_italic_font(self, value):
         self.find_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH).click()
         self.set_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH, value)
         attribute_value = self.find_by_xpath(AutoHedgerConstants.DROP_DOWN_MENU_XPATH).get_attribute("class")
         return True if 'italic' in attribute_value else False
+
+    def is_synthetic_combination_to_auto_hedge_field_displayed(self):
+        return self.is_element_present(AutoHedgerConstants.INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGER)
+
+    def is_execution_strategy_field_displayed(self):
+        return self.is_element_present(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY)
+
+    def is_execution_strategy_tif_field_displayed(self):
+        return self.is_element_present(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_TIF)
+
+    def is_execution_strategy_max_duration_field_displayed(self):
+        return self.is_element_present(AutoHedgerConstants.INSTRUMENTS_TAB_EXECUTION_STRATEGY_MAX_DURATION)
+
+    def is_request_approval_checkbox_displayed(self):
+        return self.is_element_present(AutoHedgerConstants.INSTRUMENTS_TAB_REQUEST_APPROVAL_CHECKBOX)
