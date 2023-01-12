@@ -39,13 +39,16 @@ class QAP_T4647(TestCase):
         self.qty_init = 15000
         self.qty_mod = 10000
         self.max_participation = 0.2
-        self.price = 1
         self.price_ask = 2
         self.price_bid = 1
         self.qty_bid = self.qty_ask = 1_000_000
+        self.qty_ltq = 10_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
         self.waves = 5
+        self.tick_size = 0.001
+        self.price = 1
+        self.child_price_passive = self.price_bid - self.tick_size
         self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty_mod, self.waves)
         # endregion
 
@@ -89,7 +92,7 @@ class QAP_T4647(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price) # _bid-self.tick_size
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.child_price_passive)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
@@ -155,17 +158,17 @@ class QAP_T4647(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV"))
         market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(
             self.s_par, self.fix_env1.feed_handler)
-        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price, MDEntrySize=self.qty_ask)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price, MDEntrySize=self.qty_ltq)
         self.fix_manager_feed_handler.send_message(market_data_incr_par)
 
-        time.sleep(35)
+        time.sleep(60)
         # endregion
 
         # region Check child DMA order Slice 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 1", self.test_id))
 
         slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.child_price_passive, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(slice1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 1')
 
         pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
