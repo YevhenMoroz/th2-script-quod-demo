@@ -414,7 +414,39 @@ class JavaApiManager:
                                                                                    repeating_group.message_value.fields[
                                                                                        repeating_group_field].simple_value})
                                         repeating_group_list.append(repeating_group_list_field)
-                                    fields_content.update({field: {component_field: repeating_group_list}})
+                                    if not bool(repeating_group_list):
+                                        # Inner component
+                                        inner_component_fields = dict()
+                                        for inner_component_field in message.fields[main_field].message_value.fields[
+                                            field].message_value.fields[component_field].message_value.fields:
+                                            if \
+                                                    message.fields[main_field].message_value.fields[
+                                                        field].message_value.fields[
+                                                        component_field].message_value.fields[
+                                                        inner_component_field].simple_value != "":
+                                                inner_component_fields.update({inner_component_field:
+                                                                             message.fields[
+                                                                                 main_field].message_value.fields[
+                                                                                 field].message_value.fields[
+                                                                                 component_field].message_value.fields[
+                                                                                 inner_component_field].simple_value})
+                                                fields_content.update({field: {component_fields: {inner_component_fields}}})
+                                            else:
+                                                # Inner Repeating Group
+                                                inner_repeating_group_list = list()
+                                                for inner_repeating_group in \
+                                                        message.fields[main_field].message_value.fields[
+                                                            field].message_value.fields[
+                                                            component_field].message_value.fields[inner_component_field].list_value.values:
+                                                    inner_repeating_group_list_field = dict()
+                                                    for inner_repeating_group_field in inner_repeating_group.message_value.fields:
+                                                        inner_repeating_group_list_field.update({inner_repeating_group_field:
+                                                                                               inner_repeating_group.message_value.fields[
+                                                                                                   inner_repeating_group_field].simple_value})
+                                                    inner_repeating_group_list.append(inner_repeating_group_list_field)
+                                                fields_content.update({field: {component_field:{inner_component_field:inner_repeating_group_list}}})
+                                    else:
+                                        fields_content.update({field: {component_field: repeating_group_list}})
                     fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
