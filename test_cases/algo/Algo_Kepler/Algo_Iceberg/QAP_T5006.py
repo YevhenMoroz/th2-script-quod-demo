@@ -140,8 +140,8 @@ class QAP_T5006(TestCase):
         # self.count_of_groups = '#3'
         # self.initial_param_buy_side = initial_param_sell_side + '=' + self.count_of_groups
         # self.party_id_source_map = constants.PartyIDSourceMap.proprietary.value
-        self.party_id_source_map_for_group_1 = '=' + constants.PartyIDSourceMap.proprietary.value
-        self.party_role_1_map = '=' + constants.PartyRoleMap.client_id.value
+        # self.party_id_source_map_for_group_1 = '=' + constants.PartyIDSourceMap.proprietary.value
+        # self.party_role_1_map = '=' + constants.PartyRoleMap.client_id.value
         # self.party_role_2_map = constants.PartyRoleMap.order_originator.value
         # self.party_role_3_map = constants.PartyRoleMap.executing_trader.value
         # endregion
