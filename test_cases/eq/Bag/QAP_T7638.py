@@ -25,6 +25,7 @@ class QAP_T7638(TestCase):
         self.submit_request = OrderSubmitOMS(self.data_set)
         self.bag_request = OrderBagCreationRequest()
         self.wave_request = OrderBagWaveRequest()
+        self.price = '20'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -33,6 +34,7 @@ class QAP_T7638(TestCase):
             self.data_set.get_recipient_by_name("recipient_user_1"), "1")
         self.java_api_manager.send_message_and_receive_response(submit_request)
         ord_notif = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value)
+        price = self.submit_request.get_parameters()['NewOrderSingleBlock']['Price']
         ord_id = ord_notif.get_parameter("OrdNotificationBlock")["OrdID"]
         submit_request2 = submit_request.update_fields_in_component("NewOrderSingleBlock",
                                                                     {"ClOrdID": basic_custom_actions.client_orderid(9)})
@@ -47,6 +49,7 @@ class QAP_T7638(TestCase):
         # endregion
         # region Step 1 2 3
         self.wave_request.set_default(bag_id, "200", "MKT", "GTD")
+        self.wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {"Price": price})
         day = str((tm(datetime.utcnow().isoformat()) + timedelta(days=1)).date().strftime('%Y%m%d'))
         self.wave_request.update_fields_in_component("OrderBagWaveRequestBlock", {"ExpireDate": day})
         response = self.java_api_manager.send_message_and_receive_response(self.wave_request)
@@ -67,6 +70,7 @@ class QAP_T7638(TestCase):
                     ord_update2 = res
 
         child_notify_exp_result = {"TimeInForce": "GTD", "LeavesQty": "100.0", "ExpireDate": day}
+        print(child_notify)
         self.java_api_manager.compare_values(child_notify_exp_result,
                                              child_notify.get_parameter("OrdNotificationBlock"),
                                              "Check 1st child order")
