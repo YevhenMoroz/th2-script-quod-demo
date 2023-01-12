@@ -82,10 +82,11 @@ class QAP_T7732(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, self.price)
+        nos_rule_lit = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, self.price)
         nos_rule_dark = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_dark, self.ex_destination_dark, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, True)
-        self.rule_list = [nos_rule, ocr_rule, nos_rule_dark]
+        ocr_rule_lit = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, True)
+        ocr_rule_dark = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_dark, self.ex_destination_dark, True)
+        self.rule_list = [nos_rule_lit, ocr_rule_lit, nos_rule_dark, ocr_rule_dark]
         # endregion
 
         time.sleep(5)
