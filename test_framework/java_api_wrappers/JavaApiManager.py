@@ -4,12 +4,14 @@ from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessag
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
-from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
+    MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
+from test_framework.java_api_wrappers.fx.MarketDataSnapshotFX import MarketDataSnapshotFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
@@ -281,6 +283,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == MDAMessageType.MarketDataRequest.value:
+            response = self.act.submitMarketDataRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
         else:
             response = None
@@ -397,6 +405,8 @@ class JavaApiManager:
                 response_fix_message = UnMatchReply()
             elif message_type == ORSMessageType.FixConfirmation.value:
                 response_fix_message = FixConfirmation()
+            elif message_type == MDAMessageType.MarketDataSnapshotFullRefresh.value:
+                response_fix_message = MarketDataSnapshotFX()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
