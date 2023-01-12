@@ -25,7 +25,6 @@ class QAP_T7638(TestCase):
         self.submit_request = OrderSubmitOMS(self.data_set)
         self.bag_request = OrderBagCreationRequest()
         self.wave_request = OrderBagWaveRequest()
-        self.price = '20'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
