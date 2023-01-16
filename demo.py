@@ -8,13 +8,27 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 from send_rqf import Send_RFQ
 from stubs import Stubs
+from test_cases.fx.fx_mm_esp.QAP_T2462 import QAP_T2462
 
 from test_cases.fx.fx_mm_esp.QAP_T2719 import QAP_T2719
 
 from test_cases.fx.fx_mm_esp.QAP_T9406 import QAP_T9406
+from test_cases.fx.fx_mm_esp.QAP_T9438 import QAP_T9438
+from test_cases.fx.fx_mm_positions.QAP_T9408 import QAP_T9408
+from test_cases.fx.fx_mm_rfq.QAP_T2780 import QAP_T2780
+from test_cases.fx.fx_mm_rfq.QAP_T8020 import QAP_T8020
+from test_cases.fx.fx_mm_rfq.QAP_T8636 import QAP_T8636
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2575 import QAP_T2575
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2580 import QAP_T2580
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2584 import QAP_T2584
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2594 import QAP_T2594
+from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2596 import QAP_T2596
+from test_cases.fx.fx_mm_rfq.manual_intervention.QAP_T2550 import QAP_T2550
 
 from test_cases.fx.fx_taker_esp import QAP_T2487
 from test_cases.fx.fx_wrapper.common_tools import restart_qs_rfq_fix_th2
+from test_cases.fx.qs_fx_routine import java_api_MDReq
+from test_cases.fx.qs_fx_routine.java_api_MDReq import TestCase
 
 from test_cases.fx.send_md import QAP_MD
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -45,9 +59,9 @@ def test_run():
 
         # QAP_T2487.execute(report_id, session_id=None, data_set=configuration.data_set)
 
-        # QAP_T8544(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9406(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # restart_qs_rfq_fix_th2()
+        # QAP_T2594(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # TestCase().execute(report_id)
 
 
         # rm = RuleManager()
