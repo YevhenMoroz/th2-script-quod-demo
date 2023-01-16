@@ -8,6 +8,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4309 import QAP_T4309
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4312 import QAP_T4312
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4352 import QAP_T4352
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4368 import QAP_T4368
+from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4453 import QAP_T4453
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4466 import QAP_T4466
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4467 import QAP_T4467
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4468 import QAP_T4468
@@ -41,6 +42,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4484(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4525(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4486(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4453(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Auction volume
