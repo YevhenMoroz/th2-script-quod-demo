@@ -56,6 +56,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
+from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
@@ -367,9 +368,14 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
-
         elif message.get_message_type() == ORSMessageType.OrderActionRequest.value:
             response = self.act.submitOrderActionRequestWithFilter(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.SuspendOrderManagementRequest.value:
+            response = self.act.submitSuspendOrderManagementRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
@@ -564,6 +570,8 @@ class JavaApiManager:
                 response_fix_message = OrderListWaveModificationReply()
             elif message_type == ORSMessageType.OrderActionReply.value:
                 response_fix_message = OrderActionReply()
+            elif message_type == ORSMessageType.SuspendOrderManagementReply.value:
+                response_fix_message = SuspendOrderManagementReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

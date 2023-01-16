@@ -112,6 +112,7 @@ class ORSMessageType(Enum):
     OrderActionReply = 'Order_OrderActionReply'
     TradeEntryBatchRequest = 'Order_TradeEntryBatchRequest'
     TradeEntryBatchReply = 'Order_TradeEntryBatchReply'
+    SuspendOrderManagementReply = 'Order_SuspendOrderManagementReply'
 
 
 class TradingRestApiMessageType(Enum):
