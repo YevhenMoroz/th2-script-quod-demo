@@ -47,6 +47,7 @@ class QAP_T2463(TestCase):
             "SecurityType": self.security_type
         }
         self.rest_message_params = None
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -70,9 +71,9 @@ class QAP_T2463(TestCase):
                                                            Currency=self.currency_gbp,
                                                            Instrument=self.instrument,
                                                            OrderQty="500000")
-        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
         self.quote.set_params_for_quote(self.quote_request)
-        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.new_order_single.set_default_prev_quoted(self.quote_request, self.response[0])
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_single(self.new_order_single)
         self.fix_verifier.check_fix_message(self.execution_report)
@@ -98,8 +99,8 @@ class QAP_T2463(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
-        self.fix_manager_gtw.send_message(self.quote_cancel)
         self.velocity_rule.clear_message_params().set_params(self.rest_message_params).delete_limit()
         self.rest_manager.send_post_request(self.velocity_rule)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager_gtw.send_message(self.quote_cancel)
         self.sleep(2)

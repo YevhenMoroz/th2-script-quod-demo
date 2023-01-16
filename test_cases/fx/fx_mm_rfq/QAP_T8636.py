@@ -51,6 +51,8 @@ class QAP_T8636(TestCase):
         self.fix_manager_sel.send_message_and_receive_response(self.order)
         # endregion
         # region Step 4
+        quote_req_id = response[0].get_parameter("QuoteReqID")
         self.execution_report.set_params_from_new_order_single_synergy(self.order)
+        self.execution_report.add_tag({"SecondaryClOrdID": quote_req_id})
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

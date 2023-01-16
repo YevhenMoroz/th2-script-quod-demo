@@ -71,8 +71,9 @@ class QAP_T6965(TestCase):
             self.java_api_manager.send_message_and_receive_response(self.order_submit)
             order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
                 JavaApiFields.OrdReplyBlock.value]
-            self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                                                 order_reply, 'Checking expected and actually results  (step 1)')
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply, 'Checking expected and actually results  (step 1)')
             list_of_orders_ids.append(order_reply[JavaApiFields.OrdID.value])
         # endregion
 
@@ -130,7 +131,8 @@ class QAP_T6965(TestCase):
                                                                           ])
             self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
             allocation_report = \
-                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                       JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                     JavaApiFields.AllocationReportBlock.value]
             list_of_alloc_instruction_ids.append(allocation_report[JavaApiFields.ClientAllocID.value])
             order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
@@ -148,9 +150,10 @@ class QAP_T6965(TestCase):
                                                                 {'AllocID': list_of_alloc_instruction_ids[0],
                                                                  'AllocID2': list_of_alloc_instruction_ids[1]})
         for alloc_id in list_of_alloc_instruction_ids:
-            filter_dict.update({alloc_id:alloc_id})
+            filter_dict.update({alloc_id: alloc_id})
             allocation_report = \
-                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, alloc_id).get_parameters()[
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                       alloc_id).get_parameters()[
                     JavaApiFields.AllocationReportBlock.value]
             self.java_api_manager.compare_values(
                 {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
@@ -177,8 +180,8 @@ class QAP_T6965(TestCase):
                 confirmation_report,
                 f'Checking expected and actually results for allocation of block {alloc_id} (step 6)')
             allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
-                JavaApiFields.AllocationReportBlock.value]
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
             self.java_api_manager.compare_values(
                 {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
                  JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value,

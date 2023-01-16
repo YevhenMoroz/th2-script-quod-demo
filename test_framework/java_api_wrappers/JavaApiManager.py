@@ -4,15 +4,18 @@ from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessag
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
-from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
+    MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
 from test_framework.java_api_wrappers.fx.FixPositionReportFX import FixPositionReportFX
+from test_framework.java_api_wrappers.fx.MarketDataSnapshotFX import MarketDataSnapshotFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
 from test_framework.java_api_wrappers.fx.QuoteRequestNotifFX import QuoteRequestNotifFX
+from test_framework.java_api_wrappers.ors_messages.AddOrdersToOrderListReply import AddOrdersToOrderListReply
 from test_framework.java_api_wrappers.ors_messages.AllocationReport import AllocationReport
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateBatchReply import BlockUnallocateBatchReply
 from test_framework.java_api_wrappers.ors_messages.BookingCancelReply import BookingCancelReply
@@ -22,6 +25,7 @@ from test_framework.java_api_wrappers.ors_messages.CheckOutOrderReply import Che
 from test_framework.java_api_wrappers.ors_messages.ComputeBookingFeesCommissionsReply import \
     ComputeBookingFeesCommissionsReply
 from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import ConfirmationReport
+from test_framework.java_api_wrappers.ors_messages.DFDManagementBatchReply import DFDManagementBatchReply
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.FixConfirmation import FixConfirmation
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchReply import \
@@ -29,6 +33,7 @@ from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBa
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
     ForceAllocInstructionStatusRequest
 from test_framework.java_api_wrappers.ors_messages.HeldOrderAckReply import HeldOrderAckReply
+from test_framework.java_api_wrappers.ors_messages.ListCancelReply import ListCancelReply
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossReply import ManualOrderCrossReply
 from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrderReply
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
@@ -36,6 +41,7 @@ from test_framework.java_api_wrappers.ors_messages.OrdListNotification import Or
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
+from test_framework.java_api_wrappers.ors_messages.OrderActionReply import OrderActionReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCancelReply import OrderBagCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationReply import OrderBagCreationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagDissociateReply import OrderBagDissociateReply
@@ -44,10 +50,12 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import O
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
+from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
@@ -293,6 +301,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == MDAMessageType.MarketDataRequest.value:
+            response = self.act.submitMarketDataRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.NewOrderReply.value:
             response = self.act.submitNewOrderReply(
                 request=ActJavaSubmitMessageRequest(
@@ -329,7 +343,37 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.RemoveOrdersFromOrderListRequest.value:
+            response = self.act.submitRemoveOrdersFromOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.ListCancelRequest.value:
+            response = self.act.submitListCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.AddOrdersToOrderListRequest.value:
+            response = self.act.submitAddOrdersToOrderListRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveModificationRequest.value:
+            response = self.act.submitOrderListWaveModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
+        elif message.get_message_type() == ORSMessageType.OrderActionRequest.value:
+            response = self.act.submitOrderActionRequestWithFilter(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
         else:
             response = None
@@ -386,7 +430,39 @@ class JavaApiManager:
                                                                                    repeating_group.message_value.fields[
                                                                                        repeating_group_field].simple_value})
                                         repeating_group_list.append(repeating_group_list_field)
-                                    fields_content.update({field: {component_field: repeating_group_list}})
+                                    if not bool(repeating_group_list):
+                                        # Inner component
+                                        inner_component_fields = dict()
+                                        for inner_component_field in message.fields[main_field].message_value.fields[
+                                            field].message_value.fields[component_field].message_value.fields:
+                                            if \
+                                                    message.fields[main_field].message_value.fields[
+                                                        field].message_value.fields[
+                                                        component_field].message_value.fields[
+                                                        inner_component_field].simple_value != "":
+                                                inner_component_fields.update({inner_component_field:
+                                                                             message.fields[
+                                                                                 main_field].message_value.fields[
+                                                                                 field].message_value.fields[
+                                                                                 component_field].message_value.fields[
+                                                                                 inner_component_field].simple_value})
+                                                fields_content.update({field: {component_fields: {inner_component_fields}}})
+                                            else:
+                                                # Inner Repeating Group
+                                                inner_repeating_group_list = list()
+                                                for inner_repeating_group in \
+                                                        message.fields[main_field].message_value.fields[
+                                                            field].message_value.fields[
+                                                            component_field].message_value.fields[inner_component_field].list_value.values:
+                                                    inner_repeating_group_list_field = dict()
+                                                    for inner_repeating_group_field in inner_repeating_group.message_value.fields:
+                                                        inner_repeating_group_list_field.update({inner_repeating_group_field:
+                                                                                               inner_repeating_group.message_value.fields[
+                                                                                                   inner_repeating_group_field].simple_value})
+                                                    inner_repeating_group_list.append(inner_repeating_group_list_field)
+                                                fields_content.update({field: {component_field:{inner_component_field:inner_repeating_group_list}}})
+                                    else:
+                                        fields_content.update({field: {component_field: repeating_group_list}})
                     fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
@@ -466,14 +542,28 @@ class JavaApiManager:
                 response_fix_message = UnMatchReply()
             elif message_type == ORSMessageType.FixConfirmation.value:
                 response_fix_message = FixConfirmation()
+            elif message_type == MDAMessageType.MarketDataSnapshotFullRefresh.value:
+                response_fix_message = MarketDataSnapshotFX()
             elif message_type == ORSMessageType.CheckInOrderReply.value:
                 response_fix_message = CheckInOrderReply()
             elif message_type == ORSMessageType.HeldOrderAckReply.value:
                 response_fix_message = HeldOrderAckReply()
             elif message_type == ORSMessageType.MarkOrderReply.value:
                 response_fix_message = MarkOrderReply()
+            elif message_type == ORSMessageType.RemoveOrdersFromOrderListReply.value:
+                response_fix_message = RemoveOrdersFromOrderListReply()
             elif message_type == ORSMessageType.OrderBagDissociateReply.value:
                 response_fix_message = OrderBagDissociateReply()
+            elif message_type == ORSMessageType.DFDManagementBatchReply.value:
+                response_fix_message = DFDManagementBatchReply()
+            elif message_type == ORSMessageType.ListCancelReply.value:
+                response_fix_message = ListCancelReply()
+            elif message_type == ORSMessageType.AddOrdersToOrderListReply.value:
+                response_fix_message = AddOrdersToOrderListReply()
+            elif message_type == ORSMessageType.OrderListWaveModificationReply.value:
+                response_fix_message = OrderListWaveModificationReply()
+            elif message_type == ORSMessageType.OrderActionReply.value:
+                response_fix_message = OrderActionReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

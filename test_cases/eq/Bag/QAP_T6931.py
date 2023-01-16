@@ -50,7 +50,6 @@ class QAP_T6931(TestCase):
         client = self.data_set.get_client_by_name('client_pt_1')
         venue_client_account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         exec_destination = self.data_set.get_mic_by_name('mic_1')
-        rule_manager = RuleManager(Simulators.equity)
         orders_id = []
         name_of_bag = 'QAP_T6931'
         expire_data = str(date.today() + timedelta(days=1)).replace('-', '')
@@ -106,7 +105,7 @@ class QAP_T6931(TestCase):
         self.bag_wave_request.remove_fields_from_component('OrderBagWaveRequestBlock', ['TimeInForce'])
         new_order_single = None
         try:
-            new_order_single = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side,
                 venue_client_account, exec_destination,
                 float(price))
@@ -115,7 +114,7 @@ class QAP_T6931(TestCase):
             logger.error(f'{e}')
         finally:
             time.sleep(3)
-            rule_manager.remove_rule(new_order_single)
+            self.rule_manager.remove_rule(new_order_single)
         # end of part
 
         # part 2 : get child`s OrderIDs

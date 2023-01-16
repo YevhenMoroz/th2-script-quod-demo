@@ -95,7 +95,7 @@ class QAP_T2652(TestCase):
         self.fix_md.set_market_data_fwd().update_repeating_group("NoMDEntries", self.no_md_entries_fwd)
         self.fix_md.update_MDReqID(self.md_gbp_usd_fwd, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        self.sleep(4)
+        self.sleep(6)
         # endregion
         # region Step 5
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium2)

@@ -15,6 +15,8 @@ class QAP_T2819(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_rfq_connectivity = self.fix_env.sell_side_rfq
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.quote_request = FixQuoteRequestFX()
         self.client_tier_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")

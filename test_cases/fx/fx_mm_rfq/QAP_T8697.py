@@ -28,6 +28,7 @@ class QAP_T8697(TestCase):
         self.status = Status.Fill
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
+        self.quote_2 = FixMessageQuoteFX()
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_3")
@@ -38,35 +39,30 @@ class QAP_T8697(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account,
                                                            Side=self.sell_side)
         self.quote_request.update_near_leg(leg_side=self.buy_side)
         self.quote_request.update_far_leg(leg_side=self.sell_side)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 2
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side=self.sell_side)
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single)
-        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
         # region Step 3
         self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                           Side=self.buy_side)
-        self.quote_request.update_near_leg(leg_side=self.sell_side)
-        self.quote_request.update_far_leg(leg_side=self.buy_side)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
-        self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.quote_2.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 4
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side=self.buy_side)
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap(self.new_order_single)
-        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

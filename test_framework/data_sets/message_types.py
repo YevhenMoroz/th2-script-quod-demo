@@ -48,6 +48,7 @@ class ORSMessageType(Enum):
     TradeEntryNotif = 'Order_TradeEntryNotif'
     BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
     BookingCancelRequest = 'Order_BookingCancelRequest'
+    ListCancelRequest = 'Order_ListCancelRequest'
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
@@ -71,6 +72,7 @@ class ORSMessageType(Enum):
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
     OrderBagDissociateReply = 'Order_OrderBagDissociateReply'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    RemoveOrdersFromOrderListRequest = 'Order_RemoveOrdersFromOrderListRequest'
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
@@ -99,6 +101,13 @@ class ORSMessageType(Enum):
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
+    DFDManagementBatchReply = 'Order_DFDManagementBatchReply'
+    RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListReply'
+    ListCancelReply = 'Order_ListCancelReply'
+    AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
+    OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
+    OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
+
 
 class TradingRestApiMessageType(Enum):
     NewOrderSingle = "NewOrderSingle"
@@ -168,3 +177,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+
+
+class MDAMessageType(Enum):
+    MarketDataRequest = "Market_MarketDataRequest"
+    MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"

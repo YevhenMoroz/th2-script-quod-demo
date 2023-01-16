@@ -13,7 +13,7 @@ class FixPositionMaintenanceRequestFX(JavaApiMessage):
 
     def set_default_params(self):
         request_params = {
-            "SEND_SUBJECT": "QUOD.PKS.FE",
+            "SEND_SUBJECT": "QUOD.PKS.REQUEST",
             "REPLY_SUBJECT": "QUOD.POSIT.CLIENT1_1.EUR/USD",
             "PositionMaintenanceRequestBlock": {
                 "InstrumentBlock": {
@@ -26,7 +26,15 @@ class FixPositionMaintenanceRequestFX(JavaApiMessage):
                 "PosMaintAction": "DEL",
                 "PosTransType": "ADJ",
                 "ClientPosReqID": bca.client_orderid(9),
-                "ClearingBusinessDate": "20230116",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
+                "ClearingBusinessDate": "20230113",
+                "PartiesList": {
+                    "PartiesBlock": [
+                        {"PartyID": "CLIENT1_1",
+                         "PartyIDSource": "Proprietary",
+                         "PartyRole": "PositionAccount"}
+                    ]
+                },
                 "PositionAmountDataList": {
                     "PositionAmountDataBlock": [
                         {
@@ -35,9 +43,14 @@ class FixPositionMaintenanceRequestFX(JavaApiMessage):
                             "PositionCurrency": "USD",
                         },
                         {
-                            "PosAmtType": "INIQ",
+                            "PosAmtType": "CSLQ",
                             "PosAmt": "0",
                             "PositionCurrency": "USD",
+                        },
+                        {
+                            "PosAmtType": "AVG",
+                            "PosAmt": "0",
+                            # "PositionCurrency": "USD",
                         },
                     ]
 

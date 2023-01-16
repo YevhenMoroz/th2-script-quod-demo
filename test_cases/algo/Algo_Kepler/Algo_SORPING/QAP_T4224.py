@@ -3,6 +3,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
@@ -54,7 +55,11 @@ class QAP_T4224(TestCase):
            ]
 
         now = datetime.today() - timedelta(hours=3)
-        self.ExpireDate = (now + timedelta(days=4)).strftime("%Y%m%d")
+        delta = 4
+        expire_date = (now + timedelta(days=delta))
+        self.ExpireDate_for_sending = expire_date.strftime("%Y%m%d")
+        shift = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(expire_date)
+        self.ExpireDate = (expire_date - timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -118,7 +123,7 @@ class QAP_T4224(TestCase):
 
         self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qdl11, TimeInForce=self.tif_gtd)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ExpireDate=self.ExpireDate))
+        self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qdl11, TimeInForce=self.tif_gtd)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ExpireDate=self.ExpireDate_for_sending))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
         # endregion
@@ -140,10 +145,11 @@ class QAP_T4224(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_pending)
+        er_pending_new_Synthetic_TIF_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_new)
-        er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*'))
+        er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -164,7 +170,7 @@ class QAP_T4224(TestCase):
         
         # region Check that Synthetic TIF order was canceled
         er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_cancel)
-        er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*'))
+        er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
         

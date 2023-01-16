@@ -138,10 +138,10 @@ class QAP_T2948(TestCase):
         modified_bid_px = round(float(self.default_bid_px) + 0.00015, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00015, 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px,
-                                                         QuoteCondition="B")  # probably a bug
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px,
-                                                         QuoteCondition="B")  # probably a bug
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px,
+                                                         QuoteCondition="B")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px,
+                                                         QuoteCondition="B")
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -158,10 +158,10 @@ class QAP_T2948(TestCase):
         modified_bid_px = round(float(self.default_bid_px) + 0.00025, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00005, 5)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDEntryPx=modified_bid_px,
-                                                         QuoteCondition="B")  # probably a bug
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 5, MDEntryPx=modified_ask_px,
-                                                         QuoteCondition="B")  # probably a bug
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px,
+                                                         QuoteCondition="B")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px,
+                                                         QuoteCondition="B")
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
