@@ -25,6 +25,9 @@ from test_cases.algo.Algo_TWAP.QAP_T4265 import QAP_T4265
 from test_cases.algo.Algo_TWAP.QAP_T4271 import QAP_T4271
 from test_cases.algo.Algo_TWAP.QAP_T4946 import QAP_T4946
 from test_cases.algo.Algo_TWAP.QAP_T4647 import QAP_T4647
+from test_cases.algo.Algo_TWAP.QAP_T4276 import QAP_T4276
+from test_cases.algo.Algo_TWAP.QAP_T4627 import QAP_T4627
+
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -71,6 +74,8 @@ def test_run(parent_id= None, version = None):
         QAP_T4271(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4946(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4647(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4276(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4627(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # #FIX/FE
         # QAP_T4946.execute(report_id, session_id)
         # QAP_T4945.execute(report_id, session_id)
