@@ -43,6 +43,7 @@ class QAP_T2376(TestCase):
             "Symbol": self.gbp_cad,
             "SecurityType": self.security_type
         }
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -73,12 +74,12 @@ class QAP_T2376(TestCase):
         self.quote_request.set_rfq_params()
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.client,
                                                            Currency="GBP", Instrument=self.instrument)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        response = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region Step 3
         self.quote.set_params_for_quote(self.quote_request)
         self.fix_verifier.check_fix_message(self.quote)
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager.send_message(self.quote_cancel)
         # endregion
 
@@ -109,10 +110,10 @@ class QAP_T2376(TestCase):
         self.quote_request.set_rfq_params()
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.client,
                                                            Currency="GBP", Instrument=self.instrument)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote(self.quote_request)
         self.fix_verifier.check_fix_message(self.quote)
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)
         # endregion
 
