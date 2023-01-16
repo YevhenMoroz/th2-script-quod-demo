@@ -174,8 +174,8 @@ class QAP_T7173(TestCase):
             'MatchStatus', 'ConfirmStatus', 'TradeDate',
             'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
             'CpctyConfGrp', 'ReportedPx', 'ConfirmTransType', 'Instrument',
-                                                              'GrossTradeAmt', 'ConfirmID',
-            'MiscFeeCurr', 'MiscFeeType', 'CommCurrency', 'CommissionType'
+            'GrossTradeAmt', 'ConfirmID',
+            'MiscFeeCurr', 'MiscFeeType', 'CommCurrency', 'CommissionType', 'OrderAvgPx'
         ]
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,

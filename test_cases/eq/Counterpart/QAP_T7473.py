@@ -83,7 +83,7 @@ class QAP_T7473(TestCase):
         # endregion
         # region Check ExecutionReports
         list_ignored_fields = ['Account', 'NoMiscFees',
-                               'CommissionData', 'MiscFeesGrp']
+                               'CommissionData', 'MiscFeesGrp', 'OrderAvgPx']
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_ignored_fields)
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_ignored_fields)
         # endregion

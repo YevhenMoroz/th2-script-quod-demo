@@ -50,7 +50,7 @@ class QAP_T3519(CommonTestCase):
 
             wizard.click_on_save_changes()
 
-            self.verify("Entity not save, error message appears", True, wizard.is_warning_in_footer_displayed())
+            self.verify("Entity not save, error message appears", True, wizard.is_error_in_footer_displayed())
             value_tab.set_concurrently_active_quotes_age(self.concurrently_active_quotes_age[1])
             wizard.click_on_save_changes()
 

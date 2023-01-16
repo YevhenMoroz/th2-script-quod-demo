@@ -84,7 +84,7 @@ class QAP_T7297(TestCase):
         ]
         ord_id = order_reply["OrdID"]
         cl_ord_id = order_reply["ClOrdID"]
-        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=2), "%Y-%#m-%d") + "T12:00"
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=2), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value, "SettlDate": settl_date_expected},
             order_reply,
@@ -114,7 +114,7 @@ class QAP_T7297(TestCase):
             JavaApiFields.OrdReplyBlock.value
         ]
         ord_id_child = order_reply["OrdID"]
-        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=3), "%Y-%#m-%d") + "T12:00"
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=3), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
@@ -141,7 +141,7 @@ class QAP_T7297(TestCase):
         exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value
         ]
-        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=4), "%Y-%#m-%d") + "T12:00"
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=4), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,

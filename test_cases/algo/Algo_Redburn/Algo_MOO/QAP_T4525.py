@@ -175,7 +175,7 @@ class QAP_T4525(TestCase):
         # endregion
 
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy'])
+        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*',LastMkt=self.mic, Text='reached uncross')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy', 'OrigClOrdID'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
 

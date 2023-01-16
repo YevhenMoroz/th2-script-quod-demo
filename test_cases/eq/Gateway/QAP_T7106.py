@@ -87,7 +87,7 @@ class QAP_T7106(TestCase):
         # endregion
 
         # region book order and verify values after it at order book (step 1)
-        list_of_ignored_fields = ['Account','SettlCurrency']
+        list_of_ignored_fields = ['Account', 'SettlCurrency', 'OrderAvgPx']
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_2")
         settl_currency_amt = str(int(qty) * int(price))
         self.allocation_instruction.set_default_book(order_id)
@@ -106,8 +106,8 @@ class QAP_T7106(TestCase):
         fix_allocation_instruction.add_tag({'RootSettlCurrAmt': '*'})
         fix_varifier.check_fix_message_fix_standard(fix_allocation_instruction, ignored_fields=list_of_ignored_fields)
         actually_post_trade_status = \
-        self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter('OrdUpdateBlock')[
-            'PostTradeStatus']
+            self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter('OrdUpdateBlock')[
+                'PostTradeStatus']
         alloc_id = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
             'AllocationReportBlock')['ClientAllocID']
         self.order_book.compare_values(

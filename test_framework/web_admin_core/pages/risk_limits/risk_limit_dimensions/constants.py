@@ -51,6 +51,9 @@ class Constants:
         CHECKBOX_DROP_DOWN_MENU = '//*[@class="option-list"]//nb-option'
         DROP_DOWN_MENU = '//nb-option//span'
         DIMENSIONS_LIMIT_INFO_MESSAGE = '//*[text()="Maximum 4 different dimensions"]'
+        SELECT_ALL_CHECKBOX = '//div[contains(@class, "ui-widget-header")]//span[contains(@class, "ui-chkbox")]'
+        MULTISELECT_FRAME_FILTER = '//input[contains(@class, "ui-inputtext")]'
+        MULTISELECT_FRAME_ENTITY_CHECKBOX = '//span[normalize-space()="{}"]//..//span[contains(@class, "ui-chkbox")]'
 
         class ValuesTab:
             NAME = '//*[@formcontrolname="riskLimitDimensionName"]'
@@ -62,7 +65,7 @@ class Constants:
 
         class DimensionsTab:
             ACCOUNT_DIMENSIONS = '//*[@id="typeCCA"]'
-            ACCOUNTS = '//*[@id="riskLimitDimSecurityAccount_ext"]//button'
+            ACCOUNTS = '//*[@formcontrolname="riskLimitDimSecurityAccount_ext"]'
             CLIENTS = '//*[@id="riskLimitDimAccountGroup_ext"]//button'
             CLIENT_LIST = '//*[@id="clientList"]'
             USER_DIMENSIONS = '//*[@id="typeDU"]'

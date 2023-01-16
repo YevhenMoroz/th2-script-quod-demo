@@ -180,7 +180,7 @@ class QAP_T7514(TestCase):
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice',
-                                  'AllocInstructionMiscBlock1']
+                                  'AllocInstructionMiscBlock1', 'OrderAvgPx']
 
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType'])

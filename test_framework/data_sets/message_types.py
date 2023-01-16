@@ -48,6 +48,7 @@ class ORSMessageType(Enum):
     TradeEntryNotif = 'Order_TradeEntryNotif'
     BlockUnallocateRequest = 'Order_BlockUnallocateRequest'
     BookingCancelRequest = 'Order_BookingCancelRequest'
+    ListCancelRequest = 'Order_ListCancelRequest'
     NewOrderList = 'Order_NewOrderList'
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
@@ -69,7 +70,9 @@ class ORSMessageType(Enum):
     OrderBagWaveCancelRequest = 'Order_OrderBagWaveCancelRequest'
     OrderBagWaveCancelReply = 'Order_OrderBagWaveCancelReply'
     OrderBagDissociateRequest = 'Order_OrderBagDissociateRequest'
+    OrderBagDissociateReply = 'Order_OrderBagDissociateReply'
     AddOrdersToOrderListRequest = 'Order_AddOrdersToOrderListRequest'
+    RemoveOrdersFromOrderListRequest = 'Order_RemoveOrdersFromOrderListRequest'
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
@@ -89,7 +92,21 @@ class ORSMessageType(Enum):
     OrderUnMatchReply = 'Order_UnMatchReply'
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
-
+    NewOrderReply = 'Gateway_NewOrderReply'
+    CheckOutOrderRequest = "Order_CheckOutOrderRequest"
+    CheckOutOrderReply = "Order_CheckOutOrderReply"
+    CheckInOrderRequest = 'Order_CheckInOrderRequest'
+    CheckInOrderReply = 'Order_CheckInOrderReply'
+    HeldOrderAckRequest = 'Order_HeldOrderAck'
+    HeldOrderAckReply = 'Order_HeldOrderAckReply'
+    MarkOrderRequest = 'Order_MarkOrderRequest'
+    MarkOrderReply = 'Order_MarkOrderReply'
+    DFDManagementBatchReply = 'Order_DFDManagementBatchReply'
+    RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListReply'
+    ListCancelReply = 'Order_ListCancelReply'
+    AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
+    OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
+    OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
 
 
 class TradingRestApiMessageType(Enum):
@@ -126,6 +143,7 @@ class ESMessageType(Enum):
     ExecutionReport = 'Gateway_ExecutionReport'
     NewOrderReply = 'Gateway_NewOrderReply'
     OrderCancelReply = 'Gateway_OrderCancelReply'
+    OrderModificationReply = "Gateway_OrderModificationReply"
 
 
 class ResAPIMessageType(Enum):

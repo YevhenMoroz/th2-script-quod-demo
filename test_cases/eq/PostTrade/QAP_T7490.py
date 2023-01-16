@@ -1,6 +1,5 @@
 import logging
 import time
-from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -8,12 +7,20 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
-    AllocationsColumns, PostTradeStatuses
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
+    ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.ors_messages.BlockChangeConfirmationServiceRequest import \
+    BlockChangeConfirmationServiceRequest
+from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
+from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,16 +36,23 @@ class QAP_T7490(TestCase):
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.ss_connectivity)
-        self.qty = '300'
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.qty = '100'
         self.price = '10'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.client = self.data_set.get_client('client_pt_8')  # MOClient7 Fully manual with one account
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_7_venue_1')  # MOClient7_PARIS
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient7 Fully manual with one account
+        self.account1 = self.data_set.get_account_by_name("client_pt_1_acc_1")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient7_PARIS
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.all_instr = AllocationInstructionOMS(self.data_set)
+        self.change_confirm = BlockChangeConfirmationServiceRequest()
+        self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirm = ConfirmationOMS(self.data_set)
+        self.booking_cancel = BookingCancelRequest()
+        self.unallocate = BlockUnallocateRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -53,131 +67,118 @@ class QAP_T7490(TestCase):
             self.fix_message.change_parameters(
                 {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            cl_ord_id = response[0].get_parameters()['ClOrdID']
-            order_id = response[0].get_parameters()['OrderID']
-
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(trade_rule)
         # endregion
-
         # region Split Booking
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
-        split_param_1 = self.order_book.create_split_booking_parameter(split_qty='100')
-        split_param_2 = self.order_book.create_split_booking_parameter(split_qty='200')
-        self.order_book.split_book([split_param_1, split_param_2])
+        order_id = response[0].get_parameters()['OrderID']
+        self.all_instr.set_split_book(order_id)
+        self.all_instr.update_fields_in_component("AllocationInstructionBlock",
+                                                  {"InstrID": self.data_set.get_instrument_id_by_name(
+                                                      "instrument_2"),
+                                                      "AccountGroupID": self.client})
+        self.java_api_manager.send_message_and_receive_response(self.all_instr)
+        allocation_report1 = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        alloc_id1 = allocation_report1[JavaApiFields.ClAllocID.value]
+        booking_id = allocation_report1[JavaApiFields.ClientAllocID.value]
+        expected_result = ({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+                            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value})
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report1[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report1[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking')
+
+        allocation_report2 = \
+            self.java_api_manager.get_first_message(ORSMessageType.AllocationReport.value, "APP").get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        alloc_id2 = allocation_report2[JavaApiFields.ClAllocID.value]
+        expected_result = ({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+                            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value})
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report2[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report2[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking 2')
         # endregion
+        # region approve blocks
+        self.approve.set_default_approve(alloc_id1)
+        self.java_api_manager.send_message_and_receive_response(self.approve)
+        expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value})
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check approve')
 
-        # region Mass Approve
-        self.middle_office.mass_approve([1, 2])
-        # first block
-        values_after_approve_first = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value], row_number=2)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched"},
-            values_after_approve_first, "Comparing statuses of first order after Approve")
-
-        # second block
-        values_after_approve_second = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value], row_number=1)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched", },
-            values_after_approve_second, "Comparing statuses of second order after Approve")
+        self.approve.set_default_approve(alloc_id2)
+        self.java_api_manager.send_message_and_receive_response(self.approve)
+        expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                                JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value})
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check approve2')
         # endregion
+        # region allocate block
+        self.confirm.set_default_allocation(alloc_id1)
+        self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.account1,
+                                                                      "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                          "instrument_2"), "AllocQty": "50"})
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        confirm_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        expected_result_confirmation = {
+            JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value}
+        actually_result = {
+            JavaApiFields.ConfirmStatus.value: confirm_report[JavaApiFields.ConfirmStatus.value],
+            JavaApiFields.MatchStatus.value: confirm_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
+                                             f'Check statuses of confirmation of {self.account1}')
 
-        # region Mass Allocate
-        self.middle_office.mass_allocate([1, 2])
-        # first block
-        values_after_allocate_first = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=2)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched",
-             MiddleOfficeColumns.summary_status.value: "MatchedAgreed"}, values_after_allocate_first,
-            "Comparing statuses of first order after Allocate")
-
-        # second block
-        values_after_allocate_second = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=1)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched",
-             MiddleOfficeColumns.summary_status.value: "MatchedAgreed"}, values_after_allocate_second,
-            "Comparing statuses of second order after Allocate")
+        self.confirm.set_default_allocation(alloc_id2)
+        self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.account1,
+                                                                      "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                          "instrument_2"), "AllocQty": "50"})
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        confirm_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        expected_result_confirmation = {
+            JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value}
+        actually_result = {
+            JavaApiFields.ConfirmStatus.value: confirm_report[JavaApiFields.ConfirmStatus.value],
+            JavaApiFields.MatchStatus.value: confirm_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
+                                             f'Check statuses of confirmation 2 of {self.account1}')
         # endregion
-
-        # region Comparing statuses of first block after Mass Allocate in Allocations
-        # first allocation
-        values_after_mass_allocate_first_alloc = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value],
-            filter_dict_block={MiddleOfficeColumns.qty.value: '100'})
-        self.middle_office.compare_values(
-            {AllocationsColumns.sts.value: "Affirmed", AllocationsColumns.match_status.value: "Matched"},
-            values_after_mass_allocate_first_alloc,
-            "Comparing statuses of first block after Mass Allocate in Allocations")
-
-        # second allocation
-        values_after_mass_allocate_second_alloc = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value],
-            filter_dict_block={MiddleOfficeColumns.qty.value: '200'}, clear_filter_from_block=True)
-        self.middle_office.compare_values(
-            {AllocationsColumns.sts.value: "Affirmed", AllocationsColumns.match_status.value: "Matched"},
-            values_after_mass_allocate_second_alloc,
-            "Comparing statuses of second block after Mass Allocate in Allocations")
+        # region unbook
+        self.booking_cancel.set_default(booking_id)
+        self.java_api_manager.send_message_and_receive_response(self.booking_cancel)
+        cancel_reply = self.java_api_manager.get_last_message(ORSMessageType.BookingCancelReply.value).get_parameters()[
+            "MessageReply"]["MessageReplyBlock"]
+        self.java_api_manager.compare_values({"ErrorCD": "QUOD-24806"}, cancel_reply[0], 'Check unsuccessful unbook')
+        self.java_api_manager.compare_values({"ErrorCD": "QUOD-24806"}, cancel_reply[1], 'Check unsuccessful unbook 2')
         # endregion
-
-        # region try Unbook order
-        self.middle_office.un_book_order(filter=[OrderBookColumns.order_id.value, order_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Checking PostTradeStatus after trying Unbook')
+        # region unallocate
+        self.unallocate.set_default(alloc_id1)
+        self.java_api_manager.send_message(self.unallocate)
+        self.unallocate.set_default(alloc_id2)
+        self.java_api_manager.send_message(self.unallocate)
         # endregion
-
-        # region Mass Un-Allocate
-        self.middle_office.mass_unallocate([1, 2])
-        # first block
-        values_after_mass_unallocate_first = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=2)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched",
-             MiddleOfficeColumns.summary_status.value: ""}, values_after_mass_unallocate_first,
-            "Comparing statuses of first order after Mass Un-Allocate")
-
-        # second block
-        values_after_mass_unallocate_second = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=1)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Accepted", MiddleOfficeColumns.match_status.value: "Matched",
-             MiddleOfficeColumns.summary_status.value: ""}, values_after_mass_unallocate_second,
-            "Comparing statuses of second order after Mass Un-Allocate")
+        # region unbook
+        self.booking_cancel.set_default(booking_id)
+        self.java_api_manager.send_message_and_receive_response(self.booking_cancel)
+        cancel_reply = self.java_api_manager.get_last_message(ORSMessageType.BookingCancelReply.value).get_parameters()[
+            "BookingCancelReplyBlock"]
+        self.java_api_manager.compare_values({"AllocInstructionID": booking_id, "AllocStatus": "CXL"}, cancel_reply,
+                                             'Check successful unbook')
         # endregion
-
-        # region Unbook order
-        self.middle_office.un_book_order([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value},
-            'Checking PostTradeStatus after Unbook order')
-
-        # checking first block
-        values_after_unbook_first = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=2)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Canceled", MiddleOfficeColumns.match_status.value: "Unmatched"},
-            values_after_unbook_first, "Comparing statuses of first order after Unbook")
-
-        # checking second block
-        values_after_unbook_second = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value,
-             MiddleOfficeColumns.summary_status.value], row_number=1)
-        self.middle_office.compare_values(
-            {MiddleOfficeColumns.sts.value: "Canceled", MiddleOfficeColumns.match_status.value: "Unmatched"},
-            values_after_unbook_second, "Comparing statuses of second order after Unbook")
-        # endregion
-
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
