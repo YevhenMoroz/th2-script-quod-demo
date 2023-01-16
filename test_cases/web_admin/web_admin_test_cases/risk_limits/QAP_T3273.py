@@ -25,10 +25,8 @@ class QAP_T3273(CommonTestCase):
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_risk_limit_dimension_page()
-        time.sleep(2)
 
     def test_context(self):
         try:
@@ -36,13 +34,10 @@ class QAP_T3273(CommonTestCase):
 
             main_page = MainPage(self.web_driver_container)
             main_page.click_on_new_button()
-            time.sleep(2)
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_accounts_dimension(self.account_dimensions[0])
             dimensions_tab.set_accounts([self.account_field_options[0]])
-            time.sleep(1)
             selected_accounts = dimensions_tab.get_accounts().split(",")
-            time.sleep(2)
             excepted_result = dimensions_tab.get_all_accounts_from_drop_menu()
 
             self.verify("All Accounts has been selected", len(excepted_result)-2, len(selected_accounts))

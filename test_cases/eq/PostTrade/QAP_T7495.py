@@ -310,7 +310,7 @@ class QAP_T7495(TestCase):
         conf_report_message = self.java_api_manager.get_last_message(
             ORSMessageType.ConfirmationReport.value
         ).get_parameters()["ConfirmationReportBlock"]
-        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%#m-%d") + "T12:00"
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.AffirmStatus.value: "AFF",

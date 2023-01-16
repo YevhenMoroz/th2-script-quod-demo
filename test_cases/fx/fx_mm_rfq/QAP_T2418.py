@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
@@ -23,6 +24,7 @@ class QAP_T2418(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
+        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
@@ -49,6 +51,30 @@ class QAP_T2418(TestCase):
             "Symbol": self.symbol,
             "SecurityType": self.security_type_swap
         }
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.fix_manager_esp = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.gbp_usd_spot = {
+            'Symbol': self.symbol,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.gbp_usd_spot,
+            'SettlType': self.settle_type_spot}]
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.settle_type_wk1 = self.data_set.get_settle_type_by_name("wk1")
+        self.settle_type_wk1 = self.data_set.get_settle_type_by_name("wk2")
+        self.gbp_usd_fwd = {
+            'Symbol': self.symbol,
+            'SecurityType': self.security_type_fwd,
+            'Product': '4', }
+        self.no_related_symbols_wk1 = [{
+            'Instrument': self.gbp_usd_fwd,
+            'SettlType': self.settle_type_wk1}]
+        self.no_related_symbols_wk2 = [{
+            'Instrument': self.gbp_usd_fwd,
+            'SettlType': self.settle_type_wk1}]
         self.md_req_id_sp = "GBP/USD:SPO:REG:HSBC"
         self.md_req_id_fwd = "GBP/USD:FXF:WK1:HSBC"
         self.md_req_id_fwd_2 = "GBP/USD:FXF:WK2:HSBC"
@@ -119,34 +145,46 @@ class QAP_T2418(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_esp.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot)
         self.fix_md.update_MDReqID(self.md_req_id_sp, self.fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_wk1)
+        self.fix_manager_esp.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data_fwd().update_repeating_group("NoMDEntries", self.no_md_entries_fwd)
         self.fix_md.update_MDReqID(self.md_req_id_fwd, self.fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_wk2)
+        self.fix_manager_esp.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data_fwd().update_repeating_group("NoMDEntries", self.no_md_entries_fwd_2)
         self.fix_md.update_MDReqID(self.md_req_id_fwd_2, self.fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
         # endregion
         # region step 2
-        self.quote_request.set_swap_rfq_params()
-        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol,
-                                           leg_sec_type=self.security_type_fwd,
-                                           settle_date=self.settle_date_wk1, settle_type=self.settle_type_wk1)
-        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
-                                          settle_date=self.settle_date_wk2, settle_type=self.settle_type_wk2)
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+        self.quote_request.set_swap_fwd_fwd()
+        self.quote_request.update_near_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_far_leg(leg_qty=self.qty, leg_symbol=self.symbol)
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.account,
                                                            Currency="GBP", Instrument=self.instrument)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 3
         self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side="1")
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_swap(self.new_order_single, self.status)
-        self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.fix_verifier.check_fix_message(self.execution_report)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -158,5 +196,6 @@ class QAP_T2418(TestCase):
         self.fix_manager_fh.send_message(self.fix_md)
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_req_id_fwd_2, self.fh_connectivity, "FX")
+        self.fix_md.update_value_in_repeating_group("NoMDEntries", "SettlDate", self.settle_date_wk2)
         self.fix_manager_fh.send_message(self.fix_md)
         self.sleep(2)

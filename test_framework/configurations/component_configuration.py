@@ -30,6 +30,12 @@ class ComponentConfiguration:
         component_environment = list(root.find(f".//component[@name='{self.name}']/environments"))
         self.environment = FullEnvironment(component_environment)
 
+
 class ComponentConfigurationAlgo(ComponentConfiguration):
     def __init__(self, component_name: str):
         super().__init__(component_name, f"{ROOT_DIR}/test_framework/configuration_files/regression_run_config_algo.xml")
+
+
+class ComponentConfigurationFX(ComponentConfiguration):
+    def __init__(self, component_name: str):
+        super().__init__(component_name, f"{ROOT_DIR}/test_framework/configuration_files/regression_run_config_fx.xml")

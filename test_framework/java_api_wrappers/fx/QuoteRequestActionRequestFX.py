@@ -34,4 +34,4 @@ class QuoteRequestActionRequestFX(JavaApiMessage):
         self.update_fields_in_component("QuoteRequestActionRequestBlock", {"QuoteReqAction": "EST"})
 
     def set_action_reject(self):
-        self.update_fields_in_component("QuoteRequestActionRequestBlock", {"QuoteReqAction": "Reject"})
+        self.update_fields_in_component("QuoteRequestActionRequestBlock", {"QuoteReqAction": "REJ"})

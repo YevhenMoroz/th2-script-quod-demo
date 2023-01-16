@@ -39,11 +39,11 @@ class QAP_T2861(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(self.quote)
         # endregion
         # region Step 2
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager_sel.send_message(self.quote_cancel)
         # endregion

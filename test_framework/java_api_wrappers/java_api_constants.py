@@ -51,6 +51,7 @@ class SubmitRequestConst(Enum):
     OrdCapacity_Agency = 'Agency'
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
+    Side_Sell = 'Sell'
 
 
 class AllocationReportConst(Enum):
@@ -135,6 +136,7 @@ class JavaApiFields(Enum):
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
     PartyRole = "PartyRole"
+    CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     TimeInForce = 'TimeInForce'
@@ -164,6 +166,7 @@ class JavaApiFields(Enum):
     OrderBagName = 'OrderBagName'
     OrderBagID = 'OrderBagID'
     OrderBagQty = 'OrderBagQty'
+    ReleasedQty = 'ReleasedQty'
     PegScope = 'PegScope'
     PegOffsetType = 'PegOffsetType'
     PegOffsetValue = 'PegOffsetValue'
@@ -190,11 +193,19 @@ class JavaApiFields(Enum):
     DayCumAmt = 'DayCumAmt'
     UnsolicitedOrder = "UnsolicitedOrder"
     OrdQty = 'OrdQty'
+    LeavesQty = 'LeavesQty'
+    CumQty = 'CumQty'
+    UnmatchedQty = 'UnmatchedQty'
     ExecPrice = 'ExecPrice'
     DisclosedExec = 'DisclosedExec'
     OrdListNotificationBlock = 'OrdListNotificationBlock'
     AddOrdersToOrderListReplyBlock = 'AddOrdersToOrderListReplyBlock'
     RemoveOrdersFromOrderListReplyBlock = 'RemoveOrdersFromOrderListReplyBlock'
+    AccountGroupName = 'AccountGroupName'
+    PreTradeAllocationBlock = 'PreTradeAllocationBlock'
+    PreTradeAllocationList = 'PreTradeAllocationList'
+    PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
+    AllocAccountID = 'AllocAccountID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -273,6 +284,7 @@ class JavaApiFields(Enum):
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'
+    OrderBagExecStatus = 'OrderBagExecStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -282,6 +294,7 @@ class JavaApiPartyRoleConstants(Enum):
 
 class BagChildCreationPolicy(Enum):
     Split = 'SPL'
+    Group = "GRP"
     AVP = 'AVP'  # GroupByAvgPx
 
 

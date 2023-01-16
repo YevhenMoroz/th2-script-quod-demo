@@ -101,6 +101,7 @@ class ORSMessageType(Enum):
     HeldOrderAckReply = 'Order_HeldOrderAckReply'
     MarkOrderRequest = 'Order_MarkOrderRequest'
     MarkOrderReply = 'Order_MarkOrderReply'
+    DFDManagementBatchReply = 'Order_DFDManagementBatchReply'
     RemoveOrdersFromOrderListReply = 'Order_RemoveOrdersFromOrderListReply'
     ListCancelReply = 'Order_ListCancelReply'
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
@@ -176,3 +177,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+
+
+class MDAMessageType(Enum):
+    MarketDataRequest = "Market_MarketDataRequest"
+    MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"

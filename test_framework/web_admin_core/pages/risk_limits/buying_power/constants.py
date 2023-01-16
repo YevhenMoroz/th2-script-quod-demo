@@ -38,32 +38,54 @@ class Constants:
             NAME_FIELD = '//input[@id="buyingPowerLimitName"]'
             DESCRIPTION_FIELD = '//input[@id="buyingPowerLimitDesc"]'
 
+        class AssignmentsTab:
+            INSTITUTION_FIELD = '//*[@id="institution"]'
+
         class CashValuesTab:
-            CASH_CHECKBOX = '//*[text()="Cash"]/preceding-sibling::span'
-            TEMPORARY_CASH_CHECKBOX = '//*[text()="Temporary Cash"]/preceding-sibling::span'
-            CASH_LOAN_CHECKBOX = '//*[text()="Cash Loan"]/preceding-sibling::span'
-            COLLATERAL_CHECKBOX = '//*[text()="Collateral"]/preceding-sibling::span'
-            ALLOW_COLLATERAL_ON_NEGATIVE_LEADER_CHECKBOX = '//*[text()="Allow Collateral on Negative Ledger"]/preceding-sibling::span'
+            CASH_CHECKBOX = '//*[normalize-space()="Cash"]/preceding-sibling::span'
+            TEMPORARY_CASH_CHECKBOX = '//*[normalize-space()="Temporary Cash"]/preceding-sibling::span'
 
         class SecurityValuesTab:
-            INCLUDE_SECURITIES_CHECKBOX = '//*[text()="Include Securities"]/preceding-sibling::span'
-            REFERENCE_VALUE_FIELD = '//input[@id="buyingPowerRefPriceType"]'
-            HOLDINGS_RATIO_FIELD = '//input[@id="holdingsRatio"]'
-            ALLOW_SECURITIES_ON_NEGATIVE_LEDGERS_CHECKBOX = '//*[text()="Allow Securities on Negative Ledgers"]/preceding-sibling::span'
-            DISALLOW_FOR_SAME_LISTING_CHECKBOX = '//*[text()="Disallow for same Listing"]/preceding-sibling::span'
-            DISALLOW_FOR_DELIVERABLE_CONTRACTS_CHECKBOX = '//*[text()="Disallow for deliverable contracts"]/preceding-sibling::span'
+            TRADE_ON_MARGIN_CHECKBOX = '//*[normalize-space()="Trade on Margin"]/preceding-sibling::span'
+            GLOBAL_MARGIN_FIELD = '//*[@id="globalMargin"]'
 
             class Table:
-                PLUS_BUTTON = '//button[contains(@class, "add-button")]'
-                SAVE_CHECKMARK_BUTTON = '//td//*[@data-name="checkmark"]'
-                CANCEL_BUTTON = '//td//*[@data-name="close"]'
-                EDIT_BUTTON = '//td//*[@data-name="edit"]'
-                DELETE_BUTTON = '//td//*[@data-name="trash-2"]'
-                SETTLEMENT_PERIOD_FILTER = '(//input[@placeholder="Filter"])[1]'
-                POSITION_VALIDITY_FILTER = '(//input[@placeholder="Filter"])[2]'
-                MARGIN_METHOD_FILTER = '(//input[@placeholder="Filter"])[3]'
-                CUSTOM_PERCENTAGE_FILTER = '(//input[@placeholder="Filter"])[4]'
-                SETTLEMENT_PERIOD_FIELD = '//input[@id="settlType"]'
-                POSITION_VALIDITY_FIELD = '//input[@id="posValidity"]'
+                PLUS_BUTTON = '//*[normalize-space()="Security Values"]//..//button[contains(@class, "add-button")]'
+                SAVE_CHECKMARK_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="checkmark"]'
+                CANCEL_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="close"]'
+                EDIT_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="edit"]'
+                DELETE_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="trash-2"]'
+
+                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[1]'
+                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[2]'
+                UNDERLYING_LISTING_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[3]'
+                HAIRCUT_VALUE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[4]'
+
+                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrType"]'
+                INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrumentGroup"]'
+                UNDERLYING_LISTING_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="account"]'
+                HAIRCUT_VALUE_FIELD = '//input[@placeholder="Haircut Value"]'
+
+        class RiskMarginTab:
+            class Table:
+                PLUS_BUTTON = '//*[normalize-space()="Risk Margin"]//..//button[contains(@class, "add-button")]'
+                SAVE_CHECKMARK_BUTTON = '//*[normalize-space()="Risk Margin"]//..//td//*[@data-name="checkmark"]'
+                CANCEL_BUTTON = '//*[normalize-space()="Risk Margin"]//..//td//*[@data-name="close"]'
+                EDIT_BUTTON = '//*[normalize-space()="Risk Margin"]//..//td//*[@data-name="edit"]'
+                DELETE_BUTTON = '//*[normalize-space()="Risk Margin"]//..//td//*[@data-name="trash-2"]'
+
+                MARGIN_METHOD_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[1]'
+                INITIAL_MARGIN_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[2]'
+                MAINTENANCE_MARGIN_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[3]'
+                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[4]'
+                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[5]'
+                INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[6]'
+                UNDERLYING_INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[7]'
+
                 MARGIN_METHOD_FIELD = '//input[@id="marginMethod"]'
-                CUSTOM_PERCENTAGE_FIELD = '//input[@placeholder="Custom %"]'
+                INITIAL_MARGIN_FIELD = '//input[@placeholder="Initial Margin *"]'
+                MAINTENANCE_MARGIN_FIELD = '//input[@placeholder="Maintenance Margin *"]'
+                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="instrType"]'
+                INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="instrumentGroup"]'
+                INSTRUMENT_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="account"]'
+                UNDERLYING_INSTRUMENT_FIELD = '//input[@id="underlyingAccount"]'

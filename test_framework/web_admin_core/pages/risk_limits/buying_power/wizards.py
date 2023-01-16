@@ -48,6 +48,14 @@ class ValuesTab(CommonPage):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.DESCRIPTION_FIELD)
 
 
+class AssignmentsTab(CommonPage):
+    def set_institution(self, value):
+        self.set_combobox_value(Constants.Wizard.AssignmentsTab.INSTITUTION_FIELD, value)
+
+    def get_institution(self):
+        return self.get_text_by_xpath(Constants.Wizard.AssignmentsTab.INSTITUTION_FIELD)
+
+
 class CashValuesTab(CommonPage):
     def set_cash_checkbox(self):
         self.find_by_xpath(Constants.Wizard.CashValuesTab.CASH_CHECKBOX).click()
@@ -61,79 +69,21 @@ class CashValuesTab(CommonPage):
     def is_temporary_cash_checkbox_selected(self):
         return self.is_checkbox_selected(Constants.Wizard.CashValuesTab.TEMPORARY_CASH_CHECKBOX)
 
-    def set_cash_loan_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.CashValuesTab.CASH_LOAN_CHECKBOX).click()
-
-    def is_cash_loan_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.CashValuesTab.CASH_LOAN_CHECKBOX)
-
-    def set_collateral_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.CashValuesTab.COLLATERAL_CHECKBOX).click()
-
-    def is_collateral_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.CashValuesTab.COLLATERAL_CHECKBOX)
-
-    def set_allow_collateral_on_negative_ledger_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.CashValuesTab.ALLOW_COLLATERAL_ON_NEGATIVE_LEADER_CHECKBOX).click()
-
-    def is_allow_collateral_on_negative_ledger_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.CashValuesTab.ALLOW_COLLATERAL_ON_NEGATIVE_LEADER_CHECKBOX)
-
 
 class SecurityValuesTab(CommonPage):
-    def set_include_securities_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.SecurityValuesTab.INCLUDE_SECURITIES_CHECKBOX).click()
+    def set_trade_on_margin_checkbox(self):
+        self.find_by_xpath(Constants.Wizard.SecurityValuesTab.TRADE_ON_MARGIN_CHECKBOX).click()
 
-    def is_include_securities_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.SecurityValuesTab.INCLUDE_SECURITIES_CHECKBOX)
+    def is_trade_on_margin_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.Wizard.SecurityValuesTab.TRADE_ON_MARGIN_CHECKBOX)
 
-    def set_reference_value(self, value):
-        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.REFERENCE_VALUE_FIELD, value)
+    def set_global_margin(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.GLOBAL_MARGIN_FIELD, value)
 
-    def get_reference_value(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.REFERENCE_VALUE_FIELD)
+    def get_global_margin(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.GLOBAL_MARGIN_FIELD)
 
-    def get_all_reference_value_from_drop_menu(self):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.REFERENCE_VALUE_FIELD, "")
-        time.sleep(1)
-        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
-
-    def clear_reference_value(self):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.REFERENCE_VALUE_FIELD, "")
-
-    def is_reference_value_field_empty(self):
-        return False if "has-value" in self.find_by_xpath(Constants.Wizard.SecurityValuesTab.REFERENCE_VALUE_FIELD)\
-            .get_attribute("class") else True
-
-    def set_holdings_ratio(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.HOLDINGS_RATIO_FIELD, value)
-
-    def get_holding_ratio(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.HOLDINGS_RATIO_FIELD)
-
-    def is_holding_ratio_field_empty(self):
-        return False if "has-value" in self.find_by_xpath(Constants.Wizard.SecurityValuesTab.HOLDINGS_RATIO_FIELD)\
-            .get_attribute("class") else True
-
-    def set_allow_securities_on_negative_ledgers_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.SecurityValuesTab.ALLOW_SECURITIES_ON_NEGATIVE_LEDGERS_CHECKBOX).click()
-
-    def is_allow_securities_on_negative_ledgers_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.SecurityValuesTab.ALLOW_SECURITIES_ON_NEGATIVE_LEDGERS_CHECKBOX)
-
-    def set_disallow_for_same_listing_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.SecurityValuesTab.DISALLOW_FOR_SAME_LISTING_CHECKBOX).click()
-
-    def is_disallow_for_same_listing_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.SecurityValuesTab.DISALLOW_FOR_SAME_LISTING_CHECKBOX)
-
-    def set_disallow_for_deliverable_contracts_checkbox(self):
-        self.find_by_xpath(Constants.Wizard.SecurityValuesTab.DISALLOW_FOR_DELIVERABLE_CONTRACTS_CHECKBOX).click()
-
-    def is_disallow_for_deliverable_contracts_checkbox_selected(self):
-        return self.is_checkbox_selected(Constants.Wizard.SecurityValuesTab.DISALLOW_FOR_DELIVERABLE_CONTRACTS_CHECKBOX)
-
-    # Security Values table
+    # Table
     def click_on_plus_in_table(self):
         self.find_by_xpath(Constants.Wizard.SecurityValuesTab.Table.PLUS_BUTTON).click()
 
@@ -149,38 +99,119 @@ class SecurityValuesTab(CommonPage):
     def click_on_delete_in_table(self):
         self.find_by_xpath(Constants.Wizard.SecurityValuesTab.Table.DELETE_BUTTON).click()
 
-    def set_settlement_period_filter(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.SETTLEMENT_PERIOD_FILTER, value)
+    def set_instrument_type_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FILTER, value)
 
-    def set_position_validity_filter(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.POSITION_VALIDITY_FILTER, value)
+    def set_instrument_group_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_GROUP_FILTER, value)
+
+    def set_underlying_listing_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.UNDERLYING_LISTING_FILTER, value)
+
+    def set_haircut_value_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FILTER, value)
+
+    def set_instrument_type(self, value):
+        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD, value)
+
+    def get_instrument_type(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD)
+
+    def set_instrument_group(self, value):
+        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_GROUP_FIELD, value)
+
+    def get_instrument_group(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_GROUP_FIELD)
+
+    def set_underlying_listing(self, value):
+        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.UNDERLYING_LISTING_FIELD, value)
+
+    def get_underlying_listing(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.UNDERLYING_LISTING_FIELD)
+
+    def set_haircut_value(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FIELD, value)
+
+    def get_haircut_value(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FIELD)
+
+
+class RiskMarginTab(CommonPage):
+    # Table
+    def click_on_plus_in_table(self):
+        self.find_by_xpath(Constants.Wizard.RiskMarginTab.Table.PLUS_BUTTON).click()
+
+    def click_on_save_checkmark_in_table(self):
+        self.find_by_xpath(Constants.Wizard.RiskMarginTab.Table.SAVE_CHECKMARK_BUTTON).click()
+
+    def click_on_cancel_in_table(self):
+        self.find_by_xpath(Constants.Wizard.RiskMarginTab.Table.CANCEL_BUTTON).click()
+
+    def click_on_edit_in_table(self):
+        self.find_by_xpath(Constants.Wizard.RiskMarginTab.Table.EDIT_BUTTON).click()
+
+    def click_on_delete_in_table(self):
+        self.find_by_xpath(Constants.Wizard.RiskMarginTab.Table.DELETE_BUTTON).click()
 
     def set_margin_method_filter(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.MARGIN_METHOD_FILTER, value)
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FILTER, value)
 
-    def set_custom_percentage_filter(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FILTER, value)
+    def set_initial_margin_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INITIAL_MARGIN_FILTER, value)
 
-    def set_settlement_period(self, value):
-        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.SETTLEMENT_PERIOD_FIELD, value)
+    def set_maintenance_margin_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FILTER, value)
 
-    def get_settlement_period(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.SETTLEMENT_PERIOD_FIELD)
+    def set_instrument_type_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_TYPE_FILTER, value)
 
-    def set_position_validity(self, value):
-        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.POSITION_VALIDITY_FIELD, value)
+    def set_instrument_group_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_GROUP_FILTER, value)
 
-    def get_position_validity(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.POSITION_VALIDITY_FIELD)
+    def set_instrument_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_FILTER, value)
+
+    def set_underlying_instrument_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.UNDERLYING_INSTRUMENT_FILTER, value)
 
     def set_margin_method(self, value):
-        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.MARGIN_METHOD_FIELD, value)
+        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FIELD, value)
 
     def get_margin_method(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.MARGIN_METHOD_FIELD)
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FIELD)
 
-    def set_custom_percentage(self, value):
-        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FIELD, value)
+    def set_initial_margin(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INITIAL_MARGIN_FIELD, value)
 
-    def get_custom_percentage(self):
-        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.CUSTOM_PERCENTAGE_FIELD)
+    def get_initial_margin(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INITIAL_MARGIN_FIELD)
+
+    def set_maintenance_margin(self, value):
+        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD, value)
+
+    def get_maintenance_margin(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD)
+
+    def set_instrument_type(self, value):
+        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_TYPE_FIELD, value)
+
+    def get_instrument_type(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_TYPE_FIELD)
+
+    def set_instrument_group(self, value):
+        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_GROUP_FIELD, value)
+
+    def get_instrument_group(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_GROUP_FIELD)
+
+    def set_instrument(self, value):
+        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_FIELD, value)
+
+    def get_instrument(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_FIELD)
+
+    def set_underlying_instrument(self, value):
+        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.UNDERLYING_INSTRUMENT_FIELD, value)
+
+    def get_underlying_instrument(self):
+        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.UNDERLYING_INSTRUMENT_FIELD)

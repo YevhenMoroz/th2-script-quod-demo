@@ -45,7 +45,7 @@ class QAP_T2903(TestCase):
         self.quote_request.update_far_leg(leg_symbol=self.symbol, leg_qty=self.far_qty)
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region step 2
         self.dealer_intervention.set_list_filter(["NearLegQty", self.near_qty, "FarLegQty", self.far_qty])
@@ -53,7 +53,7 @@ class QAP_T2903(TestCase):
         time.sleep(5)
         self.dealer_intervention.estimate_quote()
         time.sleep(5)
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager_sel.send_message(self.quote_cancel)
         self.dealer_intervention.check_assigned_fields({"Status": "Canceled"})
         self.dealer_intervention.close_window()

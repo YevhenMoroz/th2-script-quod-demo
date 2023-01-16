@@ -8,6 +8,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
@@ -23,6 +24,7 @@ class QAP_T2481(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_act = Stubs.fix_act
+        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
@@ -52,6 +54,17 @@ class QAP_T2481(TestCase):
             "SecurityType": self.security_type
         }
         # region MarketData
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.fix_manager_esp = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.gbp_usd_spot = {
+            'Symbol': self.gbp_usd,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.gbp_usd_spot,
+            'SettlType': self.settle_type_spot}]
         self.md_req_id = "GBP/USD:SPO:REG:HSBC"
         self.bid_px_0 = "1.16079"
         self.offer_px_0 = "1.1614"
@@ -174,6 +187,7 @@ class QAP_T2481(TestCase):
             }
         ]
         # endregion
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -184,6 +198,11 @@ class QAP_T2481(TestCase):
         self.sleep(5)
         # endregion
         # region Step 1
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_esp.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data()
         self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_0)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
@@ -195,7 +214,7 @@ class QAP_T2481(TestCase):
                                                            Currency=self.currency_gbp,
                                                            Instrument=self.instrument)
         self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
-        self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.response = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
         self.quote.set_params_for_quote(self.quote_request)
         self.sleep(3)
         # endregion
@@ -247,7 +266,7 @@ class QAP_T2481(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
