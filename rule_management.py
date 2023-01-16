@@ -639,15 +639,8 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager(Simulators.algo)
-    # rule_manager.remove_rules_by_alias("fix-buy-side-316-ganymede-redburn")
+    rule_manager = RuleManager()
     rule_manager.print_active_rules()
-
-    # nos_rule = rule_manager.add_NOS("fix-buy-side-316-ganymede-redburn", "XAMS_CLIENT3")
-    # ocr_rule = rule_manager.add_OCR("fix-buy-side-316-ganymede-redburn")
-    # ocrr_rule = rule_manager.add_OrderCancelReplaceRequest("fix-buy-side-316-ganymede-redburn", "XAMS_CLIENT3", "XAMS")
-    # cancel_rule = rule_manager.add_OrderCancelRequest("fix-buy-side-316-ganymede-redburn", "XAMS_CLIENT3", "XAMS", True)
-    cancel_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty("fix-buy-side-316-ganymede-redburn", "XAMS_CLIENT3", "XAMS", 30, 30, 1000, 1000, 0)
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
     # print("_________________________")
