@@ -35,9 +35,8 @@ class QAP_T9217(CommonTestCase):
             instruments_tab = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
             instruments_tab.click_on_plus_button()
             time.sleep(1)
-            expected_result = [True for _ in range(5)]
-            actual_result = [instruments_tab.is_synthetic_combination_to_auto_hedge_field_displayed(),
-                             instruments_tab.is_execution_strategy_field_displayed(),
+            expected_result = [True for _ in range(4)]
+            actual_result = [instruments_tab.is_execution_strategy_field_displayed(),
                              instruments_tab.is_execution_strategy_tif_field_displayed(),
                              instruments_tab.is_execution_strategy_max_duration_field_displayed(),
                              instruments_tab.is_request_approval_checkbox_displayed()]

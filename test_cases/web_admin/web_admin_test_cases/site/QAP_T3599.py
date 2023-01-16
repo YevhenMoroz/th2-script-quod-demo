@@ -31,9 +31,7 @@ class QAP_T3599(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_institutions_page()
-        time.sleep(2)
 
     def test_context(self):
         try:
@@ -41,13 +39,11 @@ class QAP_T3599(CommonTestCase):
             try:
                 institution_page = InstitutionsPage(self.web_driver_container)
                 institution_page.set_institution_name(self.institution_name)
-                time.sleep(2)
+                time.sleep(1)
                 institution_page.click_on_more_actions()
-                time.sleep(2)
                 institution_page.click_on_edit()
                 location_assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
                 location_assignments_sub_wizard.click_on_zones(self.zone)
-                time.sleep(2)
                 zone_assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
                 zone_assignments_sub_wizard.click_on_locations(self.location)
                 time.sleep(2)

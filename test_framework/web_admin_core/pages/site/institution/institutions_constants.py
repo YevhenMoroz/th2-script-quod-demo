@@ -6,7 +6,7 @@ class InstitutionsConstants:
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok" or normalize-space()="OK"]'
     NO_BUTTON_XPATH = '//*[normalize-space()="No"]'
     CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
@@ -30,6 +30,7 @@ class InstitutionsConstants:
     CROSS_CURRENCY_HAIR_CUT = '//*[@col-id="settlCurrFxHairCut"]//*[@ref="eValue"]'
     CASH_ACCOUNT_CURRENCY_RATE_FILTER = '//*[@style="width: 200px; left: 1200px;"]//*[@class="ag-floating-filter-input"]'
     CASH_ACCOUNT_CURRENCY_RATE = '//*[@col-id="settlCurrFxRateSource"]//*[@ref="eValue"]'
+    CONFIRMATION_POP_UP = '//nb-dialog-container'
 
     # Main page
 

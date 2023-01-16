@@ -62,6 +62,7 @@ class QAP_T3359(CommonTestCase):
             position_page.set_min_amt(self.qty_amt_values[5])
             position_page.set_max_qty(self.qty_amt_values[6])
             position_page.set_max_amt(self.qty_amt_values[7])
+            time.sleep(1)
             position_page.set_currency(self.currency)
             time.sleep(1)
             self.verify('Entity displayed', True, position_page.is_searched_entity_found(self.currency))
