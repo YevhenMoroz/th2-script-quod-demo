@@ -39,6 +39,7 @@ from test_framework.java_api_wrappers.ors_messages.OrdListNotification import Or
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
+from test_framework.java_api_wrappers.ors_messages.OrderActionReply import OrderActionReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCancelReply import OrderBagCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagCreationReply import OrderBagCreationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagDissociateReply import OrderBagDissociateReply
@@ -359,6 +360,13 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
+        elif message.get_message_type() == ORSMessageType.OrderActionRequest.value:
+            response = self.act.submitOrderActionRequestWithFilter(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+
         else:
             response = None
         return self.parse_response(response)
@@ -414,7 +422,39 @@ class JavaApiManager:
                                                                                    repeating_group.message_value.fields[
                                                                                        repeating_group_field].simple_value})
                                         repeating_group_list.append(repeating_group_list_field)
-                                    fields_content.update({field: {component_field: repeating_group_list}})
+                                    if not bool(repeating_group_list):
+                                        # Inner component
+                                        inner_component_fields = dict()
+                                        for inner_component_field in message.fields[main_field].message_value.fields[
+                                            field].message_value.fields[component_field].message_value.fields:
+                                            if \
+                                                    message.fields[main_field].message_value.fields[
+                                                        field].message_value.fields[
+                                                        component_field].message_value.fields[
+                                                        inner_component_field].simple_value != "":
+                                                inner_component_fields.update({inner_component_field:
+                                                                             message.fields[
+                                                                                 main_field].message_value.fields[
+                                                                                 field].message_value.fields[
+                                                                                 component_field].message_value.fields[
+                                                                                 inner_component_field].simple_value})
+                                                fields_content.update({field: {component_fields: {inner_component_fields}}})
+                                            else:
+                                                # Inner Repeating Group
+                                                inner_repeating_group_list = list()
+                                                for inner_repeating_group in \
+                                                        message.fields[main_field].message_value.fields[
+                                                            field].message_value.fields[
+                                                            component_field].message_value.fields[inner_component_field].list_value.values:
+                                                    inner_repeating_group_list_field = dict()
+                                                    for inner_repeating_group_field in inner_repeating_group.message_value.fields:
+                                                        inner_repeating_group_list_field.update({inner_repeating_group_field:
+                                                                                               inner_repeating_group.message_value.fields[
+                                                                                                   inner_repeating_group_field].simple_value})
+                                                    inner_repeating_group_list.append(inner_repeating_group_list_field)
+                                                fields_content.update({field: {component_field:{inner_component_field:inner_repeating_group_list}}})
+                                    else:
+                                        fields_content.update({field: {component_field: repeating_group_list}})
                     fields.update({main_field: fields_content})
             message_type = message.metadata.message_type
             response_fix_message = None
@@ -512,6 +552,8 @@ class JavaApiManager:
                 response_fix_message = AddOrdersToOrderListReply()
             elif message_type == ORSMessageType.OrderListWaveModificationReply.value:
                 response_fix_message = OrderListWaveModificationReply()
+            elif message_type == ORSMessageType.OrderActionReply.value:
+                response_fix_message = OrderActionReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
