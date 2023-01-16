@@ -22,6 +22,7 @@ class FIXMessageType(Enum):
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
     BusinessMessageReject = "BusinessMessageReject"
+    Reject = 'Reject'
 
 
 class ORSMessageType(Enum):
@@ -107,6 +108,10 @@ class ORSMessageType(Enum):
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
     OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
     OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
+    OrderActionRequest = 'Order_OrderActionRequest'
+    OrderActionReply = 'Order_OrderActionReply'
+    TradeEntryBatchRequest = 'Order_TradeEntryBatchRequest'
+    TradeEntryBatchReply = 'Order_TradeEntryBatchReply'
 
 
 class TradingRestApiMessageType(Enum):
