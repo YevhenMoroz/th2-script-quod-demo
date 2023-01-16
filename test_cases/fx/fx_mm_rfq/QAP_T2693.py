@@ -32,6 +32,7 @@ class QAP_T2693(TestCase):
         self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
 
         self.md_req_id = 'EUR/USD:FXF:WK1:MS'
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -49,7 +50,7 @@ class QAP_T2693(TestCase):
         self.quote_request.set_swap_fwd_fwd()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
                                                            Account=self.client_argentina)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         quote = FixMessageQuoteFX().set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=quote)
         # endregion
@@ -59,6 +60,6 @@ class QAP_T2693(TestCase):
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)
         self.sleep(2)

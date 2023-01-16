@@ -74,6 +74,7 @@ class QAP_T2560(TestCase):
         self.quote.set_params_for_dealer_fwd(self.quote_request)
         quote_response = next(response)
         quote_from_di = self.fix_manager_sel.parse_response(quote_response)[0]
+        self.quote.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         self.new_order_single.set_default_for_dealer(self.quote_request, quote_from_di, side="2")
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)

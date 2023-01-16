@@ -58,5 +58,8 @@ class QAP_T2963(TestCase):
         execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single,
                                                                                                     self.status,
                                                                                                     text=text)
+
+        execution_report.add_tag({"OrdRejReason": "99"})
+        execution_report.remove_parameters(["LastMkt", "ExecRestatementReason", "SettlType", "SettlCurrency"])
         self.fix_verifier.check_fix_message(execution_report)
         # endregion

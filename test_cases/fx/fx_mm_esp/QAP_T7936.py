@@ -3,7 +3,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.constants import DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -41,12 +40,8 @@ class QAP_T7936(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.argentina)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 0, ("MDEntryPx", "MDEntrySize"))
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 1, ("MDEntryPx", "MDEntrySize"))
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigClientVenueID", "OrigMDTime"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

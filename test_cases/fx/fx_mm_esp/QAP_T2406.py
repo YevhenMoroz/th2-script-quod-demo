@@ -83,10 +83,7 @@ class QAP_T2406(TestCase):
         self.no_related_symbols = [{
             'Instrument': self.get_instrument,
             'SettlType': self.settle_type}]
-        # self.ss_connectivity = SessionAliasFX().ss_esp_connectivity
-        # self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        # self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.account = self.data_set.get_client_by_name("client_mm_1")
 
@@ -116,14 +113,14 @@ class QAP_T2406(TestCase):
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
         time.sleep(4)
-        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_3m,
-                                                         MDEntrySize=self.qty_bid_3m)
-        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_3m,
-                                                         MDEntrySize=self.qty_ask_3m)
-        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 2, MDEntryPx=self.price_bid_1m,
+        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1m,
                                                          MDEntrySize=self.qty_bid_1m)
-        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 3, MDEntryPx=self.price_ask_1m,
+        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_1m,
                                                          MDEntrySize=self.qty_ask_1m)
+        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 2, MDEntryPx=self.price_bid_3m,
+                                                         MDEntrySize=self.qty_bid_3m)
+        self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 3, MDEntryPx=self.price_ask_3m,
+                                                         MDEntrySize=self.qty_ask_3m)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

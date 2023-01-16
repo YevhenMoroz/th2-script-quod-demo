@@ -124,10 +124,11 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                     row_prc += 1
 
     def set_params_for_empty_md_response(self, md_request: FixMessageMarketDataRequestFX,
-                                   no_md_entries_count: list = ["*", "*", "*"],
-                                   published=True, ndf=False,
-                                   priced=True, band_not_pub=None, band_not_priced=None):
+                                         no_md_entries_count=None,
+                                         published=True, ndf=False,
+                                         priced=True, band_not_pub=None, band_not_priced=None):
         self.prepare_params_for_empty_md_response(md_request)
+        no_md_entries_count = []
         if len(no_md_entries_count) > 0:
             band = 0
             row_pub = 0
@@ -333,4 +334,3 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
             temp['Instrument'].update({"CFICode": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
         super().change_parameters(temp)
         return self
-
