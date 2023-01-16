@@ -1,6 +1,6 @@
 from test_cases.fx.fx_mm_rfq import  QAP_T2843, QAP_T2629, \
     QAP_T2931, QAP_T2846, QAP_T2817, QAP_T2816,  \
-    QAP_T2814, QAP_T2740, QAP_T2731, QAP_2992, QAP_T2715, QAP_T2714, QAP_4748, QAP_T2865
+    QAP_T2814, QAP_T2740, QAP_T2731, QAP_2992, QAP_T2715,  QAP_4748, QAP_T2865
 from test_cases.fx.fx_mm_rfq.QAP_T2391 import QAP_T2391
 from test_cases.fx.fx_mm_rfq.QAP_T2392 import QAP_T2392
 from test_cases.fx.fx_mm_rfq.QAP_T2393 import QAP_T2393
@@ -64,7 +64,6 @@ from test_cases.fx.fx_mm_rfq.QAP_T7855 import QAP_T7855
 from test_cases.fx.fx_mm_rfq.QAP_T7857 import QAP_T7857
 from test_cases.fx.fx_mm_rfq.QAP_T7967 import QAP_T7967
 from test_cases.fx.fx_mm_rfq.QAP_T7981 import QAP_T7981
-from test_cases.fx.fx_mm_rfq.QAP_T2970 import QAP_T2970
 from test_cases.fx.fx_mm_rfq.QAP_T2963 import QAP_T2963
 from test_cases.fx.fx_mm_rfq.QAP_T2905 import QAP_T2905
 from test_cases.fx.fx_mm_rfq.QAP_T2879 import QAP_T2879
