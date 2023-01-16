@@ -4,7 +4,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 class SuspendOrderManagementReply(JavaApiMessage):
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessageType.SuspendOrderManagementRequest.value)
+        super().__init__(message_type=ORSMessageType.SuspendOrderManagementReply.value)
         super().change_parameters(parameters)
 
     def set_default(self, order_id, suspend_order="Y", cancel_children="N") -> None:
