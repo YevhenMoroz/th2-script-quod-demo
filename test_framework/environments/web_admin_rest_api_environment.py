@@ -29,7 +29,7 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                 )
                 WebAdminRestApiEnvironment.environment_instances.update(
                     {EnvironmentType.quod309_kratos_web_admin.value: site_environment})
-            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod314_luna_web_admin.value]
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod309_kratos_web_admin.value]
         elif env.value == EnvironmentType.quod315_luna_web_admin.value:
             if EnvironmentType.quod315_luna_web_admin.value not in WebAdminRestApiEnvironment.environment_instances.keys():
                 site_environment = WebAdminRestApiEnvironment(
