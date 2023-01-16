@@ -171,7 +171,7 @@ class QAP_T7031(TestCase):
                                                                            'ExecAllocList': {
                                                                                'ExecAllocBlock': [{'ExecQty': self.qty,
                                                                                                    'ExecID': exec_id,
-                                                                                                   'ExecPrice': new_avg_px}]},
+                                                                                                   'ExecPrice': self.price}]},
 
                                                                        })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)

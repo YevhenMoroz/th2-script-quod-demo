@@ -7,18 +7,25 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, MiddleOfficeColumns, \
-    PostTradeStatuses
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, JavaApiFields, OrderReplyConst
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7131(TestCase):
@@ -30,15 +37,16 @@ class QAP_T7131(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '500'
-        self.price = '1.12345678'
+        self.qty = "100"
+        self.price = "1.12345678"
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.client = self.data_set.get_client('client_pt_3')  # MOClient3
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.client = self.data_set.get_client("client_pt_3")  # MOClient3
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.trade_request = TradeEntryOMS(self.data_set)
+        self.complete_request = DFDManagementBatchOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -46,53 +54,52 @@ class QAP_T7131(TestCase):
         # region Create CO order via FIX
         self.fix_message.set_default_care_limit()
         self.fix_message.change_parameters(
-            {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
+            {"Side": "1", "OrderQtyData": {"OrderQty": self.qty}, "Account": self.client, "Price": self.price}
+        )
         response = self.fix_manager.send_message_and_receive_response(self.fix_message)
         # get Client Order ID and Order ID
-        cl_ord_id = response[0].get_parameters()['ClOrdID']
-        order_id = response[0].get_parameters()['OrderID']
+        cl_ord_id = response[0].get_parameters()["ClOrdID"]
+        ord_id = response[0].get_parameters()["OrderID"]
         # endregion
 
-        # region Accept order
-        self.client_inbox.accept_order()
+        # region Step 2 - Execute Care order
+        self.trade_request.set_default_trade(ord_id, self.price, self.qty)
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        print_message("Execute CO", responses)
+        exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
+            exec_report,
+            "Comparing Execution status (TransExecStatus)",
+        )
         # endregion
 
-        # region Filter Order Book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        # endregion
+        # region Step 3 - Complete CO
+        self.complete_request.set_default_complete(ord_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
+        print_message("COMPLETE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
 
-        # region Checking Status in OrderBook
-        self.order_book.check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
+                JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value,
+                "PostTradeReportedPrice": "1.124",
+            },
+            order_reply,
+            "Comparing PostTradeStatus and Price after Complete in Order_OrdReply",
+        )
 
-        # region Execute first CO
-        self.order_book.manual_execution(qty=self.qty)
-        # endregion
-
-        # region Check ExecSts after Execution
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.filled.value})
-        # endregion
-
-        # region Complete order
-        self.order_book.complete_order(filter_list=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        # endregion
-
-        # region Book order and checking PostTradeStatuses in the Order book
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Book')
-        # endregion
-
-        # region Checking the Price in the Middle Office
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.price.value, MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value],
-            [OrderBookColumns.order_id.value, order_id])
-        self.middle_office.compare_values({MiddleOfficeColumns.price.value: '1.124',
-                                           MiddleOfficeColumns.sts.value: 'ApprovalPending',
-                                           MiddleOfficeColumns.match_status.value: 'Unmatched'}, values_after_book,
-                                          'Comparing values in the MiddleOffice after the Book of the first order')
+        alloc_report_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value
+        ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values(
+            {"AvgPrice": "1.124"}, alloc_report_reply, "Comparing Price after Complete in Order_AllocationReport"
+        )
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

@@ -66,6 +66,7 @@ class ClientsConstants:
     VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="confirmationService"]'
     VALUES_TAB_GIVE_UP_SERVICE = '//*[@id="giveUpService"]'
     VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE = '//*[@id="extGiveUpService"]'
+    VALUES_TAB_GIVE_UP_MATCHING_ID = '//*[@id="giveUpMatchingID"]'
     VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON = '//*[@id="extGiveUpService"]//ancestor::div[@class="row"]//button'
     VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="extConfirmationService"]'
     VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'

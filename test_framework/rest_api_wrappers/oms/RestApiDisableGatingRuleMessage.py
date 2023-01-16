@@ -14,8 +14,6 @@ class RestApiDisableGatingRuleMessage(RestApiMessages):
                                 "gatingRuleCondition": [
                                     {"gatingRuleCondExp": "AND(ExecutionPolicy=DMA,OrdQty<1000)",
                                      "gatingRuleCondName": "Cond1",
-                                     "holdOrder": "false",
-                                     "qtyPrecision": 100,
                                      "alive": "true",
                                      "gatingRuleCondIndice": 1,
                                      "gatingRuleResult": [
@@ -25,7 +23,6 @@ class RestApiDisableGatingRuleMessage(RestApiMessages):
                                           "gatingRuleResultAction": "DMA",
                                           "gatingRuleResultRejectType": "HRD"}]},
                                     {"gatingRuleCondName": "Default Result",
-                                     "alive": "true",
                                      "gatingRuleCondIndice": 2,
                                      "gatingRuleResult": [
                                         {"alive": "true",

@@ -1,23 +1,33 @@
 import logging
-from datetime import datetime
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, PostTradeStatuses, \
-    MiddleOfficeColumns, TimeInForce, OrderType
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, OrderReplyConst, \
+    AllocationReportConst, ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7216(TestCase):
@@ -32,80 +42,102 @@ class QAP_T7216(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.qty = '100'
         self.price = '20'
-        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue = self.data_set.get_mic_by_name('mic_1')
+        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
         self.client = self.data_set.get_client('client_pt_1')  # MOClient
-        self.washbook = self.data_set.get_washbook_account_by_name('washbook_account_3')
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')  # VETO
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.washbook = self.data_set.get_washbook_account_by_name('washbook_account_2')
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.trade_entry = TradeEntryOMS(self.data_set)
+        self.complete_request = DFDManagementBatchOMS(self.data_set)
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.confirmation_request = ConfirmationOMS(self.data_set)
+        self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Create CO order
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty,
-                                            order_type=OrderType.limit.value, tif=TimeInForce.DAY.value,
-                                            washbook=self.washbook, recipient=self.desk)
-        self.order_ticket.create_order(self.lookup)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        cl_ord_id = self.order_book.extract_field(OrderBookColumns.cl_ord_id.value)
+        # region Create CO order (step 1)
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+            'AccountGroupID': self.client,
+            'OrdQty': self.qty,
+            "ClOrdID": bca.client_orderid(9),
+            'Price': self.price,
+            'WashBookAccountID': self.washbook
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message('Create CO order', responses)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         # endregion
 
-        # region Accept CO order
-        self.client_inbox.accept_order()
+        # region trade CO order and complete it (step 2)
+        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+        self.trade_entry.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.venue})
+        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+        print_message(f'Trade CO  order {order_id}', responses)
+        response = \
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        exec_id = response[JavaApiFields.ExecID.value]
+        self.complete_request.set_default_complete(order_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
+        print_message(f'Complete CO  order {order_id}', responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value}, order_reply,
+            f'Check {JavaApiFields.PostTradeStatus.value} (step 2)')
         # endregion
 
-        # region Check status in OrderBook
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
-        self.order_book.check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
+        # region book CO order (step 3)
+        gross_trade_amt = str(float(self.qty) * float(self.price))
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+            "AccountGroupID": self.client,
+            "SettlCurrAmt": gross_trade_amt,
+            'Qty': self.qty,
+            'ExecAllocList': {
+                'ExecAllocBlock': [{'ExecQty': self.qty,
+                                    'ExecID': exec_id,
+                                    'ExecPrice': self.price}]},
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        print_message(f'Book {order_id} order', responses)
+        allocation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+             JavaApiFields.WashBookAccountID.value: self.washbook
+             }, allocation_report, 'Check expected and actually result from step 3')
         # endregion
 
-        # region Execute CO
-        self.order_book.manual_execution(qty=self.qty)
-        # endregion
+        # region Approve and Allocate CO order step 4
+        alloc_id = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
+        self.approve_block.set_default_approve(alloc_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
+        print_message('Approve Block', responses)
 
-        # region Complete order
-        self.order_book.complete_order(filter_list=[OrderBookColumns.order_id.value, order_id])
+        self.confirmation_request.set_default_allocation(alloc_id)
+        self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
+            "AllocAccountID": self.alloc_account,
+            'AllocQty': self.qty,
+            'AvgPx': self.price,
+        })
+        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        print_message(f'Allocate block ', responses)
+        confirmation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+                                              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+                                              JavaApiFields.WashBookAccountID.value: self.washbook},
+                                             confirmation_report,
+                                             'Check expected and actually result from step 4')
         # endregion
-
-        # region Check values in OrderBook after Complete
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id])
-        self.order_book.check_order_fields_list({OrderBookColumns.exec_sts.value: ExecSts.filled.value,
-                                                 OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value,
-                                                 OrderBookColumns.done_for_day.value: 'Yes'},
-                                                'Comparing values after Complete')
-        # endregion
-
-        # region Book order
-        self.middle_office.book_order(filter=[OrderBookColumns.order_id.value, order_id])
-        # endregion
-
-        # region Checking values after the Book in the Middle Office
-        block_id = self.middle_office.extract_block_field(MiddleOfficeColumns.block_id.value,
-                                                          [MiddleOfficeColumns.order_id.value, order_id])
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            [MiddleOfficeColumns.sts.value, MiddleOfficeColumns.match_status.value, 'WashBookAccount'],
-            [MiddleOfficeColumns.block_id.value, block_id[MiddleOfficeColumns.block_id.value]])
-        self.middle_office.compare_values({MiddleOfficeColumns.sts.value: 'ApprovalPending',
-                                           MiddleOfficeColumns.match_status.value: 'Unmatched',
-                                           'WashBookAccount': self.washbook}, values_after_book,
-                                          'Comparing values after Book for block of MiddleOffice')
-        # endregion
-
-        # region Approve and Allocate the block
-        self.middle_office.approve_block()
-        allocation_param = [
-            {'Security Account': self.data_set.get_account_by_name('client_pt_1_acc_1'), 'Alloc Qty': self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
-        self.middle_office.allocate_block()
-        # endregion
-
-        # region Verifying WashBookAccountID after Allocate
-        washbook_from_alloc = self.middle_office.extract_allocate_value(column_name='WashBookAccountID ')
-        self.middle_office.compare_values({'WashBookAccountID ': self.washbook}, washbook_from_alloc,
-                                          'Comparing WashBookAccount after Allocate')
-        # endregion
-
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

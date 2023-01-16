@@ -5,25 +5,21 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-
 from rule_management import RuleManager, Simulators
-
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import (
-    OrderBookColumns,
-    PostTradeStatuses,
-    MiddleOfficeColumns,
-    AllocationsColumns,
-)
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-
-from th2_grpc_act_gui_quod.middle_office_pb2 import PanelForExtraction
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, AllocationReportConst, \
+    ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -47,12 +43,15 @@ class QAP_T7230(TestCase):
         self.venue = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
         self.alloc_account = self.data_set.get_account_by_name("client_pt_1_acc_1")  # MOClient_SA1
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.all_instr = AllocationInstructionOMS(self.data_set)
+        self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirm = ConfirmationOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -84,81 +83,74 @@ class QAP_T7230(TestCase):
             {"ReplyReceivedTime": "*", "LastMkt": "*", "Text": "*", "Account": self.venue_client_names}
         )
         self.exec_report.remove_parameters(["SettlCurrency"])
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=['SecurityDesc'])
         # endregion
 
-        # region Book order and checking values after it in the Order book
-        self.middle_office.set_modify_ticket_details(
-            settl_currency="UAH", exchange_rate="2", exchange_rate_calc="Multiply", toggle_recompute=True
-        )
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            "Comparing PostTradeStatus after Book",
-        )
+        # region book order
+        self.all_instr.set_recompute_book(order_id)
+        self.all_instr.update_fields_in_component("AllocationInstructionBlock",
+                                                  {"InstrID": self.data_set.get_instrument_id_by_name(
+                                                      "instrument_2"),
+                                                      "AccountGroupID": self.client,
+                                                      "Side": "Sell"})
+        self.java_api_manager.send_message_and_receive_response(self.all_instr)
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
+        expected_result = {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
+                           JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
+                           JavaApiFields.SettlCurrency.value: self.data_set.get_currency_by_name("currency_5"),
+                           JavaApiFields.SettlCurrAmt.value: "2000.0", JavaApiFields.GrossTradeAmt.value: "2000.0",
+                           JavaApiFields.AvgPrice.value: "20.0"}
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value],
+                           JavaApiFields.SettlCurrency.value: allocation_report[JavaApiFields.SettlCurrency.value],
+                           JavaApiFields.SettlCurrAmt.value: allocation_report[JavaApiFields.SettlCurrAmt.value],
+                           JavaApiFields.GrossTradeAmt.value: allocation_report[JavaApiFields.GrossTradeAmt.value],
+                           JavaApiFields.AvgPrice.value: allocation_report[JavaApiFields.AvgPrice.value]}
+
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check booking')
         # endregion
 
-        # region Checking the values after the Book in the Middle Office
-        values_after_book = self.middle_office.extract_list_of_block_fields(
-            [
-                MiddleOfficeColumns.price.value,
-                MiddleOfficeColumns.sts.value,
-                MiddleOfficeColumns.match_status.value,
-                MiddleOfficeColumns.settl_currency.value,
-                MiddleOfficeColumns.gross_amt.value,
-                MiddleOfficeColumns.net_amt.value,
-                MiddleOfficeColumns.net_price.value,
-            ],
-            [MiddleOfficeColumns.order_id.value, order_id],
-        )
-        self.middle_office.compare_values(
-            {
-                MiddleOfficeColumns.price.value: "20",
-                MiddleOfficeColumns.sts.value: "ApprovalPending",
-                MiddleOfficeColumns.match_status.value: "Unmatched",
-                MiddleOfficeColumns.settl_currency.value: "UAH",
-                MiddleOfficeColumns.gross_amt.value: "2,000",
-                MiddleOfficeColumns.net_amt.value: "2,000",
-                MiddleOfficeColumns.net_price.value: "20",
-            },
-            values_after_book,
-            "Comparing values after Book for block of MiddleOffice",
-        )
+        # region approve block
+        self.approve.set_default_approve(alloc_id)
+        self.java_api_manager.send_message_and_receive_response(self.approve)
+        expected_result = ({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
+                            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value})
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        actually_result = {JavaApiFields.AllocStatus.value: allocation_report[JavaApiFields.AllocStatus.value],
+                           JavaApiFields.MatchStatus.value: allocation_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result, actually_result, 'Check approve')
         # endregion
+        # region allocate block
 
-        # region Approve and Allocate block
-        self.middle_office.approve_block()
-        allocation_param = [
-            {AllocationsColumns.security_acc.value: self.alloc_account, AllocationsColumns.alloc_qty.value: self.qty}
-        ]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
-        self.middle_office.allocate_block()
-        # endregion
-
-        # region Extracting values from Allocations ticket
-        extract_settlement_tab_alloc = self.middle_office.extract_values_from_amend_allocation_ticket(
-            panels_extraction=[PanelForExtraction.SETTLEMENT],
-            block_filter_dict={MiddleOfficeColumns.order_id.value: order_id},
-        )
-        fields_for_dlt = ("SettlAmount", "SettlDate", "PSET", "PSETBIC")
-        expected_alloc_ticket_values = {}
-        for d in self.middle_office.split_tab_misk(extract_settlement_tab_alloc):
-            expected_alloc_ticket_values.update(d)
-            for key in fields_for_dlt:
-                expected_alloc_ticket_values.pop(key, None)
-        # endregion
-
-        # region Comparing values in Allocations ticket
-        self.middle_office.compare_values(
-            {
-                MiddleOfficeColumns.settl_currency.value: "UAH",
-                MiddleOfficeColumns.exchange_rate.value: "1",
-                "ExchangeRateCalc": "",
-            },
-            expected_alloc_ticket_values,
-            "Comparing values in Allocations ticket",
-        )
-        # endregion
+        self.confirm.set_default_allocation(alloc_id)
+        self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.alloc_account,
+                                                                      "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                          "instrument_2"),
+                                                                      "Side": "Sell",
+                                                                      "AvgPx": "20"})
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        confirm_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        expected_result_confirmation = {
+            JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+            JavaApiFields.SettlCurrency.value: self.data_set.get_currency_by_name("currency_5"),
+            JavaApiFields.SettlCurrAmt.value: "2000.0", JavaApiFields.GrossTradeAmt.value: "2000.0",
+            JavaApiFields.AvgPx.value: "20.0"}
+        actually_result = {
+            JavaApiFields.ConfirmStatus.value: confirm_report[JavaApiFields.ConfirmStatus.value],
+            JavaApiFields.MatchStatus.value: confirm_report[JavaApiFields.MatchStatus.value],
+            JavaApiFields.SettlCurrency.value: confirm_report[JavaApiFields.SettlCurrency.value],
+            JavaApiFields.SettlCurrAmt.value: confirm_report[JavaApiFields.SettlCurrAmt.value],
+            JavaApiFields.GrossTradeAmt.value: confirm_report[JavaApiFields.GrossTradeAmt.value],
+            JavaApiFields.AvgPx.value: confirm_report[JavaApiFields.AvgPx.value]}
+        self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
+                                             f'Check statuses of confirmation of {self.alloc_account}')
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

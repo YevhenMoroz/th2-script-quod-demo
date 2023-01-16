@@ -29,6 +29,9 @@ class FeesOrderFeeProfileSubWizard(CommonPage):
     def get_commission_profile_name(self):
         return self.get_text_by_xpath(FeesConstants.ORDER_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH)
 
+    def set_commission_profile_name_filter(self, value):
+        self.set_text_by_xpath(FeesConstants.ORDER_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH, value)
+
     def set_description(self, value):
         self.set_text_by_xpath(FeesConstants.ORDER_FEE_PROFILE_DESCRIPTION_XPATH, value)
 

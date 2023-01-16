@@ -21,7 +21,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import Orde
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
-from test_framework.win_gui_wrappers.java_api_constants import SubmitRequestConst
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -108,7 +108,7 @@ class QAP_T7504(TestCase):
         ignored_fields_conf_report = ['AllocQty', 'ConfirmType', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier',
                                       'BookID', 'SettlDate', 'AllocID', 'Currency', 'NetMoney', 'MatchStatus',
                                       'ConfirmStatus', 'TradeDate', 'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
-                                      'CpctyConfGrp','ReportedPx', 'Instrument', 'GrossTradeAmt', 'ConfirmID']
+                                      'CpctyConfGrp','ReportedPx', 'Instrument', 'GrossTradeAmt', 'ConfirmID','OrderAvgPx']
         conf_report = FixMessageConfirmationReportOMS(self.data_set, params)
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=ignored_fields_conf_report)
         # endregion
@@ -126,7 +126,8 @@ class QAP_T7504(TestCase):
         ignored_fields_alloc_report = ["Account", "TransactTime", "Side", "AvgPx", "QuodTradeQualifier", "BookID",
                                        "SettlDate", "AllocID", "Currency", "NetMoney", "TradeDate", "BookingType",
                                        "NoAllocs", "NoParty", "AllocInstructionMiscBlock1", "Quantity", "tag5120",
-                                       "ReportedPx", "Instrument", "RootSettlCurrAmt", "GrossTradeAmt"]
+                                       "ReportedPx", "Instrument", "RootSettlCurrAmt", "GrossTradeAmt",
+                                       'OrderAvgPx']
         alloc_report = FixMessageAllocationInstructionReportOMS(new_params)
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ['AllocTransType', 'AllocType'],
                                                             ignored_fields=ignored_fields_alloc_report)

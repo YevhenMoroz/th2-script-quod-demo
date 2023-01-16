@@ -56,6 +56,8 @@ class QAP_T8357(CommonTestCase):
 
             wizard_page = ClientsWizard(self.web_driver_container)
             wizard_page.click_on_save_changes()
+            time.sleep(2)
+
             page = ClientsPage(self.web_driver_container)
             page.set_name(self.name)
             time.sleep(1)

@@ -10,7 +10,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,7 +24,7 @@ class QAP_T7302(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_1')
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
@@ -45,13 +44,13 @@ class QAP_T7302(TestCase):
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
-        party = {"Parties": {'NoPartyIDs': [
+        party = {'NoPartyIDs': [
             self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
             self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
             self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4')
-        ]}}
-        self.exec_report.add_tag(party)
-        self.exec_report.add_tag({"ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
+        ]}
+        self.exec_report.change_parameters(
+            {"Parties": party, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
         # endregion

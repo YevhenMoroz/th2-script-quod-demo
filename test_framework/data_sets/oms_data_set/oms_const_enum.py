@@ -3,12 +3,12 @@ from enum import Enum
 
 class OmsFixInstruments(Enum):
     instrument_1 = dict(  # without commission/fee
-        Symbol='FR0010436584',  # assigned counterpart_reb_1
+        Symbol='FR0010436584_EUR',  # assigned counterpart_reb_1
         SecurityID='FR0010436584',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS',
-        SecurityDesc='VETOQUINOL'
+        SecurityDesc='DREAMNEX'
     )
     instrument_2 = dict(  # with commission/fee
         Symbol='ISI1',  # assigned counterpart_mma_2
@@ -69,12 +69,14 @@ class OmsInstrumentId(Enum):
     instrument_1 = "5XRAA7DXZg14IOkuNrAfsg"
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
+    instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
 
 
 class OmsListingId(Enum):
     listing_1 = "1200"
     listing_2 = '9500000049'
     listing_3 = "704"
+    listing_4 = "2259"
 
 
 class OmsVenues(Enum):
@@ -114,6 +116,8 @@ class OmsClients(Enum):
     client_pt_8 = "MOClient7"
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
+    client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
+    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -121,10 +125,13 @@ class OmsClients(Enum):
     client_com_1 = "CLIENT_COMM_1"
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
+    client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
     client_counterpart_3 = "CLIENT_COUNTERPART_3"
+    """ClientAccountGroupID"""
+    client_2_ext_id = "CLIENT2ExtID"
 
 
 class OmsVenueClientNames(Enum):
@@ -132,6 +139,7 @@ class OmsVenueClientNames(Enum):
     client_1_venue_1 = "XPAR_CLIENT1"
     client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
+    client_3_venue_1 = "XPAR_CLIENT3"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
@@ -164,6 +172,7 @@ class OmsVenueClientNames(Enum):
 class OmsAccounts(Enum):
     """Base"""
     client_1_acc_1 = "NEWACCOUNT"
+    client_1_acc_2 = "TEST2"
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
@@ -187,6 +196,7 @@ class OmsAccounts(Enum):
     client_pt_7_acc_1 = "MOClient7_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
+    client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
@@ -195,11 +205,11 @@ class OmsAccounts(Enum):
     client_com_1_acc_1 = "CLIENT_COMM_1_SA1"
     client_com_1_acc_2 = "CLIENT_COMM_1_SA2"
     client_com_1_acc_3 = "CLIENT_COMM_1_SA3"
-    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions
+    client_com_1_acc_4 = "CLIENT_COMM_1_EXEMPTED"  # This acc is exempted from client commissions and Agent Fees
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
-    client_fees_1_acc_1 = "CLIENT_FEES_1_SA_1"
+    client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
     client_counterpart_1_acc_2 = "CLIENT_COUNTERPART_SA2"
@@ -218,6 +228,7 @@ class OmsWashbookAccounts(Enum):
     washbook_account_2 = "CareWB"
     washbook_account_3 = "DefaultWashBook"
     washbook_account_4 = "AlgoWashBook"
+    washbook_account_5 = "EquityWashBook"
 
 
 class OmsRecipients(Enum):
@@ -248,6 +259,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
 class OmsCurrency(Enum):
@@ -285,6 +297,9 @@ class OMSCommissionProfiles(Enum):
     abs_amt_3 = 9
     commission_with_minimal_value = 600018
     client_commission_percentage = 15
+    abs_amt_gbp = 12
+    perc_rounding_to_whole_number = 800020
+    abs_amt_gbp_small = 800021
 
 
 class OMSFeeType(Enum):
@@ -343,6 +358,7 @@ class OmsQtyTypes(Enum):
 class OMSPset(Enum):
     pset_1 = ('CREST', "CRSTGB22")
     pset_2 = ('EURO_CLEAR', "MGTCBEBE")
+    pset_by_id_1 = ('4', '2')
 
 
 class OMSCommissionAndFeeBasis(Enum):
@@ -542,11 +558,15 @@ class OMSCounterPartyIDs_FIX(Enum):
                                           'PartyID': "CREST",
                                           'PartyIDSource': "D"}
     counterpart_id_euro_clear = {'PartyRole': '10',
-                                          'PartyID': "EURO_CLEAR",
-                                          'PartyIDSource': "D"}
+                                 'PartyID': "EURO_CLEAR",
+                                 'PartyIDSource': "D"}
+    counterpart_java_api_user = {'PartyRole': '36',
+                                 'PartyID': "JavaApiUser",
+                                 'PartyIDSource': "D"}
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
+    counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}

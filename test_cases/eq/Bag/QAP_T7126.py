@@ -7,16 +7,15 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.win_gui_wrappers.base_bag_order_book import EnumBagCreationPolitic
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBagColumn, OrderBookColumns, SecondLevelTabs, \
-    Status, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_bag_order_book import OMSBagOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, OrderReplyConst, \
+    BagChildCreationPolicy, OrderBagConst, ExecutionReportConst
+from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+from test_framework.java_api_wrappers.ors_messages.OrderBagCancelRequest import OrderBagCancelRequest
+from test_framework.java_api_wrappers.ors_messages.OrderBagCreationRequest import OrderBagCreationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,112 +31,153 @@ class QAP_T7126(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.bag_order_book = OMSBagOrderBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.bag_creation_request = OrderBagCreationRequest()
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.execution_report = ExecutionReportOMS(self.data_set)
+        self.bag_cancel_request = OrderBagCancelRequest()
+        self.trade_entry = TradeEntryOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '7126'
-        qty_of_bag = str(int(int(qty) * 2))
-        qty_for_verifying_bag = qty_of_bag[0:2] + ',' + qty_of_bag[2:5]
-        qty_for_verifying_order = qty[0] + ',' + qty[1:4]
+        qty = '700'
         price = '10'
         client = self.data_set.get_client_by_name('client_pt_1')
         venue_client_account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        self.fix_message.change_parameter('Account', client)
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
-        self.fix_message.change_parameter('Price', price)
         exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', exec_destination)
-        self.fix_message.change_parameter("HandlInst", '3')
-        rule_manager = RuleManager(Simulators.equity)
+        currency = self.data_set.get_currency_by_name('currency_1')
         orders_id = []
         name_of_bag = 'QAP_T7126'
-        new_order_single_rule = trade_rule = None
-        filter_bag_list = [OrderBagColumn.ord_bag_name.value, name_of_bag]
-
+        new_order_single_rule = None
         # endregion
 
-        # region step 1, step 2 and step 3
-        self.fix_message.change_parameter("HandlInst", '3')
-        for i in range(2):
-            self.fix_manager.send_message_fix_standard(self.fix_message)
-            self.client_inbox.accept_order()
-            self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-            orders_id.append(self.order_book.extract_field(OrderBookColumns.order_id.value, 1))
-        self.order_book.set_filter([OrderBookColumns.qty.value, qty])
-        self.bag_order_book.create_bag_details([1, 2], name_of_bag=name_of_bag)
-        self.bag_order_book.create_bag(EnumBagCreationPolitic.BAG_BY_AVG_PX_PRIORITY)
-        values = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.ord_bag_name.value,
-                                                                          OrderBagColumn.order_bag_qty.value],
-                                                                    filter_bag_list)
-        expected_result = {OrderBagColumn.order_bag_qty.value: qty_for_verifying_bag,
-                           OrderBagColumn.ord_bag_name.value: name_of_bag}
-        self.bag_order_book.compare_values(values, expected_result, 'Comparing values after creating bag')
+        # region step 1 : Create CO orders
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"OrdQty": qty,
+             "AccountGroupID": client,
+             "Price": price})
+        for counter in range(2):
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                         {
+                                                             "ClOrdID": bca.client_orderid(9)
+                                                         })
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            orders_id.append(order_reply[JavaApiFields.OrdID.value])
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply,
+                f'Checking expected and actually results for {orders_id[counter]} (step 1)')
         # endregion
 
-        # region step 4 and step 5 and step 6
+        # region step 2: Create Bag order
+        self.bag_creation_request.set_default(BagChildCreationPolicy.AVP.value, name_of_bag, orders_id)
+        self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
+        order_bag_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+                JavaApiFields.OrderBagNotificationBlock.value]
+        bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
+        expected_result = {JavaApiFields.OrderBagName.value: name_of_bag,
+                           JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
+        self.java_api_manager.compare_values(expected_result, order_bag_notification,
+                                             'Checking expected and actually results (step 2)')
+        # endregion
+
+        # region step 3 , step 4: Create SliceOrder from bag
+        client_ord_id = bca.client_orderid(9)
+        slice_order_id = None
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                     {
+                                                         'ExecutionPolicy': 'DMA',
+                                                         'AvgPriceType': "EA",
+                                                         'ExternalCare': 'N',
+                                                         'SlicedOrderBagID': bag_order_id,
+                                                         'OrdQty': qty,
+                                                         'ClOrdID': client_ord_id
+                                                     })
         try:
-            new_order_single_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-                self.fix_env.buy_side,
-                venue_client_account,
-                exec_destination,
-                float(price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       venue_client_account,
-                                                                                       exec_destination,
-                                                                                       float(price), int(qty), 0)
-            order_details = self.order_ticket.set_order_details(client, limit=price, qty=qty)
-            self.bag_order_book.set_create_order_details({OrderBagColumn.ord_bag_name.value: name_of_bag},
-                                                         order_details.order_details)
-        except Exception as e:
-            logger.info(f'Your Exception is {e}')
-
+            new_order_single_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side, venue_client_account, exec_destination, float(price))
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value, client_ord_id). \
+                get_parameters()[JavaApiFields.OrdReplyBlock.value]
+            slice_order_id = order_reply[JavaApiFields.OrdID.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply, 'Checking that Slice order created (step 5)')
+        except Exception as E:
+            logger.error(f'Exception is {E}', exc_info=True)
         finally:
             time.sleep(3)
-            rule_manager.remove_rule(trade_rule)
-            rule_manager.remove_rule(new_order_single_rule)
+            self.rule_manager.remove_rule(new_order_single_rule)
         # endregion
 
-        # expected result step 4 and step 5 and step 6
-        result = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1', sub_extraction_fields=[
-            OrderBookColumns.sts.value, OrderBookColumns.exec_sts.value],
-                                                                               table_name=SecondLevelTabs.slicing_orders.value)
-        expected_result = {OrderBookColumns.sts.value: ExecSts.terminated.value,
-                           OrderBookColumns.exec_sts.value: ExecSts.filled.value}
-        self.bag_order_book.compare_values(expected_result, result, "Comparing values")
-        expected_result = {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value}
-        for order in orders_id:
-            self.__check_value_of_co_orders(expected_result, [OrderBookColumns.exec_sts.value], order)
+        # region step 5: Execute Slice order of bag
+        filter_dict = {slice_order_id: slice_order_id}
+        for co_order_id in orders_id:
+            filter_dict.update({co_order_id: co_order_id})
+
+        self.execution_report.set_default_trade(slice_order_id)
+        self.execution_report.update_fields_in_component('ExecutionReportBlock',
+                                                         {
+                                                             "LastTradedQty": qty,
+                                                             "LastPx": price,
+                                                             "OrdType": "Limit",
+                                                             "Price": price,
+                                                             "Currency": currency,
+                                                             "ExecType": "Trade",
+                                                             "TimeInForce": "Day",
+                                                             "LeavesQty": '0',
+                                                             "CumQty": qty,
+                                                             "AvgPrice": price,
+                                                             "LastMkt": exec_destination,
+                                                             "OrdQty": qty
+                                                         })
+        self.java_api_manager.send_message_and_receive_response(self.execution_report, filter_dict)
+
+        execution_report_of_slice_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                                 filter_dict[slice_order_id]). \
+            get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values({
+            JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value,
+            JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value
+        }, execution_report_of_slice_order,
+            f'Checking expected and actually result for slicing order {slice_order_id} (step 5)')
+
+        for co_order_id in orders_id:
+            execution_report_co_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                               co_order_id). \
+                get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
+                execution_report_co_order,
+                f'Checking expected and actually result for {co_order_id} CO order (step 5)')
         # endregion
 
-        # region step 7 and step 8
-        self.bag_order_book.cancel_bag(filter_bag_list)
-        self.order_book.manual_execution(qty=str(int(int(qty) / 2)), price=price,
-                                         filter_dict={OrderBookColumns.order_id.value: orders_id[0]})
+        # region step 6: Cancel Bag
+        self.bag_cancel_request.set_default(bag_order_id)
+        self.java_api_manager.send_message_and_receive_response(self.bag_cancel_request)
+
+        order_bag_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+                JavaApiFields.OrderBagNotificationBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_CXL.value},
+            order_bag_notification, f'Checking {JavaApiFields.OrderBagStatus.value} (step 6)')
         # endregion
 
-        # region expected result for step 7 and step 8
-        values = self.bag_order_book.extract_order_bag_book_details('1', [OrderBagColumn.bag_status.value],
-                                                                    filter_bag_list)
-        expected_result = {OrderBagColumn.bag_status.value: Status.canceled.value}
-        self.bag_order_book.compare_values(values, expected_result, 'Comparing values after canceling bag')
-        expected_result = {OrderBookColumns.exec_sts.value: ExecSts.filled.value}
-        self.__check_value_of_co_orders(expected_result, [OrderBookColumns.exec_sts.value], orders_id[0])
+        # region step 7
+        self.trade_entry.set_default_trade(orders_id[0], price, str(float(qty)/2))
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+        execution_report_co_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).\
+            get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
+                                             execution_report_co_order,
+                                             'Checking expected and actually results (step 7)')
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __check_value_of_co_orders(self, expected_result, columns: list, order_id: str):
-        result = self.bag_order_book.extract_from_order_bag_book_and_other_tab('1', sub_extraction_fields=columns,
-                                                                               sub_filter=[
-                                                                                   OrderBookColumns.order_id.value,
-                                                                                   order_id],
-                                                                               table_name=SecondLevelTabs.orders_tab.value)
-        self.bag_order_book.compare_values(expected_result, result, f"Comparing values of {order_id}")

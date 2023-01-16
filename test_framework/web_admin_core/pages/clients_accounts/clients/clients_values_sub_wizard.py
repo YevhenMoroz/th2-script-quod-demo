@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -157,6 +159,11 @@ class ClientsValuesSubWizard(CommonPage):
     def get_give_up_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE)
 
+    def get_all_give_up_service_from_drop_menu(self):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, "")
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_external_give_up_service(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE, value)
 
@@ -165,6 +172,12 @@ class ClientsValuesSubWizard(CommonPage):
 
     def is_external_give_up_service_field_enable(self):
         return self.is_field_enabled(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE)
+
+    def set_give_up_mathing_id(self, value):
+        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_MATCHING_ID, value)
+
+    def get_give_up_matching_id(self):
+        return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_MATCHING_ID)
 
     def click_on_manage_external_give_up_service(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON).click()

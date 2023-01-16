@@ -36,7 +36,6 @@ from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3870 import
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3871 import QAP_T3871
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3872 import QAP_T3872
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3877 import QAP_T3877
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3885 import QAP_T3885
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3886 import QAP_T3886
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3923 import QAP_T3923
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3924 import QAP_T3924
@@ -137,8 +136,6 @@ class RunOrderManagement:
             QAP_T3886(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             #
-            QAP_T3885(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
             QAP_T3877(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 

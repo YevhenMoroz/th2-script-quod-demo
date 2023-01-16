@@ -34,7 +34,8 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'BookID': '*',
             'NoOrders': [{
                 'ClOrdID': new_order_single.get_parameter('ClOrdID'),
-                'OrderID': '*'
+                'OrderID': '*',
+                'OrderAvgPx': new_order_single.get_parameter("Price"),  # New?
             }],
             'SettlDate': '*',
             'AllocID': '*',

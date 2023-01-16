@@ -21,15 +21,12 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Participation" run="True">
+                <component name="Participation" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
                             <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
-                        <fe_environments>
-                            <fe_environment>quod310_fe</fe_environment>
-                        </fe_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="False">
@@ -64,7 +61,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark" run="True">
+                <component name="Lit_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -96,7 +93,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Mp_dark" run="True">
+                <component name="Mp_dark" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -107,7 +104,7 @@
                         </rest_environments>
                     </environments>
                 </component>
-                <component name="Synth_min_qty" run="True">
+                <component name="Synth_min_qty" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -115,7 +112,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Lit_dark_iceberg" run="True">
+                <component name="Lit_dark_iceberg" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -123,7 +120,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Sorping" run="True">
+                <component name="Sorping" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -131,7 +128,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Multiple_emulation" run="True">
+                <component name="Multiple_emulation" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -145,9 +142,12 @@
                         <fix_environments>
                             <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
-                <component name="Expity_Auction" run="False">
+                <component name="Expiry_Auction" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -155,7 +155,7 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="PreClose_Auction" run="False">
+                <component name="PreClose_Auction" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -175,22 +175,6 @@
                     </environments>
                 </component>
                 <component name="POV_Scaling" run="False">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_redburn</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="Pair_trading" run="False">
-                    <data_set>AlgoDataSet</data_set>
-                    <environments>
-                        <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
-                        </fix_environments>
-                    </environments>
-                </component>
-                <component name="Acceptance_list" run="False">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>

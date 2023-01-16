@@ -36,7 +36,7 @@ class QAP_T7471(TestCase):
         self.fix_verifier_dc = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client = self.data_set.get_client_by_name("client_counterpart_2")
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(self.fix_message)
+        self.alloc_report = FixMessageAllocationInstructionReportOMS()
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.fix_message.change_parameter('Account', self.client)
         self.price = self.fix_message.get_parameter("Price")
@@ -72,6 +72,7 @@ class QAP_T7471(TestCase):
             {'PartyRole': "*",
              'PartyID': "*",
              'PartyIDSource': "*"},
+            self.data_set.get_counterpart_id_fix('counterpart_java_api_user')
         ]
         # endregion
         # region Execute Order
@@ -93,7 +94,7 @@ class QAP_T7471(TestCase):
         list_of_ignored_fields = ['SecurityDesc', 'CommissionData', 'RootSettlCurrAmt', 'AllocInstructionMiscBlock1',
                                   'MiscFeesGrp', 'BookingType', 'RootOrClientCommission',
                                   'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', 'Account',
-                                  'NoRootMiscFeesList']
+                                  'NoRootMiscFeesList', 'OrderAvgPx']
         exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": {"NoPartyIDs": parties}, "LastMkt": "*", "VenueType": "*", "MiscFeesGrp": "*",
@@ -155,10 +156,27 @@ class QAP_T7471(TestCase):
         # endregion
 
         # region Check AllocationReport
-        parties[1] = self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm_2')
-        parties.append({'PartyRole': "*",
-                        'PartyID': "*",
-                        'PartyIDSource': "*"})
+        self.alloc_report.set_default_ready_to_book(self.fix_message)
+        parties = [{'PartyRole': "28",
+             'PartyID': "CustodianUser",
+             'PartyIDSource': "C"},
+            {'PartyRole': "34",
+             'PartyID': "RegulatoryBody - Venue(Paris)",
+             'PartyIDSource': "C",
+             'NoPartySubIDs': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"},
+            {'PartyRole': "*",
+             'PartyID': "*",
+             'PartyIDSource': "*"}
+        ]
         self.alloc_report.add_tag(
             {"NoParty": {"NoParty": parties}, "RootCommTypeClCommBasis": "*", "tag5120": "*",
              "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", })

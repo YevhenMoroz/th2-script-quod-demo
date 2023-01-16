@@ -59,7 +59,6 @@ class QAP_T3549(CommonTestCase):
             time.sleep(1)
             wizard.click_on_edit()
             wizard.click_at_client_link()
-            wizard.click_on_ok_button()
 
             time.sleep(2)
             client_values_tab = ClientsValuesSubWizard(self.web_driver_container)

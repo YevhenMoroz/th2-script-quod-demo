@@ -26,6 +26,8 @@ from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_
     QuotingSessionsConstants
 from test_framework.web_admin_core.pages.general.system_commands.system_commands_constants import \
     SystemCommandsConstants
+from test_framework.web_admin_core.pages.general.system_components.constants import Constants as \
+    SystemComponentsConstants
 from test_framework.web_admin_core.pages.general.entitlements.constants import \
     EntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -186,6 +188,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(SystemCommandsConstants.SYSTEM_COMMANDS_PAGE_TITLE_XPATH)
 
+    def open_system_components_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SYSTEM_COMPONENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(SystemComponentsConstants.MainPage.PAGE_TITLE)
+
     def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
@@ -195,6 +202,10 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(SettingsConstants.SETTINGS_PAGE_TITLE_XPATH)
+
+    def click_on_settings_page_from_side_menu(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.SETTINGS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
 
     def open_commissions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.COMMISSIONS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,

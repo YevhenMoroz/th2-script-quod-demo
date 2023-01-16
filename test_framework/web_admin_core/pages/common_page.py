@@ -221,7 +221,7 @@ class CommonPage:
             c += 100
             action.perform()
             if self.is_element_present(search_element):
-                c += 200
+                c += 100
                 action.drag_and_drop_by_offset(scr_elem, c, 0)
                 action.perform()
                 break
@@ -256,7 +256,7 @@ class CommonPage:
         items_list = [_.text.strip() for _ in items]
         return items_list
 
-    def _get_all_items_from_table_column(self, xpath) -> list:
+    def get_all_items_from_table_column(self, xpath) -> list:
         items = self.find_elements_by_xpath(xpath)
         items_list = [_.text.strip() for _ in items]
         return items_list

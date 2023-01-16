@@ -1,46 +1,75 @@
 import logging
+import os
 import time
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-from custom.basic_custom_actions import create_event
-from test_framework.old_wrappers.fix_verifier import FixVerifier
-from rule_management import RuleManager
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
+from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-def execute(report_id, session_id):
-    case_name = "QAP_T7193"
-    qty = "5611"
-    client = "MOClient"
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    buy_connectivity = test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity()
+class QAP_T7193(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.ord_can = FixMessageOrderCancelRequestOMS()
+        self.rule_manager = RuleManager(Simulators.equity)
 
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingle_Market(buy_connectivity, client + "_PARIS", "XPAR", True, int(qty), 50)
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 2, client, 1, qty, 1)
-        response = fix_message.pop('response')
-    finally:
-        time.sleep(1)
-        rule_manager.remove_rule(nos_rule)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Declaration
+        price = self.fix_message.get_parameter("Price")
+        qty = self.fix_message.get_parameter("OrderQtyData")["OrderQty"]
+        client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
+        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
+        self.fix_message.change_parameter('Price', price)
+        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.fix_message.change_parameter('ExDestination', exec_destination)
+        cl_ord_id = self.fix_message.get_parameter('ClOrdID')
+        rule = None
+        # endregion
 
-    order_id = response.response_messages_list[0].fields['ClOrdID'].simple_value
-    cl_order_id = response.response_messages_list[0].fields['ClOrdID'].simple_value
-    test_framework.old_wrappers.eq_fix_wrappers.cancel_order_via_fix(case_id, order_id, cl_order_id, client, 2)
-
-    params = {
-        'Account': client,
-        'OrdStatus': '2',
-        'ClOrdID': response.response_messages_list[0].fields['ClOrdID'].simple_value,
-        'OrderID': '*',
-        'TransactTime': '*',
-        'Text': '11629 Order is already in terminate state',
-        'OrigClOrdID': '*'
-    }
-    fix_verifier_ss = FixVerifier(test_framework.old_wrappers.eq_fix_wrappers.get_sell_connectivity(), case_id)
-    fix_verifier_ss.CheckCancelReject(params, response, key_parameters=['ClOrdID', 'OrdStatus', ])
+        # region Step 1-2
+        try:
+            rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(
+                self.fix_env.buy_side, client_for_rule, exec_destination, float(price), int(qty), 0)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        except Exception as e:
+            logger.info(f'Your Exception is {e}')
+        finally:
+            time.sleep(3)
+            self.rule_manager.remove_rule(rule)
+        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+        self.fix_manager.compare_values({"OrdStatus": "2", 'ExecType': 'F'}, exec_rep, "Check Order")
+        # endregion
+        # region Step 3
+        self.ord_can.set_default(self.fix_message)
+        try:
+            rule = self.rule_manager.add_OrderCancelRequest(
+                self.fix_env.buy_side, client_for_rule, exec_destination, True)
+            self.fix_manager.send_message_and_receive_response(self.ord_can)
+        except Exception as e:
+            logger.info(f'Your Exception is {e}')
+        finally:
+            time.sleep(3)
+            self.rule_manager.remove_rule(rule)
+        can_rej = self.fix_manager.get_last_message("OrderCancelReject").get_parameters()
+        self.fix_manager.compare_values({"OrdStatus": "2", 'CxlRejReason': '0', "ClOrdID": cl_ord_id}, can_rej,
+                                        "Check CancelReject")
+        # endregion

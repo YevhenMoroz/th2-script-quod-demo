@@ -47,7 +47,7 @@ class QAP_T3175(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_delete(True)
             time.sleep(1)
-            self.verify(f"Entity {self.name} has been delete", True,
+            self.verify(f"Entity {self.name} has been delete", False,
                         main_page.is_searched_entity_found_by_name(self.name))
 
         except Exception:

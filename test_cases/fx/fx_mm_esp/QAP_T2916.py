@@ -101,5 +101,6 @@ class QAP_T2916(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data().update_MDReqID(self.md_eur_gbp_spo, self.fx_fh_connectivity, "FX")
+        self.fix_md.update_value_in_repeating_group("NoMDEntries", "SettlDate", self.settle_date_spot)
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.sleep(2)

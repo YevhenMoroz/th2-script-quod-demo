@@ -48,7 +48,8 @@ class Constants:
         class ValuesTab:
             NAME = '//*[@formcontrolname="priceCleansingRuleName"]'
             REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX = '//*[normalize-space()="Remove Detected Price Update"]/preceding-sibling::span'
-            REFERENCE_VENUES = '//*[@formcontrolname="priceCleansingReferenceVenue"]/button'
+            REFERENCE_VENUES_BUTTON = '//*[@formcontrolname="priceCleansingReferenceVenue"]//nb-icon//*[@data-name="chevron-down"]'
+            REFERENCE_VENUES_FIELD = '//*[@formcontrolname="priceCleansingReferenceVenue"]/button'
             REFERENCE_VENUES_NAME_IN_DROP_DOWN = '//nb-option-list//nb-option'
             PRICE_DEVIATION = '//input[@id="priceDeviation"]'
             PRICE_DEVIATION_FORMAT = '//input[@id="priceDeviationFormat"]'

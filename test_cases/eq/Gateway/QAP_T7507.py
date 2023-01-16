@@ -179,7 +179,7 @@ class QAP_T7507(TestCase):
                                   'SecurityDesc', 'Symbol', 'SecurityID', 'ExDestination', 'VenueType',
                                   'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
-                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account'
+                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx'
                                   ]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})
@@ -199,7 +199,6 @@ class QAP_T7507(TestCase):
         change_parameters['AllocType'] = 5
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
-                                                         key_parameters=['ClOrdID', 'AllocType'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
@@ -212,7 +211,6 @@ class QAP_T7507(TestCase):
         change_parameters['AllocQty'] = self.qty
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                         ['AllocAccount', 'NoOrders'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 

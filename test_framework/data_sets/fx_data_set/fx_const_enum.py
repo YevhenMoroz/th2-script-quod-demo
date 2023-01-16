@@ -1,7 +1,7 @@
 from enum import Enum
 
 from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
-    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api
+    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api
 
 
 class FxInstruments(Enum):
@@ -207,13 +207,14 @@ class FxTenorsJavaApi(Enum):
 
 class FxSettleDates(Enum):
     today = today()
+    today_java_api = today_java_api()
     tomorrow = tom()
     spot = spo()
     spot_java_api = spo_java_api()
     wk1_java_api = wk1_java_api()
     wk1 = wk1()
     wk2 = wk2()
-    wk_java_api = wk2_java_api()
+    wk2_java_api = wk2_java_api()
     wk3 = wk3()
     spo_ndf = spo_ndf()
     wk1_ndf = wk1_ndf()

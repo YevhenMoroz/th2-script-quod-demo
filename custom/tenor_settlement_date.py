@@ -27,6 +27,10 @@ def today():
     return (tm(datetime.utcnow().isoformat()) + bd(n=0)).date().strftime('%Y%m%d')
 
 
+def today_java_api():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=0)).date().strftime('%Y-%m-%dT%H:%M:%S')
+
+
 def spo():
     return (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d')
 

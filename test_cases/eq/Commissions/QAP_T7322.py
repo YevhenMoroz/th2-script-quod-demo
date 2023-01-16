@@ -6,16 +6,18 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import  JavaApiFields, OrderReplyConst, \
+    ExecutionReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, SecondLevelTabs, ChildOrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_child_order_book import OMSChildOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -33,8 +35,10 @@ class QAP_T7322(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.ss_connectivity = self.fix_env.sell_side
         self.dc_connectivity = self.fix_env.drop_copy
-        self.client = self.data_set.get_client_by_name("client_com_1")
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.client = self.data_set.get_client_by_name("client_counterpart_1")
         self.cur = self.data_set.get_currency_by_name('currency_3')
+        self.cur_fee = self.data_set.get_currency_by_name('currency_2')
         self.qty = "900"
         self.qty_to_first_split = "500"
         self.qty_to_second_split = "400"
@@ -48,104 +52,116 @@ class QAP_T7322(TestCase):
              "Currency": self.cur, "Price": self.price, 'OrderQtyData': {'OrderQty': self.qty}})
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.child_book = OMSChildOrderBook(self.test_id, self.session_id)
-        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.fix_exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.comm_profile = self.data_set.get_comm_profile_by_name("perc_qty")
         self.com_cur = self.data_set.get_currency_by_name('currency_2')
         self.fee_type = self.data_set.get_misc_fee_type_by_name('agent')
+        self.ord_scope = self.data_set.get_fee_order_scope_by_name('done_for_day')
         self.exec_scope = self.data_set.get_fee_exec_scope_by_name('all_exec')
-        self.contra_firm = self.data_set.get_counterpart('counterpart_cnf_1')
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_com_1_venue_2")
-        self.username = self.fe_env.user_1
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
         self.route_id = self.data_set.get_route_id_by_name('route_1')
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.trade_entry_request = TradeEntryOMS(self.data_set)
+        self.complete_order = DFDManagementBatchOMS(self.data_set)
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(comm_profile=self.comm_profile).change_message_params(
             {'commExecScope': self.exec_scope, "orderCommissionProfileID": self.comm_profile,
-             "miscFeeType": self.fee_type, "routeID": self.route_id}).send_post_request()
+             "miscFeeType": self.fee_type, "routeID": self.route_id,
+             "commOrderScope": self.ord_scope}).send_post_request()
         # endregion
         # region send order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        self.order_id = response[0].get_parameter("OrderID")
-        self.client_inbox.accept_order()
-        # endregion
-        # region first split order
-        self.__split_order(self.qty_to_first_split)
-        child_order_id1 = \
-            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                                {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
-        # endregion
-        # region second split order
-        self.__split_order(self.qty_to_second_split)
-        child_order_id2 = \
-            self.order_book.extract_2lvl_fields(SecondLevelTabs.child_tab.value, [OrderBookColumns.order_id.value], [1],
-                                                {OrderBookColumns.order_id.value: self.order_id})[0]["ID"]
-        # endregion
-        # region check FeeAgent
-        self.__check_fee_sub_lvl_details(child_order_id1, '0.5')
-        self.__check_fee_sub_lvl_details(child_order_id2, '0.4')
-        # endregion
-        # region extract execution id
-        exec_id_1 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [1],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0][
-            OrderBookColumns.exec_id.value]
-        exec_id_2 = \
-        self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value, [OrderBookColumns.exec_id.value], [2],
-                                            {OrderBookColumns.order_id.value: self.order_id})[0][
-            OrderBookColumns.exec_id.value]
-        # endregion
-        # region check ExecReports on BO
-        no_misc1 = {"MiscFeeAmt": '0.5', "MiscFeeCurr": self.com_cur,
-                    "MiscFeeType": "12"}
-        execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
-        execution_report.change_parameters(
-            {'ExecID': exec_id_1, 'OrdStatus': '1', 'QuodTradeQualifier': "*", 'Currency': self.cur,
-             'LastMkt': "*",
-             "Account": self.client, "NoMiscFees": {"NoMiscFees": [no_misc1]}, "CommissionData": "*", "ExecBroker": "*",
-             "tag5120": "*", "NoParty": "*", 'BookID': "*", "OrderID": self.order_id, 'LastExecutionPolicy': "*"})
-        execution_report.remove_parameters(
-            ['SettlCurrency', "TradeReportingIndicator", 'Parties', 'SecondaryOrderID'])
-        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report, ['ExecID'])
-        no_misc2 = {"MiscFeeAmt": '0.4', "MiscFeeCurr": self.com_cur,
-                    "MiscFeeType": "12"}
-        execution_report.change_parameters(
-            {'ExecID': exec_id_2, "NoMiscFees": {"NoMiscFees": [no_misc2]}, 'OrdStatus': '2'})
-        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report, ['ExecID'])
+        order_id = response[0].get_parameter("OrderID")
+        cl_ord_id = response[0].get_parameter("ClOrdID")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __split_order(self, qty):
+        # region first split order
+        responses = self.__split_order(self.qty_to_first_split, order_id)
+        # endregion
+
+        # region check first order
+        self.__return_result(responses, ORSMessageType.OrdUpdate.value)
+        order_reply = self.result.get_parameter('OrdUpdateBlock')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
+            order_reply, "Check the first child order open sts")
+        self.__return_result(responses, ORSMessageType.PositionReport.value)
+        order_reply = self.result.get_parameter('PositionReportBlock')
+        posit_block = order_reply['PositionList']['PositionBlock'][0]
+        exec_id_1 = posit_block['LastPositUpdateEventID']
+        ignored_list_1 = ['ReplyReceivedTime', 'Currency', 'SecondaryOrderID', 'SettlType', 'CommissionData', 'LastMkt']
+        misc_fee1 = {'NoMiscFees': [{'MiscFeeAmt': '0.5', 'MiscFeeCurr': self.cur_fee, 'MiscFeeType': '12'}]}
+        self.exec_report.set_default_filled(self.fix_message)
+        self.exec_report.change_parameters({'ExecID': exec_id_1, 'OrdStatus': '1', 'MiscFeesGrp': misc_fee1})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ['ExecID'], ignored_fields=ignored_list_1)
+        # endregion
+
+        # region second split order
+        responses = self.__split_order(self.qty_to_second_split, order_id)
+        # endregion
+
+        # region check first order
+        self.__return_result(responses, ORSMessageType.OrdUpdate.value)
+        order_reply = self.result.get_parameter('OrdUpdateBlock')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
+            order_reply, "Check the second child order open sts")
+        self.__return_result(responses, ORSMessageType.PositionReport.value)
+        order_reply = self.result.get_parameter('PositionReportBlock')
+        posit_block = order_reply['PositionList']['PositionBlock'][0]
+        exec_id_2 = posit_block['LastPositUpdateEventID']
+        misc_fee2 = {'NoMiscFees': [{'MiscFeeAmt': '0.4', 'MiscFeeCurr': self.cur_fee, 'MiscFeeType': '12'}]}
+        self.exec_report.set_default_filled(self.fix_message)
+        self.exec_report.change_parameters({'ExecID': exec_id_2, 'MiscFeesGrp': misc_fee2})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ['ExecID'], ignored_fields=ignored_list_1)
+        # endregion
+
+        # region check execution after complete parent order
+        self.complete_order.set_default_complete(order_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.complete_order)
+        self.__return_result(responses, ORSMessageType.ExecutionReport.value)
+        exec_report_par = self.result.get_parameter('ExecutionReportBlock')
+        self.java_api_manager.compare_values({JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAL.value,
+                                              JavaApiFields.ExecCommission.value: '0.9'},
+                                             exec_report_par, "Check the parent order execution")
+        # endregion
+
+    def __split_order(self, qty, order_id):
         try:
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+            open_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                   self.client_for_rule,
+                                                                                                   self.mic,
+                                                                                                   int(self.price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.client_for_rule,
-                                                                                            self.mic, int(self.price),
+                                                                                            self.mic,
+                                                                                            int(self.price),
                                                                                             int(qty), 2)
-            self.order_ticket.set_order_details(qty=qty)
-            self.order_ticket.split_order([OrderBookColumns.order_id.value, self.order_id])
+            self.order_submit.set_default_child_dma(order_id)
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'OrdQty': qty,
+                                                                                 'ListingList': {'ListingBlock': [{
+                                                                                     'ListingID': self.data_set.get_listing_id_by_name(
+                                                                                         "listing_2")}]},
+                                                                                 'InstrID': self.data_set.get_instrument_id_by_name(
+                                                                                     "instrument_3"),
+                                                                                 'Price': self.price,
+                                                                                 'AccountGroupID': self.client})
+            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
         finally:
             time.sleep(1)
+            self.rule_manager.remove_rule(open_rule)
             self.rule_manager.remove_rule(trade_rule)
+        return responses
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def __check_fee_sub_lvl_details(self, order_id, expect_fee: str):
-        res1 = self.child_book.get_child_order_sub_lvl_value(1, ChildOrderBookColumns.exec_fee_agent.value,
-                                                             SecondLevelTabs.executions.value,
-                                                             child_book_filter={
-                                                                 OrderBookColumns.order_id.value:
-                                                                     order_id})
-        res2 = self.child_book.get_child_order_sub_lvl_value(1, ChildOrderBookColumns.exec_fees.value,
-                                                             SecondLevelTabs.executions.value,
-                                                             child_book_filter={
-                                                                 OrderBookColumns.order_id.value:
-                                                                     order_id})
-        self.child_book.compare_values({"1": expect_fee, "2": expect_fee},
-                                       {"1": res1, "2": res2},
-                                       "Check Exec Fee and Fee Agent in Executions tab")
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

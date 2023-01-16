@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
@@ -28,10 +29,12 @@ class QAP_T8419(TestCase):
         self.rqf_connectivity = self.fix_env.sell_side_rfq
         self.fx_fh_connectivity = self.fix_env.feed_handler
         self.fix_manager_gtw = FixManager(self.rqf_connectivity, self.test_id)
+        self.fix_manager_esp = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.fix_verifier = FixVerifier(self.rqf_connectivity, self.test_id)
         self.fix_manager_fh = FixManager(self.fx_fh_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_request_2 = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
         self.quote_2 = FixMessageQuoteFX()
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
@@ -40,8 +43,10 @@ class QAP_T8419(TestCase):
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.client = self.data_set.get_client_by_name("client_mm_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_15")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date = self.data_set.get_settle_date_by_name("spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.currency_usd = self.data_set.get_currency_by_name("currency_usd")
         self.currency_nok = self.data_set.get_currency_by_name("currency_nok")
         self.instrument = {
@@ -49,6 +54,13 @@ class QAP_T8419(TestCase):
             "SecurityType": self.security_type_fwd
         }
         self.instrument_2 = copy.deepcopy(self.instrument)
+        self.eur_usd_spot = {
+            'Symbol': self.symbol,
+            'SecurityType': self.security_type_spot,
+            'Product': '4', }
+        self.no_related_symbols_spot = [{
+            'Instrument': self.eur_usd_spot,
+            'SettlType': self.settle_type_spot}]
         self.md_req_id = "USD/NOK:SPO:REG:HSBC"
         self.no_md_entries_spot = [
             {
@@ -77,9 +89,15 @@ class QAP_T8419(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Prepare MD
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client)
+        self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
+        self.fix_manager_esp.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_esp.send_message(self.md_request)
         self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.fix_md)
+        self.sleep(2)
         # endregion
 
         # region Step 3

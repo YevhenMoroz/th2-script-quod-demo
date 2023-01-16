@@ -15,6 +15,7 @@ from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX imp
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -112,6 +113,7 @@ class QAP_T8020(TestCase):
         self.md_snapshot.update_repeating_group("NoMDEntries", self.no_md_entries_wk2)
         self.md_snapshot.update_MDReqID(self.md_req_id_wk2, self.fxfh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.md_snapshot)
+        self.sleep(10)
         # endregion
         # region Step 1
         self.quote_request.set_deposit_and_loan_param()

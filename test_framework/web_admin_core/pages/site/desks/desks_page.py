@@ -53,10 +53,10 @@ class DesksPage(CommonPage):
         return self.is_element_present(DesksConstants.DISPLAYED_DESK_XPATH.format(value))
 
     def get_list_of_all_locations(self):
-        return self._get_all_items_from_table_column(DesksConstants.LOCATIONS_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(DesksConstants.LOCATIONS_COLUMN_XPATH)
 
     def get_list_of_all_desks_name(self):
-        return self._get_all_items_from_table_column(DesksConstants.DESKS_NAME_COLUMN_XPATH)
+        return self.get_all_items_from_table_column(DesksConstants.DESKS_NAME_COLUMN_XPATH)
 
     def get_ctm_bic(self):
         return self.find_by_xpath(DesksConstants.CTM_BIC_AT_MAIN_PAGE).text

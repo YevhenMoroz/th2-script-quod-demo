@@ -24,8 +24,7 @@ class ExecutionReportOMS(ExecutionReport):
             "ExecutionReportBlock": {"InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
                                      "ClOrdID": "*",
                                      "VenueExecID": basic_custom_actions.client_orderid(9),
-                                     "LastVenueOrdID": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
-                                         '%Y-%m-%dT%H:%M:%S'),
+                                     "LastVenueOrdID": basic_custom_actions.client_orderid(12),
                                      "OrdQty": "100.0",
                                      "Side": "Buy",
                                      "LastTradedQty": "100.0",

@@ -39,6 +39,10 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3856 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3905 import QAP_T3905
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8321 import QAP_T8321
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8502 import QAP_T8502
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8848 import QAP_T8848
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8849 import QAP_T8849
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8857 import QAP_T8857
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T9132 import QAP_T9132
 
 
 class RunMiddleOffice:
@@ -118,6 +122,14 @@ class RunMiddleOffice:
             QAP_T8321(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8502(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8848(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8849(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T8857(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T9132(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

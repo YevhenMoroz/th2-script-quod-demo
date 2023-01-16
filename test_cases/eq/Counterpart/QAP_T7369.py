@@ -110,8 +110,8 @@ class QAP_T7369(TestCase):
                                                                                        })
             responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
             class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
-            self.__return_result(responses, ORSMessageType.ExecutionReport.value)
-            exec_id = self.result.get_parameters()['ExecutionReportBlock']['ExecID']
+            self.__return_result(responses, ORSMessageType.PositionReport.value)
+            exec_id = self.result.get_parameters()['PositionReportBlock']['PositionList']['PositionBlock'][0]['LastPositUpdateEventID']
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
@@ -193,5 +193,5 @@ class QAP_T7369(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(60)
 

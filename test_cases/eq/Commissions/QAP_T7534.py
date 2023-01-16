@@ -31,7 +31,7 @@ class QAP_T7534(TestCase):
         self.price = "2998"
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.account = self.data_set.get_account_by_name("client_com_1_acc_1")
-        self.test_id = create_event(self.__class__.__name__, self.report_id)
+        self.test_id = create_event(Path(__file__).name[:-3], self.report_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
@@ -42,7 +42,17 @@ class QAP_T7534(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.rest_commission_sender.clear_fees()
-        self.rest_commission_sender.send_default_fee()
+        misc_fee_type = self.data_set.get_misc_fee_type_by_name('exch_fees')
+        commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
+        instr_type = self.data_set.get_instr_type('equity')
+        venue_id = self.data_set.get_venue_id('eurex')
+        self.rest_commission_sender.set_modify_fees_message(comm_profile=commission_profile, fee_type=misc_fee_type)
+        self.rest_commission_sender.change_message_params({
+            'venueID': venue_id,
+            'instrType': instr_type,
+        })
+        self.rest_commission_sender.send_post_request()
+        self.rest_commission_sender.send_post_request()
         self.__send_fix_order()
         self.__verify_commissions()
 
@@ -70,7 +80,7 @@ class QAP_T7534(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __verify_commissions(self):
-        value_of_commission = '0.01'
+        value_of_commission = '4494.002'
         list_of_ignored_fields = ['ReplyReceivedTime', 'Account',
                                   'SettlCurrency', 'Currency', 'LastMkt', 'SettlType', 'Text']
         self.fix_execution_report.change_parameters({'CommissionData': {'Commission': value_of_commission,

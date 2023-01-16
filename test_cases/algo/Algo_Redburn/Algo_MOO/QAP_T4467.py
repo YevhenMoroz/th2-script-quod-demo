@@ -2,8 +2,11 @@ import os
 import sched
 import time
 import datetime
+from copy import deepcopy
 
 from pathlib import Path
+
+import pytz
 
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
@@ -159,6 +162,9 @@ class QAP_T4467(TestCase):
         # region check Would child
 
         end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) / 1000
+        would_time = AFM.change_datetime_from_epoch_to_normal(end_time - 2).astimezone(pytz.utc)
+        would_time_from = would_time.isoformat()[:-6]
+        would_time_to = (would_time + datetime.timedelta(milliseconds=100)).isoformat()[:-6]
 
         self.checkpoint = end_time + 5
         scheduler = sched.scheduler(time.time, time.sleep)
@@ -168,7 +174,12 @@ class QAP_T4467(TestCase):
 
         self.would_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
         self.would_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.would_qty, Price=self.would_price, Parties='*', QtyType='*', SettlDate='*'))
+        self.would_order.change_parameter("TransactTime", ">"+ would_time_from)
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.would_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle would child'))
+
+        self.would_order2 = deepcopy(self.would_order)
+        self.would_order2.change_parameter("TransactTime", "<" + would_time_to)
+        scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.would_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle would child less checkpoint + 0.1ms'))
 
         er_pending_new_would = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.would_order, self.gateway_side_buy, self.status_pending)
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_would, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew would child'))
