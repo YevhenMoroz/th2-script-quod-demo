@@ -66,3 +66,6 @@ class LoginPage(CommonPage):
         elements_with_text = self.find_elements_by_xpath(LoginConstants.LOGIN_PAGE_TITLE_TEXT_XPATH)
         full_text = ' '.join([elements_with_text[i].text for i in range(len(elements_with_text))])
         return full_text
+
+    def get_version(self):
+        return self.find_by_xpath(LoginConstants.VERSION_XPATH).text

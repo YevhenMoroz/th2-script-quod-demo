@@ -146,6 +146,9 @@ class CommonPage(CP):
         browser_tab = self.web_driver_container.get_driver().window_handles[tab]
         self.web_driver_container.get_driver().switch_to.window(browser_tab)
 
+    def is_info_message_displayed(self):
+        return self.is_element_present(CommonConstants.INFO_MESSAGE_POP_UP)
+
     def is_error_message_displayed(self):
         return self.is_element_present(CommonConstants.ERROR_MESSAGE_POP_UP)
 
@@ -153,4 +156,14 @@ class CommonPage(CP):
         return self.web_driver_container.get_driver().get_cookies()[0]
 
     def get_error_pop_up_text(self):
-        return self.find_by_xpath(CommonConstants.INFO_ERROR_TEXT).text
+        return self.find_by_xpath(CommonConstants.ERROR_POP_UP_TEXT).text
+
+    def get_info_pop_up_text(self):
+        return self.find_by_xpath(CommonConstants.INFO_POP_UP_TEXT).text
+
+    def get_console_error(self):
+        """
+        This method returns a list with errors in the console (errors are written in a dictionary)
+        [{dict}, {dict}, ...]
+        """
+        return self.web_driver_container.get_driver().get_log('browser')

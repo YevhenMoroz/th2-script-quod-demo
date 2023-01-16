@@ -86,15 +86,6 @@ class QAP_T4477(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Rule creation
-        rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price)
-        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic)
-        cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.mic, True)
-        self.rule_list = [nos_rule, ocr_rule, ocrr_rule,  cancel_rule]
-        # endregion
-
 
         # region Update Trading Phase
 
@@ -132,41 +123,13 @@ class QAP_T4477(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        # region
-        case_id_2 = bca.create_event("Check child order", self.test_id)
-        self.fix_verifier_buy.set_case_id(case_id_2)
-        self.fix_verifier_sell.set_case_id(case_id_2)
-
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=7, Parties='*', QtyType='*', SettlDate='*'))
-        self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order')
-
-        er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order')
-
-        er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order')
-        # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-
-        time.sleep(3)
-        # region Cancel Algo Order
-        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_2)
-        cancel_request_auction_order = FixMessageOrderCancelRequest(self.auction_algo)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_2)
-        # endregion
-
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=7)).remove_parameters(["CxlQty", 'TargetStrategy'])
+        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*', Text='reached uncross')).change_parameters(dict(TimeInForce=7)).remove_parameters(["CxlQty", 'TargetStrategy', 'OrigClOrdID'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
 
-        time.sleep(2)
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
