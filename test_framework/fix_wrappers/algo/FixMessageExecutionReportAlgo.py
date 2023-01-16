@@ -752,8 +752,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
         temp = dict()
-        if order_cancel_replace.get_parameter('OrdType') == '2':
-            temp.update(Price = order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.get_parameter('OrdType') != 3 and order_cancel_replace.get_parameter('OrdType') != 4:
+            temp.update(Price=order_cancel_replace.get_parameter("Price"))
         if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
@@ -785,7 +785,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=0,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             OrigClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
-            Price=order_cancel_replace.get_parameter('Price'),
             Side=order_cancel_replace.get_parameter('Side'),
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
