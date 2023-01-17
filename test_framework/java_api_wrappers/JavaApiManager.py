@@ -39,6 +39,7 @@ from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrd
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
 from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
+from test_framework.java_api_wrappers.ors_messages.OrdRejectedNotif import OrdRejectedNotif
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
 from test_framework.java_api_wrappers.ors_messages.OrderActionReply import OrderActionReply
@@ -57,6 +58,7 @@ from test_framework.java_api_wrappers.ors_messages.PositionReport import Positio
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
+from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
 
@@ -564,6 +566,10 @@ class JavaApiManager:
                 response_fix_message = OrderListWaveModificationReply()
             elif message_type == ORSMessageType.OrderActionReply.value:
                 response_fix_message = OrderActionReply()
+            elif message_type == ORSMessageType.OrdRejectedNotif.value:
+                response_fix_message = OrdRejectedNotif()
+            elif message_type == ORSMessageType.TradeEntryReply.value:
+                response_fix_message = TradeEntryReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
