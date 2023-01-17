@@ -183,6 +183,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+    ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
+    ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
 
 
 class MDAMessageType(Enum):

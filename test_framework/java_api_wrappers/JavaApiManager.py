@@ -8,6 +8,8 @@ from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
     MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
+from test_framework.java_api_wrappers.cs_message.ManualMatchExecToParentOrdersReply import \
+    ManualMatchExecToParentOrdersReply
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
@@ -380,6 +382,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == CSMessageType.ManualMatchExecToParentOrdersRequest.value:
+            response = self.act.submitManualMatchExecToParentOrdersRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
         else:
             response = None
@@ -572,6 +580,8 @@ class JavaApiManager:
                 response_fix_message = OrderActionReply()
             elif message_type == ORSMessageType.SuspendOrderManagementReply.value:
                 response_fix_message = SuspendOrderManagementReply()
+            elif message_type == CSMessageType.ManualMatchExecToParentOrdersReply.value:
+                response_fix_message = ManualMatchExecToParentOrdersReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
