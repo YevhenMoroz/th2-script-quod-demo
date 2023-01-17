@@ -104,22 +104,6 @@ class QAP_T4224(TestCase):
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
-        # endregion
-        
-        # region Cancel Synthetic TIF order
-        case_id_2 = bca.create_event("Cancel Synthetic TIF Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_2)
-        cancel_request_Synthetic_TIF_order = FixMessageOrderCancelRequest(self.Synthetic_TIF_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_Synthetic_TIF_order, case_id_2)
-        self.fix_verifier_sell.check_fix_message(cancel_request_Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-        # endregion
-
-        time.sleep(3)
-
-        # region Check Sell side
-        self.fix_verifier_sell.set_case_id(bca.create_event("Check Synthetic TIF order", self.test_id))
-
         self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, self.key_params_cl, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_pending)
@@ -130,6 +114,17 @@ class QAP_T4224(TestCase):
         er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).add_tag(dict(NoParty='*')).change_parameter('ExpireDate', '*')
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
+
+        # region Cancel Synthetic TIF order
+        case_id_2 = bca.create_event("Cancel Synthetic TIF Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_2)
+        cancel_request_Synthetic_TIF_order = FixMessageOrderCancelRequest(self.Synthetic_TIF_order)
+
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_Synthetic_TIF_order, case_id_2)
+        self.fix_verifier_sell.check_fix_message(cancel_request_Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+        # endregion
+
+        time.sleep(3)
 
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))

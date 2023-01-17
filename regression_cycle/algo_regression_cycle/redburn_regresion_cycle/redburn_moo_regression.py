@@ -2,11 +2,13 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4256 import QAP_T4256
+from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4196 import QAP_T4196
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4197 import QAP_T4197
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4309 import QAP_T4309
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4312 import QAP_T4312
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4352 import QAP_T4352
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4368 import QAP_T4368
+from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4453 import QAP_T4453
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4466 import QAP_T4466
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4467 import QAP_T4467
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4468 import QAP_T4468
@@ -40,10 +42,12 @@ def test_run(parent_id=None, version=None):
         QAP_T4484(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4525(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4486(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4453(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Auction volume
         QAP_T4474(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4196(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region AuctionInitialSliceMultiplier
