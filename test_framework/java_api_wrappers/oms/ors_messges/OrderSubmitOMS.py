@@ -101,7 +101,8 @@ class OrderSubmitOMS(OrderSubmit):
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
-                                         'ClOrdID':  basic_custom_actions.client_orderid(9), "ParentOrdrList": parent_params})
+                                         'ClOrdID': basic_custom_actions.client_orderid(9),
+                                         "ParentOrdrList": parent_params})
         self.add_tag(params)
         return self
 
@@ -115,4 +116,29 @@ class OrderSubmitOMS(OrderSubmit):
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
                                          'ClOrdID': cl_ord_id})
+        return self
+
+    def set_default_direct_child_care(self, parent_id: str, route: str = None,
+                                      desk: str = None, recipient: str = None, role: str = None):
+        assign_params = {'CDOrdAssignInstructionsBlock': {}}
+        if desk:
+            assign_params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
+        else:
+            assign_params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = '1'
+        if recipient:
+            assign_params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
+        if role:
+            assign_params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
+        self.change_parameters(self.base_parameters)
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        if route:
+            route_params = {'RouteBlock': [{'RouteID': route}]}
+        else:
+            route = self.data_set.get_route_id_by_name("route_1")
+            route_params = {'RouteBlock': [{'RouteID': route}]}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
+                                         'ClOrdID': basic_custom_actions.client_orderid(9),
+                                         "ParentOrdrList": parent_params, 'RouteList': route_params})
+        self.add_tag(assign_params)
         return self
