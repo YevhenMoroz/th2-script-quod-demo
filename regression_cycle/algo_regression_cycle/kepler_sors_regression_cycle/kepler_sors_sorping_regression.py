@@ -11,6 +11,7 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9356 import QAP_T9356
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9357 import QAP_T9357
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9358 import QAP_T9358
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9359 import QAP_T9359
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9364 import QAP_T9364
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4080 import QAP_T4080
@@ -177,6 +178,7 @@ def test_run(parent_id=None, version=None):
         QAP_T9357(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9358(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9359(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9364(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

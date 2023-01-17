@@ -315,30 +315,48 @@ class AlgoFormulasManager:
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+            exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+            exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
         elif phase == TradingPhases.PreClosed:
             pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = pcl_start + timedelta(minutes=4)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+            exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+            exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
         elif phase == TradingPhases.Open:
             opn_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_start = opn_start + timedelta(minutes=4)
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+            exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+            exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
         elif phase == TradingPhases.AtLast:
             pcl_end = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             clo_start = pcl_end + timedelta(minutes=4)
             pcl_start = pcl_end - timedelta(minutes=5)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
+            exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+            exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
         elif phase == TradingPhases.Closed:
             clo_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = clo_start - timedelta(minutes=5)
             pcl_start = pcl_end - timedelta(minutes=5)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
+            exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+            exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
+        elif phase == TradingPhases.Expiry:
+            opn_start = tm - datetime.timedelta(minutes=10, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=20)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+            exa_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            exa_end = exa_start + timedelta(minutes=5)
 
         return [
             {
@@ -375,6 +393,14 @@ class AlgoFormulasManager:
                 "submitAllowed": "True",
                 "tradingPhase": "CLO",
                 "standardTradingPhase": "CLO",
+            },
+            {
+                "beginTime": exa_start,
+                "endTime": exa_end,
+                "submitAllowed": "True",
+                "tradingPhase": "EXA",
+                "standardTradingPhase": "EXA",
+                "expiryCycle": "EVM",
             }
         ]
 
@@ -416,7 +442,15 @@ class AlgoFormulasManager:
                 "submitAllowed": "True",
                 "tradingPhase": "CLO",
                 "standardTradingPhase": "CLO",
-            }
+            },
+           {
+               "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+               "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+               "submitAllowed": "True",
+               "tradingPhase": "EXA",
+               "standardTradingPhase": "EXA",
+               "expiryCycle": "EVM",
+           }
         ]
 
     @staticmethod
