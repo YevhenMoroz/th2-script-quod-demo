@@ -7,7 +7,7 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, TimeInForces
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, TimeInForces, OrdTypes
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
@@ -59,6 +59,6 @@ class QAP_T7696(TestCase):
         self.java_api_manager.compare_values({
             JavaApiFields.FreeNotes.value: '11603 \'OrdQty\' (0) negative or zero / \'OrdQty\' (0) negative or zero',
             JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value,
-            JavaApiFields.TimeInForce.value: TimeInForces.ATC.value},
+            JavaApiFields.TimeInForce.value: TimeInForces.ATC.value, JavaApiFields.OrdType.value: OrdTypes.Limit.value},
             ord_reply_block, "Check error after DirectLOC with qty=0")
         # endregion
