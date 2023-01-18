@@ -408,6 +408,7 @@ class OMSExecutionPolicy(Enum):
 class OMSTimeInForce(Enum):
     time_in_force_1 = "Day"
     time_in_force_2 = "GoodTillDate"
+    time_in_force_3 = "AtTheClose"
 
 
 class OMSOrdType(Enum):
