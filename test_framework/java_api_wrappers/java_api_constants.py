@@ -30,6 +30,7 @@ class OrderReplyConst(Enum):
     DiscloseExec_M = 'M'
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
+    OrdStatus_REJ = 'REJ'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -225,6 +226,9 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
+    VenueScenarioID = 'VenueScenarioID'
+    NewOrderReplyBlock = 'NewOrderReplyBlock'
+    OrdType = 'OrdType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -303,10 +307,12 @@ class BagChildCreationPolicy(Enum):
 class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
+    ATC = 'ATC'
 
 
 class OrdTypes(Enum):
     Limit = 'LMT'
+    Market = 'MKT'
 
 
 class PegScopes(Enum):
