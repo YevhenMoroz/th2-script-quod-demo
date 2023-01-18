@@ -46,7 +46,6 @@ class QAP_T7420(TestCase):
     def run_pre_conditions_and_steps(self):
 
         # region create  DMA order
-        dma_order_id = None
         trade_rule = None
         nos_rule = None
         exec_id = None
