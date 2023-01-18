@@ -31,7 +31,7 @@ class QAP_T7380(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Precondition
+        # region Step 1
         self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                  desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                  role=SubmitRequestConst.USER_ROLE_1.value)
@@ -42,10 +42,12 @@ class QAP_T7380(TestCase):
         self.order_submit2.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                   desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                   role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit2.update_fields_in_component("NewOrderSingleBlock", {'Side': 'Sell'})
         self.java_api_manager.send_message_and_receive_response(self.order_submit2)
         ord_id_care2 = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
-
+        # endregion
+        # region Step 2
         self.suspend_request.set_default(ord_id_care)
         self.java_api_manager.send_message_and_receive_response(self.suspend_request)
         suspend_reply = self.java_api_manager.get_last_message(
@@ -54,7 +56,7 @@ class QAP_T7380(TestCase):
         self.java_api_manager.compare_values({"OrdID": ord_id_care, "SuspendedCare": "Y"}, suspend_reply,
                                              "Check suspend")
         # endregion
-        # region Step 1-3
+        # region Step 3
         self.cross_request.set_default(self.data_set, ord_id_care, ord_id_care2)
         self.java_api_manager.send_message_and_receive_response(self.cross_request)
         cross_reply = self.java_api_manager.get_last_message(ORSMessageType.ManualOrderCrossReply.value).get_parameters(
