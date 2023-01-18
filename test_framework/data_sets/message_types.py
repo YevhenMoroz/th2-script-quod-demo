@@ -107,6 +107,10 @@ class ORSMessageType(Enum):
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
     OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
     OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
+    OrdRejectedNotif = 'Order_OrdRejectedNotif'
+    OrderActionReply = 'Order_OrderActionReply'
+    TradeEntryReply = 'Order_TradeEntryReply'
+    OrderSubmitReply = 'Order_OrderSubmitReply'
 
 
 class TradingRestApiMessageType(Enum):
