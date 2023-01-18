@@ -22,6 +22,7 @@ class FIXMessageType(Enum):
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
     BusinessMessageReject = "BusinessMessageReject"
+    Reject = 'Reject'
 
 
 class ORSMessageType(Enum):
@@ -107,10 +108,14 @@ class ORSMessageType(Enum):
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
     OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
     OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
-    OrdRejectedNotif = 'Order_OrdRejectedNotif'
+    OrderActionRequest = 'Order_OrderActionRequest'
     OrderActionReply = 'Order_OrderActionReply'
-    TradeEntryReply = 'Order_TradeEntryReply'
-    OrderSubmitReply = 'Order_OrderSubmitReply'
+    TradeEntryBatchRequest = 'Order_TradeEntryBatchRequest'
+    TradeEntryBatchReply = 'Order_TradeEntryBatchReply'
+    SuspendOrderManagementReply = 'Order_SuspendOrderManagementReply'
+    TradeEntryReply = "Order_TradeEntryReply"
+    OrderSubmitReply = "Order_OrderSubmitReply"
+    OrdRejectedNotif = 'Order_OrdRejectedNotif'
 
 
 class TradingRestApiMessageType(Enum):
@@ -181,6 +186,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+    ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
+    ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
 
 
 class MDAMessageType(Enum):

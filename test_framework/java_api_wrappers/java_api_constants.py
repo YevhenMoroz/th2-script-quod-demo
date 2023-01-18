@@ -207,6 +207,7 @@ class JavaApiFields(Enum):
     PreTradeAllocationList = 'PreTradeAllocationList'
     PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
     AllocAccountID = 'AllocAccountID'
+    SuspendOrderManagementReplyBlock = 'SuspendOrderManagementReplyBlock'
     TradeEntryReplyBlock = 'TradeEntryReplyBlock'
     OrdNotificationBlock = 'OrdNotificationBlock'
     """List Wave"""
