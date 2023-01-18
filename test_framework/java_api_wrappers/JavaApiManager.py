@@ -60,6 +60,7 @@ from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
+from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
 
 
@@ -582,6 +583,8 @@ class JavaApiManager:
                 response_fix_message = SuspendOrderManagementReply()
             elif message_type == CSMessageType.ManualMatchExecToParentOrdersReply.value:
                 response_fix_message = ManualMatchExecToParentOrdersReply()
+            elif message_type == ORSMessageType.TradeEntryReply.value:
+                response_fix_message = TradeEntryReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
