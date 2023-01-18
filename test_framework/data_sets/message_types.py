@@ -112,6 +112,9 @@ class ORSMessageType(Enum):
     OrderActionReply = 'Order_OrderActionReply'
     TradeEntryBatchRequest = 'Order_TradeEntryBatchRequest'
     TradeEntryBatchReply = 'Order_TradeEntryBatchReply'
+    SuspendOrderManagementReply = 'Order_SuspendOrderManagementReply'
+    TradeEntryReply = "Order_TradeEntryReply"
+    OrderSubmitReply = "Order_OrderSubmitReply"
 
 
 class TradingRestApiMessageType(Enum):
@@ -182,6 +185,8 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+    ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
+    ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
 
 
 class MDAMessageType(Enum):
