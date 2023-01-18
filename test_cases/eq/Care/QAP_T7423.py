@@ -45,7 +45,6 @@ class QAP_T7423(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
         # region create  DMA order
         trade_rule = None
         nos_rule = None
