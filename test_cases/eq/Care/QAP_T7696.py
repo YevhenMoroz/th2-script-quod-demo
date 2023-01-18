@@ -37,7 +37,7 @@ class QAP_T7696(TestCase):
         cl_ord_id = response[0].get_parameters()["ClOrdID"]
         # endregion
 
-        # region check error
+        # region DirectLOC with qty = 0
         self.order_submit.set_default_child_dma(order_id, cl_ord_id)
         self.order_submit.update_fields_in_component('NewOrderSingleBlock',
                                                      {'ListingList': {'ListingBlock': [
