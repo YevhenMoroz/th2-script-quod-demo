@@ -54,6 +54,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification impo
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
+from test_framework.java_api_wrappers.ors_messages.OrderSubmitReply import OrderSubmitReply
 from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
@@ -570,6 +571,8 @@ class JavaApiManager:
                 response_fix_message = OrdRejectedNotif()
             elif message_type == ORSMessageType.TradeEntryReply.value:
                 response_fix_message = TradeEntryReply()
+            elif message_type == ORSMessageType.OrderSubmitReply.value:
+                response_fix_message = OrderSubmitReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
