@@ -115,6 +115,8 @@ class ORSMessageType(Enum):
     SuspendOrderManagementReply = 'Order_SuspendOrderManagementReply'
     TradeEntryReply = "Order_TradeEntryReply"
     OrderSubmitReply = "Order_OrderSubmitReply"
+    FixOrderModificationRequest = "Fix_OrderModificationRequest"
+    FixOrderCancelRequest = "Fix_OrderCancelRequest"
 
 
 class TradingRestApiMessageType(Enum):
