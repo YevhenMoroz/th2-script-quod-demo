@@ -62,7 +62,7 @@ class QAP_T7044(TestCase):
             JavaApiFields.OrdReplyBlock.value)
         self.java_api_manager.compare_values({JavaApiFields.ExecType.value: OrderReplyConst.ExecStatus_OPN.value,
                                               JavaApiFields.OrdQty.value: self.qty + '.0',
-                                              JavaApiFields.Price.value: self.price + self.price},
+                                              JavaApiFields.Price.value: self.price + '.0'},
                                              ord_reply_block, 'Check values of child order after splitting')
         # endregion
 
