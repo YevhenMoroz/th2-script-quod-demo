@@ -552,20 +552,20 @@ class FixMessageQuoteFX(FixMessage):
                 temp[0].pop('LegOfferForwardPoints')
             if "LegBidForwardPoints" in temp[0]:
                 temp[0].pop('LegBidForwardPoints')
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "0":
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "0":
             if "LegOfferForwardPoints" in temp[1]:
                 temp[1].pop('LegOfferForwardPoints')
             if "LegBidForwardPoints" in temp[1]:
                 temp[1].pop('LegBidForwardPoints')
 
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "W1":
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "W1":
             temp[0]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "W2":
             temp[0]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "W3":
             temp[0]["InstrumentLeg"]["LegMaturityDate"] = wk3_ndf_maturity()
 
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "W1":
+        if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "W1":
             temp[1]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1]["LegSettlType"] == "W2":
             temp[1]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
