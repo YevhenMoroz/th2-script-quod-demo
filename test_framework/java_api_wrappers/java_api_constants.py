@@ -9,6 +9,7 @@ class ExecutionReportConst(Enum):
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
     ExecType_ACT = 'ACT'
+    PostTradeExecStatus_NAL = 'NAL'
 
 
 class BasketMessagesConst(Enum):
@@ -40,6 +41,7 @@ class OrderReplyConst(Enum):
     OrdCapacity_I = 'I'
     IsLocked_Y = 'Y'
     IsLocked_N = 'N'
+    ExecType_REP = 'REP'
 
 
 class ExecutionPolicyConst(Enum):
@@ -210,6 +212,7 @@ class JavaApiFields(Enum):
     SuspendOrderManagementReplyBlock = 'SuspendOrderManagementReplyBlock'
     TradeEntryReplyBlock = 'TradeEntryReplyBlock'
     OrdNotificationBlock = 'OrdNotificationBlock'
+    OrderModificationReplyBlock = 'OrderModificationReplyBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -287,6 +290,11 @@ class JavaApiFields(Enum):
     IsLocked = 'IsLocked'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
+    Price = 'Price'
+    VenueClientAccountName = 'VenueClientAccountName'
+    PostTradeExecStatus = 'PostTradeExecStatus'
+    DiscloseExec = 'DiscloseExec'
+    DayAvgPrice = 'DayAvgPrice'
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
