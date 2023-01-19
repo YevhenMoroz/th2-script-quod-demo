@@ -155,6 +155,8 @@ class QAP_T4099(TestCase):
         self.fix_verifier_sell.check_fix_message(eliminate_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminate')
         # endregion
 
+        time.sleep(5)
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         rule_manager = RuleManager(Simulators.algo)

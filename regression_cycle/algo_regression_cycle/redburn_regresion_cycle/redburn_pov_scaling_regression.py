@@ -4,6 +4,8 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4287 import QAP_T4287
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4288 import QAP_T4288
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4289 import QAP_T4289
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4478 import QAP_T4478
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4473 import QAP_T4473
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -20,9 +22,19 @@ def test_run(parent_id=None, version=None):
         # region Iceberg: Route/Venue
         configuration = ComponentConfigurationAlgo("POV_Scaling")
 
+        # region Reject
         QAP_T4287(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4288(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4289(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Basic POV + Scaling behavior
+        QAP_T4478(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region change in sats.xml config <Participate><maxAggressiveAttempts> = 0
+        QAP_T4473(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
