@@ -424,3 +424,45 @@ class RejectMessages(Enum):
     no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
 
 
+class PegPriceType(Enum):
+    LastPeg = '1'
+    MidPricePeg = '2'
+    OpeningPeg = '3'
+    MarketPeg = '4'
+    PrimaryPeg = '5'
+    PegToVWAP = '7'
+    TrailingStopPeg = '8'
+    PegToLimitPrice = '9'
+    ShortSaleMinimumPricePeg = '10'
+
+
+class PegOffsetType(Enum):
+    Price = '0'
+    BasisPoints = '1'
+    Ticks = '2'
+    PriceTier = '3'
+    Percentage = '4'
+
+
+class StrategyParameterType(Enum):
+    Int = '1'
+    Length = '2'
+    NumInGroup = '3'
+    SeqNum = '4'
+    TagNum = '5'
+    Float = '6'
+    Qty = '7'
+    Price = '8'
+    PriceOffset = '9'
+    Amt = '10'
+    Percentage = '11'
+    Char = '12'
+    Boolean = '13'
+    String = '14'
+    MultipleCharValue = '15'
+    Currency = '16'
+    Exchange = '17'
+    MonthYear = '18'
+    UTCTimeStamp = '19'
+    UTCTimeOnly = '20'
+    LocalMktDate = '21'
