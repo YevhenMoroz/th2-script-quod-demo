@@ -1,6 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4201 import QAP_T4201
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4202 import QAP_T4202
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4256 import QAP_T4256
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4290 import QAP_T4290
@@ -67,6 +68,7 @@ def test_run(parent_id=None, version=None):
 
         # region LimitPriceOffset
         QAP_T4311(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4201(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
