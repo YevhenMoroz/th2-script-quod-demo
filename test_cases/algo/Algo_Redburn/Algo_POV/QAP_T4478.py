@@ -55,6 +55,11 @@ class QAP_T4478(TestCase):
         self.pp2_participation = 40
         self.number_of_levels = 4
 
+        self.step = 0.5
+        self.level_1_price = self.pp1_price + self.step     # 102.5
+        self.level_2_price = self.level_1_price + self.step # 103
+        self.level_3_price = self.level_2_price + self.step # 103.5
+
         self.qty = 1_000_000
         self.price = 100
 
@@ -108,11 +113,11 @@ class QAP_T4478(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_ask)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
-        nos_ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 102)
-        nos_ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 102.5)
-        nos_ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 103)
-        nos_ioc_rule_4 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 103.5)
-        nos_ioc_rule_5 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 104)
+        nos_ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.pp1_price)
+        nos_ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_1_price)
+        nos_ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_2_price)
+        nos_ioc_rule_4 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_3_price)
+        nos_ioc_rule_5 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.pp2_price)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos_rule, nos_ioc_rule, nos_ioc_rule_1, nos_ioc_rule_2, nos_ioc_rule_3, nos_ioc_rule_4, nos_ioc_rule_5, ocr_rule]
         # endregion
