@@ -31,6 +31,11 @@ class AlgoFormulasManager:
     # endregion
 
     @staticmethod
+    def calc_step_for_scaling(pp2_price: float, pp1_price: float, number_of_levels: int) -> float:
+        result = (pp2_price - pp1_price) / number_of_levels
+        return int(result) if result.is_integer() else round(result, 2)
+
+    @staticmethod
     def get_next_twap_slice(remaining_ord_qty: int, remaining_waves: int, round_lot: int = 1) -> int:
         return math.floor(remaining_ord_qty / remaining_waves/round_lot) * round_lot
 

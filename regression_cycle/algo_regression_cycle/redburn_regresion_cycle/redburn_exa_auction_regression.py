@@ -17,7 +17,7 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"Auction - MOO/MOC/Expiry (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        configuration = ComponentConfigurationAlgo("Expity_Auction")
+        configuration = ComponentConfigurationAlgo("Expiry_Auction")
 
         # region General
         QAP_T8625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
