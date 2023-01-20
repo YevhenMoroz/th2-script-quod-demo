@@ -33,3 +33,7 @@ class VenuesWizard(CommonPage):
 
     def get_footer_error_text(self):
         return self.find_by_xpath(VenuesConstants.FOOTER_ERROR_XPATH).text
+
+    def get_venue_id(self):
+        venue_id = self.find_by_xpath(VenuesConstants.VENUE_ID_XPATH).text
+        return venue_id.split()[-1]

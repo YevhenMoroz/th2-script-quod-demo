@@ -1,5 +1,6 @@
 class VenuesConstants:
     VENUES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Venues ']"
+    VENUE_ID_XPATH = '//*[@class="breadcrumbs entity-title"]'
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     DOWNLOAD_PDF_AT_MORE_ACTION_BUTTON_XPATH = "//nb-overlay-container//*[@data-name='download']"
