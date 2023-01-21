@@ -34,7 +34,6 @@ class QAP_T7554(TestCase):
         self.cancel_request = FixOrderCancelRequestOMS(self.data_set)
         self.client = self.data_set.get_client_by_name("client_2")
         self.trd_request = TradeEntryOMS(self.data_set)
-        self.wash_book = self.data_set.get_washbook_account_by_name('washbook_account_2')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
