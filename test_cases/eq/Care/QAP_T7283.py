@@ -53,7 +53,7 @@ class QAP_T7283(TestCase):
         order_id = order_reply[JavaApiFields.OrdID.value]
         # endregion
 
-        # region step 1: create Child CO order
+        # region step 1: create Child DMA order
         nos_rule = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
