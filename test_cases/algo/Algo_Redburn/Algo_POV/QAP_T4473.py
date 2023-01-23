@@ -45,27 +45,30 @@ class QAP_T4473(TestCase):
         self.price_bid = 110
         self.qty_bid = 100_000
 
-        self.ltp = 102
+        self.ltp = 100
         self.ltq = 100_000
 
         self.percentage_volume = 10
-        self.pp1_price = self.scaling_child_order_price_1 = 102
+        self.pp1_price = 102
         self.pp1_participation = 20
-        self.pp2_price = self.scaling_child_order_price_2 = 104
+        self.pp2_price = 104
         self.pp2_participation = 40
         self.number_of_levels = 4
+
+        self.step = 0.5
+        self.level_1_price = self.pp1_price + self.step     # 102.5
+        self.level_2_price = self.level_1_price + self.step # 103
+        self.level_3_price = self.level_2_price + self.step # 103.5
 
         self.qty = 1_000_000
         self.price = 102
 
-        self.scaling_child_order_qty_1 = 11_112
-        self.scaling_child_order_qty_2 = 49_382
+        self.scaling_child_order_qty = '%^([1-2][5,8]|[6-9])\d{3}$'  # fisrt number 10-12 or 7-9 and any 3 number
+        self.scaling_child_order_price = '%^1(10|0[2-4]|0[2-4].[5])$'  # the first number 100 or 102-104 with step 0.5
 
         self.side_sell = OrderSide.Sell.value
 
         self.check_order_sequence = False
-
-        self.scaling_exclude_pp1 = '0'
         # endregion
 
         # region Gateway Side
@@ -108,10 +111,15 @@ class QAP_T4473(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 102)
-        nos_ioc_rule_5 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 104)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_ask)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
+        nos_ioc_rule_1 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.pp1_price)
+        nos_ioc_rule_2 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_1_price)
+        nos_ioc_rule_3 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_2_price)
+        nos_ioc_rule_4 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.level_3_price)
+        nos_ioc_rule_5 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.pp2_price)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_ioc_rule_1, nos_ioc_rule_5, ocr_rule]
+        self.rule_list = [nos_rule, nos_ioc_rule, nos_ioc_rule_1, nos_ioc_rule_2, nos_ioc_rule_3, nos_ioc_rule_4, nos_ioc_rule_5, ocr_rule]
         # endregion
 
         # region Clear Market Data
@@ -136,7 +144,7 @@ class QAP_T4473(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Scaling_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side_sell))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels, ExcludePricePoint2=self.scaling_exclude_pp1))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
         time.sleep(3)
@@ -155,45 +163,32 @@ class QAP_T4473(TestCase):
 
         # region Check passive child order 1
         case_id_2 = bca.create_event("Scaling child orders", self.test_id)
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 Scaling child orders Buy side NewOrderSingle", case_id_2))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 6 Scaling child orders Buy side NewOrderSingle", case_id_2))
 
-        # region Aggressive Scaling order 1
-        scaling_ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        scaling_ioc_child_order_1.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty_1, Price=self.scaling_child_order_price_1, TimeInForce=self.tif_ioc, Instrument='*', Side=self.side_sell))
-        scaling_ioc_child_order_1.add_tag(dict(Parties='*', QtyType=0))
-        scaling_ioc_child_order_1.remove_parameter('NoParty')
+        # region Aggressive Scaling order
+        scaling_ioc_child_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        scaling_ioc_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, TimeInForce=self.tif_ioc, Instrument='*', Side=self.side_sell))
+        scaling_ioc_child_order.add_tag(dict(Parties='*', QtyType=0))
+        scaling_ioc_child_order.remove_parameter('NoParty')
 
-        pending_scaling_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_1, self.gateway_side_buy, self.status_pending)
+        pending_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_pending)
 
-        new_scaling_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_1, self.gateway_side_buy, self.status_new)
+        new_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_new)
 
-        eliminate_scaling_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_1, self.gateway_side_buy, self.status_eliminated)
-        # endregion
-
-        # region Aggressive Scaling order 2
-        scaling_ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        scaling_ioc_child_order_2.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty_2, Price=self.scaling_child_order_price_2, TimeInForce=self.tif_ioc, Instrument='*', Side=self.side_sell))
-        scaling_ioc_child_order_2.add_tag(dict(Parties='*', QtyType=0))
-        scaling_ioc_child_order_2.remove_parameter('NoParty')
-
-        pending_scaling_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_2, self.gateway_side_buy, self.status_pending)
-
-        new_scaling_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_2, self.gateway_side_buy, self.status_new)
-
-        eliminate_scaling_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order_2, self.gateway_side_buy, self.status_eliminated)
+        eliminate_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_eliminated)
         # endregion
 
         # region Check Scaling child orders
-        self.fix_verifier_buy.check_fix_message_sequence([scaling_ioc_child_order_1, scaling_ioc_child_order_2], [self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 Scaling child orders Buy Side Pending New", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_ioc_child_order_1_params, pending_scaling_ioc_child_order_2_params], [self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 6 Scaling child orders Buy Side Pending New", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 Scaling child orders Buy Side New", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_ioc_child_order_1_params, new_scaling_ioc_child_order_2_params], [self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 6 Scaling child orders Buy Side New", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 Scaling child orders Buy Side Eliminate Aggressive", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([eliminate_scaling_ioc_child_order_1_params, eliminate_scaling_ioc_child_order_2_params], [self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 6 Scaling child orders Buy Side Eliminate Aggressive", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
 
         # region Check eliminated Algo Order
