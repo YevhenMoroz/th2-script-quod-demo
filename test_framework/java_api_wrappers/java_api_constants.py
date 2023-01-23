@@ -214,6 +214,9 @@ class JavaApiFields(Enum):
     TradeEntryReplyBlock = 'TradeEntryReplyBlock'
     OrdNotificationBlock = 'OrdNotificationBlock'
     OrderModificationReplyBlock = 'OrderModificationReplyBlock'
+    CDTransferReplyBlock = 'CDTransferReplyBlock'
+    CDTransferID = 'CDTransferID'
+    RecipientUserID = 'RecipientUserID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
