@@ -36,6 +36,7 @@ class OrderReplyConst(Enum):
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
     TransStatus_ELI = 'ELI'
+    TransStatus_REJ = 'REJ'
     OrdCapacity_A = 'A'
     OrdCapacity_P = 'P'
     OrdCapacity_I = 'I'
