@@ -9,5 +9,7 @@ class TradeEntryReply(JavaApiMessage):
         super().change_parameters(parameters)
 
     def set_default(self) -> None:
-        base_parameters = {}
+        base_parameters = {
+            'TradeEntryReplyBlock': {}
+        }
         super().change_parameters(base_parameters)

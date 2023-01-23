@@ -9,6 +9,7 @@ class ExecutionReportConst(Enum):
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
     ExecType_ACT = 'ACT'
+    PostTradeExecStatus_NAL = 'NAL'
 
 
 class BasketMessagesConst(Enum):
@@ -30,6 +31,7 @@ class OrderReplyConst(Enum):
     DiscloseExec_M = 'M'
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
+    OrdStatus_REJ = 'REJ'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -40,6 +42,7 @@ class OrderReplyConst(Enum):
     OrdCapacity_I = 'I'
     IsLocked_Y = 'Y'
     IsLocked_N = 'N'
+    ExecType_REP = 'REP'
 
 
 class ExecutionPolicyConst(Enum):
@@ -208,6 +211,9 @@ class JavaApiFields(Enum):
     PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
     AllocAccountID = 'AllocAccountID'
     SuspendOrderManagementReplyBlock = 'SuspendOrderManagementReplyBlock'
+    TradeEntryReplyBlock = 'TradeEntryReplyBlock'
+    OrdNotificationBlock = 'OrdNotificationBlock'
+    OrderModificationReplyBlock = 'OrderModificationReplyBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -225,6 +231,9 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
+    VenueScenarioID = 'VenueScenarioID'
+    NewOrderReplyBlock = 'NewOrderReplyBlock'
+    OrdType = 'OrdType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -282,6 +291,11 @@ class JavaApiFields(Enum):
     IsLocked = 'IsLocked'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
+    Price = 'Price'
+    VenueClientAccountName = 'VenueClientAccountName'
+    PostTradeExecStatus = 'PostTradeExecStatus'
+    DiscloseExec = 'DiscloseExec'
+    DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
 
     # fields of Bag
@@ -304,10 +318,12 @@ class BagChildCreationPolicy(Enum):
 class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
+    ATC = 'ATC'
 
 
 class OrdTypes(Enum):
     Limit = 'LMT'
+    Market = 'MKT'
 
 
 class PegScopes(Enum):

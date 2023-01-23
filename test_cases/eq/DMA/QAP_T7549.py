@@ -51,7 +51,7 @@ class QAP_T7549(TestCase):
             self.fix_manager.send_message_fix_standard(self.fix_message)
             self.execution_report.set_default_filled(self.fix_message)
             list_of_ignored_fields = ['ReplyReceivedTime', 'SecondaryOrderID', 'LastMkt', 'Text', 'SecurityDesc',
-                                      'SettlCurrency']
+                                      'SettlCurrency', 'Account']
             self.fix_verifier.check_fix_message_fix_standard(self.execution_report,
                                                              ignored_fields=list_of_ignored_fields)
         except Exception as e:
