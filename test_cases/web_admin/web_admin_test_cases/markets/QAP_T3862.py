@@ -67,7 +67,7 @@ class QAP_T3862(CommonTestCase):
             self.precondition()
 
             trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
-            profiles.click_on_trading_phase_profile_mange_button()
+            profiles.click_on_trading_phase_profile_manage_button()
             time.sleep(2)
             trading_phase_profile_sub_wizard.click_on_plus_button()
             try:

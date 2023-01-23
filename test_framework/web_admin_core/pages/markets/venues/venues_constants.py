@@ -138,20 +138,21 @@ class VenuesConstants:
     TICK_SIZE_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimitDouble ng-star-inserted"]//input'
 
     # -- Holiday calendars sub tab--
-    HOLIDAYS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Holidays "]/ancestor::nb-card//nb-card-body//*[@class="nb-plus ng2-add-btn"]'
-    HOLIDAYS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Holidays "]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    HOLIDAYS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Holidays "]/ancestor::nb-card//nb-card-body//*[@class="nb-close ng2-cancel-btn"]'
-    HOLIDAYS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Holidays "]/ancestor::nb-card//nb-card-body//*[@class="nb-edit ng2-edit-btn"]'
-    HOLIDAYS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Holidays "]/ancestor::nb-card//nb-card-body//*[@class="nb-trash"]'
+    HOLIDAYS_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::thead//*[@nbtooltip="Add"]'
+    HOLIDAYS_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::p-table//*[@data-name="checkmark"]'
+    HOLIDAYS_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::p-table//*[@data-name="close"]'
+    HOLIDAYS_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::p-table//*[@data-name="edit"]'
+    HOLIDAYS_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::p-table//*[@data-name="trash-2"]'
 
     HOLIDAYS_TAB_HOLIDAY_NAME_XPATH = '//*[@placeholder="Holiday Name *"]'
-    HOLIDAYS_TAB_HOLIDAY_NAME_FILTER_XPATH = '//*[@class="holidayName ng2-smart-th ng-star-inserted"]//input'
+    HOLIDAYS_TAB_HOLIDAY_NAME_FILTER_XPATH = '(//*[normalize-space()="Holiday Name"]//ancestor::thead//*[@placeholder="Filter"])[1]'
+    HOLIDAYS_TAB_DISPLAYED_ENTITY_XPATH = '//*[normalize-space()="{}"]'
 
-    HOLIDAYS_CALENDAR_TAB_PLUS_BUTTON_XPATH = '//*[text()="Holiday Calendars"]/ancestor::nb-card//nb-card-body//*[@class="nb-plus sub-table-action"]'
-    HOLIDAYS_CALENDAR_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Holiday Calendars"]/ancestor::nb-card//nb-card-body//*[@class="nb-checkmark"]'
-    HOLIDAYS_CALENDAR_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Holiday Calendars"]/ancestor::nb-card//nb-card-body//*[@class="nb-close"]'
-    HOLIDAYS_CALENDAR_TAB_EDIT_BUTTON_XPATH = '//*[text()="Holiday Calendars"]/ancestor::nb-card//nb-card-body//*[@class="nb-edit sub-table-action"]'
-    HOLIDAYS_CALENDAR_TAB_DELETE_BUTTON_XPATH = '//*[text()="Holiday Calendars"]/ancestor::nb-card//nb-card-body//*[@class="nb-trash sub-table-action"]'
+    HOLIDAYS_CALENDAR_TAB_PLUS_BUTTON_XPATH = '//*[contains(text(), "Holiday Calendars")]//following::*[@nbtooltip="Add"]'
+    HOLIDAYS_CALENDAR_TAB_CHECKMARK_BUTTON_XPATH = '//*[contains(text(), "Holiday Calendars")]//following::*[@data-name="checkmark"]'
+    HOLIDAYS_CALENDAR_TAB_CLOSE_BUTTON_XPATH = '//*[contains(text(), "Holiday Calendars")]//following::*[@data-name="close"]'
+    HOLIDAYS_CALENDAR_TAB_EDIT_BUTTON_XPATH = '//*[contains(text(), "Holiday Calendars")]//following::*[@data-name="edit"]'
+    HOLIDAYS_CALENDAR_TAB_DELETE_BUTTON_XPATH = '//*[contains(text(), "Holiday Calendars")]//following::*[@data-name="trash-2"]'
 
     HOLIDAYS_CALENDAR_TAB_DATE_XPATH = '//*[@placeholder="Date *"]'
     HOLIDAYS_CALENDAR_TAB_DATE_FILTER_XPATH = '//*[@class="holidayDate ng2-smart-th ng-star-inserted"]//input'
@@ -166,8 +167,8 @@ class VenuesConstants:
     TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_XPATH = '//*[@placeholder="TradingPhaseProfile Desc *"]'
-    TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH = '//*[@class="ng2-smart-th tradPhaseProfileDesc ng-star-inserted"]//input'
-
+    TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::thead//*[@placeholder="Filter"]'
+    TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DISPLAYED_ENTITY_XPATH = '//*[normalize-space()="{}"]'
     # --Trading phase profile sequence sub tab--
 
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profile Sequences"]/following-sibling::app-inline-table//*[@data-name="plus"]'
