@@ -41,6 +41,7 @@ from test_framework.java_api_wrappers.ors_messages.MarkOrderReply import MarkOrd
 from test_framework.java_api_wrappers.ors_messages.NewOrderListReply import NewOrderListReply
 from test_framework.java_api_wrappers.ors_messages.OrdListNotification import OrdListNotification
 from test_framework.java_api_wrappers.ors_messages.OrdNotification import OrdNotification
+from test_framework.java_api_wrappers.ors_messages.OrdRejectedNotif import OrdRejectedNotif
 from test_framework.java_api_wrappers.ors_messages.OrdReply import OrdReply
 from test_framework.java_api_wrappers.ors_messages.OrdUpdate import OrdUpdate
 from test_framework.java_api_wrappers.ors_messages.OrderActionReply import OrderActionReply
@@ -600,6 +601,8 @@ class JavaApiManager:
                 response_fix_message = TradeEntryReply()
             elif message_type == ORSMessageType.OrderSubmitReply.value:
                 response_fix_message = OrderSubmitReply()
+            elif message_type == ORSMessageType.OrdRejectedNotif.value:
+                response_fix_message = OrdRejectedNotif()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

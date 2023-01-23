@@ -9,14 +9,15 @@ class UnMatchRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.UnMatchRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, data_set: BaseDataSet, exec_id, qty=None) -> None:
+    def set_default(self, data_set: BaseDataSet, exec_id, qty=None, washbook=None) -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'UnMatchRequestBlock': {'UnMatchingList': {'UnMatchingBlock': [
                 {'VirtualExecID': exec_id,
                  'UnMatchingQty': qty if qty is not None else '100',
-                 'SourceAccountID': data_set.get_washbook_account_by_name('washbook_account_3'),
+                 'SourceAccountID': washbook if washbook is not None else data_set.get_washbook_account_by_name(
+                     'washbook_account_3'),
                  'PositionType': 'N'}
             ]
             }
