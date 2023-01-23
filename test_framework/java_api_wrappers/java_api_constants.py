@@ -282,6 +282,7 @@ class JavaApiFields(Enum):
     IsLocked = 'IsLocked'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
+    SuspendedCare = "SuspendedCare"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
