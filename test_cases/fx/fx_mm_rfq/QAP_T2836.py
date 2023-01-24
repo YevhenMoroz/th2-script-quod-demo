@@ -38,8 +38,8 @@ class QAP_T2836(TestCase):
 
         self.qty_3m = "3000000"
         self.bid_px_ccy1 = "104.6325"
-        self.offer_px_ccy1 = "104.63251"
-        self.bid_px_ccy2 = "104.63254"
+        self.offer_px_ccy1 = "104.6325"
+        self.bid_px_ccy2 = "104.6325"
         self.off_px_ccy2 = "104.6325"
         self.instrument_spot = {"Symbol": self.usd_jpy,
                                 "SecurityType": "FXSPOT"}
@@ -99,14 +99,15 @@ class QAP_T2836(TestCase):
                                                            Currency=self.jpy)
         self.quote_request.update_near_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
         self.quote_request.update_far_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
-        response = self.fix_manager.send_message_and_receive_response(self.quote_request,
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
-
+        bid_fwd_pts = self.response[0].get_parameter("NoLegs")[1]["LegBidForwardPoints"]
+        self.bid_px_ccy2 = str(round(float(self.bid_px_ccy2) + float(bid_fwd_pts), 5))
         self.quote.set_params_for_quote_swap_ccy2(self.quote_request, near_leg_off_px=self.off_px_ccy2,
                                                   far_leg_bid_px=self.bid_px_ccy2)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
 
-        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)
         # endregion
 
@@ -121,7 +122,8 @@ class QAP_T2836(TestCase):
 
         self.response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
-
+        ask_fwd_pts = self.response[0].get_parameter("NoLegs")[1]["LegOfferForwardPoints"]
+        self.offer_px_ccy1 = str(round(float(self.offer_px_ccy1) + float(ask_fwd_pts), 5))
         self.quote.set_params_for_quote_swap(self.quote_request, near_leg_bid_px=self.bid_px_ccy1,
                                              far_leg_off_px=self.offer_px_ccy1)
         self.quote.remove_parameters(["BidSwapPoints", "BidPx"])
