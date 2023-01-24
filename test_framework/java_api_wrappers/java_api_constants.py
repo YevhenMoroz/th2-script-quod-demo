@@ -217,6 +217,8 @@ class JavaApiFields(Enum):
     CDTransferReplyBlock = 'CDTransferReplyBlock'
     CDTransferID = 'CDTransferID'
     RecipientUserID = 'RecipientUserID'
+    CDOrdNotifBlock = 'CDOrdNotifBlock'
+    CDOrdNotifID = 'CDOrdNotifID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"

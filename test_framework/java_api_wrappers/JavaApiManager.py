@@ -7,6 +7,7 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.cs_message.CDTransferAckReply import CDTransferAckReply
 from test_framework.java_api_wrappers.cs_message.CDTransferNotif import CDTransferNotif
@@ -418,6 +419,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == CSMessageType.CDOrdAssign.value:
+            response = self.act.submitCDOrdAssign(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
 
         else:
             response = None
@@ -628,6 +635,8 @@ class JavaApiManager:
                 response_fix_message = CDTransferNotif()
             elif message_type == CSMessageType.CDTransferAckReply.value:
                 response_fix_message = CDTransferAckReply()
+            elif message_type == CSMessageType.CDAssignReply.value:
+                response_fix_message = CDAssignReply()
 
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)

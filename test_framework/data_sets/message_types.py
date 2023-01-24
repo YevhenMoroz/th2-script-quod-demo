@@ -195,6 +195,8 @@ class CSMessageType(Enum):
     CDTransferNotif = 'Order_CDTransferNotif'
     CDTransferAck = 'Order_CDTransferAck'
     CDTransferAckReply = 'Order_CDTransferAckReply'
+    CDOrdAssign = 'Order_CDOrdAssign'
+    CDAssignReply = 'Order_CDAssignReply'
 
 
 class MDAMessageType(Enum):
