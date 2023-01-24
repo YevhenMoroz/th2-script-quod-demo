@@ -28,7 +28,9 @@ class TradeEntryBatchRequest(JavaApiMessage):
 
     def set_default(self) -> None:
         base_parameters = {
-            'Order_TradeEntryBatchRequest': {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'TradeEntryBatchRequestBlock': {
                 'TradeEntryRequestList': {
                     'TradeEntryRequestBlock': self.list_of_orders_and_executions
                 }

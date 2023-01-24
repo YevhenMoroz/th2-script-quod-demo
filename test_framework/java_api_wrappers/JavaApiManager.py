@@ -65,6 +65,7 @@ from test_framework.java_api_wrappers.ors_messages.PositionReport import Positio
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
+from test_framework.java_api_wrappers.ors_messages.TradeEntryBatchReply import TradeEntryBatchReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
@@ -425,7 +426,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
-
+        elif message.get_message_type() == ORSMessageType.TradeEntryBatchRequest.value:
+            response = self.act.submitTradeEntryBatchRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -637,7 +643,8 @@ class JavaApiManager:
                 response_fix_message = CDTransferAckReply()
             elif message_type == CSMessageType.CDAssignReply.value:
                 response_fix_message = CDAssignReply()
-
+            elif message_type == ORSMessageType.TradeEntryBatchReply.value:
+                response_fix_message = TradeEntryBatchReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
