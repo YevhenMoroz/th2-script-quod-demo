@@ -136,6 +136,36 @@ def check_quote_request_id(quote_request):
         query = f"SELECT quoterequestid  FROM quoterequest WHERE clientquotereqid ='{quote_req_id}'"
         cursor.execute(query)
         response = cursor.fetchone()[0]
+        print(f"Extraction is successful! QuoteReID is {response}.")
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+def extract_freenotes(quote_request):
+    """
+    Get QuoteRequestId from DB using quote_req_id from fix request
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        quote_req_id = quote_request.get_parameter("QuoteReqID")
+        query = f"SELECT freenotes FROM quoterequest WHERE clientquotereqid ='{quote_req_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        print(f"\nExtraction is successful! FreeNotes is \"{response}\".\n")
         return response
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
@@ -230,8 +260,10 @@ def clear_position():
             print("PostgreSQL connection is closed")
 
 
-def login_and_execute(script: str):
+def login_and_execute(script: str = None):
     commands = ['su - quod314', 'quod314', script]
+    if script is True:
+        commands.append(script)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect("10.0.22.34", 22, "ostronov", "stronov1993")
