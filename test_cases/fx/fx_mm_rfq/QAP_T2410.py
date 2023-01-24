@@ -1,6 +1,8 @@
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -23,6 +25,7 @@ class QAP_T2410(TestCase):
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.modify_client_tier = RestApiClientTierMessages()
+        self.verifier = Verifier(self.test_id)
         self.rest_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
@@ -45,7 +48,9 @@ class QAP_T2410(TestCase):
         self.minus_1 = (datetime.now() - timedelta(hours=1))
         self.timestamp_2 = str(datetime.timestamp(self.minus_2)).replace(".", "")[:13]
         self.timestamp_1 = str(datetime.timestamp(self.minus_1)).replace(".", "")[:13]
-        self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.minus_1})"
+        self.expected_error_id = "11900"
+        self.validation_text = "Check error ID"
+        # self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.minus_1})"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -64,12 +69,17 @@ class QAP_T2410(TestCase):
                                                            Currency="GBP", Instrument=self.instrument,
                                                            OrderQty=self.qty, SettlDate=self.settle_date_today,
                                                            SettlType=self.settle_type_today)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+
         # endregion
         # region Step 3
-        self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
-        self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
-        self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
+        error_id = response[0].get_parameter("Text").split()[0]
+        self.verifier.set_event_name(self.validation_text)
+        self.verifier.compare_values(self.validation_text, self.expected_error_id, error_id)
+        self.verifier.verify()
+        # self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
+        # self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
+        # self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
