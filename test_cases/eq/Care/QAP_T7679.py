@@ -27,7 +27,6 @@ class QAP_T7679(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.price = '20'
         self.qty = '233'
-        self.new_stop_price = '19'
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_connectivity2 = self.environment.get_list_java_api_environment()[0].java_api_conn_user2
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
