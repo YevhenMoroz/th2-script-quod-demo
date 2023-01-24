@@ -12,7 +12,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubmitRequestConst, ExecutionReportConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubmitRequestConst, ExecutionReportConst, \
+    OrderReplyConst
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.OrderActionRequest import OrderActionRequest
 from test_framework.java_api_wrappers.ors_messages.TradeEntryBatchRequest import TradeEntryBatchRequest
@@ -74,6 +75,10 @@ class QAP_T7398(TestCase):
         self.order_action_request.set_default(orders_id)
         order_dict = {order_id_1: order_id_1, order_id_2: order_id_2}
         self.java_api_manager.send_message_and_receive_response(self.order_action_request, order_dict)
+        for order_id in orders_id:
+            order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, order_id).get_parameters()[JavaApiFields.OrderNotificationBlock.value]
+            self.java_api_manager.compare_values({JavaApiFields.DiscloseExec.value:OrderReplyConst.DiscloseExec_M.value},
+                                                 order_notification, f'Verifying that DiscloseExec = M for {order_id} (step 2)')
         # endregion
 
         # region step 3 : Split and execute orders
@@ -99,7 +104,7 @@ class QAP_T7398(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_batch_request, order_dict)
         # endregion
 
-        # verify tags by minifix gtw
+        # region step 7: Check ExecutionReports(39=B)
         ignored_fields = ['GatingRuleName', 'GatingRuleCondName', 'trailer', 'header']
         self.exec_report.set_default_calculated(self.fix_message_1)
         self.exec_report.change_parameters(
