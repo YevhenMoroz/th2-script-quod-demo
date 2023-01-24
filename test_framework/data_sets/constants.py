@@ -301,12 +301,14 @@ class MiscNumber(Enum):
 class Symbol(Enum):
     symbol_1 = 'DE0005489561'
     symbol_2 = 'BE0020575115'
+    symbol_3 = 'GB00B03MLX29'
 
 
 class SecurityID(Enum):
     security_id_1 = 'DE0005489561'
     security_id_2 = '2681'
     security_id_3 = 'BE0020575115'
+    security_id_4 = 'GB00B03MLX29'
 
 
 class SecurityIDSource(Enum):
