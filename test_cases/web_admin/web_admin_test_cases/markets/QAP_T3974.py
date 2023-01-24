@@ -15,7 +15,7 @@ from test_framework.web_admin_core.pages.markets.listings.listings_values_sub_wi
     ListingsValuesSubWizard
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
 from test_framework.web_admin_core.pages.markets.listings.listings_translation_sub_wizard\
-    import ListingsTranslationSubWizard
+    import TranslationTab
 from test_framework.web_admin_core.pages.markets.listings.listings_dark_algo_comission_sub_wizard\
     import ListingsDarkAlgoCommissionSubWizard
 from test_framework.web_admin_core.pages.markets.listings.listings_market_data_sub_wizard\
@@ -103,11 +103,11 @@ class QAP_T3974(CommonTestCase):
             values_tab.set_settl_type(self.settle_type[0])
             values_tab.set_strike_price(self.strike_price[0])
             
-            translation_tab = ListingsTranslationSubWizard(self.web_driver_container)
-            translation_tab.click_on_plus()
-            translation_tab.set_language(self.language[0])
-            translation_tab.set_description(self.language_description[0])
-            translation_tab.click_on_checkmark()
+            translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
+            translation_tab_listing.click_on_plus()
+            translation_tab_listing.set_language(self.language[0])
+            translation_tab_listing.set_description(self.language_description[0])
+            translation_tab_listing.click_on_checkmark()
 
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
             attachment_tab.set_venue(self.venue)
@@ -170,10 +170,10 @@ class QAP_T3974(CommonTestCase):
         values_tab.set_settl_type(self.settle_type[0])
         values_tab.set_strike_price(self.strike_price[0])
 
-        translation_tab = ListingsTranslationSubWizard(self.web_driver_container)
-        translation_tab.set_language(self.language[0])
-        translation_tab.set_description(self.language_description[0])
-        translation_tab.click_on_checkmark()
+        translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
+        translation_tab_listing.set_language(self.language[0])
+        translation_tab_listing.set_description(self.language_description[0])
+        translation_tab_listing.click_on_checkmark()
 
         attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_tab.set_sub_venue(self.sub_venue[0])
@@ -231,11 +231,11 @@ class QAP_T3974(CommonTestCase):
             values_tab.set_settl_type(self.settle_type[1])
             values_tab.set_strike_price(self.strike_price[1])
 
-            translation_tab = ListingsTranslationSubWizard(self.web_driver_container)
-            translation_tab.click_on_plus()
-            translation_tab.set_language(self.language[1])
-            translation_tab.set_description(self.language_description[1])
-            translation_tab.click_on_checkmark()
+            translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
+            translation_tab_listing.click_on_plus()
+            translation_tab_listing.set_language(self.language[1])
+            translation_tab_listing.set_description(self.language_description[1])
+            translation_tab_listing.click_on_checkmark()
 
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
             attachment_tab.set_sub_venue(self.sub_venue[1])
@@ -291,11 +291,11 @@ class QAP_T3974(CommonTestCase):
             main_page.click_on_edit()
             time.sleep(2)
 
-            translation_tab.click_on_edit()
+            translation_tab_listing.click_on_edit()
 
             actual_result = [values_tab.get_symbol(), values_tab.get_settl_type(),
-                             values_tab.get_strike_price(), translation_tab.get_language(),
-                             translation_tab.get_description(), attachment_tab.get_sub_venue(),
+                             values_tab.get_strike_price(), translation_tab_listing.get_language(),
+                             translation_tab_listing.get_description(), attachment_tab.get_sub_venue(),
                              currency_tab.get_instr_currency(), dark_algo_commission_tab.get_per_unit_comm_amt(),
                              market_data_tab.get_quote_book_symbol(), market_identifiers_tab.get_security_id(),
                              market_identifiers_tab.get_security_id_source(), format_tab.get_tick_denominator(),

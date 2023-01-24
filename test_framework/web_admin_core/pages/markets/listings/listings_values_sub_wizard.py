@@ -22,11 +22,17 @@ class ListingsValuesSubWizard(CommonPage):
     def is_instr_type_field_required(self):
         return self.is_field_required(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
 
+    def is_instr_type_field_enabled(self):
+        return self.is_field_enabled(ListingsConstants.VALUES_TAB_INSTR_TYPE_XPATH)
+
     def set_security_exchange(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_SECURITY_EXCHANGE_XPATH, value)
 
     def get_security_exchange(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_SECURITY_EXCHANGE_XPATH)
+
+    def is_security_exchange_field_enabled(self):
+        return self.is_field_enabled(ListingsConstants.VALUES_TAB_SECURITY_EXCHANGE_XPATH)
 
     def set_strike_price(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_STRIKE_PRICE_XPATH, value)
@@ -88,6 +94,9 @@ class ListingsValuesSubWizard(CommonPage):
     def is_instr_symbol_field_required(self):
         return self.is_field_required(ListingsConstants.VALUES_TAB_INSTR_SYMBOL_XPATH)
 
+    def is_instr_symbol_field_enabled(self):
+        return self.is_field_enabled(ListingsConstants.VALUES_TAB_INSTR_SYMBOL_XPATH)
+
     def set_cfi(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_CFI_XPATH, value)
 
@@ -105,6 +114,30 @@ class ListingsValuesSubWizard(CommonPage):
 
     def get_call_put(self):
         return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_CALL_PUT_XPATH)
+
+    def set_industry(self, value):
+        self.set_text_by_xpath(ListingsConstants.VALUES_TAB_INDUSTRY_XPATH, value)
+
+    def get_industry(self):
+        return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INDUSTRY_XPATH)
+
+    def set_sub_industry(self, value):
+        self.set_text_by_xpath(ListingsConstants.VALUES_TAB_SUB_INDUSTRY_XPATH, value)
+
+    def get_sub_industry(self):
+        return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_SUB_INDUSTRY_XPATH)
+
+    def set_industry_group(self, value):
+        self.set_text_by_xpath(ListingsConstants.VALUES_TAB_INDUSTRY_GROUP_XPATH, value)
+
+    def get_industry_group(self):
+        return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_INDUSTRY_GROUP_XPATH)
+
+    def set_sector(self, value):
+        self.set_text_by_xpath(ListingsConstants.VALUES_TAB_SECTOR_XPATH, value)
+
+    def get_sector(self):
+        return self.get_text_by_xpath(ListingsConstants.VALUES_TAB_SECTOR_XPATH)
 
     def set_instr_settl_date(self, value):
         self.set_text_by_xpath(ListingsConstants.VALUES_TAB_INSTR_SETTL_DATE_XPATH, value)

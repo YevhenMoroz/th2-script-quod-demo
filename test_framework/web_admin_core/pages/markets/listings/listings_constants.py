@@ -58,22 +58,37 @@ class ListingsConstants:
     VALUES_TAB_CFI_XPATH = '//*[@formcontrolname="CFI"]'
     VALUES_TAB_MIC_XPATH = '//*[@formcontrolname="MIC"]'
     VALUES_TAB_CALL_PUT_XPATH = '//*[@id="callPut"]'
+    VALUES_TAB_INDUSTRY_XPATH = '//*[@id="industry"]'
+    VALUES_TAB_SUB_INDUSTRY_XPATH = '//*[@id="subIndustry"]'
+    VALUES_TAB_INDUSTRY_GROUP_XPATH = '//*[@id="industryGroup"]'
+    VALUES_TAB_SECTOR_XPATH = '//*[@id="sector"]'
     VALUES_TAB_INSTR_SETTL_DATE_XPATH = '//*[@formcontrolname="instrSettlDate"]'
     VALUES_TAB_OPT_ATTR_XPATH = '//*[@formcontrolname="optAttr"]'
 
     # Translation tab
-    TRANSLATION_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@nbtooltip="Add"]'
-    TRANSLATION_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="checkmark"]'
-    TRANSLATION_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="close""]'
-    TRANSLATION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="edit"]'
-    TRANSLATION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space(text())="Translation"]/parent::nb-accordion-item//nb-accordion-item-body//*[@data-name="trash-2"]'
+    # Listing
+    TRANSLATION_TAB_LISTING_PLUS_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@nbtooltip="Add"]'
+    TRANSLATION_TAB_LISTING_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@data-name="checkmark"]'
+    TRANSLATION_TAB_LISTING_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@data-name="close"]'
+    TRANSLATION_TAB_LISTING_EDIT_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@data-name="edit"]'
+    TRANSLATION_TAB_LISTING_DELETE_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@data-name="trash-2"]'
 
-    TRANSLATION_TAB_LANGUAGE_FILTER_XPATH = '//*[@class="lang ng2-smart-th ng-star-inserted"]//input'
-    TRANSLATION_TAB_LANGUAGE_XPATH = '//*[@placeholder="Language *"]'
-    TRANSLATION_TAB_NAME_FILTER_XPATH = '//*[@class="langListingGroupName ng2-smart-th ng-star-inserted"]//input'
-    TRANSLATION_TAB_NAME_XPATH = '//*[@placeholder="Name *"]'
-    TRANSLATION_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="listingGroupDesc ng2-smart-th ng-star-inserted"]//input'
-    TRANSLATION_TAB_DESCRIPTION_XPATH = '//*[@placeholder="Description *"]'
+    TRANSLATION_TAB_LISTING_LANGUAGE_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Filter"])[1]'
+    TRANSLATION_TAB_LISTING_LANGUAGE_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Language *"]'
+    TRANSLATION_TAB_LISTING_DESCRIPTION_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Filter"])[2]'
+    TRANSLATION_TAB_LISTING_DESCRIPTION_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Description *"]'
+
+    # Instrument
+    TRANSLATION_TAB_INSTRUMENT_PLUS_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@nbtooltip="Add"]'
+    TRANSLATION_TAB_INSTRUMENT_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@data-name="checkmark"]'
+    TRANSLATION_TAB_INSTRUMENT_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@data-name="close"]'
+    TRANSLATION_TAB_INSTRUMENT_EDIT_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@data-name="edit"]'
+    TRANSLATION_TAB_INSTRUMENT_DELETE_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@data-name="trash-2"]'
+
+    TRANSLATION_TAB_INSTRUMENT_LANGUAGE_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Filter"])[1]'
+    TRANSLATION_TAB_INSTRUMENT_LANGUAGE_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Language *"]'
+    TRANSLATION_TAB_INSTRUMENT_DESCRIPTION_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Filter"])[2]'
+    TRANSLATION_TAB_INSTRUMENT_DESCRIPTION_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Description *"]'
 
     # Attachment tab
     ATTACHMENT_TAB_VENUE_XPATH = '//*[@id="venue"]'
