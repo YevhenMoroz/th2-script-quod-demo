@@ -192,6 +192,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
     qa_mpdark_12 = "QA_Auto_MPDark12"
+    qa_mpdark_13 = "QA_Auto_MPDark13"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -301,12 +302,14 @@ class MiscNumber(Enum):
 class Symbol(Enum):
     symbol_1 = 'DE0005489561'
     symbol_2 = 'BE0020575115'
+    symbol_3 = 'GB00B03MLX29'
 
 
 class SecurityID(Enum):
     security_id_1 = 'DE0005489561'
     security_id_2 = '2681'
     security_id_3 = 'BE0020575115'
+    security_id_4 = 'GB00B03MLX29'
 
 
 class SecurityIDSource(Enum):

@@ -1,7 +1,9 @@
 import os
 import time
+from datetime import datetime, timedelta, date
 from pathlib import Path
 
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
@@ -39,8 +41,18 @@ class QAP_T4805(TestCase):
         self.qty_bid = self.qty_ask = 1000000
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
 
-        self.ExpireDate = '20230101'
-        self.NewExpireDate = '20221230'
+        now = datetime.today()
+        current_year = now.year
+        next_year = now.year + 1
+
+        # ExpireDate = '20230101'
+        temp_expire_date = date(next_year, 1, 1)
+        self.ExpireDate = temp_expire_date.strftime("%Y%m%d")
+
+        # New ExpireDate = '20221230'
+        temp_new_expire_date = datetime(current_year, 12, 31)
+        shift = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(temp_new_expire_date)
+        self.NewExpireDate = (temp_new_expire_date - timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
