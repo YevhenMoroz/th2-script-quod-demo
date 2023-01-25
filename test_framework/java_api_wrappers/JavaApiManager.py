@@ -7,6 +7,7 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
 from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
 from test_framework.java_api_wrappers.cs_message.CDTransferAckReply import CDTransferAckReply
@@ -65,7 +66,6 @@ from test_framework.java_api_wrappers.ors_messages.PositionReport import Positio
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
-from test_framework.java_api_wrappers.ors_messages.TradeEntryBatchReply import TradeEntryBatchReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
@@ -633,6 +633,8 @@ class JavaApiManager:
                 response_fix_message = TradeEntryReply()
             elif message_type == ORSMessageType.OrderSubmitReply.value:
                 response_fix_message = OrderSubmitReply()
+            elif message_type == CSMessageType.CDOrdAckBatchReply.value:
+                response_fix_message = CDOrdAckBatchReply()
             elif message_type == ORSMessageType.OrdRejectedNotif.value:
                 response_fix_message = OrdRejectedNotif()
             elif message_type == CSMessageType.CDTransferReply.value:
