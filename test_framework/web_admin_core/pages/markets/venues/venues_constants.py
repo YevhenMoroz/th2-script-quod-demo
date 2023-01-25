@@ -8,6 +8,7 @@ class VenuesConstants:
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[normalize-space()="Ok" or normalize-space()="OK"]'
+    NO_BUTTON_XPATH = '//*[normalize-space()="No" or normalize-space()="NO"]'
     CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = '//*[normalize-space()="Revert Changes"]'
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
@@ -112,30 +113,32 @@ class VenuesConstants:
     PRICE_LIMIT_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimit ng-star-inserted"]//input'
 
     # --Tick size profiles sub tab--
-    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
-    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
-    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
-    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
-    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
+    TICK_SIZE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="External ID"]//ancestor::p-table//*[@nbtooltip="Add"]'
+    TICK_SIZE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="External ID"]//ancestor::p-table//*[@data-name="checkmark"]'
+    TICK_SIZE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="External ID"]//ancestor::p-table//*[@data-name="close"]'
+    TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="External ID"]//ancestor::p-table//*[@data-name="edit"]'
+    TICK_SIZE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="External ID"]//ancestor::p-table//*[@data-name="trash-2"]'
 
     TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_XPATH = '//*[@placeholder="External ID *"]'
-    TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_FILTER_XPATH = '//*[@class="externalTickSizeProfileID ng2-smart-th ng-star-inserted"]//input'
+    TICK_SIZE_PROFILES_TAB_EXTERNAL_ID_FILTER_XPATH = '(//*[normalize-space()="External ID"]//ancestor::p-table//*[@placeholder="Filter"])[1]'
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_XAXIS_TYPE_XPATH = '//*[@placeholder="Tick Size XAxis Type"]'
-    TICK_SIZE_PROFILES_TAB_TICK_SIZE_XAXIS_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeXAxisType ng-star-inserted"]//input'
+    TICK_SIZE_PROFILES_TAB_TICK_SIZE_XAXIS_TYPE_FILTER_XPATH = '(//*[normalize-space()="External ID"]//ancestor::p-table//*[@placeholder="Filter"])[2]'
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_XPATH = '//*[@placeholder="Tick Size RefPrice Type"]'
-    TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeRefPriceType ng-star-inserted"]//input'
+    TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '(//*[normalize-space()="External ID"]//ancestor::p-table//*[@placeholder="Filter"])[3]'
+    TICK_SIZE_PROFILES_LOOKUP_FIELD_XPATH = '//input[contains(@class, "lookup-in")]'
+    TICK_SIZE_PROFILES_LOAD_BUTTON_XPATH = '//button[contains(@class, "lookup-btn")]'
 
     # --Tick size points sub tab--
-    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="plus"]'
-    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="checkmark"]'
-    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="close"]'
-    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="edit"]'
-    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="trash-2"]'
+    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Tick"]//ancestor::p-table//*[@nbtooltip="Add"]'
+    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Tick"]//ancestor::p-table//*[@data-name="checkmark"]'
+    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Tick"]//ancestor::p-table//*[@data-name="close"]'
+    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Tick"]//ancestor::p-table//*[@data-name="edit"]'
+    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Tick"]//ancestor::p-table//*[@data-name="trash-2"]'
 
     TICK_SIZE_POINTS_TAB_TICK_XPATH = '//*[@placeholder="Tick *"]'
-    TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '//*[@class="ng2-smart-th tickSize ng-star-inserted"]//input'
+    TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '(//*[normalize-space()="Tick"]//ancestor::p-table//*[@placeholder="Filter"])[1]'
     TICK_SIZE_POINTS_TAB_UPPER_LIMIT_XPATH = '//*[@placeholder="Upper Limit"]'
-    TICK_SIZE_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '//*[@class="ng2-smart-th upperLimitDouble ng-star-inserted"]//input'
+    TICK_SIZE_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH = '(//*[normalize-space()="Tick"]//ancestor::p-table//*[@placeholder="Filter"])[2]'
 
     # -- Holiday calendars sub tab--
     HOLIDAYS_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Holiday Name"]//ancestor::thead//*[@nbtooltip="Add"]'
@@ -351,34 +354,34 @@ class VenuesConstants:
     MATCH_TYPE_TAB_MATCH_TYPE_FILTER_XPATH = '//*[@class="matchType ng2-smart-th ng-star-inserted"]//input'
 
     # --Phase session tab--
-    PHASE_SESSION_TAB_PLUS_BUTTON_XPATH = '//*[text()=" Phase Session "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-plus"]'
-    PHASE_SESSION_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()=" Phase Session "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-checkmark"]'
-    PHASE_SESSION_TAB_CLOSE_BUTTON_XPATH = '//*[text()=" Phase Session "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-close"]'
-    PHASE_SESSION_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Phase Session "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-edit"]'
-    PHASE_SESSION_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Phase Session "]/parent::nb-accordion-item//nb-accordion-item-body//*[@class="nb-trash"]'
+    PHASE_SESSION_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@nbtooltip="Add"]'
+    PHASE_SESSION_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="checkmark"]'
+    PHASE_SESSION_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="close"]'
+    PHASE_SESSION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="edit"]'
+    PHASE_SESSION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="trash-2"]'
 
     PHASE_SESSION_TAB_TRADING_PHASE_XPATH = '//*[@placeholder="Trading Phase *"]'
-    PHASE_SESSION_TAB_TRADING_PHASE_FILTER_XPATH = '//*[@class="ng2-smart-th tradingPhase ng-star-inserted"]//input'
+    PHASE_SESSION_TAB_TRADING_PHASE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[1]'
     PHASE_SESSION_TAB_TRADING_SESSION_XPATH = '//*[@placeholder="Trading Session *"]'
-    PHASE_SESSION_TAB_TRADING_SESSION_FILTER_XPATH = '//*[@class="ng2-smart-th tradingSession ng-star-inserted"]//input'
-    PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_XPATH = '//*[@placeholder="Trading Session *"]'
-    PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_FILTER_XPATH = '//*[@class="status-basic ng-untouched ng-pristine ng-valid nb-transition"]//input'
-    PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH = '//*[@class="appearance-outline full-width size-medium status-basic shape-rectangle ng-untouched ng-pristine ng-valid nb-transition"]'
-    PHASE_SESSION_TAB_PEG_PRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th venuePhaseSessionPegPriceType ng-star-inserted"]//input'
+    PHASE_SESSION_TAB_TRADING_SESSION_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[2]'
+    PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[contains(@class, "custom-checkbox")])[1]'
+    PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[3]'
+    PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH = '//*[normalize-space()="Phase Session"]//..//nb-select/button'
+    PHASE_SESSION_TAB_PEG_PRICE_TYPE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[4]'
 
     # --Type tif sub tab--
-    TYPE_TIF_TAB_PLUS_BUTTON_XPATH = '//*[text()="Type TIF"]/following-sibling::ng2-smart-table//*[@class="nb-plus sub-table-action"]'
-    TYPE_TIF_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Type TIF"]/following-sibling::ng2-smart-table//*[@class="nb-checkmark"]'
-    TYPE_TIF_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Type TIF"]/following-sibling::ng2-smart-table//*[@class="nb-close"]'
-    TYPE_TIF_TAB_EDIT_BUTTON_XPATH = '//*[text()="Type TIF"]/following-sibling::ng2-smart-table//*[@class="nb-edit sub-table-action"]'
-    TYPE_TIF_TAB_DELETE_BUTTON_XPATH = '//*[text()="Type TIF"]/following-sibling::ng2-smart-table//*[@class="nb-trash sub-table-action"]'
+    TYPE_TIF_TAB_PLUS_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@nbtooltip="Add"]'
+    TYPE_TIF_TAB_CHECKMARK_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="checkmark"]'
+    TYPE_TIF_TAB_CLOSE_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="close"]'
+    TYPE_TIF_TAB_EDIT_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="edit"]'
+    TYPE_TIF_TAB_DELETE_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="trash-2"]'
 
     TYPE_TIF_TAB_TIME_IN_FORCE_XPATH = '//*[@placeholder="Time In Force *"]'
-    TYPE_TIF_TAB_TIME_IN_FORCE_FILTER_XPATH = '//*[@class="ng2-smart-th timeInForce ng-star-inserted"]//input'
+    TYPE_TIF_TAB_TIME_IN_FORCE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[5]'
     TYPE_TIF_TAB_ORD_TYPE_XPATH = '//*[@placeholder="Ord Type *"]'
-    TYPE_TIF_TAB_ORD_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th ordType ng-star-inserted"]//input'
-    TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_XPATH = '//*[@class="status-basic ng-untouched ng-pristine ng-valid nb-transition"]//input'
-    TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_FILTER_XPATH = '//*[@class="ng2-smart-th supportDisplayQty ng-star-inserted"]//input'
+    TYPE_TIF_TAB_ORD_TYPE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[6]'
+    TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[contains(@class, "custom-checkbox")]'
+    TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[7]'
 
     # --Status metrics--
     STATUS_METRICS_TAB_WARNING_THRESHOLD_XPATH = '//*[@id="warnLast Update Elapsed Time (sec)"]'

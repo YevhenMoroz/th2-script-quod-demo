@@ -66,6 +66,7 @@ from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3975 import QAP_T397
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3976 import QAP_T3976
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3977 import QAP_T3977
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3978 import QAP_T3978
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3979 import QAP_T3979
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3980 import QAP_T3980
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3981 import QAP_T3981
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T4011 import QAP_T4011
@@ -81,10 +82,13 @@ from test_cases.web_admin.web_admin_test_cases.markets.QAP_T4034 import QAP_T403
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T4035 import QAP_T4035
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T4036 import QAP_T4036
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T7872 import QAP_T7872
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T7876 import QAP_T7876
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T7932 import QAP_T7932
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T8293 import QAP_T8293
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T8808 import QAP_T8808
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T8830 import QAP_T8830
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T8895 import QAP_T8895
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T9418 import QAP_T9418
 
 
 class RunMarkets:
@@ -222,6 +226,8 @@ class RunMarkets:
                       environment=configuration.environment).run()
             QAP_T3978(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3979(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3980(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3981(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -254,11 +260,17 @@ class RunMarkets:
                       environment=configuration.environment).run()
             QAP_T7872(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T7876(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T8293(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8808(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T8830(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T8895(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T9418(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

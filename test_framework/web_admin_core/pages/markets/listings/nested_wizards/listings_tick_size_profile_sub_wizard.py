@@ -82,3 +82,13 @@ class ListingsTickSizeProfileSubWizard(CommonPage):
 
     def set_upper_limit_filter(self, value):
         self.set_text_by_xpath(ListingsConstants.TICK_SIZE_POINTS_TAB_UPPER_LIMIT_FILTER_XPATH, value)
+
+    def is_tick_size_profile_lookup_displayed(self):
+        return self.is_element_present(ListingsConstants.TICK_SIZE_PROFILES_LOOKUP_FIELD_XPATH)
+
+    def load_tick_size_profile_by_lookup(self, value):
+        self.set_text_by_xpath(ListingsConstants.TICK_SIZE_PROFILES_LOOKUP_FIELD_XPATH, value)
+        self.find_by_xpath(ListingsConstants.TICK_SIZE_PROFILES_LOAD_BUTTON_XPATH).click()
+
+    def is_tick_size_profile_table_contains_entity(self):
+        return self.is_element_present(ListingsConstants.TICK_SIZE_PROFILES_TAB_EDIT_BUTTON_XPATH)

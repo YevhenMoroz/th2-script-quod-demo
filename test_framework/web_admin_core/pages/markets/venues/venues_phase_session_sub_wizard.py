@@ -47,10 +47,13 @@ class VenuesPhaseSessionSubWizard(CommonPage):
         self.set_text_by_xpath(VenuesConstants.PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_FILTER_XPATH, value)
 
     def is_support_min_quantity_selected(self):
-        self.is_checkbox_selected(VenuesConstants.PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_XPATH)
+        return self.is_checkbox_selected(VenuesConstants.PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_XPATH)
 
     def set_peg_price_type(self, value):
         self.set_checkbox_list(VenuesConstants.PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH, value)
+
+    def get_peg_price_type(self):
+        return self.get_text_by_xpath(VenuesConstants.PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH)
 
     def set_peg_price_type_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.PHASE_SESSION_TAB_PEG_PRICE_TYPE_FILTER_XPATH, value)
@@ -81,7 +84,7 @@ class VenuesPhaseSessionSubWizard(CommonPage):
     def get_time_in_force(self):
         return self.get_text_by_xpath(VenuesConstants.TYPE_TIF_TAB_TIME_IN_FORCE_XPATH)
 
-    def set_odr_type(self, value):
+    def set_ord_type(self, value):
         self.set_combobox_value(VenuesConstants.TYPE_TIF_TAB_ORD_TYPE_XPATH, value)
 
     def set_ord_type_filter(self, value):
