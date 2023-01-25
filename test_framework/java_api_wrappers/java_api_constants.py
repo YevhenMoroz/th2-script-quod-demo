@@ -48,6 +48,7 @@ class OrderReplyConst(Enum):
 class ExecutionPolicyConst(Enum):
     DMA = 'D'
     CARE = 'C'
+    Synthetic = 'S'
 
 
 class SubmitRequestConst(Enum):
