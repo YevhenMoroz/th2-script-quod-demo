@@ -1187,6 +1187,33 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def set_params_for_nos_dfd_rule(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            LastPx='*',
+            LastQty='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            Price=new_order_single.get_parameter('Price'),
+            Currency=new_order_single.get_parameter('Currency'),
+            Instrument=new_order_single.get_parameter('Instrument'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=3,
+            Side=new_order_single.get_parameter('Side'),
+            TransactTime='*',
+            ExecType=3,
+            LeavesQty='*',
+            Text='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def __set_eliminate_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
