@@ -8,7 +8,11 @@ from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
     MDAMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
+from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
+from test_framework.java_api_wrappers.cs_message.CDTransferAckReply import CDTransferAckReply
+from test_framework.java_api_wrappers.cs_message.CDTransferNotif import CDTransferNotif
+from test_framework.java_api_wrappers.cs_message.CDTransferReply import CDTransferReply
 from test_framework.java_api_wrappers.cs_message.ManualMatchExecToParentOrdersReply import \
     ManualMatchExecToParentOrdersReply
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
@@ -62,6 +66,7 @@ from test_framework.java_api_wrappers.ors_messages.PositionReport import Positio
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
+from test_framework.java_api_wrappers.ors_messages.TradeEntryBatchReply import TradeEntryBatchReply
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
@@ -404,7 +409,30 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
-
+        elif message.get_message_type() == CSMessageType.CDTransferRequest.value:
+            response = self.act.submitCDTransferRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == CSMessageType.CDTransferAck.value:
+            response = self.act.submitCDTransferAckRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == CSMessageType.CDOrdAssign.value:
+            response = self.act.submitCDOrdAssign(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.TradeEntryBatchRequest.value:
+            response = self.act.submitTradeEntryBatchRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -471,26 +499,30 @@ class JavaApiManager:
                                                         component_field].message_value.fields[
                                                         inner_component_field].simple_value != "":
                                                 inner_component_fields.update({inner_component_field:
-                                                                             message.fields[
-                                                                                 main_field].message_value.fields[
-                                                                                 field].message_value.fields[
-                                                                                 component_field].message_value.fields[
-                                                                                 inner_component_field].simple_value})
-                                                fields_content.update({field: {component_fields: {inner_component_fields}}})
+                                                                                   message.fields[
+                                                                                       main_field].message_value.fields[
+                                                                                       field].message_value.fields[
+                                                                                       component_field].message_value.fields[
+                                                                                       inner_component_field].simple_value})
+                                                fields_content.update(
+                                                    {field: {component_fields: {inner_component_fields}}})
                                             else:
                                                 # Inner Repeating Group
                                                 inner_repeating_group_list = list()
                                                 for inner_repeating_group in \
                                                         message.fields[main_field].message_value.fields[
                                                             field].message_value.fields[
-                                                            component_field].message_value.fields[inner_component_field].list_value.values:
+                                                            component_field].message_value.fields[
+                                                            inner_component_field].list_value.values:
                                                     inner_repeating_group_list_field = dict()
                                                     for inner_repeating_group_field in inner_repeating_group.message_value.fields:
-                                                        inner_repeating_group_list_field.update({inner_repeating_group_field:
-                                                                                               inner_repeating_group.message_value.fields[
-                                                                                                   inner_repeating_group_field].simple_value})
+                                                        inner_repeating_group_list_field.update(
+                                                            {inner_repeating_group_field:
+                                                                 inner_repeating_group.message_value.fields[
+                                                                     inner_repeating_group_field].simple_value})
                                                     inner_repeating_group_list.append(inner_repeating_group_list_field)
-                                                fields_content.update({field: {component_field:{inner_component_field:inner_repeating_group_list}}})
+                                                fields_content.update({field: {component_field: {
+                                                    inner_component_field: inner_repeating_group_list}}})
                                     else:
                                         fields_content.update({field: {component_field: repeating_group_list}})
                     fields.update({main_field: fields_content})
@@ -606,6 +638,16 @@ class JavaApiManager:
                 response_fix_message = CDOrdAckBatchReply()
             elif message_type == ORSMessageType.OrdRejectedNotif.value:
                 response_fix_message = OrdRejectedNotif()
+            elif message_type == CSMessageType.CDTransferReply.value:
+                response_fix_message = CDTransferReply()
+            elif message_type == CSMessageType.CDTransferNotif.value:
+                response_fix_message = CDTransferNotif()
+            elif message_type == CSMessageType.CDTransferAckReply.value:
+                response_fix_message = CDTransferAckReply()
+            elif message_type == CSMessageType.CDAssignReply.value:
+                response_fix_message = CDAssignReply()
+            elif message_type == ORSMessageType.TradeEntryBatchReply.value:
+                response_fix_message = TradeEntryBatchReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

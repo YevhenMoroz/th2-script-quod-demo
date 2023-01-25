@@ -142,3 +142,33 @@ class OrderSubmitOMS(OrderSubmit):
                                          "ParentOrdrList": parent_params, 'RouteList': route_params})
         self.add_tag(assign_params)
         return self
+
+    def set_default_direct_moc(self, parent_id: str, route: str = None):
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        if route:
+            route_params = {'RouteBlock': [{'RouteID': route}]}
+        else:
+            route = self.data_set.get_route_id_by_name("route_1")
+            route_params = {'RouteBlock': [{'RouteID': route}]}
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {'ClOrdID': basic_custom_actions.client_orderid(9),
+                                         'TimeInForce': 'AtTheClose',
+                                         "ParentOrdrList": parent_params, 'RouteList': route_params})
+
+    def set_default_direct_algo_iceberg(self, parent_id, display_qty, route_id: str = None):
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        if route_id:
+            route_params = {'RouteBlock': [{'RouteID': route_id}]}
+        else:
+            route_id = self.data_set.get_route_id_by_name("route_1")
+            route_params = {'RouteBlock': [{'RouteID': route_id}]}
+        self.change_parameters(self.base_parameters)
+        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '1000056'}
+        display_instruction_param = {'DisplayQty': display_qty, 'DisplayMethod': "Initial"}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {'ClOrdID': basic_custom_actions.client_orderid(9),
+                                         'ExecutionPolicy': 'Synthetic',
+                                         "ParentOrdrList": parent_params, 'RouteList': route_params,
+                                         'AlgoParametersBlock': algo_param,
+                                         'DisplayInstructionBlock': display_instruction_param})

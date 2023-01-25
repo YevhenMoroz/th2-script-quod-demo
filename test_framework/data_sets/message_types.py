@@ -191,6 +191,13 @@ class CSMessageType(Enum):
     ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
     ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
     CDOrdAckBatchReply = "Order_CDOrdAckBatchReply"
+    CDTransferRequest = "Order_CDTransferRequest"
+    CDTransferReply = "Order_CDTransferReply"
+    CDTransferNotif = 'Order_CDTransferNotif'
+    CDTransferAck = 'Order_CDTransferAck'
+    CDTransferAckReply = 'Order_CDTransferAckReply'
+    CDOrdAssign = 'Order_CDOrdAssign'
+    CDAssignReply = 'Order_CDAssignReply'
 
 
 class MDAMessageType(Enum):

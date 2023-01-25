@@ -48,6 +48,7 @@ class OrderReplyConst(Enum):
 class ExecutionPolicyConst(Enum):
     DMA = 'D'
     CARE = 'C'
+    Synthetic = 'S'
 
 
 class SubmitRequestConst(Enum):
@@ -214,6 +215,11 @@ class JavaApiFields(Enum):
     TradeEntryReplyBlock = 'TradeEntryReplyBlock'
     OrdNotificationBlock = 'OrdNotificationBlock'
     OrderModificationReplyBlock = 'OrderModificationReplyBlock'
+    CDTransferReplyBlock = 'CDTransferReplyBlock'
+    CDTransferID = 'CDTransferID'
+    RecipientUserID = 'RecipientUserID'
+    CDOrdNotifBlock = 'CDOrdNotifBlock'
+    CDOrdNotifID = 'CDOrdNotifID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -296,6 +302,7 @@ class JavaApiFields(Enum):
     PostTradeExecStatus = 'PostTradeExecStatus'
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
+    SuspendedCare = "SuspendedCare"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'

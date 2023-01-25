@@ -141,6 +141,7 @@ class OmsVenueClientNames(Enum):
     client_1_venue_2 = "XEUR_CLIENT1"
     client_3_venue_1 = "XPAR_CLIENT3"
     client_4_venue_1 = "CLIENT4_PARIS"
+    client_4_venue_2 = "CLIENT4_EUREX"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
