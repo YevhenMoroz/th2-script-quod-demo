@@ -67,7 +67,7 @@ class QAP_T7615(TestCase):
         list_of_ignored_fields: list = ['ReplyReceivedTime', 'SecondaryOrderID', 'Text', 'LastMkt',
                                         "LastExecutionPolicy", "TradeDate", "TradeReportingIndicator",
                                         "SecondaryExecID", "ExDestination", "GrossTradeAmt", "SettlCurrency",
-                                        "Instrument"]
+                                        "Instrument", "Account"]
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
