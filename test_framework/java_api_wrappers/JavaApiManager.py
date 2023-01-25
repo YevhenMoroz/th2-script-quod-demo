@@ -143,7 +143,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.BlockUnallocateRequest.value:
             response = self.act.submitOrderBlockUnallocateRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -702,6 +702,21 @@ class JavaApiManager:
         for res in self.response:
             if res.get_message_type() == message_type:
                 if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
+                return res
+        raise KeyError(f"{message_type} not found")
+
+    def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
+        self.response.reverse()
+        sequence_of_flag = list()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                for filter_value in filter_values:
+                    if str(res.get_parameters()).find(filter_value) == -1:
+                        sequence_of_flag.append(False)
+                if False in sequence_of_flag:
+                    sequence_of_flag.clear()
                     continue
                 self.response.reverse()
                 return res
