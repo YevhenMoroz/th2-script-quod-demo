@@ -752,7 +752,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
         temp = dict()
-        if order_cancel_replace.get_parameter('OrdType') != 3 and order_cancel_replace.get_parameter('OrdType') != 4:
+        if order_cancel_replace.is_parameter_exist('Price'):
             temp.update(Price=order_cancel_replace.get_parameter("Price"))
         if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))

@@ -192,6 +192,8 @@ class QAP_T8788(TestCase):
         self.fix_verifier_buy.check_fix_message(er_partial_fill_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PartialFill Child DMA 1 order')
         # endregion
 
+        time.sleep(5)
+
         # region Check reject replace child (recycling eliminated qty)
         er_reject_replaced_dma_qdl1_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_reject_replaced_dma_qdl1_order_params, self.key_params_ER_cancel_reject_child, self.ToQuod, 'Buy Side OrderCancelRejectReport Child DMA order')

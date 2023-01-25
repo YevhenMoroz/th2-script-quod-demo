@@ -1,6 +1,11 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7889 import QAP_T7889
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7890 import QAP_T7890
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7891 import QAP_T7891
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7892 import QAP_T7892
+from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7893 import QAP_T7893
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7894 import QAP_T7894
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7895 import QAP_T7895
 from test_cases.algo.Algo_Kepler.Algo_Instrument_Identification.QAP_T7896 import QAP_T7896
@@ -48,6 +53,11 @@ def test_run(parent_id=None, version=None):
     try:
         # region Instrument identification
         configuration = ComponentConfiguration("Sorping")
+        QAP_T7889(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7890(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7891(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7892(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7893(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7894(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7895(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7896(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
