@@ -190,6 +190,7 @@ class CSMessageType(Enum):
     CDOrdNotif = "Order_CDOrdNotif"
     ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
     ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
+    CDOrdAckBatchReply = "Order_CDOrdAckBatchReply"
 
 
 class MDAMessageType(Enum):
