@@ -77,6 +77,7 @@ class ListingsConstants:
     TRANSLATION_TAB_LISTING_LANGUAGE_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Language *"]'
     TRANSLATION_TAB_LISTING_DESCRIPTION_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Filter"])[2]'
     TRANSLATION_TAB_LISTING_DESCRIPTION_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//*[@placeholder="Description *"]'
+    TRANSLATION_TAB_LISTING_SEARCHED_ENTITY_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Listing"]//..//span[normalize-space()="{}"]'
 
     # Instrument
     TRANSLATION_TAB_INSTRUMENT_PLUS_BUTTON_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@nbtooltip="Add"]'
@@ -89,6 +90,7 @@ class ListingsConstants:
     TRANSLATION_TAB_INSTRUMENT_LANGUAGE_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Language *"]'
     TRANSLATION_TAB_INSTRUMENT_DESCRIPTION_FILTER_XPATH = '(//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Filter"])[2]'
     TRANSLATION_TAB_INSTRUMENT_DESCRIPTION_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//*[@placeholder="Description *"]'
+    TRANSLATION_TAB_INSTRUMENT_SEARCHED_ENTITY_XPATH = '//*[normalize-space()="Translation"]//..//*[normalize-space()="Instrument"]//..//span[normalize-space()="{}"]'
 
     # Attachment tab
     ATTACHMENT_TAB_VENUE_XPATH = '//*[@id="venue"]'

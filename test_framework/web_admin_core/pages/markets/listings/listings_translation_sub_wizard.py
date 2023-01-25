@@ -42,6 +42,9 @@ class TranslationTab:
         def get_description(self):
             return self.get_text_by_xpath(ListingsConstants.TRANSLATION_TAB_LISTING_DESCRIPTION_XPATH)
 
+        def is_searched_listing_entity_displayed(self, value):
+            return self.is_element_present(ListingsConstants.TRANSLATION_TAB_LISTING_SEARCHED_ENTITY_XPATH.format(value))
+
     class InstrumentTable(CommonPage):
         def __init__(self, web_driver_container: WebDriverContainer):
             super().__init__(web_driver_container)
@@ -78,3 +81,6 @@ class TranslationTab:
 
         def get_description(self):
             return self.get_text_by_xpath(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_DESCRIPTION_XPATH)
+
+        def is_searched_instrument_entity_displayed(self, value):
+            return self.is_element_present(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_SEARCHED_ENTITY_XPATH.format(value))
