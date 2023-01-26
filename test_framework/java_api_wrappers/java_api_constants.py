@@ -43,6 +43,7 @@ class OrderReplyConst(Enum):
     IsLocked_Y = 'Y'
     IsLocked_N = 'N'
     ExecType_REP = 'REP'
+    ExecType_PCA = 'PCA'
 
 
 class ExecutionPolicyConst(Enum):

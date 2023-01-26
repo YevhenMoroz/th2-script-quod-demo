@@ -143,7 +143,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.BlockUnallocateRequest.value:
             response = self.act.submitOrderBlockUnallocateRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -484,20 +484,30 @@ class JavaApiManager:
                                                 component_field].list_value.values:
                                         repeating_group_list_field = dict()
                                         for repeating_group_field in repeating_group.message_value.fields:
-                                            repeating_group_list_field.update({repeating_group_field:
-                                                                                   repeating_group.message_value.fields[
-                                                                                       repeating_group_field].simple_value})
+                                            if repeating_group.message_value.fields[
+                                                repeating_group_field].simple_value != '':
+                                                repeating_group_list_field.update({repeating_group_field:
+                                                                                       repeating_group.message_value.fields[
+                                                                                           repeating_group_field].simple_value})
+                                            else:
+                                                component_into_repeating_group = dict()
+                                                for component_into_group_field in repeating_group.message_value.fields[repeating_group_field].message_value.fields:
+                                                    component_into_repeating_group.update({component_into_group_field:
+                                                                                               repeating_group.message_value.fields[
+                                                                                                   repeating_group_field].message_value.fields[
+                                                                                                   component_into_group_field].simple_value})
+                                                repeating_group_list_field.update(
+                                                    {repeating_group_field: component_into_repeating_group})
                                         repeating_group_list.append(repeating_group_list_field)
                                     if not bool(repeating_group_list):
                                         # Inner component
                                         inner_component_fields = dict()
                                         for inner_component_field in message.fields[main_field].message_value.fields[
                                             field].message_value.fields[component_field].message_value.fields:
-                                            if \
-                                                    message.fields[main_field].message_value.fields[
-                                                        field].message_value.fields[
-                                                        component_field].message_value.fields[
-                                                        inner_component_field].simple_value != "":
+                                            if message.fields[main_field].message_value.fields[
+                                                field].message_value.fields[
+                                                component_field].message_value.fields[
+                                                inner_component_field].simple_value != "":
                                                 inner_component_fields.update({inner_component_field:
                                                                                    message.fields[
                                                                                        main_field].message_value.fields[
@@ -505,7 +515,7 @@ class JavaApiManager:
                                                                                        component_field].message_value.fields[
                                                                                        inner_component_field].simple_value})
                                                 fields_content.update(
-                                                    {field: {component_fields: {inner_component_fields}}})
+                                                    {field: {component_field: inner_component_fields}})
                                             else:
                                                 # Inner Repeating Group
                                                 inner_repeating_group_list = list()
@@ -702,6 +712,21 @@ class JavaApiManager:
         for res in self.response:
             if res.get_message_type() == message_type:
                 if filter_value and str(res.get_parameters()).find(filter_value) == -1:
+                    continue
+                self.response.reverse()
+                return res
+        raise KeyError(f"{message_type} not found")
+
+    def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
+        self.response.reverse()
+        sequence_of_flag = list()
+        for res in self.response:
+            if res.get_message_type() == message_type:
+                for filter_value in filter_values:
+                    if str(res.get_parameters()).find(filter_value) == -1:
+                        sequence_of_flag.append(False)
+                if False in sequence_of_flag:
+                    sequence_of_flag.clear()
                     continue
                 self.response.reverse()
                 return res
