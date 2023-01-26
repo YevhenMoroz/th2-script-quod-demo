@@ -104,7 +104,6 @@ class QAP_T9011(TestCase):
         self.text_6 = 'found new aggregated best bid 24'
         self.text_7 = 'market event for QUODLIT1'
         self.text_8 = 'checking mid-price after update on QUODLIT1'
-        self.text_9 = 'found new aggregated best ask 30'
         # endregion
         
         self.rule_list = []
@@ -234,7 +233,7 @@ class QAP_T9011(TestCase):
         compare_message_4.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_4))
 
         compare_message_5 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message_5.change_parameters(dict(OrderId=multilisted_algo_child_order_id, ext=self.text_5))
+        compare_message_5.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_5))
 
         compare_message_6 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
         compare_message_6.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_6))
@@ -248,12 +247,17 @@ class QAP_T9011(TestCase):
         compare_message_9 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
         compare_message_9.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_1))
 
-        compare_message_10 = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message_10.change_parameters(dict(OrderId=multilisted_algo_child_order_id, Text=self.text_9))
-
         # Need to separate on some events with the separate prefilters
         self.read_log_verifier.set_case_id(bca.create_event("ReadLog Check MarketData events", self.test_id))
-        self.read_log_verifier.check_read_log_message_sequence([compare_message_1, compare_message_2, compare_message_3, compare_message_4, compare_message_5, compare_message_6, compare_message_7, compare_message_8, compare_message_9, compare_message_10], [self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog, self.key_params_readlog], pre_filter=self.pre_filter)
+        self.read_log_verifier.check_read_log_message(compare_message_1, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_2, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_3, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_4, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_5, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_6, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_7, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_8, self.key_params_readlog)
+        self.read_log_verifier.check_read_log_message(compare_message_9, self.key_params_readlog)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

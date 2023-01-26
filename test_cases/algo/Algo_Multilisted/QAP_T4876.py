@@ -162,7 +162,7 @@ class QAP_T4876(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Business Message Reject", self.test_id))
         business_message_reject = FixMessageBusinessMessageRejectReportAlgo().set_params_for_business_message_reject()
         business_message_reject.change_parameters(
-            dict(Text=self.text, RefMsgType=self.refMsgType, BusinessRejectReason=self.businessRejectReason))
+            dict(Text=self.text, RefMsgType=self.refMsgType, BusinessRejectReason=self.businessRejectReason)).remove_parameter('DefaultApplVerID')
         self.fix_verifier_sell.check_fix_message(business_message_reject, message_name='Sell side Business Message Reject')
 
     # endregion

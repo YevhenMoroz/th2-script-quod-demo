@@ -752,7 +752,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
         temp = dict()
-        if order_cancel_replace.get_parameter('OrdType') != 3 and order_cancel_replace.get_parameter('OrdType') != 4:
+        if order_cancel_replace.is_parameter_exist('Price'):
             temp.update(Price=order_cancel_replace.get_parameter("Price"))
         if 'DisplayInstruction' in order_cancel_replace.get_parameters():
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
@@ -1181,6 +1181,33 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Side=new_order_single.get_parameter('Side'),
             TransactTime='*',
             ExecType=4,
+            LeavesQty='*',
+            Text='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def set_params_for_nos_dfd_rule(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            LastPx='*',
+            LastQty='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            Price=new_order_single.get_parameter('Price'),
+            Currency=new_order_single.get_parameter('Currency'),
+            Instrument=new_order_single.get_parameter('Instrument'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=3,
+            Side=new_order_single.get_parameter('Side'),
+            TransactTime='*',
+            ExecType=3,
             LeavesQty='*',
             Text='*'
         )
