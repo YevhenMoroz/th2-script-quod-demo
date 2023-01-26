@@ -425,6 +425,7 @@ class RejectMessages(Enum):
     no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
     no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
     no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
+    no_listing_12 = '11697 No listing found for order with currency USD on exchange XETRA'
 
 
 class PegPriceType(Enum):
