@@ -31,8 +31,6 @@ class QAP_T7019(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.str_name = 'Urgency'
-        self.ex_str_name = '14'
         self.params = {
             "TargetStrategy": "1021",
             "StrategyParametersGrp": {"NoStrategyParameters": [
