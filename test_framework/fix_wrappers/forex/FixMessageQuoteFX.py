@@ -544,7 +544,7 @@ class FixMessageQuoteFX(FixMessage):
                 self.add_tag({"OfferPx": "*"})
                 self.add_tag({"OfferSwapPoints": "*"})
                 temp[0].pop('LegOfferPx')
-                temp[0].pop('LegBidForwardPoints')
+                temp[0].pop('LegOfferForwardPoints')
                 temp[1].pop('LegBidPx')
                 temp[1].pop('LegBidForwardPoints')
         if quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0]["LegSettlType"] == "0":
