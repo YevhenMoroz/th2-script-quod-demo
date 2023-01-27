@@ -162,14 +162,10 @@ class QAP_T8672(TestCase):
         scheduler.enterabs(end_time + 3, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
         # endregion
 
-
         scheduler.run()
 
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         time.sleep(5)
-        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
+        case_id_2 = bca.create_event("Check that Algo Order is Canceled", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
         # endregion
 
@@ -177,6 +173,9 @@ class QAP_T8672(TestCase):
         er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=5,LastMkt=self.mic, Text="reached uncross")).remove_parameters(["CxlQty", 'TargetStrategy', 'OrigClOrdID'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
