@@ -148,7 +148,7 @@ def check_quote_request_id(quote_request):
 
 def extract_freenotes(quote_request):
     """
-    Get QuoteRequestId from DB using quote_req_id from fix request
+    Get freenotes from DB using quote_req_id from fix request
     """
     connection = None
     cursor = None
@@ -166,6 +166,36 @@ def extract_freenotes(quote_request):
         cursor.execute(query)
         response = cursor.fetchone()[0]
         print(f"\nExtraction is successful! FreeNotes is \"{response}\".\n")
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
+def extract_automatic_quoting(quote_request):
+    """
+    Get automaticquoting from DB using quote_req_id from fix request
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        quote_req_id = quote_request.get_parameter("QuoteReqID")
+        query = f"SELECT automaticquoting FROM quoterequest WHERE clientquotereqid ='{quote_req_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        print(f"\nExtraction is successful! AutomaticQuoting is \"{response}\".\n")
         return response
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
