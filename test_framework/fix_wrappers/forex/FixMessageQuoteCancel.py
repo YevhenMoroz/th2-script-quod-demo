@@ -20,19 +20,17 @@ class FixMessageQuoteCancelFX(FixMessage):
                 QuoteID=quote.get_parameter("QuoteID"),
                 QuoteCancelType="5"
             )
-            super().change_parameters(temp)
-            return self
         elif quote_request.get_message_type() is java_api_request:
             temp = dict(
                 QuoteReqID=quote_request.get_parameter("QuoteRequestBlock")["ClientQuoteReqID"],
                 QuoteID=quote.get_parameter("QuoteID"),
                 QuoteCancelType="5"
             )
-            super().change_parameters(temp)
-            return self
         else:
             err = str(type(quote_request)).rsplit(".")[-1].replace("\'>", "")
             raise AttributeError(f"\"FixMessageQuoteCancelFX\" doesn\'t support \"{err}\" object")
+        super().change_parameters(temp)
+        return self
 
 
     def set_params_for_receive(self, quote_request: FixMessageQuoteRequestFX):
