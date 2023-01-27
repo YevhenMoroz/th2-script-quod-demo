@@ -5,6 +5,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4307 import QAP_T4307
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4310 import QAP_T4310
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8625 import QAP_T8625
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8672 import QAP_T8672
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T9063 import QAP_T9063
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -31,6 +32,10 @@ def test_run(parent_id=None, version=None):
 
         # region LimitPriceOffset
         QAP_T4310(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region RedburnCustomTags
+        QAP_T9063(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
