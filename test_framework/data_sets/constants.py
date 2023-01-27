@@ -179,6 +179,7 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+    GoodForTime = 'A'
 
 
 class ClientAlgoPolicy(Enum):
@@ -471,3 +472,21 @@ class StrategyParameterType(Enum):
     UTCTimeStamp = '19'
     UTCTimeOnly = '20'
     LocalMktDate = '21'
+
+
+class RBCustomTags(Enum):
+    RedburnCustomFields = dict(
+        TVTID='*',
+        CustomTag_26010='*',
+        CustomTag_26011='*',
+        CustomTag_26012='*',
+        CustomTag_26013='*',
+        CustomTag_26014='*',
+        CustomTag_26015='*',
+        CustomTag_26016='*',
+        CustomTag_26017='*',
+        CustomTag_26018='*',
+        CustomTag_26019='*',
+        CustomTag_26020='*',
+        CustomTag_26021='*'
+    )
