@@ -2,17 +2,12 @@ import logging
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.cs_message.ManualMatchExecsToParentOrderRequest import \
-    ManualMatchExecsToParentOrderRequest
 from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields
-from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,7 +27,6 @@ class QAP_T7432(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.client = self.data_set.get_client_by_name("client_1")
-        self.mic = self.data_set.get_mic_by_name('mic_1')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
