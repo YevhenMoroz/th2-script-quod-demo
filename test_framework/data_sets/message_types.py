@@ -192,7 +192,6 @@ class CSMessageType(Enum):
     ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
     ManualMatchExecsToParentOrderRequest = 'Order_ManualMatchExecsToParentOrderRequest'
     ManualMatchExecsToParentOrderReply = "Order_ManualMatchExecsToParentOrderReply"
-
     CDOrdAckBatchReply = "Order_CDOrdAckBatchReply"
     CDTransferRequest = "Order_CDTransferRequest"
     CDTransferReply = "Order_CDTransferReply"
@@ -201,6 +200,7 @@ class CSMessageType(Enum):
     CDTransferAckReply = 'Order_CDTransferAckReply'
     CDOrdAssign = 'Order_CDOrdAssign'
     CDAssignReply = 'Order_CDAssignReply'
+    UnMatchRequest = 'Internal_UnMatchRequest'
 
 
 class MDAMessageType(Enum):

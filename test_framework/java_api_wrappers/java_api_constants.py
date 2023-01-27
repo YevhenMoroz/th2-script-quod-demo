@@ -221,6 +221,8 @@ class JavaApiFields(Enum):
     RecipientUserID = 'RecipientUserID'
     CDOrdNotifBlock = 'CDOrdNotifBlock'
     CDOrdNotifID = 'CDOrdNotifID'
+    CDRequestType = 'CDRequestType'
+    OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -354,3 +356,8 @@ class OrderBagConst(Enum):
     OrderBagStatus_CXL = 'CXL'
     OrderWaveStatus_TER = 'TER'
     OrderBagStatus_TER = 'TER'
+
+
+class CDResponsesConst(Enum):
+    CDRequestType_MOD = 'MOD'
+    CDRequestType_CAN = 'CAN'
