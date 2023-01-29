@@ -1,65 +1,98 @@
 import logging
+from datetime import datetime
 from pathlib import Path
-from rule_management import RuleManager, Simulators
-from test_framework.core.try_exept_decorator import try_except
-from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.core.test_case import TestCase
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
+from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst, JavaApiFields, SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
 
 
-@try_except(test_id=Path(__file__).name[:-3])
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
+
+
 class QAP_T7697(TestCase):
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_market()
-        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
-        self.qty_per = "100"
-        self.rule_manager = RuleManager(Simulators.equity)
-        self.route = self.data_set.get_route('route_1')
-        self.qty_type = self.data_set.get_qty_type('qty_type_1')
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
-        self.venue = self.data_set.get_mic_by_name('mic_1')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.qty = "100"
+        self.price = "20"
+        self.client = self.data_set.get_client("client_1")  # CLIENT1
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.cd_ord_ack_batch_request = CDOrdAckBatchRequest()
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region Create Market CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-        # region Accept CO order
-        self.client_inbox.accept_order()
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-        # region DirectMoc order
-        try:
-            self.nos_rule = self.rule_manager.add_NewOrdSingle_Market_FIXStandard(
-                self.fix_env.sell_side,
-                self.venue_client_names, self.venue,
-                False, int(self.qty), 0)
-            self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).direct_moc_order(self.qty_per, self.route, self.qty_type)
-        except Exception:
-            logger.error("Error execution", exc_info=True)
-        finally:
-            self.rule_manager.remove_rule(self.nos_rule)
-        # endregion
-        # region check child order
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_second_lvl_fields_list(
-            {OrderBookColumns.qty.value: self.qty})
+        # region Step 1 - Create Market CO order
+        self.order_submit.set_default_care_market(
+            recipient=self.environment.get_list_fe_environment()[0].user_1,
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+            role=SubmitRequestConst.USER_ROLE_1.value,
+        )
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {
+                "OrdQty": self.qty,
+                "AccountGroupID": self.client,
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message("CREATE", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id = order_reply["OrdID"]
+        cl_ord_id = order_reply["ClOrdID"]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+            order_reply,
+            "Step 1 - Comparing Status of Market Care order",
+        )
         # endregion
 
+        # region Step 1,2 - Direct Moc order
+        self.order_submit.set_default_direct_moc(ord_id)
+        self.order_submit.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"ExecutionPolicy": "DMA", "OrdQty": self.qty, "OrdType": "Market"},
+        )
+        self.order_submit.remove_parameters(["CDOrdAssignInstructionsBlock"])
+        self.order_submit.remove_fields_from_component(
+            "NewOrderSingleBlock",
+            ["SettlCurrency", "MaxPriceLevels", "ExecutionOnly", "BookingType", "ClientInstructionsOnly"],
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        print_message("Direct MOC order", responses)
+        # endregion
+
+        # region Step 3 - Comparing values after Direct Moc
+        order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            "OrdReplyBlock"
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value, "OrdQty": str(float(self.qty))},
+            order_reply_message,
+            "Step 3 - Comparing values after Direct Moc",
+        )
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
