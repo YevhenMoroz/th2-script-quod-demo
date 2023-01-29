@@ -206,3 +206,13 @@ class CSMessageType(Enum):
 class MDAMessageType(Enum):
     MarketDataRequest = "Market_MarketDataRequest"
     MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
+
+
+class AQSMessageType(Enum):
+    FrontendQuery = 'Order_FrontendQuery'
+    FrontendQueryReply = 'Order_FrontendQueryReply'
+
+
+class StoredProcedureNamesForAqs(Enum):
+    FEExecutionTransferList = 'FE_ExecutionTransfer_List'
+    FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'
