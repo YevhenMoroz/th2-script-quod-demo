@@ -113,9 +113,12 @@ class QAP_T7655(TestCase):
         cd_ord_ack_batch_reply = self.java_api_manager.get_last_message(
             CSMessageType.CDOrdAckBatchReply.value
         ).get_parameters()["CDOrdAckBatchReplyBlock"]
-        # self.java_api_manager.compare_values(
-        #     {"ErrorMsg": f"Invalid quantity :  The LeavesQty=0.0 for TransID={ord_id}"}, cd_ord_ack_batch_reply,
-        #     "Check Trying to cancel")
+        message_reply_block = cd_ord_ack_batch_reply["CDOrdAckReplyList"]["CDOrdAckReplyBlock"][0]["MessageReplyBlock"]
+        self.java_api_manager.compare_values(
+            {"ErrorMsg": f"Invalid quantity :  The LeavesQty=0.0 for TransID={ord_id}"},
+            message_reply_block,
+            "Step 3 - Check ErrorMsg after trying to cancel",
+        )
         # endregion
 
         # region Step 4 - Reject cancel request
