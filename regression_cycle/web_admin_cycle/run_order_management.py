@@ -20,7 +20,6 @@ from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3774 import
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3775 import QAP_T3775
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3776 import QAP_T3776
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3778 import QAP_T3778
-from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3791 import QAP_T3791
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3818 import QAP_T3818
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3819 import QAP_T3819
 from test_cases.web_admin.web_admin_test_cases.order_management.QAP_T3820 import QAP_T3820
@@ -172,11 +171,6 @@ class RunOrderManagement:
 
             # Не увидел проверки, что кнопка действительно сменила статус (Степ 4, 6, 8, 10)
             QAP_T3818(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-
-            # Не увидел проверки, что первая критерия реквайред. Проверки что критерия сохранилась и сообщение об изменение появилось.
-            # Степы 52-54 сделал бы что элемент (поле) присутствует, а не заполнением данными. Уменьшает вероятность падения теста из-за симпл даты
-            QAP_T3791(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             # Задублирована переменная page. Степы 120-129 заменил бы на проверку того что у нас присутствует 2 сущности с одинаковым именем и венью.

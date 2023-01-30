@@ -27,7 +27,6 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T3718 import QAP_T3718
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3720 import QAP_T3720
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3777 import QAP_T3777
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3782 import QAP_T3782
-from test_cases.web_admin.web_admin_test_cases.users.QAP_T3783 import QAP_T3783
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3803 import QAP_T3803
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3808 import QAP_T3808
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3846 import QAP_T3846
@@ -100,8 +99,6 @@ class RunUsers:
             QAP_T3777(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3782(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3783(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3803(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
