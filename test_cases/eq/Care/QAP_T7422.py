@@ -1,20 +1,19 @@
 import logging
 import os
 import time
-
+from pathlib import Path
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.cs_message.ManualMatchExecToParentOrdersRequest import \
+    ManualMatchExecToParentOrdersRequest
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, OrderReplyConst
 from test_framework.java_api_wrappers.ors_messages.UnMatchRequest import UnMatchRequest
-from test_framework.win_gui_wrappers.fe_trading_constant import SecondLevelTabs, OrderBookColumns, TradeBookColumns, \
-    TimeInForce, OrderType, MatchWindowsColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,148 +26,105 @@ class QAP_T7422(TestCase):
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.qty = '100'
+        self.fix_message_dma = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.price = '10'
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_message.set_default_dma_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
-        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
-        self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
         self.fix_message.change_parameter('Price', self.price)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
+        self.qty_dma = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.fix_message.change_parameter('ExDestination', self.exec_destination)
         self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.manual_match_request = ManualMatchExecToParentOrdersRequest()
+        self.unmatch_request = UnMatchRequest()
+        self.washbook = self.data_set.get_washbook_account_by_name('washbook_account_1')
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
 
         # region create  DMA order
-        dma_order_id = None
+        trade_rule = None
+        nos_rule = None
+        exec_id = None
         try:
-            rule_manager = RuleManager(Simulators.equity)
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                             self.client_for_rule,
-                                                                                             self.exec_destination,
-                                                                                             float(self.price))
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                       self.client_for_rule,
-                                                                                       self.exec_destination,
-                                                                                       float(self.price),
-                                                                                       int(self.qty),
-                                                                                       delay=0)
-            self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_pt_1'), limit=self.price, qty=self.qty,
-                                                order_type=OrderType.limit.value, tif=TimeInForce.DAY.value)
-            self.order_ticket.create_order('DNX')
-            dma_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.client_for_rule,
+                                                                                                  self.exec_destination,
+                                                                                                  float(self.price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.client_for_rule,
+                                                                                            self.exec_destination,
+                                                                                            float(self.price),
+                                                                                            int(self.qty_dma),
+                                                                                            delay=0)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            exec_id = response[5].get_parameters()['ExecID']
         except Exception as e:
             logger.error(f'{e}')
 
         finally:
             time.sleep(5)
-            rule_manager.remove_rule(nos_rule)
-            rule_manager.remove_rule(trade_rule)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
         # endregion
 
         # region create and accept CO order
-        self.fix_message.change_parameter("HandlInst", '3')
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        self.client_inbox.accept_order(self.lookup, self.qty, self.price)
-        care_order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-
-        # region extract execution from DMA order
-        exec_id = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                      [TradeBookColumns.exec_id.value],
-                                                      [1], {OrderBookColumns.order_id.value: dma_order_id})[0][OrderBookColumns.exec_id.value]
+        self.fix_message.set_default_care_limit()
+        qty_care = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        care_order_id = response[0].get_parameters()['OrderID']
         # endregion
 
         # region match
-        self.trade_book.manual_match(self.qty, [MatchWindowsColumns.order_id.value, care_order_id],
-                                     [TradeBookColumns.exec_id.value, exec_id])
+        self.manual_match_request.set_default(care_order_id, qty_care, exec_id)
+        self.java_api_manager.send_message_and_receive_response(self.manual_match_request)
         # endregion
 
         # region verifying values of care order after match
-        self.order_book.set_filter([OrderBookColumns.order_id.value, care_order_id])
-        values_of_co_order = self.order_book.extract_fields_list(
-            {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
-             OrderBookColumns.unmatched_qty.value: OrderBookColumns.unmatched_qty.value})
-        self.order_book.compare_values({OrderBookColumns.exec_sts.value: 'Filled',
-                                        OrderBookColumns.unmatched_qty.value: '0'}, values_of_co_order,
-                                       'Comparing values at CO order(after match)')
+        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+            JavaApiFields.ExecutionReportBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
+             JavaApiFields.UnmatchedQty.value: '0.0',
+             JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_TRD.value}, exec_report_block,
+            'Comparing values at CO order(after match)')
         # endregion
 
         # region extraction execution from CO order
-        exec_id_co_order = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                               [TradeBookColumns.exec_id.value],
-                                                               [1], {OrderBookColumns.order_id.value: care_order_id})[
-            0]['ExecID']
+        exec_id_co_order = exec_report_block['ExecID']
         # endregion
 
         # region unmatch order on half of qty
-        order_un_match_params_first = UnMatchRequest({
-            'SEND_SUBJECT': 'QUOD.ORS.FE',
-            'UnMatchRequestBlock': {
-                'UnMatchingList': {'UnMatchingBlock': [
-                    {'VirtualExecID': exec_id_co_order, 'UnMatchingQty': str(int(self.qty) / 2),
-                     'SourceAccountID': self.data_set.get_washbook_account_by_name('washbook_account_1'),
-                     'PositionType': "N"}
-                ]},
-                'DestinationAccountID': self.data_set.get_account_by_name('client_pos_3_acc_3')
-            }
-        })
-        self.java_api_manager.send_message(order_un_match_params_first)
-
-        self.order_book.set_filter([OrderBookColumns.order_id.value, care_order_id])
-        values_of_co_order = self.order_book.extract_fields_list(
-            {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
-             OrderBookColumns.unmatched_qty.value: OrderBookColumns.unmatched_qty.value})
-        self.order_book.compare_values({OrderBookColumns.exec_sts.value: 'Filled',
-                                        OrderBookColumns.unmatched_qty.value: str(int(int(self.qty) / 2))},
-                                       values_of_co_order,
-                                       'Comparing values at CO order(after unmatch on half of qty)')
-
-        exec_id_co_order = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                               [TradeBookColumns.exec_id.value],
-                                                               [1], {OrderBookColumns.order_id.value: care_order_id})[
-            0]['ExecID']
+        half_of_qty = str(int(int(qty_care) / 2))
+        self.unmatch_request.set_default(self.data_set, exec_id_co_order, half_of_qty, self.washbook)
+        self.java_api_manager.send_message_and_receive_response(self.unmatch_request)
         # endregion
-        order_un_match_params_second = UnMatchRequest({
-            'SEND_SUBJECT': 'QUOD.ORS.FE',
-            'UnMatchRequestBlock': {
-                'UnMatchingList': {'UnMatchingBlock': [
-                    {'VirtualExecID': exec_id_co_order, 'UnMatchingQty': str(int(self.qty) / 2),
-                     'SourceAccountID': self.data_set.get_washbook_account_by_name('washbook_account_1'),
-                     'PositionType': "N"}
-                ]},
-                'DestinationAccountID': self.data_set.get_account_by_name('client_pos_3_acc_3')
-            }
-        })
-        self.java_api_manager.send_message(order_un_match_params_second)
 
-        # region verifying values of care order after last unmatch
-        self.order_book.set_filter([OrderBookColumns.order_id.value, care_order_id])
-        values_of_co_order = self.order_book.extract_fields_list(
-            {OrderBookColumns.exec_sts.value: OrderBookColumns.exec_sts.value,
-             OrderBookColumns.unmatched_qty.value: OrderBookColumns.unmatched_qty.value})
-        self.order_book.compare_values({OrderBookColumns.exec_sts.value: '',
-                                        OrderBookColumns.unmatched_qty.value: self.qty}, values_of_co_order,
-                                       'Comparing values at CO order(after last unmatch)')
+        # region verifying values of care order after first unmatch
+        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+            JavaApiFields.ExecutionReportBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value,
+             JavaApiFields.UnmatchedQty.value: half_of_qty + '.0'}, exec_report_block,
+            'Comparing values at CO order(after unmatch on half of qty)')
+        # endregion
 
-        values_after_last_cancel = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                                       [
-                                                                           TradeBookColumns.exec_type.value],
-                                                                       [1],
-                                                                       {OrderBookColumns.order_id.value: care_order_id})
+        # region unmatch order on half of qty
+        exec_id_co_order = exec_report_block['ExecID']
+        self.unmatch_request.set_default(self.data_set, exec_id_co_order, half_of_qty, self.washbook)
+        self.java_api_manager.send_message_and_receive_response(self.unmatch_request)
+        # endregion
 
-        self.order_book.compare_values({TradeBookColumns.exec_type.value:
-                                            'TradeCancel'}, values_after_last_cancel[0],
-                                       'Verifying exec type of CO order execution')
+        # region verifying values of care order after second unmatch
+        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+            JavaApiFields.ExecutionReportBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+             JavaApiFields.UnmatchedQty.value: qty_care + '.0',
+             JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAN.value}, exec_report_block,
+            'Comparing values at CO order(after unmatch on half of remaining qty)')
         # endregion

@@ -47,9 +47,12 @@ class QAP_T8165(TestCase):
         # endregion
         # region Step 1
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        self.order_book.compare_values({"OrdStatus": "8", "ExecType": "8"},
+        order_id: str = response[0].get_parameter('OrderID')
+        bool_value = order_id.startswith('RO')
+        self.order_book.compare_values({"OrdStatus": "8", "ExecType": "8", 'BookValueForOrderID': True},
                                        {"OrdStatus": response[0].get_parameter('OrdStatus'),
-                                        "ExecType": response[0].get_parameter('ExecType')}, "Compare order sts")
+                                        "ExecType": response[0].get_parameter('ExecType'),
+                                        'BookValueForOrderID': bool_value}, "Compare order sts and order id")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
