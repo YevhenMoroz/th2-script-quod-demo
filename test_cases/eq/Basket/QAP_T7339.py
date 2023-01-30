@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7339(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -46,8 +47,8 @@ class QAP_T7339(TestCase):
 
         # region Check ExecutionReports
         list_to_ignore = ['CxlQty', 'SettlDate', 'ExpireDate', 'Account', 'GatingRuleCondName', 'GatingRuleName']
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1, list_to_ignore)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2, list_to_ignore)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_to_ignore)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_to_ignore)
         # endregion
 
         # region Send OrderCancelReplaceRequest on order
@@ -57,6 +58,7 @@ class QAP_T7339(TestCase):
         # endregion
 
         # region Check basket ExecutionReport
+
         exec_report4 = FixMessageExecutionReportOMS(self.data_set).set_default_canceled(self.ord_message)
         self.fix_verifier.check_fix_message_fix_standard(exec_report4,
                                                          ignored_fields=list_to_ignore)
@@ -79,5 +81,6 @@ class QAP_T7339(TestCase):
         exec_report5 = FixMessageExecutionReportOMS(self.data_set).set_default_canceled_list(self.message, 1)
         self.fix_verifier.check_fix_message_fix_standard(exec_report5,
                                                          ignored_fields=['CxlQty', 'SettlDate', 'ExpireDate', 'Account',
-                                                                         'OrigClOrdID'])
+                                                                         'OrigClOrdID', 'GatingRuleName',
+                                                                         'GatingRuleCondName'])
         # endregion
