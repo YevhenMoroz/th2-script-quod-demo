@@ -190,6 +190,8 @@ class CSMessageType(Enum):
     CDOrdNotif = "Order_CDOrdNotif"
     ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
     ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
+    ManualMatchExecsToParentOrderRequest = 'Order_ManualMatchExecsToParentOrderRequest'
+    ManualMatchExecsToParentOrderReply = "Order_ManualMatchExecsToParentOrderReply"
     CDOrdAckBatchReply = "Order_CDOrdAckBatchReply"
     CDTransferRequest = "Order_CDTransferRequest"
     CDTransferReply = "Order_CDTransferReply"
@@ -198,8 +200,19 @@ class CSMessageType(Enum):
     CDTransferAckReply = 'Order_CDTransferAckReply'
     CDOrdAssign = 'Order_CDOrdAssign'
     CDAssignReply = 'Order_CDAssignReply'
+    UnMatchRequest = 'Internal_UnMatchRequest'
 
 
 class MDAMessageType(Enum):
     MarketDataRequest = "Market_MarketDataRequest"
     MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
+
+
+class AQSMessageType(Enum):
+    FrontendQuery = 'Order_FrontendQuery'
+    FrontendQueryReply = 'Order_FrontendQueryReply'
+
+
+class StoredProcedureNamesForAqs(Enum):
+    FEExecutionTransferList = 'FE_ExecutionTransfer_List'
+    FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'

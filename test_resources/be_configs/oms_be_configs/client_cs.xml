@@ -1,0 +1,24 @@
+<!--
+$HeadURL: http://svnhost:3080/svn/midas/dev/trunk/order/cs/cfg/client_cs.xml $
+$LastChangedDate: 2018-04-12 15:59:18 +0200 (jeu., 12 avr. 2018) $
+$LastChangedRevision: 127162 $
+$LastChangedBy: adib $
+
+Copyright Quod Financial
+-->
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
+        <include>${CFG_DEFAULT}/cs.xml</include>
+    </includes>
+    <cs>
+        <fixAutoAcknowledge>true</fixAutoAcknowledge>
+        <cancelWaitChildOrderTerminationOrDFD>false</cancelWaitChildOrderTerminationOrDFD>
+        <!-- auto-acknowledge FE cancel and modify requests for care orders. Default false. This token has higher priority than 'assignFEModifyCancelToDesk' -->
+        <autoAcknowledge>false</autoAcknowledge>
+        <fixAutoAckNewOrderEvenIfRecipientNotConnected>true</fixAutoAckNewOrderEvenIfRecipientNotConnected>
+        <forwardRecipientRejectToHeadDisable>true</forwardRecipientRejectToHeadDisable>
+
+    </cs>
+</quod>

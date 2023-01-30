@@ -14,6 +14,12 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
+
 
 class QAP_T7688(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -37,8 +43,9 @@ class QAP_T7688(TestCase):
         cd_order_notif_id = cd_order_notif_message.get_parameter("CDOrdNotifBlock")["CDOrdNotifID"]
         # endregion
         # region Step 8
-        self.accept_request.set_default(ord_id, cd_order_notif_id, desk, True)
-        self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        self.accept_request.set_default(ord_id, cd_order_notif_id, desk, 'N', True)
+        respones = self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        print_message('Reject', respones)
         ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value, ord_id).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values({"CDTransStatus": "REJ"}, ord_rep, "Check order reject")
