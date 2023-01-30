@@ -29,7 +29,7 @@ class QAP_T7553(TestCase):
         # region Step 1
         self.nos.set_default_care_limit()
         self.java_api_manager.send_message_and_receive_response(self.nos)
-        ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameter(
-            JavaApiFields.OrdReplyBlock.value)
-        self.java_api_manager.compare_values({"WashBookAccountID": self.wash_book}, ord_rep, "Check wasbook")
+        ord_not = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            "OrdNotificationBlock"]
+        self.java_api_manager.compare_values({"WashBookAccountID": self.wash_book}, ord_not, "Check wasbook")
         # endregion
