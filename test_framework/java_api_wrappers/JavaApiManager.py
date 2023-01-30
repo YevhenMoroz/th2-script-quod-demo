@@ -5,8 +5,9 @@ from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
-    MDAMessageType
+    MDAMessageType, AQSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.java_api_wrappers.aqs_messages.Order_FrontendQueryReply import Order_FrontendQueryReply
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
 from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
@@ -15,6 +16,8 @@ from test_framework.java_api_wrappers.cs_message.CDTransferNotif import CDTransf
 from test_framework.java_api_wrappers.cs_message.CDTransferReply import CDTransferReply
 from test_framework.java_api_wrappers.cs_message.ManualMatchExecToParentOrdersReply import \
     ManualMatchExecToParentOrdersReply
+from test_framework.java_api_wrappers.cs_message.ManualMatchExecsToParentOrderReply import \
+    ManualMatchExecsToParentOrderReply
 from test_framework.java_api_wrappers.es_messages.NewOrderReply import NewOrderReply
 from test_framework.java_api_wrappers.es_messages.OrdReport import OrdReport
 from test_framework.java_api_wrappers.es_messages.OrderCancelReply import OrderCancelReply
@@ -251,7 +254,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
 
         elif message.get_message_type() == ORSMessageType.ComputeBookingFeesCommissionsRequest.value:
             response = self.act.submitComputeBookingFeesCommissionsRequest(
@@ -433,6 +436,18 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == CSMessageType.ManualMatchExecsToParentOrderRequest.value:
+            response = self.act.submitManualMatchExecsToParentOrderRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == AQSMessageType.FrontendQuery.value:
+            response = self.act.submitFrontendQueryRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -491,7 +506,8 @@ class JavaApiManager:
                                                                                            repeating_group_field].simple_value})
                                             else:
                                                 component_into_repeating_group = dict()
-                                                for component_into_group_field in repeating_group.message_value.fields[repeating_group_field].message_value.fields:
+                                                for component_into_group_field in repeating_group.message_value.fields[
+                                                    repeating_group_field].message_value.fields:
                                                     component_into_repeating_group.update({component_into_group_field:
                                                                                                repeating_group.message_value.fields[
                                                                                                    repeating_group_field].message_value.fields[
@@ -658,6 +674,10 @@ class JavaApiManager:
                 response_fix_message = CDAssignReply()
             elif message_type == ORSMessageType.TradeEntryBatchReply.value:
                 response_fix_message = TradeEntryBatchReply()
+            elif message_type == CSMessageType.ManualMatchExecsToParentOrderReply.value:
+                response_fix_message = ManualMatchExecsToParentOrderReply()
+            elif message_type == AQSMessageType.FrontendQueryReply.value:
+                response_fix_message = Order_FrontendQueryReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
