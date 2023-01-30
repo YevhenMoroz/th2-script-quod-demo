@@ -48,6 +48,7 @@ class QAP_T7397(TestCase):
         self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                  desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                  role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {"ClOrdID": bca.client_orderid(9)})
         responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
         self.return_result(responses, ORSMessageType.OrdReply.value)
         order_id2 = self.result.get_parameter('OrdReplyBlock')['OrdID']

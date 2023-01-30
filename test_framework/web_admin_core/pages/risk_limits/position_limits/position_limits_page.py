@@ -76,15 +76,19 @@ class PositionLimitsPage(CommonPage):
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MAX_SOFT_AMT_VALUE_XPATH).text
 
     def set_min_qty(self, value):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_FILTER_XPATH)
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_FILTER_XPATH, value)
 
     def get_min_qty(self):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_VALUE_XPATH)
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_QTY_VALUE_XPATH).text
 
     def set_min_amt(self, value):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_FILTER_XPATH)
         self.set_text_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_FILTER_XPATH, value)
 
     def get_min_amt(self):
+        self.horizontal_scroll(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_VALUE_XPATH)
         return self.find_by_xpath(PositionsLimitsConstants.MAIN_PAGE_MIN_AMT_VALUE_XPATH).text
 
     def set_max_qty(self, value):

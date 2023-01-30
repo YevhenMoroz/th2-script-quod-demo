@@ -51,6 +51,7 @@ class SubmitRequestConst(Enum):
     OrdCapacity_Agency = 'Agency'
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
+    Side_Sell = 'Sell'
 
 
 class AllocationReportConst(Enum):
@@ -201,6 +202,10 @@ class JavaApiFields(Enum):
     AddOrdersToOrderListReplyBlock = 'AddOrdersToOrderListReplyBlock'
     RemoveOrdersFromOrderListReplyBlock = 'RemoveOrdersFromOrderListReplyBlock'
     AccountGroupName = 'AccountGroupName'
+    PreTradeAllocationBlock = 'PreTradeAllocationBlock'
+    PreTradeAllocationList = 'PreTradeAllocationList'
+    PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
+    AllocAccountID = 'AllocAccountID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"

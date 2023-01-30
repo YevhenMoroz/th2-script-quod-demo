@@ -64,7 +64,7 @@ class QAP_T4288(TestCase):
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
 
-        self.text_reject_invalid_percentage_of_volume = constants.FreeNotesReject.InvalidPercentageOfVolume.value
+        self.text_reject_invalid_percentage_of_volume = constants.FreeNotesReject.PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation.value
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

@@ -17,7 +17,7 @@ class AutoHedgerConstants:
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
-    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    LOGOUT_BUTTON_XPATH = "//*[@title='Logout']"
     POSITION_BOOK_ALREADY_ASSIGNED_TO_MESSAGE = '//*[contains(text(),"Position Book already assigned to")]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"

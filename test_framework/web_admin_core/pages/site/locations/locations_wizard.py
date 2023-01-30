@@ -40,3 +40,9 @@ class LocationsWizard(CommonPage):
 
     def click_on_no_button(self):
         self.find_by_xpath(LocationsConstants.NO_BUTTON_XPATH).click()
+
+    def click_on_cancel(self):
+        self.find_by_xpath(LocationsConstants.CANCEL_BUTTON_XPATH).click()
+
+    def is_leave_page_confirmation_pop_up_displayed(self):
+        return self.is_element_present(LocationsConstants.CONFIRMATION_POP_UP)

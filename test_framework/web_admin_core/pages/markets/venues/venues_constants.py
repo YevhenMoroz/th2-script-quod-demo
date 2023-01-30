@@ -125,11 +125,11 @@ class VenuesConstants:
     TICK_SIZE_PROFILES_TAB_TICK_SIZE_REFPRICE_TYPE_FILTER_XPATH = '//*[@class="ng2-smart-th tickSizeRefPriceType ng-star-inserted"]//input'
 
     # --Tick size points sub tab--
-    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="plus"]'
-    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="checkmark"]'
-    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="close"]'
-    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="edit"]'
-    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following-sibling::app-inline-table//*[@data-name="trash-2"]'
+    TICK_SIZE_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="plus"]'
+    TICK_SIZE_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="checkmark"]'
+    TICK_SIZE_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="close"]'
+    TICK_SIZE_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="edit"]'
+    TICK_SIZE_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[text()="Tick Size Points"]/following::*[@data-name="trash-2"]'
 
     TICK_SIZE_POINTS_TAB_TICK_XPATH = '//*[@placeholder="Tick *"]'
     TICK_SIZE_POINTS_TAB_TICK_FILTER_XPATH = '//*[@class="ng2-smart-th tickSize ng-star-inserted"]//input'
@@ -183,9 +183,9 @@ class VenuesConstants:
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_STANDART_TRADING_PHASE_FILTER_XPATH = '//*[@class="ng2-smart-th standardTradingPhase ng-star-inserted"]//input'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_EXPIRY_CYCLE_XPATH = '//*[@placeholder="Expiry Cycle"]'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_EXPIRY_CYCLE_FILTER_XPATH = '//*[@class="ng2-smart-th standardTradingPhase ng-star-inserted"]//input'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_BEGIN_TIME_XPATH = '//*[@placeholder="Begin Time"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_BEGIN_TIME_XPATH = '//*[@placeholder="Phase Begin Time"]'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_BEGIN_TIME_FILTER_XPATH = '//*[@class="beginTime_ext ng2-smart-th ng-star-inserted"]//input'
-    TRADING_PHASE_PROFILE_SEQUENCES_TAB_END_TIME_XPATH = '//*[@placeholder="End Time"]'
+    TRADING_PHASE_PROFILE_SEQUENCES_TAB_END_TIME_XPATH = '//*[@placeholder="Phase End Time"]'
     TRADING_PHASE_PROFILE_SEQUENCES_TAB_END_TIME_FILTER_XPATH = '//*[@class="endTime_ext ng2-smart-th ng-star-inserted"]//input'
 
     # --Routing param groups sub tab--

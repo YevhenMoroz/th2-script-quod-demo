@@ -32,14 +32,13 @@ class QAP_T4360(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa)
         # endregion
 
         # region order parameters
         self.qty = 5000
         self.price = 100
         self.traded_qty = 2000
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_2.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_13.value
         self.weight_chix = 6
         self.weight_bats = 4
         self.leaves_qty = self.qty - self.traded_qty
@@ -102,11 +101,6 @@ class QAP_T4360(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region modify strategy
-        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "LISResidentTime", "5000")
-        # endregion
-
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         rfq_1_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay_for_rfq)
@@ -264,11 +258,6 @@ class QAP_T4360(TestCase):
 
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
-
-        # region revert modifying strategy
-        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark2", "LISResidentTime", "45000")
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)

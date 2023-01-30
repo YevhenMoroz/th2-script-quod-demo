@@ -102,4 +102,5 @@ class QAP_T7080(TestCase):
         self.api_manager.send_post_request(self.rest_institution_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        time.sleep(90)
         os.remove("temp.xml")
