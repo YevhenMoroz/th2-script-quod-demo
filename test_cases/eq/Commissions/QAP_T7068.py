@@ -140,7 +140,8 @@ class QAP_T7068(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_id = alloc_report[JavaApiFields.ClAllocID.value]
         # end_of_part
@@ -185,6 +186,6 @@ class QAP_T7068(TestCase):
 
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_commissions()
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_commissions()
