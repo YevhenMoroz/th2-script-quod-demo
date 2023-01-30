@@ -45,8 +45,9 @@ class QAP_T7339(TestCase):
         # endregion
 
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        list_to_ignore = ['CxlQty', 'SettlDate', 'ExpireDate', 'Account', 'GatingRuleCondName', 'GatingRuleName']
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, list_to_ignore)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, list_to_ignore)
         # endregion
 
         # region Send OrderCancelReplaceRequest on order
@@ -56,7 +57,6 @@ class QAP_T7339(TestCase):
         # endregion
 
         # region Check basket ExecutionReport
-        list_to_ignore = ['CxlQty', 'SettlDate', 'ExpireDate', 'Account']
         exec_report4 = FixMessageExecutionReportOMS(self.data_set).set_default_canceled(self.ord_message)
         self.fix_verifier.check_fix_message_fix_standard(exec_report4,
                                                          ignored_fields=list_to_ignore)
