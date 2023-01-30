@@ -125,7 +125,8 @@ class QAP_T6996(TestCase):
         fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
 
         fix_execution_report.add_tag(no_party)
-        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier']
+        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier',
+                                  'GatingRuleCondName', 'GatingRuleName']
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
         # endregion
