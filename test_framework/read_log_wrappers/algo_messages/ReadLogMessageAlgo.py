@@ -219,5 +219,12 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_exec_type(self) -> ReadLogMessage:
+        base_parameters = {
+            "OrdID": "*",
+            "ExecType": "CancelReject"
+        }
+        super().change_parameters(base_parameters)
+        return self
 
 
