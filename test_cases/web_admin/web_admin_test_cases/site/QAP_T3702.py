@@ -95,6 +95,8 @@ class QAP_T3702(CommonTestCase):
             common_page = CommonPage(self.web_driver_container)
             common_page.click_on_info_error_message_pop_up()
             wizard.click_on_close()
+            if wizard.is_leave_page_confirmation_pop_up_displayed():
+                wizard.click_on_ok_button()
             time.sleep(2)
             main_page.click_on_download_csv()
             time.sleep(2)

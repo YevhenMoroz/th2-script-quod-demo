@@ -123,6 +123,7 @@ class QAP_T3879(CommonTestCase):
         schedules_wizard.click_on_delete_button_at_schedule_name()
         wizard = ClientTiersWizard(self.web_driver_container)
         wizard.click_on_go_back_button()
+        client_tiers_values_tab.select_schedule_checkbox()
         wizard.click_on_save_changes()
 
         client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
@@ -198,10 +199,10 @@ class QAP_T3879(CommonTestCase):
             instrument_page.click_on_more_actions()
             instrument_page.click_on_edit()
 
-            self.verify("Warning for external client appears", False,
+            self.verify("Warning for external client not appears", False,
                         instrument_external_client.is_warning_icon_displayed())
 
-            self.verify("Warning for internal client appears", False,
+            self.verify("Warning for internal client not appears", False,
                         instrument_internal_client.is_warning_icon_displayed())
             instrument_wizard.click_on_save_changes()
 

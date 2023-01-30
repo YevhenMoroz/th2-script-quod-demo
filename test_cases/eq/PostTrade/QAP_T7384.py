@@ -123,7 +123,7 @@ class QAP_T7384(TestCase):
         ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
         alloc_id: str = alloc_report_reply["ClientAllocID"]
         trade_date_block: str = alloc_report_reply["TradeDate"]
-        trade_date_expected = datetime.strftime(datetime.now(), "%Y-%#m-%d") + "T12:00"
+        trade_date_expected = datetime.strftime(datetime.now(), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.AllocStatus.value: "APP",

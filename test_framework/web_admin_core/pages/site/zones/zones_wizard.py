@@ -41,6 +41,9 @@ class ZonesWizard(CommonPage):
     def click_on_no_button(self):
         self.find_by_xpath(ZonesConstants.NO_BUTTON_XPATH).click()
 
+    def click_on_cancel(self):
+        self.find_by_xpath(ZonesConstants.CANCEL_BUTTON_XPATH).click()
+
     def is_such_record_exists_massage_displayed(self):
         if self.find_by_xpath(
                 ZonesConstants.SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH).text == "Such a record already exists":
@@ -50,3 +53,6 @@ class ZonesWizard(CommonPage):
 
     def is_wizard_open(self):
         return self.is_element_present(ZonesConstants.ZONES_WIZARD_PAGE_TITLE_XPATH)
+
+    def is_leave_page_confirmation_pop_up_displayed(self):
+        return self.is_element_present(ZonesConstants.CONFIRMATION_POP_UP)
