@@ -11,35 +11,32 @@ class MarketDataRequestFX(JavaApiMessage):
         super().__init__(message_type=MDAMessageType.MarketDataRequest.value, data_set=data_set)
         super().change_parameters(parameters)
 
-    def set_default_params(self):
+    def set_default_params_sub(self):
+        client_tier_id = self.get_data_set().get_client_tier_id_by_name("client_tier_id_1")
+        # client_tier_id = "4"
+        listing_id = self.get_data_set().get_listing_id_by_name("gbp_usd_spo")
         md_request_params = {
-            "SEND_SUBJECT": "QUOD.PKS.REQUEST",
-            "REPLY_SUBJECT": "QUOD.PKS.REPLY",
-            "RequestForPositionsBlock": {
-                "ClientPosReqID": bca.client_orderid(9),
-                "InstrumentBlock": {
-                    "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                    "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_spot"),
-                },
-                "PosReqType": "Positions",
-                "SubscriptionRequestType": "Subscribe",
-                "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
-                # "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
-                "ClientAccountGroupID": "Iridium1",
-                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
-
+            "SEND_SUBJECT": "MDA.QUOD.PRICING.8.SUB",
+            "REPLY_SUBJECT": f"MDA.{listing_id}.{client_tier_id}.D.PRICING.8",
+            "MarketDataRequestBlock": {
+                "MDReqID": bca.client_orderid(10),
+                "MDSymbolList": {
+                    "MDSymbolBlock": [
+                        {
+                            "ListingID": listing_id,
+                            "MDSymbol": f"{listing_id}.{client_tier_id}",
+                            "ClientTierID": client_tier_id,
+                            "FeedType": "D",
+                            "SubscriptionRequestType": "SUB",
+                        }
+                    ]
+                }
             }
         }
         super().change_parameters(md_request_params)
         return self
 
-    # def change_client(self, client):
-    #     params = self.get_parameters()
-    #     params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
-    #     return self
-    #
-    # def change_instrument(self, instrument, currency):
-    #     params = self.get_parameters()
-    #     params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"]["InstrSymbol"] = instrument
-    #     params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
-    #     return self
+    def unsubscribe(self):
+        md_block = self.get_parameter("MarketDataRequestBlock")
+        md_sym_block = md_block["MDSymbolList"]["MDSymbolBlock"][0]
+        md_sym_block["SubscriptionRequestType"] = "UNS"
