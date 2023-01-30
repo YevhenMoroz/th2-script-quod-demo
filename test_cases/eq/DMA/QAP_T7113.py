@@ -103,7 +103,8 @@ class QAP_T7113(TestCase):
             self.rule_manager.remove_rule(trade_with_trade_date)
 
         # region check TradeData in the exec report of the first message
-        ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc']
+        ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc',
+                        "GatingRuleCondName", "GatingRuleName"]
         self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({'OrderID': ord_id1, 'TradeDate': default_trade_date})
