@@ -219,19 +219,5 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
-    def set_compare_message_for_check_mapping(self) -> ReadLogMessage:
-        base_parameters = {
-            "Parameter1": "*",
-            "Value1": "*",
-            "Parameter2": "*",
-            "Value2": "*",
-            "Parameter3": "*",
-            "Value3": "*",
-            "Parameter4": "*",
-            "Value4": "*",
-        }
-        super().change_parameters(base_parameters)
-        return self
-
 
 

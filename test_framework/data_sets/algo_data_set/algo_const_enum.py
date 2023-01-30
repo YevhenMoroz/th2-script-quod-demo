@@ -437,7 +437,6 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
     key_params_log_319_check_order_event = ['OrderId', 'Text']
-    key_params_log_319_check_mapping = ['Parameter1', 'Value1', 'Parameter2', 'Value2', 'Parameter3', 'Value3', 'Parameter4', 'Value4']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
