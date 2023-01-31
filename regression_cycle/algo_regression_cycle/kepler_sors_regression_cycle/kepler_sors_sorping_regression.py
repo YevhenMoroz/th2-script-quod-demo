@@ -2,6 +2,10 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10393 import QAP_T10393
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10416 import QAP_T10416
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10420 import QAP_T10420
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10421 import QAP_T10421
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10428 import QAP_T10428
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4957 import QAP_T4957
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4959 import QAP_T4959
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9011 import QAP_T9011
@@ -189,6 +193,10 @@ def test_run(parent_id=None, version=None):
         QAP_T9364(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9365(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10393(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10416(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10420(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10421(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10428(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
