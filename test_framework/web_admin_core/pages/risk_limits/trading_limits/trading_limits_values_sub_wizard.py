@@ -56,3 +56,23 @@ class TradingLimitsValuesSubWizardPage(CommonPage):
 
     def get_max_soft_amount(self):
         return self.get_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MAX_SOFT_AMOUNT_XPATH)
+
+    def set_min_display(self, value):
+        self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MIN_DISPLAY_XPATH, value)
+
+    def get_min_display(self):
+        return self.get_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MIN_DISPLAY_XPATH)
+
+    def set_max_display(self, value):
+        self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MAX_DISPLAY_XPATH, value)
+
+    def get_max_display(self):
+        return self.get_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MAX_DISPLAY_XPATH)
+
+    def set_min_display_percentage(self, value):
+        self.set_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MIN_DISPLAY_PERCENTAGE_XPATH, value)
+
+    def get_min_display_percentage(self):
+        return self.get_text_by_xpath(TradingLimitsConstants.VALUES_TAB_MIN_DISPLAY_PERCENTAGE_XPATH)
+
+

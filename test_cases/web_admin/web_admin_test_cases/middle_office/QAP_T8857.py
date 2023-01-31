@@ -32,7 +32,7 @@ class QAP_T8857(CommonTestCase):
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.commission_profile_name = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
                                         for _ in range(2)]
-        self.comm_xunit = 'Quantity'
+        self.comm_xunit = ['Amount', 'Quantity']
         self.comm_algorithm = 'Flat'
         self.base_values = '1 '
         self.misc_fee_type = ['Other', 'Agent']
@@ -41,8 +41,8 @@ class QAP_T8857(CommonTestCase):
         exec_fee_profile = FeesExecFeeProfileSubWizard(self.web_driver_container)
         exec_fee_profile.click_on_plus()
         exec_fee_profile.set_commission_profile_name(name)
-        exec_fee_profile.set_comm_type(comm_type)
         exec_fee_profile.set_comm_xunit(comm_xunit)
+        exec_fee_profile.set_comm_type(comm_type)
         exec_fee_profile.set_comm_algorithm(comm_algorithm)
         commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
         commission_profile_points.click_on_plus()
@@ -60,9 +60,10 @@ class QAP_T8857(CommonTestCase):
         values_tab = FeesValuesSubWizard(self.web_driver_container)
         values_tab.click_on_manage_exec_fee_profile()
 
-        self.create_new_exec_fee_profile(self.commission_profile_name[0], self.comm_type[0], self.comm_xunit,
+        self.create_new_exec_fee_profile(self.commission_profile_name[0], self.comm_type[0], self.comm_xunit[0],
                                          self.comm_algorithm, self.base_values)
-        self.create_new_exec_fee_profile(self.commission_profile_name[1], self.comm_type[1], self.comm_xunit,
+        time.sleep(1)
+        self.create_new_exec_fee_profile(self.commission_profile_name[1], self.comm_type[1], self.comm_xunit[1],
                                          self.comm_algorithm, self.base_values)
 
         wizard = FeesWizard(self.web_driver_container)
@@ -84,6 +85,7 @@ class QAP_T8857(CommonTestCase):
             time.sleep(1)
             self.verify("Fees is not saved. Exec Scope = AllExec, CommType = Absolute", True,
                         common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
 
             values_tab.set_exec_scope(self.exec_scope[3])
             values_tab.set_exec_fee_profile(self.commission_profile_name[0])
@@ -91,6 +93,7 @@ class QAP_T8857(CommonTestCase):
             time.sleep(1)
             self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = Absolute", True,
                         common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
 
             values_tab.set_exec_scope(self.exec_scope[0])
             values_tab.set_exec_fee_profile(self.commission_profile_name[1])
@@ -98,6 +101,7 @@ class QAP_T8857(CommonTestCase):
             time.sleep(1)
             self.verify("Fees is not saved. Exec Scope = AllExec, CommType = PerUnit", True,
                         common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
 
             values_tab.set_exec_scope(self.exec_scope[3])
             values_tab.set_exec_fee_profile(self.commission_profile_name[1])
@@ -105,28 +109,23 @@ class QAP_T8857(CommonTestCase):
             time.sleep(1)
             self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = PerUnit", True,
                         common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
 
             values_tab.set_exec_scope(self.exec_scope[2])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[0])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = FirstExec, CommType = Absolute", True,
-                        common_act.is_error_message_displayed())
-
-            values_tab.set_exec_scope(self.exec_scope[1])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[0])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = DayFirstExec, CommType = Absolute", True,
-                        common_act.is_error_message_displayed())
-
-            values_tab.set_misc_fee_type(self.misc_fee_type[1])
-            values_tab.set_exec_scope('')
             values_tab.set_exec_fee_profile(self.commission_profile_name[1])
             wizard.click_on_save_changes()
             time.sleep(1)
-            self.verify("Fees is not saved. Misc Fee Type = Agent, CommType = PerUnit", True,
+            self.verify("Fees is not saved. Exec Scope = FirstExec, CommType != Absolute", True,
                         common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
+
+            values_tab.set_exec_scope(self.exec_scope[1])
+            values_tab.set_exec_fee_profile(self.commission_profile_name[1])
+            wizard.click_on_save_changes()
+            time.sleep(1)
+            self.verify("Fees is not saved. Exec Scope = DayFirstExec, CommType != Absolute", True,
+                        common_act.is_error_message_displayed())
+            common_act.click_on_info_error_message_pop_up()
 
             values_tab.set_description(self.description)
             values_tab.set_exec_scope(self.exec_scope[2])

@@ -70,12 +70,20 @@ class QAP_T3566(CommonTestCase):
 
         if page == "Institutions":
             institution_wizard.click_on_close()
+            if institution_wizard.is_leave_page_confirmation_pop_up_displayed():
+                institution_wizard.click_on_no_button()
         elif page == "Zones":
             zones_wizard.click_on_close()
+            if zones_wizard.is_leave_page_confirmation_pop_up_displayed():
+                zones_wizard.click_on_no_button()
         elif page == "Locations":
             locations_wizard.click_on_close()
+            if locations_wizard.is_leave_page_confirmation_pop_up_displayed():
+                locations_wizard.click_on_no_button()
         elif page == "Desks":
             desks_wizard.click_on_close_wizard()
+            if desks_wizard.is_leave_page_confirmation_pop_up_displayed():
+                desks_wizard.click_on_no_button()
 
     def step_check_full_screen_after_edit_btn(self, page):
         common_page = CommonPage(self.web_driver_container)
@@ -111,12 +119,20 @@ class QAP_T3566(CommonTestCase):
 
         if page == "Institutions":
             institution_wizard.click_on_close()
+            if institution_wizard.is_leave_page_confirmation_pop_up_displayed():
+                institution_wizard.click_on_ok_button()
         elif page == "Zones":
             zones_wizard.click_on_close()
+            if zones_wizard.is_leave_page_confirmation_pop_up_displayed():
+                zones_wizard.click_on_ok_button()
         elif page == "Locations":
             locations_wizard.click_on_close()
+            if locations_wizard.is_leave_page_confirmation_pop_up_displayed():
+                locations_wizard.click_on_ok_button()
         elif page == "Desks":
             desks_wizard.click_on_close_wizard()
+            if desks_wizard.is_leave_page_confirmation_pop_up_displayed():
+                desks_wizard.click_on_ok_button()
 
     def step_check_full_screen_after_clone_btn(self, page):
         common_page = CommonPage(self.web_driver_container)

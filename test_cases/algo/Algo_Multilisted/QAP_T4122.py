@@ -158,7 +158,7 @@ class QAP_T4122(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params_dec, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params_dec = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params_dec, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params_dec.add_tag(dict(SettlType='*', SettlDate='*', StopPx=self.dec_stop_price)).change_parameters(dict(OrdType=self.order_type_stop_lmt)).remove_parameter('NoParty')
+        replaced_multilisting_order_params_dec.add_tag(dict(SettlType='*', SettlDate='*', StopPx=self.dec_stop_price)).change_parameters(dict(OrdType=self.order_type_stop_lmt, Price=self.dec_price)).remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params_dec, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 

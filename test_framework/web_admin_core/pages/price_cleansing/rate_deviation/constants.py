@@ -51,6 +51,7 @@ class Constants:
             REFERENCE_VENUES_BUTTON = '//*[@formcontrolname="priceCleansingReferenceVenue"]//nb-icon//*[@data-name="chevron-down"]'
             REFERENCE_VENUES_FIELD = '//*[@formcontrolname="priceCleansingReferenceVenue"]/button'
             REFERENCE_VENUES_NAME_IN_DROP_DOWN = '//nb-option-list//nb-option'
+            REFERENCE_VENUE_LINK = '//*[@id="priceCleansingReferenceVenue"]//..//a[normalize-space()="{}"]'
             PRICE_DEVIATION = '//input[@id="priceDeviation"]'
             PRICE_DEVIATION_FORMAT = '//input[@id="priceDeviationFormat"]'
             REFERENCE_PRICE = '//input[@id="priceDeviationRefPrice"]'

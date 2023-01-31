@@ -89,8 +89,9 @@ class QAP_T4886(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid-self.tick_size)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
-        self.rule_list = [nos_rule, ocr_rule]
+        self.rule_list = [nos_rule, ocr_rule, ocrr_rule]
         # endregion
 
         now = datetime.utcnow()
@@ -179,8 +180,6 @@ class QAP_T4886(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        RuleManager(Simulators.algo).remove_rules(self.rule_list)
-
         # region Cancel Algo Order
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -195,3 +194,5 @@ class QAP_T4886(TestCase):
         cancel_twap_order.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
+
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)

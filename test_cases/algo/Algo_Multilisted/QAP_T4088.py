@@ -151,5 +151,7 @@ class QAP_T4088(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Eliminate')
         # endregion
 
+        time.sleep(5)
+
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

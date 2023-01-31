@@ -66,7 +66,6 @@ class QAP_T8930(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_edit()
 
-            wizard.click_on_edit_at_sub_counterparts_tab()
             actual_result = [sub_counterparts_wizard.get_name_value_at_sub_counterparts_tab(),
                              sub_counterparts_wizard.get_party_id_value_at_sub_counterparts_tab(),
                              sub_counterparts_wizard.get_ext_id_client_value_at_sub_counterparts_tab(),
