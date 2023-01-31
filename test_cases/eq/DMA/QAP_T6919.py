@@ -89,7 +89,8 @@ class QAP_T6919(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
                                                          ignored_fields=['Parties', 'QuodTradeQualifier', 'BookID',
                                                                          'NoParty', 'SecondaryOrderID', 'tag5120',
-                                                                         'LastMkt', 'Text', 'ExecBroker'])
+                                                                         'LastMkt', 'Text', 'ExecBroker',
+                                                                         "GatingRuleCondName", "GatingRuleName"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

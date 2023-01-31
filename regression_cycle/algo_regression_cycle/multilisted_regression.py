@@ -7,8 +7,8 @@ from datetime import datetime
 from test_cases.algo.Algo_Multilisted.QAP_T8142 import QAP_T8142
 from test_cases.algo.Algo_Multilisted.QAP_T4053 import QAP_T4053
 # from test_cases.algo.Algo_Multilisted.QAP_T4043 import QAP_T4043
-# from test_cases.algo.Algo_Multilisted.QAP_T4058 import QAP_T4058
-# from test_cases.algo.Algo_Multilisted.QAP_T4059 import QAP_T4059
+from test_cases.algo.Algo_Multilisted.QAP_T4058 import QAP_T4058
+from test_cases.algo.Algo_Multilisted.QAP_T4059 import QAP_T4059
 from test_cases.algo.Algo_Multilisted.QAP_T4137 import  QAP_T4137
 from test_cases.algo.Algo_Multilisted.QAP_T4121 import  QAP_T4121
 from test_cases.algo.Algo_Multilisted.QAP_T4106 import  QAP_T4106
@@ -57,7 +57,7 @@ from test_cases.algo.Algo_Multilisted.QAP_T4098 import QAP_T4098
 from test_cases.algo.Algo_Multilisted.QAP_T4097 import QAP_T4097
 from test_cases.algo.Algo_Multilisted.QAP_T4096 import QAP_T4096
 from test_cases.algo.Algo_Multilisted.QAP_T4091 import QAP_T4091
-# from test_cases.algo.Algo_Multilisted.QAP_T4140 import QAP_T4140
+from test_cases.algo.Algo_Multilisted.QAP_T4140 import QAP_T4140
 from test_cases.algo.Algo_Multilisted.QAP_T4110 import QAP_T4110
 from test_cases.algo.Algo_Multilisted.QAP_T4111 import QAP_T4111
 from test_cases.algo.Algo_Multilisted.QAP_T4127 import QAP_T4127
@@ -139,6 +139,9 @@ def test_run(parent_id=None, version=None):
         QAP_T8432(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8431(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8142(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4058(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4059(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4140(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 

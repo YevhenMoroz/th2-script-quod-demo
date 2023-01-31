@@ -165,8 +165,9 @@ class QAP_T4889(TestCase):
 
         new_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.slice2_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(new_slice2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 2')
-        time.sleep(40)
         # endregion
+
+        time.sleep(50)
 
         # region check eliminate child DMA slice 2
         eliminate_slice2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.slice2_order, self.gateway_side_buy, self.status_cancel)

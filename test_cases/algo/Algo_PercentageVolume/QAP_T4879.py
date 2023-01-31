@@ -95,8 +95,8 @@ class QAP_T4879(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
-
-        self.rule_list = [ocr_rule, nos_dma_rule, ocr_rule]
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        self.rule_list = [ocr_rule, nos_dma_rule, ocrr_rule]
         # endregion
 
         # region Send_MarkerData

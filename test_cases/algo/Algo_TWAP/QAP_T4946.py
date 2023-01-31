@@ -138,8 +138,6 @@ class QAP_T4946(TestCase):
         time.sleep(5)
 
         # region Check child DMA order Slice 1
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 1", self.test_id))
-
         slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
 
@@ -151,8 +149,6 @@ class QAP_T4946(TestCase):
         time.sleep(75)
 
         # region Check child DMA order Slice 2
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
-
         slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
 
@@ -164,8 +160,6 @@ class QAP_T4946(TestCase):
         time.sleep(75)
 
         # region Check child DMA order Slice 3
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 3", self.test_id))
-
         slice3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         slice3_order.change_parameters(dict(OrderQty=self.slice3_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
 
@@ -177,8 +171,6 @@ class QAP_T4946(TestCase):
         time.sleep(75)
 
         # region Check child DMA order Slice 4
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 4", self.test_id))
-
         slice4_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
         slice4_order.change_parameters(dict(OrderQty=self.slice4_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
 

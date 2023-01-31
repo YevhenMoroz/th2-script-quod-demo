@@ -31,6 +31,9 @@ class VenuesHolidaySubWizard(CommonPage):
     def set_holiday_name_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.HOLIDAYS_TAB_HOLIDAY_NAME_FILTER_XPATH, value)
 
+    def is_holiday_found(self, value):
+        return self.is_element_present(VenuesConstants.HOLIDAYS_TAB_DISPLAYED_ENTITY_XPATH.format(value))
+
     # --------------------------- holiday calendars
     def click_on_plus_button_at_holiday_calendars(self):
         self.find_by_xpath(VenuesConstants.HOLIDAYS_CALENDAR_TAB_PLUS_BUTTON_XPATH).click()

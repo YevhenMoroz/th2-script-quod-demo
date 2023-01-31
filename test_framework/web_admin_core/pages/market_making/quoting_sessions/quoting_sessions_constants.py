@@ -17,7 +17,7 @@ class QuotingSessionsConstants:
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
-    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    LOGOUT_BUTTON_XPATH = "//*[@title='Logout']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//*[@status="danger"]//following-sibling::span'
 
     # main page

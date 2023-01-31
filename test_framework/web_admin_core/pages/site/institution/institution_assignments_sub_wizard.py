@@ -10,6 +10,10 @@ class InstitutionAssignmentsSubWizard(CommonPage):
 
     def click_on_zones(self, desk_name):
         self.find_by_xpath(InstitutionsConstants.ASSIGNMENTS_TAB_ZONES_LINK_XPATH.format(desk_name)).click()
+        if self.is_element_present(InstitutionsConstants.CONFIRMATION_POP_UP):
+            self.find_by_xpath(InstitutionsConstants.OK_BUTTON_XPATH).click()
 
     def click_on_user(self, user_name):
         self.find_by_xpath(InstitutionsConstants.ASSIGNMENTS_TAB_USERS_LINK_XPATH.format(user_name)).click()
+        if self.is_element_present(InstitutionsConstants.CONFIRMATION_POP_UP):
+            self.find_by_xpath(InstitutionsConstants.OK_BUTTON_XPATH).click()
