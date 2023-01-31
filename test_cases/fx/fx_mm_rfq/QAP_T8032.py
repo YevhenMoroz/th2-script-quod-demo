@@ -29,6 +29,7 @@ class QAP_T8032(TestCase):
         self.fix_manager_buy = FixManager(self.fxfh_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.quote_request_prepare = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1")
         self.quote = FixMessageQuoteFX()
@@ -40,6 +41,11 @@ class QAP_T8032(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.quote_request_prepare.set_deposit_and_loan_param()
+        self.quote_request_prepare.update_repeating_group_by_index("NoRelatedSym", index=0,
+                                                                   SettlDate=self.settle_date_spot,
+                                                                   MaturityDate=self.settle_date_wk1)
+        self.fix_manager_sel.send_message_and_receive_response(self.quote_request_prepare, self.test_id)
         # region Send MD for WK1 USD
         self.fix_md.set_md_for_deposit_and_loan_fwd()
         self.fix_md.update_MDReqID(self.md_req_id, self.fxfh_connectivity, "FX")
