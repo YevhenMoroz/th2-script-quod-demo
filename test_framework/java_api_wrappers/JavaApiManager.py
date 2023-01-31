@@ -703,7 +703,7 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            raise KeyError(f"Element: {k} not found")
+            raise ValueError('\033[91m' + f"Element: {k} not found"+ '\033[0m')
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
