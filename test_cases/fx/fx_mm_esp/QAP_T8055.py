@@ -63,9 +63,7 @@ class QAP_T8055(TestCase):
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-
-        ]
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
         # region incorrect
         self.incorrect_no_md_entries = [
             {"MDEntryType": "0",
@@ -79,37 +77,12 @@ class QAP_T8055(TestCase):
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_fwd,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            # {"MDEntryType": "0",
-            #  "MDEntryPx": 1.1849,
-            #  "MDEntrySize": 6000000,
-            #  "MDEntryPositionNo": 2,
-            #  'SettlDate': self.settle_date_fwd,
-            #  "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            # {"MDEntryType": "1",
-            #  "MDEntryPx": 1.1852,
-            #  "MDEntrySize": 6000000,
-            #  "MDEntryPositionNo": 2,
-            #  'SettlDate': self.settle_date_fwd,
-            #  "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            # {"MDEntryType": "0",
-            #  "MDEntryPx": 1.1848,
-            #  "MDEntrySize": 120000000,
-            #  "MDEntryPositionNo": 3,
-            #  'SettlDate': self.settle_date_spot,
-            #  "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            # {"MDEntryType": "1",
-            #  "MDEntryPx": 1.1853,
-            #  "MDEntrySize": 120000000,
-            #  "MDEntryPositionNo": 3,
-            #  'SettlDate': self.settle_date_spot,
-            #  "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}
-        ]
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region precondition
+        # region Step 1-2
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager_gtw.send_message(self.md_request)
@@ -117,14 +90,6 @@ class QAP_T8055(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        # endregion
-        self.fix_md.set_market_data()
-        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
-        self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
-        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
-        self.fix_manager_fh_314.send_message(self.fix_md)
-        self.sleep(4)
-
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
@@ -134,6 +99,22 @@ class QAP_T8055(TestCase):
         self.fix_verifier.check_fix_message(self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request, "Unsubscribe")
+        # endregion
+        # region Step 3-4
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
+        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(4)
+        self.md_request.set_md_req_parameters_maker(). \
+            update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
+        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request, "Unsubscribe")
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
