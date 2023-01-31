@@ -4,6 +4,7 @@ class CommonConstants:
     COMMON_CHECKBOX_STATE_SPAN_CSS_SELECTOR = "span[class*='custom-checkbox']"
     CHECKED_ATTRIBUTE = "checked"
     HORIZONTAL_SCROLL_ELEMENT_XPATH = '//*[@ref="eBodyHorizontalScrollViewport"]'
+    HORIZONTAL_SCROLL_WHEEL = '//*[@ref="eBottomContainer"]'
     DROP_MENU_OPTION_PATTERN_XPATH = '//option[text()="{}"]'
     HELP_ICON = '//nb-card-header//*[@nbtooltip="Help"]'
     USER_ICON = '//*[@data-name="person"]'

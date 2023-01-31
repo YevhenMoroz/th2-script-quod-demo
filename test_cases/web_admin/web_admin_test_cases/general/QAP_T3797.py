@@ -33,12 +33,7 @@ class QAP_T3797(CommonTestCase):
             time.sleep(1)
             version_from_copy_version_button = main_page.extract_version_from_copy_version()
             admin_version = main_page.extract_admin_version()
-            print(admin_version)
             self.verify("Is version compared", True, version_from_copy_version_button in admin_version)
-
-
-
-
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

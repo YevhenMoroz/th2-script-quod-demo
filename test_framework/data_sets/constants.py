@@ -326,6 +326,7 @@ class TransactionStatus(Enum):
     new = "New"
     open = "Open"
     canceled = "Cancelled"
+    terminated = "Terminated"
 
 
 class ReadLogVerifiers(Enum):
@@ -351,21 +352,11 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
-    log_319_check_mapping_on_sell_side = "log319-check-mapping-on-sell-side"
-    log_319_check_mapping_on_buy_side = "log319-check-mapping-on-buy-side"
+    log_319_check_exec_type = "log319-check-exec-type"
 
 
-class ReadLogParams(Enum):
-    party_id = 'PartyID'
-    party_id_source = 'PartyIDSource'
-    party_role = 'PartyRole'
-    cl_ord_id = 'ClOrdID'
-    algopolicy_name = 'AlgoPolicyName'
-    security_exchange = 'SecurityExchange'
-    external_strategy_name = 'ExternalStrategyName'
-    cl_algopolicy_id = 'ClientAlgoPolicyID'
-    cl_account_group_id = 'ClientAccountGroupID'
-    parties_block = 'PartiesBlock'
+class ExecType(Enum):
+    cancel_reject = "CancelReject"
 
 
 class WebAdminURL(Enum):

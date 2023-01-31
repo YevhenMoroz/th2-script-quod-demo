@@ -63,33 +63,51 @@ class CommissionsPage(CommonPage):
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_INSTR_TYPE_FILTER_XPATH, value)
 
     def set_venue(self, value):
+        self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_VENUE_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VENUE_FILTER_XPATH, value)
 
     def set_side(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_SIDE_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_SIDE_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_SIDE_FILTER_XPATH, value)
 
     def set_execution_policy(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_EXECUTION_POLICY_FILTER_XPATH, value)
 
     def set_virtual_account(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_VIRTUAL_ACCOUNT_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_VIRTUAL_ACCOUNT_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_VIRTUAL_ACCOUNT_FILTER_XPATH, value)
 
     def set_client(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_CLIENT_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_CLIENT_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_FILTER_XPATH, value)
 
     def set_client_group(self, value):
+        self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH, value)
 
     def set_client_list(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_CLIENT_LIST_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_CLIENT_LIST_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_CLIENT_LIST_FILTER_XPATH, value)
 
     def set_commission_amount_type(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_AMOUNT_TYPE_FILTER_XPATH, value)
 
     def set_commission_profile(self, value):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH)
         self.set_text_by_xpath(CommissionsConstants.MAIN_PAGE_COMMISSION_PROFILE_FILTER_XPATH, value)
 
     def click_on_re_calculate_for_allocations(self):
+        if not self.is_element_present(CommissionsConstants.MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH):
+            self.horizontal_scroll(CommissionsConstants.MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH)
         self.find_by_xpath(CommissionsConstants.MAIN_PAGE_RE_CALCULATE_FOR_ALLOCATIONS_FILTER_XPATH).click()
 
     def offset_horizontal_slide(self):

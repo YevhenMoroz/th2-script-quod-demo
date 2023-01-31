@@ -199,7 +199,7 @@ class QAP_T7297(TestCase):
 
         # Checking AllocationReportBlock
         alloc_report_reply = self.java_api_manager.get_last_message(
-            ORSMessageType.AllocationReport.value
+            ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value
         ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
         alloc_id = alloc_report_reply["ClientAllocID"]
         self.java_api_manager.compare_values(

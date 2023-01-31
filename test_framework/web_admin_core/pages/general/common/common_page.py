@@ -91,7 +91,6 @@ class CommonPage(CP):
         self.click_on_copy_version_button()
         time.sleep(1)
         element = pyperclip.paste()
-        print(element)
         return element
 
     def click_on_about(self):
