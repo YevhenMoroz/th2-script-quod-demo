@@ -10,6 +10,8 @@ from test_framework.web_admin_core.pages.positions.wash_books.wash_books_assignm
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_page import WashBookRulesPage
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_wizard import WashBookRulesWizard
 
+from test_framework.web_admin_core.pages.site.institution.institutions_wizard \
+    import InstitutionsWizard
 from test_framework.web_admin_core.pages.site.institution.institution_values_sub_wizard \
     import InstitutionsValuesSubWizard
 
@@ -53,6 +55,11 @@ class QAP_T3404(CommonTestCase):
 
             self.verify("The system redirected the user to the settings of the selected Institution.",
                         self.institution, institution_values_tab.get_institution_name())
+
+            institution_wizard = InstitutionsWizard(self.web_driver_container)
+            institution_wizard.click_on_close()
+            if institution_wizard.is_leave_page_confirmation_pop_up_displayed():
+                institution_wizard.click_on_ok_button()
 
             side_menu.open_washbook_rules_page()
             wash_book_rules_page = WashBookRulesPage(self.web_driver_container)

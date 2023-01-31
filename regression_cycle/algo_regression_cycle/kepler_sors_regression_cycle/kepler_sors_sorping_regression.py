@@ -1,6 +1,9 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10393 import QAP_T10393
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4957 import QAP_T4957
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4959 import QAP_T4959
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9011 import QAP_T9011
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9274 import QAP_T9274
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9305 import QAP_T9305
@@ -120,6 +123,8 @@ def test_run(parent_id=None, version=None):
         QAP_T4940(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4941(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4944(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4957(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4959(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4963(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4966(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4967(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -183,6 +188,7 @@ def test_run(parent_id=None, version=None):
         QAP_T9359(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9364(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9365(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10393(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

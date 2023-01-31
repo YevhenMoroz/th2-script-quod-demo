@@ -684,7 +684,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             AvgPx='*',
             OrdStatus=1,
             Currency=new_order_single.get_parameter('Currency'),
-            TimeInForce=0,
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
             ExDestination=new_order_single.get_parameter('ExDestination'),
@@ -1144,7 +1144,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExDestination=new_order_single.get_parameter('ExDestination'),
             AvgPx='*',
             ClOrdID='*',
-            CumQty='0',
+            CumQty='*',
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             ExecID='*',
             OrderID='*',
@@ -1181,6 +1181,33 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Side=new_order_single.get_parameter('Side'),
             TransactTime='*',
             ExecType=4,
+            LeavesQty='*',
+            Text='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def set_params_for_nos_dfd_rule(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            LastPx='*',
+            LastQty='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            Price=new_order_single.get_parameter('Price'),
+            Currency=new_order_single.get_parameter('Currency'),
+            Instrument=new_order_single.get_parameter('Instrument'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=3,
+            Side=new_order_single.get_parameter('Side'),
+            TransactTime='*',
+            ExecType=3,
             LeavesQty='*',
             Text='*'
         )

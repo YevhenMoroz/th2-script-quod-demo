@@ -75,15 +75,15 @@ class QAP_T7473(TestCase):
             ]
         }
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
-            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Currency": self.cur})
+            {"Parties": parties, "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Currency": self.cur})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
-            {"Parties": parties, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account":self.account, "Currency": self.cur})
+            {"Parties": parties,  "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account":self.account, "Currency": self.cur})
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
         list_ignored_fields = ['Account', 'NoMiscFees',
-                               'CommissionData', 'MiscFeesGrp', 'OrderAvgPx']
+                               'CommissionData', 'MiscFeesGrp', 'OrderAvgPx', 'ReplyReceivedTime']
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_ignored_fields)
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_ignored_fields)
         # endregion

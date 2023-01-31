@@ -28,7 +28,7 @@ def waiting_until_page_requests_to_be_load(function):
                                     'class'):
                     a += 1
                     time.sleep(0.25)
-                elif a == 240: raise TimeoutError
+                elif a == 240: self.web_driver_container.stop_driver()
                 else: return function(*args)
         elif not self.is_element_present(CommonConstants.NGX_APP_LOADED):
             a = 0
@@ -36,7 +36,7 @@ def waiting_until_page_requests_to_be_load(function):
                 if not self.is_element_present(CommonConstants.NGX_APP_LOADED):
                     a += 1
                     time.sleep(0.25)
-                elif a == 240: raise TimeoutError
+                elif a == 240: self.web_driver_container.stop_driver()
                 else: return function(*args)
         else: return function(*args)
     return wrapper
@@ -207,24 +207,39 @@ class CommonPage:
         Method was created for scroll
         '''
         scr_elem = self.find_by_xpath(CommonConstants.HORIZONTAL_SCROLL_ELEMENT_XPATH)
-        elem_size = scr_elem.size['width']
+        elem_size = int(scr_elem.size['width'])
+        e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+        scr_elem_full_size = int(e.split()[1].replace('px;', ''))
+        wheel_position = 0
+        if 'transform' in e:
+            wheel_position = abs(int(e.split()[-1].replace('translateX(', '').replace('px);', '')))
 
         action = ActionChains(self.web_driver)
-        action.move_to_element_with_offset(scr_elem, 5, 5)
+        action.move_to_element_with_offset(scr_elem, 5, 5).perform()
         action.double_click()
         action.double_click()
-        time.sleep(1)
-
-        c = 100
-        while elem_size > c:
-            action.drag_and_drop_by_offset(scr_elem, c, 0)
-            c += 100
-            action.perform()
-            if self.is_element_present(search_element):
+        time.sleep(0.5)
+        c = 0
+        if wheel_position != 0:
+            c = scr_elem_full_size - elem_size - wheel_position
+            d = wheel_position
+            while True:
+                if d <= wheel_position and c <= elem_size:
+                    e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute(
+                        'style')
+                    d = abs(int(e.split()[-1].replace('translateX(', '').replace('px);', '')))
+                    c += 100
+                    action.move_to_element_with_offset(scr_elem, c, 5).click().perform()
+                else:
+                    break
+        else:
+            while elem_size > c:
+                action = ActionChains(self.web_driver)
+                action.move_to_element_with_offset(scr_elem, c, 5).click().perform()
                 c += 100
-                action.drag_and_drop_by_offset(scr_elem, c, 0)
-                action.perform()
-                break
+                e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+                if self.is_element_present(search_element) and 'transform' in e and '(0px)' not in e:
+                    break
 
     def write_to_file(self, path_to_file, value):
         try:

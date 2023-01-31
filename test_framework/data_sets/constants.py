@@ -179,6 +179,7 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+    GoodForTime = 'A'
 
 
 class ClientAlgoPolicy(Enum):
@@ -325,6 +326,7 @@ class TransactionStatus(Enum):
     new = "New"
     open = "Open"
     canceled = "Cancelled"
+    terminated = "Terminated"
 
 
 class ReadLogVerifiers(Enum):
@@ -350,21 +352,11 @@ class ReadLogVerifiers(Enum):
     log_319_check_settl_date_part_3 = "log319-check-settl-date-part-3"
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
-    log_319_check_mapping_on_sell_side = "log319-check-mapping-on-sell-side"
-    log_319_check_mapping_on_buy_side = "log319-check-mapping-on-buy-side"
+    log_319_check_exec_type = "log319-check-exec-type"
 
 
-class ReadLogParams(Enum):
-    party_id = 'PartyID'
-    party_id_source = 'PartyIDSource'
-    party_role = 'PartyRole'
-    cl_ord_id = 'ClOrdID'
-    algopolicy_name = 'AlgoPolicyName'
-    security_exchange = 'SecurityExchange'
-    external_strategy_name = 'ExternalStrategyName'
-    cl_algopolicy_id = 'ClientAlgoPolicyID'
-    cl_account_group_id = 'ClientAccountGroupID'
-    parties_block = 'PartiesBlock'
+class ExecType(Enum):
+    cancel_reject = "CancelReject"
 
 
 class WebAdminURL(Enum):
@@ -425,6 +417,8 @@ class RejectMessages(Enum):
     no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
     no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
     no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
+    no_listing_12 = '11697 No listing found for order with currency USD on exchange XETRA'
+    no_listing_13 = '11752 Instrument not traded at primary XETRA / 11697 No listing found for order with currency USD on exchange XETRA'
 
 
 class PegPriceType(Enum):
@@ -469,3 +463,21 @@ class StrategyParameterType(Enum):
     UTCTimeStamp = '19'
     UTCTimeOnly = '20'
     LocalMktDate = '21'
+
+
+class RBCustomTags(Enum):
+    RedburnCustomFields = dict(
+        TVTID='*',
+        CustomTag_26010='*',
+        CustomTag_26011='*',
+        CustomTag_26012='*',
+        CustomTag_26013='*',
+        CustomTag_26014='*',
+        CustomTag_26015='*',
+        CustomTag_26016='*',
+        CustomTag_26017='*',
+        CustomTag_26018='*',
+        CustomTag_26019='*',
+        CustomTag_26020='*',
+        CustomTag_26021='*'
+    )

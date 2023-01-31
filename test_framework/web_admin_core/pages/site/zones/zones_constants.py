@@ -5,6 +5,7 @@ class ZonesConstants:
     INSTITUTIONS_COLUMN_XPATH = '//*[@col-id="institution.institutionName"][@tabindex="-1"]//span[@ref="eValue"]'
     ZONES_NAME_COLUMN_XPATH = '//*[@col-id="zoneName"][@tabindex="-1"]//span[@ref="eValue"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    CONFIRMATION_POP_UP = '//nb-dialog-container'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"

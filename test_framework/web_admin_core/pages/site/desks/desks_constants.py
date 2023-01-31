@@ -17,6 +17,7 @@ class DesksConstants:
     DESKS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
     CTM_BIC_AT_MAIN_PAGE = '//*[@col-id="BIC"]//*[@class="ag-group-value"]'
+    CONFIRMATION_POP_UP = '//nb-dialog-container'
 
     # Filters at main page
     NAME_FILTER_AT_MAIN_PAGE_XPATH = "(//input[@ref='eFloatingFilterText'])[1]"
