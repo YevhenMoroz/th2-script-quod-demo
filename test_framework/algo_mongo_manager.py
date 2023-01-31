@@ -10,6 +10,11 @@ from test_framework.data_sets.constants import TradingPhases
 class AlgoMongoManager:
     @staticmethod
     def get_straight_curve_for_mongo(phases: list, volume: float = 1000.0, price: float = 35.0) -> list:
+        if type(volume) != float:
+            raise ValueError("Volume should be float type")
+        if type(price) != float:
+            raise ValueError("Price should be float type")
+
         pop_start = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreOpen, start_time=True)).replace(tzinfo=None) - timedelta(days=1)
         pop_end = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreOpen, start_time=False)).replace(tzinfo=None) - timedelta(days=1)
         pcl_start = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreClosed, start_time=True)).replace(tzinfo=None) - timedelta(days=1) + timedelta(minutes=1)
@@ -66,10 +71,10 @@ class AlgoMongoManager:
 
 
 # region Usage example
-# # get list of trading phases
-# trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
-# # get curve to insert to mongo
-# curve = AlgoMongoManager.get_straight_curve_for_mongo(trading_phases)
-# # insert data into mongoDB
-# AlgoMongoManager.insert_many_to_mongodb_with_drop(curve, "filteredQuoteDB", "Q48", host="10.0.22.35", port=27316)
+# get list of trading phases
+trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
+# get curve to insert to mongo
+curve = AlgoMongoManager.get_straight_curve_for_mongo(trading_phases, volume=100.0)
+# insert data into mongoDB
+AlgoMongoManager.insert_many_to_mongodb_with_drop(curve, "filteredQuoteDB", "Q48", host="10.0.22.35", port=27316)
 # region
