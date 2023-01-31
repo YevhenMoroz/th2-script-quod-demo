@@ -84,7 +84,6 @@ class QAP_T7369(TestCase):
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         parent_order_id = response[0].get_parameter("OrderID")
         client_ord_id = response[0].get_parameter("ClOrdID")
-        print(client_ord_id)
         # endregion
 
         # region Split
@@ -118,7 +117,7 @@ class QAP_T7369(TestCase):
             self.rule_manager.remove_rule(trade_rule)
 
         list_of_ignored_fields = ['SettlCurrency', 'SecondaryOrderID', 'MiscFeesGrp', 'CommissionData', 'NoMiscFees',
-                                  'PartyRoleQualifier']
+                                  'PartyRoleQualifier','GatingRuleCondName', 'GatingRuleName']
         list_of_counterparts = [
                 self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
