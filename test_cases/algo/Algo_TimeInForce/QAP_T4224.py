@@ -106,11 +106,11 @@ class QAP_T4224(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
         self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, self.key_params_cl, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_pending)
+        er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_pending)
         er_pending_new_Synthetic_TIF_order_params.remove_parameter('NoParty').add_tag(dict(TargetStrategy='*')).change_parameter('ExpireDate', '*')
         self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_TIF_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_new)
+        er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_new)
         er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).add_tag(dict(NoParty='*')).change_parameter('ExpireDate', '*')
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
@@ -120,7 +120,7 @@ class QAP_T4224(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
         cancel_request_Synthetic_TIF_order = FixMessageOrderCancelRequest(self.Synthetic_TIF_order)
 
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_Synthetic_TIF_order, case_id_2)
+        self.fix_manager_sell.send_message(cancel_request_Synthetic_TIF_order)
         self.fix_verifier_sell.check_fix_message(cancel_request_Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         # endregion
 
@@ -142,7 +142,7 @@ class QAP_T4224(TestCase):
         # endregion
         
         # region Check that Synthetic TIF order was canceled
-        er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_TIF_order, self.status_cancel)
+        er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_cancel)
         er_cancel_Synthetic_TIF_order_params.change_parameters(dict(TargetStrategy='*', NoParty='*')).change_parameter('ExpireDate', '*')
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
