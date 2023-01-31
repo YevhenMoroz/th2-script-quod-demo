@@ -170,6 +170,12 @@ class QAP_T10420(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport New Passive child DMA 2 order")
         # endregion
 
+        # region Check partial fill parent order
+        self.fix_verifier_sell.set_case_id(bca.create_event("Check partial fill parent order", self.test_id))
+        er_partial_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
+        self.fix_verifier_sell.check_fix_message(er_partial_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PartialFill')
+        # endregion
+
         time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
