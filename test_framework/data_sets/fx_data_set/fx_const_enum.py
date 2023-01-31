@@ -20,6 +20,7 @@ class FxVenues(Enum):
     venue_7 = "EBS"
     venue_8 = "GS"
     venue_9 = "D3"
+    venue_10 = "BNP"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -134,6 +135,7 @@ class FxSecurityTypes(Enum):
     fx_ndf = "FXNDF"
     fx_nds = "FXNDS"
     fx_mleg = "MLEG"
+    fx_for = "FOR"
 
 
 class FxInstrTypeWA(Enum):
@@ -279,6 +281,7 @@ class FxCurrencies(Enum):
     currency_sek = "SEK"
     currency_jpy = "JPY"
     currency_nok = "NOK"
+    currency_mxn = "MXN"
 
 
 class FxRecipients(Enum):
