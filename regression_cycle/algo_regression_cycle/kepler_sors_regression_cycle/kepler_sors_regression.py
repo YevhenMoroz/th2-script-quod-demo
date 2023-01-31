@@ -19,7 +19,7 @@ def test_run():
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
-        version = '5.1.156.169'
+        version = root.find(".//version").text
 
         # if eval(root.find(".//component[@name='Lit_dark_iceberg']").attrib["run"]):
         kepler_sors_iceberg_regression.test_run(parent_id=report_id, version=version)
