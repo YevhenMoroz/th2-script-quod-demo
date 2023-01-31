@@ -242,6 +242,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_31 = dict(
+        Symbol='LU1129894801',
+        SecurityID='LU1129894801',
+        SecurityIDSource='4',
+        SecurityExchange='XLUX',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -335,6 +343,7 @@ class AlgoMic(Enum):
     mic_35 = "XBRU"   # Euronext Brussels
     mic_36 = "QDL3"   # QUODLIT3
     mic_37 = "TQEL"   # TQEULIS
+    mic_38 = "XLUX"   # LUXEMBURG
 
 
 class AlgoListingId(Enum):
