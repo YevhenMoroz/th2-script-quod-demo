@@ -14,6 +14,10 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T5039 import QAP_T5039
 from test_cases.algo.Algo_PercentageVolume.QAP_T5064 import QAP_T5064
 from test_cases.algo.Algo_PercentageVolume.QAP_T5088 import QAP_T5088
 from test_cases.algo.Algo_PercentageVolume.QAP_T5089 import QAP_T5089
+from test_cases.algo.Algo_PercentageVolume.QAP_T4269 import QAP_T4269
+from test_cases.algo.Algo_PercentageVolume.QAP_T4274 import QAP_T4274
+from test_cases.algo.Algo_PercentageVolume.QAP_T4263 import QAP_T4263
+from test_cases.algo.Algo_PercentageVolume.QAP_T4266 import QAP_T4266
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -50,6 +54,10 @@ def test_run(parent_id=None, version=None):
         QAP_T5064(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5089(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4269(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4274(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4263(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4266(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # FIX/FE
         # QAP_T5113.execute(report_id, session_id)
         # QAP_T5097.execute(report_id, session_id)

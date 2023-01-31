@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T3254 import QAP_T3254
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3255 import QAP_T3255
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3351 import QAP_T3351
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3507 import QAP_T3507
@@ -24,6 +25,9 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T3918 import QAP_T391
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3921 import QAP_T3921
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T4017 import QAP_T4017
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T4018 import QAP_T4018
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T7866 import QAP_T7866
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T9446 import QAP_T9446
+
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -41,6 +45,9 @@ class RunGeneral:
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
+
+            QAP_T3254(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3255(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3351(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -84,6 +91,10 @@ class RunGeneral:
             QAP_T4017(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4018(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T7866(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T9446(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

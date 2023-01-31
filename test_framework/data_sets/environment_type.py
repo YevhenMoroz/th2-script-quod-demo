@@ -40,8 +40,8 @@ class EnvironmentType(Enum):
     quod320_kuiper_web_admin = "quod320_kuiper_web_admin"
     quod317_ganymede_web_admin = "quod317_ganymede_web_admin"
     quod314_luna_web_admin = "quod314_luna_web_admin"
-    quod309_kratos_web_admin = "quod309_kratos_web_admin"
     quod310_columbia_web_admin_site = "quod310_columbia_web_admin_site"
+    quod309_kratos_web_admin = "quod309_kratos_web_admin"
     # endregion
 
     # region web trading

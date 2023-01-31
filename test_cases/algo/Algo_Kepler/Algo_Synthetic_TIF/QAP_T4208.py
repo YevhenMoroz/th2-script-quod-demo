@@ -83,15 +83,11 @@ class QAP_T4208(TestCase):
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
 
-        self.rule_list = []
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         self.nos_eliminate_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, self.price, text=self.text)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, True)
-        self.rule_list = [ocr_rule]
         # endregion
 
         # region Send_MarketData
@@ -120,8 +116,9 @@ class QAP_T4208(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
 
+        time.sleep(1)
+
         rule_manager.remove_rule(self.nos_eliminate_rule)
-        self.nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit12, self.price)
 
         time.sleep(3)
         # endregion
@@ -175,8 +172,4 @@ class QAP_T4208(TestCase):
         er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
-
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
-        rule_manager.remove_rule(self.nos_rule)
 

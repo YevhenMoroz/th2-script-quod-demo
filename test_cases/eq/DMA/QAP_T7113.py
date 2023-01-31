@@ -1,110 +1,124 @@
-import datetime
 import logging
 import os
-import random
-import string
 import time
+import datetime
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+from pkg_resources import resource_filename
 
 from custom import basic_custom_actions as bca
-from rule_management import RuleManager
-from stubs import Stubs
+from custom.basic_custom_actions import timestamps
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixMessage import FixMessage
-from test_framework.fix_wrappers.SessionAlias import SessionAliasOMS
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.TestCase import TestCase
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.base_window import BaseWindow, try_except
-from test_framework.win_gui_wrappers.oms.oms_basket_order_book import OMSBasketOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
-"""
-IgnoreTradeDate=false at ex.xml
-"""
+
+seconds, nanos = timestamps()
 
 
-class QAP6075(TestCase):
-    def __init__(self, report_id, session_id, file_name):
-        super().__init__(report_id, session_id)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.test_id)
-        self.file_name = file_name
-        self.ss_connectivity = SessionAliasOMS().ss_connectivity
-        self.bs_connectivity = SessionAliasOMS().bs_connectivity
+class QAP_T7113(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
+        super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.dc_connectivity = self.fix_env.drop_copy
+        self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
+        self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.alloc_account = 'test'
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.fix_message.change_parameters({'Account': self.client})
+        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
+        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.price = self.fix_message.get_parameter('Price')
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_es.xml")
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_es.xml"
+        # endregion
 
-    def qap_6075(self):
-        # region Declaration
-        order_book = OMSOrderBook(self.test_id, self.session_id)
-        base_window = BaseMainWindow(self.test_id, self.session_id)
-        work_dir = Stubs.custom_config['qf_trading_fe_folder']
-        username = Stubs.custom_config['qf_trading_fe_user']
-        password = Stubs.custom_config['qf_trading_fe_password']
-        fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        fix_message = FixMessageNewOrderSingleOMS()
-        fix_message.set_default_dma_limit()
-        client = fix_message.get_parameter('Account')
-        price = fix_message.get_parameter('Price')
-        qty = fix_message.get_parameter('OrderQtyData')['OrderQty']
-        order_id_first = None
-        order_id_second = None
-        """
-        You need to set your trade_date
-        """
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region set up configuration on BackEnd(precondition)
+        tree = ET.parse(self.local_path)
+        quod = tree.getroot()
+        quod.find("es/execution/ignoreTradeDate").text = 'false'
+        tree.write("temp.xml")
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart ESBUYTH2TEST")
+        time.sleep(90)
+        # endregion
+
         trade_date = str(datetime.date.today() + datetime.timedelta(days=3)).replace('-', '')
         default_trade_date = str(datetime.date.today()).replace('-', '')
-        # endregion
-
-        # region Open FE
-        base_window.open_fe(self.report_id, work_dir, username, password)
-        # endregion
-
-        # region create DMA order
         try:
-            rule_manager = RuleManager()
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             'XPAR_' + client,
-                                                                                             'XPAR', float(price))
+            # region create second DMA order
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.venue,
+                                                                                                  float(self.price))
+
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client_names,
+                                                                                            self.venue,
+                                                                                            float(self.price),
+                                                                                            int(self.qty),
+                                                                                            delay=0)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            ord_id1 = response[0].get_parameters()['OrderID']
+            self.rule_manager.remove_rule(trade_rule)
+            # endregion
+
+            # region create first DMA order
             trade_with_trade_date = \
-                rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQtyWithTradeDate_FIXStandard(
+                self.rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQtyWithTradeDate_FIXStandard(
                     self.bs_connectivity,
-                    'XPAR_' + client, 'XPAR', float(price), int(qty), trade_date, delay=0)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_id_first = order_book.extract_field('Order ID')
-            rule_manager.remove_rule(trade_with_trade_date)
-            trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                       'XPAR_' + client, 'XPAR',
-                                                                                       float(price), int(qty), delay=0)
-            fix_manager.send_message_fix_standard(fix_message)
-            order_book.scroll_order_book(1)
-            order_id_second = order_book.extract_field('Order ID')
-        # endregion
+                    self.venue_client_names, self.venue, float(self.price), int(self.qty), trade_date, delay=0)
+            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            ord_id2 = response[0].get_parameters()['OrderID']
+
+            # endregion
         finally:
             time.sleep(1)
-            rule_manager.remove_rule(trade_rule)
-            rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_with_trade_date)
 
-        # region extract executions from orders
-        extracted_values_first_order = order_book.extract_2lvl_fields('Executions', ['Qty', 'TradeDate'], [1],
-                                                                      {'Order ID': order_id_first})
-        extracted_values_second_order = order_book.extract_2lvl_fields('Executions', ['Qty', 'TradeDate'], [1],
-                                                                       {'Order ID': order_id_second})
-
+        # region check TradeData in the exec report of the first message
+        ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc']
+        self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
+        self.exec_report.set_default_filled(self.fix_message)
+        self.exec_report.change_parameters({'OrderID': ord_id1, 'TradeDate': default_trade_date})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, key_parameters=['OrderID', 'OrdStatus'],
+                                                         ignored_fields=ignored_list)
         # endregion
-        extracted_values_first_order[0]['TradeDate'] = \
-            str(extracted_values_first_order[0]['TradeDate']).replace('/', '')
-        expected_result_first = {'Qty': '100', 'TradeDate': trade_date}
-        base_window.compare_values(expected_result_first,
-                                   extracted_values_first_order[0], 'Check values of First Order')
 
-        extracted_values_second_order[0]['TradeDate'] = \
-            str(extracted_values_second_order[0]['TradeDate']).replace('/', '')
-        expected_result_second = {'Qty': '100', 'TradeDate': default_trade_date}
-        base_window.compare_values(expected_result_second, extracted_values_second_order[0],
-                                   'Check values of Second Order')
+        # region check TradeData in the exec report of the second message
+        self.exec_report.change_parameters({'OrderID': ord_id2, 'TradeDate': trade_date})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, key_parameters=['OrderID', 'OrdStatus'],
+                                                         ignored_fields=ignored_list)
+        # endregion
 
-    @try_except(test_id=os.path.basename(__file__))
-    def execute(self):
-        self.qap_6075()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.send_command("qrestart ESBUYTH2TEST")
+        os.remove("temp.xml")

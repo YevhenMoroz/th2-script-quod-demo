@@ -29,8 +29,8 @@ class QAP_T2550(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
-        self.iridium = self.data_set.get_client_by_name("client_mm_3")
-        self.iridium_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.argentina_id = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
         self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
@@ -50,14 +50,14 @@ class QAP_T2550(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
-                                                                          {"ClientTierID": self.iridium_id})
+                                                                          {"ClientTierID": self.argentina_id})
         self.adjustment_request.disable_pricing_by_index(2)
         self.java_manager.send_message(self.adjustment_request)
         time.sleep(2)
 
         # region Step 1
         self.quote_request.set_rfq_params()
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.iridium,
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.argentina,
                                                            Currency=self.currency, Instrument=self.instrument_spot,
                                                            OrderQty=self.qty, Side="2")
         response = self.fix_manager_gtw.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
@@ -83,6 +83,6 @@ class QAP_T2550(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
-                                                                          {"ClientTierID": self.iridium_id})
+                                                                          {"ClientTierID": self.argentina_id})
         self.java_manager.send_message(self.adjustment_request)
         time.sleep(2)

@@ -92,12 +92,7 @@ class QAP_T7394(TestCase):
                                        'PartyIDSource': "*"})
         parties['NoPartyIDs'].extend([self.data_set.get_counterpart_id_fix('counter_part_id_executing_firm'),
                                       self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm'),
-                                      self.data_set.get_counterpart_id_fix('counterpart_java_api_user'),
-                                      self.data_set.get_counterpart_id_fix(
-                                          'counterpart_id_regulatory_body_venue_paris')])
-        parties['NoPartyIDs'].remove({'PartyRole': "34",
-           'PartyID': "RegulatoryBody - Venue(Paris)",
-           'PartyIDSource': "C"})
+                                      self.data_set.get_counterpart_id_fix('counterpart_java_api_user')])
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": parties})

@@ -38,11 +38,11 @@ channels = dict()
 
 
 def test_run(parent_id=None, version=None):
-    pc_name = get_pc_name()  # getting PC name
+    # pc_name = get_pc_name()  # getting PC name
     full_ver = '5.1.169.182' # site version
     ver = full_ver[-3:]
-    report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
-    report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver, report_id_main)
+    # report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
+    report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver)
     logger.info(f"Root event was created (id = {report_id.id})")
     # session_id = set_session_id(pc_name) # grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated
 

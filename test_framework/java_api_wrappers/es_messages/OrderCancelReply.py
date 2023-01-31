@@ -11,7 +11,7 @@ class OrderCancelReply(JavaApiMessage):
         super().__init__(message_type=ESMessageType.OrderCancelReply.value)
         super().change_parameters(parameters)
 
-    def set_default(self, data_set: BaseDataSet, cl_ord_id):
+    def set_default(self, data_set: BaseDataSet, cl_ord_id, ord_venue_id):
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ES.BUYTH2TEST.REPLY',
             'REPLY_SUBJECT': 'QUOD.BUYTH2TEST.ES.REPLY',
@@ -20,7 +20,7 @@ class OrderCancelReply(JavaApiMessage):
                 "CreationTime": datetime.utcnow().isoformat()},
             "OrderCancelReplyBlock": {
                 "InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
-                "LastVenueOrdID": basic_custom_actions.client_orderid(9),
+                "LastVenueOrdID": ord_venue_id,
                 "ClOrdID": cl_ord_id,
                 "ReplySource": "Exchange",
                 "TransactTime": datetime.utcnow().isoformat(),
@@ -41,4 +41,3 @@ class OrderCancelReply(JavaApiMessage):
         }
         super().change_parameters(base_parameters)
         return self
-

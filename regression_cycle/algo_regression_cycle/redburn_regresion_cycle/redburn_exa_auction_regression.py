@@ -1,7 +1,11 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_MOE import QAP_T4307, QAP_T4310
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4307 import QAP_T4307
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4310 import QAP_T4310
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8625 import QAP_T8625
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8672 import QAP_T8672
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T9063 import QAP_T9063
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -15,12 +19,24 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"Auction - MOO/MOC/Expiry (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region Iceberg: Route/Venue
-        configuration = ComponentConfigurationAlgo("Expity_Auction")
+        configuration = ComponentConfigurationAlgo("Expiry_Auction")
 
-        # QAP_T4307.execute(report_id)
-        # QAP_T4310.execute(report_id)
+        # region General
+        QAP_T8625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8672(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
+        # region WouldPrice
+        QAP_T4307(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region LimitPriceOffset
+        QAP_T4310(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region RedburnCustomTags
+        QAP_T9063(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

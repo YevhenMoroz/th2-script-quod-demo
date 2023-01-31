@@ -44,7 +44,7 @@ class QAP_T7385(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.test_id = bca.create_event(os.path.basename(__file__), self.report_id)
+        self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.qty = "100"
         self.price = "20"
@@ -147,7 +147,7 @@ class QAP_T7385(TestCase):
         ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
         alloc_id: str = alloc_report_reply["ClientAllocID"]
         trade_date_block: str = alloc_report_reply["TradeDate"]  # Get TradeDate for the block
-        trade_date_expected = datetime.strftime(datetime.now(), "%Y-%#m-%d") + "T12:00"
+        trade_date_expected = datetime.strftime(datetime.now(), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.AllocStatus.value: "APP",

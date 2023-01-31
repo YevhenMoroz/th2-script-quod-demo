@@ -1,6 +1,6 @@
 from xml.etree import ElementTree
 from rule_management import RuleManager, Simulators
-from regression_cycle.algo_regression_cycle import iceberg_regression, twap_regression, multilisted_regression, participation_regression, tif_regression, litdark_regression
+from regression_cycle.algo_regression_cycle import iceberg_regression, twap_regression, multilisted_regression, participation_regression, tif_regression, litdark_regression, block_regression, stop_regression
 from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_mpdark_other_regression, kepler_sors_iceberg_regression, kepler_sors_multiple_emulation_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression
 from stubs import Stubs, ROOT_DIR
 import logging
@@ -28,6 +28,10 @@ def test_run(parent_id=None):
             tif_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Iceberg']").attrib["run"]):
             iceberg_regression.test_run(report_id, version)
+        if eval(root.find(".//component[@name='Block']").attrib["run"]):
+            block_regression.test_run(report_id, version)
+        if eval(root.find(".//component[@name='Stop']").attrib["run"]):
+            stop_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Multilisted']").attrib["run"]):
             multilisted_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Peg']").attrib["run"]):

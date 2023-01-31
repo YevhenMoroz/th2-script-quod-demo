@@ -99,8 +99,8 @@ class QAP_T4578(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region DarkPoolWeights modification
-        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
-        rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=2, BATSDARK=2, CBOEEUDARK=2, ITG=2)))
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
+        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=2, BATSDARK=2, CBOEEUDARK=2, ITG=2)))
         # endregion
 
         # region Rule creation
@@ -299,8 +299,8 @@ class QAP_T4578(TestCase):
         # endregion
 
         # region DarkPoolWeights undo modification
-        rest_api_manager = RestApiAlgoManager(session_alias="rest_wa319kuiper")
-        rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=6, BATSDARK=2, CBOEEUDARK=1, ITG=1)))
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
+        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark4", "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=6, BATSDARK=2, CBOEEUDARK=1, ITG=1)))
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)

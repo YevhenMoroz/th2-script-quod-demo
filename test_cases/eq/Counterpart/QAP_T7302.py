@@ -24,7 +24,7 @@ class QAP_T7302(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit('instrument_1')
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_1_venue_1")

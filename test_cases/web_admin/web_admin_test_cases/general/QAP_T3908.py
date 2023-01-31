@@ -14,7 +14,7 @@ class QAP_T3908(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.new_link = "https://support.quodfinancial.com/confluence/"
-        self.opened_page = "#all-udates#ordermanagement-ordermgmtrules"
+        self.opened_page = "#all-udates"
 
     def test_context(self):
 

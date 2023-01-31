@@ -16,15 +16,17 @@ class TradeEntryRequestFX(JavaApiMessage):
             "SEND_SUBJECT": "QUOD.ORS.FE",
             "REPLY_SUBJECT": "QUOD.FE.ORS",
             "TradeEntryRequestBlock": {
-                "ExecPrice": "1.18",
+                "ExecPrice": "1.2",
                 "ExecQty": "1000000",
                 "TradeEntryTransType": "NEW",
+                "VenueExecID": "Test123",
                 "LastMkt": "XQFX",
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
-                "AccountGroupID": "CLIENT1",
-                "ListingID": "506403761",
+                "AccountGroupID": "CLIENT_TEST_EXT",
+                # "ListingID": "506403761", # EUR/USD
+                "ListingID": "506404433", # GBP/USD
                 "SettlCurrFxRate": "0",
                 "OrdrMiscBlock": {
                     "OrdrMisc2": "test"

@@ -17,7 +17,7 @@ class QuotingSessionsConstants:
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
-    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    LOGOUT_BUTTON_XPATH = "//*[@title='Logout']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//*[@status="danger"]//following-sibling::span'
 
     # main page
@@ -62,9 +62,9 @@ class QuotingSessionsConstants:
     CLIENT_TIER_SYMBOLS_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Client Tier Symbols "]/parent::*[@class="expanded"]//*[@data-name="trash-2"]'
 
     CLIENT_TIER_SYMBOLS_TAB_SYMBOL_XPATH = '//*[@placeholder="Symbol *"]'
-    CLIENT_TIER_SYMBOLS_TAB_SYMBOL_FILTER_XPATH = '//*[@class = "instrSymbol ng2-smart-th ng-star-inserted"]//input'
+    CLIENT_TIER_SYMBOLS_TAB_SYMBOL_FILTER_XPATH = '(//*[normalize-space()="Client Tier Symbols"]//..//*[@placeholder="Filter"])[1]'
     CLIENT_TIER_SYMBOLS_TAB_CLIENT_TIER_XPATH = '//*[@placeholder="Client Tier *"]'
-    CLIENT_TIER_SYMBOLS_TAB_CLIENT_TIER_FILTER_XPATH = '//*[@class = "clientTier ng2-smart-th ng-star-inserted"]//input'
+    CLIENT_TIER_SYMBOLS_TAB_CLIENT_TIER_FILTER_XPATH = '(//*[normalize-space()="Client Tier Symbols"]//..//*[@placeholder="Filter"])[2]'
     CLIENT_TIER_SYMBOLS_TAB_BROADCAST_CLIENT_CLIENT_TIER_ID_XPATH = '//*[@placeholder="Broadcast Client Client Tier ID"]'
     CLIENT_TIER_SYMBOLS_TAB_BROADCAST_CLIENT_CLIENT_TIER_ID_FILTER = '//*[@class = "broadcastClientClientTierID ng2-smart-th ng-star-inserted"]//input'
 

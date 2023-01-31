@@ -1,6 +1,5 @@
 import logging
 import time
-from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -8,12 +7,21 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
+    FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, \
-    MiddleOfficeColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ConfirmationReportConst, \
+    AllocationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
+from test_framework.java_api_wrappers.ors_messages.BookingCancelRequest import BookingCancelRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,36 +38,47 @@ class QAP_T7174(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.qty = '100'
-        self.price = '20'
+        self.dc_connectivity = self.fix_env.drop_copy
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.client = self.data_set.get_client('client_pt_1')  # MOClient
         self.client2 = self.data_set.get_client('client_pt_2')  # MOClient2
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.unallocate = BlockUnallocateRequest()
+        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
+        self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirmation = ConfirmationOMS(self.data_set)
+        self.cancel_booking = BookingCancelRequest()
+        self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
+        self.alloc_report = FixMessageAllocationInstructionReportOMS()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Create DMA order via FIX
+        order_id = None
+        qty = '100'
+        price = '10'
+        exec_destination = self.data_set.get_mic_by_name('mic_1')
         try:
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.venue_client_names,
                                                                                             self.venue,
-                                                                                            float(self.price),
-                                                                                            int(self.qty), 0)
+                                                                                            float(price),
+                                                                                            int(qty), 0)
             self.fix_message.set_default_dma_limit()
-            self.fix_message.change_parameters(
-                {'Side': '2', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client})
+            self.fix_message.change_parameters({'OrderQtyData': {'OrderQty': qty},
+                                                'Account': self.data_set.get_client_by_name('client_pt_1'),
+                                                'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1'),
+                                                'Price': price,
+                                                'ExDestination': exec_destination})
             response = self.fix_manager.send_message_and_receive_response(self.fix_message)
-            # get Client Order ID and Order ID
-            cl_ord_id = response[0].get_parameters()['ClOrdID']
+            # get Order ID
             order_id = response[0].get_parameters()['OrderID']
-
         except Exception:
             logger.error('Error execution', exc_info=True)
         finally:
@@ -67,44 +86,94 @@ class QAP_T7174(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
 
-        # region Book order and checking PostTradeStatus in the Order book
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, cl_ord_id])
-        self.order_book.check_order_fields_list(
-            {OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value},
-            'Comparing PostTradeStatus after Book')
+        # region book order and verify values after it at order book (step 1)
+        instr_id = self.data_set.get_instrument_id_by_name("instrument_2")
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock', {
+            'InstrID': instr_id})
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.__return_result(responses, ORSMessageType.OrdUpdate.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            self.result.get_parameter('OrdUpdateBlock'),
+            'Check order sts')
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
+             JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value},
+            self.result.get_parameter('AllocationReportBlock'),
+            'Check block sts')
+        booking_alloc_instr_id = self.result.get_parameter('AllocationReportBlock')['BookingAllocInstructionID']
+        alloc_instr_id = self.result.get_parameter('AllocationReportBlock')['AllocInstructionID']
         # endregion
 
-        # region Checking the ClientID
-        client_id = self.middle_office.extract_block_field(MiddleOfficeColumns.client_id.value,
-                                                           [MiddleOfficeColumns.order_id.value, order_id])
-        self.middle_office.compare_values({MiddleOfficeColumns.client_id.value: self.client}, client_id,
-                                          'Comparing ClientID after Book in the Middle Office')
+        # region approve block
+        self.approve.set_default_approve(alloc_id=alloc_instr_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.approve)
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
+             JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value},
+            self.result.get_parameter('AllocationReportBlock'),
+            'Check sts after approve')
         # endregion
 
-        # region Approve and Allocate block
-        self.middle_office.approve_block()
-        allocation_param = [
-            {'Security Account': self.data_set.get_account_by_name('client_pt_1_acc_1'), 'Alloc Qty': self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=allocation_param)
-        self.middle_office.allocate_block()
+        # region allocate block
+        self.confirmation.set_default_allocation(alloc_id=alloc_instr_id)
+        self.confirmation.update_fields_in_component('ConfirmationBlock', {'InstrID': instr_id})
+        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation)
+        self.__return_result(responses, ORSMessageType.ConfirmationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ConfirmTransType.value: ConfirmationReportConst.ConfirmTransType_NEW.value,
+             JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value},
+            self.result.get_parameter('ConfirmationReportBlock'),
+            'Check sts after allocation')
         # endregion
 
-        # region Unallocate block and Unbook order
-        self.middle_office.unallocate_order([MiddleOfficeColumns.order_id.value, order_id])
-        self.middle_office.un_book_order([OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        # region Unallocate block
+        self.unallocate.set_default(alloc_instr_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.unallocate)
+        self.__return_result(responses, ORSMessageType.ConfirmationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.ConfirmTransType.value: ConfirmationReportConst.ConfirmTransType_CAN.value,
+             JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_CXL.value},
+            self.result.get_parameter('ConfirmationReportBlock'),
+            'Check sts after unallocation')
+        # endregion
+
+        # region unbook block
+        self.cancel_booking.set_default(booking_alloc_instr_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.cancel_booking)
+        self.__return_result(responses, ORSMessageType.OrdUpdate.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value},
+            self.result.get_parameter('OrdUpdateBlock'),
+            'Check order sts')
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
+             JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_CXL.value},
+            self.result.get_parameter('AllocationReportBlock'),
+            'Check unbook sts')
         # endregion
 
         # region re-Book order
-        self.middle_office.set_modify_ticket_details(client=self.client2)
-        self.middle_office.book_order(filter=[OrderBookColumns.cl_ord_id.value, cl_ord_id])
+        self.allocation_instruction.set_default_book(order_id)
+        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
+                                                               {'AccountGroupID': self.client2,
+                                                                'InstrID': instr_id})
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.__return_result(responses, ORSMessageType.OrdUpdate.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            self.result.get_parameter('OrdUpdateBlock'), 'Check order booking sts after rebooking')
+        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.AccountGroupID.value: self.client2},
+            self.result.get_parameter('AllocationReportBlock'), 'Check order Account value after rebooking')
         # endregion
 
-        # region Changing the Client and checking the new ClientID
-        client_id2 = self.middle_office.extract_block_field(MiddleOfficeColumns.client_id.value,
-                                                            [MiddleOfficeColumns.order_id.value, order_id])
-        self.middle_office.compare_values({MiddleOfficeColumns.client_id.value: self.client2}, client_id2,
-                                          'Comparing new ClientID after re-Book in the Middle Office')
-        # endregion
-
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+    def __return_result(self, responses, message_type):
+        for response in responses:
+            if response.get_message_type() == message_type:
+                self.result = response

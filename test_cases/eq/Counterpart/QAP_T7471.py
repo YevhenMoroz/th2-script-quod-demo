@@ -94,7 +94,7 @@ class QAP_T7471(TestCase):
         list_of_ignored_fields = ['SecurityDesc', 'CommissionData', 'RootSettlCurrAmt', 'AllocInstructionMiscBlock1',
                                   'MiscFeesGrp', 'BookingType', 'RootOrClientCommission',
                                   'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', 'Account',
-                                  'NoRootMiscFeesList']
+                                  'NoRootMiscFeesList', 'OrderAvgPx']
         exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": {"NoPartyIDs": parties}, "LastMkt": "*", "VenueType": "*", "MiscFeesGrp": "*",
@@ -179,10 +179,11 @@ class QAP_T7471(TestCase):
         ]
         self.alloc_report.add_tag(
             {"NoParty": {"NoParty": parties}, "RootCommTypeClCommBasis": "*", "tag5120": "*",
-             "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", })
+             "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", 'AllocType': '5'})
         self.alloc_report.add_fields_into_repeating_group("NoOrders",
                                                           [{"ClOrdID": '*', "OrderID": order_id_second}])
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=list_of_ignored_fields)
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, key_parameters=['AllocType'],
+                                                            ignored_fields=list_of_ignored_fields)
         # endregion
 
     @staticmethod

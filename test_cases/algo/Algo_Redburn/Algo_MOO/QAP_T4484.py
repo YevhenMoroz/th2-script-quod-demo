@@ -130,7 +130,7 @@ class QAP_T4484(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*', Text='uncross is in the past')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy', 'OrigClOrdID'])
+        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*', Text='reached uncross')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy', 'OrigClOrdID'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
     @try_except(test_id=Path(__file__).name[:-3])
