@@ -177,13 +177,13 @@ class QAP_T9063(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_3)
         # endregion
 
-        cancel_request_pov_order = FixMessageOrderCancelRequest(self.auction_algo)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+        cancel_request_auction_order = FixMessageOrderCancelRequest(self.auction_algo)
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_3)
+        self.fix_verifier_sell.check_fix_message(cancel_request_auction_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(5)
 
-        # region check cancellation parent POV order
+        # region check cancellation parent Auction order
         cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
         cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_gtc))
         cancel_auction_order.remove_parameter('TargetStrategy')
