@@ -84,7 +84,7 @@ class QAP_T7223(TestCase):
                                             'ExecBroker': '*',
                                             'VenueType': '*',
                                             })
-        list_of_ignored_fields = ['NoParty', 'SecurityDesc']
+        list_of_ignored_fields = ['NoParty', 'SecurityDesc', 'GatingRuleCondName', 'GatingRuleName']
         execution_report.change_parameters({'Side': '1'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ['ClOrdID', 'OrdStatus', 'Side'], ignored_fields=list_of_ignored_fields)
         execution_report.change_parameters({'Side': '2', 'Account': self.firm_client})

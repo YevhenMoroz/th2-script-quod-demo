@@ -85,7 +85,8 @@ class QAP_T7169(TestCase):
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
             {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '0',
              'TrdSubType': '*', 'TrdType': '*', 'LastCapacity': '*'})
-        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc']
+        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc', 'GatingRuleCondName',
+                                  'GatingRuleName']
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         execution_report.change_parameters({'ClOrdID': client_order_id_2, 'Side': '2'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report,

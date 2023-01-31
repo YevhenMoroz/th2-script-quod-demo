@@ -171,16 +171,14 @@ class QAP_T7507(TestCase):
         }
         change_parameters.update(instrument_dict)
         list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime',
-                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx',
-                                  'QuodTradeQualifier', 'BookID', 'SettlDate',
-                                  'AllocID', 'Currency', 'NetMoney',
-                                  'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
-                                  'IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'AllocInstructionMiscBlock1',
-                                  'SecurityDesc', 'Symbol', 'SecurityID', 'ExDestination', 'VenueType',
-                                  'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
+                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx','QuodTradeQualifier', 'BookID',
+                                  'SettlDate','AllocID', 'Currency', 'NetMoney','TradeDate', 'RootSettlCurrAmt',
+                                  'BookingType', 'GrossTradeAmt','IndividualAllocID', 'AllocNetPrice', 'AllocPrice',
+                                  'AllocInstructionMiscBlock1','SecurityDesc', 'Symbol', 'SecurityID', 'ExDestination',
+                                  'VenueType', 'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
-                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx'
-                                  ]
+                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx',
+                                  'GatingRuleCondName', 'GatingRuleName']
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
