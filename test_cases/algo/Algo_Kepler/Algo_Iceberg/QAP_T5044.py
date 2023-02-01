@@ -112,7 +112,7 @@ class QAP_T5044(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_params()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, ExDestination=self.ex_destination_qdl6, Price=self.price, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
@@ -134,7 +134,7 @@ class QAP_T5044(TestCase):
         # region Check 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler()
+        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
         self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl6, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -167,7 +167,7 @@ class QAP_T5044(TestCase):
         # region Check 2nd child DMA order for low liquidity
         self.fix_verifier_buy.set_case_id(bca.create_event("New child DMA order after the replace", self.test_id))
 
-        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler()
+        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
         self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl6, OrderQty=self.dec_display_qty, Price=self.inc_price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 

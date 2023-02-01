@@ -24,6 +24,11 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
                 self.__set_new_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
+        elif side is GatewaySide.KeplerSell:
+            if status is Status.New:
+                self.__set_new_kepler_sell(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
         return self
 
     def __set_reject_buy(self, new_order_single: FixMessageNewOrderSingle = None):
@@ -59,6 +64,25 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
     def __set_new_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+            temp.update(
+                SecondaryAlgoPolicyID='*',
+            )
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            OrderID='*',
+            ClOrdID=new_order_single.get_parameter("ClOrdID"),
+            OrigClOrdID='*',
+            OrdStatus='0',
+            CxlRejResponseTo='1',
+            Text='*',
+            TransactTime='*',
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_new_kepler_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1008']:
             temp.update(
                 SecondaryAlgoPolicyID='*',
             )

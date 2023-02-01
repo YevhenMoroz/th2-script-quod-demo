@@ -115,7 +115,7 @@ class QAP_T4241(TestCase):
         case_id_1 = bca.create_event("Create SORPING STL Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_STL_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
+        self.SORPING_STL_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_Kepler_params()
         self.SORPING_STL_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_STL_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, OrdType=self.order_type_stop_lmt, Instrument=self.instrument)).add_tag(dict(StopPx=self.stop_price))
 
@@ -137,7 +137,7 @@ class QAP_T4241(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_params()
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_Kepler_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, OrdType=self.order_type_stop_lmt))
         self.dma_order.add_tag(dict(StopPx=self.stop_price))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')

@@ -112,7 +112,7 @@ class QAP_T4675(TestCase):
         case_id_1 = bca.create_event("Create MP Dark Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
+        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_Kepler_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy))
 
@@ -134,7 +134,7 @@ class QAP_T4675(TestCase):
         # region Check child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA orders", self.test_id))
 
-        self.dma_1_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_1_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_1_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_1_chix_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_1_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 1st child DMA order on CHIXDELTA')
 
@@ -146,7 +146,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
-        self.dma_1_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_1_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_1_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_1_bats_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_1_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 1st child DMA order on BATSDARK')
 
@@ -158,7 +158,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue CBOE DARKPOOL EU
-        self.dma_1_cboe_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_1_cboe_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_1_cboe_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_cboe, OrderQty=self.qty_1_cboe_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_1_cboe_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 1st child DMA order on CBOE DARKPOOL EU')
 
@@ -170,7 +170,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue ITG
-        self.dma_1_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_1_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_1_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_1_itg_child, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 1st child DMA order on ITG')
 
@@ -215,7 +215,7 @@ class QAP_T4675(TestCase):
         # region Check child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("New Dark child DMA orders after replace parent", self.test_id))
 
-        self.dma_2_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_2_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_2_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_2_chix_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on CHIXDELTA')
 
@@ -227,7 +227,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
-        self.dma_2_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_2_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_2_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_2_bats_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on BATSDARK')
 
@@ -239,7 +239,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue CBOE DARKPOOL EU
-        self.dma_2_cboe_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_2_cboe_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_2_cboe_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_cboe, OrderQty=self.qty_2_cboe_child, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_cboe_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on CBOE DARKPOOL EU')
 
@@ -251,7 +251,7 @@ class QAP_T4675(TestCase):
         # endregion
 
         # region Check child DMA order on venue ITG
-        self.dma_2_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_2_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_2_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_2_itg_child, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle 2nd child DMA order on ITG')
 

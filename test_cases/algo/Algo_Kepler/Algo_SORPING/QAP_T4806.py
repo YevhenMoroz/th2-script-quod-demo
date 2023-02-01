@@ -117,7 +117,7 @@ class QAP_T4806(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument))
 
@@ -139,7 +139,7 @@ class QAP_T4806(TestCase):
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty, Price=self.price_ask, Instrument=self.instrument, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 

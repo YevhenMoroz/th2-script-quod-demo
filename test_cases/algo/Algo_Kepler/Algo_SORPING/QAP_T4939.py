@@ -94,7 +94,7 @@ class QAP_T4939(TestCase):
         case_id_1 = bca.create_event("Create DMA Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
+        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Kepler_params()
         self.DMA_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.DMA_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
 

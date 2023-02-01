@@ -97,7 +97,7 @@ class QAP_T4835(TestCase):
         case_id_1 = bca.create_event("Create SORPING GTC Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_GTC_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
+        self.SORPING_GTC_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_Kepler_params()
         self.SORPING_GTC_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_GTC_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtc, ClientAlgoPolicyID=self.algopolicy, OrdType=self.order_type_stop_lmt)).add_tag(dict(StopPx=self.stop_price))
 

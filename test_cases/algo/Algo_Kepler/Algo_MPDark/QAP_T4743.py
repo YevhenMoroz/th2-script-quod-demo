@@ -6,6 +6,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -42,6 +43,7 @@ class QAP_T4743(TestCase):
         self.weight_bats = 4
         self.weight_chix = 6
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats)
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_13.value
         # endregion
 
         # region Gateway Side
@@ -93,12 +95,6 @@ class QAP_T4743(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region modify strategy
-        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark", "LISResidentTime", "5000")
-        time.sleep(2)
-        # endregion
-
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         rfq_rule1 = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, True, False, 5000)
@@ -118,9 +114,9 @@ class QAP_T4743(TestCase):
         case_id_1 = bca.create_event("Create MP Dark Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
+        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_Kepler_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty,  Price=self.price))
+        self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty,  Price=self.price, ClientAlgoPolicyID=self.algopolicy))
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
 
         time.sleep(2)
@@ -156,7 +152,7 @@ class QAP_T4743(TestCase):
         # region dark orders sended on market
         self.fix_verifier_buy.set_case_id(bca.create_event("After timeout algo generate child orders on Dark venues", self.test_id))
         # CHIXDELTA
-        self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.client_chix_delta, ExDestination=self.ex_destination_chix_dark, OrderQty=self.qty_chix_child))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
@@ -169,7 +165,7 @@ class QAP_T4743(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
 
         # BATSDARK
-        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.client_bats_dark, ExDestination=self.ex_destination_bats_dark, OrderQty=self.qty_bats_child))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
 
@@ -204,11 +200,5 @@ class QAP_T4743(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region revert strategy changes
-        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert strategy changes", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter("QA_Auto_MPDark", "LISResidentTime", "45000")
-        # endregion
-
-
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

@@ -133,7 +133,7 @@ class QAP_T4982(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algopolicy)).add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
@@ -156,7 +156,7 @@ class QAP_T4982(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA orders", self.test_id))
 
         # region Check child DMA order on venue CHIX DARK
-        self.dma_chixdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_chixdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chixdark_order.change_parameters(dict(Account=self.account_chixdark, ExDestination=self.ex_destination_chixdark, OrderQty=self.qty, Price=self.dark_price, Instrument=self.instrument, TimeInForce=self.tif_iok))
         self.fix_verifier_buy.check_fix_message(self.dma_chixdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -167,7 +167,7 @@ class QAP_T4982(TestCase):
         # endregion
 
         # region Check child DMA order on venue BATS DARK
-        self.dma_batsdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_batsdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_batsdark_order.change_parameters(dict(Account=self.account_batsdark, ExDestination=self.ex_destination_batsdark, OrderQty=self.qty, Price=self.dark_price, Instrument=self.instrument, TimeInForce=self.tif_iok))
         self.fix_verifier_buy.check_fix_message(self.dma_batsdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
@@ -179,7 +179,7 @@ class QAP_T4982(TestCase):
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_1_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_1_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_1_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_par, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_1_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -220,7 +220,7 @@ class QAP_T4982(TestCase):
         # region Check new Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_2_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_2_xpar_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_2_xpar_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_par, OrderQty=self.display_qty, Price=self.inc_price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_2_xpar_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 

@@ -113,7 +113,7 @@ class QAP_T4207(TestCase):
         case_id_1 = bca.create_event("Create Synthetic TIF Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler()
+        self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Synthetic_TIF_Kepler_params()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_quodlit12, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
 
@@ -138,7 +138,7 @@ class QAP_T4207(TestCase):
         # region 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
-        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler()
+        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler_params()
         self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -147,7 +147,7 @@ class QAP_T4207(TestCase):
         # endregion
 
         # region 2nd child DMA order
-        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler()
+        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler_params()
         self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
 
         er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)

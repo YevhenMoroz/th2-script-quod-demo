@@ -116,7 +116,7 @@ class QAP_T4780(TestCase):
         case_id_1 = bca.create_event("Create MP Dark Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_params()
+        self.MP_Dark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MPDark_Kepler_params()
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
         self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)
@@ -139,7 +139,7 @@ class QAP_T4780(TestCase):
         # region dark orders sended on market
         self.fix_verifier_buy.set_case_id(bca.create_event("Algo generate child orders on Dark venues", self.test_id))
         # CHIXDELTA
-        self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.client_chix_delta, ExDestination=self.ex_destination_chix_dark, OrderQty=self.qty_chix_child))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
@@ -152,7 +152,7 @@ class QAP_T4780(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
 
         # BATSDARK
-        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.client_bats_dark, ExDestination=self.ex_destination_bats_dark, OrderQty=self.qty_bats_child))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
 
@@ -194,7 +194,7 @@ class QAP_T4780(TestCase):
         # region second dark orders sended on market
         self.fix_verifier_buy.set_case_id(bca.create_event("Algo generate child orders on Dark venues with new qty", self.test_id))
         # CHIXDELTA
-        self.dma_chix_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_chix_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order2.change_parameters(dict(Account=self.client_chix_delta, ExDestination=self.ex_destination_chix_dark, OrderQty=self.qty_chix_child_inc))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
@@ -207,7 +207,7 @@ class QAP_T4780(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
 
         # BATSDARK
-        self.dma_bats_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_params()
+        self.dma_bats_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order2.change_parameters(dict(Account=self.client_bats_dark, ExDestination=self.ex_destination_bats_dark, OrderQty=self.qty_bats_child_inc))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
 

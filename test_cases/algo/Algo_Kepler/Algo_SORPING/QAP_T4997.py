@@ -137,7 +137,7 @@ class QAP_T4997(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_params_with_PartyInfo()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Iceberg_Kepler_params_with_PartyInfo()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3])).update_repeating_group('NoParty', self.no_party)
         self.ClOrdId = self.SORPING_order.get_parameter('ClOrdID')
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, DisplayInstruction=dict(DisplayQty=self.display_qty)))
@@ -175,7 +175,7 @@ class QAP_T4997(TestCase):
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo()
+        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_SORPING_Iceberg_Kepler_params_with_PartyInfo()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).update_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 

@@ -134,7 +134,7 @@ class QAP_T4065(TestCase):
         case_id_1 = bca.create_event("Create Synth MinQty Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_params()
+        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_Kepler_params()
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 
@@ -176,7 +176,7 @@ class QAP_T4065(TestCase):
         # region Check 1 child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive 1 child DMA order", self.test_id))
 
-        self.dma_1_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_1_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_1_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.trade_qty, Price=self.price, TimeInForce=self.tif_fok))
         self.fix_verifier_buy.check_fix_message(self.dma_1_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 1 order')
 
@@ -203,7 +203,7 @@ class QAP_T4065(TestCase):
         # region Check 2 child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive 2 child DMA order", self.test_id))
 
-        self.dma_1_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_1_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_1_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.trade_qty, Price=self.price, TimeInForce=self.tif_fok))
         self.fix_verifier_buy.check_fix_message(self.dma_1_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 2 order')
 
@@ -247,7 +247,7 @@ class QAP_T4065(TestCase):
         # region Check passive child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Passive child DMA order", self.test_id))
 
-        self.dma_2_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_2_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_2_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.leaves_qty, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Passive Child DMA 3 order')
 
@@ -270,7 +270,7 @@ class QAP_T4065(TestCase):
         # region Check 4 child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive 4 child DMA order", self.test_id))
 
-        self.dma_2_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_2_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_2_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.leaves_qty, Price=self.new_price_bid_qdl2, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_2_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 2 order')
         # endregion

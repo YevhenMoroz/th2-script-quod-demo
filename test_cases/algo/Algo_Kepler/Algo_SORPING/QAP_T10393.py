@@ -128,7 +128,7 @@ class QAP_T10393(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
 
@@ -151,7 +151,7 @@ class QAP_T10393(TestCase):
         # region Check Lit aggressive child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit 1st aggressive child DMA order", self.test_id))
 
-        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.aggressive_child_qty, Price=self.price_ask_qdl1, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 1 order')
 
@@ -171,7 +171,7 @@ class QAP_T10393(TestCase):
         # region Check Lit passive child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit passive child DMA order", self.test_id))
 
-        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.passive_child_qty, Price=self.price))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Passive Child DMA 2 order')
 
@@ -190,7 +190,7 @@ class QAP_T10393(TestCase):
         # region Check Lit aggressive child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit 2nd aggressive child DMA order (sweeping)", self.test_id))
 
-        self.dma_3_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_3_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_3_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.aggressive_2nd_child_traded_qty, Price=self.price_ask_qdl1, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_3_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Aggressive Child DMA 3 order')
 
