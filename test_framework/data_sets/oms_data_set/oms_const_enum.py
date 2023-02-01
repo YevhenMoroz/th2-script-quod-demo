@@ -24,6 +24,12 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    instrument_4 = dict(
+        Symbol='CS-SHA-M15-2200/2600',  # MultyLeg
+        SecurityID='CS-SHA-M15-2200/2600',
+        SecurityIDSource='4',
+        SecurityExchange='TOMX'
+    )
     instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
@@ -70,6 +76,7 @@ class OmsInstrumentId(Enum):
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
+    instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
 
 
 class OmsListingId(Enum):
@@ -77,7 +84,7 @@ class OmsListingId(Enum):
     listing_2 = '9500000049'
     listing_3 = "704"
     listing_4 = "2259"
-
+    listing_5 = "16734"  # MultyLeg
 
 class OmsVenues(Enum):
     venue_1 = "PARIS"
@@ -261,6 +268,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
@@ -270,6 +278,7 @@ class OmsCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "GBX"
 
 
 class OmsRoutes(Enum):

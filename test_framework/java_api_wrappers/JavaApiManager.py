@@ -726,7 +726,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
 
     def get_first_message(self, message_type, filter_value=None) -> JavaApiMessage:
         for res in self.response:
@@ -735,7 +735,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
 
     def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
         self.response.reverse()
@@ -750,4 +750,4 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
