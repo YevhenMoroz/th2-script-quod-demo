@@ -7,7 +7,7 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType, AQSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
-from test_framework.java_api_wrappers.aqs_messages.Order_FrontendQueryReply import Order_FrontendQueryReply
+from test_framework.java_api_wrappers.aqs_messages.FrontendQueryReply import FrontendQueryReply
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
 from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
@@ -677,7 +677,7 @@ class JavaApiManager:
             elif message_type == CSMessageType.ManualMatchExecsToParentOrderReply.value:
                 response_fix_message = ManualMatchExecsToParentOrderReply()
             elif message_type == AQSMessageType.FrontendQueryReply.value:
-                response_fix_message = Order_FrontendQueryReply()
+                response_fix_message = FrontendQueryReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
