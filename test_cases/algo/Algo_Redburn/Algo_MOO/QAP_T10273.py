@@ -138,7 +138,7 @@ class QAP_T10273(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_Scaling_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.auction_algo.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_percentage, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_percentage))
+        self.auction_algo.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_percentage, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_percentage))
         self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         time.sleep(10)
