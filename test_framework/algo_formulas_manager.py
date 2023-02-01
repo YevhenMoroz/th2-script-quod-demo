@@ -249,7 +249,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_epoch_to_normal(datetime_epoch) -> dt:
-        return datetime.datetime.fromtimestamp(int(datetime_epoch))
+        return datetime.datetime.fromtimestamp(datetime_epoch).astimezone(tz=timezone.utc)
 
     @staticmethod
     def change_datetime_from_epoch_to_normal_with_milisec(datetime_epoch) -> dt:
@@ -523,9 +523,9 @@ class AlgoFormulasManager:
         for phase_from_list in phases:
             if phase_from_list['tradingPhase'] == phase.value:
                 if start_time:
-                    return int(phase_from_list['beginTime'])
+                    return phase_from_list['beginTime'].timestamp()
                 else:
-                    return int(phase_from_list['endTime'])
+                    return phase_from_list['endTime'].timestamp()
 
     @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,

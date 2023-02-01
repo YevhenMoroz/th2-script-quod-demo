@@ -41,7 +41,7 @@ class QAP_T5037(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -86,7 +86,7 @@ class QAP_T5037(TestCase):
         case_id_1 = bca.create_event("Create DMA Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
+        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Kepler_params()
         self.DMA_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.DMA_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xlux))
 
@@ -98,10 +98,10 @@ class QAP_T5037(TestCase):
         # region Check DMA order
         self.fix_verifier_sell.check_fix_message(self.DMA_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_pending)
+        er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(er_pending_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew')
         
-        er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_new)
+        er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New')
         # endregion
         

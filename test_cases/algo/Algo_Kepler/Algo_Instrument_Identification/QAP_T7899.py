@@ -44,7 +44,7 @@ class QAP_T7899(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -133,7 +133,7 @@ class QAP_T7899(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=dict(Symbol=self.symbol, SecurityID=self.sid, SecurityIDSource=self.sids, SecurityType=self.sec_type), DisplayInstruction=dict(DisplayQty=self.display_qty), Side=self.side)).remove_parameter('ExDestination')
 
@@ -155,7 +155,7 @@ class QAP_T7899(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_xbru_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler()
+        self.dma_xbru_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
         self.dma_xbru_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xbru, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument, Side=self.side))
         self.fix_verifier_buy.check_fix_message(self.dma_xbru_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
