@@ -62,6 +62,25 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_eliminate_rb_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
+        if side is GatewaySide.RBBuy:
+            if status is Status.Pending:
+                self.__set_pending_new_buy(new_order_single)
+            elif status is Status.New:
+                self.__set_new_buy(new_order_single)
+            elif status is Status.Fill:
+                self.__set_fill_buy(new_order_single)
+            elif status is Status.PartialFill:
+                self.__set_partial_fill_buy(new_order_single)
+            elif status is Status.CancelReplace:
+                self.__set_cancel_replace_buy(new_order_single)
+            elif status is Status.Cancel:
+                self.__set_cancel_rb_buy(new_order_single)
+            elif status is Status.Eliminate:
+                self.__set_eliminate_buy(new_order_single)
+            elif status is Status.Reject:
+                self.__set_reject_buy(new_order_single)
+            else:
+                raise Exception(f'Incorrect Status')
         elif side is GatewaySide.KeplerSell:
             if status is Status.Pending:
                 self.__set_pending_new_kepler_sell(new_order_single)
@@ -825,6 +844,25 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
     def __set_cancel_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict(
             ExDestination=new_order_single.get_parameter('ExDestination'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrigClOrdID='*',
+            Side=new_order_single.get_parameter('Side'),
+            Text='order canceled',
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rb_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict(
             AvgPx='*',
             ClOrdID='*',
             CumQty='0',
