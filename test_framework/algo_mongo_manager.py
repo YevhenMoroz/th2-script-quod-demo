@@ -71,10 +71,10 @@ class AlgoMongoManager:
 
 
 # region Usage example
-# get list of trading phases
-trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
-# get curve to insert to mongo
-curve = AlgoMongoManager.get_straight_curve_for_mongo(trading_phases, volume=100.0)
-# insert data into mongoDB
-AlgoMongoManager.insert_many_to_mongodb_with_drop(curve, "filteredQuoteDB", "Q48", host="10.0.22.35", port=27316)
+# # get list of trading phases
+# trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreClosed)
+# # get curve to insert to mongo
+# curve = AlgoMongoManager.get_straight_curve_for_mongo(trading_phases, volume=100.0)
+# # insert data into mongoDB
+# AlgoMongoManager.insert_many_to_mongodb_with_drop(curve, "filteredQuoteDB", "Q48", host="10.0.22.35", port=27316)
 # region
