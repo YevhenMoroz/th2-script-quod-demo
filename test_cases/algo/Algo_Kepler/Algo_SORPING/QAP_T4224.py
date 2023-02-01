@@ -46,6 +46,7 @@ class QAP_T4224(TestCase):
         self.party_id_source = constants.PartyIDSource.party_id_source_2.value
         self.party_role_1 = constants.PartyRole.party_role_12.value
         self.party_role_2 = constants.PartyRole.party_role_3.value
+        self.target_strategy = constants.TargetStrategy.SynthTIF.value
 
         self.no_party = [
             {'PartyID': self.party_id_1, 'PartyIDSource': self.party_id_source,
@@ -121,7 +122,7 @@ class QAP_T4224(TestCase):
         case_id_1 = bca.create_event("Create Synthetic TIF Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
+        self.Synthetic_TIF_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Kepler_params()
         self.Synthetic_TIF_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qdl11, TimeInForce=self.tif_gtd)).add_fields_into_repeating_group('NoParty', self.no_party).add_tag(dict(ExpireDate=self.ExpireDate_for_sending))
 
@@ -144,19 +145,19 @@ class QAP_T4224(TestCase):
 
         self.fix_verifier_sell.check_fix_message(self.Synthetic_TIF_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_Kepler_DMA(self.Synthetic_TIF_order, self.status_pending)
+        er_pending_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_pending)
         er_pending_new_Synthetic_TIF_order_params.change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
-        er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_Kepler_DMA(self.Synthetic_TIF_order, self.status_new)
-        er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).change_parameters(dict(ExpireDate=self.ExpireDate))
+        er_new_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_new)
+        er_new_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy=self.target_strategy)).change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_qdl11_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_child_params()
+        self.dma_qdl11_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_Kepler_params()
         self.dma_qdl11_order.change_parameters(dict(Account=self.account_qdl11, ExDestination=self.ex_destination_qdl11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
         self.fix_verifier_buy.check_fix_message(self.dma_qdl11_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
@@ -169,8 +170,8 @@ class QAP_T4224(TestCase):
         # endregion
         
         # region Check that Synthetic TIF order was canceled
-        er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_Kepler_DMA(self.Synthetic_TIF_order, self.status_cancel)
-        er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy='*')).change_parameters(dict(ExpireDate=self.ExpireDate))
+        er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_Synthetic_TIF_order_params.add_tag(dict(TargetStrategy=self.target_strategy)).change_parameters(dict(ExpireDate=self.ExpireDate))
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_TIF_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
         

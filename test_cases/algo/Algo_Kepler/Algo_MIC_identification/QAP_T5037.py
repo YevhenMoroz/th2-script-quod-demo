@@ -51,7 +51,7 @@ class QAP_T5037(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_31")
         # endregion
 
         # region Direction
@@ -60,7 +60,7 @@ class QAP_T5037(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_xlux = self.data_set.get_mic_by_name("mic_10")
+        self.ex_destination_xlux = self.data_set.get_mic_by_name("mic_38")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
         # endregion
@@ -98,10 +98,10 @@ class QAP_T5037(TestCase):
         # region Check DMA order
         self.fix_verifier_sell.check_fix_message(self.DMA_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_Kepler_DMA(self.DMA_order, self.status_pending)
+        er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(er_pending_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew')
         
-        er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_Kepler_DMA(self.DMA_order, self.status_new)
+        er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New')
         # endregion
         
