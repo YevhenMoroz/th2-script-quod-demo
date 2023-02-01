@@ -163,7 +163,7 @@ class QAP_T4464(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Scaling_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side_sell))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Offset=self.pp1_offset, PricePoint1Reference=self.pp1_reference, PricePoint1Participation=self.pp1_participation, PricePoint2Offset=self.pp2_offset, PricePoint2Reference=self.pp2_reference, PricePoint2Participation=self.pp2_participation))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Offset=self.pp1_offset, PricePoint1Reference=self.pp1_reference, PricePoint1Participation=self.pp1_participation, PricePoint2Offset=self.pp2_offset, PricePoint2Reference=self.pp2_reference, PricePoint2Participation=self.pp2_participation))
         self.pov_order.remove_fields_from_component('QuodFlatParameters', ['PricePoint1Price', 'PricePoint2Price'])
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
