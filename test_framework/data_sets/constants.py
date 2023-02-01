@@ -112,6 +112,7 @@ class GatewaySide(Enum):
     Sell = "Sell"
     Buy = "Buy"
     RBSell = "RBSell"
+    RBBuy = "RBBuy"
     KeplerSell = 'KeplerSell'
 
 class Aggressivity(Enum):

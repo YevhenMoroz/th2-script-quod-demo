@@ -37,7 +37,7 @@ key_params_cl = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price']
 key_params=['OrdStatus', 'ExecType', 'OrderQty', 'Price']
 
 #Gateway Side
-gateway_side_buy = DataSet.GatewaySide.Buy
+gateway_side_buy = DataSet.GatewaySide.RBBuy
 gateway_side_sell = DataSet.GatewaySide.Sell
 
 #Status
