@@ -162,24 +162,26 @@ class QAP_T10273(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy side NewOrderSingle", case_id_2))
 
         # region Aggressive Scaling order
-        scaling_ioc_child_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        scaling_ioc_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, Instrument='*', TimeInForce=self.tif_ato))
-        scaling_ioc_child_order.add_tag(dict(Parties='*', QtyType=0))
-        scaling_ioc_child_order.remove_parameter('NoParty')
+        scaling_dma_child_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        scaling_dma_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, Instrument='*', TimeInForce=self.tif_ato))
+        scaling_dma_child_order.add_tag(dict(Parties='*', QtyType=0))
+        scaling_dma_child_order.remove_parameter('NoParty')
 
-        pending_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_pending)
+        pending_scaling_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_pending)
 
-        new_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_new)
+        new_scaling_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_new)
+
+        cancel_scaling_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_cancel)
         # endregion
 
         # region Check Scaling child orders
-        self.fix_verifier_buy.check_fix_message_sequence([scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order, scaling_ioc_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side Pending New", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params, pending_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side New", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params, new_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
         # endregion
         
         # region Check eliminated Algo Order
@@ -192,6 +194,11 @@ class QAP_T10273(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_auction_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(5)
+        
+        # region Check cancellation of the Scaling child orders
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Cancel", case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
+        # endregion
 
         # region check cancellation parent Auction order
         cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
