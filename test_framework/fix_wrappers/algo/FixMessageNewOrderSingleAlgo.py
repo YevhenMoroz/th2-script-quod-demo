@@ -348,6 +348,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10'
             }
         }
         super().change_parameters(base_parameters)
@@ -375,6 +376,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10'
             }
         }
         super().change_parameters(base_parameters)
@@ -402,6 +404,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10',
                 'ExcludePricePoint2': '1'
             }
         }
