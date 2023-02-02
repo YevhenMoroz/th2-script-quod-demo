@@ -135,10 +135,10 @@ class QAP_T7249(TestCase):
         self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
                                              f'Check statuses of confirmation of {self.alloc_account}')
 
-        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
         # endregion
         # region Step 6
         self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
         status = self.ssh_client.execute_sql(f"select ordstatus from ordr where ordid='{order_id}';")[0][0]
         self.java_api_manager.compare_values({"Sts": "EXP"}, {"Sts": status}, "Check order status")
         # endregion
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
