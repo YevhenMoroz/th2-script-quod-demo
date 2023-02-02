@@ -11,7 +11,7 @@ from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessa
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
-from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.NewOrderMultiLegOMS import NewOrderMultiLegOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,8 +35,8 @@ class QAP_T9051(TestCase):
         self.price = self.nos.get_parameter("Price")
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
-        self.order_submit = OrderSubmitOMS(self.data_set)
-        self.order_submit2 = OrderSubmitOMS(self.data_set)
+        self.order_submit = NewOrderMultiLegOMS(self.data_set)
+        self.order_submit2 = NewOrderMultiLegOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -44,10 +44,6 @@ class QAP_T9051(TestCase):
         self.order_submit.set_default_care_limit(self.environment.get_list_fe_environment()[0].user_1,
                                                  self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                  SubmitRequestConst.USER_ROLE_1.value)
-        multy_leg_param = {
-            "InstrID": self.data_set.get_instrument_id_by_name("instrument_5"), 'ListingList': {'ListingBlock': [
-                {'ListingID': self.data_set.get_listing_id_by_name("listing_5")}]}}
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", multy_leg_param)
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
         ord_notify = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value]
@@ -60,7 +56,6 @@ class QAP_T9051(TestCase):
         self.order_submit2.set_default_child_care(self.environment.get_list_fe_environment()[0].user_1,
                                                   self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                   SubmitRequestConst.USER_ROLE_1.value, ord_id)
-        self.order_submit2.update_fields_in_component("NewOrderSingleBlock", multy_leg_param)
         self.java_api_manager.send_message_and_receive_response(self.order_submit2)
         ord_notify = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value]

@@ -77,7 +77,7 @@ class OmsInstrumentId(Enum):
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
-
+    instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
 
 class OmsListingId(Enum):
     listing_1 = "1200"
