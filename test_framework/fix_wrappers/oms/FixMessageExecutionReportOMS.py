@@ -128,7 +128,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "ExpireDate": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["ExpireDate"],
         }
         if new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"] == "2":
-            change_parameters.update({"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
+            change_parameters.update(
+                {"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
@@ -167,7 +168,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
 
         }
         if new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"] == "2":
-            change_parameters.update({"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
+            change_parameters.update(
+                {"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
@@ -228,7 +230,8 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
 
         }
         if new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"] == "2":
-            change_parameters.update({"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
+            change_parameters.update(
+                {"Price": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Price"]})
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
@@ -260,7 +263,6 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
-
 
     def set_default_calculated(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
@@ -300,7 +302,7 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "OrdType": new_order_single.get_parameter("OrdType"),
             "TimeInForce": new_order_single.get_parameter("TimeInForce"),
             "Instrument": new_order_single.get_parameter("Instrument"),
-            "SettlDate":(tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
+            "SettlDate": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
             "SecondaryOrderID": ord_id,
             "TradeDate": (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y%m%d'),
             "SecondaryExecID": basic_custom_actions.client_orderid(9),

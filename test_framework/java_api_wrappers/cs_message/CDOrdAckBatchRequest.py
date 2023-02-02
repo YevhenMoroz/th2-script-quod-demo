@@ -8,7 +8,8 @@ class CDOrdAckBatchRequest(JavaApiMessage):
         super().__init__(message_type=CSMessageType.CDOrdAckBatchRequest.value)
         self.change_parameters(parameters)
 
-    def set_default(self, order_id, cd_ord_notif_id, desk_id):
+    def set_default(self, order_id, cd_ord_notif_id, desk_id, ack_type='N', set_reject=False):
+        """CDOrdAckType: N=New, M=Modify, C=Cancel"""
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.CS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.CS',
@@ -21,7 +22,9 @@ class CDOrdAckBatchRequest(JavaApiMessage):
                         ]
                 },
                     'CDOrdResponse': 'A',
-                    'CDOrdAckType': 'N',
+                    'CDOrdAckType': ack_type,
                     'AcceptorDeskID': desk_id}
         }
+        if set_reject:
+            base_parameters["CDOrdAckBatchRequestBlock"]["CDOrdResponse"] = "R"
         return self.change_parameters(base_parameters)

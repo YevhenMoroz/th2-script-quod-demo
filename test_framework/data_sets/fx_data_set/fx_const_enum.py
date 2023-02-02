@@ -333,3 +333,15 @@ class FXAlgoPoliciesID(Enum):
     algo_policy_id_1 = "400019"
     algo_policy_id_2 = "200011"
     algo_policy_id_3 = "400024"
+
+
+class FXListings(Enum):
+    eur_usd_spo = "506403761"
+    eur_usd_wk1 = "506403765"
+    eur_usd_wk2 = "506403766"
+    eur_usd_wk3 = "506403767"
+    eur_usd_bda = "506403787"
+    gbp_usd_spo = "506404433"
+    gbp_usd_wk1 = "506404437"
+    gbp_usd_wk2 = "506404438"
+    #TODO add more listings

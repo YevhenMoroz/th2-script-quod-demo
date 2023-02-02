@@ -24,7 +24,7 @@ class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest
             "TransactTime": datetime.utcnow().isoformat(),
         }
 
-    def set_default(self, new_order_single: FixMessageNewOrderSingle):
+    def set_default(self, new_order_single: FixMessageNewOrderSingle, qty=None, price=None):
         change_parameters = {
             "Account": new_order_single.get_parameter("Account"),
             "OrderQtyData": new_order_single.get_parameter("OrderQtyData"),
@@ -36,6 +36,10 @@ class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest
             "HandlInst": new_order_single.get_parameter("HandlInst"),
             "Instrument": new_order_single.get_parameter("Instrument"),
         }
+        if qty:
+            change_parameters['OrderQtyData'] = {'OrderQty': qty}
+        if price:
+            change_parameters['Price'] = price
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
         return self
@@ -50,7 +54,7 @@ class FixMessageOrderCancelReplaceRequestOMS(FixMessageOrderCancelReplaceRequest
             'OrigClOrdID': new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["ClOrdID"],
             "Side": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Side"],
             "OrdType": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["OrdType"],
-            "Instrument":  new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
+            "Instrument": new_order_list.get_parameter("ListOrdGrp")["NoOrders"][ord_number]["Instrument"],
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)

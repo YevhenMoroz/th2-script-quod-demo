@@ -250,6 +250,40 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_32 = dict(
+        Symbol='PTSNG0AM0007',
+        SecurityID='PTSNG0AM0007',
+        SecurityIDSource='4',
+        SecurityExchange='XLIS',
+        SecurityType='CS'
+    )
+
+    instrument_33 = dict(
+        Symbol='US3448491049',
+        SecurityID='US3448491049',
+        SecurityIDSource='4',
+        SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
+
+    instrument_34 = dict(
+        Symbol='IE00BD1RP616',
+        SecurityID='IE00BD1RP616',
+        SecurityIDSource='4',
+        SecurityExchange='XDUB',
+        SecurityType='CS'
+    )
+
+    instrument_35 = dict(
+        Symbol='GB00BY7QYJ50',
+        SecurityID='GB00BY7QYJ50',
+        SecurityIDSource='4',
+        SecurityExchange='XDUB',
+        SecurityType='CS'
+    )
+
+
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -344,6 +378,8 @@ class AlgoMic(Enum):
     mic_36 = "QDL3"   # QUODLIT3
     mic_37 = "TQEL"   # TQEULIS
     mic_38 = "XLUX"   # LUXEMBURG
+    mic_39 = "XLIS"   # Euronext Lisbon
+    mic_40 = "XDUB"   # DUBLIN
 
 
 class AlgoListingId(Enum):

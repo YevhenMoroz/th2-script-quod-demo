@@ -5,7 +5,7 @@ from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 class OrderActionRequest(JavaApiMessage):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessageType.OrderBagCancelReply.value)
+        super().__init__(message_type=ORSMessageType.OrderActionRequest.value)
         super().change_parameters(parameters)
 
     def set_default(self, order_ids: []) -> None:
@@ -13,10 +13,12 @@ class OrderActionRequest(JavaApiMessage):
         for order in order_ids:
             orders_list.append({'OrdID': order})
         base_parameters = {
-            'OrderBagCancelReplyBlock': {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'OrderActionRequestBlock': {
                 'OrderAction': "DSE",
                 'DiscloseExec': "M",
-                'OrderActionRequestBlock': {'OrderActionList': {'OrderActionBlock': orders_list}}
+                'OrderActionList': {'OrderActionBlock': orders_list}
             }
         }
         super().change_parameters(base_parameters)

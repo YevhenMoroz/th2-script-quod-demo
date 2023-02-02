@@ -39,7 +39,7 @@ class QAP_T3981(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
         profiles_sub_wizard = VenuesProfilesSubWizard(self.web_driver_container)
-        profiles_sub_wizard.click_on_trading_phase_profile_mange_button()
+        profiles_sub_wizard.click_on_trading_phase_profile_manage_button()
         time.sleep(2)
         trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
         trading_phase_profile_sub_wizard.click_on_plus_button()
