@@ -39,7 +39,7 @@ class QAP_T7598(TestCase):
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_pos_3')  # MOClient
+        self.client = self.data_set.get_client('client_pos_3')
         self.security_account = self.data_set.get_account_by_name('client_pos_3_acc_3')
         self.security_account_second = self.data_set.get_account_by_name('client_pos_3_acc_2')
         self.order_book = OMSOrderBook(self.test_id, self.session_id)

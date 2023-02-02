@@ -1,50 +1,59 @@
 import logging
 from pathlib import Path
+
+from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, Suspended
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossRequest import ManualOrderCrossRequest
+from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementRequest import SuspendOrderManagementRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7382(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
-        self.price = self.fix_message.get_parameter('Price')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.suspend_request = SuspendOrderManagementRequest()
+        self.cross_request = ManualOrderCrossRequest()
+        self.trd_request = TradeEntryOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        # region Precondition
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        ord_id_care = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         # endregion
-        # region accept CO order
-        self.client_inbox.accept_order()
+        # region Step 1
+        self.suspend_request.set_default(ord_id_care)
+        self.java_api_manager.send_message_and_receive_response(self.suspend_request)
+        suspend_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.SuspendOrderManagementReply.value).get_parameter(
+            JavaApiFields.SuspendOrderManagementReplyBlock.value)
+        self.java_api_manager.compare_values({"OrdID": ord_id_care, "SuspendedCare": "Y"}, suspend_reply,
+                                             "Check suspend")
         # endregion
-        # region suspend
-        self.order_book.suspend_order()
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.suspend.value: Suspended.yes.value})
-        # endregion
-        # region extract error and compare
-        result = self.order_book.manual_execution(qty=self.qty, price=self.price, error_expected=True)
-        self.order_book.compare_values({'Trade Ticket Error': "Error - [QUOD-11503] Invalid status [SuspendedCare=Y]"},
-                                       result, 'Error message appeared in footer of ManualExec Ticket')
+        # region Step 2
+        self.trd_request.set_default_trade(ord_id_care)
+        self.java_api_manager.send_message_and_receive_response(self.trd_request)
+        ord_notify = self.java_api_manager.get_last_message(ORSMessageType.TradeEntryReply.value).get_parameters()[
+            "TradeEntryReplyBlock"]
+        self.java_api_manager.compare_values({"TradeEntryStatus": "REJ", "FreeNotes": "Invalid status [SuspendedCare=Y]"
+                                              }, ord_notify, "Check child sts")
+
         # endregion

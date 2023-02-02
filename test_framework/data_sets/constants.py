@@ -41,6 +41,7 @@ class Connectivity(Enum):
     Luna_315_web_trading_http = 'rest_wt315luna'
     Luna_315_web_trading_web_socket = 'api_session_315luna'
     Ganymede_317_ja = '317_java_api'
+    Ganymede_317_ja_user2 = '317_java_api_user2'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Ganymede_317_ors_report = "log317-ors-report"
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'

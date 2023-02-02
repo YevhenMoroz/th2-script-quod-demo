@@ -41,8 +41,7 @@ class QAP_T2392(TestCase):
         # region step 2
         self.quote_request.set_swap_rfq_params()
 
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                           OrderQty=self.qty, Account=self.account,
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Instrument=self.instrument, Currency=self.currency)
         self.quote_request.update_near_leg(leg_symbol=self.symbol, settle_date=self.settle_date_spo_ndf,
                                            leg_qty=self.qty)

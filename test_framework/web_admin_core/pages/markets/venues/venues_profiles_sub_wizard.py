@@ -73,7 +73,7 @@ class VenuesProfilesSubWizard(CommonPage):
     def click_on_holiday_manage_button(self):
         self.find_by_xpath(VenuesConstants.PROFILES_TAB_HOLIDAY_MANAGE_BUTTON_XPATH).click()
 
-    def click_on_trading_phase_profile_mange_button(self):
+    def click_on_trading_phase_profile_manage_button(self):
         self.find_by_xpath(VenuesConstants.PROFILES_TAB_TRADING_PHASE_PROFILE_MANAGE_BUTTON_XPATH).click()
 
     def click_on_routing_param_group(self):

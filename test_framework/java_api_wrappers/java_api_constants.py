@@ -9,6 +9,7 @@ class ExecutionReportConst(Enum):
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
     ExecType_ACT = 'ACT'
+    PostTradeExecStatus_NAL = 'NAL'
 
 
 class BasketMessagesConst(Enum):
@@ -30,20 +31,25 @@ class OrderReplyConst(Enum):
     DiscloseExec_M = 'M'
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
+    OrdStatus_REJ = 'REJ'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
     TransStatus_ELI = 'ELI'
+    TransStatus_REJ = 'REJ'
     OrdCapacity_A = 'A'
     OrdCapacity_P = 'P'
     OrdCapacity_I = 'I'
     IsLocked_Y = 'Y'
     IsLocked_N = 'N'
+    ExecType_REP = 'REP'
+    ExecType_PCA = 'PCA'
 
 
 class ExecutionPolicyConst(Enum):
     DMA = 'D'
     CARE = 'C'
+    Synthetic = 'S'
 
 
 class SubmitRequestConst(Enum):
@@ -206,6 +212,18 @@ class JavaApiFields(Enum):
     PreTradeAllocationList = 'PreTradeAllocationList'
     PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
     AllocAccountID = 'AllocAccountID'
+    SuspendOrderManagementReplyBlock = 'SuspendOrderManagementReplyBlock'
+    TradeEntryReplyBlock = 'TradeEntryReplyBlock'
+    OrdNotificationBlock = 'OrdNotificationBlock'
+    OrderModificationReplyBlock = 'OrderModificationReplyBlock'
+    CDTransferReplyBlock = 'CDTransferReplyBlock'
+    CDTransferID = 'CDTransferID'
+    RecipientUserID = 'RecipientUserID'
+    CDOrdNotifBlock = 'CDOrdNotifBlock'
+    CDOrdNotifID = 'CDOrdNotifID'
+    CDRequestType = 'CDRequestType'
+    OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
+    ReportedCumQty = 'ReportedCumQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -223,6 +241,9 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
+    VenueScenarioID = 'VenueScenarioID'
+    NewOrderReplyBlock = 'NewOrderReplyBlock'
+    OrdType = 'OrdType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -280,6 +301,12 @@ class JavaApiFields(Enum):
     IsLocked = 'IsLocked'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
+    Price = 'Price'
+    VenueClientAccountName = 'VenueClientAccountName'
+    PostTradeExecStatus = 'PostTradeExecStatus'
+    DiscloseExec = 'DiscloseExec'
+    DayAvgPrice = 'DayAvgPrice'
+    SuspendedCare = "SuspendedCare"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
@@ -301,10 +328,12 @@ class BagChildCreationPolicy(Enum):
 class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
+    ATC = 'ATC'
 
 
 class OrdTypes(Enum):
     Limit = 'LMT'
+    Market = 'MKT'
 
 
 class PegScopes(Enum):
@@ -328,3 +357,8 @@ class OrderBagConst(Enum):
     OrderBagStatus_CXL = 'CXL'
     OrderWaveStatus_TER = 'TER'
     OrderBagStatus_TER = 'TER'
+
+
+class CDResponsesConst(Enum):
+    CDRequestType_MOD = 'MOD'
+    CDRequestType_CAN = 'CAN'

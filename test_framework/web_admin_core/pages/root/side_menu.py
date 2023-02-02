@@ -348,6 +348,9 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(VenuesConstants.VENUES_PAGE_TITLE_XPATH)
 
+    def click_on_venues_tab(self):
+        self.click_menu_item(RootConstants.VENUES_ITEM_XPATH)
+
     def open_cum_trading_limits_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CUM_TRADING_LIMITS_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)

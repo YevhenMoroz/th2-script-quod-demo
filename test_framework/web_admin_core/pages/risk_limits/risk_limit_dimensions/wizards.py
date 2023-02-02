@@ -356,6 +356,18 @@ class DimensionsTab(CommonPage):
     def is_side_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.SIDE)
 
+    def set_order_type(self, value):
+        self.set_combobox_value(Constants.Wizard.DimensionsTab.ORDER_TYPE, value)
+
+    def get_order_type(self):
+        return self.get_text_by_xpath(Constants.Wizard.DimensionsTab.ORDER_TYPE)
+
+    def select_display_order_checkbox(self):
+        self.find_by_xpath(Constants.Wizard.DimensionsTab.DISPLAY_ORDER_CHECKBOX).click()
+
+    def is_display_order_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.Wizard.DimensionsTab.DISPLAY_ORDER_CHECKBOX)
+
 
 class AssignmentsTab(CommonPage):
     def set_institution(self, value):

@@ -5,8 +5,8 @@ from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, OrderType
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
+    FixMessageOrderCancelReplaceRequestOMS
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 
@@ -14,9 +14,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
-@try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7665(TestCase):
 
+class QAP_T7665(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -24,22 +23,35 @@ class QAP_T7665(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        self.qty2 = '240'
+        self.price2 = '50'
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         # region create CO order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameters()['OrderID']
+        exec_report_new = response[2].get_parameters()
         # endregion
-        # region create accept order
-        self.client_inbox.accept_order()
-        # endregion
+
         # region check order status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
+        self.order_book.compare_values({'ExecType': '0'},
+                                       exec_report_new, 'Check order is created')
+        # endregion
+
+        # region amend order by Fix
+        self.fix_message_cancel_replace.set_default(self.fix_message)
+        self.fix_message_cancel_replace.change_parameters({'OrderQtyData': {'OrderQty': self.qty2}, "Price":
+            self.price2})
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel_replace)
+        # endregion
+
+        # region check changed values
+        exec_report_replaced = response[0].get_parameters()
+        self.order_book.compare_values({'ExecType': '5', 'Price': self.price2, 'OrderQtyData': {'OrderQty': self.qty2}},
+                                       exec_report_replaced, 'Check replaced values ')
         # endregion
 
 
