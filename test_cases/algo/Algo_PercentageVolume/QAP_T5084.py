@@ -1,285 +1,268 @@
 import os
-import logging
-from custom import basic_custom_actions as bca
-from win_gui_modules.order_book_wrappers import ModifyOrderDetails, OrderInfo, OrdersDetails, ExtractionDetail, ExtractionAction, CancelOrderDetails
-from win_gui_modules.wrappers import *
-from win_gui_modules.order_ticket_wrappers import OrderTicketDetails, NewOrderDetails
 import time
-from datetime import datetime
-from stubs import Stubs
-from logging import getLogger, INFO
-from custom.basic_custom_actions import timestamps, create_event, message_to_grpc, convert_to_request
-from win_gui_modules.utils import set_session_id, get_base_request, prepare_fe, call, close_fe, get_opened_fe
-from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
-from th2_grpc_common.common_pb2 import ConnectionID
+from pathlib import Path
+from datetime import datetime, timedelta
+
+from test_framework.core.try_exept_decorator import try_except
+from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from custom.verifier import Verifier
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.core.test_case import TestCase
+from test_framework.data_sets import constants
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 
-logging.basicConfig(format='%(asctime)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+class QAP_T5084(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, data_set=None, environment=None):
+        super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
-qty = 1000
-child_qty_1 = 86
-child_qty_2 = 43
-child_qty_3 = 67
-text_pn='Pending New status'
-text_n='New status'
-text_ocrr='OCRRRule'
-text_c='order canceled'
-text_f='Fill'
-text_ret = 'reached end time'
-text_s = 'sim work'
-side = 1
-price = 1
-tif_day = 0
-ex_destination = "XPAR"
-client = "CLIENT2"
-order_type = 'Limit'
-account = 'XPAR_CLIENT2'
-currency = 'EUR'
-s_par = '1015'
-lookup = 'PAR'
+        self.fix_env1 = self.environment.get_list_fix_environment()[0]
 
-case_name = os.path.basename(__file__)
-connectivity_buy_side = "fix-bs-310-columbia"
-connectivity_sell_side = "fix-ss-310-columbia-standart"
-connectivity_fh = 'fix-fh-310-columbia'
+        # region th2 components
+        self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
+        self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
+        self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
+        self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        # endregion
 
-report_id = None   
+        # region order parameters
+        self.order_type = constants.OrderType.Limit.value
+        self.qty = 1000
+        self.pct = 0.3
+        self.pct_mod = 0.4
+        self.aggressivity = constants.Aggressivity.Neutral.value
+        self.param_type_bool = constants.StrategyParameterType.Boolean.value
+        self.param_type_string = constants.StrategyParameterType.String.value
+        self.param_type_int = constants.StrategyParameterType.Int.value
+        self.price_ask = 2
+        self.price = self.price_bid = 1
+        self.qty_bid = self.qty_ask = 100
+        self.ltq = 100
+        self.tif_day = constants.TimeInForce.Day.value
+        self.child_1_qty = AlgoFormulasManager.get_pov_child_qty(self.pct, self.ltq, self.qty)
+        self.child_2_qty = AlgoFormulasManager.get_pov_child_qty(self.pct, self.qty_bid, self.qty)
+        self.child_3_qty = AlgoFormulasManager.get_pov_child_qty(self.pct_mod, self.qty_bid, self.qty)
+        # endregion
 
-def rule_creation():
-    rule_manager = RuleManager(Simulators.algo)
-    nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(connectivity_buy_side, account, ex_destination, price)
-    ocr_rule = rule_manager.add_OrderCancelRequest(connectivity_buy_side, account, ex_destination, True)
-    ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(connectivity_buy_side, False)
-    return [nos_rule, ocr_rule, ocrr_rule]
+        # region Gateway Side
+        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_buy = GatewaySide.Buy
+        # endregion
 
-def rule_destroyer(list_rules):
-    rule_manager = RuleManager(Simulators.algo)
-    for rule in list_rules:
-        rule_manager.remove_rule(rule)
+        # region Status
+        self.status_pending = Status.Pending
+        self.status_new = Status.New
+        self.status_cancel = Status.Cancel
+        self.status_cancel_replace = Status.CancelReplace
+        # endregion
 
-def send_market_data(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-        symbol=symbol,
-        connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntries': market_data
-    }
+        # region instrument
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
+        # endregion
 
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataSnapshotFullRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataSnapshotFullRefresh', md_params, connectivity_fh)
-    ))
+        # region Direction
+        self.FromQuod = DirectionEnum.FromQuod
+        self.ToQuod = DirectionEnum.ToQuod
+        # endregion
 
+        # region venue param
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.s_par = self.data_set.get_listing_id_by_name("listing_1")
+        # endregion
 
-def send_market_dataT(symbol: str, case_id :str, market_data ):
-    MDRefID = Stubs.simulator.getMDRefIDForConnection(request=RequestMDRefID(
-            symbol=symbol,
-            connection_id=ConnectionID(session_alias=connectivity_fh)
-    )).MDRefID
-    md_params = {
-        'MDReqID': MDRefID,
-        'NoMDEntriesIR': market_data
-    }
+        # region Key parameters
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
+        # endregion
 
-    Stubs.fix_act.sendMessage(request=convert_to_request(
-        'Send MarketDataIncrementalRefresh',
-        connectivity_fh,
-        case_id,
-        message_to_grpc('MarketDataIncrementalRefresh', md_params, connectivity_fh)
-    ))
+        self.rule_list = []
 
-def order(base_request, case_id):
-        ob_act = Stubs.win_act_order_book
-        act = Stubs.win_act
-        case_id_0 = bca.create_event("Send Market Data", case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Rule creation
+        rule_manager = RuleManager(Simulators.algo)
+        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, 3000)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
-        market_data2 = [
-            {
-                'MDUpdateAction': '0',
-                'MDEntryType': '2',
-                'MDEntryPx': '1',
-                'MDEntrySize': '200',
-                'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
-            }
-        ]
-        send_market_dataT(s_par, case_id_0, market_data2)
+        self.rule_list = [ocr_rule, nos_dma_rule, ocrr_rule]
+        # endregion
 
-        market_data3 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data3)
+        now = datetime.utcnow()
+        start_time = now.strftime("%Y-%b-%d %H:%M:%S")
+        end_time = (now + timedelta(minutes=9)).strftime("%Y-%b-%d %H:%M:%S")
 
-        order_ticket = OrderTicketDetails()
-        order_ticket.set_quantity(str(qty))
-        order_ticket.set_limit(str(price))
-        order_ticket.set_client(client)
-        order_ticket.set_order_type(order_type)
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        # endregion
 
-        vol_strategy = order_ticket.add_quod_participation_strategy("Quod Participation")
-        #vol_strategy.set_start_date("Now")
-        vol_strategy.set_percentage_volume('30')
-        vol_strategy.set_aggressivity("Neutral")
-
-        new_order_details = NewOrderDetails()
-        new_order_details.set_lookup_instr(lookup)
-        new_order_details.set_order_details(order_ticket)
-        new_order_details.set_default_params(base_request)
-
-
-        order_ticket_service = Stubs.win_act_order_ticket
-        call(order_ticket_service.placeOrder, new_order_details.build())
-
-        case_id_0 = bca.create_event("Send Market Data", case_id)
-
-        market_data3 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '186',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_0, market_data3)
+        # region Set TradingPhase and LTQ for POV
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
+        self.fix_manager_feed_handler.send_message(market_data_incr_par)
+        # endregion
 
         time.sleep(3)
 
-        order_info_extraction = "getOrderInfo"
+        # region Send NewOrderSingle (35=D) for POV order
+        case_id_1 = bca.create_event("Create POV Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
 
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(order_info_extraction)
-        call(ob_act.getOrdersDetails, main_order_details.request())
+        self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
+        self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
+        self.POV_order.add_fields_into_repeating_group_algo('NoStrategyParameters', [['StartDate', self.param_type_string, start_time],
+                                                                                     ['EndDate', self.param_type_string, end_time],
+                                                                                     ['Aggressivity', self.param_type_int, self.aggressivity]]) 
+        self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
+        # endregion
 
-        main_order_qty = ExtractionDetail("orderbook.qty", "Qty")
-        main_order_lmt_price = ExtractionDetail("orderbook.lmtprice", "Limit Price")
-        main_order_id = ExtractionDetail("orderBook.orderid", "Order ID")
-        main_order_sts = ExtractionDetail("orderBook.sts", "Sts")
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid + self.child_1_qty)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        # endregion
 
-        main_order_extraction_action = ExtractionAction.create_extraction_action(
-            extraction_details=[main_order_qty, main_order_lmt_price, main_order_id, main_order_sts])
+        # region Check Sell side
+        self.fix_verifier_sell.check_fix_message(self.POV_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+
+        pending_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
+
+        new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
+        new_POV_order_params.change_parameter('NoParty', '*')
+        self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
+        # endregion
+
+        time.sleep(5)
+
+        # region Check child DMA orders 1 & 2
+        case_id_2 = bca.create_event("Child DMA orders 1 & 2", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_2)
         
-        main_order_details.add_single_order_info(OrderInfo.create(action=main_order_extraction_action))
+        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_1.change_parameters(dict(OrderQty=self.child_1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
-        response = call(ob_act.getOrdersDetails, main_order_details.request())
+        self.pending_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_pending)
 
-        order_id = response[main_order_id.name]
-        main_order_details.set_filter(['Order ID', order_id])
-        call(ob_act.getOrdersDetails, main_order_details.request())
+        self.new_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_new)
 
-        order_amend = OrderTicketDetails()
-        vol_stategy = order_amend.add_quod_participation_strategy('Quod Participation')
-        vol_stategy.set_percentage_volume('40')
+        # region Check child DMA order 2
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2.change_parameters(dict(OrderQty=self.child_1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
-        amend_order_details = ModifyOrderDetails()
-        amend_order_details.set_default_params(base_request)
-        amend_order_details.set_order_details(order_amend)
-        call(Stubs.win_act_order_book.amendOrder, amend_order_details.build())
+        self.pending_dma_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_pending)
 
+        self.new_dma_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_new)
+        # endregion
+
+        time.sleep(5)
+
+        # region Send_MarkerData
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        # endregion
+
+        # region Modify parent POV order
+        case_id_3 = bca.create_event("Replace POV Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_3)
+
+        self.POV_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.POV_order)
+        self.POV_order_replace_params.update_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'PercentageVolume', 'StrategyParameterType': 6, 'StrategyParameterValue': self.pct_mod}])
+        self.fix_manager_sell.send_message_and_receive_response(self.POV_order_replace_params, case_id_2)
+
+        time.sleep(1)
+
+        self.POV_order_replace_params.change_parameter('TransactTime', '*')
+        self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
+
+        replaced_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        replaced_twap_order_params.change_parameter('NoParty', '*')
+        self.fix_verifier_sell.check_fix_message(replaced_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
+        # endregion
+
+        # region check cancel child DMA 1
+        self.cancel_req_dma_order_1 = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_order_1)
+        self.cancel_req_dma_order_1.change_parameter('NoParty', '*').remove_parameter('ChildOrderID')
         
-        case_id_1 = bca.create_event("Send Market Data", case_id)
+        self.er_cancel_dma_order_1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_cancel)
+        # endregion
 
-        market_data4 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '100',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_1, market_data4)
+        # region check cancel child DMA 2
+        self.cancel_req_dma_order_2 = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_order_1)
+        self.cancel_req_dma_order_2.change_parameter('NoParty', '*').remove_parameter('ChildOrderID')
 
-        market_data5 = [
-            {
-                'MDEntryType': '0',
-                'MDEntryPx': '1',
-                'MDEntrySize': '100',
-                'MDEntryPositionNo': '1'
-            },
-            {
-                'MDEntryType': '1',
-                'MDEntryPx': '0',
-                'MDEntrySize': '0',
-                'MDEntryPositionNo': '1'
-            }
-        ]
-        send_market_data(s_par, case_id_1, market_data5)
+        self.er_cancel_dma_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_cancel)
+        # endregion
+        
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_order_1, self.dma_order_2, self.cancel_req_dma_order_1, self.cancel_req_dma_order_2],
+                                                         [None, None, None, None], self.FromQuod, "Buy Side NOS/Cancel Requests for child orders 1 & 2")
 
-        after_order_details_id = "afterTWAPAlgo_order_details"     
+        self.fix_verifier_buy.check_fix_message_sequence([self.pending_dma_order_1_params, self.new_dma_order_1_params, self.pending_dma_order_2_params,
+                                                          self.new_dma_order_2_params,self.er_cancel_dma_order_1, self.er_cancel_dma_order_2],
+                                                         [None, None, None, None, None, None], self.ToQuod, "Buy Side ExecReports for child orders 1 & 2")
 
-        sub_order1_qty = ExtractionDetail("subOrder1.qty", "Qty")
-        sub_order2_qty = ExtractionDetail("subOrder2.qty", "Qty")
-        sub_order3_qty = ExtractionDetail("subOrder3.qty", "Qty")
+        time.sleep(5)
 
-        sub_order_details = OrdersDetails()
-        sub_order_details.add_single_order_info(OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order1_qty)))
-        sub_order_details.add_single_order_info(OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order2_qty)))
-        sub_order_details.add_single_order_info(OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_detail=sub_order3_qty)))
-            
-        length_name = "subOrders.length"
-        sub_order_details.extract_length(length_name)
+        # region Check child DMA order 3
+        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 3", self.test_id))
+        self.dma_order_3 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_3.change_parameters(dict(OrderQty=self.child_3_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
-        main_order_info = OrderInfo.create(sub_order_details=sub_order_details)
+        self.fix_verifier_buy.check_fix_message(self.dma_order_3, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 3')
 
-        main_order_details = OrdersDetails()
-        main_order_details.set_default_params(base_request)
-        main_order_details.set_extraction_id(after_order_details_id)
-        main_order_details.set_filter(["Order ID", order_id])
-        main_order_details.add_single_order_info(main_order_info)
+        pending_dma_order_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_3, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_dma_order_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 3')
 
-        call(ob_act.getOrdersDetails, main_order_details.request())
+        new_dma_order_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_3, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(new_dma_order_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3')
+        # endregion
 
-        call(act.verifyEntities, verification(after_order_details_id, "checking child orders",
-                                                     [verify_ent("Sub order 1 qty", sub_order1_qty.name, str(child_qty_1)),
-                                                      verify_ent("Sub order 2 qty", sub_order2_qty.name, str(child_qty_2)),
-                                                      verify_ent("Sub order 3 qty", sub_order3_qty.name, str(child_qty_3)),
-                                                      verify_ent("Sub order count", length_name, "3")]))
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        # region Cancel Algo Order
+        case_id_4 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_4)
 
-        cancel_order_details = CancelOrderDetails()
-        cancel_order_details.set_default_params(base_request)
-        call(ob_act.cancelOrder, cancel_order_details.build())
+        cancel_request_pov_order = FixMessageOrderCancelRequest(self.POV_order)
 
-def execute(report_id, session_id):
-    try:
-        case_id = create_event(case_name, report_id)
-        set_base(session_id, case_id)
-        base_request = get_base_request(session_id, case_id)
-        rule_list = rule_creation()
-        order(base_request, case_id)        
-    except:
-        logging.error("Error execution",exc_info=True)
-    finally:
-        rule_destroyer(rule_list)
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_4)
+        self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        time.sleep(5)
+
+        # region check cancellation parent POV order
+        cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
+        cancel_pov_order.change_parameters({'NoParty': '*', 'SettlType': 'B'})
+        self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
+        # endregion
+
+        # region check cancel child DMA 3
+        cancel_dma_order_3 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_3, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_order_3, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel Child DMA 3")
+        # endregion
+
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)

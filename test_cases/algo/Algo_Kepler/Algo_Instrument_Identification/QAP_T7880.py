@@ -47,7 +47,7 @@ class QAP_T7880(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -107,7 +107,7 @@ class QAP_T7880(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=dict(Symbol=self.symbol, SecurityID=self.sid, SecurityIDSource=self.sids, SecurityType=self.sec_type), ExDestination=self.ex_destination_xbru, DisplayInstruction=dict(DisplayQty=self.display_qty), Side=self.side))
 

@@ -41,7 +41,7 @@ class QAP_T4868(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -97,7 +97,7 @@ class QAP_T4868(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_LitDark_Iceberg_params()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_LitDark_Iceberg_Kepler_params()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
@@ -120,7 +120,7 @@ class QAP_T4868(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_LitDark_Iceberg_params()
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_LitDark_Iceberg_Kepler_params()
         self.dma_order.change_parameters(dict(Account=self.account_xpar, ExDestination=self.ex_destination_xpar, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
