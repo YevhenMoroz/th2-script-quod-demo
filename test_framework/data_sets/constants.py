@@ -397,6 +397,11 @@ class DataBaseEnv(Enum):
     USER_309 = "quod309prd"
     PASS_309 = "quod309prd"
     DB_TYPE_309 = "oracle"
+    # 316 mongo
+    HOST_316 = "10.0.22.35"
+    PORT_316 = 27316
+    NAME_316 = "filteredQuoteDB"
+    DB_TYPE_316 = "mongo"
 
 
 class FreeNotesReject(Enum):
