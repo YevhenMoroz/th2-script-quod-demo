@@ -196,7 +196,8 @@ class QAP_T7167(TestCase):
             "AllocTransType",
             "ReportedPx",
             "GrossTradeAmt",
-            'OrderAvgPx'
+            'OrderAvgPx',
+            'tag11245'
         ]
         change_parameters = {
             "Instrument": "*",
