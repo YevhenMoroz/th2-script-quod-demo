@@ -486,11 +486,9 @@ class QAP_T8793(TestCase):
 
         # region Check cancel first 2 passive child orders
         cancel_passive_child_order_xpar_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_par_1, self.gateway_side_buy, self.status_cancel)
-        cancel_passive_child_order_xpar_1_params.remove_parameter('ExDestination')
         self.fix_verifier_buy.check_fix_message(cancel_passive_child_order_xpar_1_params, direction=self.ToQuod, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child XPAR 2')
 
         cancel_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_trqx_1, self.gateway_side_buy, self.status_cancel)
-        cancel_passive_child_order_trqx_1_params.remove_parameter('ExDestination')
         self.fix_verifier_buy.check_fix_message(cancel_passive_child_order_trqx_1_params, direction=self.ToQuod, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child XPAR 2')
         # endregion
 
