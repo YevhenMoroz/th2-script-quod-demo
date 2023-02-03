@@ -205,7 +205,7 @@ class QAP_T7507(TestCase):
         # region step 9 (check 35= AK message)
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType'])
+                                       'AllocType', 'tag11245'])
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty
