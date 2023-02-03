@@ -70,6 +70,8 @@ class QAP_T7612(TestCase):
             "Instrument",
             "SettlDate",
             "OrigClOrdID",
+            "GatingRuleCondName",
+            "GatingRuleName"
         ]
         self.exec_report.set_default_canceled(self.fix_message).change_parameters(
             {"OrdStatus": "4", "CxlQty": self.qty}

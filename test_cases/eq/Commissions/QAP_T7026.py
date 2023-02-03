@@ -139,3 +139,8 @@ class QAP_T7026(TestCase):
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.commission_sender.clear_commissions()
+        self.commission_sender.clear_fees()

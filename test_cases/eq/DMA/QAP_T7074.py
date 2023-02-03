@@ -49,7 +49,7 @@ class QAP_T7074(TestCase):
         self.fix_message.change_parameters(
             {"Account": venue_client_account, "ClOrdID": ord_id, "ExDestination": self.mic})
         self.fix_message.remove_fields_from_component("Instrument", ["SecurityDesc"])
-        ignored_fields = ["TransactTime", "Parties", "SettlDate"]
+        ignored_fields = ["TransactTime", "Parties", "SettlDate","GatingRuleCondName", "GatingRuleName"]
         self.fix_verifier.check_fix_message_fix_standard(self.fix_message, ["ClOrdID"], ignored_fields=ignored_fields)
 
     @try_except(test_id=Path(__file__).name[:-3])

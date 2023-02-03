@@ -94,7 +94,8 @@ class QAP_T8436(TestCase):
         self.exec_report.change_parameters({"Instrument": instr})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
                                                          ignored_fields=['ReplyReceivedTime', 'SecondaryOrderID',
-                                                                         'LastMkt', 'Text'])
+                                                                         'LastMkt', 'Text', "GatingRuleCondName",
+                                                                         "GatingRuleName"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

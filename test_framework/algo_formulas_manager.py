@@ -323,7 +323,7 @@ class AlgoFormulasManager:
             exa_start = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc)
             exa_end = dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc)
         elif phase == TradingPhases.PreClosed:
-            pcl_start = tm - datetime.timedelta(minutes=tm.minute % 5, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             pcl_end = pcl_start + timedelta(minutes=4)
             opn_start = pcl_start - timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
@@ -553,3 +553,7 @@ class AlgoFormulasManager:
     @staticmethod
     def get_child_qty_for_auction_first_child(indicative_volume, percentage, parent_qty, initial_slice_multiplier):
         return ceil(indicative_volume * percentage / (100 - percentage) * (initial_slice_multiplier / 100))
+
+    @staticmethod
+    def get_child_qty_for_auction_historical_volume(historical_volume, percentage, parent_qty):
+        return ceil(historical_volume * percentage / 100)
