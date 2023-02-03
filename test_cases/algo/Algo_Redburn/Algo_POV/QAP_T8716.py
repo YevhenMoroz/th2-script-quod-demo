@@ -267,7 +267,6 @@ class QAP_T8716(TestCase):
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Cancel passive child order - 1", self.test_id))
         cancel_passive_child_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_cancel)
-        cancel_passive_child_order.remove_parameter('ExDestination')
         self.fix_verifier_buy.check_fix_message(cancel_passive_child_order, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel')
 
         # region check cancellation parent POV order

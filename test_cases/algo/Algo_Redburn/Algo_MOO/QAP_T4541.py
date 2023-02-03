@@ -152,10 +152,6 @@ class QAP_T4541(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order')
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-
-        time.sleep(3)
         # region Cancel Algo Order
         case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
@@ -163,12 +159,14 @@ class QAP_T4541(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_2)
         # endregion
 
+        time.sleep(3)
+
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
         er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy'])
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
 
-
-        time.sleep(2)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
