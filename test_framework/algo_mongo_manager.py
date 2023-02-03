@@ -61,14 +61,34 @@ class AlgoMongoManager:
         return mongo_list
 
     @staticmethod
-    def insert_many_to_mongodb_with_drop(data, db, collection, host="localhost", port=27017):
-        client = pymongo.MongoClient(host, port)
-        db = client[db]
-        coll = db[collection]
-        if collection in db.list_collection_names():
-            coll.drop()
-        coll.insert_many(data)
+    def connect_to_mongo(host="localhost", port=27017):
+        return pymongo.MongoClient(host, port)
 
+    @staticmethod
+    def get_database(client, db):
+        return client[db]
+
+    @staticmethod
+    def get_collection(db, collection_name):
+        return db[collection_name]
+
+    @staticmethod
+    def drop_collection(db, collection_name):
+        coll = AlgoMongoManager.get_collection(db, collection_name)
+        if collection_name in db.list_collection_names():
+            coll.drop()
+
+    @staticmethod
+    def insert_many(collection, data):
+        collection.insert_many(data)
+
+    @staticmethod
+    def insert_many_to_mongodb_with_drop(data, db, collection_name, host="localhost", port=27017):
+        client = AlgoMongoManager.connect_to_mongo(host, port)
+        database = AlgoMongoManager.get_database(client, db)
+        collection = AlgoMongoManager.get_collection(database, collection_name)
+        AlgoMongoManager.drop_collection(database, collection_name)
+        AlgoMongoManager.insert_many(collection, data)
 
 # region Usage example
 # # get list of trading phases
