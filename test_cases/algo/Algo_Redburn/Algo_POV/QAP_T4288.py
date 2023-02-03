@@ -47,7 +47,7 @@ class QAP_T4288(TestCase):
         self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_2')
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_buy = GatewaySide.RBBuy
         self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 

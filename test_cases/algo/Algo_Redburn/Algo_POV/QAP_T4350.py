@@ -55,7 +55,7 @@ class QAP_T4350(TestCase):
         # endregion
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_buy = GatewaySide.RBBuy
         self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 

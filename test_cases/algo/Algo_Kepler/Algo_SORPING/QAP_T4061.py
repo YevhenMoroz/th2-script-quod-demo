@@ -47,7 +47,7 @@ class QAP_T4061(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -115,7 +115,7 @@ class QAP_T4061(TestCase):
         case_id_1 = bca.create_event("Create SynthMinQty Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Multilisting_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Multilisting_params()
+        self.Multilisting_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multilisting_Kepler_params()
         self.Multilisting_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, OrdType=self.ord_type, Instrument=self.instrument, Side=self.side, ClientAlgoPolicyID=self.algopolicy)).remove_parameter('Price')
 
@@ -137,7 +137,7 @@ class QAP_T4061(TestCase):
         # region Check 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
-        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Kepler_Multilisting_params()
+        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multilisting_Kepler_params()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price_bid_qdl1, Instrument=self.instrument, TimeInForce=self.tif_ioc, Side=self.side))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 

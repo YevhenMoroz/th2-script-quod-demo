@@ -1,4 +1,5 @@
 import time
+from copy import deepcopy
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -381,7 +382,7 @@ class RestApiAlgoManager(RestApiManager):
                              body=str(e))
             return
         trading_phase_profile.pop("alive")
-        trading_phase_profile["tradingPhaseSequence"] = trading_phase_sequence
+        trading_phase_profile["tradingPhaseSequence"] = deepcopy(trading_phase_sequence)
 
 
         for index, phase in enumerate(trading_phase_profile["tradingPhaseSequence"]):
@@ -405,5 +406,5 @@ class RestApiAlgoManager(RestApiManager):
             return
         trading_phase_profile_updated.pop("alive")
 
-        if not [i for i in trading_phase_profile_updated["tradingPhaseSequence"] if i not in trading_phase_sequence] == []:
+        if not [i for i in trading_phase_profile_updated["tradingPhaseSequence"] if i not in trading_phase_profile["tradingPhaseSequence"]] == []:
             raise ValueError(f"Trading phase profile doesn't update")
