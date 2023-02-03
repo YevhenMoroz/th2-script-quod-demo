@@ -209,7 +209,7 @@ class QAP_T7503(TestCase):
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
-                                  'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice','OrderAvgPx']
+                                  'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'OrderAvgPx']
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         # endregion
@@ -246,7 +246,7 @@ class QAP_T7503(TestCase):
                 {'AllocInstructionMiscBlock2': dict_alloc_misc_fields[list_of_security_account.index(account)]})
             confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
             self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                             ['AllocAccount', 'NoOrders'],
+                                                             ['AllocAccount', 'NoOrders', 'tag11245'],
                                                              ignored_fields=list_of_ignored_fields)
         # endregion
 
