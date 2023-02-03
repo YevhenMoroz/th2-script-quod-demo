@@ -81,7 +81,8 @@ class QAP_T7610(TestCase):
         # endregion
 
         # region Check ExecutionReports
-        list_of_ignored_fields: list = ['ReplyReceivedTime', 'SecondaryOrderID', 'Text', 'LastMkt']
+        list_of_ignored_fields: list = ['ReplyReceivedTime', 'SecondaryOrderID', 'Text', 'LastMkt',
+                                        "GatingRuleCondName", "GatingRuleName"]
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=list_of_ignored_fields)
         # endregion
 

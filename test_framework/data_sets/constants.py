@@ -384,6 +384,20 @@ class SshClientEnv(Enum):
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
 
+class DataBaseEnv(Enum):
+    # 317 site
+    HOST_317 = "10.0.22.69"
+    NAME_317 = "quoddb"
+    USER_317 = "quod317prd"
+    PASS_317 = "quod317prd"
+    DB_TYPE_317 = "postgresql"
+    # 309 site
+    HOST_309 = "10.0.22.56"
+    NAME_309 = "QDSHIVA1"
+    USER_309 = "quod309prd"
+    PASS_309 = "quod309prd"
+    DB_TYPE_309 = "oracle"
+
 
 class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"

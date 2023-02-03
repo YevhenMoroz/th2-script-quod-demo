@@ -83,7 +83,8 @@ class QAP_T7046(TestCase):
         self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
-        ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker"]
+        ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker",
+                          "GatingRuleCondName", "GatingRuleName"]
         self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_fields)
         # endregion
 

@@ -101,7 +101,9 @@ class QAP_T7190(TestCase):
         orders_id_block = []
         orders_id_block.append({JavaApiFields.OrdID.value: list_of_orders_ids[0]})
         orders_id_block.append({JavaApiFields.OrdID.value: list_of_orders_ids[2]})
-        self.allocation_instruction.set_default_book_without_ord_id()
+        filter_map = {list_of_orders_ids[0]: list_of_orders_ids[0],
+                      list_of_orders_ids[2]: list_of_orders_ids[2]}
+        self.allocation_instruction.set_default_book(list_of_orders_ids[1])
         self.allocation_instruction.update_fields_in_component("AllocationInstructionBlock",
                                                                {'Qty': str(float(self.qty) * 2),
                                                                 'AvgPx': '11',
@@ -117,9 +119,10 @@ class QAP_T7190(TestCase):
                                                                 "OrdAllocList": {"OrdAllocBlock": orders_id_block}
                                                                 })
         self.allocation_instruction.remove_fields_from_component('AllocationInstructionBlock', ['AvgPx'])
-        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction, filter_map)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.AvgPrice.value: average_price_for_first_block},
                                              allocation_report,
@@ -137,7 +140,7 @@ class QAP_T7190(TestCase):
             self.java_api_manager.compare_values({JavaApiFields.PostTradeStatus.value:
                                                       OrderReplyConst.PostTradeStatus_RDY.value,
                                                   JavaApiFields.DoneForDay.value:
-                                                  OrderReplyConst.DoneForDay_YES.value},
+                                                      OrderReplyConst.DoneForDay_YES.value},
                                                  order_update,
                                                  f'Checking expected and actually results for {order_id[JavaApiFields.OrdID.value]} (step 3)')
         # endregion

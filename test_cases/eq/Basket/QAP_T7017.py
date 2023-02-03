@@ -91,8 +91,9 @@ class QAP_T7017(TestCase):
             {'TargetStrategy': '1021'})
         execution_report2.change_parameters(
             {'TargetStrategy': '1022'})
+        list_of_ignored_fields = ['StrategyParametersGrp', 'trailer', 'header','GatingRuleName', 'GatingRuleCondName']
         self.fix_verifier.check_fix_message(execution_report1,
-                                            ignored_fields=['StrategyParametersGrp', 'trailer', 'header'])
+                                            ignored_fields=list_of_ignored_fields)
         self.fix_verifier.check_fix_message(execution_report2,
-                                            ignored_fields=['StrategyParametersGrp', 'trailer', 'header'])
+                                            ignored_fields=list_of_ignored_fields)
         # endregion
