@@ -131,3 +131,9 @@ class ClientTiersPage(CommonPage):
         action.perform()
         time.sleep(1)
         return self.is_element_present(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_PRICING_DISABLE_TOOLTIP)
+
+    def get_executable_text_color(self):
+        return self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_EXECUTABLE_TEXT).value_of_css_property('color')
+
+    def get_pricing_text_color(self):
+        return self.find_by_xpath(ClientTierConstants.MAIN_PAGE_CLIENT_TIER_PRICING_TEXT).value_of_css_property('color')

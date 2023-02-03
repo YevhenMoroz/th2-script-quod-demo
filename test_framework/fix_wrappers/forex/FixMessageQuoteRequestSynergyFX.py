@@ -16,6 +16,7 @@ class FixMessageQuoteRequestSynergyFX(FixMessageQuoteRequestFX):
             "VenueType": "M",
             "NoRelatedSym": [{
                 "Instrument": {
+                    "SymbolSfx": "SP",
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
                     "SecurityType": "FOR",
                     "Product": "4"

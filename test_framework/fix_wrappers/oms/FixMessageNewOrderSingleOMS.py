@@ -32,11 +32,13 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
             self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
         return self
 
-    def set_default_care_limit(self, instr: str = None):
+    def set_default_care_limit(self, instr: str = None, account: str = None):
         self.change_parameters(self.base_parameters)
         self.change_parameters({"OrdType": "2", "HandlInst": "3", "Price": "20"})
         if instr:
             self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
+        if account:
+            self.change_parameters({"Account": self.data_set.get_client_by_name(account)})
         return self
 
     def set_default_dma_market(self, instr: str = None):

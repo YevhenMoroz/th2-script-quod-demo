@@ -65,7 +65,9 @@ class QAP_T7732(TestCase):
         # region venue param
         self.s_lit = self.data_set.get_listing_id_by_name("listing_qdl_2")
         self.ex_destination_lit = self.data_set.get_mic_by_name("mic_10")
+        self.ex_destination_dark = self.data_set.get_mic_by_name("mic_14")
         self.account_lit = self.data_set.get_account_by_name("account_16")
+        self.account_dark = self.data_set.get_account_by_name("account_20")
         self.client = self.data_set.get_client_by_name("client_2")
         # endregion
 
@@ -80,9 +82,11 @@ class QAP_T7732(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, True)
-        self.rule_list = [nos_rule, ocr_rule]
+        nos_rule_lit = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, self.price)
+        nos_rule_dark = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_dark, self.ex_destination_dark, self.price)
+        ocr_rule_lit = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_lit, self.ex_destination_lit, True)
+        ocr_rule_dark = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_dark, self.ex_destination_dark, True)
+        self.rule_list = [nos_rule_lit, ocr_rule_lit, nos_rule_dark, ocr_rule_dark]
         # endregion
 
         time.sleep(5)
@@ -119,7 +123,7 @@ class QAP_T7732(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_new)
-        new_litdark_order_params.remove_parameters(['SecondaryAlgoPolicyID', 'NoParty'])
+        new_litdark_order_params.change_parameter('SecondaryAlgoPolicyID', '*').remove_parameters(['NoParty'])
         self.fix_verifier_sell.check_fix_message(new_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -154,6 +158,8 @@ class QAP_T7732(TestCase):
         cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel first DMA 1 order")
         # endregion
+
+        time.sleep(5)
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

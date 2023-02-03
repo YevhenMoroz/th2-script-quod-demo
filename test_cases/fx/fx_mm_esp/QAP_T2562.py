@@ -7,8 +7,6 @@ from custom import basic_custom_actions as bca
 from test_framework.data_sets.constants import Status, DirectionEnum, GatewaySide
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -33,7 +31,7 @@ class QAP_T2562(TestCase):
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
         self.wrong_settldate = self.data_set.get_settle_date_by_name("tomorrow")
         self.security_type = self.data_set.get_security_type_by_name('fx_spot')
-        self.text = "11697 No listing found for order with currency EUR on exchange QUODFX"
+        self.text = "11697 No listing found on exchange QUODFX"
         self.bands = list()
         self.no_related_symbols = [{
             'Instrument': {

@@ -41,6 +41,7 @@ class Connectivity(Enum):
     Luna_315_web_trading_http = 'rest_wt315luna'
     Luna_315_web_trading_web_socket = 'api_session_315luna'
     Ganymede_317_ja = '317_java_api'
+    Ganymede_317_ja_user2 = '317_java_api_user2'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Ganymede_317_ors_report = "log317-ors-report"
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
@@ -56,9 +57,16 @@ class Connectivity(Enum):
     Kuiper_319_Feed_Handler = 'fix-feed-handler-319-kuiper'
     Kuiper_319_web_admin_site = 'rest_wa319kuiper'
     Kratos_309_ss_rfq = 'fix-sell-rfq-m-309kratos-stand'
+    Kratos_309_bs_md = 'fix-sell-md-t-309-stand'
     Kratos_309_ss_esp = 'fix-sell-esp-m-309kratos-stand'
     Kratos_309_Feed_Handler = 'fix-fh-309-kratos'
-
+    Kratos_309_Feed_Handler_Q = 'fix-fh-q-309-kratos'
+    Kratos_309_ss_esp_t = 'fix-sell-esp-t-309-stand'
+    Kratos_309_dc = 'fix-sell-m-309kratos-drop'
+    Kratos_309_cnx = 'fix-sell-rfq-m-309-cnx'
+    Kratos_309_wa = "rest_wa309kratos"
+    Kratos_309_ja = "309_java_api"
+    Kratos_309_ev = "fix-buy-extern-309-stand"
 
 
 class FrontEnd(Enum):
@@ -172,6 +180,7 @@ class TimeInForce(Enum):
     GoodTillDate = 6
     AtTheClose = 7
     ValidForAuction = 100
+    GoodForTime = 'A'
 
 
 class ClientAlgoPolicy(Enum):
@@ -185,6 +194,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
     qa_mpdark_12 = "QA_Auto_MPDark12"
+    qa_mpdark_13 = "QA_Auto_MPDark13"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -294,12 +304,14 @@ class MiscNumber(Enum):
 class Symbol(Enum):
     symbol_1 = 'DE0005489561'
     symbol_2 = 'BE0020575115'
+    symbol_3 = 'GB00B03MLX29'
 
 
 class SecurityID(Enum):
     security_id_1 = 'DE0005489561'
     security_id_2 = '2681'
     security_id_3 = 'BE0020575115'
+    security_id_4 = 'GB00B03MLX29'
 
 
 class SecurityIDSource(Enum):
@@ -404,6 +416,7 @@ class FreeNotesReject(Enum):
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
+    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
 
 
 class TradingPhases(Enum):
@@ -428,5 +441,67 @@ class RejectMessages(Enum):
     no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
     no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
     no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
+    no_listing_12 = '11697 No listing found for order with currency USD on exchange XETRA'
+    no_listing_13 = '11752 Instrument not traded at primary XETRA / 11697 No listing found for order with currency USD on exchange XETRA'
 
 
+class PegPriceType(Enum):
+    LastPeg = '1'
+    MidPricePeg = '2'
+    OpeningPeg = '3'
+    MarketPeg = '4'
+    PrimaryPeg = '5'
+    PegToVWAP = '7'
+    TrailingStopPeg = '8'
+    PegToLimitPrice = '9'
+    ShortSaleMinimumPricePeg = '10'
+
+
+class PegOffsetType(Enum):
+    Price = '0'
+    BasisPoints = '1'
+    Ticks = '2'
+    PriceTier = '3'
+    Percentage = '4'
+
+
+class StrategyParameterType(Enum):
+    Int = '1'
+    Length = '2'
+    NumInGroup = '3'
+    SeqNum = '4'
+    TagNum = '5'
+    Float = '6'
+    Qty = '7'
+    Price = '8'
+    PriceOffset = '9'
+    Amt = '10'
+    Percentage = '11'
+    Char = '12'
+    Boolean = '13'
+    String = '14'
+    MultipleCharValue = '15'
+    Currency = '16'
+    Exchange = '17'
+    MonthYear = '18'
+    UTCTimeStamp = '19'
+    UTCTimeOnly = '20'
+    LocalMktDate = '21'
+
+
+class RBCustomTags(Enum):
+    RedburnCustomFields = dict(
+        TVTID='*',
+        CustomTag_26010='*',
+        CustomTag_26011='*',
+        CustomTag_26012='*',
+        CustomTag_26013='*',
+        CustomTag_26014='*',
+        CustomTag_26015='*',
+        CustomTag_26016='*',
+        CustomTag_26017='*',
+        CustomTag_26018='*',
+        CustomTag_26019='*',
+        CustomTag_26020='*',
+        CustomTag_26021='*'
+    )

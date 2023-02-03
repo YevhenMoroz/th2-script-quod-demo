@@ -12,12 +12,9 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3205 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3218 import QAP_T3218
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3230 import QAP_T3230
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3261 import QAP_T3261
-from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3262 import QAP_T3262
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3264 import QAP_T3264
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3272 import QAP_T3272
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3273 import QAP_T3273
-from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3287 import QAP_T3287
-from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3288 import QAP_T3288
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3294 import QAP_T3294
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3322 import QAP_T3322
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T3335 import QAP_T3335
@@ -46,6 +43,8 @@ from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T4020 import QAP_
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7931 import QAP_T7931
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7933 import QAP_T7933
 from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T7934 import QAP_T7934
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T9298 import QAP_T9298
+from test_cases.web_admin.web_admin_test_cases.risk_limits.QAP_T9330 import QAP_T9330
 
 
 class RunRiskLimits:
@@ -72,17 +71,11 @@ class RunRiskLimits:
                       environment=configuration.environment).run()
             QAP_T3261(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T3262(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
             QAP_T3264(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3272(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3273(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3287(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3288(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3294(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
@@ -139,6 +132,10 @@ class RunRiskLimits:
             QAP_T7933(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T7934(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T9298(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            QAP_T9330(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
 
             end_time = time.monotonic()

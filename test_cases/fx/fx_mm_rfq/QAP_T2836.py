@@ -81,6 +81,7 @@ class QAP_T2836(TestCase):
             },
 
         ]
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -98,14 +99,14 @@ class QAP_T2836(TestCase):
                                                            Currency=self.jpy)
         self.quote_request.update_near_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
         self.quote_request.update_far_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
-        self.fix_manager.send_message_and_receive_response(self.quote_request,
+        response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
 
         self.quote.set_params_for_quote_swap_ccy2(self.quote_request, near_leg_off_px=self.off_px_ccy2,
                                                   far_leg_bid_px=self.bid_px_ccy2)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
 
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager.send_message(self.quote_cancel)
         # endregion
 
@@ -118,7 +119,7 @@ class QAP_T2836(TestCase):
         self.quote_request.update_near_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
         self.quote_request.update_far_leg(leg_qty=self.qty_3m, leg_symbol=self.usd_jpy)
 
-        self.fix_manager.send_message_and_receive_response(self.quote_request,
+        self.response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
 
         self.quote.set_params_for_quote_swap(self.quote_request, near_leg_bid_px=self.bid_px_ccy1,
@@ -132,6 +133,6 @@ class QAP_T2836(TestCase):
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        self.quote_cancel.set_params_for_cancel(quote_request=self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager.send_message(self.quote_cancel)
         self.sleep(2)

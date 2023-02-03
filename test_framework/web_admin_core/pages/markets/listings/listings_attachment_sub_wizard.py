@@ -13,6 +13,9 @@ class ListingsAttachmentSubWizard(CommonPage):
     def get_venue(self):
         return self.get_text_by_xpath(ListingsConstants.ATTACHMENT_TAB_VENUE_XPATH)
 
+    def is_venue_field_enabled(self):
+        return self.is_field_enabled(ListingsConstants.ATTACHMENT_TAB_VENUE_XPATH)
+
     def set_preferred_venue(self, value):
         self.set_combobox_value(ListingsConstants.ATTACHMENT_TAB_PREFERRED_VENUE_XPATH, value)
 

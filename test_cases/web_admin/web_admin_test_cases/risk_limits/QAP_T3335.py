@@ -7,8 +7,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.risk_limits.buying_power.main_page import MainPage
-from test_framework.web_admin_core.pages.risk_limits.buying_power.wizards import ValuesTab, CashValuesTab, \
-    SecurityValuesTab, MainWizard
+from test_framework.web_admin_core.pages.risk_limits.buying_power.wizards import *
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -24,12 +23,17 @@ class QAP_T3335(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.reference_value = 'LastTradedPrice'
-        self.holding_ratio = '10'
-        self.settlement_period = 'TPlus4'
-        self.position_validity = 'TPlus5'
-        self.margin_method = 'CustomPercentage'
-        self.custom_percentage = '74'
+        self.institution = 'QUOD FINANCIAL'
+        self.global_margin = '1'
+        self.instrument_type = 'Bond'
+        self.instrument_group = 'TC Danish'
+        self.underling_listing = 'AMANAT'
+        self.haircut_value = '2'
+        self.margin_method = 'CustomAmount'
+        self.initial_margin = '3'
+        self.maintenance_margin = '4'
+        self.instrument_type_risk_margin = 'Equity'
+        self.instrument = 'AMANAT'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -45,6 +49,8 @@ class QAP_T3335(CommonTestCase):
             main_page.click_on_new_button()
             values_tab = ValuesTab(self.web_driver_container)
             values_tab.set_name(self.name)
+            assignments_tab = AssignmentsTab(self.web_driver_container)
+            assignments_tab.set_institution(self.institution)
             wizard = MainWizard(self.web_driver_container)
             wizard.click_on_save_changes()
 
@@ -60,22 +66,27 @@ class QAP_T3335(CommonTestCase):
             cash_values_tab = CashValuesTab(self.web_driver_container)
             cash_values_tab.set_cash_checkbox()
             cash_values_tab.set_temporary_cash_checkbox()
-            cash_values_tab.set_cash_loan_checkbox()
-            cash_values_tab.set_collateral_checkbox()
-            cash_values_tab.set_allow_collateral_on_negative_ledger_checkbox()
 
             security_values = SecurityValuesTab(self.web_driver_container)
-            security_values.set_include_securities_checkbox()
-            security_values.set_reference_value(self.reference_value)
-            security_values.set_holdings_ratio(self.holding_ratio)
+            security_values.set_trade_on_margin_checkbox()
+            security_values.set_global_margin(self.global_margin)
             security_values.click_on_plus_in_table()
-            security_values.set_settlement_period(self.settlement_period)
-            security_values.set_position_validity(self.position_validity)
-            security_values.set_margin_method(self.margin_method)
-            security_values.set_custom_percentage(self.custom_percentage)
-            security_values.set_allow_securities_on_negative_ledgers_checkbox()
-            security_values.set_disallow_for_same_listing_checkbox()
-            security_values.set_disallow_for_deliverable_contracts_checkbox()
+            security_values.set_instrument_type(self.instrument_type)
+            security_values.set_instrument_group(self.instrument_group)
+            security_values.set_underlying_listing(self.underling_listing)
+            security_values.set_haircut_value(self.haircut_value)
+            security_values.click_on_save_checkmark_in_table()
+
+            risk_margin = RiskMarginTab(self.web_driver_container)
+            risk_margin.click_on_plus_in_table()
+            risk_margin.set_margin_method(self.margin_method)
+            risk_margin.set_initial_margin(self.initial_margin)
+            risk_margin.set_maintenance_margin(self.maintenance_margin)
+            risk_margin.set_instrument_type(self.instrument_type_risk_margin)
+           # risk_margin.set_instrument_group(self.instrument_group)
+            risk_margin.set_instrument(self.instrument)
+            risk_margin.set_underlying_instrument(self.underling_listing)
+            risk_margin.click_on_save_checkmark_in_table()
 
             wizard = MainWizard(self.web_driver_container)
             wizard.click_on_save_changes()
@@ -86,25 +97,24 @@ class QAP_T3335(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_clone()
 
-            expected_result = [self.description, "Cash: True", "Temporary Cash: True", "Cash Loan: True",
-                               "Collateral: True", "Allow Collateral on Negative Ledger: True",
-                               "Include Securities: True", self.reference_value, self.holding_ratio,
-                               self.settlement_period, self.position_validity, self.margin_method,
-                               self.custom_percentage, "Allow Securities on Negative Ledgers: True",
-                               "Disallow for same Listing: True", "Disallow for deliverable contracts: True"]
+            expected_result = [self.description, self.institution, "Cash: False", "Temporary Cash: True",
+                               "Trade on Margin: True", self.global_margin, self.instrument_type, self.instrument_group,
+                               self.underling_listing, self.haircut_value, self.margin_method, self.initial_margin,
+                               self.maintenance_margin, self.maintenance_margin, self.instrument_type,
+                               self.instrument_group, self.instrument, self.underling_listing]
+
             security_values.click_on_edit_in_table()
-            actual_result = [values_tab.get_description(), f"Cash: {cash_values_tab.is_cash_checkbox_selected()}",
+            risk_margin.click_on_edit_in_table()
+            actual_result = [values_tab.get_description(), assignments_tab.get_institution(),
+                             f"Cash: {cash_values_tab.is_cash_checkbox_selected()}",
                              f"Temporary Cash: {cash_values_tab.is_temporary_cash_checkbox_selected()}",
-                             f"Cash Loan: {cash_values_tab.is_cash_loan_checkbox_selected()}",
-                             f"Collateral: {cash_values_tab.is_collateral_checkbox_selected()}",
-                             f"Allow Collateral on Negative Ledger: {cash_values_tab.is_allow_collateral_on_negative_ledger_checkbox_selected()}",
-                             f"Include Securities: {security_values.is_include_securities_checkbox_selected()}",
-                             security_values.get_reference_value(), security_values.get_holding_ratio(),
-                             security_values.get_settlement_period(), security_values.get_position_validity(),
-                             security_values.get_margin_method(), security_values.get_custom_percentage(),
-                             f"Allow Securities on Negative Ledgers: {security_values.is_allow_securities_on_negative_ledgers_checkbox_selected()}",
-                             f"Disallow for same Listing: {security_values.is_disallow_for_same_listing_checkbox_selected()}",
-                             f"Disallow for deliverable contracts: {security_values.is_disallow_for_deliverable_contracts_checkbox_selected()}"]
+                             f"Trade on Margin: {security_values.is_trade_on_margin_checkbox_selected()}",
+                             security_values.get_global_margin(), security_values.get_instrument_type(),
+                             security_values.get_instrument_group(), security_values.get_underlying_listing(),
+                             security_values.get_haircut_value(), risk_margin.get_margin_method(),
+                             risk_margin.get_initial_margin(), risk_margin.get_maintenance_margin(),
+                             risk_margin.get_instrument_type(), risk_margin.get_instrument_group(),
+                             risk_margin.get_instrument(), risk_margin.get_underlying_instrument()]
 
             self.verify("Not required fields autofill", expected_result, actual_result)
 

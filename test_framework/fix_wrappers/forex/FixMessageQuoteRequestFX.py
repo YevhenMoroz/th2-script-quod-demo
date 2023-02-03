@@ -61,6 +61,7 @@ class FixMessageQuoteRequestFX(FixMessage):
                 "Account": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Side": "1",
                 "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
+                "QuoteType": "1",
                 "Instrument": {
                     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
                     "SecurityType": self.get_data_set().get_security_type_by_name("fx_swap")
@@ -218,7 +219,7 @@ class FixMessageQuoteRequestFX(FixMessage):
                 "Instrument": {
                     "Symbol": self.get_data_set().get_currency_by_name("currency_usd"),
                     "Product": "9",
-                    "SecurityType":"FOR"
+                    "SecurityType": "FOR"
                 },
                 "NoPartyIDs": [
                     {

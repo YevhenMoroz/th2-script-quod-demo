@@ -240,7 +240,7 @@ class QAP_T7498(TestCase):
         alloc_report_reply_amend = self.java_api_manager.get_last_message(
             ORSMessageType.AllocationReport.value
         ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
-        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%#m-%d") + "T12:00"
+        settl_date_expected = datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%m-%d") + "T12:00"
         self.java_api_manager.compare_values(
             {
                 JavaApiFields.AllocStatus.value: "APP",

@@ -13,8 +13,8 @@ class QAP_T9406(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        # self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_env = "308_java_api"
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        # self.java_api_env = "308_java_api"
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.trade_request = TradeEntryRequestFX()
 

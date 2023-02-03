@@ -1,58 +1,88 @@
 import logging
-import os
 from pathlib import Path
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
-    FixMessageOrderCancelReplaceRequestOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 class QAP_T7045(TestCase):
-
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
-        self.qty = "100"
-        self.new_qty = "150"
-        self.price = "20"
-        self.new_price = "15"
-        self.client = self.data_set.get_client_by_name("client_pt_1")
-        self.venue_client_name = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")
-        self.test_id = create_event(self.__class__.__name__, self.report_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.cl_inbox = OMSClientInbox(self.test_id, self.session_id)
+        self.new_qty = "200"
+        self.new_price = "25"
+        self.venue_client_name = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.qty = self.new_order_single.get_parameter('OrderQtyData')['OrderQty']
+        self.price = self.new_order_single.get_parameter('Price')
+        self.test_id = create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
+        self.order_submit = OrderSubmitOMS(data_set)
+        self.modify_request = OrderModificationRequest()
         self.nos_rule = None
         self.cancel_replace_rule = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.__send_fix_order()
-        self.cl_inbox.accept_order(self.data_set.get_lookup_by_name("lookup_1"), self.qty, self.price)
-        self.order_ticket.set_order_details(qty=self.qty)
-        self.order_ticket.split_order()
-        self.__send_cancel_replace_request()
-        self.cl_inbox.accept_modify_plus_child(self.data_set.get_lookup_by_name("lookup_1"), self.qty, self.price)
-        qty = OrderBookColumns.qty.value
-        unmatched_qty = OrderBookColumns.unmatched_qty.value
-        price = OrderBookColumns.limit_price.value
-        self.order_book.check_order_fields_list({qty: self.new_qty, unmatched_qty: "0", price: self.new_price})
-        self.order_book.check_second_lvl_fields_list({qty: self.new_qty, unmatched_qty: "", price: self.new_price})
+        # region Declaration
+        # region create CO order
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
+        order_id = response[0].get_parameter("OrderID")
+        cl_ord_id = response[0].get_parameters()["ClOrdID"]
+        # endregion
+
+        # region do split order
+        self.__split_order(order_id, cl_ord_id)
+        # endregion
+
+        # check splitting values
+        ord_update_block = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter(
+            JavaApiFields.OrdUpdateBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.UnmatchedQty.value: "0.0", JavaApiFields.LeavesQty.value: self.qty + ".0"},
+            ord_update_block, 'Check values of parent order after splitting')
+        ord_reply_block = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameter(
+            JavaApiFields.OrdReplyBlock.value)
+        self.java_api_manager.compare_values({JavaApiFields.ExecType.value: OrderReplyConst.ExecStatus_OPN.value,
+                                              JavaApiFields.OrdQty.value: self.qty + '.0',
+                                              JavaApiFields.Price.value: self.price + '.0'},
+                                             ord_reply_block, 'Check values of child order after splitting')
+        # endregion
+
+        # region send cancel replace request
+        self.__send_cancel_replace_request(order_id)
+        # endregion
+
+        # region check values after amending
+        ord_reply_block = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameter(
+            JavaApiFields.OrdReplyBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.LeavesQty.value: self.new_qty + ".0",
+             JavaApiFields.OrdQty.value: self.new_qty + ".0", JavaApiFields.Price.value: self.new_price + ".0"},
+            ord_reply_block, 'Check values of parent order after modification')
+        ord_update_block = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter(
+            JavaApiFields.OrdUpdateBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.UnmatchedQty.value: "0.0"},
+            ord_update_block, 'Check UnmatchedQty of parent order after modification')
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -61,22 +91,22 @@ class QAP_T7045(TestCase):
         if self.cancel_replace_rule:
             self.rule_manager.remove_rule(self.cancel_replace_rule)
 
-    def __send_fix_order(self):
+    def __split_order(self, order_id, cl_ord_id):
         self.nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-            self.fix_env.buy_side, self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1"),
-            self.data_set.get_mic_by_name("mic_1"), float(self.price))
-        self.new_order_single = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit().add_ClordId(
-            (os.path.basename(__file__)[:-3])).change_parameters(
-            {'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price, "Account": self.client})
-        self.fix_manager.send_message_fix_standard(self.new_order_single)
+            self.fix_env.buy_side, self.venue_client_name,
+            self.mic, float(self.price))
+        self.order_submit.set_default_child_dma(order_id, cl_ord_id)
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_3")}]},
+            'InstrID': self.data_set.get_instrument_id_by_name("instrument_2")})
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
 
-    def __send_cancel_replace_request(self):
+    def __send_cancel_replace_request(self, order_id):
         self.cancel_replace_rule \
             = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.fix_env.buy_side,
-                                                                          self.data_set.get_venue_client_names_by_name(
-                                                                              "client_pt_1_venue_1"),
-                                                                          self.data_set.get_mic_by_name("mic_1"))
-        cancel_replace_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set).set_default(
-            self.new_order_single).add_ClordId((os.path.basename(__file__)[:-3])).change_parameters(
-            {'OrderQtyData': {'OrderQty': self.new_qty}, "Price": self.new_price})
-        self.fix_manager.send_message_fix_standard(cancel_replace_request)
+                                                                          self.venue_client_name,
+                                                                          self.mic)
+        self.modify_request.set_default(self.data_set, order_id)
+        self.modify_request.update_fields_in_component('OrderModificationRequestBlock',
+                                                       {'OrdQty': self.new_qty, 'Price': self.new_price})
+        self.java_api_manager.send_message_and_receive_response(self.modify_request)

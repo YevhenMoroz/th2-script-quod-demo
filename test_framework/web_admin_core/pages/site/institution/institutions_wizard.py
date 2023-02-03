@@ -34,6 +34,9 @@ class InstitutionsWizard(CommonPage):
         else:
             return False
 
+    def is_leave_page_confirmation_pop_up_displayed(self):
+        return self.is_element_present(InstitutionsConstants.CONFIRMATION_POP_UP)
+
     def click_on_ok_button(self):
         self.find_by_xpath(InstitutionsConstants.OK_BUTTON_XPATH).click()
 

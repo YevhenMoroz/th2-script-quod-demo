@@ -8,11 +8,14 @@ class ExecutionReportConst(Enum):
     ExecType_CAL = 'CAL'
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
+    ExecType_ACT = 'ACT'
+    PostTradeExecStatus_NAL = 'NAL'
 
 
 class BasketMessagesConst(Enum):
     ListExecutionPolicy_C = 'C'
     ListOrderStatus_EXE = 'EXE'
+    ListOrderStatus_REJ = 'REJ'
 
 
 class BagMessagesConst(Enum):
@@ -28,20 +31,25 @@ class OrderReplyConst(Enum):
     DiscloseExec_M = 'M'
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
+    OrdStatus_REJ = 'REJ'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
     TransStatus_ELI = 'ELI'
+    TransStatus_REJ = 'REJ'
     OrdCapacity_A = 'A'
     OrdCapacity_P = 'P'
     OrdCapacity_I = 'I'
     IsLocked_Y = 'Y'
     IsLocked_N = 'N'
+    ExecType_REP = 'REP'
+    ExecType_PCA = 'PCA'
 
 
 class ExecutionPolicyConst(Enum):
     DMA = 'D'
     CARE = 'C'
+    Synthetic = 'S'
 
 
 class SubmitRequestConst(Enum):
@@ -49,6 +57,7 @@ class SubmitRequestConst(Enum):
     OrdCapacity_Agency = 'Agency'
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
+    Side_Sell = 'Sell'
 
 
 class AllocationReportConst(Enum):
@@ -116,6 +125,7 @@ class CommissionAmountTypeConst(Enum):
 class OrdListNotificationConst(Enum):
     ListOrderStatus_EXE = 'EXE'
     OrderListWaveStatus_TER = 'TER'
+    OrderListWaveStatus_NEW = 'NEW'
 
 
 class QtyPercentageProfile(Enum):
@@ -132,6 +142,7 @@ class JavaApiFields(Enum):
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
     PartyRole = "PartyRole"
+    CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     TimeInForce = 'TimeInForce'
@@ -161,6 +172,7 @@ class JavaApiFields(Enum):
     OrderBagName = 'OrderBagName'
     OrderBagID = 'OrderBagID'
     OrderBagQty = 'OrderBagQty'
+    ReleasedQty = 'ReleasedQty'
     PegScope = 'PegScope'
     PegOffsetType = 'PegOffsetType'
     PegOffsetValue = 'PegOffsetValue'
@@ -187,14 +199,38 @@ class JavaApiFields(Enum):
     DayCumAmt = 'DayCumAmt'
     UnsolicitedOrder = "UnsolicitedOrder"
     OrdQty = 'OrdQty'
+    LeavesQty = 'LeavesQty'
+    CumQty = 'CumQty'
+    UnmatchedQty = 'UnmatchedQty'
     ExecPrice = 'ExecPrice'
     DisclosedExec = 'DisclosedExec'
+    OrdListNotificationBlock = 'OrdListNotificationBlock'
+    AddOrdersToOrderListReplyBlock = 'AddOrdersToOrderListReplyBlock'
+    RemoveOrdersFromOrderListReplyBlock = 'RemoveOrdersFromOrderListReplyBlock'
+    AccountGroupName = 'AccountGroupName'
+    PreTradeAllocationBlock = 'PreTradeAllocationBlock'
+    PreTradeAllocationList = 'PreTradeAllocationList'
+    PreTradeAllocAccountBlock = 'PreTradeAllocAccountBlock'
+    AllocAccountID = 'AllocAccountID'
+    SuspendOrderManagementReplyBlock = 'SuspendOrderManagementReplyBlock'
+    TradeEntryReplyBlock = 'TradeEntryReplyBlock'
+    OrdNotificationBlock = 'OrdNotificationBlock'
+    OrderModificationReplyBlock = 'OrderModificationReplyBlock'
+    CDTransferReplyBlock = 'CDTransferReplyBlock'
+    CDTransferID = 'CDTransferID'
+    RecipientUserID = 'RecipientUserID'
+    CDOrdNotifBlock = 'CDOrdNotifBlock'
+    CDOrdNotifID = 'CDOrdNotifID'
+    CDRequestType = 'CDRequestType'
+    OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
+    ReportedCumQty = 'ReportedCumQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
     OrderListWaveStatus = 'OrderListWaveStatus'
     PercentQtyToRelease = 'PercentQtyToRelease'
     QtyPercentageProfile = 'QtyPercentageProfile'
+    RootParentOrdID = 'RootParentOrdID'
     RouteID = 'RouteID'
     """External Algo"""
     ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
@@ -205,6 +241,9 @@ class JavaApiFields(Enum):
     VenueScenarioParameterID = 'VenueScenarioParameterID'
     ScenarioID = 'ScenarioID'
     ExternalAlgo = 'ExternalAlgo'
+    VenueScenarioID = 'VenueScenarioID'
+    NewOrderReplyBlock = 'NewOrderReplyBlock'
+    OrdType = 'OrdType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -261,10 +300,18 @@ class JavaApiFields(Enum):
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
     Currency = "Currency"
+    FreeNotes = 'FreeNotes'
+    Price = 'Price'
+    VenueClientAccountName = 'VenueClientAccountName'
+    PostTradeExecStatus = 'PostTradeExecStatus'
+    DiscloseExec = 'DiscloseExec'
+    DayAvgPrice = 'DayAvgPrice'
+    SuspendedCare = "SuspendedCare"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'
+    OrderBagExecStatus = 'OrderBagExecStatus'
 
 
 class JavaApiPartyRoleConstants(Enum):
@@ -274,16 +321,19 @@ class JavaApiPartyRoleConstants(Enum):
 
 class BagChildCreationPolicy(Enum):
     Split = 'SPL'
+    Group = "GRP"
     AVP = 'AVP'  # GroupByAvgPx
 
 
 class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
+    ATC = 'ATC'
 
 
 class OrdTypes(Enum):
     Limit = 'LMT'
+    Market = 'MKT'
 
 
 class PegScopes(Enum):
@@ -307,3 +357,8 @@ class OrderBagConst(Enum):
     OrderBagStatus_CXL = 'CXL'
     OrderWaveStatus_TER = 'TER'
     OrderBagStatus_TER = 'TER'
+
+
+class CDResponsesConst(Enum):
+    CDRequestType_MOD = 'MOD'
+    CDRequestType_CAN = 'CAN'

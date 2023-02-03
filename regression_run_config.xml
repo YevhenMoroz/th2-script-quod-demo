@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 182v</name>
-    <version>5.1.169.182</version>
+    <name>Regression 184v</name>
+    <version>5.1.171.184</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -62,11 +62,11 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Stop" run="False">
+                <component name="Stop" run="true">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
@@ -78,11 +78,11 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Block" run="False">
+                <component name="Block" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>

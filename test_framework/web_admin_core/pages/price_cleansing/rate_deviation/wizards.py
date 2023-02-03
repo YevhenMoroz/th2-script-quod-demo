@@ -65,6 +65,9 @@ class ValuesTab(CommonPage):
         time.sleep(1)
         return self.get_all_items_from_drop_down(Constants.Wizard.ValuesTab.REFERENCE_VENUES_NAME_IN_DROP_DOWN)
 
+    def click_at_reference_venue_by_name(self, name):
+        self.find_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUE_LINK.format(name)).click()
+
     def set_price_deviation(self, value: int or float):
         self.set_text_by_xpath(Constants.Wizard.ValuesTab.PRICE_DEVIATION, str(value))
 

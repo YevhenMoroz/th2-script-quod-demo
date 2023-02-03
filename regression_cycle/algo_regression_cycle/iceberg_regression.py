@@ -12,6 +12,7 @@ from test_cases.algo.Algo_Iceberg.QAP_T4919 import QAP_T4919
 from test_cases.algo.Algo_Iceberg.QAP_T4925 import QAP_T4925
 from test_cases.algo.Algo_Iceberg.QAP_T4182 import QAP_T4182
 from test_cases.algo.Algo_Iceberg.QAP_T4183 import QAP_T4183
+from test_cases.algo.Algo_Iceberg.QAP_T4191 import QAP_T4191
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -34,8 +35,9 @@ def test_run(parent_id=None, version=None):
         QAP_T4918(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4919(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4925(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4182(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4191(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4183(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4182(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 

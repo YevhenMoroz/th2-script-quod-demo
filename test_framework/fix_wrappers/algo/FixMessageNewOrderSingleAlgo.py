@@ -1420,3 +1420,120 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_Block_params(self):
+        base_parameters = {
+            'Account': "CLIENT2",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '1000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1019',
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'ReleaseMode',
+                    'StrategyParameterType': '14',
+                    'StrategyParameterValue': 'LastTradedQty'
+                },
+                {
+                    'StrategyParameterName': 'ModifyFactor',
+                    'StrategyParameterType': '6',
+                    'StrategyParameterValue': '1'
+                }
+
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Stop_params(self):
+        base_parameters = {
+            'Account': "CLIENT2",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '1000',
+            'TimeInForce': "0",
+            'StopPx': "20",
+            'OrdType': 3,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1001',
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'AvailableVenues',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+                {
+                    'StrategyParameterName': 'AllowMissingPrimary',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Pegged_params(self):
+        base_parameters = {
+            'Account': "CLIENT2",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '1000',
+            'Price': '20',
+            'TimeInForce': "0",
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1009',
+            'PegInstructions': {
+                'PegOffsetValue': '1', #float
+                'PegPriceType': '1', #int
+                'PegOffsetType': '0', #int
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_TrailingStop_params(self):
+        base_parameters = {
+            'Account': "CLIENT2",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '1000',
+            'TimeInForce': "0",
+            'OrdType': 1,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1006',
+            'NoStrategyParameters': [
+                {
+                    'StrategyParameterName': 'TriggerPriceType',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'LastTrade'
+                },
+                {
+                    'StrategyParameterName': 'OffsetValue',
+                    'StrategyParameterType': '13',
+                    'StrategyParameterValue': 'true'
+                },
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self

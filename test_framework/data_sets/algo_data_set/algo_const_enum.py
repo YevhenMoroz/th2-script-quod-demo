@@ -226,6 +226,22 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_29 = dict(
+        Symbol='GB00B03MLX29',
+        SecurityID='GB00B03MLX29',
+        SecurityIDSource='4',
+        SecurityExchange='XETR',
+        SecurityType='CS'
+    )
+
+    instrument_30 = dict(
+        Symbol='GB00B03MLX29',
+        SecurityID='5323',
+        SecurityIDSource='8',
+        SecurityExchange='XLON',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -372,6 +388,8 @@ class AlgoListingId(Enum):
     listing_48 = "1872056"         # BATS for BE0020575115
     listing_49 = "897585397"       # TRQX for BE0020575115
     listing_50 = "982"       # Euronext Paris for FR0000044448
+    listing_51 = "1925020511"       # XETRA for GB00B03MLX29
+    listing_52 = "1925020512"       # LSE for GB00B03MLX29
     listing_qdl_1 = "9400000036" # QUODLIT1 for QUODTESTQA00 @ Columbia
     listing_qdl_2 = "9400000038" # QUODLIT2 for QUODTESTQA00 @ Columbia
 
@@ -382,6 +400,7 @@ class AlgoCurrency(Enum):
     currency_4 = "USD"
     currency_5 = "UAH"
     currency_6 = "SEK"
+    currency_7 = "GBX"
 
 
 class AlgoVerifierKeyParameters(Enum):

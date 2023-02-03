@@ -17,7 +17,7 @@ class AutoHedgerConstants:
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
     NEW_BUTTON_XPATH = '//*[text()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
-    LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
+    LOGOUT_BUTTON_XPATH = "//*[@title='Logout']"
     POSITION_BOOK_ALREADY_ASSIGNED_TO_MESSAGE = '//*[contains(text(),"Position Book already assigned to")]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
@@ -97,13 +97,16 @@ class AutoHedgerConstants:
     INSTRUMENTS_TAB_LONG_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Long Residual Qty (EUR)"]/preceding-sibling::input'
     INSTRUMENTS_TAB_SHORT_THRESHOLD_QTY_FIELD_XPATH = '//*[text()="Short Threshold Qty (EUR)"]/preceding-sibling::input'
     INSTRUMENTS_TAB_SHORT_RESIDUAL_QTY_FIELD_XPATH = '//*[text()="Short Residual Qty (EUR)"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGER = '//*[@id="crossCurrPairHedgingPolicy"]'
+    INSTRUMENTS_TAB_EXECUTION_STRATEGY = '//*[@id="strategy"]'
+    INSTRUMENTS_TAB_EXECUTION_TIF = '//*[@id="timeInForce"]'
+    INSTRUMENTS_TAB_EXECUTION_STRATEGY_MAX_DURATION = '//*[@id="exposureDuration"]'
+
     # checkboxes
     INSTRUMENTS_TAB_USE_LONG_QUANTITIES_AS_BOTH_LONG_AND_SHORT_CHECKBOX_XPATH = '//*[text()="Use Long Quantities as Both Long and Short"]'
     INSTRUMENTS_TAB_MAINTAIN_HEDGE_POSITIONS_CHECKBOX_XPATH = '//*[text()="Maintain Hedge Positions"]'
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_FIELD_XPATH = '//*[@id ="hedgeOrderDestination"]'
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-auto-hedger/ngx-ah-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[5]/nb-accordion-item-body/div/div/ngx-ah-instrument-form/div/div[2]/form/div[3]/div[3]/div/div[1]/nb-checkbox/label/span[1]'
-    INSTRUMENTS_TAB_SYNTHETIC_COMBINATION_TO_AUTO_HEDGE_FIELD_XPATH = '//*[text()="Synthetic Combination to Auto-Hedge"]'
     INSTRUMENTS_TAB_EXECUTION_STRATEGY_TYPE_XPATH = '//*[@id="scenario"]'
     INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Execution Strategy"]/preceding-sibling::input'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_TIF_FIELD_XPATH = '//*[text()= "Execution Strategy TIF"]'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_MAX_DURATION_FIELD_XPATH = '//*[text()= "Execution Strategy Max Duration (sec)"]'
+    INSTRUMENTS_TAB_REQUEST_APPROVAL_CHECKBOX = '//*[@formcontrolname="holdOrder"]//input'

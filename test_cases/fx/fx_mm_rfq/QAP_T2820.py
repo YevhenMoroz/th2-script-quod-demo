@@ -91,7 +91,7 @@ class QAP_T2820(TestCase):
         quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                       Currency=self.currency, Instrument=self.instrument_fwd,
                                                       OrderQty=self.qty)
-        self.fix_manager_gtw.send_message_and_receive_response(quote_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(quote_request, self.test_id)
         quote = FixMessageQuoteFX().set_params_for_quote_fwd(quote_request)
         self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
         self.quote_request_book.set_filter(
@@ -99,7 +99,7 @@ class QAP_T2820(TestCase):
             {self.quote_status_column: self.sts_accepted}, event_name="Check Quote Accepted")
         # endregion
         # region  Step 6
-        quote_cancel = FixMessageQuoteCancelFX().set_params_for_cancel(quote_request)
+        quote_cancel = FixMessageQuoteCancelFX().set_params_for_cancel(quote_request, response[0])
         self.fix_manager_gtw.send_message(quote_cancel)
         self.quote_request_book.set_filter(
             [self.cur_column, self.currency, self.qty_column, self.qty]).check_2nd_lvl_quote_book_fields_list(
