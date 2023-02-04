@@ -72,7 +72,7 @@ class QAP_T4473(TestCase):
         # endregion
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_buy = GatewaySide.RBBuy
         self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 
@@ -144,7 +144,7 @@ class QAP_T4473(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Scaling_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side_sell))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
         time.sleep(3)
