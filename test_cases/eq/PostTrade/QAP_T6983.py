@@ -184,7 +184,7 @@ class QAP_T6983(TestCase):
                                                               'AccountGroupID': self.client,
                                                               'PosValidity': 'DEL',
                                                               'WashBookAccountID': self.data_set.get_washbook_account_by_name(
-                                                                  'washbook_account_3')}
+                                                                  'washbook_account_2')}
                                                              )
         self.java_api_manager.send_message_and_receive_response(self.modification_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[

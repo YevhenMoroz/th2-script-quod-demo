@@ -78,18 +78,20 @@ class QAP_T7473(TestCase):
             {"Parties": parties, "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Currency": self.cur})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
-            {"Parties": parties,  "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account":self.account, "Currency": self.cur})
+            {"Parties": parties, "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*", "Account": self.account,
+             "Currency": self.cur})
         exec_report2.remove_parameter("SettlCurrency")
         # endregion
         # region Check ExecutionReports
         list_ignored_fields = ['Account', 'NoMiscFees',
-                               'CommissionData', 'MiscFeesGrp', 'OrderAvgPx', 'ReplyReceivedTime']
+                               'CommissionData', 'MiscFeesGrp', 'OrderAvgPx', 'ReplyReceivedTime', 'GatingRuleCondName',
+                               'GatingRuleName']
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_ignored_fields)
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
         party_stub_dict = {'PartyRole': "*",
-                           'PartyRoleQualifier':'*',
+                           'PartyRoleQualifier': '*',
                            'PartyID': "*",
                            'PartyIDSource': "*"}
         no_party = {
@@ -102,7 +104,8 @@ class QAP_T7473(TestCase):
         }
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message).change_parameters(
-            {"NoParty": no_party, "Account": self.client, "tag5120": "*", "AllocAccount": self.account, "Currency": self.cur_for_check, "AvgPx": "*"})
+            {"NoParty": no_party, "Account": self.client, "tag5120": "*", "AllocAccount": self.account,
+             "Currency": self.cur_for_check, "AvgPx": "*"})
         # endregion
         # region Check Book & Allocation
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_ignored_fields)

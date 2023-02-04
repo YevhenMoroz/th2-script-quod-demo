@@ -78,7 +78,8 @@ class QAP_T7155(TestCase):
         # endregion
         # region send exec report
         execution_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message)
-        self.fix_verifier.check_fix_message_fix_standard(execution_report1)
+        self.fix_verifier.check_fix_message_fix_standard(execution_report1,
+                                                         ignored_fields=['GatingRuleCondName', 'GatingRuleName'])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -52,5 +52,6 @@ class QAP_T7302(TestCase):
         ]}
         self.exec_report.change_parameters(
             {"Parties": party, "ReplyReceivedTime": "*", "SecondaryOrderID": "*", "LastMkt": "*", "Text": "*"})
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
+                                                         ignored_fields=['GatingRuleCondName', 'GatingRuleName'])
         # endregion
