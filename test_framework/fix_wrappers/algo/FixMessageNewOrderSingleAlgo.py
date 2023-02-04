@@ -348,6 +348,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10'
             }
         }
         super().change_parameters(base_parameters)
@@ -375,6 +376,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10'
             }
         }
         super().change_parameters(base_parameters)
@@ -402,6 +404,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                 'PricePoint1Participation': '12',
                 'PricePoint2Price': '26',
                 'PricePoint2Participation': '14',
+                'NumberOfLevels': '10',
                 'ExcludePricePoint2': '1'
             }
         }
@@ -458,34 +461,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                     'StrategyParameterName': 'ChildMinValue',
                     'StrategyParameterType': '6',
                     'StrategyParameterValue': '150'
-                }
-            ]
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_POV_for_Kepler_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_9'),
-            'ClOrdID': basic_custom_actions.client_orderid(9),
-            "HandlInst": "2",
-            "Side": "1",
-            "OrderQty": "1000",
-            "TimeInForce": "0",
-            "OrdType": "2",
-            "TransactTime": datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
-            "Price": "20",
-            'Currency': self.get_data_set().get_currency_by_name('currency_1'),
-            'ExDestination': self.get_data_set().get_mic_by_name('mic_10'),
-            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_8"),
-            "TargetStrategy": "2",
-            "ClientAlgoPolicyID": "CustomPOV",
-            'NoStrategyParameters': [
-                {
-                    'StrategyParameterName': 'PercentageVolume',
-                    'StrategyParameterType': '6',
-                    'StrategyParameterValue': '0.1'
                 }
             ]
         }
@@ -605,7 +580,26 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_MPDark_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Auction_Child_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'CLIENT1',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_21'),
+            'TimeInForce': '2',
+            "TransactTime": '*',
+            'ExDestination': 'XAMS',
+            'OrderCapacity': 'A',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_MPDark_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -627,7 +621,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_Dark_Child_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Dark_Child_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": 'KEPLER',
             'ClOrdID': '*',
@@ -645,112 +639,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_Auction_Child_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": 'CLIENT1',
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_21'),
-            'TimeInForce': '2',
-            "TransactTime": '*',
-            'ExDestination': 'XAMS',
-            'OrderCapacity': 'A',
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_SynthMinQty_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_9'),
-            'ClOrdID': basic_custom_actions.client_orderid(9),
-            'HandlInst': '2',
-            'Side': '2',
-            'OrderQty': '500000',
-            'TimeInForce': '0',
-            'OrdType': '2',
-            'TransactTime': datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
-            "Price": "11",
-            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TargetStrategy': '1008',
-            'MinQty': '100'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_SynthMinQty_params_with_strategy(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_9'),
-            'ClOrdID': basic_custom_actions.client_orderid(9),
-            'HandlInst': '2',
-            'Side': '2',
-            'OrderQty': '500000',
-            'TimeInForce': '0',
-            'OrdType': '2',
-            'TransactTime': datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
-            "Price": "11",
-            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TargetStrategy': '1008',
-            'ClientAlgoPolicyID': 'QA_Auto_SORPING_2',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'MinQty': '100'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_ChildMinQty_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": 'KEPLER',
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '11',
-            'Side': '2',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': 'QDL1',
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_ChildMinQty_params_with_strategy_tags(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": 'KEPLER',
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '11',
-            'Side': '2',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': 'QDL1',
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
             'misc5': '*'
         }
         super().change_parameters(base_parameters)
@@ -779,7 +667,79 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_LitDark_Iceberg_params(self):
+    def set_DMA_after_RFQ_params(self):
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': 1,
+            'OrderQty': 3000000,
+            'OrdType': "D",
+            'Price': 20,
+            'Side': 1,
+            'Instrument': "*",
+            'TimeInForce': 0,
+            "TransactTime": '*',
+            'ExDestination': 'LISX',
+            'OrderCapacity': 'A',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'AlgoCst01': 'firm-up',
+            'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
+            'QuoteID': '*',
+            'ChildOrderID': '*',
+            'misc5': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SynthMinQty_Kepler_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_9'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '2',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "11",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_Auto_SOR_PassivePrioPrimary',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'MinQty': '100'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_ChildMinQty_Kepler_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '11',
+            'Side': '2',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'QDL1',
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'misc5': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_LitDark_Iceberg_Kepler_params(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -802,7 +762,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_LitDark_Iceberg_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_LitDark_Iceberg_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
             'ClOrdID': '*',
@@ -823,7 +783,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Kepler_Iceberg_params(self):
+    def set_Iceberg_Kepler_params_specific_tags(self):
         base_parameters = {
             'Account': "KEPLER",
             'ClOrdID': '*',
@@ -854,7 +814,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_Kepler_Iceberg_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_Iceberg_Kepler_params_specific_tags(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
             'ClOrdID': '*',
@@ -879,80 +839,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Kepler_Iceberg_params_with_algopolicy(self):
-        base_parameters = {
-            'Account': "KEPLER",
-            'ClOrdID': '*',
-            'HandlInst': "2",
-            'Side': '1',
-            'OrderQty': '500000',
-            'TimeInForce': "0",
-            'Price': "20",
-            'OrdType': "2",
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
-            'OrderCapacity': 'A',
-            'Currency': 'EUR',
-            'TargetStrategy': '1004',
-            'StrategyName': 'QA_Auto_ICEBERG',
-            'ComplianceID': 'FX5',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ExDestination': 'QDL11',
-            "DisplayInstruction": {
-                'DisplayQty': '500'
-            }
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_child_of_Kepler_Iceberg_params_with_algopolicy(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": "KEPLER",
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': "QDL11",
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_Kepler_DMA_params(self):
-        base_parameters = {
-            'Account': "KEPLER",
-            'ClOrdID': '*',
-            'HandlInst': "2",
-            'Side': '1',
-            'OrderQty': '500000',
-            'TimeInForce': "0",
-            'Price': "20",
-            'OrdType': "2",
-            'TransactTime': datetime.utcnow().isoformat(),
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'OrderCapacity': 'A',
-            'Currency': 'EUR',
-            'ExDestination': 'QDL1',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'IClOrdIdTO': '19864'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_SORPING_Iceberg_params_with_PartyInfo(self):
+    def set_SORPING_Iceberg_Kepler_params_with_PartyInfo(self):
         base_parameters = {
             'ClOrdID': '*',
             'HandlInst': "2",
@@ -984,7 +871,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_SORPING_Iceberg_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_SORPING_Iceberg_Kepler_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
             'ClOrdID': '*',
@@ -1012,7 +899,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_LitDark_Iceberg_params_with_PartyInfo(self):
+    def set_LitDark_Iceberg_Kepler_params_with_PartyInfo(self):
         base_parameters = {
             'ClOrdID': '*',
             'HandlInst': "2",
@@ -1045,7 +932,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_child_of_LitDark_Iceberg_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
+    def set_DMA_child_of_LitDark_Iceberg_Kepler_params_with_PartyInfo(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
             'ClOrdID': '*',
@@ -1064,7 +951,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
-                     'NoParty': [
+            'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
                     'PartyIDSource': 'D',
@@ -1075,7 +962,101 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_SORPING_params(self) -> FixMessageNewOrderSingle:
+    def set_Iceberg_Kepler_params(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Account': "KEPLER",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "0",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1004',
+            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
+            'ExDestination': 'XPAR',
+            "DisplayInstruction": {
+                'DisplayQty': '500'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_Iceberg_Kepler_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'misc5': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Kepler_params(self):
+        base_parameters = {
+            'Account': "KEPLER",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'ExDestination': 'QDL1',
+            'IClOrdIdCO': 'OD_5fgfDXg-00',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'IClOrdIdTO': '19864'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_Kepler_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "KEPLER",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': "QDL1",
+            'OrderCapacity': 'A',
+            'ChildOrderID': '*',
+            'IClOrdIdCO': 'OD_5fgfDXg-00',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ShortCode': '17536',
+            'IClOrdIdTO': '19864',
+            'misc5': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_SORPING_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -1097,33 +1078,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_after_RFQ_params(self):
-        base_parameters = {
-            "Account": 'KEPLER',
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': 1,
-            'OrderQty': 3000000,
-            'OrdType': "D",
-            'Price': 20,
-            'Side': 1,
-            'Instrument': "*",
-            'TimeInForce': 0,
-            "TransactTime": '*',
-            'ExDestination': 'LISX',
-            'OrderCapacity': 'A',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'AlgoCst01': 'firm-up',
-            'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
-            'QuoteID': '*',
-            'ChildOrderID': '*',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_Child_of_SORPING_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Child_of_SORPING_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": 'KEPLER',
             'ClOrdID': '*',
@@ -1146,47 +1101,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_SORPING_params_with_default_strategy(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            'Account': self.get_data_set().get_account_by_name('account_9'),
-            'ClOrdID': basic_custom_actions.client_orderid(9),
-            'HandlInst': '2',
-            'Side': '1',
-            'OrderQty': '500000',
-            'TimeInForce': '0',
-            'OrdType': '2',
-            'TransactTime': datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
-            "Price": "11",
-            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TargetStrategy': '1011'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_Child_of_SORPING_with_default_strategy_params(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": 'KEPLER',
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '11',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': 'QDL1',
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+    def set_Multiple_Emulation_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -1208,7 +1123,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_Child_of_Multiple_Emulation_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Child_of_Multiple_Emulation_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": 'KEPLER',
             'ClOrdID': '*',
@@ -1231,7 +1146,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Kepler_Multilisting_params(self) -> FixMessageNewOrderSingle:
+    def set_Multilisting_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_9'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -1262,7 +1177,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_DMA_Child_of_Kepler_Multilisting_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_Child_of_Multilisting_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": 'KEPLER',
             'ClOrdID': '*',
@@ -1286,7 +1201,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Kepler_DMA_child_params(self) -> FixMessageNewOrderSingle:
+    def set_Synthetic_TIF_Kepler_params(self):
+        base_parameters = {
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Account': "KEPLER",
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
+            'Side': '1',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'OrderQty': '500000',
+            'OrdType': "2",
+            'Price': "20",
+            'Currency': 'EUR',
+            'ComplianceID': 'FX5',
+            'TimeInForce': "1",
+            'OrderCapacity': 'A',
+            'TargetStrategy': '1003',
+            'ExDestination': 'QDL11',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_child_of_Synthetic_TIF_Kepler_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "KEPLER",
             'ClOrdID': '*',
@@ -1296,42 +1232,13 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrdType': '2',
             'Price': '20',
             'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_8'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
             'TimeInForce': '0',
             "TransactTime": '*',
-            'ExDestination': "QDL1",
+            'ExDestination': "QDL11",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
-            'IClOrdIdCO': 'OD_5fgfDXg-00',
-            'IClOrdIdAO': 'OD_5fgfDXg-00',
-            'ShortCode': '17536',
-            'IClOrdIdTO': '19864',
             'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_Iceberg_Kepler(self):
-        base_parameters = {
-            'ClOrdID': '*',
-            'HandlInst': "2",
-            'Account': "KEPLER",
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
-            'Side': '1',
-            'TransactTime': datetime.utcnow().isoformat(),
-            'OrderQty': '500000',
-            'OrdType': "2",
-            'Price': "20",
-            'Currency': 'EUR',
-            'ComplianceID': 'FX5',
-            'TimeInForce': "0",
-            'OrderCapacity': 'A',
-            'TargetStrategy': '1004',
-            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
-            'ExDestination': 'XPAR',
-            "DisplayInstruction": {
-                'DisplayQty': '500'
-            }
         }
         super().change_parameters(base_parameters)
         return self
@@ -1354,69 +1261,6 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ClientAlgoPolicyID': 'InternalQuodQa_SORPING',
             'NoStrategyParameters': [
             ]
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_child_of_Iceberg_Kepler(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": "KEPLER",
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_9'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': "XPAR",
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'misc5': '*'
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_Synthetic_TIF_Kepler(self):
-        base_parameters = {
-            'ClOrdID': '*',
-            'HandlInst': "2",
-            'Account': "KEPLER",
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
-            'Side': '1',
-            'TransactTime': datetime.utcnow().isoformat(),
-            'OrderQty': '500000',
-            'OrdType': "2",
-            'Price': "20",
-            'Currency': 'EUR',
-            'ComplianceID': 'FX5',
-            'TimeInForce': "1",
-            'OrderCapacity': 'A',
-            'TargetStrategy': '1003',
-            'ExDestination': 'QDL11',
-        }
-        super().change_parameters(base_parameters)
-        return self
-
-    def set_DMA_child_of_Synthetic_TIF_Kepler(self) -> FixMessageNewOrderSingle:
-        base_parameters = {
-            "Account": "KEPLER",
-            'ClOrdID': '*',
-            'Currency': 'EUR',
-            'HandlInst': '1',
-            'OrderQty': '1000',
-            'OrdType': '2',
-            'Price': '20',
-            'Side': '1',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_17'),
-            'TimeInForce': '0',
-            "TransactTime": '*',
-            'ExDestination': "QDL11",
-            'OrderCapacity': 'A',
-            'ChildOrderID': '*',
-            'misc5': '*'
         }
         super().change_parameters(base_parameters)
         return self

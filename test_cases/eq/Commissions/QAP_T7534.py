@@ -82,7 +82,8 @@ class QAP_T7534(TestCase):
     def __verify_commissions(self):
         value_of_commission = '4494.002'
         list_of_ignored_fields = ['ReplyReceivedTime', 'Account',
-                                  'SettlCurrency', 'Currency', 'LastMkt', 'SettlType', 'Text']
+                                  'SettlCurrency', 'Currency', 'LastMkt', 'SettlType', 'Text','GatingRuleCondName',
+                                  'GatingRuleName']
         self.fix_execution_report.change_parameters({'CommissionData': {'Commission': value_of_commission,
                                                                         'CommType': '3'},
                                                      'MiscFeesGrp': {

@@ -88,3 +88,7 @@ class QAP_T7123(TestCase):
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.rest_commission_sender.clear_fees()

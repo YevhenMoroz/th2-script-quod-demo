@@ -242,6 +242,48 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_31 = dict(
+        Symbol='LU1129894801',
+        SecurityID='LU1129894801',
+        SecurityIDSource='4',
+        SecurityExchange='XLUX',
+        SecurityType='CS'
+    )
+
+    instrument_32 = dict(
+        Symbol='PTSNG0AM0007',
+        SecurityID='PTSNG0AM0007',
+        SecurityIDSource='4',
+        SecurityExchange='XLIS',
+        SecurityType='CS'
+    )
+
+    instrument_33 = dict(
+        Symbol='US3448491049',
+        SecurityID='US3448491049',
+        SecurityIDSource='4',
+        SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
+
+    instrument_34 = dict(
+        Symbol='IE00BD1RP616',
+        SecurityID='IE00BD1RP616',
+        SecurityIDSource='4',
+        SecurityExchange='XDUB',
+        SecurityType='CS'
+    )
+
+    instrument_35 = dict(
+        Symbol='GB00BY7QYJ50',
+        SecurityID='GB00BY7QYJ50',
+        SecurityIDSource='4',
+        SecurityExchange='XDUB',
+        SecurityType='CS'
+    )
+
+
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -335,6 +377,9 @@ class AlgoMic(Enum):
     mic_35 = "XBRU"   # Euronext Brussels
     mic_36 = "QDL3"   # QUODLIT3
     mic_37 = "TQEL"   # TQEULIS
+    mic_38 = "XLUX"   # LUXEMBURG
+    mic_39 = "XLIS"   # Euronext Lisbon
+    mic_40 = "XDUB"   # DUBLIN
 
 
 class AlgoListingId(Enum):
@@ -427,6 +472,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
     verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
+    key_params_read_log_check_updating_status_with_order_id = ['OrderId', 'OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
     key_params_read_log_check_primary_listing = ['OrderId', 'PrimaryListingID']
     key_params_read_log_check_party_info = ['PartyID', 'OrdrMisc6', 'ClOrdID']
@@ -437,7 +483,7 @@ class AlgoVerifierKeyParameters(Enum):
     key_params_log_319_check_transact_time_for_child = ['TransactTime']
     key_params_log_319_check_settl_date_part_3 = ['SettlDate']
     key_params_log_319_check_order_event = ['OrderId', 'Text']
-    key_params_log_319_check_mapping = ['Parameter1', 'Value1', 'Parameter2', 'Value2', 'Parameter3', 'Value3', 'Parameter4', 'Value4']
+    key_params_log_319_check_exec_type = ['OrdID', 'ExecType']
 
 class AlgoPreFilter(Enum):
     pre_filer_equal_F = {
