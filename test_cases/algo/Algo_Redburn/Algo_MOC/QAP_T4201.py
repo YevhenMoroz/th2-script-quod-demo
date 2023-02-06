@@ -110,10 +110,10 @@ class QAP_T4201(TestCase):
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase Open", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("3")
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
 
-        self.incremental_refresh_with_ltp = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.price).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("3")
+        self.incremental_refresh_with_ltp = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.price).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_with_ltp)
         # endregion
 
@@ -149,7 +149,7 @@ class QAP_T4201(TestCase):
 
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send t rading phase PreClose ", self.test_id))
-        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreClosed)
         scheduler.enterabs(end_time + 1, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_close))
 
 

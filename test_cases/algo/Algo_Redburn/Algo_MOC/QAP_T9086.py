@@ -129,7 +129,10 @@ class QAP_T9086(TestCase):
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase PreClosed", self.test_id))
-        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume_null).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative()\
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume_null)\
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)\
+            .set_phase(TradingPhases.PreClosed)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_pre_close)
         # endregion
 
@@ -184,17 +187,14 @@ class QAP_T9086(TestCase):
         er_new_canceled2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
         er_new_canceled2.change_parameter("TransactTime", "<" + auction_cancel_time_end)
         scheduler.enterabs(self.verifier_time, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
-
         # endregion
-
-        auction_child_time = AFM.change_datetime_from_epoch_to_normal(end_time_preclosed).astimezone(pytz.utc).isoformat()[:-6]
-        self.dma_order.change_parameter("TransactTime", ">" + auction_child_time)
 
         scheduler.enterabs(end_time_preclosed- 32, 1, self.fix_manager_feed_handler.set_case_id,kwargs=dict(case_id=bca.create_event("Send trading phase PreClosed with volume before 30 sec checkpoint", self.test_id)))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative()\
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume2)\
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.price2)\
-            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)\
+            .set_phase(TradingPhases.PreClosed)
         scheduler.enterabs(end_time_preclosed - 32, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh))
 
 
@@ -204,7 +204,8 @@ class QAP_T9086(TestCase):
         self.incremental_refresh_atlast = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative()\
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume_null) \
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.price2) \
-            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("5")
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)\
+            .set_phase(TradingPhases.AtLast)
         scheduler.enterabs(end_time_preclosed + 1, 1, self.fix_manager_feed_handler.set_case_id,kwargs=dict(case_id=bca.create_event("Send trading phase AtLast", self.test_id)))
         scheduler.enterabs(end_time_preclosed + 1, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_atlast))
 

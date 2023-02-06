@@ -2,6 +2,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
 from stubs import Stubs
+from test_framework.data_sets.constants import TradingPhases
 from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import FixMessageMarketDataIncrementalRefresh
 from datetime import datetime
 
@@ -86,8 +87,19 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         self.change_parameter("MDReqID", md_req_id)
         return self
 
-    def set_phase(self, phase: str) -> FixMessageMarketDataIncrementalRefresh:
-        super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", phase)
+    def set_phase(self, phase: TradingPhases) -> FixMessageMarketDataIncrementalRefresh:
+        str_phase = ""
+        if phase == TradingPhases.PreClosed:
+            str_phase = '4'
+        elif phase == TradingPhases.PreOpen:
+            str_phase = '2'
+        elif phase == TradingPhases.Open:
+            str_phase = '3'
+        elif phase == TradingPhases.Closed:
+            str_phase = '1'
+        elif phase == TradingPhases.AtLast:
+            str_phase = '5'
+        super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", str_phase)
         return self
 
     def set_market_data_incr_refresh_open_px(self) -> FixMessageMarketDataIncrementalRefresh:

@@ -147,7 +147,7 @@ class QAP_T9063(TestCase):
 
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
 
-        self.open_phase = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase("3")
+        self.open_phase = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         scheduler.enterabs(start_time + 20, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.open_phase))
 
         dma_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()

@@ -147,15 +147,15 @@ class QAP_T4483(TestCase):
         end_time_open = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) / 1000
         self.checkpoint = end_time_open + 5
 
-        self.incremental_refresh_pre_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("2")
+        self.incremental_refresh_pre_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
         scheduler.enterabs(start_time_pre_open, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - PreOpen", self.test_id)))
         scheduler.enterabs(start_time_pre_open, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_open))
 
-        self.incremental_refresh_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("3")
+        self.incremental_refresh_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         scheduler.enterabs(end_time_pre_open, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - Open", self.test_id)))
         scheduler.enterabs(end_time_pre_open, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_open))
 
-        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("4")
+        self.incremental_refresh_pre_close = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreClosed)
         scheduler.enterabs(end_time_open-1, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - PreClose", self.test_id)))
         scheduler.enterabs(end_time_open, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_close))
 
