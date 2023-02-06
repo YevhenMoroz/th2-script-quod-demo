@@ -36,7 +36,7 @@ class QAP_T7019(TestCase):
             "StrategyParametersGrp": {"NoStrategyParameters": [
                 {
                     'StrategyParameterName': 'Urgency',
-                    'StrategyParameterType': self.ex_str_name,
+                    'StrategyParameterType': "ExternalStrategyName",
                     'StrategyParameterValue': 'LOW'
                 }
             ]}
