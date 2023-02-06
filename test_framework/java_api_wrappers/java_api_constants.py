@@ -32,6 +32,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     OrdStatus_REJ = 'REJ'
+    OrdStatus_CXL = 'CXL'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -307,6 +308,7 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
+    SubCounterpartList = "SubCounterpartList"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
