@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-class QAP_T9390(TestCase):
+class QAP_T9389(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
@@ -60,8 +60,21 @@ class QAP_T9390(TestCase):
                                              order_reply, f'Verify that order {order_id} has Sts = Open')
         # endregion
 
-        # region step 2: Create Child CO order
+        # region step 2 : Manually execute CO order via JavaApiUser_2
         half_qty = str(float(qty) / 2)
+        self.manual_execute.set_default_trade(order_id, price, half_qty)
+        self.java_api_manager2.send_message_and_receive_response(self.manual_execute)
+        execution_report = \
+            self.java_api_manager2.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
+            execution_report, f'Verifying that {order_id} has ExecSts = '
+                              f'{ExecutionReportConst.TransExecStatus_PFL.value}, (step 2)')
+
+        # endregion
+
+        # region step 3: Create Child CO order
         self.order_submit.set_default_child_care(recipient, desk, role, order_id)
         self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {
             JavaApiFields.OrdQty.value: half_qty
@@ -75,19 +88,19 @@ class QAP_T9390(TestCase):
         child_ord_id = order_notif_message[JavaApiFields.OrdID.value]
         self.java_api_manager2.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
                                               order_notif_message, f'Verify that  Child Order {child_ord_id} '
-                                                                   f'has Sts = Sent (step 2)')
+                                                                   f'has Sts = Sent (step 3)')
         # endregion
 
-        # region step 3:Accept Child CO order
+        # region step 4:Accept Child CO order
         self.accept_request.set_default(child_ord_id, cd_order_notif_id, desk)
         self.java_api_manager.send_message_and_receive_response(self.accept_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                                             order_reply, f'Check that {child_ord_id} has Sts = Open (step 3)')
+                                             order_reply, f'Check that {child_ord_id} has Sts = Open (step 4)')
         # endregion
 
-        # region step 4: Fully Filled Child CO order
+        # region step 5: Fully Filled Child CO order
         self.manual_execute.set_default_trade(child_ord_id, price, half_qty)
         self.java_api_manager.send_message_and_receive_response(self.manual_execute,
                                                                 {order_id: order_id, child_ord_id: child_ord_id})
@@ -97,34 +110,24 @@ class QAP_T9390(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             execution_report_child_order,
-            f'Verifying that Child order {order_id} is {ExecutionReportConst.TransExecStatus_FIL.value} (step 4)')
+            f'Verifying that Child order {order_id} is {ExecutionReportConst.TransExecStatus_FIL.value} (step 5)')
         execution_report_parent_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                                order_id).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
-            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             execution_report_parent_order, f'Verifying that {order_id} has ExecSts = '
-                                           f'{ExecutionReportConst.TransExecStatus_PFL.value}, (step 4)')
+                                           f'{ExecutionReportConst.TransExecStatus_FIL.value}, (step 5)')
         # endergion
 
-        # region step 5: Manually execute CO order via JavaApiUser_2:
-        self.manual_execute.set_default_trade(order_id, price, half_qty)
-        self.java_api_manager2.send_message_and_receive_response(self.manual_execute)
-        execution_report = \
-        self.java_api_manager2.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
-        self.java_api_manager.compare_values(
-            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
-            execution_report, f'Verifying that {order_id} has ExecSts = '
-                              f'{ExecutionReportConst.TransExecStatus_FIL.value}, (step 5)')
-        # endregion
+
 
         # region step 6: Complete CO order
         self.complete_reqeust.set_default_complete(order_id)
-        self.java_api_manager2.send_message_and_receive_response(self.complete_reqeust)
-        order_reply_message = self.java_api_manager2.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
+        self.java_api_manager.send_message_and_receive_response(self.complete_reqeust)
+        order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
-        self.java_api_manager2.compare_values(
+        self.java_api_manager.compare_values(
             {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_RDY.value,
              JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
             order_reply_message,
@@ -133,17 +136,17 @@ class QAP_T9390(TestCase):
 
         # region step 7: Book Parent CO order
         self.allocation_instruction.set_default_book(order_id)
-        self.java_api_manager2.send_message_and_receive_response(self.allocation_instruction)
-        ord_update = self.java_api_manager2.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
-        self.java_api_manager2.compare_values(
+        self.java_api_manager.compare_values(
             {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
              JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value}, ord_update,
             'Verifying that order booked (step 7)')
         # endregion
 
         # region step 8: Check 35 = J message
-        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
         party_stup = {'PartyRole': '*',
                       'PartyRoleQualifier': '*',
                       'PartyID': '*',
