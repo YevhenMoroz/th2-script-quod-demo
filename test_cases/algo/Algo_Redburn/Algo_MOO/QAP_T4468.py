@@ -55,8 +55,8 @@ class QAP_T4468(TestCase):
         # endregion
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_buy = GatewaySide.RBBuy
+        self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 
         # region Status
@@ -130,17 +130,17 @@ class QAP_T4468(TestCase):
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, WouldInAuction=1, TriggerPriceRed=self.would_price, MaxWouldShares=self.max_would_shares))
-        responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
+        self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=2, NoParty='*', SecAltIDGrp='*'))
+        er_pending_new.change_parameters(dict(TimeInForce=2))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        er_new.change_parameters(dict(TimeInForce=2, NoParty='*', SecAltIDGrp='*')).remove_parameter('TargetStrategy')
+        er_new.change_parameters(dict(TimeInForce=2))
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -149,8 +149,8 @@ class QAP_T4468(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_2)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, Parties='*', QtyType='*', SettlDate='*'))
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child')
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -193,6 +193,8 @@ class QAP_T4468(TestCase):
         scheduler.run()
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region Cancel Algo Order
         case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
@@ -200,13 +202,6 @@ class QAP_T4468(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_2)
         # endregion
         time.sleep(3)
-
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=2)).remove_parameters(["CxlQty", 'TargetStrategy'])
-        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
@@ -216,3 +211,7 @@ class QAP_T4468(TestCase):
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
+
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=2))
+        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

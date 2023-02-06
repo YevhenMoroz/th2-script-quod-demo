@@ -119,10 +119,8 @@ class QAP_T4323(TestCase):
         case_id_2 = bca.create_event("TWAP DMA child order", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
-        twap_child = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        twap_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         twap_child.change_parameters(dict(OrderQty=self.qty_twap_1, Price=self.price))
-        twap_child.add_tag(dict(Parties='*', QtyType=0))
-        twap_child.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(twap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child')
 
         pending_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_child, self.gateway_side_buy, self.status_pending)
@@ -135,10 +133,8 @@ class QAP_T4323(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_3)
 
         # Check Second Navigator child
-        nav_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        nav_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         nav_child_1.change_parameters(dict(OrderQty=self.qty_nav, Price=self.price_nav))
-        nav_child_1.add_tag(dict(Parties='*', QtyType=0))
-        nav_child_1.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(nav_child_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Navigator')
 
         pending_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, self.gateway_side_buy, self.status_pending)

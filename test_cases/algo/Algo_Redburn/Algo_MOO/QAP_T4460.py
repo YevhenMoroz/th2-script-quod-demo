@@ -146,42 +146,40 @@ class QAP_T4460(TestCase):
 
         pending_auction_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
         pending_auction_order_params.change_parameters(dict(TimeInForce=self.tif_ato))
-        pending_auction_order_params.remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(pending_auction_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_auction_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
         new_auction_order_params.change_parameters(dict(TimeInForce=self.tif_ato))
-        new_auction_order_params.remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(new_auction_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check passive child order 1
-        case_id_2 = bca.create_event("Scaling child orders", self.test_id)
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy side NewOrderSingle", case_id_2))
+        self.case_id_2 = bca.create_event("Scaling child orders", self.test_id)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy side NewOrderSingle", self.case_id_2))
 
         # region Aggressive Scaling order
-        scaling_dma_child_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        scaling_dma_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         scaling_dma_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, Instrument='*', TimeInForce=self.tif_ato))
-        scaling_dma_child_order.add_tag(dict(Parties='*', QtyType=0))
-        scaling_dma_child_order.remove_parameter('NoParty')
 
         pending_scaling_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_pending)
 
         new_scaling_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_new)
         
-        cancel_scaling_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_cancel)
+        self.cancel_scaling_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_cancel)
         # endregion
 
         # region Check Scaling child orders
         self.fix_verifier_buy.check_fix_message_sequence([scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Pending New", case_id_2))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Pending New", self.case_id_2))
         self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side New", case_id_2))
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side New", self.case_id_2))
         self.fix_verifier_buy.check_fix_message_sequence([new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -194,19 +192,10 @@ class QAP_T4460(TestCase):
         time.sleep(5)
 
         # region Check cancellation of the Scaling child orders
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Cancel", case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params, cancel_scaling_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Cancel", self.case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
-
-        # region check cancellation parent Auction order
-        cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_ato))
-        cancel_auction_order.remove_parameter('TargetStrategy')
-        self.fix_verifier_sell.check_fix_message(cancel_auction_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
-        # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
+        
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
@@ -215,3 +204,9 @@ class QAP_T4460(TestCase):
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
+        
+        # region check cancellation parent Auction order
+        cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
+        cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_ato))
+        self.fix_verifier_sell.check_fix_message(cancel_auction_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
+        # endregion

@@ -156,10 +156,8 @@ class QAP_T4350(TestCase):
         # region Check IOC child order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order - 1", self.test_id))
 
-        ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_1.change_parameters(dict(OrderQty=self.child_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
-        ioc_child_order_1.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_1.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
@@ -173,6 +171,8 @@ class QAP_T4350(TestCase):
         self.fix_verifier_buy.check_fix_message(cancel_ioc_child_order_1, self.key_params, self.ToQuod, "Buy Side ExecReport Partial Fill IOC Child 1")
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -182,11 +182,11 @@ class QAP_T4350(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
+        time.sleep(3)
+
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)
+
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        RuleManager(Simulators.algo).remove_rules(self.rule_list)
