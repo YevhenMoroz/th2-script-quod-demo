@@ -120,12 +120,12 @@ class QAP_T9086(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-        # insert data into mongoDB
+        # region insert data into mongoDB
 
         curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
         self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
-        bca.create_event("Data in mong inserted", self.test_id)
-
+        bca.create_event("Data in mongo inserted", self.test_id)
+        # endregion
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase PreClosed", self.test_id))
@@ -133,7 +133,7 @@ class QAP_T9086(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_pre_close)
         # endregion
 
-        # region Send NewOrderSingle (35=D) for MP Dark order
+        # region Send NewOrderSingle
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
@@ -159,31 +159,31 @@ class QAP_T9086(TestCase):
         scheduler = sched.scheduler(time.time, time.sleep)
 
         end_time_preclosed = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreClosed, start_time=False)
-        self.checkpoint = end_time_preclosed + 5
+        self.verifier_time = end_time_preclosed + 5
 
         auction_cancel_time_start = AFM.change_datetime_from_epoch_to_normal(end_time_preclosed -30).astimezone(pytz.utc).isoformat()[:-6]
         auction_cancel_time_end = AFM.change_datetime_from_epoch_to_normal(end_time_preclosed-15).astimezone(pytz.utc).isoformat()[:-6]
 
         # region check child order
-        scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=bca.create_event("Check child order", self.test_id)))
+        scheduler.enterabs(self.verifier_time, 1, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=bca.create_event("Check child order", self.test_id)))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=self.time_in_force_ATC, Instrument=self.instrument))
-        scheduler.enterabs(self.checkpoint, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
+        scheduler.enterabs(self.verifier_time, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(self.checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
+        scheduler.enterabs(self.verifier_time, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(self.checkpoint, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New child order'))
+        scheduler.enterabs(self.verifier_time, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New child order'))
 
         er_new_canceled = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
         er_new_canceled.change_parameter("TransactTime", ">" + auction_cancel_time_start)
-        scheduler.enterabs(self.checkpoint, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
+        scheduler.enterabs(self.verifier_time, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
 
         er_new_canceled2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
         er_new_canceled2.change_parameter("TransactTime", "<" + auction_cancel_time_end)
-        scheduler.enterabs(self.checkpoint, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
+        scheduler.enterabs(self.verifier_time, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
 
         # endregion
 
@@ -227,11 +227,11 @@ class QAP_T9086(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
+        self.db_manager.drop_collection(f"Q{self.listing_id}")
+        bca.create_event(f"Collection QP{self.listing_id} is dropped", self.test_id)
+
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
-
-        self.db_manager.drop_collection(f"Q{self.listing_id}")
-        bca.create_event(f"Collection QP{self.listing_id} is dropped", self.test_id)
