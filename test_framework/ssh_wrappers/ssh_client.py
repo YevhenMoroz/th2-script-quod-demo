@@ -1,13 +1,15 @@
 import time
 
 import paramiko
+import psycopg2
 
 
 class SshClient:
     """A wrapper of paramiko.SSHClient"""
     TIMEOUT = 1
 
-    def __init__(self, host, port, username, password, su_user=None, su_pass=None):
+    def __init__(self, host, port, username, password, su_user=None, su_pass=None, db_host=None, db_name=None,
+                 db_user=None, db_pass=None):
         self.username = username
         self.password = password
         self.client = paramiko.SSHClient()
@@ -21,6 +23,10 @@ class SshClient:
             time.sleep(self.TIMEOUT)
             self.channel.send(f"{su_pass}\n")
             time.sleep(self.TIMEOUT)
+        self.db_host = db_host
+        self.db_name = db_name
+        self.db_user = db_user
+        self.db_pass = db_pass
 
     def get_file(self, remote_path, local_path):
         self.sftp_client.get(remote_path, local_path)
@@ -49,6 +55,15 @@ class SshClient:
         return {'out': stdout.readlines(),
                 'err': stderr.readlines(),
                 'retval': stdout.channel.recv_exit_status()}
+
+    def execute_sql(self, sql_request):
+        conn = psycopg2.connect(dbname=self.db_name, user=self.db_user, password=self.db_pass, host=self.db_host)
+        cursor = conn.cursor()
+        cursor.execute(sql_request)
+        records = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return records
 
     def close(self):
         if self.client is not None:

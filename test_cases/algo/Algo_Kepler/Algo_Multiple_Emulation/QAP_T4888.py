@@ -45,7 +45,7 @@ class QAP_T4888(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -99,7 +99,7 @@ class QAP_T4888(TestCase):
         case_id_1 = bca.create_event("Create SORPING GTD Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_GTD_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
+        self.SORPING_GTD_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_Kepler_params()
         self.SORPING_GTD_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_GTD_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, TimeInForce=self.tif_gtd, ClientAlgoPolicyID=self.algopolicy)).add_tag(dict(ExpireDate=self.ExpireDate))
 

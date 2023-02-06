@@ -11,6 +11,7 @@ from test_framework.environments.web_admin_rest_api_environment import WebAdminR
 from test_framework.environments.trading_rest_api_environment import TradingRestApiEnvironment
 from test_framework.environments.web_trading_environment import WebTradingEnvironment
 from test_framework.environments.mobile_android_environment import MobileEnvironment
+from test_framework.environments.data_base_environment import DataBaseEnvironment
 
 class FullEnvironment:
 
@@ -25,6 +26,7 @@ class FullEnvironment:
         self.__list_java_api_environment = list()
         self.__list_read_log_environment = list()
         self.__list_ssh_client_environment = list()
+        self.__list_data_base_environment = list()
 
         for session_environment in component_environment:
             environment = list(session_environment)
@@ -57,6 +59,9 @@ class FullEnvironment:
                 if instance.tag == "ssh_client_environment":
                     self.__list_ssh_client_environment.append(
                         SshClientEnvironment.get_instance(EnvironmentType[instance.text]))
+                if instance.tag == "data_base_environment":
+                    self.__list_data_base_environment.append(
+                        DataBaseEnvironment.get_instance(EnvironmentType[instance.text]))
 
     # region getters
     def get_list_fix_environment(self) -> typing.List[FixEnvironment]:
@@ -88,4 +93,7 @@ class FullEnvironment:
 
     def get_list_ssh_client_environment(self) -> typing.List[SshClientEnvironment]:
         return self.__list_ssh_client_environment
+
+    def get_list_data_base_environment(self) -> typing.List[DataBaseEnvironment]:
+        return self.__list_data_base_environment
     # endregion

@@ -118,7 +118,7 @@ class QAP_T7414(TestCase):
         # region step 6: Check Execution report on sell side
         list_of_ignored_fields = ['Account', 'ReplyReceivedTime',
                                   'SettlCurrency', 'SecondaryOrderID',
-                                  'LastMkt']
+                                  'LastMkt', 'GatingRuleCondName', 'GatingRuleName']
         for cl_ord_id in cl_ord_ids:
             self.fix_message.change_parameter('ClOrdID', cl_ord_id)
             self.execution_report.set_default_filled(self.fix_message)

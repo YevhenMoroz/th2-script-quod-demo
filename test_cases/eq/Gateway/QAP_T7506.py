@@ -70,7 +70,7 @@ class QAP_T7506(TestCase):
                                  'TimeInForce', 'PositionEffect', 'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty',
                                  'CumQty', 'LastPx', 'OrdType', 'SecondaryOrderID', 'tag5120', 'LastMkt',
                                  'OrderCapacity', 'QtyType', 'ExecBroker', 'Price', 'VenueType', 'Instrument',
-                                 'ExDestination', 'GrossTradeAmt']
+                                 'ExDestination', 'GrossTradeAmt', 'GatingRuleCondName','GatingRuleName']
         change_parameters = {
             "ExecType": "F", "OrdStatus": "2", "ClOrdID": client_order_id, "OrderID": parent_order_id,
             "SecondaryExecID": exec_id}
