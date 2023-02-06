@@ -24,6 +24,7 @@ class Verifier:
         self.success = True
         self.result = dict()
         self.fields = dict()
+        self.printed_name = None
 
     def set_parent_id(self, parent_id: EventID):
         self.parent_id = parent_id
@@ -57,8 +58,7 @@ class Verifier:
                     }
             })
         self.success &= passed
-        if not self.success: raise ValueError('\033[91m' +
-         f"Verification failed: {expected_value} not {verification_method.value} {actual_value}" + '\033[0m')
+        self.printed_name = printed_name
 
     def _build_json(self) -> list:
         return [
@@ -81,3 +81,6 @@ class Verifier:
         event_batch = EventBatch()
         event_batch.events.append(event)
         event_store.send(event_batch)
+        result = self._build_json()[0]["fields"][self.printed_name]
+        if not self.success: raise ValueError('\033[91m' + f'{result["expected"]} not {result["operation"]}'
+                                                           f' {result["actual"]}' + '\033[0m')
