@@ -415,6 +415,7 @@ class FreeNotesReject(Enum):
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
     PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    ReachedUncross = "reached uncross"
 
 
 class TradingPhases(Enum):
