@@ -80,10 +80,10 @@ class QAP_T7472(TestCase):
                         ]
         }
         ignor_list_new_ord = ['QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker', 'Parties', 'SecondaryOrderID',
-                              'LastMkt', 'Text']
+                              'LastMkt', 'Text','GatingRuleCondName', 'GatingRuleName']
         ignor_list_filled_ord = ['NoMiscFees', 'CommissionData', 'ExecBroker', 'tag5120', 'M_PreAllocGrp', 'Parties',
                                  'QuodTradeQualifier', 'BookID', 'SettlCurrency', 'TradeReportingIndicator', 'LastMkt',
-                                 'Text']
+                                 'Text','GatingRuleCondName', 'GatingRuleName']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {"NoParty": parties, "Currency": self.cur})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(

@@ -66,7 +66,7 @@ class QAP_T7394(TestCase):
         }
         list_of_ignored_fields = ['SettlCurrency', 'LastExecutionPolicy', 'SecondaryOrderID', 'LastMkt', 'VenueType',
                                   'SecondaryExecID', 'MiscFeesGrp', 'CommissionData', 'SecurityDesc', 'PartyID',
-                                  'PartyRoleQualifier']
+                                  'PartyRoleQualifier','GatingRuleCondName', 'GatingRuleName']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {'Parties': parties})
         exec_report1.change_parameters({'ExecType': '0', 'OrdStatus': '0'})

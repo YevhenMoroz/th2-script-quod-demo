@@ -43,7 +43,6 @@ class QAP_T7521(TestCase):
         self.bag_creation_request = OrderBagCreationRequest()
         self.bag_wave_request = OrderBagWaveRequest()
 
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         resp = self.fix_manager.send_message_and_receive_response_fix_standard(self.nos)
@@ -56,13 +55,16 @@ class QAP_T7521(TestCase):
         self.bag_creation_request.set_default(BagChildCreationPolicy.Split.value, bag_name, orders_id)
         self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
         order_bag_notification = \
-                self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
                 JavaApiFields.OrderBagNotificationBlock.value]
         bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
         qty_of_bag = str(int(int(self.qty) * 2))
         self.bag_wave_request.set_default(bag_order_id, qty_of_bag, OrdTypes.Limit.value)
         self.bag_wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {"Price": self.price,
-                    "AlgoParametersBlock": {"AlgoType": "TWP", "ScenarioID": "2", "AlgoPolicyID": "1000029"}})
+                                                                                      "AlgoParametersBlock": {
+                                                                                          "AlgoType": "TWP",
+                                                                                          "ScenarioID": "2",
+                                                                                          "AlgoPolicyID": "1000029"}})
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
                                                                                                   self.venue_client_name,
@@ -73,10 +75,11 @@ class QAP_T7521(TestCase):
             logger.error('Error execution', exc_info=True)
         finally:
             self.rule_manager.remove_rule(nos_rule)
-        child_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id) \
-                .get_parameters()[JavaApiFields.OrderNotificationBlock.value]["OrdID"]
-        child_ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value, child_ord_id) \
-                .get_parameters()[JavaApiFields.OrdReplyBlock.value]
-        expected_result = {JavaApiFields.VenueClientActGrpName.value: self.venue_client_name}
-        self.java_api_manager.compare_values(expected_result, child_ord_rep, "Check child NIN")
-
+        order_bag_wave_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value).get_parameter(
+                JavaApiFields.OrderBagWaveNotificationBlock.value)
+        expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderWaveStatus_NEW.value, "AlgoParametersBlock": {
+                                                                                          "AlgoType": "TWP",
+                                                                                          "ScenarioID": "2",
+                                                                                          "AlgoPolicyID": "1000029"}}
+        self.java_api_manager.compare_values(expected_result, order_bag_wave_notification, "Check wave is created")

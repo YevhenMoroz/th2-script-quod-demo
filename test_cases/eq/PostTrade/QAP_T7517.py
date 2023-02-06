@@ -77,7 +77,7 @@ class QAP_T7517(TestCase):
 
         # region check execution
         ignored_field = ['ReplyReceivedTime', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc', 'Account',
-                         'GatingRuleName']
+                         'GatingRuleCondName', 'GatingRuleName']
         self.exec_report.set_default_filled(self.fix_message)
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_field)
         # endregion
