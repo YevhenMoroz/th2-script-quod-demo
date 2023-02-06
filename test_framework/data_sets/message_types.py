@@ -118,6 +118,7 @@ class ORSMessageType(Enum):
     OrdRejectedNotif = 'Order_OrdRejectedNotif'
     FixOrderModificationRequest = "Fix_OrderModificationRequest"
     FixOrderCancelRequest = "Fix_OrderCancelRequest"
+    NewOrderMultiLeg = "Order_NewOrderMultiLeg"
 
 
 class TradingRestApiMessageType(Enum):

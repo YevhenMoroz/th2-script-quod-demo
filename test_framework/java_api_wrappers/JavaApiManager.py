@@ -7,7 +7,7 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType, AQSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
-from test_framework.java_api_wrappers.aqs_messages.Order_FrontendQueryReply import Order_FrontendQueryReply
+from test_framework.java_api_wrappers.aqs_messages.FrontendQueryReply import FrontendQueryReply
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
 from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
@@ -448,6 +448,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.NewOrderMultiLeg.value:
+            response = self.act.submitNewOrderMultiLeg(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -677,7 +683,7 @@ class JavaApiManager:
             elif message_type == CSMessageType.ManualMatchExecsToParentOrderReply.value:
                 response_fix_message = ManualMatchExecsToParentOrderReply()
             elif message_type == AQSMessageType.FrontendQueryReply.value:
-                response_fix_message = Order_FrontendQueryReply()
+                response_fix_message = FrontendQueryReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
@@ -703,7 +709,7 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            raise KeyError(f"Element: {k} not found")
+            raise ValueError('\033[91m' + f"Element: {k} not found"+ '\033[0m')
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
@@ -726,7 +732,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
 
     def get_first_message(self, message_type, filter_value=None) -> JavaApiMessage:
         for res in self.response:
@@ -735,7 +741,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
 
     def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
         self.response.reverse()
@@ -750,4 +756,4 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')

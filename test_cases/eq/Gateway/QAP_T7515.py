@@ -83,12 +83,11 @@ class QAP_T7515(TestCase):
         list_of_ignore_fields = ['SecondaryOrderID', 'LastExecutionPolicy', 'TradeDate', 'SecondaryExecID',
                                  'ExDestination', 'GrossTradeAmt', 'SettlCurrency', 'Instrument', 'TimeInForce',
                                  'OrdType', "TradeReportingIndicator", 'SettlDate', 'Side', 'HandlInst', 'OrderQtyData',
-                                 'SecondaryExecID',
-                                 'ExecID', 'LastQty', 'TransactTime',
-                                 'AvgPx', 'QuodTradeQualifier', 'BookID', 'Currency',
-                                 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty',
+                                 'SecondaryExecID','ExecID', 'LastQty', 'TransactTime','AvgPx', 'QuodTradeQualifier',
+                                 'BookID', 'Currency', 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty',
                                  'CumQty', 'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
-                                 'ExecBroker', 'Price', 'QtyType', 'OrderCapacity', 'OrderID']
+                                 'ExecBroker', 'Price', 'QtyType', 'OrderCapacity', 'OrderID', 'GatingRuleCondName',
+                                  'GatingRuleName']
         change_parameters = None
         for cl_ord_id in list_of_cl_ord_id:
             change_parameters = {

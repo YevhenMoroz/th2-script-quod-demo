@@ -1,4 +1,6 @@
 import json
+import os
+import sys
 from enum import Enum
 
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -55,6 +57,8 @@ class Verifier:
                     }
             })
         self.success &= passed
+        if not self.success: raise ValueError('\033[91m' +
+         f"Verification failed: {expected_value} not {verification_method.value} {actual_value}" + '\033[0m')
 
     def _build_json(self) -> list:
         return [
@@ -77,4 +81,3 @@ class Verifier:
         event_batch = EventBatch()
         event_batch.events.append(event)
         event_store.send(event_batch)
-
