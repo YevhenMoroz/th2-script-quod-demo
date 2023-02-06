@@ -167,6 +167,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <data_base_environments>
+                            <data_base_environment>quod316_data_base_mongo</data_base_environment>
+                        </data_base_environments>
                     </environments>
                 </component>
                 <component name="Scaling" run="True">
