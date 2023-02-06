@@ -165,7 +165,7 @@ class QAP_T9390(TestCase):
                                                                          'AllocTransType', 'ReportedPx', 'Side',
                                   'AvgPx',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
-                                  'PartyRoleQualifier', 'NoPartySubIDs'
+                                  'PartyRoleQualifier', 'NoPartySubIDs',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'OrderAvgPx']
