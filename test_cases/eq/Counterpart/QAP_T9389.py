@@ -120,8 +120,6 @@ class QAP_T9389(TestCase):
                                            f'{ExecutionReportConst.TransExecStatus_FIL.value}, (step 5)')
         # endergion
 
-
-
         # region step 6: Complete CO order
         self.complete_reqeust.set_default_complete(order_id)
         self.java_api_manager.send_message_and_receive_response(self.complete_reqeust)
@@ -165,7 +163,7 @@ class QAP_T9389(TestCase):
         }
 
         list_of_ignored_fields = ['Quantity', 'tag5120', 'TransactTime', 'AllocInstructionMiscBlock1',
-                                                                         'AllocTransType', 'ReportedPx', 'Side',
+                                  'AllocTransType', 'ReportedPx', 'Side',
                                   'AvgPx',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
                                   'PartyRoleQualifier', 'NoPartySubIDs',
