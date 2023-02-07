@@ -118,12 +118,12 @@ class QAP_T5107(TestCase):
         self.fix_verifier_sell.set_case_id(bca.create_event("Check Synthetic TIF order", self.test_id))
         self.fix_verifier_sell.check_fix_message(self.Synthetic_Block_order, self.key_params_cl, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_Block_order, self.status_pending)
-        er_pending_new_Synthetic_Block_order_params.remove_parameter('NoParty').change_parameter('NoStrategyParameters', '*')
+        er_pending_new_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_Block_order, self.gateway_side_sell, self.status_pending)
+        er_pending_new_Synthetic_Block_order_params.change_parameter('NoStrategyParameters', '*').remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(er_pending_new_Synthetic_Block_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        er_new_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_Block_order, self.status_new)
-        er_new_Synthetic_Block_order_params.change_parameter('NoStrategyParameters', '*')
+        er_new_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_Block_order, self.gateway_side_sell, self.status_new)
+        er_new_Synthetic_Block_order_params.change_parameters(dict(NoStrategyParameters='*', NoParty='*')).remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(er_new_Synthetic_Block_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -155,8 +155,8 @@ class QAP_T5107(TestCase):
         # endregion
 
         # region Check that Synthetic Block order was canceled
-        er_cancel_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.Synthetic_Block_order, self.status_cancel)
-        er_cancel_Synthetic_Block_order_params.change_parameters(dict(NoParty='*', NoStrategyParameters='*'))
+        er_cancel_Synthetic_Block_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_Block_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_Synthetic_Block_order_params.change_parameters(dict(NoParty='*', NoStrategyParameters='*')).remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(er_cancel_Synthetic_Block_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 
