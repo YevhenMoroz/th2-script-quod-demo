@@ -88,7 +88,7 @@ class QAP_T7049(TestCase):
             'VenueType', 'Instrument', 'ExDestination',
             'NoMiscFees', 'GrossTradeAmt', 'CommissionData'
         ]
-        list_ord_status = ['1', '2']
+        list_ord_status = ['2', '1']
         for counter in range(2):
             execution_report.change_parameters({
                 "ExecType": "F",
