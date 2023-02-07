@@ -79,7 +79,7 @@ class QAP_T7049(TestCase):
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         list_ignored_fields = [
             'Account', 'ExecID', 'GatingRuleCondName', 'OrderQtyData', 'LastQty', 'GatingRuleName', 'TransactTime',
-            'Side','PartyRoleQualifier'
+            'Side','PartyRoleQualifier',
             'AvgPx', 'QuodTradeQualifier', 'BookID', 'SettlCurrency', 'TrdSubType', 'SettlDate', 'Currency',
             'TimeInForce',
             'PositionEffect', 'TradeDate', 'HandlInst', 'TrdType', 'LeavesQty', 'CumQty',
