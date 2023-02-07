@@ -19,6 +19,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.db_wrapper.db_manager import DBManager
+
 
 class QAP_T10273(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -34,6 +36,7 @@ class QAP_T10273(TestCase):
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         # endregion
 
         # region order parameters
@@ -122,6 +125,12 @@ class QAP_T10273(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
+
+        # region Mongo insert
+        self.db_manager.create_empty_collection(collection_name=f"Q{self.s_par}")
+        bca.create_event("Data in mongo inserted", self.test_id)
+        # endregion
+
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.s_par, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.PreOpen)
@@ -189,6 +198,9 @@ class QAP_T10273(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_auction_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(5)
+
+        self.db_manager.drop_collection(f"Q{self.s_par}")
+        bca.create_event(f"Collection QP{self.s_par} is dropped", self.test_id)
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

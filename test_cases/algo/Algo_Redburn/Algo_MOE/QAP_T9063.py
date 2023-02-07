@@ -20,7 +20,6 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.db_wrapper.db_manager import DBManager
-from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 
 
 class QAP_T9063(TestCase):
@@ -196,6 +195,9 @@ class QAP_T9063(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
+
+        self.db_manager.drop_collection(f"Q{self.s_par}")
+        bca.create_event(f"Collection QP{self.s_par} is dropped", self.test_id)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
