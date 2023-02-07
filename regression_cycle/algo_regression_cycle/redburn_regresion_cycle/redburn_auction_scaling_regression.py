@@ -1,9 +1,9 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T10278 import QAP_T10278
-from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T10273 import QAP_T10273
-from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4460 import QAP_T4460
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10278 import QAP_T10278
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10273 import QAP_T10273
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4460 import QAP_T4460
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
