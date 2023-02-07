@@ -83,12 +83,29 @@ class AlgoMongoManager:
         collection.insert_many(data)
 
     @staticmethod
+    def insert_one(collection, data):
+        collection.insert_one(data)
+
+    @staticmethod
     def insert_many_to_mongodb_with_drop(data, db, collection_name, host="localhost", port=27017):
         client = AlgoMongoManager.connect_to_mongo(host, port)
         database = AlgoMongoManager.get_database(client, db)
         collection = AlgoMongoManager.get_collection(database, collection_name)
         AlgoMongoManager.drop_collection(database, collection_name)
         AlgoMongoManager.insert_many(collection, data)
+
+
+    @staticmethod
+    def insert_one_to_mongodb_with_drop(data, db, collection_name, host="localhost", port=27017):
+        client = AlgoMongoManager.connect_to_mongo(host, port)
+        database = AlgoMongoManager.get_database(client, db)
+        collection = AlgoMongoManager.get_collection(database, collection_name)
+        AlgoMongoManager.drop_collection(database, collection_name)
+        AlgoMongoManager.insert_one(collection, data)
+
+    @staticmethod
+    def create_empty_collection(db, collection_name, host="localhost", port=27017):
+        AlgoMongoManager.insert_one_to_mongodb_with_drop({}, db, collection_name, host, port)
 
 # region Usage example
 # # get list of trading phases
