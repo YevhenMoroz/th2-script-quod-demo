@@ -41,6 +41,7 @@ class Connectivity(Enum):
     Luna_315_web_trading_http = 'rest_wt315luna'
     Luna_315_web_trading_web_socket = 'api_session_315luna'
     Ganymede_317_ja = '317_java_api'
+    Ganymede_317_ja_user2 = '317_java_api_user2'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Ganymede_317_ors_report = "log317-ors-report"
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
@@ -112,6 +113,8 @@ class GatewaySide(Enum):
     Sell = "Sell"
     Buy = "Buy"
     RBSell = "RBSell"
+    RBBuy = "RBBuy"
+    KeplerSell = 'KeplerSell'
 
 class Aggressivity(Enum):
     Passive = '1'
@@ -381,6 +384,25 @@ class SshClientEnv(Enum):
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
 
+class DataBaseEnv(Enum):
+    # 317 site
+    HOST_317 = "10.0.22.69"
+    NAME_317 = "quoddb"
+    USER_317 = "quod317prd"
+    PASS_317 = "quod317prd"
+    DB_TYPE_317 = "postgresql"
+    # 309 site
+    HOST_309 = "10.0.22.56"
+    NAME_309 = "QDSHIVA1"
+    USER_309 = "quod309prd"
+    PASS_309 = "quod309prd"
+    DB_TYPE_309 = "oracle"
+    # 316 mongo
+    HOST_316 = "10.0.22.35"
+    PORT_316 = 27316
+    NAME_316 = "filteredQuoteDB"
+    DB_TYPE_316 = "mongo"
+
 
 class FreeNotesReject(Enum):
     MissWouldPriceReference = "missing WouldPriceReference"
@@ -393,6 +415,7 @@ class FreeNotesReject(Enum):
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
     PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    ReachedUncross = "reached uncross"
 
 
 class TradingPhases(Enum):

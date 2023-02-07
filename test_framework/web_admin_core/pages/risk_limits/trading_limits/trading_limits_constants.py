@@ -21,6 +21,7 @@ class TradingLimitsConstants:
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     DISPLAYED_ROUTE_XPATH = "//*[text()='{}']"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    FOOTER_WARNING_TEXT_XPATH = '//nb-card-footer//nb-alert//span'
 
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
@@ -46,6 +47,9 @@ class TradingLimitsConstants:
     VALUES_TAB_MAX_AMOUNT_XPATH = '//*[@formcontrolname="maxOrdAmt"]'
     VALUES_TAB_MAX_SOFT_QUANTITY_XPATH = '//*[@formcontrolname="softMaxOrdQty"]'
     VALUES_TAB_MAX_SOFT_AMOUNT_XPATH = '//*[@formcontrolname="softMaxOrdAmt"]'
+    VALUES_TAB_MIN_DISPLAY_XPATH = '//*[@id="minDisplayQty"]'
+    VALUES_TAB_MAX_DISPLAY_XPATH = '//*[@id="maxDisplayQty"]'
+    VALUES_TAB_MIN_DISPLAY_PERCENTAGE_XPATH = '//*[@id="minDisplayPercentage"]'
 
     # Dimensions tab
     DIMENSIONS_TAB_VENUE_XPATH = '//*[normalize-space()="Dimensions"]/..//input[@id="venue"]'

@@ -21,6 +21,7 @@ class WashBookConstants:
     CLEARING_ACCOUNT_TYPE_AT_MAIN_PAGE_XPATH = '//*[@class="ag-center-cols-container"]//div//div[6]//*[@class="ag-group-value"]'
     COUNTERPART_AT_MAIN_PAGE_XPATH = '//*[@class="ag-center-cols-container"]//div//div[7]//*[@class="ag-group-value"]'
     ENABLED_AT_MAIN_PAGE_XPATH = '//*[@class="custom-checkbox checked"]'
+    SEARCHED_ENTITY_XPATH = '//*[normalize-space()="{}"]'
 
     # -FILTERS AT MAIN PAGE-
     ID_FILTER_AT_MAIN_PAGE_XPATH = "//*[@class='ag-header-container']/div[2]/div[1]//input"

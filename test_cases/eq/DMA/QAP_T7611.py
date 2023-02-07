@@ -62,14 +62,8 @@ class QAP_T7611(TestCase):
         # endregion
 
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields: list = [
-            "ReplyReceivedTime",
-            "SecondaryOrderID",
-            "LastMkt",
-            "Instrument",
-            "SettlDate",
-            "OrigClOrdID",
-        ]
+        list_of_ignored_fields: list = ["ReplyReceivedTime", "SecondaryOrderID", "LastMkt", "Instrument", "SettlDate",
+            "OrigClOrdID", "GatingRuleCondName", "GatingRuleName"]
         self.exec_report.set_default_canceled(self.fix_message).change_parameters(
             {"OrdStatus": "4", "CxlQty": self.qty, "Text": "Canceled"}
         )

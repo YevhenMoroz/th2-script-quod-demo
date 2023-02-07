@@ -94,4 +94,7 @@ class WashBookPage(CommonPage):
     def get_enabled_at_main_page(self):
         return self.is_checkbox_selected(WashBookConstants.ENABLED_AT_MAIN_PAGE_XPATH)
 
+    def is_searched_entity_found(self, value):
+        return self.is_element_present(WashBookConstants.SEARCHED_ENTITY_XPATH.format(value))
+
     # endregion

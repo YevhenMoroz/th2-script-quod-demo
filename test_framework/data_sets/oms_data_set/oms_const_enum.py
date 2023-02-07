@@ -140,6 +140,8 @@ class OmsVenueClientNames(Enum):
     client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
     client_3_venue_1 = "XPAR_CLIENT3"
+    client_4_venue_1 = "CLIENT4_PARIS"
+    client_4_venue_2 = "CLIENT4_EUREX"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
@@ -408,6 +410,7 @@ class OMSExecutionPolicy(Enum):
 class OMSTimeInForce(Enum):
     time_in_force_1 = "Day"
     time_in_force_2 = "GoodTillDate"
+    time_in_force_3 = "AtTheClose"
 
 
 class OMSOrdType(Enum):
@@ -570,3 +573,7 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
+
+
+class OMSVenueClientAccountName(Enum):
+    venue_client_account_name = 'MOCLIENT_SA1'

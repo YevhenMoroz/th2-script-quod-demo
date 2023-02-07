@@ -85,6 +85,8 @@ class Constants:
             SETTLEMENT_PERIOD = '//*[@id="settlType"]'
             SIDE = '//*[@id="side"]'
             POSITION_LIMITS = '//*[normalize-space(text()) = "Dimensions"]//..//*[normalize-space(text())="Position Limits"]'
+            ORDER_TYPE = '//*[@id="ordType"]'
+            DISPLAY_ORDER_CHECKBOX = '//*[normalize-space()="Display Order"]//..//*[contains(@class, "custom-checkbox")]'
 
         class AssignmentsTab:
             INSTITUTION = '//*[@id="institution"]'

@@ -58,3 +58,8 @@ class EnvironmentType(Enum):
     # region ssh client
     quod317_ssh_client = "quod317_ssh_client"
     # endregion
+
+    # region data base
+    quod317_data_base = "quod317_data_base"
+    quod316_data_base_mongo = "quod316_data_base_mongo"
+    # endregion

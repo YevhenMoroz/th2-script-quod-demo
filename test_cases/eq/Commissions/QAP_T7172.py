@@ -117,7 +117,8 @@ class QAP_T7172(TestCase):
         self.exec_report.change_parameters(
             {"SecondaryOrderID": "*", "Text": "*", "LastMkt": "*", "Currency": self.currency_minor}
         )
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        list_ignored_fields = ['GatingRuleCondName', 'GatingRuleName']
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=list_ignored_fields)
         # endregion
 
         # region Step 1 - Book order

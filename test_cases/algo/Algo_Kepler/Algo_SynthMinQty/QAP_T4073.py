@@ -46,7 +46,7 @@ class QAP_T4073(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -114,7 +114,7 @@ class QAP_T4073(TestCase):
         case_id_1 = bca.create_event("Create synthMinQty_order Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_params()
+        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_Kepler_params()
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 
@@ -138,14 +138,14 @@ class QAP_T4073(TestCase):
         # region Check 1st child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Aggressive child DMA orders", self.test_id))
 
-        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=(self.ex_destination_quodlit1, self.ex_destination_quodlit2), OrderQty=(self.trade_1_qty, self.trade_2_qty), Price=self.price, TimeInForce=self.tif_fok))
 
         er_fill_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_fill)
         # endregion
 
         # region Check 2nd child DMA order
-        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_params()
+        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_ChildMinQty_Kepler_params()
         self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=(self.ex_destination_quodlit2, self.ex_destination_quodlit1), OrderQty=(self.trade_2_qty, self.trade_1_qty), Price=self.price, TimeInForce=self.tif_fok))
 
         er_fill_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_fill)

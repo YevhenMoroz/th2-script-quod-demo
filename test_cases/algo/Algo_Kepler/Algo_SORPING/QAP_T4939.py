@@ -40,7 +40,7 @@ class QAP_T4939(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -94,7 +94,7 @@ class QAP_T4939(TestCase):
         case_id_1 = bca.create_event("Create DMA Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_DMA_params()
+        self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Kepler_params()
         self.DMA_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.DMA_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price))
 
@@ -109,7 +109,7 @@ class QAP_T4939(TestCase):
 
         # region Check fill DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Fill DMA order", self.test_id))
-        er_fill_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.DMA_order, self.status_fill)
+        er_fill_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_fill)
         er_fill_DMA_order_params.add_tag(dict(misc5='#'))
         self.fix_verifier_buy.check_fix_message(er_fill_DMA_order_params, key_parameters=self.key_params_ER_fill, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
         # endregion

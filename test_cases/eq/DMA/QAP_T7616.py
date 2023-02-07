@@ -69,6 +69,8 @@ class QAP_T7616(TestCase):
             "Price",
             "SettlCurrency",
             "Instrument",
+            "GatingRuleCondName",
+            "GatingRuleName"
         ]
         self.exec_report.set_default_filled(self.fix_message).change_parameters(
             {"OrdStatus": "1", "Text": "Partial fill"}

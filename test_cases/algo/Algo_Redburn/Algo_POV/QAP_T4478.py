@@ -72,7 +72,7 @@ class QAP_T4478(TestCase):
         # endregion
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
+        self.gateway_side_buy = GatewaySide.RBBuy
         self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 
@@ -144,7 +144,7 @@ class QAP_T4478(TestCase):
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Scaling_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side_sell))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
         time.sleep(3)
@@ -166,10 +166,8 @@ class QAP_T4478(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 6 Scaling child orders Buy side NewOrderSingle", case_id_2))
 
         # region Aggressive Scaling orders
-        scaling_ioc_child_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        scaling_ioc_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         scaling_ioc_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, TimeInForce=self.tif_ioc, Instrument='*', Side=self.side_sell))
-        scaling_ioc_child_order.add_tag(dict(Parties='*', QtyType=0))
-        scaling_ioc_child_order.remove_parameter('NoParty')
 
         pending_scaling_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_ioc_child_order, self.gateway_side_buy, self.status_pending)
 
@@ -191,6 +189,8 @@ class QAP_T4478(TestCase):
         self.fix_verifier_buy.check_fix_message_sequence([eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params, eliminate_scaling_ioc_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -200,11 +200,11 @@ class QAP_T4478(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
+        time.sleep(3)
+
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)
+
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        RuleManager(Simulators.algo).remove_rules(self.rule_list)
