@@ -50,7 +50,7 @@ class QAP_T4460(TestCase):
         self.pp2_price = 117
 
         self.scaling_child_order_qty = '%^(2[3-9]|3[0-7])\d{3}|136364$'  # fisrt number 136 364, 23-37K and any 3 number
-        self.scaling_child_order_price = '%1(20|1[7-9].[1-9]|17)$'  # the first number 120, 117 or 119.7-117.3 with step 3
+        self.scaling_child_order_price = '%^1(20|1[7-9].[1-9]|17)$'  # the first number 120, 117 or 119.7-117.3 with step 3
 
         self.check_order_sequence = False
 

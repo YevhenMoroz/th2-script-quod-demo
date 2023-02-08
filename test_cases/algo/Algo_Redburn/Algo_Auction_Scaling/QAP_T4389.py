@@ -23,7 +23,7 @@ from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 
 
-class QAP_T10278(TestCase):
+class QAP_T4389(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -49,13 +49,11 @@ class QAP_T10278(TestCase):
         self.historical_price = 140.0
         self.percentage_volume = 10
 
-        self.pp1_percentage = 12
-        self.pp1_price = 120
         self.pp2_percentage = 30
         self.pp2_price = 117
 
-        self.scaling_child_order_qty = '%^(1[7-9])\d{3}|20{4}|10{5}$'  # fisrt number 100000, 20000, 17-19K and any 3 number
-        self.scaling_child_order_price = '%^1(20|30|1[7-9].[1-9]|17)$'  # the first number 130, 120, 117 or 119.7-117.3 with step 3
+        self.scaling_child_order_qty = '%^(19|20)\d{3}|10{5}$'  # fisrt number 100000, 20000, 17-19K and any 3 number
+        self.scaling_child_order_price = '%^1(30|[1-2][0-9].[1-9]|17)$'  # the first number 130-117 with step 1.3
 
         self.check_order_sequence = False
 
@@ -104,21 +102,20 @@ class QAP_T10278(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-        nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 120)
-        nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.7)
-        nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.4)
-        nos_rule_5 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.1)
-        nos_rule_6 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.8)
-        nos_rule_7 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.5)
-        nos_rule_8 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.2)
-        nos_rule_9 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.9)
-        nos_rule_10 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.6)
-        nos_rule_11 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.3)
+        nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 128.7)
+        nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 127.4)
+        nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 126.1)
+        nos_rule_5 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 124.8)
+        nos_rule_6 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 123.5)
+        nos_rule_7 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 122.2)
+        nos_rule_8 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 120.9)
+        nos_rule_9 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.6)
+        nos_rule_10 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.3)
         nos_rule_12 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_1, True)
-        self.rule_list = [nos_rule_1, nos_rule_2, nos_rule_3, nos_rule_4, nos_rule_5, nos_rule_6, nos_rule_7, nos_rule_8, nos_rule_9, nos_rule_10, nos_rule_11, nos_rule_12, ocr_rule, ocrr_rule, cancel_rule]
+        self.rule_list = [nos_rule_1, nos_rule_2, nos_rule_3, nos_rule_4, nos_rule_5, nos_rule_6, nos_rule_7, nos_rule_8, nos_rule_9, nos_rule_10, nos_rule_12, ocr_rule, ocrr_rule, cancel_rule]
         # endregion
 
         # region Update Trading Phase
@@ -146,7 +143,8 @@ class QAP_T10278(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_Scaling_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.auction_algo.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_percentage, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_percentage))
+        self.auction_algo.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_percentage))
+        self.auction_algo.remove_fields_from_component('QuodFlatParameters', ['PricePoint1Participation', 'PricePoint1Price'])
         self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         time.sleep(10)
@@ -179,13 +177,13 @@ class QAP_T10278(TestCase):
         # endregion
 
         # region Check Scaling child orders
-        self.fix_verifier_buy.check_fix_message_sequence([scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side Pending New", self.case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Pending New", self.case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side New", self.case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side New", self.case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
