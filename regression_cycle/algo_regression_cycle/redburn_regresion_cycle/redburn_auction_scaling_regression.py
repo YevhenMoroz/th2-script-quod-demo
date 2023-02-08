@@ -6,6 +6,8 @@ from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10273 import QAP_T10
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4460 import QAP_T4460
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4389 import QAP_T4389
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10476 import QAP_T10476
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4506 import QAP_T4506
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4507 import QAP_T4507
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -21,6 +23,11 @@ def test_run(parent_id=None, version=None):
     try:
 
         configuration = ComponentConfigurationAlgo("Scaling")
+        # region Check Reject
+        QAP_T4506(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4507(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
         QAP_T10278(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10273(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4460(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
