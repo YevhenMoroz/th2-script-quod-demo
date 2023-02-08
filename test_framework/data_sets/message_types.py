@@ -121,6 +121,7 @@ class ORSMessageType(Enum):
     OrderListWaveNotificationBlock = "OrderListWaveNotificationBlock"
     OrderListWaveCancelRequest = "Order_OrderListWaveCancelRequest"
     OrderListWaveCancelReply = 'Order_OrderListWaveCancelReply'
+    NewOrderMultiLeg = "Order_NewOrderMultiLeg"
 
 
 class TradingRestApiMessageType(Enum):

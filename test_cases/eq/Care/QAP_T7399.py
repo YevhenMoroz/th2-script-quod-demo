@@ -108,19 +108,12 @@ class QAP_T7399(TestCase):
                                                                                             float(price),
                                                                                             int(self.qty), delay=0)
             self.order_submit_request.set_default_child_dma(order_id)
-            self.order_submit_request.update_fields_in_component('NewOrderSingleBlock', {'Price': price,
-                                                                                         'OrdQty': self.qty,
-                                                                                         'AccountGroupID': client,
-                                                                                         'Side': side,
-                                                                                         'InstrID': instrument,
-                                                                                         'ListingList': {
-                                                                                             'ListingBlock':
-                                                                                                 [{
-                                                                                                     'ListingID': listing}]}
-                                                                                         })
+            self.order_submit_request.update_fields_in_component('NewOrderSingleBlock',
+               {'Price': price, 'OrdQty': self.qty, 'AccountGroupID': client, 'Side': side, 'InstrID': instrument,
+                      'ListingList': {'ListingBlock': [{'ListingID': listing}]}})
             self.java_api_manager.send_message_and_receive_response(self.order_submit_request)
             execution_report = \
-                self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, order_id).get_parameters()[
                     JavaApiFields.ExecutionReportBlock.value]
             exec_id = execution_report[JavaApiFields.ExecID.value]
             self.java_api_manager.compare_values(

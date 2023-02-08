@@ -1,6 +1,6 @@
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -8,19 +8,21 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
+    ConfirmationReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
+from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+from test_framework.java_api_wrappers.ors_messages.CancelOrderRequest import CancelOrderRequest
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, Status, \
-    ExecSts, AllocationsColumns
-from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -34,96 +36,109 @@ class QAP_T7249(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
-        self.qty = '100'
-        self.price = '10'
-        self.client = self.data_set.get_client('client_pt_1')
-        self.venue_client = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        self.mic = self.data_set.get_mic_by_name("mic_1")
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
+        self.venue_client = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")  # MOClient_PARIS
+        self.mic = self.data_set.get_mic_by_name("mic_1")  # XPAR
+        self.client = self.data_set.get_client("client_pt_1")  # MOClient
+        self.alloc_account = self.data_set.get_account_by_name("client_pt_1_acc_1")  # MOClient_SA1
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.execution_report = FixMessageExecutionReportOMS(self.data_set)
-        self.booking_blotter = OMSBookingWindow(self.test_id, self.session_id)
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
+                                    self.ssh_client_env.su_password, self.ssh_client_env.db_host,
+                                    self.ssh_client_env.db_name, self.ssh_client_env.db_user,
+                                    self.ssh_client_env.db_password)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.cancel_request = CancelOrderRequest()
+        self.trade_entry = TradeEntryOMS(self.data_set)
+        self.complete_request = DFDManagementBatchOMS(self.data_set)
+        self.all_instr = AllocationInstructionOMS(self.data_set)
+        self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.confirm = ConfirmationOMS(self.data_set)
+        self.future_date = datetime.now() + timedelta(days=2)
+        self.expire_date = datetime.strftime(self.future_date, "%Y%m%d")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region create order via fix (precondition)
-        self.fix_message.set_default_care_market('instrument_1')
-        self.fix_message.change_parameters(
-            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client,
-             'TimeInForce': '6', 'ExpireDate': (datetime.now()).strftime("%Y%m%d")})
-
+        # region Step 1
+        self.fix_message.set_default_care_market()
+        self.fix_message.change_parameters({"TimeInForce": "6", "ExpireDate": self.expire_date, "Account": self.client})
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
-        filter_dict = {OrderBookColumns.order_id.value: order_id}
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        self.client_inbox.accept_order(filter=filter_dict)
         # endregion
-
-        # region split and partially filled CO order
-        cum_qty = str(int(int(self.qty) / 2))
+        # region Step 2
+        qty = int(self.fix_message.get_parameter('OrderQtyData')['OrderQty']) / 2
+        price = 20.0
         try:
-            nos_rule = self.rule_manager.add_NewOrdSingle_Market_FIXStandard(self.fix_env.buy_side,
-                                                                             self.venue_client, self.mic, False,
-                                                                             int(cum_qty), float(self.price))
-            self.order_ticket.set_order_details(qty=cum_qty)
-            self.order_ticket.split_order(filter_list)
+            trade_rule = self.rule_manager.add_NewOrdSingle_Market_FIXStandard(self.fix_env.buy_side, self.venue_client,
+                                                                               self.mic, False, int(qty), price)
+            self.order_submit.set_default_child_dma(order_id)
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {"AccountGroupID": self.client,
+                                                                                 "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                                     "instrument_2"),
+                                                                                 "OrdType": 'Market'})
+            self.order_submit.remove_fields_from_component("NewOrderSingleBlock", ["Price"])
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
         except Exception:
             logger.error("Error execution", exc_info=True)
         finally:
             time.sleep(1)
-            self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
+        # endregion
+        # region Step 3
+        self.trade_entry.set_default_trade(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+        execution_report_co_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value). \
+            get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
+            execution_report_co_order, 'Checking that order executed')
+        # endregion
+        # region Step 4
+        self.complete_request.set_default_complete(order_id)
+        self.java_api_manager.send_message(self.complete_request)
+        # endregion
+        # region Step 5
+        self.all_instr.set_default_book(order_id)
+        self.all_instr.update_fields_in_component("AllocationInstructionBlock",
+                                                  {"AccountGroupID": self.client,
+                                                   "InstrID": self.data_set.get_instrument_id_by_name("instrument_2")})
+        self.java_api_manager.send_message_and_receive_response(self.all_instr)
+        allocation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
+        alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
+
+        self.approve.set_default_approve(alloc_id)
+        self.java_api_manager.send_message_and_receive_response(self.approve)
+
+        self.confirm.set_default_allocation(alloc_id)
+        self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.alloc_account,
+                                                                      "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                          "instrument_2")})
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
+        confirm_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
+        expected_result_confirmation = {
+            JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
+            JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value}
+        actually_result = {
+            JavaApiFields.ConfirmStatus.value: confirm_report[JavaApiFields.ConfirmStatus.value],
+            JavaApiFields.MatchStatus.value: confirm_report[JavaApiFields.MatchStatus.value]}
+        self.java_api_manager.compare_values(expected_result_confirmation, actually_result,
+                                             f'Check statuses of confirmation of {self.alloc_account}')
 
         # endregion
-        self.order_book.manual_execution(filter_dict=filter_dict, qty=cum_qty, price=self.price)
-        # region check executions
-        self.order_book.set_filter(filter_list).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.partially_filled.value})
-        self.order_book.set_filter(filter_list).check_second_lvl_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.eliminated.value})
-        # endregion
-        self.order_book.complete_order(filter_list=filter_list)
-        self.middle_office.book_order(filter=filter_list)
-        self.middle_office.approve_block(filter_list=filter_list)
-        no_allocs = [{AllocationsColumns.security_acc.value: self.alloc_account,
-                      AllocationsColumns.alloc_qty.value: self.qty}]
-        self.middle_office.set_modify_ticket_details(arr_allocation_param=no_allocs)
-        self.middle_office.allocate_block(filter=filter_list)
-        # region Checking values in Allocations
-        extracted_fields = self.middle_office.extract_list_of_allocate_fields(
-            [AllocationsColumns.sts.value, AllocationsColumns.match_status.value])
-        self.middle_office.compare_values(
-            {AllocationsColumns.sts.value: 'Affirmed', AllocationsColumns.match_status.value: 'Matched'},
-            extracted_fields, 'Checking values in Allocations')
-        # endregion
-        # region call end of day procedures
+        # region Step 6
         self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
+        status = self.ssh_client.execute_sql(f"select ordstatus from ordr where ordid='{order_id}';")[0][0]
+        self.java_api_manager.compare_values({"Sts": "EXP"}, {"Sts": status}, "Check order status")
         # endregion
-
-        # region check ExpireOrders
-        self.order_book.refresh_order(filter_list)
-        self.order_book.set_filter(filter_list)
-        values = self.order_book.extract_fields_list({OrderBookColumns.sts.value: OrderBookColumns.sts.value,
-                                                      OrderBookColumns.free_notes.value: OrderBookColumns.free_notes.value,
-                                                      OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value})
-        self.order_book.compare_values({
-            OrderBookColumns.sts.value: Status.expired.value,
-            OrderBookColumns.free_notes.value: "Order terminated by Quod eod_ExpireOrders procedure",
-            OrderBookColumns.post_trade_status.value: PostTradeStatuses.booked.value
-        }, values, 'Check Expired sts')
-        # endregion
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
