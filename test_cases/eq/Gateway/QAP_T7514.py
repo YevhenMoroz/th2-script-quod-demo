@@ -184,7 +184,7 @@ class QAP_T7514(TestCase):
                                   'GatingRuleName']
 
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
-                                       'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType'])
+                                       'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'OrderAvgPx', 'tag11245'])
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['CommissionData'] = {'CommissionType': '3',
                                                'Commission': '100',

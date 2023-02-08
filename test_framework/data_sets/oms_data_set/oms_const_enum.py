@@ -525,6 +525,7 @@ class OMSClearingAccountTypes(Enum):
 
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+    test_auto = 7
 
 
 class OMSISINSecurityAltIDs(Enum):
