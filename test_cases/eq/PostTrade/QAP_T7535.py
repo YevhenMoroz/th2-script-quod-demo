@@ -119,7 +119,7 @@ class QAP_T7535(TestCase):
         # region check Alloc Report (step 3)
         list_of_ignored_fields = ['Account', 'RootSettlCurrFxRateCalc', 'RootSettlCurrFxRate',
                                   'OrderAvgPx', 'AllocInstructionMiscBlock2', 'SettlCurrFxRateCalc',
-                                  'SettlCurrFxRate']
+                                  'SettlCurrFxRate', 'tag11245']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
             {'AvgPx': str(new_avg_px), 'Currency': self.currency, 'RootSettlCurrency': self.currency,

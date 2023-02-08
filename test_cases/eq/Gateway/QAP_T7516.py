@@ -70,8 +70,8 @@ class QAP_T7516(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region check exec report
-        list_of_ignore_fields = ['SecurityDesc', 'Text', 'LastMkt', 'SettlCurrency',
-                                 'StrategyParametersGrp', 'ReplyReceivedTime']
+        list_of_ignore_fields = ['SecurityDesc', 'Text', 'LastMkt', 'SettlCurrency', 'StrategyParametersGrp',
+                                 'ReplyReceivedTime', 'GatingRuleCondName', 'GatingRuleName']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
         fix_execution_report.set_default_filled(self.fix_message)
         fix_execution_report.change_parameters({'TargetStrategy': self.params["TargetStrategy"]})

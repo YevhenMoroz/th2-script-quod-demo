@@ -346,9 +346,11 @@ class FixMessageExecutionReportOMS(FixMessageExecutionReport):
             "LastPx": "20",
         }
         if new_order_single.get_parameter("OrdType") == "2":
-            change_parameters.update({"Price": new_order_single.get_parameter("Price"),
-                                      "AvgPx": new_order_single.get_parameter("Price"),
-                                      "GrossTradeAmt": int(new_order_single.get_parameter("Price")) *
-                                                       int(new_order_single.get_parameter("OrderQtyData")["OrderQty"])})
+            change_parameters |= {
+                "Price": new_order_single.get_parameter("Price"),
+                "AvgPx": new_order_single.get_parameter("Price"),
+                "GrossTradeAmt": int(new_order_single.get_parameter("Price"))
+                * int(new_order_single.get_parameter("OrderQtyData")["OrderQty"]),
+            }
         self.change_parameters(change_parameters)
         return self
