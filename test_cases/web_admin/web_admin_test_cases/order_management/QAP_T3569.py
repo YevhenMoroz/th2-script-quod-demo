@@ -5,12 +5,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
-    OrderManagementRulesDefaultResultSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
-    OrderManagementRulesPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
-    OrderManagementRulesWizard
+from test_framework.web_admin_core.pages.order_management.order_management_rules.main_page import MainPage
+from test_framework.web_admin_core.pages.order_management.order_management_rules.wizard import *
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -22,6 +18,10 @@ class QAP_T3569(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.action = 'SendStrategy'
+        self.execution_strategy = 'Quod Financial Internal Auction Participate Default'
+        self.split = '10'
+        self.execution_strategy_2 = 'Quod Financial Internal Synthetic Block Default'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -29,78 +29,37 @@ class QAP_T3569(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
         side_menu.wait_for_button_to_become_active()
-        page = OrderManagementRulesPage(self.web_driver_container)
-        page.click_on_new_button()
-        time.sleep(2)
 
     def test_context(self):
 
         try:
             self.precondition()
-            wizard = OrderManagementRulesWizard(self.web_driver_container)
-            default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_4"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_7"))
+
+            main_page = MainPage(self.web_driver_container)
+            main_page.click_on_new_button()
+            conditions_tab = ConditionsTab(self.web_driver_container)
+            conditions_tab.click_on_plus_button()
+            conditions_tab.click_on_plus_button_at_result()
+            conditions_tab.set_action(self.action)
+            conditions_tab.set_execution_strategy(self.execution_strategy)
+            conditions_tab.set_split(self.split)
+            conditions_tab.click_on_save_checkmark_at_result()
+
+            conditions_tab.click_on_plus_button()
+            conditions_tab.click_on_plus_button_at_result()
+            conditions_tab.set_action(self.action)
+            conditions_tab.set_execution_strategy(self.execution_strategy)
+            conditions_tab.set_split(self.split)
+            conditions_tab.click_on_save_checkmark_at_result()
             time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
+            wizard = MainWizard(self.web_driver_container)
+            expecter_result = 'Such a record already exists'
+            self.verify("Error appears", expecter_result, wizard.get_footer_error_text())
+
+            conditions_tab.set_execution_strategy(self.execution_strategy_2)
+            conditions_tab.click_on_save_checkmark_at_result()
             time.sleep(1)
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_4"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_7"))
-            self.verify("Algorithmic created correctly", True, True)
-            time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            self.verify("Such record already exists", True, wizard.such_record_already_exists())
-            time.sleep(2)
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_8"))
-            time.sleep(2)
-            default_result_sub_wizard.click_on_checkmark()
-            self.verify("Algorithmic second created correctly", True, True)
-            time.sleep(2)
-            #####
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_5"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_5"))
-            time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_5"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_5"))
-            self.verify("SOR created correctly", True, True)
-            time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            self.verify("Such record already exists", True, wizard.such_record_already_exists())
-            time.sleep(2)
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_3"))
-            time.sleep(2)
-            default_result_sub_wizard.click_on_checkmark()
-            self.verify("SOR second created correctly", True, True)
-            time.sleep(2)
-            ########
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_6"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_2"))
-            time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            default_result_sub_wizard.click_on_plus()
-            default_result_sub_wizard.set_exec_policy(self.data_set.get_exec_policy("exec_policy_6"))
-            default_result_sub_wizard.set_percentage("10")
-            default_result_sub_wizard.set_strategy_type(self.data_set.get_strategy_type("strategy_type_2"))
-            self.verify("ExternalAlgo created correctly", True, True)
-            time.sleep(1)
-            default_result_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            self.verify("Such record already exists", True, wizard.such_record_already_exists())
+            self.verify("Another one strategy has been add", False, wizard.is_footer_error_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier without name",
