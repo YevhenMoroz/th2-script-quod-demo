@@ -409,12 +409,15 @@ class FreeNotesReject(Enum):
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
+    MissPP1Reference = "missing PricePoint1Reference"
+    MissPP2Reference = "missing PricePoint2Reference"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
     InvalidPercentageOfVolume = "invalid value for percentage of volume"
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
-    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenMaxParticipation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
     ReachedUncross = "reached uncross"
 
 
