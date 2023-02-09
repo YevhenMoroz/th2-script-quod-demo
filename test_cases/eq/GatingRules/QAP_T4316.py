@@ -6,6 +6,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -47,9 +48,13 @@ class QAP_T4316(TestCase):
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            "OrdNotificationBlock"]
+            JavaApiFields.OrderNotificationBlock.value
+        ]
+        act_res_2 = self.ja_manager.get_last_message(ORSMessageType.OrderSubmitReply.value).get_parameters()[JavaApiFields.NewOrderReplyBlock.value]
         self.ja_manager.compare_values({"GatingRuleCondName": "All Orders", "OrdStatus": "HLD"}, act_res,
                                        "check GatingRuleCondName")
+        self.ja_manager.compare_values({JavaApiFields.FreeNotes.value:'order held as per gating rule instruction'},
+                                       act_res_2, 'Verifying FreeNotes has correct value')
         set_value_params.pop('gatingRuleResultRejectType')
         set_value_params.update({
             'gatingRuleResultAction': 'DMA',
