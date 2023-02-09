@@ -51,7 +51,6 @@ class QAP_T4951(TestCase):
         param[0]["gatingRuleResult"][0]["gatingRuleResultAction"] = "DMA"
         param[0]['gatingRuleResult'][0].update({"venueID": self.data_set.get_venue_by_name('venue_1')})
         param[1]['gatingRuleResult'][0]["gatingRuleResultAction"] = "DMA"
-        print(param)
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
