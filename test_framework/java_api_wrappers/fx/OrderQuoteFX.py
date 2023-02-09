@@ -17,7 +17,7 @@ class OrderQuoteFX(JavaApiMessage):
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         params_for_request = {
             "SEND_SUBJECT": "QUOD.QS_RFQ_FIX_TH2.FE",
-            "REPLY_SUBJECT": "QUOD.QUOD.FE.QS_RFQ_FIX_TH2",
+            "REPLY_SUBJECT": "QUOD.FE.QS_RFQ_FIX_TH2",
             "QuoteBlock": {
                 "QuoteRequestID": action_reply.get_parameter("QuoteRequestActionReplyBlock")["QuoteRequestID"],
                 "InstrID": estimation_block["InstrID"],
@@ -133,7 +133,8 @@ class OrderQuoteFX(JavaApiMessage):
     # endregion Quotes
     # region Swaps
     def set_params_for_swap(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
-        self.set_params_for_quote(quote_request, action_reply)
+        self.prepare_params(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         leg_quote_block = estimation_block["LegQuoteList"]["LegQuoteBlock"]
+
     # endregion
