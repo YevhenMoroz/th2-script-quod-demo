@@ -10,9 +10,9 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.oms.RestApiDisableGatingRuleMessage import RestApiDisableGatingRuleMessage
 from test_framework.rest_api_wrappers.oms.RestApiModifyGatingRuleMessage import RestApiModifyGatingRuleMessage
 
 logger = logging.getLogger(__name__)
@@ -38,19 +38,20 @@ class QAP_T4951(TestCase):
         self.exec_destination = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.qty = "15000"
         self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set).set_default_param()
-        self.disable_rule_message = RestApiDisableGatingRuleMessage(self.data_set).set_default_param()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        class_name = QAP_T4951
         # region Enabling GatingRule
         self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": self.qty})
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         # Set 'origin=JAV' field and condition to GatingRule
-        self.modify_rule_message.update_parameters({"origin": "JAV"})
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         param[0]["gatingRuleCondExp"] = "OrdQty>10000"
+        param[0]["gatingRuleResult"][0]["gatingRuleResultAction"] = "DMA"
+        param[0]['gatingRuleResult'][0].update({"venueID": self.data_set.get_venue_by_name('venue_1')})
+        param[1]['gatingRuleResult'][0]["gatingRuleResultAction"] = "DMA"
+        print(param)
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
@@ -60,8 +61,7 @@ class QAP_T4951(TestCase):
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.venue_client_names, self.exec_destination, float(price)
             )
-            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            class_name.print_message("CREATE", responses)
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
         except Exception as e:
             logger.info(f"Your Exception is {e}")
         finally:
@@ -71,29 +71,27 @@ class QAP_T4951(TestCase):
 
         # region Check that the Gating rule is applied to the order
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            "OrdReplyBlock"
+            JavaApiFields.OrdReplyBlock.value
         ]
         self.java_api_manager.compare_values(
             {
-                "GatingRuleCondName": "Cond1",
-                "ExecType": "OPN",
-                "OrdQty": str(float(self.qty)),
-                "Price": str(float(price)),
+                JavaApiFields.GatingRuleCondName.value: "All Orders",
+                JavaApiFields.ExecType.value: "OPN",
+                JavaApiFields.OrdQty.value: str(float(self.qty)),
+                JavaApiFields.Price.value: str(float(price)),
             },
             order_reply,
             "Check that the Gating rule is applied to the order",
         )
+        order_notification = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+                JavaApiFields.OrderNotificationBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name('main_rule_id')},
+            order_notification, 'Verifying ORS attaches correct GatingRule')
         # endregion
-
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
-
-    @staticmethod
-    def print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())
