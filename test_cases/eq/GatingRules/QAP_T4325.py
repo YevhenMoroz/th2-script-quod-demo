@@ -38,7 +38,7 @@ class QAP_T4325(TestCase):
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            "OrdNotificationBlock"]
+            JavaApiFields.OrderNotificationBlock.value]
         self.ja_manager.compare_values({JavaApiFields.GatingRuleCondName.value: "Default Result",
                                         JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name('main_rule_id')}, act_res,
                                        "check GatingRuleCondName and GatingRule ID")
