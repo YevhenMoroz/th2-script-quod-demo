@@ -593,3 +593,7 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
 
 class OMSVenueClientAccountName(Enum):
     venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSGatingRuleIDs(Enum):
+    main_rule_id = '2200035'

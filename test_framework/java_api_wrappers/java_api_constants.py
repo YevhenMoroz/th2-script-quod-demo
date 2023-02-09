@@ -227,6 +227,8 @@ class JavaApiFields(Enum):
     OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
     ReportedCumQty = 'ReportedCumQty'
     Ord = 'Ord'
+    GatingRuleID = 'GatingRuleID'
+    GatingRuleCondName = 'GatingRuleCondName'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
