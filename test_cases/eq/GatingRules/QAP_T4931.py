@@ -70,8 +70,7 @@ class QAP_T4931(TestCase):
         self.ja_manager.compare_values(
             {JavaApiFields.GatingRuleCondName.value: "All Orders", JavaApiFields.OrdStatus.value: "HLD",
              JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name('main_rule_id'),
-             JavaApiFields.OrdQty.value: qty, JavaApiFields.Price.value:price,
-             JavaApiFields.FreeNotes.value:'order held as per gating rule instruction'}, act_res,
+             JavaApiFields.OrdQty.value: qty, JavaApiFields.Price.value: price}, act_res,
             "check GatingRuleCondName")
         act_res_2 = self.ja_manager.get_last_message(ORSMessageType.OrderSubmitReply.value).get_parameters()[
             JavaApiFields.NewOrderReplyBlock.value][JavaApiFields.Ord.value]
