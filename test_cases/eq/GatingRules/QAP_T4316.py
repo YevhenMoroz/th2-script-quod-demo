@@ -50,10 +50,11 @@ class QAP_T4316(TestCase):
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value
         ]
-        act_res_2 = self.ja_manager.get_last_message(ORSMessageType.OrderSubmitReply.value).get_parameters()[JavaApiFields.NewOrderReplyBlock.value]
+        act_res_2 = self.ja_manager.get_last_message(ORSMessageType.OrderSubmitReply.value).get_parameters()[
+            JavaApiFields.NewOrderReplyBlock.value][JavaApiFields.Ord.value]
         self.ja_manager.compare_values({"GatingRuleCondName": "All Orders", "OrdStatus": "HLD"}, act_res,
                                        "check GatingRuleCondName")
-        self.ja_manager.compare_values({JavaApiFields.FreeNotes.value:'order held as per gating rule instruction'},
+        self.ja_manager.compare_values({JavaApiFields.FreeNotes.value: 'order held as per gating rule instruction'},
                                        act_res_2, 'Verifying FreeNotes has correct value')
         set_value_params.pop('gatingRuleResultRejectType')
         set_value_params.update({

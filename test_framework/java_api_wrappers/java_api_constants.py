@@ -226,6 +226,7 @@ class JavaApiFields(Enum):
     CDRequestType = 'CDRequestType'
     OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
     ReportedCumQty = 'ReportedCumQty'
+    Ord = 'Ord'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
