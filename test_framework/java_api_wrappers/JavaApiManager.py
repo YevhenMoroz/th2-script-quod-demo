@@ -61,6 +61,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import O
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveCancelReply import OrderListWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
@@ -448,6 +449,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveCancelRequest.value:
+            response = self.act.submitOrderListWaveCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.NewOrderMultiLeg.value:
             response = self.act.submitNewOrderMultiLeg(
                 request=ActJavaSubmitMessageRequest(
@@ -684,6 +691,8 @@ class JavaApiManager:
                 response_fix_message = ManualMatchExecsToParentOrderReply()
             elif message_type == AQSMessageType.FrontendQueryReply.value:
                 response_fix_message = FrontendQueryReply()
+            elif message_type == ORSMessageType.OrderListWaveCancelReply.value:
+                response_fix_message = OrderListWaveCancelReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

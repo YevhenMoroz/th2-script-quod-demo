@@ -185,16 +185,18 @@ class QAP_T6990(TestCase):
 
         # region step 4
         misc_fee_rate = 5
-        amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price)/100
-        actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_CAL.value).get_parameters()[
-                JavaApiFields.ExecutionReportBlock.value][JavaApiFields.MiscFeesList.value][
-                JavaApiFields.MiscFeesBlock.value][0]
+        amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price) / 100
+        actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                 ExecutionReportConst.ExecType_CAL.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value][JavaApiFields.MiscFeesList.value][
+            JavaApiFields.MiscFeesBlock.value][0]
         expected_result = {JavaApiFields.MiscFeeRate.value: str(float(misc_fee_rate)),
                            JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
                            JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
                            JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEES_TYPE_AGE.value,
                            JavaApiFields.MiscFeeAmt.value: str(amount_of_fees)}
-        self.java_api_manager.compare_values(expected_result, actually_result, 'Comparing expected and actually result from step 4')
+        self.java_api_manager.compare_values(expected_result, actually_result,
+                                             'Comparing expected and actually result from step 4')
         # endregion
 
         # region check 35=8 message step 5
@@ -204,7 +206,7 @@ class QAP_T6990(TestCase):
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',
                                   'Price', 'Instrument', 'BookID', 'QuodTradeQualifier', 'NoParty', 'ExDestination',
-                                  'Side','OrderAvgPx']
+                                  'Side', 'OrderAvgPx', 'GatingRuleCondName', 'GatingRuleName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.change_parameters({
             'ClOrdID': cl_ord_id,
@@ -228,7 +230,8 @@ class QAP_T6990(TestCase):
                                        'BookingType', 'RootSettlCurrency', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'AllocTransType', 'RootSettlCurrFxRate', 'RootSettlCurrAmt',
                                        'GrossTradeAmt', 'AllocSettlCurrAmt', 'AllocSettlCurrency',
-                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx'])
+                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx',
+                                       'tag11245'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
                                              'AllocType': '5'})

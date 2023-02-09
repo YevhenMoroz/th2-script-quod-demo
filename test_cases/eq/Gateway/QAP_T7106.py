@@ -87,7 +87,7 @@ class QAP_T7106(TestCase):
         # endregion
 
         # region book order and verify values after it at order book (step 1)
-        list_of_ignored_fields = ['Account', 'SettlCurrency', 'OrderAvgPx']
+        list_of_ignored_fields = ['Account', 'SettlCurrency', 'OrderAvgPx', 'tag11245']
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_2")
         settl_currency_amt = str(int(qty) * int(price))
         self.allocation_instruction.set_default_book(order_id)

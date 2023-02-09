@@ -300,7 +300,7 @@ class QAP_T8458(TestCase):
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
                                   'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
                                   'AllocInstructionMiscBlock2',
-                                  'OrderAvgPx', 'CommissionData']
+                                  'OrderAvgPx', 'CommissionData', 'GatingRuleName', 'GatingRuleCondName']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
@@ -341,7 +341,7 @@ class QAP_T8458(TestCase):
         # check that 35 = AK messages (part of step 8)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType', 'AllocAccount', 'AllocQty',
-                                       'OrderAvgPx'])
+                                       'OrderAvgPx', 'tag11245'])
         params_of_allocation.pop('AllocType')
         params_of_allocation.update({'ConfirmTransType': "0"})
         fix_confirmation = FixMessageConfirmationReportOMS(self.data_set, params_of_allocation)
