@@ -8,6 +8,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiDisableGatingRuleMessage import RestApiDisableGatingRuleMessage
@@ -36,8 +37,10 @@ class QAP_T4931(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
-        price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
+        qty = str(float('200'))
+        price = str(float('10'))
+        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": qty,
+                                                                             'Price': price})
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         set_value_params: dict = {"alive": 'true',
                                   "gatingRuleResultIndice": 1,
@@ -48,6 +51,8 @@ class QAP_T4931(TestCase):
                                   "gatingRuleResultRejectType": "HRD"}
         param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
         param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
+        param[0]["gatingRuleResult"][1]["gatingRuleResultAction"] = "DMA"
+        param[0]["gatingRuleCondExp"] = "AND(ExecutionPolicy=DMA,OrdQty<1000)"
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         try:
@@ -61,10 +66,17 @@ class QAP_T4931(TestCase):
             self.rule_manager.remove_rule(nos_rule)
 
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            "OrdNotificationBlock"]
-        self.ja_manager.compare_values({"GatingRuleCondName": "Cond1", "OrdStatus": "HLD"}, act_res,
-                                       "check GatingRuleCondName")
+            JavaApiFields.OrderNotificationBlock.value]
+        self.ja_manager.compare_values(
+            {JavaApiFields.GatingRuleCondName.value: "All Orders", JavaApiFields.OrdStatus.value: "HLD",
+             JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name('main_rule_id'),
+             JavaApiFields.OrdQty.value: qty, JavaApiFields.Price.value: price}, act_res,
+            "check GatingRuleCondName")
+        act_res_2 = self.ja_manager.get_last_message(ORSMessageType.OrderSubmitReply.value).get_parameters()[
+            JavaApiFields.NewOrderReplyBlock.value][JavaApiFields.Ord.value]
+        self.ja_manager.compare_values({JavaApiFields.FreeNotes.value: 'order held as per gating rule instruction'},
+                                       act_res_2, 'Verifying FreeNotes has correct value')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())

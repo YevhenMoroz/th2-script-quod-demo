@@ -32,10 +32,10 @@ class QAP_T4329(TestCase):
         self.buy_side = self.environment.get_list_fix_environment()[0].buy_side
         self.rule_manager = RuleManager(Simulators.equity)
         self.client_venue_paris = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
-        self.client_venue_eurex = self.data_set.get_venue_client_names_by_name('client_1_venue_2')
+        self.client_venue_eurex = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.exec_destination_paris = self.data_set.get_mic_by_name('mic_1')
         self.exec_destination_eurex = self.data_set.get_mic_by_name('mic_2')
-        self.class_name = QAP_T4329
+        self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -47,22 +47,19 @@ class QAP_T4329(TestCase):
                 self.buy_side, self.client_venue_eurex, self.exec_destination_eurex, float(price)
             )
             self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
-            modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
-            modify_rule_message.set_default_param()
-            param = modify_rule_message.get_parameter("gatingRuleCondition")
+
+            self.modify_rule_message.set_default_param()
+            param = self.modify_rule_message.get_parameter("gatingRuleCondition")
             param[0]["gatingRuleCondExp"] = "OR(VenueID IN(PARIS),VenueID NOT IN(PARIS))"
-            param[0]["gatingRuleCondName"] = "Conflicting_rules"
             set_value_params: dict = {"alive": 'true',
                                       "gatingRuleResultIndice": 1,
-                                      "splitRatio": 0,
-                                      "holdOrder": 'true',
-                                      "gatingRuleResultProperty": "APP",
-                                      "gatingRuleResultAction": "VAL",
-                                      "gatingRuleResultRejectType": "HRD"}
-            param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
-            param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
-            modify_rule_message.update_parameters({"gatingRuleCondition": param})
-            self.rest_api_manager.send_post_request(modify_rule_message)
+                                      "splitRatio": 1,
+                                      "holdOrder": 'false',
+                                      "gatingRuleResultAction": "REJ",
+                                      "gatingRuleResultRejectType": "SFT"}
+            param[0]["gatingRuleResult"][0] = set_value_params
+            self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
+            self.rest_api_manager.send_post_request(self.modify_rule_message)
             self.send_submit_message_and_check_result(self.order_submit)
             self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
                 'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
@@ -78,21 +75,15 @@ class QAP_T4329(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
-
-    @staticmethod
-    def print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())
 
     def send_submit_message_and_check_result(self, order_submit):
-        responses = self.ja_manager.send_message_and_receive_response(order_submit)
-        self.class_name.print_message('Message After Creation of order', responses)
+        self.ja_manager.send_message_and_receive_response(order_submit)
         act_res_rule: dict = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value]
-        self.ja_manager.compare_values({"GatingRuleCondName": "Conflicting_rules",
-                                        JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_HLD.value},
+        self.ja_manager.compare_values({JavaApiFields.GatingRuleCondName.value: "All Orders",
+                                        JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_HLD.value,
+                                        JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name(
+                                            'main_rule_id')},
                                        act_res_rule,
                                        "check GatingRuleCondName")

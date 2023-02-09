@@ -32,6 +32,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     OrdStatus_REJ = 'REJ'
+    OrdStatus_CXL = 'CXL'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -44,6 +45,7 @@ class OrderReplyConst(Enum):
     IsLocked_N = 'N'
     ExecType_REP = 'REP'
     ExecType_PCA = 'PCA'
+    ExecType_PMO = 'PMO'
 
 
 class ExecutionPolicyConst(Enum):
@@ -224,6 +226,9 @@ class JavaApiFields(Enum):
     CDRequestType = 'CDRequestType'
     OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
     ReportedCumQty = 'ReportedCumQty'
+    Ord = 'Ord'
+    GatingRuleID = 'GatingRuleID'
+    GatingRuleCondName = 'GatingRuleCondName'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -307,6 +312,7 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
+    SubCounterpartList = "SubCounterpartList"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
