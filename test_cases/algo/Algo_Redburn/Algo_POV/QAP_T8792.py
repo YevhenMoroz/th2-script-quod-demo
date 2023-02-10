@@ -199,8 +199,6 @@ class QAP_T8792(TestCase):
         # region Passive XPAR order
         passive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         passive_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.passive_pov_qty_1, Price=self.price_bid_1, Instrument='*', ExDestination=self.ex_destination_xpar))
-        passive_child_order_par_1.add_tag(dict(Parties='*', QtyType=0))
-        passive_child_order_par_1.remove_parameter('NoParty')
 
         pending_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_par_1, self.gateway_side_buy, self.status_pending)
 
