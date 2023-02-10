@@ -7,7 +7,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, FreeNotesReject, TimeInForce, OrderType
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -18,7 +18,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4310(TestCase):
+class QAP_T4494(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -32,17 +32,23 @@ class QAP_T4310(TestCase):
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
-
-
         # endregion
 
         # region order parameters
-        self.qty = 1000
-        self.indicative_volume = 2000
-        self.percentage = 10
-        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
-        self.price = 30
-        self.offset = 100
+        self.qty = 1_000_000
+        self.indicative_volume = 1_000_000
+        self.indicative_price = 100
+        self.percentage_volume = 10
+
+        self.pp1_percentage = 12
+        self.pp2_percentage = 30
+        self.pp2_price = 120
+
+        self.order_type_market = OrderType.Market.value
+
+        self.text_reject = FreeNotesReject.MissPP1Reference.value
+
+        self.tif_ato = TimeInForce.AtTheOpening.value
         # endregion
 
         # region Gateway Side
@@ -58,7 +64,7 @@ class QAP_T4310(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -67,37 +73,35 @@ class QAP_T4310(TestCase):
         # endregion
 
         # region venue param
-        self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_19")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.s_par = self.data_set.get_listing_id_by_name("listing_36")
         # endregion
 
         # region Key parameters
-        self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
-        self.key_params_with_ex_destination = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
-        self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
-        self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Update Trading Phase
 
+        # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
+
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Expiry)
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -105,22 +109,24 @@ class QAP_T4310(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOE_params()
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_Scaling_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage, LimitPriceOffset=self.offset))
+        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, ExDestination=self.ex_destination_1, OrdType=self.order_type_market))
+        self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage_volume, PricePoint1Participation=self.pp1_percentage, PricePoint2Participation=self.pp2_percentage, PricePoint2Price=self.pp2_price))
+        self.auction_algo.remove_parameter('Price')
+        self.auction_algo.remove_fields_from_component('QuodFlatParameters', ['PricePoint1Price'])
         self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_cl, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.change_parameters(dict(TimeInForce=5))
-        self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
+        pending_auction_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
+        pending_auction_order_params.change_parameters(dict(TimeInForce=self.tif_ato))
+        self.fix_verifier_sell.check_fix_message(pending_auction_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        er_rejected = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
-        er_rejected.change_parameters(dict(TimeInForce=5, Text='missing LimitPriceReference'))
-        self.fix_verifier_sell.check_fix_message(er_rejected, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Rejected')
+        reject_auction_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
+        reject_auction_order_params.change_parameters(dict(TimeInForce=self.tif_ato, Text=self.text_reject))
+        self.fix_verifier_sell.check_fix_message(reject_auction_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Rejected')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

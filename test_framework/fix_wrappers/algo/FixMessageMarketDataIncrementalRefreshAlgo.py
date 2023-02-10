@@ -117,6 +117,10 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
             str_phase = '1'
         elif phase == TradingPhases.AtLast:
             str_phase = '5'
+        elif phase == TradingPhases.Expiry:
+            str_phase = '9'
+        elif phase == TradingPhases.Auction:
+            str_phase = '6'
         super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", str_phase)
         return self
 
