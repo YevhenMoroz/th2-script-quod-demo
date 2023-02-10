@@ -1,15 +1,13 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id, extract_freenotes
+from test_cases.fx.fx_wrapper.common_tools import extract_freenotes
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
-from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 
 
 class QAP_T2537(TestCase):
