@@ -134,6 +134,7 @@ class MessageType(Enum):
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
     QuoteCancel = "QuoteCancel"
+    QuoteResponse = "QuoteResponse"
 
 
 class Status(Enum):
