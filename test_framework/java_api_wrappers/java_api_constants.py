@@ -221,6 +221,7 @@ class JavaApiFields(Enum):
     CDTransferReplyBlock = 'CDTransferReplyBlock'
     CDTransferID = 'CDTransferID'
     RecipientUserID = 'RecipientUserID'
+    RecipientDeskID = 'RecipientDeskID'
     CDOrdNotifBlock = 'CDOrdNotifBlock'
     CDOrdNotifID = 'CDOrdNotifID'
     CDRequestType = 'CDRequestType'
@@ -229,6 +230,7 @@ class JavaApiFields(Enum):
     Ord = 'Ord'
     GatingRuleID = 'GatingRuleID'
     GatingRuleCondName = 'GatingRuleCondName'
+    ParentOrdrList = 'ParentOrdrList'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -249,6 +251,9 @@ class JavaApiFields(Enum):
     VenueScenarioID = 'VenueScenarioID'
     NewOrderReplyBlock = 'NewOrderReplyBlock'
     OrdType = 'OrdType'
+    VenueID = 'VenueID'
+    AlgoParametersBlock = 'AlgoParametersBlock'
+    AlgoType = 'AlgoType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'

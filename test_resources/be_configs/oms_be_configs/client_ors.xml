@@ -237,6 +237,7 @@ Copyright Quod Financial
 		<acceptMultipleVenueAccountGroups>true</acceptMultipleVenueAccountGroups>
 			<GatingRules>
 				<enabled>true</enabled>
+				<removeOrdrParametersFromDMAOrder>false</removeOrdrParametersFromDMAOrder>
 			</GatingRules>
 			<instrTypeFilter>false</instrTypeFilter>
 			<currencyFilter>false</currencyFilter>
