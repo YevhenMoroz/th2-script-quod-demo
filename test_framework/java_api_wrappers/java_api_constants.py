@@ -252,6 +252,8 @@ class JavaApiFields(Enum):
     NewOrderReplyBlock = 'NewOrderReplyBlock'
     OrdType = 'OrdType'
     VenueID = 'VenueID'
+    AlgoParametersBlock = 'AlgoParametersBlock'
+    AlgoType = 'AlgoType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
