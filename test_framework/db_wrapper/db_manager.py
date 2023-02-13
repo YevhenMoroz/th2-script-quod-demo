@@ -38,9 +38,24 @@ class DBManager:
             raise ValueError('Method only for mongo DB')
         collection.insert_many(data)
 
+    def insert_one(self, collection, data):
+        if self.db_type != "mongo":
+            raise ValueError('Method only for mongo DB')
+        collection.insert_one(data)
+
     def insert_many_to_mongodb_with_drop(self, data, collection_name):
         if self.db_type != "mongo":
             raise ValueError('Method only for mongo DB')
         collection = self.get_collection(collection_name)
         self.drop_collection(collection_name)
         self.insert_many(collection, data)
+
+    def insert_one_to_mongodb_with_drop(self, data, collection_name):
+        if self.db_type != "mongo":
+            raise ValueError('Method only for mongo DB')
+        collection = self.get_collection(collection_name)
+        self.drop_collection(collection_name)
+        self.insert_one(collection, data)
+
+    def create_empty_collection(self, collection_name):
+        self.insert_one_to_mongodb_with_drop({},collection_name)

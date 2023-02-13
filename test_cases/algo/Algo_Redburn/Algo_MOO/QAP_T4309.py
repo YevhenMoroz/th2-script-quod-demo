@@ -120,7 +120,7 @@ class QAP_T4309(TestCase):
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_rejected = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
-        er_rejected.change_parameters(dict(TimeInForce=2, Text='missing WouldPriceReference')).remove_parameter('ExDestination')
+        er_rejected.change_parameters(dict(TimeInForce=2, Text='missing WouldPriceReference'))
         self.fix_verifier_sell.check_fix_message(er_rejected, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Rejected')
         # endregion
 
