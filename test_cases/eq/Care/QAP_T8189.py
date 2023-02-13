@@ -41,7 +41,8 @@ class QAP_T8189(TestCase):
         venue_list = [self.venue]
         self.venue_list_request.modify_venue_list(venue_list)
         self.rest_api_manager.send_post_request(self.venue_list_request)
-        self.rest_wash_book_message.modify_wash_book_rule(client=self.client, venue_list_id=self.venue_id)
+        self.rest_wash_book_message.modify_wash_book_rule(client=self.client, venue_list_id=self.venue_id,
+                                                          desk=self.desk)
         self.rest_api_manager.send_post_request(self.rest_wash_book_message)
         # endregion
 
@@ -56,7 +57,8 @@ class QAP_T8189(TestCase):
         ord_reply_block = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameter(
             JavaApiFields.OrdReplyBlock.value)
         self.java_api_manager.compare_values({JavaApiFields.WashBookAccountID.value: self.wash_book_acc,
-                                              JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                                              JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                                              JavaApiFields.AccountGroupID.value: self.client},
                                              ord_reply_block, 'Check WashBook Account')
         # endregion
 
