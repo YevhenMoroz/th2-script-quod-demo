@@ -54,6 +54,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_pending_new_rb_sell(new_order_single)
             elif status is Status.New:
                 self.__set_new_rb_sell(new_order_single)
+            elif status is Status.PartialFill:
+                self.__set_partial_fill_rb_sell(new_order_single)
             elif status is Status.Reject:
                 self.__set_reject_rb_sell(new_order_single)
             elif status is Status.Cancel:
@@ -481,6 +483,46 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         )
         if new_order_single.get_parameter('TargetStrategy') in ['1008', '1011', '1010', '1004']:
             [temp.pop(key, None) for key in ['SecAltIDGrp', 'SecondaryClOrdID']]
+        super().change_parameters(temp)
+        return self
+
+    def __set_partial_fill_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if str(new_order_single.get_parameter('OrdType')) == '2':
+            temp.update(Price = new_order_single.get_parameter("Price"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=new_order_single.get_parameter('ClOrdID'),
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx='*',
+            LastQty='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=1,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            Text='*',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            LastMkt='*',
+            TradeDate='*',
+            ExecType='F',
+            LeavesQty='*',
+            SecondaryOrderID='*',
+            GrossTradeAmt='*',
+            NoParty='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            SecAltIDGrp='*',
+            QtyType=0,
+            SecondaryClOrdID='*',
+            Instrument='*',
+            SettlType='*',
+            SecondaryExecID='*',
+        )
         super().change_parameters(temp)
         return self
 
@@ -1245,7 +1287,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
             QtyType='0',
             ExecRestatementReason='*',
-            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
             Instrument=new_order_single.get_parameter('Instrument'),
         )
         super().change_parameters(temp)
@@ -1329,7 +1370,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
             ExecType="A",
             OrdStatus="A",
             TransactTime='*',
@@ -1363,7 +1403,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            TargetStrategy=new_order_single.get_parameter("TargetStrategy"),
             ExecType="0",
             OrdStatus="0",
             TransactTime='*',
@@ -1413,7 +1452,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LeavesQty=0,
             ExecRestatementReason='*',
             OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
-            TargetStrategy=new_order_single.get_parameter('TargetStrategy'),
             QtyType='*',
             Instrument='*',
             NoStrategyParameters='*',

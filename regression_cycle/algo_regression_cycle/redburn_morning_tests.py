@@ -43,7 +43,7 @@ def test_run():
     try:
         # region Calums venues
 
-        #AMSTERDAM
+        # #AMSTERDAM
         MOO_AMS.execute(report_id)
         MOC_AMS.execute(report_id)
         #ATHENS

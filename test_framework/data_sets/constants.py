@@ -401,6 +401,11 @@ class DataBaseEnv(Enum):
     USER_309 = "quod309prd"
     PASS_309 = "quod309prd"
     DB_TYPE_309 = "oracle"
+    # 316 mongo
+    HOST_316 = "10.0.22.35"
+    PORT_316 = 27316
+    NAME_316 = "filteredQuoteDB"
+    DB_TYPE_316 = "mongo"
 
 
 class FreeNotesReject(Enum):
@@ -408,12 +413,16 @@ class FreeNotesReject(Enum):
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
+    MissPP1Reference = "missing PricePoint1Reference"
+    MissPP2Reference = "missing PricePoint2Reference"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
     InvalidPercentageOfVolume = "invalid value for percentage of volume"
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
-    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenMaxParticipation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
+    ReachedUncross = "reached uncross"
 
 
 class TradingPhases(Enum):

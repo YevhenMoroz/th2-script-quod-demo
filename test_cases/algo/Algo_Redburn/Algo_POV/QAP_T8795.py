@@ -182,10 +182,8 @@ class QAP_T8795(TestCase):
 
         # region Create list of fix message for check_message_sequence
         # region Passive XPAR order
-        passive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        passive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         passive_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.passive_pov_qty_1, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_xpar))
-        passive_child_order_par_1.add_tag(dict(Parties='*', QtyType=0))
-        passive_child_order_par_1.remove_parameter('NoParty')
 
         pending_passive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_par_1, self.gateway_side_buy, self.status_pending)
 
@@ -193,10 +191,8 @@ class QAP_T8795(TestCase):
         # endregion
 
         # region Passive TRQX order
-        passive_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        passive_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         passive_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=self.passive_pov_qty_1, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_trqx))
-        passive_child_order_trqx_1.add_tag(dict(Parties='*', QtyType=0))
-        passive_child_order_trqx_1.remove_parameter('NoParty')
 
         pending_passive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
 
@@ -204,10 +200,8 @@ class QAP_T8795(TestCase):
         # endregion
 
         # region Aggressive XPAR order
-        ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.aggressive_pov_qty_1, Price=self.price_ask_1, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
-        ioc_child_order_par_1.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_par_1.remove_parameter('NoParty')
 
         pending_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_pending)
 
@@ -217,10 +211,8 @@ class QAP_T8795(TestCase):
         # endregion
 
         # region Aggressive TRQX order
-        ioc_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=self.aggressive_pov_qty_1, Price=self.price_ask_1, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
-        ioc_child_order_trqx_1.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_trqx_1.remove_parameter('NoParty')
 
         pending_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
 
@@ -313,10 +305,8 @@ class QAP_T8795(TestCase):
 
         # region Check of 2st aggressive SOR order
         # region Aggressive XPAR order
-        ioc_child_order_par_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_par_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_par_2.change_parameters(dict(Account=self.account_xpar, OrderQty=self.aggressive_pov_qty_2, Price=self.price_ask_1, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
-        ioc_child_order_par_2.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_par_2.remove_parameter('NoParty')
 
         pending_ioc_child_order_par_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_2, self.gateway_side_buy, self.status_pending)
 
@@ -326,10 +316,8 @@ class QAP_T8795(TestCase):
         # endregion
 
         # region Aggressive TRQX order
-        ioc_child_order_trqx_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_trqx_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_trqx_2.change_parameters(dict(Account=self.account_trqx, OrderQty=self.aggressive_pov_qty_2, Price=self.price_ask_1, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_trqx))
-        ioc_child_order_trqx_2.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_trqx_2.remove_parameter('NoParty')
 
         pending_ioc_child_order_trqx_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_trqx_2, self.gateway_side_buy, self.status_pending)
 
@@ -355,6 +343,9 @@ class QAP_T8795(TestCase):
 
         time.sleep(10)
 
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region Check eliminated Algo Order
         case_id_5 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_5)
@@ -364,12 +355,12 @@ class QAP_T8795(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_5)
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
+        time.sleep(3)
+
+        RuleManager(Simulators.algo).remove_rules(self.rule_list)
+
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         cancel_pov_order.remove_parameter('SecAltIDGrp')
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        RuleManager(Simulators.algo).remove_rules(self.rule_list)

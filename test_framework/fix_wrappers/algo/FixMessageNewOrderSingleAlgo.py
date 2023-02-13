@@ -35,6 +35,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_RB_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "XPAR_CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': Instrument.BUI.value,
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'SettlDate': '*',
+            'ExDestination': "XPAR",
+            'OrderCapacity': 'A',
+            'Parties': '*',
+            'QtyType': '0',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),

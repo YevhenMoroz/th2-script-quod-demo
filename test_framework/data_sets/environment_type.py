@@ -61,4 +61,5 @@ class EnvironmentType(Enum):
 
     # region data base
     quod317_data_base = "quod317_data_base"
+    quod316_data_base_mongo = "quod316_data_base_mongo"
     # endregion
