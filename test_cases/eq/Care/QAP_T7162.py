@@ -11,7 +11,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.FixNewOrderSingleOMS import FixNewOrderSingleOMS
@@ -79,10 +78,3 @@ class QAP_T7162(TestCase):
         time.sleep(80)
         os.remove("temp.xml")
         self.ssh_client.close()
-
-    def __get_fix_message(self, parameter: dict):
-        for i in range(len(self.fix_responses)):
-            for j in parameter.keys():
-                print(self.fix_responses[i].get_parameters()[j])
-                if self.fix_responses[i].get_parameters()[j] == parameter[j]:
-                    return self.fix_responses[i].get_parameters()

@@ -79,12 +79,14 @@ class OmsInstrumentId(Enum):
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
 
+
 class OmsListingId(Enum):
     listing_1 = "1200"
     listing_2 = '9500000049'
     listing_3 = "704"
     listing_4 = "2259"
     listing_5 = "16734"  # MultyLeg
+
 
 class OmsVenues(Enum):
     venue_1 = "PARIS"
@@ -583,7 +585,16 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
+    counterpart_market_maker_th2_route = {'PartyRole': "MMA", 'CounterpartID': '200007'}
+    counterpart_custodian_user = {'PartyRole': "CUS", 'CounterpartID': '1'}
+    counterpart_investor_firm_cl_counterpart = {'PartyRole': "IVF", 'CounterpartID': '600006'}
+    counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
+    counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
 
 
 class OMSVenueClientAccountName(Enum):
     venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSGatingRuleIDs(Enum):
+    main_rule_id = '2200035'
