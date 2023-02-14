@@ -23,6 +23,7 @@ class FIXMessageType(Enum):
     QuoteCancel = "QuoteCancel"
     BusinessMessageReject = "BusinessMessageReject"
     Reject = 'Reject'
+    Allocation = "Allocation"
 
 
 class ORSMessageType(Enum):

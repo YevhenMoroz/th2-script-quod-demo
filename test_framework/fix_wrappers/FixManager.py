@@ -139,7 +139,7 @@ class FixManager:
         elif fix_message.get_message_type() == FIXMessageType.NewOrderMultiLeg.value:
             response = self.act.placeOrderMultilegFIX(
                 request=basic_custom_actions.convert_to_request(
-                    "Sen New Order Multi Leg",
+                    "Send New Order Multi Leg",
                     self.__session_alias,
                     self.__case_id,
                     basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderMultiLeg.value,
@@ -262,6 +262,16 @@ class FixManager:
                     basic_custom_actions.message_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.Allocation.value:
+            response = self.act.placeAllocationFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send Allocation",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.Allocation.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
                 ))
         else:
             response = None
