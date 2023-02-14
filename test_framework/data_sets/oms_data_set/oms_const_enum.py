@@ -416,6 +416,7 @@ class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
     synthetic = 'Synth'
+    execution_policy_C =' C'
 
 
 class OMSTimeInForce(Enum):
