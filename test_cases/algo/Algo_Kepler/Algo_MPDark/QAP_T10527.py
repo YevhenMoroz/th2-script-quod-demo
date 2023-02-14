@@ -81,8 +81,6 @@ class QAP_T10527(TestCase):
         self.key_params_ER_FQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
         # endregion
 
-        self.new_reply = True
-        self.restated_reply = True
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
