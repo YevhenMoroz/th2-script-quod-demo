@@ -7,10 +7,10 @@ class RestApiWashBookRuleMessages(RestApiMessages):
     def __init__(self, data_set: BaseDataSet):
         super().__init__("")
         self.data_set = data_set
-        self.default_washbook_rule_id = self.data_set.get_washbook_rule_by_name('RuleForTest').value
-        self.default_washbook_rule_name = self.data_set.get_washbook_rule_by_name('RuleForTest').name
+        self.default_washbook_rule_id = self.data_set.get_washbook_rule_by_name('RuleForTest')
+        self.default_washbook_rule_name = 'RuleForTest'
         self.new_default_washbook_rule = self.data_set.get_washbook_rule_by_name('name_washbook_rule')
-        self.default_washbook_account = self.data_set.get_washbook_account_by_name('washbook_account_4')
+        self.default_washbook_account = self.data_set.get_washbook_account_by_name('washbook_account_5')
 
     def create_washbook_rule(self, washbook_rule_name: str = None, washbook_account: str = None,
                              institution_id: int = None, user: str = None, desk: str = None, instr_type: str = None,
@@ -45,7 +45,7 @@ class RestApiWashBookRuleMessages(RestApiMessages):
 
     def modify_wash_book_rule(self, washbook_rule: Enum = None, washbook_account: Enum = None,
                               institution_id: int = None, user: str = None, desk: str = None, instr_type: str = None,
-                             exec_policy: str = None, client: str = None):
+                              exec_policy: str = None, client: str = None):
         self.message_type = "ModifyWashBookRule"
         parameters = {
             "washBookRuleName": self.default_washbook_rule_name if washbook_rule is None else washbook_rule.name,
@@ -65,9 +65,9 @@ class RestApiWashBookRuleMessages(RestApiMessages):
             parameters.update({"accountGroupID": client})
         self.parameters = parameters
 
-    def delete_wash_book_rule(self, washbook_rule_id: int):
+    def delete_wash_book_rule(self, washbook_rule_id: int = None):
         self.message_type = "DeleteWashBookRule"
         delete_params = {
-            'washBookRuleID': int(washbook_rule_id),
+            'washBookRuleID': self.default_washbook_rule_id if washbook_rule_id is None else washbook_rule_id,
         }
         self.parameters = delete_params
