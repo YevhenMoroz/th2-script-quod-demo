@@ -290,7 +290,13 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
-
+    instrument_37 = dict(
+        Symbol='QUODTESTQA08',
+        SecurityID='TESTQA08',
+        SecurityIDSource='8',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class AlgoVenues(Enum):
@@ -454,6 +460,8 @@ class AlgoListingId(Enum):
     listing_53 = "100000001"       # QLVENUE1 for QTINST00
     listing_54 = "100000002"       # QLVENUE2 for QTINST00
     listing_55 = "200000001"       # QLVENUE3 for QTINST00
+    listing_56 = "2025020511"       # Euronext Paris for QUODTESTQA08
+    listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
 
 
 class AlgoCurrency(Enum):
