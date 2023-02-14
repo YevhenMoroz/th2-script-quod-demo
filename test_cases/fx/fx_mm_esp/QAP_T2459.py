@@ -50,8 +50,8 @@ class QAP_T2459(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.fix_md.set_market_data().\
-            update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0').\
+        self.fix_md.set_market_data(). \
+            update_value_in_repeating_group("NoMDEntries", "MDQuoteType", '0'). \
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD IND")
         time.sleep(4)
@@ -90,7 +90,7 @@ class QAP_T2459(TestCase):
         # endregion
 
         # region Step 3
-        self.fix_md.set_market_data().\
+        self.fix_md.set_market_data(). \
             update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fix_env.feed_handler, 'FX')
         self.fix_manager_fh.send_message(self.fix_md, "Send MD HSBC EUR/USD TRD")
         time.sleep(4)
