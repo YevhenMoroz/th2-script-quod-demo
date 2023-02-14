@@ -14,7 +14,6 @@ from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import 
 from test_framework.java_api_wrappers.oms.ors_messges.PositionTransferInstructionOMS import \
     PositionTransferInstructionOMS
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -22,14 +21,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
-
-
-class QAP_T7598(TestCase):
+class QAP_T7590(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -40,9 +32,8 @@ class QAP_T7598(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.client = self.data_set.get_client('client_pos_3')
-        self.security_account = self.data_set.get_account_by_name('client_pos_3_acc_3')
-        self.security_account_second = self.data_set.get_account_by_name('client_pos_3_acc_2')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
+        self.security_account = self.data_set.get_account_by_name('client_pos_3_acc_2')
+        self.security_account_second = self.data_set.get_account_by_name('client_pos_3_acc_3')
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -64,7 +55,6 @@ class QAP_T7598(TestCase):
         # region executing of  steps 1, 2, 3, 4, 5
         self.posit_transfer.set_default_transfer(self.security_account, self.security_account_second, self.qty_of_order)
         responses = self.java_api_manager.send_message_and_receive_response(self.posit_transfer)
-        print_message("After Position Transfer", responses)
         list_of_posit_qty_after_transfer = []
         for account in list_of_accounts:
             list_of_posit_qty_after_transfer.append(
@@ -105,7 +95,6 @@ class QAP_T7598(TestCase):
         # region trade DMA order via JavaApi (Precondition)
         self.execution_report.set_default_trade(order_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        print_message(f"Trade DMA order with {account}", responses)
         return self.java_api_manager.get_last_message(ORSMessageType.PositionReport.value, account). \
             get_parameters()[JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0][JavaApiFields.PositQty.value]
