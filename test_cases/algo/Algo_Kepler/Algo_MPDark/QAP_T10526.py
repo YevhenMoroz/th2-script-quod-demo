@@ -89,11 +89,11 @@ class QAP_T10526(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, self.price)
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay)
-        rfq_ocr_2_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
+        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, True)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.price)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, True)
-        self.rule_list = [rfq_rule, rfq_ocr_2_rule, nos_1_rule, ocr_2_rule, nos_2_rule, ocr_1_rule]
+        self.rule_list = [rfq_rule, rfq_ocr_rule, nos_1_rule, ocr_2_rule, nos_2_rule, ocr_1_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
