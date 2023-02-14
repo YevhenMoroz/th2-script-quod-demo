@@ -282,7 +282,21 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_36 = dict(
+        Symbol='QTINST00',
+        SecurityID='QTINST00',
+        SecurityIDSource='8',
+        SecurityExchange='QLV1',
+        SecurityType='CS'
+    )
 
+    instrument_37 = dict(
+        Symbol='QUODTESTQA08',
+        SecurityID='TESTQA08',
+        SecurityIDSource='8',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
 
 class AlgoVenues(Enum):
@@ -380,6 +394,12 @@ class AlgoMic(Enum):
     mic_38 = "XLUX"   # LUXEMBURG
     mic_39 = "XLIS"   # Euronext Lisbon
     mic_40 = "XDUB"   # DUBLIN
+    mic_41 = "QLV1"   # QLVENUE1
+    mic_42 = "QLV2"   # QLVENUE2
+    mic_43 = "QLV3"   # QLVENUE3
+    mic_44 = "QDV1"   # QDVENUE1
+    mic_45 = "QDV2"   # QDVENUE2
+    mic_46 = "QDV3"   # QDVENUE3
 
 
 class AlgoListingId(Enum):
@@ -437,6 +457,12 @@ class AlgoListingId(Enum):
     listing_52 = "1925020512"       # LSE for GB00B03MLX29
     listing_qdl_1 = "9400000036" # QUODLIT1 for QUODTESTQA00 @ Columbia
     listing_qdl_2 = "9400000038" # QUODLIT2 for QUODTESTQA00 @ Columbia
+    listing_53 = "100000001"       # QLVENUE1 for QTINST00
+    listing_54 = "100000002"       # QLVENUE2 for QTINST00
+    listing_55 = "200000001"       # QLVENUE3 for QTINST00
+    listing_56 = "2025020511"       # Euronext Paris for QUODTESTQA08
+    listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
+
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
