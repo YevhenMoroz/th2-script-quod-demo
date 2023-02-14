@@ -20,7 +20,7 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
             "TimeInForce": "0",
             "Instrument": data_set.get_fix_instrument_by_name("instrument_1"),
             "TransactTime": datetime.utcnow().isoformat(),
-            "OrderCapacity": "A",
+            # "OrderCapacity": "A", affects dictionary 4.2
             "Currency": data_set.get_currency_by_name("currency_1"),
             "ExDestination": data_set.get_mic_by_name("mic_1")
         }
