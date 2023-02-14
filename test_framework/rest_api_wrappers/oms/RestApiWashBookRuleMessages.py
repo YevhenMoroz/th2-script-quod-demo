@@ -72,3 +72,23 @@ class RestApiWashBookRuleMessages(RestApiMessages):
             'washBookRuleID': int(washbook_rule_id),
         }
         self.parameters = delete_params
+
+    def disable_care_wash_book_rule(self):
+        self.message_type = "ModifyWashBookRule"
+        parameters = {
+            "washBookRuleName": 'CARE Washbook',
+            "washBookRuleID": 2,
+            "washBookAccountID": 'CareWB',
+            "institutionID": 1}
+        self.parameters = parameters
+
+    def enable_care_wash_book_rule(self):
+        self.message_type = "ModifyWashBookRule"
+        parameters = {
+            "washBookRuleName": 'CARE Washbook',
+            "washBookRuleID": 2,
+            "washBookAccountID": 'CareWB',
+            "institutionID": 1,
+            "instrType": 'EQU',
+            "executionPolicy": 'C'}
+        self.parameters = parameters
