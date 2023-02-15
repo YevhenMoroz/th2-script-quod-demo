@@ -30,7 +30,7 @@ def execute(report_id):
             'OrderCapacity': 'A',
             'Currency': "EUR",
             'TargetStrategy': 1,
-            'ExDestination': 'XETR',
+            'ExDestination': 'MTAA',
             'Text': 'VOL_VWAP_AUC_MKT_MILAN',
             'QuodFlatParameters': {
                 'ParticipateInOpeningAuctions': 'Y',
