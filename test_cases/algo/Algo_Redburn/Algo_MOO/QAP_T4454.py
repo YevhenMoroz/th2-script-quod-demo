@@ -75,7 +75,7 @@ class QAP_T4454(TestCase):
 
         # region venue param
         self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_19")
+        self.account = self.data_set.get_account_by_name("account_3")
         self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
