@@ -9,7 +9,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -45,6 +45,8 @@ class QAP_T9341(TestCase):
         self.initial_slice_multiplier = 200
         self.child_qty = AFM.get_child_qty_for_auction_first_child(self.indicative_volume, self.percentage, self.qty, self.initial_slice_multiplier)
         self.price = 30
+
+        self.tif_atc = TimeInForce.AtTheClose.value
         # endregion
 
         # region Gateway Side
@@ -59,7 +61,7 @@ class QAP_T9341(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -70,7 +72,7 @@ class QAP_T9341(TestCase):
         # region venue param
         self.client = self.data_set.get_client_by_name("client_3")
         self.account = self.data_set.get_account_by_name("account_19")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
         # region Key parameters
@@ -80,8 +82,8 @@ class QAP_T9341(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
@@ -125,11 +127,11 @@ class QAP_T9341(TestCase):
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.change_parameters(dict(TimeInForce=7))
+        er_pending_new.change_parameters(dict(TimeInForce=self.tif_atc))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        er_new.change_parameters(dict(TimeInForce=7))
+        er_new.change_parameters(dict(TimeInForce=self.tif_atc))
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -139,7 +141,7 @@ class QAP_T9341(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, TimeInForce=7, Price=self.price, Instrument=self.instrument))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, TimeInForce=self.tif_atc, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order')
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -171,5 +173,5 @@ class QAP_T9341(TestCase):
         # end region
 
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.change_parameters(dict(TimeInForce=7))
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_atc))
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
