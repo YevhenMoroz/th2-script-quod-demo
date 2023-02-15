@@ -148,8 +148,8 @@ class QAP_T9063(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_2)
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=False) / 1000
-        start_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=True) / 1000
+        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=False) + 1
+        start_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=True)
         release_time = AFM.change_datetime_from_epoch_to_normal(start_time).astimezone(pytz.utc).isoformat()[:-6]
 
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
