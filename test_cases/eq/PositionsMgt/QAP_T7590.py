@@ -6,7 +6,7 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -58,7 +58,7 @@ class QAP_T7590(TestCase):
         list_of_posit_qty_after_transfer = []
         for account in list_of_accounts:
             list_of_posit_qty_after_transfer.append(
-                self.java_api_manager.get_last_message(ORSMessageType.PositionReport.value, account). \
+                self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, account). \
                     get_parameters()[JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                     JavaApiFields.PositionBlock.value][0][JavaApiFields.PositQty.value])
 
@@ -95,6 +95,6 @@ class QAP_T7590(TestCase):
         # region trade DMA order via JavaApi (Precondition)
         self.execution_report.set_default_trade(order_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        return self.java_api_manager.get_last_message(ORSMessageType.PositionReport.value, account). \
+        return self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, account). \
             get_parameters()[JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0][JavaApiFields.PositQty.value]

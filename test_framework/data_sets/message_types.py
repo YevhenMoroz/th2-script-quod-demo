@@ -55,7 +55,6 @@ class ORSMessageType(Enum):
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
     OrderListWaveNotification = 'Order_OrderListWaveNotification'
-    PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
     OrderModificationReply = 'Order_OrderModificationReply'
     OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
@@ -176,6 +175,7 @@ class PKSMessageType(Enum):
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
+    PositionReport = "Order_PositionReport"
 
 
 class QSMessageType(Enum):

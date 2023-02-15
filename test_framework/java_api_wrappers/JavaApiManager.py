@@ -65,7 +65,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationRepl
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderSubmitReply import OrderSubmitReply
-from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
+from test_framework.java_api_wrappers.pks_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
@@ -592,7 +592,7 @@ class JavaApiManager:
                 response_fix_message = OrdListNotification()
             elif message_type == ORSMessageType.OrderListWaveNotification.value:
                 response_fix_message = OrderListWaveNotification()
-            elif message_type == ORSMessageType.PositionReport.value:
+            elif message_type == PKSMessageType.PositionReport.value:
                 response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
