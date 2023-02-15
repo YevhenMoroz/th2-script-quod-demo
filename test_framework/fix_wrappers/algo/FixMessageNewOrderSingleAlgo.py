@@ -910,7 +910,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TimeInForce': "0",
             'OrderCapacity': 'A',
             'TargetStrategy': '1004',
-            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
+            'ClientAlgoPolicyID': 'QA_Auto_ICEBERG',
             "DisplayInstruction": {
                 'DisplayQty': '500'
             }
