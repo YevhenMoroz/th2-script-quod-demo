@@ -45,7 +45,7 @@ class RestApiWashBookRuleMessages(RestApiMessages):
 
     def modify_wash_book_rule(self, washbook_rule: Enum = None, washbook_account: Enum = None,
                               institution_id: int = None, user: str = None, desk: str = None, instr_type: str = None,
-                             exec_policy: str = None, client: str = None, venue_list_id: int = None):
+                              exec_policy: str = None, client: str = None, venue_list_id: int = None):
         self.message_type = "ModifyWashBookRule"
         parameters = {
             "washBookRuleName": self.default_washbook_rule_name if washbook_rule is None else washbook_rule.name,
@@ -90,5 +90,6 @@ class RestApiWashBookRuleMessages(RestApiMessages):
             "washBookAccountID": 'CareWB',
             "institutionID": 1,
             "instrType": 'EQU',
-            "executionPolicy": 'C'}
+            "executionPolicy": 'C',
+            "accountGroupID": self.data_set.get_client_by_name('client_pos_1')}
         self.parameters = parameters
