@@ -33,8 +33,6 @@ class QAP_T10528(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa)
-
         # endregion
 
         # region order parameters
@@ -143,7 +141,7 @@ class QAP_T10528(TestCase):
 
         # region Check the dark DMA child
         self.fix_verifier_buy.set_case_id(bca.create_event("After LIS time is over the algo generates a child order on Dark venue", self.test_id))
-        # CHIXDELTA
+
         self.dma_chixdelta_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chixdelta_order.change_parameters(dict(Account=self.account_chixdelta, ExDestination=self.ex_destination_chixdelta, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_chixdelta_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle dark child DMA order on the CHIXDELTA')
@@ -184,6 +182,8 @@ class QAP_T10528(TestCase):
         er_cancel_chixdelta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_chixdelta_order, self.key_params_ER_child, self.ToQuod, 'Buy Side ExecReport Cancel dark child DMA order on the CHIXDELTA')
         # endregion
+
+        time.sleep(3)
 
         # region Check the child DMA order on the CHIXLIS
         case_id_5 = bca.create_event("Child DMA order on the CHIXLIS", self.test_id)
