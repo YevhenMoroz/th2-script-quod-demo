@@ -1362,6 +1362,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
+            temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
         temp.update(
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -1394,6 +1396,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
+            temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
@@ -1429,6 +1433,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
+            temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
