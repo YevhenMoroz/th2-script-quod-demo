@@ -1822,6 +1822,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty='*')
+        if new_order_single.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
