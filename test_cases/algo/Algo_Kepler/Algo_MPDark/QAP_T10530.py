@@ -193,8 +193,16 @@ class QAP_T10530(TestCase):
         er_new_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_chixlis_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order on the CHIXLIS')
 
-        er_partial_filled_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_MPDArk_LIST_child_par_fill(dma_chixlis_order)
-        self.fix_verifier_buy.check_fix_message(er_partial_filled_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Partial fill Child order on the CHIXLIS')
+        er_partial_fill_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_chixlis_order, self.gateway_side_buy, self.status_partial_fill)
+        self.fix_verifier_buy.check_fix_message(er_partial_fill_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Partial fill Child order on the CHIXLIS')
+
+        er_cancel_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_chixlis_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child order on the CHIXLIS')
+        # endregion
+
+        # region Check partial fill parent order
+        er_partial_fill_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_partial_fill)
+        self.fix_verifier_sell.check_fix_message(er_partial_fill_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
         # region Check new RFQs
@@ -210,8 +218,6 @@ class QAP_T10530(TestCase):
         self.fix_verifier_buy.check_fix_message(nos_trql_rfq_2, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on TQLIS')
         # endregion
 
-        time.sleep(3)
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
@@ -225,5 +231,6 @@ class QAP_T10530(TestCase):
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
