@@ -14,6 +14,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4466 import QAP_T4466
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4467 import QAP_T4467
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4468 import QAP_T4468
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4469 import QAP_T4469
+from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4472 import QAP_T4472
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4474 import QAP_T4474
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4484 import QAP_T4484
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4485 import QAP_T4485
@@ -55,6 +56,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4196(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8869(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9405(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4472(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region AuctionInitialSliceMultiplier
