@@ -48,7 +48,9 @@ class QAP_T9405(TestCase):
         self.indicative_volume = 2000
         self.historical_volume = 1000.0
         self.percentage = 10
-        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
+        self.child_qty_indicative = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
+        self.child_qty_historical = AFM.get_child_qty_for_auction_historical_volume(self.historical_volume, self.percentage, self.qty)
+        self.child_qty = max(self.child_qty_historical, self.child_qty_indicative)
         self.price = 30
         self.tif_ato = TimeInForce.AtTheOpening.value
         # endregion
