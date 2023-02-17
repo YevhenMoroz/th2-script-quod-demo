@@ -77,6 +77,8 @@ class ORSMessageType(Enum):
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    PositionTransferCancelRequest = "Order_PositionTransferCancelRequest"
+    PositionTransferCancelReply = "Order_PositionTransferCancelReply"
     PositionTransferReport = 'Order_PositionTransferReport'
     ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
