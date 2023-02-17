@@ -8,16 +8,14 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
 
 
-class QAP_T9130(TestCase):
+class QAP_T8824(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -33,25 +31,37 @@ class QAP_T9130(TestCase):
         self.silver_id = self.data_set.get_client_tier_id_by_name("client_tier_id_1")
         self.oos = self.data_set.get_client_by_name("client_mm_13")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
+        self.settle_type_fwd = self.data_set.get_settle_type_by_name("wk1")
+        self.no_related_symbols_fwd = [{"Instrument": {
+            "Symbol": self.eur_usd,
+            "SecurityType": self.security_type_fwd,
+            "Product": "4", },
+            "SettlType": self.settle_type_fwd}]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region 1-2
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.oos)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.oos).change_parameter(
+            "NoRelatedSymbols", self.no_related_symbols_fwd)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         default_bid_px_3 = response[0].get_parameter("NoMDEntries")[4]["MDEntryPx"]
         default_ask_px_3 = response[0].get_parameter("NoMDEntries")[5]["MDEntryPx"]
         # endregion
 
         # region 3-4
-        self.adjustment_request.set_defaults()
+        self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                                                          {"InstrSymbol": self.eur_usd,
+                                                                           "ClientTierID": self.silver_id,
+                                                                           "Tenor": self.settle_type_1w_java})
         self.adjustment_request.update_margins_by_index(3, "-0.2", "0")
-        self.adjustment_request.update_instrument(self.eur_usd).update_client_tier(self.silver_id)
         self.java_manager.send_message(self.adjustment_request)
         time.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
-        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.oos)
+        self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.oos).change_parameter(
+            "NoRelatedSymbols", self.no_related_symbols_fwd)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px_3 = round(float(default_bid_px_3) + 0.00002, 5)
         modified_ask_px_3 = round(float(default_ask_px_3), 5)
@@ -67,7 +77,9 @@ class QAP_T9130(TestCase):
     def run_post_conditions(self):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
-        self.adjustment_request.set_defaults()
-        self.adjustment_request.update_instrument(self.eur_usd).update_client_tier(self.silver_id)
+        self.adjustment_request.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                                                          {"InstrSymbol": self.eur_usd,
+                                                                           "ClientTierID": self.silver_id,
+                                                                           "Tenor": self.settle_type_1w_java})
         self.java_manager.send_message(self.adjustment_request)
         self.sleep(2)
