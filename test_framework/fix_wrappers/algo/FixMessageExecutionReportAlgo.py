@@ -561,9 +561,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_partial_fill_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if str(new_order_single.get_parameter('OrdType')) == '2':
-            temp.update(Price = new_order_single.get_parameter("Price"),
-                        LastPx=new_order_single.get_parameter('Price'))
+        if new_order_single.is_parameter_exist('Price'):
+            temp.update(Price=new_order_single.get_parameter('Price'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             CumQty='*',
@@ -585,7 +584,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Instrument=new_order_single.get_parameter('Instrument'),
             ExecType='F',
             ExDestination=new_order_single.get_parameter('ExDestination'),
-            LeavesQty='*'
+            LeavesQty='*',
         )
         super().change_parameters(temp)
         return self
