@@ -16,7 +16,7 @@ from test_framework.fix_wrappers import DataSet
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, OrderType
 
 
 class QAP_T4304(TestCase):
@@ -46,6 +46,7 @@ class QAP_T4304(TestCase):
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name('account_2')
         self.s_par = self.data_set.get_listing_id_by_name('listing_36')
+        self.order_type_market = OrderType.Market.value
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
@@ -132,7 +133,8 @@ class QAP_T4304(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_3)
         # Check Second Navigator child
         nav_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        nav_child_1.change_parameters(dict(OrderQty=self.qty_nav, OrdType=1))
+        nav_child_1.change_parameters(dict(OrderQty=self.qty_nav, OrdType=self.order_type_market))
+        nav_child_1.remove_parameter('Price')
         self.fix_verifier_buy.check_fix_message(nav_child_1, key_parameters=self.key_params_mkt, message_name='Buy side NewOrderSingle Navigator')
 
         pending_nav_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nav_child_1, self.gateway_side_buy, self.status_pending)
