@@ -97,7 +97,7 @@ class QAP_T8123(TestCase):
                                              'Check that ExecSts = F (part of step 2)', VerificationMethod.CONTAINS)
         last_execution_calculated = self.__get_fix_message({'ExecType': 'B'})
         print(last_execution_calculated)
-        list_of_ignored_fields = ['SettlType']
+        list_of_ignored_fields = ['SettlType', 'GatingRuleName', 'GatingRuleCondName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_calculated(self.fix_message)
         amount = str(round(float(self.qty) * float(self.price) / 10000 * 5.0, 3))

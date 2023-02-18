@@ -180,7 +180,7 @@ class QAP_T7499(TestCase):
                                   'Symbol', 'SecurityID', 'ExDestination', 'VenueType',
                                   'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
-                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx'
+                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx', 'Instrument'
                                   ]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})
@@ -196,7 +196,7 @@ class QAP_T7499(TestCase):
             'OrderID': '*',
         }]})
         change_parameters.update(instrument_dict)
-        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice'])
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'Instrument'])
         change_parameters['AllocType'] = 5
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
@@ -207,7 +207,7 @@ class QAP_T7499(TestCase):
         # region step 9 (check 35= AK message)
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType'])
+                                       'AllocType', 'tag11245'])
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty

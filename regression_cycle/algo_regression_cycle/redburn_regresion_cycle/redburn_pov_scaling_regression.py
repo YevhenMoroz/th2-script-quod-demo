@@ -1,13 +1,13 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4287 import QAP_T4287
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4288 import QAP_T4288
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4289 import QAP_T4289
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4478 import QAP_T4478
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4473 import QAP_T4473
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4470 import QAP_T4470
-from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4464 import QAP_T4464
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4287 import QAP_T4287
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4288 import QAP_T4288
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4289 import QAP_T4289
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4478 import QAP_T4478
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4473 import QAP_T4473
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4470 import QAP_T4470
+from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4464 import QAP_T4464
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 

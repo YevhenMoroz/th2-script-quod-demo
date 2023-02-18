@@ -149,10 +149,8 @@ class QAP_T8749(TestCase):
         # region Check IOC child order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order - 1", self.test_id))
 
-        ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_1.change_parameters(dict(OrderQty=self.qty_child_1, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
-        ioc_child_order_1.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_1.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 1')
 
         pending_ioc_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_1, self.gateway_side_buy, self.status_pending)
@@ -178,10 +176,8 @@ class QAP_T8749(TestCase):
         # region Check IOC child order 2
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order - 2", self.test_id))
 
-        ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_2.change_parameters(dict(OrderQty=self.qty_child_2, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
-        ioc_child_order_2.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_2.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 2')
 
         pending_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
@@ -207,10 +203,8 @@ class QAP_T8749(TestCase):
         # region Check IOC child order 3
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order - 3", self.test_id))
 
-        ioc_child_order_3 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        ioc_child_order_3 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_3.change_parameters(dict(OrderQty=self.qty_child_3, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
-        ioc_child_order_3.add_tag(dict(Parties='*', QtyType=0))
-        ioc_child_order_3.remove_parameter('NoParty')
         self.fix_verifier_buy.check_fix_message(ioc_child_order_3, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 2')
 
         pending_ioc_child_order_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_3, self.gateway_side_buy, self.status_pending)

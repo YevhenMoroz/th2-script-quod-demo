@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
@@ -38,6 +39,7 @@ from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import Con
 from test_framework.java_api_wrappers.ors_messages.DFDManagementBatchReply import DFDManagementBatchReply
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.FixConfirmation import FixConfirmation
+from test_framework.java_api_wrappers.ors_messages.FixNewOrderReply import FixNewOrderReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchReply import \
     ForceAllocInstructionStatusBatchReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
@@ -61,6 +63,7 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import O
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveCancelReply import OrderListWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
@@ -94,8 +97,14 @@ class JavaApiManager:
 
     def send_message_and_receive_response(self, message: JavaApiMessage, filter_dict=None):
         logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
-        if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
+        if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value and filter_dict != ExtractAllMessages.All.value:
             response = self.act.submitFixNewOrderSingle(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.FixNewOrderSingle.value and filter_dict == ExtractAllMessages.All.value:
+            response = self.act.submitFixNewOrderSingleWithExtractionAllMessages(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
@@ -111,7 +120,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.OrderCancelRequest.value:
             response = self.act.submitOrderCancelRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -449,6 +458,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveCancelRequest.value:
+            response = self.act.submitOrderListWaveCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.NewOrderMultiLeg.value:
             response = self.act.submitNewOrderMultiLeg(
                 request=ActJavaSubmitMessageRequest(
@@ -697,6 +712,10 @@ class JavaApiManager:
                 response_fix_message = ManualMatchExecsToParentOrderReply()
             elif message_type == AQSMessageType.FrontendQueryReply.value:
                 response_fix_message = FrontendQueryReply()
+            elif message_type == ORSMessageType.OrderListWaveCancelReply.value:
+                response_fix_message = OrderListWaveCancelReply()
+            if message_type == ORSMessageType.FixNewOrderReply.value:
+                response_fix_message = FixNewOrderReply()
             elif message_type == ORSMessageType.PositionTransferCancelReply.value:
                 response_fix_message = PositionTransferCancelReply()
             response_fix_message.change_parameters(fields)
@@ -724,7 +743,7 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            raise ValueError('\033[91m' + f"Element: {k} not found"+ '\033[0m')
+            raise ValueError('\033[91m' + f"Element: {k} not found" + '\033[0m')
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
@@ -747,7 +766,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
 
     def get_first_message(self, message_type, filter_value=None) -> JavaApiMessage:
         for res in self.response:
@@ -756,7 +775,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
 
     def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
         self.response.reverse()
@@ -771,4 +790,8 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise ValueError('\033[91m' + f"{message_type} not found"+ '\033[0m')
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
+
+
+class ExtractAllMessages(Enum):
+    All = 'All'
