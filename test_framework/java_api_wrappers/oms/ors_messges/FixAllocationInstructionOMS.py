@@ -11,11 +11,11 @@ class FixAllocationInstructionOMS(FixAllocationInstruction):
         self.change_parameters(parameters)
         self.data_set = data_set
         self.base_parameters = {
-            'SEND_SUBJECT': 'QUOD.FIX_REPLY.gtwbo',
-            # 'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
+            'SEND_SUBJECT': 'QUOD.ORS.FIX',
+            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
             "AllocationInstructionBlock": {
                 "OrdAllocList": {
-                    "OrdAllocBlock": [{"OrdID": "*"}]},
+                    "OrdAllocBlock": [{"ClOrdID": "*"}]},
                 "AllocInstructionMiscBlock": {
                     "AllocInstructionMisc0": "BOC1",
                     "AllocInstructionMisc1": "BOC2",
@@ -26,10 +26,7 @@ class FixAllocationInstructionOMS(FixAllocationInstruction):
                 "AllocTransType": "New",
                 "AllocType": "Preliminary",
                 "Side": "Buy",
-                "AvgPrice": "20",
-                "TransactTime":datetime.utcnow().isoformat(),
-                "PositionEffect":"Open",
-                "ExecQty":"100",
+                "AvgPrice": "10",
                 "Currency": data_set.get_currency_by_name("currency_1"),
                 "TradeDate": datetime.utcnow().isoformat(),
                 "Qty": "100",
@@ -46,12 +43,10 @@ class FixAllocationInstructionOMS(FixAllocationInstruction):
                      "AllocPrice": "20",
                      "AllocAvgPx": "20",
                      "AllocQty": "100",
-                     # "AllocNetPrice": "20",
-                     # "AllocNetMoney": "100"
                      }]}
             }}
 
-    def set_default_book(self, ord_id):
+    def set_default_preliminary(self, ord_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
                                         {"OrdAllocList": {"OrdAllocBlock": [{"ClOrdID": ord_id}]}})

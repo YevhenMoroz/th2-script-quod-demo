@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from custom import basic_custom_actions
+from datetime import timezone
 from test_framework.fix_wrappers.FixMessageAllocation import FixMessageAllocation
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
 
@@ -11,40 +12,40 @@ class FixMessageAllocationOMS(FixMessageAllocation):
         self.change_parameters(parameters)
 
         self.base_parameters = {
-            # 'Account': "MOClient",
-            # 'AllocType': '5',
-            # 'BookingType': '0',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'TradeDate': datetime.now(timezone.utc).strftime('%Y%m%d'),
+            'AllocID': basic_custom_actions.client_orderid(9),
             'AllocTransType': '0',
-            # 'Quantity': '100',
+            'Shares': '100',
             'Side': '1',
             'AvgPx': '20'
         }
 
-    def set_fix42_preliminary(self, new_order_single: FixMessageNewOrderSingle, no_allocs=None):
-        if 'PreAllocGrp' in new_order_single.get_parameters():
-            no_allocs = new_order_single.get_parameter('PreAllocGrp')['NoAllocs']
-            for no_alloc in no_allocs:
-                no_alloc.update(AllocNetPrice=new_order_single.get_parameter("Price"))
-                no_alloc.update(AllocPrice=new_order_single.get_parameter("Price"))
-
+    def set_fix42_preliminary(self, new_order_single: FixMessageNewOrderSingle, cl_ord_id, alloc_acc):
         change_parameters = {
-            # 'Account': new_order_single.get_parameter('Account'),
-            'NoAllocs': "1",
+            'NoAllocs': [
+                {
+                    'AllocShares': new_order_single.get_parameter("OrderQty"),
+                    'AllocAccount': alloc_acc,
+                }
+            ],
             'Shares': new_order_single.get_parameter("OrderQty"),
-            'TransactTime': datetime.utcnow().isoformat(),
-            'AllocTransType': '0',
             'Side': new_order_single.get_parameter("Side"),
             'AvgPx': new_order_single.get_parameter("Price"),
-            'AllocID': basic_custom_actions.client_orderid(9),
-            'NoOrders': "1",
+            "NoOrders": [
+                {
+                    'ClOrdID': cl_ord_id,
+                }
+            ],
             'Currency': new_order_single.get_parameter('Currency'),
-            'NetMoney': '2000',
+            'NetMoney': str(
+                int(new_order_single.get_parameter("OrderQty")) * int(new_order_single.get_parameter("Price"))),
             "Symbol": new_order_single.get_parameter("Symbol"),
             "SecurityID": new_order_single.get_parameter("SecurityID"),
             "IDSource": new_order_single.get_parameter("IDSource"),
             "SecurityExchange": new_order_single.get_parameter("SecurityExchange"),
-            'TradeDate': datetime.utcnow().isoformat(),
-            'GrossTradeAmt': '2000',
+            'GrossTradeAmt': str(
+                int(new_order_single.get_parameter("OrderQty")) * int(new_order_single.get_parameter("Price"))),
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)
