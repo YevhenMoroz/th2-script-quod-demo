@@ -319,6 +319,7 @@ class JavaApiFields(Enum):
     SuspendedCare = "SuspendedCare"
     SubCounterpartList = "SubCounterpartList"
 
+    ManualOrderCrossReplyBlock = "ManualOrderCrossReplyBlock"
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'

@@ -76,6 +76,14 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
+    def set_default_iceberg_limit(self):
+        self.change_parameters(self.base_parameters)
+        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '26'}
+        display_instruction_param = {'DisplayQty': "1", 'DisplayMethod': "Initial"}
+        self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Synthetic', 'AlgoParametersBlock':
+            algo_param, 'DisplayInstructionBlock': display_instruction_param, "Price": '20', "OrdType": 'Limit'})
+        return self
+
     def set_default_care_market(self, recipient=None, desk=None, role=None):
         params = {'CDOrdAssignInstructionsBlock': {}}
         if recipient:
@@ -195,7 +203,7 @@ class OrderSubmitOMS(OrderSubmit):
             route_id = self.data_set.get_route_id_by_name("route_1")
             route_params = {'RouteBlock': [{'RouteID': route_id}]}
         self.change_parameters(self.base_parameters)
-        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '1000056'}
+        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '26'}
         display_instruction_param = {'DisplayQty': display_qty, 'DisplayMethod': "Initial"}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {'ClOrdID': basic_custom_actions.client_orderid(9),

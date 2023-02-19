@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -109,7 +109,7 @@ class QAP_T7369(TestCase):
                                                                                        })
             responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
             class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
-            self.__return_result(responses, ORSMessageType.PositionReport.value)
+            self.__return_result(responses, PKSMessageType.PositionReport.value)
             exec_id = self.result.get_parameters()['PositionReportBlock']['PositionList']['PositionBlock'][0]['LastPositUpdateEventID']
         finally:
             time.sleep(1)
