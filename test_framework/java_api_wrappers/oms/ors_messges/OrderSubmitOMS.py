@@ -76,6 +76,14 @@ class OrderSubmitOMS(OrderSubmit):
         self.change_parameters(self.base_parameters)
         return self
 
+    def set_default_iceberg_limit(self):
+        self.change_parameters(self.base_parameters)
+        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '26'}
+        display_instruction_param = {'DisplayQty': "1", 'DisplayMethod': "Initial"}
+        self.update_fields_in_component('NewOrderSingleBlock', {'ExecutionPolicy': 'Synthetic', 'AlgoParametersBlock':
+            algo_param, 'DisplayInstructionBlock': display_instruction_param, "Price": '20', "OrdType": 'Limit'})
+        return self
+
     def set_default_care_market(self, recipient=None, desk=None, role=None):
         params = {'CDOrdAssignInstructionsBlock': {}}
         if recipient:
@@ -89,7 +97,8 @@ class OrderSubmitOMS(OrderSubmit):
         self.add_tag(params)
         return self
 
-    def set_default_child_care(self, recipient=None, desk=None, role=None, parent_id: str = None):
+    def set_default_child_care(self, recipient=None, desk=None, role=None, parent_id: str = None,
+                               external_algo_twap=False):
         params = {'CDOrdAssignInstructionsBlock': {}}
         if recipient:
             params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
@@ -103,10 +112,25 @@ class OrderSubmitOMS(OrderSubmit):
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
                                          'ClOrdID': basic_custom_actions.client_orderid(9),
                                          "ParentOrdrList": parent_params})
+        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                               "ScenarioID": "101",
+                                               "AlgoPolicyID": "1000131"},
+                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                           {"ExternalAlgoParameterBlock": [
+                               {'AlgoParameterName': "StrategyTag",
+                                "AlgoParamString": "TWAP",
+                                'VenueScenarioParameterID': "7505"}]},
+                           'ScenarioID': "101",
+                           "ScenarioIdentifier": "8031",
+                           "VenueScenarioID": "TWAP",
+                           "VenueScenarioVersionID": "9682",
+                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
+        if external_algo_twap:
+            self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         self.add_tag(params)
         return self
 
-    def set_default_child_dma(self, parent_id: str = None, client_order_id: str = None):
+    def set_default_child_dma(self, parent_id: str = None, client_order_id: str = None, external_algo_twap=False):
         if client_order_id:
             cl_ord_id = client_order_id
         else:
@@ -116,6 +140,21 @@ class OrderSubmitOMS(OrderSubmit):
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
                                          'ClOrdID': cl_ord_id})
+        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                               "ScenarioID": "101",
+                                               "AlgoPolicyID": "1000131"},
+                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                           {"ExternalAlgoParameterBlock": [
+                               {'AlgoParameterName': "StrategyTag",
+                                "AlgoParamString": "TWAP",
+                                'VenueScenarioParameterID': "7505"}]},
+                           'ScenarioID': "101",
+                           "ScenarioIdentifier": "8031",
+                           "VenueScenarioID": "TWAP",
+                           "VenueScenarioVersionID": "9682",
+                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
+        if external_algo_twap:
+            self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
     def set_default_direct_child_care(self, parent_id: str, route: str = None,
@@ -164,7 +203,7 @@ class OrderSubmitOMS(OrderSubmit):
             route_id = self.data_set.get_route_id_by_name("route_1")
             route_params = {'RouteBlock': [{'RouteID': route_id}]}
         self.change_parameters(self.base_parameters)
-        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '1000056'}
+        algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '26'}
         display_instruction_param = {'DisplayQty': display_qty, 'DisplayMethod': "Initial"}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {'ClOrdID': basic_custom_actions.client_orderid(9),

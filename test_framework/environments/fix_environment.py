@@ -10,10 +10,11 @@ class FixEnvironment(BaseEnvironment):
                  buy_side: str = None, buy_side2: str = None, feed_handler: str = None, drop_copy: str = None,
                  sell_side_rfq: str = None, sell_side_esp: str = None, buy_side_esp: str = None,
                  feed_handler2: str = None, sell_side_cnx: str = None, buy_side_md: str = None,
-                 external_validation: str = None):
+                 external_validation: str = None,sell_side_fix42: str = None):
         self.environment_type = environment_type
         self.sell_side = sell_side
         self.sell_side2 = sell_side2
+        self.sell_side_fix42 = sell_side_fix42
         self.buy_side = buy_side
         self.buy_side2 = buy_side2
         self.feed_handler = feed_handler
@@ -90,7 +91,9 @@ class FixEnvironment(BaseEnvironment):
                     environment_type=EnvironmentType.quod317_ganymede_standard_test.value,
                     sell_side=Connectivity.Ganymede_317_ss.value,
                     buy_side=Connectivity.Ganymede_317_bs.value,
-                    drop_copy=Connectivity.Ganymede_317_dc.value
+                    drop_copy=Connectivity.Ganymede_317_dc.value,
+                    feed_handler=Connectivity.Ganymede_317_Feed_Handler.value,
+                    sell_side_fix42=Connectivity.Ganymede_317_ss_42.value,
                 )
                 FixEnvironment.environment_instances.update(
                     {EnvironmentType.quod317_ganymede_standard_test.value: site_environment})

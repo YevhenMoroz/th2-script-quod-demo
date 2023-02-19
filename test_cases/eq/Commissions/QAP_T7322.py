@@ -6,7 +6,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -93,7 +93,7 @@ class QAP_T7322(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the first child order open sts")
-        self.__return_result(responses, ORSMessageType.PositionReport.value)
+        self.__return_result(responses, PKSMessageType.PositionReport.value)
         order_reply = self.result.get_parameter('PositionReportBlock')
         posit_block = order_reply['PositionList']['PositionBlock'][0]
         exec_id_1 = posit_block['LastPositUpdateEventID']
@@ -114,7 +114,7 @@ class QAP_T7322(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the second child order open sts")
-        self.__return_result(responses, ORSMessageType.PositionReport.value)
+        self.__return_result(responses, PKSMessageType.PositionReport.value)
         order_reply = self.result.get_parameter('PositionReportBlock')
         posit_block = order_reply['PositionList']['PositionBlock'][0]
         exec_id_2 = posit_block['LastPositUpdateEventID']

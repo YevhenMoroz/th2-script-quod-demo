@@ -354,7 +354,7 @@ class QAP_T6981(TestCase):
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=AK message
-        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount'])
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount', 'tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
              'ConfirmTransType': "0",

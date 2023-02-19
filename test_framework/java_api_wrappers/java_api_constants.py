@@ -32,6 +32,7 @@ class OrderReplyConst(Enum):
     TransStatus_SEN = 'SEN'
     OrdStatus_HLD = 'HLD'
     OrdStatus_REJ = 'REJ'
+    OrdStatus_CXL = 'CXL'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -44,6 +45,7 @@ class OrderReplyConst(Enum):
     IsLocked_N = 'N'
     ExecType_REP = 'REP'
     ExecType_PCA = 'PCA'
+    ExecType_PMO = 'PMO'
 
 
 class ExecutionPolicyConst(Enum):
@@ -219,11 +221,16 @@ class JavaApiFields(Enum):
     CDTransferReplyBlock = 'CDTransferReplyBlock'
     CDTransferID = 'CDTransferID'
     RecipientUserID = 'RecipientUserID'
+    RecipientDeskID = 'RecipientDeskID'
     CDOrdNotifBlock = 'CDOrdNotifBlock'
     CDOrdNotifID = 'CDOrdNotifID'
     CDRequestType = 'CDRequestType'
     OrderModificationNotificationBlock = 'OrderModificationNotificationBlock'
     ReportedCumQty = 'ReportedCumQty'
+    Ord = 'Ord'
+    GatingRuleID = 'GatingRuleID'
+    GatingRuleCondName = 'GatingRuleCondName'
+    ParentOrdrList = 'ParentOrdrList'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -244,6 +251,9 @@ class JavaApiFields(Enum):
     VenueScenarioID = 'VenueScenarioID'
     NewOrderReplyBlock = 'NewOrderReplyBlock'
     OrdType = 'OrdType'
+    VenueID = 'VenueID'
+    AlgoParametersBlock = 'AlgoParametersBlock'
+    AlgoType = 'AlgoType'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -307,7 +317,9 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
+    SubCounterpartList = "SubCounterpartList"
 
+    ManualOrderCrossReplyBlock = "ManualOrderCrossReplyBlock"
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'

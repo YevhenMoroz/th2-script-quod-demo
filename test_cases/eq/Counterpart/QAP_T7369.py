@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -84,7 +84,6 @@ class QAP_T7369(TestCase):
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         parent_order_id = response[0].get_parameter("OrderID")
         client_ord_id = response[0].get_parameter("ClOrdID")
-        print(client_ord_id)
         # endregion
 
         # region Split
@@ -110,7 +109,7 @@ class QAP_T7369(TestCase):
                                                                                        })
             responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
             class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
-            self.__return_result(responses, ORSMessageType.PositionReport.value)
+            self.__return_result(responses, PKSMessageType.PositionReport.value)
             exec_id = self.result.get_parameters()['PositionReportBlock']['PositionList']['PositionBlock'][0]['LastPositUpdateEventID']
         finally:
             time.sleep(1)
@@ -118,7 +117,7 @@ class QAP_T7369(TestCase):
             self.rule_manager.remove_rule(trade_rule)
 
         list_of_ignored_fields = ['SettlCurrency', 'SecondaryOrderID', 'MiscFeesGrp', 'CommissionData', 'NoMiscFees',
-                                  'PartyRoleQualifier']
+                                  'PartyRoleQualifier','GatingRuleCondName', 'GatingRuleName']
         list_of_counterparts = [
                 self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),

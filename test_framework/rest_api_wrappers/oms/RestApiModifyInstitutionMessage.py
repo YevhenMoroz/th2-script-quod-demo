@@ -22,6 +22,7 @@ class RestApiModifyInstitutionMessage(RestApiMessages):
 
     def set_default_param(self):
         self.set_params(self.base_parameters)
+        return self
 
     def modify_enable_unknown_accounts(self, value_of_modification: bool = False):
         self.update_parameters({'enableUnknownAccounts': value_of_modification})

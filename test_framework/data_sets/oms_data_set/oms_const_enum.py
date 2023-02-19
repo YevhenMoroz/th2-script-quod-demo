@@ -24,6 +24,12 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    instrument_4 = dict(
+        Symbol='CS-SHA-M15-2200/2600',  # MultyLeg
+        SecurityID='CS-SHA-M15-2200/2600',
+        SecurityIDSource='4',
+        SecurityExchange='TOMX'
+    )
     instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
@@ -70,6 +76,8 @@ class OmsInstrumentId(Enum):
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
+    instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
+    instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
 
 
 class OmsListingId(Enum):
@@ -77,6 +85,7 @@ class OmsListingId(Enum):
     listing_2 = '9500000049'
     listing_3 = "704"
     listing_4 = "2259"
+    listing_5 = "16734"  # MultyLeg
 
 
 class OmsVenues(Enum):
@@ -261,6 +270,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
@@ -270,6 +280,7 @@ class OmsCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "GBX"
 
 
 class OmsRoutes(Enum):
@@ -516,6 +527,7 @@ class OMSClearingAccountTypes(Enum):
 
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+    test_auto = 7
 
 
 class OMSISINSecurityAltIDs(Enum):
@@ -573,7 +585,16 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
+    counterpart_market_maker_th2_route = {'PartyRole': "MMA", 'CounterpartID': '200007'}
+    counterpart_custodian_user = {'PartyRole': "CUS", 'CounterpartID': '1'}
+    counterpart_investor_firm_cl_counterpart = {'PartyRole': "IVF", 'CounterpartID': '600006'}
+    counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
+    counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
 
 
 class OMSVenueClientAccountName(Enum):
     venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSGatingRuleIDs(Enum):
+    main_rule_id = '2200035'

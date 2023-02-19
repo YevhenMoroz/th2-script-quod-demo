@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
 
-
+@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7129(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -49,7 +49,7 @@ class QAP_T7129(TestCase):
         self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set up fee and commission via Rest Api(precondition)
         self.rest_api_manager.send_default_fee()

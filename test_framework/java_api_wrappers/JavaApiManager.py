@@ -1,5 +1,10 @@
+import ast
+import json
 import logging
+import re
+from enum import Enum
 
+from pandas.core.dtypes.common import classes
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
@@ -7,7 +12,7 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType, AQSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
-from test_framework.java_api_wrappers.aqs_messages.Order_FrontendQueryReply import Order_FrontendQueryReply
+from test_framework.java_api_wrappers.aqs_messages.FrontendQueryReply import FrontendQueryReply
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchReply import CDOrdAckBatchReply
 from test_framework.java_api_wrappers.cs_message.CDAssignReply import CDAssignReply
 from test_framework.java_api_wrappers.cs_message.CDOrdNotif import CDOrdNotif
@@ -38,6 +43,7 @@ from test_framework.java_api_wrappers.ors_messages.ConfirmationReport import Con
 from test_framework.java_api_wrappers.ors_messages.DFDManagementBatchReply import DFDManagementBatchReply
 from test_framework.java_api_wrappers.ors_messages.ExecutionReport import ExecutionReport
 from test_framework.java_api_wrappers.ors_messages.FixConfirmation import FixConfirmation
+from test_framework.java_api_wrappers.ors_messages.FixNewOrderReply import FixNewOrderReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusBatchReply import \
     ForceAllocInstructionStatusBatchReply
 from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
@@ -61,11 +67,13 @@ from test_framework.java_api_wrappers.ors_messages.OrderBagNotification import O
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveCancelReply import OrderBagWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveModificationReply import OrderBagWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderBagWaveNotification import OrderBagWaveNotification
+from test_framework.java_api_wrappers.ors_messages.OrderListWaveCancelReply import OrderListWaveCancelReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationReply import OrderListWaveModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveNotification import OrderListWaveNotification
 from test_framework.java_api_wrappers.ors_messages.OrderModificationReply import OrderModificationReply
 from test_framework.java_api_wrappers.ors_messages.OrderSubmitReply import OrderSubmitReply
-from test_framework.java_api_wrappers.ors_messages.PositionReport import PositionReport
+from test_framework.java_api_wrappers.ors_messages.PositionTransferCancelReply import PositionTransferCancelReply
+from test_framework.java_api_wrappers.pks_messages.PositionReport import PositionReport
 from test_framework.java_api_wrappers.ors_messages.PositionTransferReport import PositionTransferReport
 from test_framework.java_api_wrappers.ors_messages.RemoveOrdersFromOrderListReply import RemoveOrdersFromOrderListReply
 from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementReply import SuspendOrderManagementReply
@@ -93,8 +101,14 @@ class JavaApiManager:
 
     def send_message_and_receive_response(self, message: JavaApiMessage, filter_dict=None):
         logging.info(f"Message {message.get_message_type()} sent with params -> {message.get_parameters()}")
-        if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value:
+        if message.get_message_type() == ORSMessageType.FixNewOrderSingle.value and filter_dict != ExtractAllMessages.All.value:
             response = self.act.submitFixNewOrderSingle(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.FixNewOrderSingle.value and filter_dict == ExtractAllMessages.All.value:
+            response = self.act.submitFixNewOrderSingleWithExtractionAllMessages(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
@@ -110,7 +124,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.OrderCancelRequest.value:
             response = self.act.submitOrderCancelRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -448,9 +462,189 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderListWaveCancelRequest.value:
+            response = self.act.submitOrderListWaveCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.NewOrderMultiLeg.value:
+            response = self.act.submitNewOrderMultiLeg(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.FixAllocationInstruction.value:
+            response = self.act.submitFixAllocationInstruction(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+        elif message.get_message_type() == ORSMessageType.PositionTransferCancelRequest.value:
+            response = self.act.submitPositionTransferCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         else:
             response = None
-        return self.parse_response(response)
+        return self.parse_response_v2(response)
+
+    def parse_response_v2(self, response: ActJavaSubmitMessageResponses) -> list:
+        key_list = response.DESCRIPTOR.fields_by_name.keys()
+        repeated_composite_container = {key: getattr(response, key) for key in key_list}  # remove unwanted keys
+        response_messages_list = str(repeated_composite_container["response_message"])
+        start_sep = "'fields': "
+        end_sep = ",\n 'metadata'"
+        fields_list = []
+        for fields in response_messages_list.split(start_sep):
+            if end_sep in fields:
+                fields = re.sub('\"\n *\"', '', fields)  # in case of result on 2 lines
+                fields_dict = ast.literal_eval(fields.split(end_sep)[0])  # get fields from message and parce it to dict
+                fields_list.append(fields_dict)
+
+        message_types = [
+            message_type.metadata.message_type
+            for message_type in response.response_message
+        ]
+        response_messages = []
+        response_fix_message = None
+        for message_type, fields in zip(message_types, fields_list):
+            if message_type == ORSMessageType.OrdReply.value:
+                response_fix_message = OrdReply()
+            elif message_type == ORSMessageType.OrdNotification.value:
+                response_fix_message = OrdNotification()
+            elif message_type == ORSMessageType.ExecutionReport.value:
+                response_fix_message = ExecutionReport()
+            elif message_type == ORSMessageType.OrdUpdate.value:
+                response_fix_message = OrdUpdate()
+            elif message_type == ORSMessageType.AllocationReport.value:
+                response_fix_message = AllocationReport()
+            elif message_type == ORSMessageType.CDNotifDealer.value:
+                response_fix_message = CDNotifDealer()
+            elif message_type == ORSMessageType.ForceAllocInstructionStatusRequest.value:
+                response_fix_message = ForceAllocInstructionStatusRequest()
+            elif message_type == ORSMessageType.ConfirmationReport.value:
+                response_fix_message = ConfirmationReport()
+            elif message_type == CSMessageType.CDOrdNotif.value:
+                response_fix_message = CDOrdNotif()
+            elif message_type == ORSMessageType.TradeEntryNotif.value:
+                response_fix_message = Order_TradeEntryNotif()
+            elif message_type == ORSMessageType.NewOrderListReply.value:
+                response_fix_message = NewOrderListReply()
+            elif message_type == ORSMessageType.OrdListNotification.value:
+                response_fix_message = OrdListNotification()
+            elif message_type == ORSMessageType.OrderListWaveNotification.value:
+                response_fix_message = OrderListWaveNotification()
+            elif message_type == PKSMessageType.PositionReport.value:
+                response_fix_message = PositionReport()
+            elif message_type == ESMessageType.NewOrderReply.value:
+                response_fix_message = NewOrderReply()
+            elif message_type == ESMessageType.OrderCancelReply.value:
+                response_fix_message = OrderCancelReply()
+            elif message_type == ESMessageType.ExecutionReport.value:
+                response_fix_message = ExecutionReport()
+            elif message_type == ESMessageType.OrdReport.value:
+                response_fix_message = OrdReport()
+            elif message_type == ORSMessageType.ManualOrderCrossReply.value:
+                response_fix_message = ManualOrderCrossReply()
+            elif message_type == ORSMessageType.OrderModificationReply.value:
+                response_fix_message = OrderModificationReply()
+            elif message_type == ORSMessageType.OrderBagCreationReply.value:
+                response_fix_message = OrderBagCreationReply()
+            elif message_type == ORSMessageType.OrderBagNotification.value:
+                response_fix_message = OrderBagNotification()
+            elif message_type == ORSMessageType.OrderBagModificationReply.value:
+                response_fix_message = OrderBagModificationReply()
+            elif message_type == ORSMessageType.OrderBagCancelReply.value:
+                response_fix_message = OrderBagCancelReply()
+            elif message_type == ORSMessageType.OrderBagWaveNotification.value:
+                response_fix_message = OrderBagWaveNotification()
+            elif message_type == ORSMessageType.OrderBagWaveModificationReply.value:
+                response_fix_message = OrderBagWaveModificationReply()
+            elif message_type == ORSMessageType.OrderBagWaveCancelReply.value:
+                response_fix_message = OrderBagWaveCancelReply()
+            elif message_type == ORSMessageType.PositionTransferReport.value:
+                response_fix_message = PositionTransferReport()
+            elif message_type == ORSMessageType.ComputeBookingFeesCommissionsReply.value:
+                response_fix_message = ComputeBookingFeesCommissionsReply()
+            elif message_type == ORSMessageType.QuoteRequestNotif.value:
+                response_fix_message = QuoteRequestNotifFX()
+            elif message_type == ORSMessageType.QuoteRequestActionReply.value:
+                response_fix_message = QuoteRequestActionReplyFX()
+            elif message_type == PKSMessageType.FixRequestForPositions.value:
+                response_fix_message = FixPositionReportFX()
+            elif message_type == ORSMessageType.BookingCancelReply.value:
+                response_fix_message = BookingCancelReply()
+            elif message_type == ORSMessageType.CheckOutOrderReply.value:
+                response_fix_message = CheckOutOrderReply()
+            elif message_type == ORSMessageType.ForceAllocInstructionStatusBatchReply.value:
+                response_fix_message = ForceAllocInstructionStatusBatchReply()
+            elif message_type == ORSMessageType.BlockUnallocateBatchReply.value:
+                response_fix_message = BlockUnallocateBatchReply()
+            elif message_type == ORSMessageType.OrderUnMatchReply.value:
+                response_fix_message = UnMatchReply()
+            elif message_type == ORSMessageType.FixConfirmation.value:
+                response_fix_message = FixConfirmation()
+            elif message_type == MDAMessageType.MarketDataSnapshotFullRefresh.value:
+                response_fix_message = MarketDataSnapshotFX()
+            elif message_type == ORSMessageType.CheckInOrderReply.value:
+                response_fix_message = CheckInOrderReply()
+            elif message_type == ORSMessageType.HeldOrderAckReply.value:
+                response_fix_message = HeldOrderAckReply()
+            elif message_type == ORSMessageType.MarkOrderReply.value:
+                response_fix_message = MarkOrderReply()
+            elif message_type == ORSMessageType.RemoveOrdersFromOrderListReply.value:
+                response_fix_message = RemoveOrdersFromOrderListReply()
+            elif message_type == ORSMessageType.OrderBagDissociateReply.value:
+                response_fix_message = OrderBagDissociateReply()
+            elif message_type == ORSMessageType.DFDManagementBatchReply.value:
+                response_fix_message = DFDManagementBatchReply()
+            elif message_type == ORSMessageType.ListCancelReply.value:
+                response_fix_message = ListCancelReply()
+            elif message_type == ORSMessageType.AddOrdersToOrderListReply.value:
+                response_fix_message = AddOrdersToOrderListReply()
+            elif message_type == ORSMessageType.OrderListWaveModificationReply.value:
+                response_fix_message = OrderListWaveModificationReply()
+            elif message_type == ORSMessageType.OrderActionReply.value:
+                response_fix_message = OrderActionReply()
+            elif message_type == ORSMessageType.SuspendOrderManagementReply.value:
+                response_fix_message = SuspendOrderManagementReply()
+            elif message_type == CSMessageType.ManualMatchExecToParentOrdersReply.value:
+                response_fix_message = ManualMatchExecToParentOrdersReply()
+            elif message_type == ORSMessageType.TradeEntryReply.value:
+                response_fix_message = TradeEntryReply()
+            elif message_type == ORSMessageType.OrderSubmitReply.value:
+                response_fix_message = OrderSubmitReply()
+            elif message_type == CSMessageType.CDOrdAckBatchReply.value:
+                response_fix_message = CDOrdAckBatchReply()
+            elif message_type == ORSMessageType.OrdRejectedNotif.value:
+                response_fix_message = OrdRejectedNotif()
+            elif message_type == CSMessageType.CDTransferReply.value:
+                response_fix_message = CDTransferReply()
+            elif message_type == CSMessageType.CDTransferNotif.value:
+                response_fix_message = CDTransferNotif()
+            elif message_type == CSMessageType.CDTransferAckReply.value:
+                response_fix_message = CDTransferAckReply()
+            elif message_type == CSMessageType.CDAssignReply.value:
+                response_fix_message = CDAssignReply()
+            elif message_type == ORSMessageType.TradeEntryBatchReply.value:
+                response_fix_message = TradeEntryBatchReply()
+            elif message_type == CSMessageType.ManualMatchExecsToParentOrderReply.value:
+                response_fix_message = ManualMatchExecsToParentOrderReply()
+            elif message_type == AQSMessageType.FrontendQueryReply.value:
+                response_fix_message = FrontendQueryReply()
+            elif message_type == ORSMessageType.OrderListWaveCancelReply.value:
+                response_fix_message = OrderListWaveCancelReply()
+            if message_type == ORSMessageType.FixNewOrderReply.value:
+                response_fix_message = FixNewOrderReply()
+            elif message_type == ORSMessageType.PositionTransferCancelReply.value:
+                response_fix_message = PositionTransferCancelReply()
+
+            response_fix_message.change_parameters(fields)
+            response_messages.append(response_fix_message)
+        self.response = response_messages
+        return response_messages
 
     def parse_response(self, response: ActJavaSubmitMessageResponses) -> list:
         response_messages = list()
@@ -580,7 +774,7 @@ class JavaApiManager:
                 response_fix_message = OrdListNotification()
             elif message_type == ORSMessageType.OrderListWaveNotification.value:
                 response_fix_message = OrderListWaveNotification()
-            elif message_type == ORSMessageType.PositionReport.value:
+            elif message_type == PKSMessageType.PositionReport.value:
                 response_fix_message = PositionReport()
             elif message_type == ESMessageType.NewOrderReply.value:
                 response_fix_message = NewOrderReply()
@@ -677,7 +871,13 @@ class JavaApiManager:
             elif message_type == CSMessageType.ManualMatchExecsToParentOrderReply.value:
                 response_fix_message = ManualMatchExecsToParentOrderReply()
             elif message_type == AQSMessageType.FrontendQueryReply.value:
-                response_fix_message = Order_FrontendQueryReply()
+                response_fix_message = FrontendQueryReply()
+            elif message_type == ORSMessageType.OrderListWaveCancelReply.value:
+                response_fix_message = OrderListWaveCancelReply()
+            if message_type == ORSMessageType.FixNewOrderReply.value:
+                response_fix_message = FixNewOrderReply()
+            elif message_type == ORSMessageType.PositionTransferCancelReply.value:
+                response_fix_message = PositionTransferCancelReply()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
@@ -703,7 +903,7 @@ class JavaApiManager:
                 self.verifier.compare_values("Compare: " + k, v, actual_values[k],
                                              verification_method)
         except KeyError:
-            raise KeyError(f"Element: {k} not found")
+            raise ValueError('\033[91m' + f"Element: {k} not found" + '\033[0m')
         self.verifier.verify()
         self.verifier = Verifier(self.__case_id)
 
@@ -726,7 +926,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
 
     def get_first_message(self, message_type, filter_value=None) -> JavaApiMessage:
         for res in self.response:
@@ -735,7 +935,7 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
 
     def get_last_message_by_multiple_filter(self, message_type, filter_values: list) -> JavaApiMessage:
         self.response.reverse()
@@ -750,4 +950,8 @@ class JavaApiManager:
                     continue
                 self.response.reverse()
                 return res
-        raise KeyError(f"{message_type} not found")
+        raise ValueError('\033[91m' + f"{message_type} not found" + '\033[0m')
+
+
+class ExtractAllMessages(Enum):
+    All = 'All'

@@ -23,6 +23,7 @@ class FIXMessageType(Enum):
     QuoteCancel = "QuoteCancel"
     BusinessMessageReject = "BusinessMessageReject"
     Reject = 'Reject'
+    Allocation = "Allocation"
 
 
 class ORSMessageType(Enum):
@@ -54,7 +55,6 @@ class ORSMessageType(Enum):
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
     OrderListWaveNotification = 'Order_OrderListWaveNotification'
-    PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
     OrderModificationReply = 'Order_OrderModificationReply'
     OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
@@ -77,6 +77,8 @@ class ORSMessageType(Enum):
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    PositionTransferCancelRequest = "Order_PositionTransferCancelRequest"
+    PositionTransferCancelReply = "Order_PositionTransferCancelReply"
     PositionTransferReport = 'Order_PositionTransferReport'
     ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
@@ -118,6 +120,12 @@ class ORSMessageType(Enum):
     OrdRejectedNotif = 'Order_OrdRejectedNotif'
     FixOrderModificationRequest = "Fix_OrderModificationRequest"
     FixOrderCancelRequest = "Fix_OrderCancelRequest"
+    OrderListWaveNotificationBlock = "OrderListWaveNotificationBlock"
+    OrderListWaveCancelRequest = "Order_OrderListWaveCancelRequest"
+    OrderListWaveCancelReply = 'Order_OrderListWaveCancelReply'
+    NewOrderMultiLeg = "Order_NewOrderMultiLeg"
+    FixNewOrderReply = "Fix_NewOrderReply"
+    FixAllocationInstruction = 'Fix_AllocationInstruction'
 
 
 class TradingRestApiMessageType(Enum):
@@ -173,6 +181,7 @@ class PKSMessageType(Enum):
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
+    PositionReport = "Order_PositionReport"
 
 
 class QSMessageType(Enum):
