@@ -509,3 +509,37 @@ class RBCustomTags(Enum):
         CustomTag_26020='*',
         CustomTag_26021='*'
     )
+
+
+class TriggerType(Enum):
+    PartialExecution='1'
+    SpecifiedTradingSession='2'
+    NextAuction='3'
+    PriceMovement='4'
+
+
+class TriggerAction(Enum):
+    Activate='1'
+    Modify='2'
+    Cancel='3'
+
+
+class TriggerPriceType(Enum):
+    BestOffer='1'
+    LastTrade='2'
+    BestBid='3'
+    BestBidOrLastTrade='4'
+    BestOfferOrLastTrade='5'
+    BestMid='6'
+
+
+class TriggerPriceTypeScope(Enum):
+    NoNe='0'
+    Local='1'
+    National='2'
+    Global='3'
+
+
+class TriggerPriceDirection(Enum):
+    PriceGoesUp='U'
+    PriceGoesDown='D'
