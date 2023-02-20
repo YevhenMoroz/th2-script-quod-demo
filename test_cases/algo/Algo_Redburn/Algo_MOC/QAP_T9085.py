@@ -77,10 +77,11 @@ class QAP_T9085(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -90,8 +91,8 @@ class QAP_T9085(TestCase):
 
         # region venue param
         self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_19")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
+        self.account = self.data_set.get_account_by_name("account_3")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
         # region Key parameters
@@ -101,8 +102,8 @@ class QAP_T9085(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
@@ -243,8 +244,8 @@ class QAP_T9085(TestCase):
         case_id_2 = bca.create_event("Check that algo order is canceled", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).change_parameters(dict(TimeInForce=self.time_in_force_ATC, Text=self.reached_uncross, LastMkt=self.mic)).remove_parameter('OrigClOrdID')
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_eliminate)
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.time_in_force_ATC, Text=self.reached_uncross))
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

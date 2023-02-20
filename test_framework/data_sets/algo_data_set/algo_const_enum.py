@@ -290,7 +290,21 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_37 = dict(
+        Symbol='QUODTESTQA08',
+        SecurityID='TESTQA08',
+        SecurityIDSource='8',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
 
+    instrument_38 = dict(
+        Symbol='NEU',
+        SecurityID='BE0003680916',
+        SecurityIDSource='4',
+        SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
 
 
 class AlgoVenues(Enum):
@@ -329,6 +343,7 @@ class AlgoAccounts(Enum):
     account_18 = "XAMS_CLIENT2"
     account_19 = "XAMS_CLIENT3"
     account_20 = "DKP1_CLIENT2"
+    account_21 = "XBRU_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -394,6 +409,7 @@ class AlgoMic(Enum):
     mic_44 = "QDV1"   # QDVENUE1
     mic_45 = "QDV2"   # QDVENUE2
     mic_46 = "QDV3"   # QDVENUE3
+    mic_47 = "XBRU"   # Euronext Brussel
 
 
 class AlgoListingId(Enum):
@@ -454,6 +470,9 @@ class AlgoListingId(Enum):
     listing_53 = "100000001"       # QLVENUE1 for QTINST00
     listing_54 = "100000002"       # QLVENUE2 for QTINST00
     listing_55 = "200000001"       # QLVENUE3 for QTINST00
+    listing_56 = "2025020511"       # Euronext Paris for QUODTESTQA08
+    listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
+    listing_58 = "383"       # Brussel for BE0003680916
 
 
 class AlgoCurrency(Enum):
@@ -588,3 +607,4 @@ class AlgoPreFilter(Enum):
 class AlgoTradingPhaseProfile(Enum):
     trading_phase_profile1 = "PreClose Auction Phase (QA)"
     trading_phase_profile2 = "Auction Phase QA2"
+    trading_phase_profile3 = "Brussel Phase"
