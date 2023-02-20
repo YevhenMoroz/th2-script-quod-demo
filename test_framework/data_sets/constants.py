@@ -19,6 +19,7 @@ class Connectivity(Enum):
     Ganymede_316_Sell_Side_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_316_web_admin_site = 'rest_wa316ganymede'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
+    Ganymede_317_ss_42 = 'fix-sell-317-standard42'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
@@ -44,6 +45,7 @@ class Connectivity(Enum):
     Ganymede_317_ja_user2 = '317_java_api_user2'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Ganymede_317_ors_report = "log317-ors-report"
+    Ganymede_317_Feed_Handler = 'fix-fh-317-ganymede'
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
@@ -195,8 +197,10 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_7 = "QA_Auto_MPDark7"
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
-    qa_mpdark_12 = "QA_Auto_MPDark12"
     qa_mpdark_13 = "QA_Auto_MPDark13"
+    qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
+    qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
+    qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -401,6 +405,11 @@ class DataBaseEnv(Enum):
     USER_309 = "quod309prd"
     PASS_309 = "quod309prd"
     DB_TYPE_309 = "oracle"
+    # 316 mongo
+    HOST_316 = "10.0.22.35"
+    PORT_316 = 27316
+    NAME_316 = "filteredQuoteDB"
+    DB_TYPE_316 = "mongo"
 
 
 class FreeNotesReject(Enum):
@@ -408,12 +417,16 @@ class FreeNotesReject(Enum):
     MissLimitPriceReference = "missing LimitPriceReference"
     MissNavigatorLimitPriceReference = "missing NavigatorLimitPriceReference"
     MissNavigatorLimitPrice = "missing Limit price for Navigator"
+    MissPP1Reference = "missing PricePoint1Reference"
+    MissPP2Reference = "missing PricePoint2Reference"
     InvalidMaxParticipation = "invalid value for MaxParticipation"
     InvalidPercentageOfVolume = "invalid value for percentage of volume"
     InvalidPricePoint1Participation = "invalid value for PricePoint1Participation"
     InvalidPricePoint2Participation = "invalid value for PricePoint2Participation"
     ReachedMaximumNumberOfAllowedChildOrders = "reached maximum number of allowed child orders"
-    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint2Participation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenMaxParticipation = "PricePoint2Participation must be equal or higher than MaxParticipation"
+    PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
+    ReachedUncross = "reached uncross"
 
 
 class TradingPhases(Enum):

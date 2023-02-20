@@ -325,6 +325,7 @@ class JavaApiFields(Enum):
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
 
+    ManualOrderCrossReplyBlock = "ManualOrderCrossReplyBlock"
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'

@@ -7,7 +7,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.win_gui_wrappers.base_window import BaseWindow
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,7 +23,6 @@ class QAP_T8194(TestCase):
         self.wash_book = self.data_set.get_washbook_account_by_name("washbook_account_2")
         self.recipient = self.data_set.get_recipient_by_name("recipient_user_1")
         self.order_submit = OrderSubmitOMS(data_set).set_default_care_limit(recipient=self.recipient, desk="1")
-        self.base_window = BaseWindow(self.test_id, session_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -35,6 +33,6 @@ class QAP_T8194(TestCase):
             if response.get_message_type() == ORSMessageType.OrdNotification.value:
                 res = response
         act_wash_book = res.get_parameter("OrdNotificationBlock")["WashBookAccountID"]
-        self.base_window.compare_values({"WashBookAccountID": self.wash_book}, {"WashBookAccountID": act_wash_book},
+        self.ja_manager.compare_values({"WashBookAccountID": self.wash_book}, {"WashBookAccountID": act_wash_book},
                                         "check WashBookAccountID")
         # endregion

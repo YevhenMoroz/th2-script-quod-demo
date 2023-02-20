@@ -7,13 +7,14 @@ class DataBaseEnvironment(BaseEnvironment):
     environment_instances = {}
 
     def __init__(self, environment_type: str = None, db_host: str = None, db_name: str = None, db_user: str = None,
-                 db_pass: str = None, db_type: str = None):
+                 db_pass: str = None, db_type: str = None, db_port: str = None):
         self.environment_type = environment_type
         self.db_host = db_host
         self.db_name = db_name
         self.db_user = db_user
         self.db_pass = db_pass
         self.db_type = db_type
+        self.db_port = db_port
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -29,6 +30,17 @@ class DataBaseEnvironment(BaseEnvironment):
                 )
                 DataBaseEnvironment.environment_instances.update({EnvironmentType.quod317_data_base.value: site_environment})
             return DataBaseEnvironment.environment_instances[EnvironmentType.quod317_data_base.value]
+        elif env.value == EnvironmentType.quod316_data_base_mongo.value:
+            if EnvironmentType.quod316_data_base_mongo.value not in DataBaseEnvironment.environment_instances.keys():
+                site_environment = DataBaseEnvironment(
+                    environment_type=EnvironmentType.quod317_fe.value,
+                    db_host=DataBaseEnv.HOST_316.value,
+                    db_name=DataBaseEnv.NAME_316.value,
+                    db_port=DataBaseEnv.PORT_316.value,
+                    db_type=DataBaseEnv.DB_TYPE_316.value
+                )
+                DataBaseEnvironment.environment_instances.update({EnvironmentType.quod316_data_base_mongo.value: site_environment})
+            return DataBaseEnvironment.environment_instances[EnvironmentType.quod316_data_base_mongo.value]
         else:
             raise Exception('No such environment')
 

@@ -152,7 +152,7 @@ class QAP_T4876(TestCase):
 
         self.multilisting_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.multilisting_order)
         self.multilisting_order_replace_params.remove_parameter('TargetStrategy')
-        self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order_replace_params, case_id_2)
+        self.fix_manager_sell.send_message(self.multilisting_order_replace_params)
 
         time.sleep(1)
 

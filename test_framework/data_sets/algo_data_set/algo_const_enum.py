@@ -282,7 +282,29 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_36 = dict(
+        Symbol='QTINST00',
+        SecurityID='QTINST00',
+        SecurityIDSource='8',
+        SecurityExchange='QLV1',
+        SecurityType='CS'
+    )
 
+    instrument_37 = dict(
+        Symbol='QUODTESTQA08',
+        SecurityID='TESTQA08',
+        SecurityIDSource='8',
+        SecurityExchange='XPAR',
+        SecurityType='CS'
+    )
+
+    instrument_38 = dict(
+        Symbol='NEU',
+        SecurityID='BE0003680916',
+        SecurityIDSource='4',
+        SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
 
 
 class AlgoVenues(Enum):
@@ -321,6 +343,7 @@ class AlgoAccounts(Enum):
     account_18 = "XAMS_CLIENT2"
     account_19 = "XAMS_CLIENT3"
     account_20 = "DKP1_CLIENT2"
+    account_21 = "XBRU_CLIENT3"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -380,6 +403,13 @@ class AlgoMic(Enum):
     mic_38 = "XLUX"   # LUXEMBURG
     mic_39 = "XLIS"   # Euronext Lisbon
     mic_40 = "XDUB"   # DUBLIN
+    mic_41 = "QLV1"   # QLVENUE1
+    mic_42 = "QLV2"   # QLVENUE2
+    mic_43 = "QLV3"   # QLVENUE3
+    mic_44 = "QDV1"   # QDVENUE1
+    mic_45 = "QDV2"   # QDVENUE2
+    mic_46 = "QDV3"   # QDVENUE3
+    mic_47 = "XBRU"   # Euronext Brussel
 
 
 class AlgoListingId(Enum):
@@ -395,9 +425,9 @@ class AlgoListingId(Enum):
     listing_10 = "525020504" # QUODLIT5 for QUODTESTQA01
     listing_11 = "625020503" # QUODLIT6 for QUODTESTQA02
     listing_12 = "625020504" # QUODLIT7 for QUODTESTQA02
-    listing_13 = "125917202" # JANESTREET for FR0000031577
+    listing_13 = "422220968" # JANESTREET for FR0000031577
     listing_14 = "422225144" # CITADEL for FR0000031577
-    listing_15 = "897588209" # TRQX for FR0010411884
+    listing_15 = "4418886" # TRQX for FR0010411884
     listing_16 = "116017192"  # QUODLIT3 for QUODTESTQA00
     listing_17 = "825020507"  # QUODLIT8 for QUODTESTQA03
     listing_18 = "825020508"  # QUODLIT9 for QUODTESTQA03
@@ -405,7 +435,7 @@ class AlgoListingId(Enum):
     listing_20 = "925020507"  # QUODLIT8 for QUODTESTQA04
     listing_21 = "925020508"  # QUODLIT9 for QUODTESTQA04
     listing_22 = "925020509"  # QUODLIT10 for QUODTESTQA04
-    listing_23 = "897587663"  # TRQX for FR0000133308
+    listing_23 = "1866442"  # TRQX for FR0000133308
     listing_24 = "1803699"    # Euronext Paris for FR0000133308
     listing_25 = "1872430"    # BATS UK for FR0000133308
     listing_26 = "768319009"    # CHIX UK for FR0000133308
@@ -416,7 +446,7 @@ class AlgoListingId(Enum):
     listing_31 = "1863318"       # CHIX for IE00B5BMR087
     listing_32 = "1874187"       # BATS for FR0010411884
     listing_33 = "1863556"       # CHIX for FR0010411884
-    listing_34 = "125911519"       # JANESTREET for FR0010411884
+    listing_34 = "422223446"       # JANESTREET for FR0010411884
     listing_35 = "1803739"       # Euronext Paris for FR0000121220
     listing_36 = "555"       # Euronext Paris for BUI / FR0000062788
     listing_37 = "48"       # Euronext Amsterdam for AXS
@@ -425,18 +455,25 @@ class AlgoListingId(Enum):
     listing_40 = "1825020508"       # QUODLIT1 for QUODTESTQA07
     listing_41 = "1825020510"       # XETRA for DE0005489561
     listing_42 = "1825020511"       # FRANKFURT for DE0005489561
-    listing_43 = "125918312"       # JANESTREET for DE0005489561
-    listing_44 = "897585784"       # TRQX for DE0005489561
+    listing_43 = "449820167"       # JANESTREET for DE0005489561
+    listing_44 = "4417583"       # TRQX for DE0005489561
     listing_45 = "1925020510"      # Euronext Brussels for BE0020575115
-    listing_46 = "125921468"       # JANESTREET for BE0020575115
+    listing_46 = "451621433"       # JANESTREET for BE0020575115
     listing_47 = "1859667"         # CHIX for BE0020575115
     listing_48 = "1872056"         # BATS for BE0020575115
-    listing_49 = "897585397"       # TRQX for BE0020575115
+    listing_49 = "4417383"       # TRQX for BE0020575115
     listing_50 = "982"       # Euronext Paris for FR0000044448
     listing_51 = "1925020511"       # XETRA for GB00B03MLX29
     listing_52 = "1925020512"       # LSE for GB00B03MLX29
     listing_qdl_1 = "9400000036" # QUODLIT1 for QUODTESTQA00 @ Columbia
     listing_qdl_2 = "9400000038" # QUODLIT2 for QUODTESTQA00 @ Columbia
+    listing_53 = "100000001"       # QLVENUE1 for QTINST00
+    listing_54 = "100000002"       # QLVENUE2 for QTINST00
+    listing_55 = "200000001"       # QLVENUE3 for QTINST00
+    listing_56 = "2025020511"       # Euronext Paris for QUODTESTQA08
+    listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
+    listing_58 = "383"       # Brussel for BE0003680916
+
 
 class AlgoCurrency(Enum):
     currency_1 = "EUR"
@@ -570,3 +607,4 @@ class AlgoPreFilter(Enum):
 class AlgoTradingPhaseProfile(Enum):
     trading_phase_profile1 = "PreClose Auction Phase (QA)"
     trading_phase_profile2 = "Auction Phase QA2"
+    trading_phase_profile3 = "Brussel Phase"

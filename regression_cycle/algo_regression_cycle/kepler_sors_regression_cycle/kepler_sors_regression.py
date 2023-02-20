@@ -1,7 +1,7 @@
 from xml.etree import ElementTree
 from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression, \
     kepler_sors_mpdark_other_regression, kepler_sors_multiple_emulation_regression, kepler_iceberg_check_party_info, kepler_iceberg_multiday_phase, kepler_custom_tags, kepler_synthetic_tif, kepler_multiple_emulation_additional, kepler_multilisting, kepler_iceberg_modify, \
-    kepler_instrument_identification, kepler_mic_identification
+    kepler_instrument_identification, kepler_mic_identification, kepler_sors_mpdark_round_robin
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -51,6 +51,8 @@ def test_run():
         kepler_instrument_identification.test_run(parent_id=report_id, version=version)
         # if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
         kepler_mic_identification.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
+        kepler_sors_mpdark_round_robin.test_run(parent_id=report_id, version=version)
         # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
         kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
 
