@@ -142,13 +142,14 @@ class ClientsValuesSubWizard(CommonPage):
         self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, "")
 
     def set_external_allocation_matching_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
+        self.set_multiselect_field_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
 
     def get_external_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
 
     def is_external_allocation_matching_service_field_enable(self):
-        return self.is_field_enabled(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
+        return 'disabled' not in self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)\
+            .get_attribute('class')
 
     def click_on_manage_external_allocation_matching_service(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH).click()

@@ -1,5 +1,5 @@
 class ClientsConstants:
-    CLIENTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Clients ']"
+    CLIENTS_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Clients"]'
     WIZARD_PAGE_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
@@ -68,15 +68,15 @@ class ClientsConstants:
     VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE = '//*[@id="extGiveUpService"]'
     VALUES_TAB_GIVE_UP_MATCHING_ID = '//*[@id="giveUpMatchingID"]'
     VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON = '//*[@id="extGiveUpService"]//ancestor::div[@class="row"]//button'
-    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="actGrpExtConfirmService"]'
-    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
+    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//div[@id="External Allocation Matching Service"]'
+    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@id="actGrpExtConfirmService"]//following::button[1]'
     VALUES_TAB_DEFAULT_ACCOUNT_XPATH = '//*[@id="defaultAccount"]'
     VALUES_TAB_ORDER_ATTRIBUTE = '//*[@id="orderAttributeType"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
     ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][text()="User Manager"]'
-    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//div[@id="Desks"]'
     ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
     ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//*[normalize-space()="Assignments"]//..//*[@class="linked-entities-wrapper"]//*[normalize-space()="{}"]'

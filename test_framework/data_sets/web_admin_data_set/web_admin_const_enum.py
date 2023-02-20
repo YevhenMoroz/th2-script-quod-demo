@@ -46,6 +46,7 @@ class WebAdminLocations(Enum):
     location_1 = "EAST-LOCATION-B"
     location_2 = "WEST-LOCATION-B"
     location_3 = "EAST-LOCATION-A"
+    location_4 = "INDIA"
 
 
 class WebAdminZones(Enum):
@@ -73,7 +74,7 @@ class WebAdminVenues(Enum):
     venue_1 = "AMEX"
     venue_2 = "ASE"
     venue_3 = "BRU"
-    venue_4 = "AMSTERDAM"
+    venue_4 = "BSE"
     venue_5 = "BATS"
     venue_6 = "ADX"
     venue_7 = "Equiduct"
@@ -185,7 +186,7 @@ class WebAdminInstrType(Enum):
 class WebAdminPreferredVenue(Enum):
     preferred_venue_1 = "AMEX"
     preferred_venue_2 = "ADX"
-    preferred_venue_3 = "BAueTS"
+    preferred_venue_3 = "ASE"
 
 
 class WebAdminListingGroup(Enum):
@@ -233,6 +234,8 @@ class WebAdminRouteAccountName(Enum):
 class WebAdminRoute(Enum):
     route_1 = "JP Morgan"
     route_2 = "DB RFQ"
+    route_3 = "BSE"
+    route_4 = "ESDEMO"
 
 
 class WebAdminClearingAccountType(Enum):

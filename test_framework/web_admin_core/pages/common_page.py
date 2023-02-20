@@ -81,6 +81,8 @@ class CommonPage:
             action.perform()
             value_from_element = pyperclip.paste()
             return value_from_element
+        elif "multiselect" in self.find_by_xpath(xpath).get_attribute("class"):
+            return self.find_by_xpath(xpath + CommonConstants.MULTISELECT_ENTITIES).text
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
@@ -122,6 +124,22 @@ class CommonPage:
         time.sleep(1)
         self.find_by_xpath(CommonConstants.COMBOBOX_OPTION_PATTERN_XPATH.format(value)).click()
 
+    def set_multiselect_field_value(self, field_xpath: str, values: str or list or int):
+        """
+        Method was created for setting checkbox list inside field type of multiselect,
+        concatenates the xpath to the checkbox through its values
+        """
+        if not self.is_element_present(CommonConstants.MULTISELECT_FORM_LOOK_UP):
+            self.find_by_xpath(field_xpath).click()
+        time.sleep(1)
+        if type(values) != list:
+            values = values.split(",")
+        for i in values:
+            self.set_text_by_xpath(CommonConstants.MULTISELECT_FORM_LOOK_UP, i)
+            time.sleep(0.2)
+            self.find_by_xpath(CommonConstants.MULTISELECT_ITEM_XPATH.format(i)).click()
+        self.find_by_xpath(field_xpath).click()
+
     def select_value_from_dropdown_list(self, xpath: str, value: str):
         """
         Method was created for select value from dropdown list
@@ -129,7 +147,7 @@ class CommonPage:
         """
         self.find_by_xpath(xpath).click()
         time.sleep(1)
-        self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value)).click()
+        self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value, value)).click()
 
     def is_checkbox_selected(self, checkbox_xpath: str):
         if "custom-checkbox" not in self.find_by_xpath(checkbox_xpath).get_attribute("class"):
@@ -180,10 +198,7 @@ class CommonPage:
         return os.path.join(download_directory, files.pop(0))
 
     def is_field_enabled(self, xpath):
-        if self.find_by_xpath(xpath).is_enabled():
-            return True
-        else:
-            return False
+        return self.find_by_xpath(xpath).is_enabled()
 
     def find_element_in_shadow_root(self, css_path):
         '''
@@ -275,3 +290,8 @@ class CommonPage:
         items = self.find_elements_by_xpath(xpath)
         items_list = [_.text.strip() for _ in items]
         return items_list
+
+    def get_all_checkboxes_statuses_from_table_column(self, xpath) -> list:
+        checkboxes = self.find_elements_by_xpath(xpath)
+        statuses = [_.is_selected() for _ in checkboxes]
+        return statuses
