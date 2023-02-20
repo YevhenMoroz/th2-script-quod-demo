@@ -37,7 +37,7 @@ class FixQuoteRequestFX(JavaApiMessage):
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                         "OrdType": "PreviouslyQuoted",
                         "OrdQty": "24456778",
-                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
+                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
                         "LiveQuoteID": bca.client_orderid(9),
                     }]
@@ -69,7 +69,7 @@ class FixQuoteRequestFX(JavaApiMessage):
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                         "OrdType": "PreviouslyQuoted",
                         "OrdQty": "1000000",
-                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
+                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
                         "LiveQuoteID": bca.client_orderid(9),
                     }]
@@ -116,7 +116,7 @@ class FixQuoteRequestFX(JavaApiMessage):
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                         "OrdType": "PreviouslyQuoted",
                         "OrdQty": "1000000",
-                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
+                        "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
                         "LiveQuoteID": bca.client_orderid(9),
                     }]
