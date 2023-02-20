@@ -181,6 +181,44 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         super().change_parameters(base_parameters)
         return self
 
+    def set_market_data_incr_refresh_intraday_auc(self) -> FixMessageMarketDataIncrementalRefresh:
+        base_parameters = {
+            'MDReqID': '555',
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': 'Q',
+                    'MDEntryPx': '40',
+                    'MDEntrySize': '1000',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                    'TradingSessionSubID': '6',
+                    'SecurityTradingStatus': '6',
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_market_data_incr_refresh_open_auc(self) -> FixMessageMarketDataIncrementalRefresh:
+        base_parameters = {
+            'MDReqID': '555',
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': 'Q',
+                    'MDEntryPx': '40',
+                    'MDEntrySize': '1000',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                    'TradingSessionSubID': '2',
+                    'SecurityTradingStatus': '3',
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_market_data_incr_refresh_low_px(self) -> FixMessageMarketDataIncrementalRefresh:
         base_parameters = {
             'MDReqID': '2754',
