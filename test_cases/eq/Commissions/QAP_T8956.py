@@ -192,3 +192,8 @@ class QAP_T8956(TestCase):
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(trade_rule)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
