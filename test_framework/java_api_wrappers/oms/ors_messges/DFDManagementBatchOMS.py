@@ -23,7 +23,7 @@ class DFDManagementBatchOMS(DFDManagementBatch):
         self.update_fields_in_component('DFDManagementBatchBlock',
                                         {"DFDOrderList": {"DFDOrderBlock":
                                                               [{"OrdID": ord_id}]
-                                                          }})
+                                                          }, "SetDoneForDay": "Y"})
         return self
 
     def set_default_uncomplete(self, ord_id):
@@ -41,7 +41,7 @@ class DFDManagementBatchOMS(DFDManagementBatch):
         self.update_fields_in_component('DFDManagementBatchBlock',
                                         {"DFDOrderList": {"DFDOrderBlock":
                                                               list_of_order_id_in_message
-                                                          }})
+                                                          }, "SetDoneForDay": "Y"})
         return self
 
     def set_notify_DFD(self, ord_id):

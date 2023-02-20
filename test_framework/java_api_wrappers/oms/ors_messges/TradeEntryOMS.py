@@ -48,3 +48,9 @@ class TradeEntryOMS(TradeEntryRequest):
                                          'OrdID': order_id,
                                          "ExecPrice": price, 'ExecQty': qty,
                                          'TradeEntryTransType': 'CAL'})
+
+    def set_default_replace_execution(self, order_id, exec_id, exec_price="10", exec_qty="100"):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('TradeEntryRequestBlock',
+                                        {"OrdID": order_id, "ExecPrice": exec_price, 'ExecQty': exec_qty,
+                                         'TradeEntryTransType': 'REP', 'ExecRefID': exec_id})
