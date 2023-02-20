@@ -313,6 +313,8 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp = 12
     perc_rounding_to_whole_number = 800020
     abs_amt_gbp_small = 800021
+    amt_plus_client = 600020
+    sixbps = 800024
 
 
 class OMSFeeType(Enum):
