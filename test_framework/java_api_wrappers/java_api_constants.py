@@ -9,6 +9,7 @@ class ExecutionReportConst(Enum):
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
     ExecType_ACT = 'ACT'
+    ExecType_POS = 'POS'
     PostTradeExecStatus_NAL = 'NAL'
 
 
@@ -231,6 +232,10 @@ class JavaApiFields(Enum):
     GatingRuleID = 'GatingRuleID'
     GatingRuleCondName = 'GatingRuleCondName'
     ParentOrdrList = 'ParentOrdrList'
+    RequestForPositionsAckBlock = 'RequestForPositionsAckBlock'
+    InstrID = 'InstrID'
+    CumBuyQty = 'CumBuyQty'
+    CumSellQty = 'CumSellQty'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -374,3 +379,13 @@ class OrderBagConst(Enum):
 class CDResponsesConst(Enum):
     CDRequestType_MOD = 'MOD'
     CDRequestType_CAN = 'CAN'
+
+
+# enums for Position
+
+class SubscriptionRequestTypes(Enum):
+    SubscriptionRequestType_SUB = 'SUB'
+
+
+class PosReqTypes(Enum):
+    PosReqType_POS = 'POS'

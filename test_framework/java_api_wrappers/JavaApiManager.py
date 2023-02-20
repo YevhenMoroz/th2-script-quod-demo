@@ -1,10 +1,8 @@
 import ast
-import json
 import logging
 import re
 from enum import Enum
 
-from pandas.core.dtypes.common import classes
 from th2_grpc_act_java_api_quod.act_java_api_quod_pb2 import ActJavaSubmitMessageRequest, ActJavaSubmitMessageResponses
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
@@ -81,6 +79,7 @@ from test_framework.java_api_wrappers.ors_messages.TradeEntryBatchReply import T
 from test_framework.java_api_wrappers.ors_messages.TradeEntryNotif import Order_TradeEntryNotif
 from test_framework.java_api_wrappers.ors_messages.TradeEntryReply import TradeEntryReply
 from test_framework.java_api_wrappers.ors_messages.UnMatchReply import UnMatchReply
+from test_framework.java_api_wrappers.pks_messages.RequestForPositionsAck import RequestForPositionsAck
 
 
 class JavaApiManager:
@@ -486,6 +485,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == PKSMessageType.RequestForPositions.value:
+            response = self.act.submitRequestForPosition(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response_v2(response)
@@ -640,7 +645,8 @@ class JavaApiManager:
                 response_fix_message = FixNewOrderReply()
             elif message_type == ORSMessageType.PositionTransferCancelReply.value:
                 response_fix_message = PositionTransferCancelReply()
-
+            elif message_type == PKSMessageType.RequestForPositionsAck.value:
+                response_fix_message = RequestForPositionsAck()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
