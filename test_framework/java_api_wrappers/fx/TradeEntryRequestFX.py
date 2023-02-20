@@ -17,7 +17,7 @@ class TradeEntryRequestFX(JavaApiMessage):
             "REPLY_SUBJECT": "QUOD.FE.ORS",
             "TradeEntryRequestBlock": {
                 "ExecPrice": "1.2",
-                "ExecQty": "1000000",
+                "ExecQty": "25000000",
                 "TradeEntryTransType": "NEW",
                 "VenueExecID": "Test123",
                 "LastMkt": "XQFX",
@@ -25,8 +25,9 @@ class TradeEntryRequestFX(JavaApiMessage):
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
                 "AccountGroupID": "CLIENT_TEST_EXT",
-                # "ListingID": "506403761", # EUR/USD
-                "ListingID": "506404433", # GBP/USD
+                "ListingID": "506403761", # EUR/USD
+                # "ListingID": "506404433", # GBP/USD
+                # "ListingID": "506409971", # USD/PHP
                 "SettlCurrFxRate": "0",
                 "OrdrMiscBlock": {
                     "OrdrMisc2": "test"
