@@ -38,12 +38,6 @@ class QAP_T10277(TestCase):
         self.client_venue = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
         self.rule_manager = RuleManager(Simulators.equity)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
