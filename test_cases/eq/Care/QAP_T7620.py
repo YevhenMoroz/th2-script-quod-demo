@@ -1,24 +1,33 @@
 import logging
 import time
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts, \
-    DiscloseExec, TradeBookColumns, SecondLevelTabs
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from test_framework.win_gui_wrappers.oms.oms_trades_book import OMSTradesBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst, \
+    SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+from test_framework.java_api_wrappers.ors_messages.OrderActionRequest import OrderActionRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
+
+def _get_fix_message(parameter: dict, responses):
+    for i in range(len(responses)):
+        for j in parameter.keys():
+            if responses[i].get_parameters()[j] == parameter[j]:
+                return responses[i].get_parameters()
 
 
 class QAP_T7620(TestCase):
@@ -29,96 +38,125 @@ class QAP_T7620(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.qty = "30000"
-        self.price = "5"
-        self.price_for_second_exec_sum = "20"
-        self.first_split_qty = "20000"
-        self.second_split_qty = "10000"
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
-        self.fix_message.change_parameter("Price", self.price)
-        self.fix_message.change_parameter("Side", "2")
-        self.fix_execution_message = FixMessageExecutionReportOMS(self.data_set).set_default_calculated(
-            self.fix_message)
-        self.trade_book = OMSTradesBook(self.test_id, self.session_id)
         self.rule_manager = RuleManager(Simulators.equity)
         self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.exec_destination = self.data_set.get_mic_by_name('mic_1')
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
+        self.account = self.fix_message.get_parameter('Account')
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
+        self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api, self.test_id)
+        self.order_action_request = OrderActionRequest()
+        self.order_submit_request = OrderSubmitOMS(self.data_set)
+        self.trade_entry_request = TradeEntryOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameter("OrderID")
+        # region step 1-2 create CO order
+        order_qty = '30000'
+        order_price = '5'
+        self.fix_message.change_parameters({"Price": order_price,
+                                            'OrderQtyData': {'OrderQty': order_qty},
+                                            "Side": "2"})
+        responses: list = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        order_id = responses[0].get_parameter("OrderID")
+        cl_ord_id = responses[0].get_parameter("ClOrdID")
+        expected_result = {'OrdStatus': '0'}
+        last_response = _get_fix_message(expected_result, responses)
+        self.java_api_manager.compare_values(expected_result, last_response,
+                                             'Checking actually and expected result (step 2)')
         # endregion
-        # region accept order
-        self.client_inbox.accept_order()
-        # endregion
-        # region check order open status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-        # region set manual disclise flag
-        self.order_book.set_disclose_flag_via_order_book("manual")
-        # endregion
-        # region check disclose execution
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.disclose_exec.value: DiscloseExec.manual.value})
-        # endregion
-        # region split order
-        self.__split_order_and_execute(self.first_split_qty)
-        # endregion
-        # region  execution summary order
-        self.order_book.exec_summary(price=self.price, filter_dict={OrderBookColumns.order_id.value: order_id})
-        execid = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-            [OrderBookColumns.exec_id.value], [2], {OrderBookColumns.order_id.value: order_id})
-        print(execid)
-        # endregion
-        # region fix_verifier
-        self.fix_execution_message.change_parameters(
-            {'TradeDate': '*', 'LastMkt': '*', "VenueType": "*", "LastPx": self.price, "AvgPx": "5", "ExecID": execid[0]['ExecID']})
-        self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_message)
-        # endregion
-        # region split order
-        self.__split_order_and_execute(self.second_split_qty)
-        self.order_book.exec_summary(price=self.price_for_second_exec_sum,
-                                     filter_dict={OrderBookColumns.order_id.value: order_id})
-        execid = self.order_book.extract_2lvl_fields(SecondLevelTabs.executions.value,
-                                                     [OrderBookColumns.exec_id.value], [4],
-                                                     {OrderBookColumns.order_id.value: order_id})
-        # endregion
-        # region fix_verifier
-        sec = FixMessageExecutionReportOMS(self.data_set).set_default_calculated(
-            self.fix_message).change_parameters(
-            {'TradeDate': '*', 'LastMkt': '*', "VenueType": "*", "LastPx": self.price_for_second_exec_sum,
-             "AvgPx": "10", "ExecID": execid[0]['ExecID'], "LastQty":self.second_split_qty, "LeavesQty":"0"})
-        self.fix_verifier.check_fix_message_fix_standard(sec, key_parameters=["ExecID", "LastPx", "AvgPx"])
 
-    def __split_order_and_execute(self, qty: str):
+        # region step 3 : Set DiscloseExec = Manual
+        self.order_action_request.set_default([order_id])
+        order_dict = {order_id: order_id}
+        self.java_api_manager.send_message_and_receive_response(self.order_action_request, order_dict)
+        order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, order_id). \
+            get_parameters()[JavaApiFields.OrderNotificationBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.DiscloseExec.value: OrderReplyConst.DiscloseExec_M.value},
+            order_notification, f'Verifying that DiscloseExec = M for {order_id} (step 3)')
+        # endregion
+
+        # region step 4-5: Split CO order
+        listing = self.data_set.get_listing_id_by_name("listing_3")
+        instrument = self.data_set.get_instrument_id_by_name("instrument_2")
+        first_split_qty = '20000'
+        exec_id = self._split_co_order_and_trade(order_id, order_price, self.client_for_rule,
+                                                 listing, instrument, first_split_qty, ['step 4', 'step 5'])
+        # endregion
+
+        # region step 6-7 : Send Execution Summary first time
+        self.trade_entry_request.set_default_execution_summary(order_id, [exec_id], order_price, first_split_qty)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry_request, order_dict)
+
+        # region step 7: Check ExecutionReport (39=B)
+        self._check_fix_message(order_price, order_price)
+        # endregion
+
+        # region step 8-9: Split CO order second time
+        second_split_qty = '10000'
+        exec_id = self._split_co_order_and_trade(order_id, order_price, self.client_for_rule,
+                                                 listing, instrument, second_split_qty, ['step 8', 'step 9'])
+        # endregion
+
+        # region step 10: Send Execution Summary second time
+        second_price = '20'
+        self.trade_entry_request.set_default_execution_summary(order_id, [exec_id], second_price, second_split_qty)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry_request, order_dict)
+        # endregion
+
+        # region step 11: Check ExecutionReport (39=B)
+        avg_px = int(
+            (int(first_split_qty) * int(order_price) + int(second_split_qty) * int(second_price)) / int(order_qty))
+        self._check_fix_message(avg_px, second_price)
+        # endregion
+
+    def _split_co_order_and_trade(self, order_id, price, client_for_rule, listing,
+                                  instrument, qty, step: list):
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                                  self.client_for_rule,
+                                                                                                  client_for_rule,
                                                                                                   self.exec_destination,
-                                                                                                  float(self.price))
+                                                                                                  float(price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                            self.client_for_rule,
+                                                                                            client_for_rule,
                                                                                             self.exec_destination,
-                                                                                            float(self.price),
-                                                                                            int(qty),
-                                                                                            delay=0)
-            # endregion
-            # region split order
-            self.order_ticket.set_order_details(qty=qty)
-            self.order_ticket.split_order()
-        except Exception:
-            logger.setLevel(logging.DEBUG)
-            logging.debug('RULE WORK CORRECTLY. (: NOT :)')
+                                                                                            float(price),
+                                                                                            int(qty), delay=0)
+            self.order_submit_request.set_default_child_dma(order_id)
+            self.order_submit_request.update_fields_in_component('NewOrderSingleBlock', {'Price': price,
+                                                                                         'OrdQty': qty,
+                                                                                         'Side': SubmitRequestConst.Side_Sell.value,
+                                                                                         'InstrID': instrument,
+                                                                                         'ListingList': {'ListingBlock':
+                                                                                             [{
+                                                                                                 'ListingID': listing}]}
+                                                                                         })
+            self.java_api_manager.send_message_and_receive_response(self.order_submit_request)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value}, order_reply,
+                f'Checking that Child DMA order created {step[0]}')
+            execution_report = \
+                self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                    JavaApiFields.ExecutionReportBlock.value]
+            exec_id = execution_report[JavaApiFields.ExecID.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
+                execution_report, f"Verifying that CO order {order_id} filled ({step[1]})")
+            return exec_id
         finally:
-            time.sleep(10)
-            self.rule_manager.remove_rule(trade_rule)
+            time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
+            self.rule_manager.remove_rule(trade_rule)
+
+    def _check_fix_message(self, avg_px, last_px):
+        ignored_fields = ['GatingRuleName', 'GatingRuleCondName', 'trailer', 'header', 'LastMkt', 'TradeDate']
+        self.exec_report.set_default_calculated(self.fix_message)
+        self.exec_report.change_parameters(
+            {"AvgPx": avg_px, "Account": self.account, "Side": "2", "VenueType": "*", 'LastPx': last_px})
+        self.fix_verifier.check_fix_message(self.exec_report, ['ClOrdID', 'OrdStatus', 'ExecType', 'AvgPx'],
+                                            ignored_fields=ignored_fields)

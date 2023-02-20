@@ -1,4 +1,6 @@
+import ast
 import logging
+import re
 
 from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 
@@ -73,7 +75,8 @@ class FixManager:
                     "Send NewOrderSingle",
                     self.__session_alias,
                     case_id,
-                    basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderSingle.value, fix_message.get_parameters(),
+                    basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderSingle.value,
+                                                         fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
         elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
@@ -139,7 +142,7 @@ class FixManager:
         elif fix_message.get_message_type() == FIXMessageType.NewOrderMultiLeg.value:
             response = self.act.placeOrderMultilegFIX(
                 request=basic_custom_actions.convert_to_request(
-                    "Sen New Order Multi Leg",
+                    "Send New Order Multi Leg",
                     self.__session_alias,
                     self.__case_id,
                     basic_custom_actions.message_to_grpc(FIXMessageType.NewOrderMultiLeg.value,
@@ -263,10 +266,54 @@ class FixManager:
                                                                       fix_message.get_parameters(),
                                                                       self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == FIXMessageType.Allocation.value:
+            response = self.act.placeAllocationFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send Allocation",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.Allocation.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
-        return self.parse_response_fix_standard(response)
+        return self.parse_response_v2(response)
+
+    def parse_response_v2(self, response: PlaceMessageRequest) -> list:
+        key_list = response.DESCRIPTOR.fields_by_name.keys()
+        repeated_composite_container = {key: getattr(response, key) for key in key_list}  # remove unwanted keys
+        response_messages_list = str(repeated_composite_container["response_messages_list"])
+        start_sep = "'fields': "
+        end_sep = ",\n 'metadata'"
+        fields_list = []
+        for fields in response_messages_list.split(start_sep):
+            if end_sep in fields:
+                fields = re.sub('\"\n *\"', '', fields)  # in case of result on 2 lines
+                fields_dict = ast.literal_eval(fields.split(end_sep)[0])  # get fields from message and parce it to dict
+                fields_list.append(fields_dict)
+
+        message_types = [
+            message_type.metadata.message_type
+            for message_type in response.response_messages_list
+        ]
+        response_fix_message = None
+        for message_type, fields in zip(message_types, fields_list):
+            if message_type == FIXMessageType.NewOrderSingle.value:
+                response_fix_message = FixMessageNewOrderSingle()
+            elif message_type == FIXMessageType.ExecutionReport.value:
+                response_fix_message = FixMessageExecutionReport()
+            elif message_type == FIXMessageType.ListStatus.value:
+                response_fix_message = FixMessageListStatus()
+            elif message_type == FIXMessageType.OrderCancelReplaceRequest.value:
+                response_fix_message = FixMessageOrderCancelReplaceRequest()
+            elif message_type == FIXMessageType.Reject.value:
+                response_fix_message = FixMessageReject()
+            response_fix_message.change_parameters(fields)
+        response_messages = [response_fix_message]
+        self.response = response_messages
+        return response_messages
 
     def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
         response_messages = list()
@@ -310,9 +357,6 @@ class FixManager:
             elif message_type == FIXMessageType.Reject.value:
                 response_fix_message = FixMessageReject()
             response_fix_message.change_parameters(fields)
-
-
-
 
             response_messages.append(response_fix_message)
         self.response = response_messages

@@ -1,86 +1,134 @@
 import logging
+from datetime import datetime
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, \
-    PreTradeAllocations, SecondLevelTabs, ChildOrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_child_order_book import OMSChildOrderBook
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst, JavaApiFields, SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7368(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.price = '35'
-        self.qty = '100'
-        self.desk = environment.get_list_fe_environment()[0].desk_2
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.client = self.data_set.get_client_by_name('client_pt_1')
-        self.client_all_1 = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        self.client_all_2 = self.data_set.get_account_by_name('client_pt_1_acc_2')
-        self.child_book = OMSChildOrderBook(self.test_id, self.session_id)
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.qty = "100"
+        self.price = "20"
+        self.client = self.data_set.get_client("client_pt_1")  # MOClient
+        self.alloc_account_1 = self.data_set.get_account_by_name("client_pt_1_acc_1")  # MOClient_SA1
+        self.alloc_account_2 = self.data_set.get_account_by_name("client_pt_1_acc_2")  # MOClient_SA2
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.submit_request = OrderSubmitOMS(self.data_set)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create CO order
-        alloc_det = {self.client_all_1: "50", self.client_all_2: '50'}
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty,
-                                            tif=TimeInForce.DAY.value, recipient=self.desk,
-                                            partial_desk=False, alloc_details=alloc_det)
-        self.order_ticket.create_order(self.lookup)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-        # region accept order
-        self.client_inbox.accept_order()
-        # endregion
-        # check 2lvl fields
-        self.__check_alloc_details(PreTradeAllocations.id.value, self.client_all_1, 1, [OrderBookColumns.order_id.value, order_id])
-        self.__check_alloc_details(PreTradeAllocations.qty.value, "50", 1, [OrderBookColumns.order_id.value, order_id])
-        self.__check_alloc_details(PreTradeAllocations.id.value, self.client_all_2, 2, [OrderBookColumns.order_id.value, order_id])
-        self.__check_alloc_details(PreTradeAllocations.qty.value, "50", 2, [OrderBookColumns.order_id.value, order_id])
-        # endregion
-        # region split order
-        self.order_ticket.set_order_details(qty=self.qty)
-        self.order_ticket.split_order()
-        child_id = self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).extract_2lvl_fields(
-            SecondLevelTabs.child_tab.value, [ChildOrderBookColumns.order_id.value], [1])
-        # endregion
-        # region get details from child order
-        self.__check_alloc_details_of_child(ChildOrderBookColumns.id_allocation.value, self.client_all_1, {ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        self.__check_alloc_details_of_child(ChildOrderBookColumns.qty_alloc.value, "50",
-                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']})
-        self.__check_alloc_details_of_child(ChildOrderBookColumns.id_allocation.value, self.client_all_2,
-                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']}, 2)
-        self.__check_alloc_details_of_child(ChildOrderBookColumns.qty_alloc.value, "50",
-                                            {ChildOrderBookColumns.order_id.value: child_id[0]['ID']}, 2)
+        # region Step 1- Create Care order with allocation accounts
+        self.submit_request.set_default_care_limit(
+            recipient=self.environment.get_list_fe_environment()[0].user_1,
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+            role=SubmitRequestConst.USER_ROLE_1.value,
+        )
+        self.submit_request.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {
+                "OrdQty": self.qty,
+                "AccountGroupID": self.client,
+                "Price": self.price,
+                "PreTradeAllocationBlock": {
+                    "PreTradeAllocationList": {
+                        "PreTradeAllocAccountBlock": [
+                            {"AllocAccountID": self.alloc_account_1, "AllocQty": str(int(self.qty) // 2)},
+                            {"AllocAccountID": self.alloc_account_2, "AllocQty": str(int(self.qty) // 2)},
+                        ]
+                    }
+                },
+            },
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        print_message("CREATE CO", responses)
+
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        ord_id = order_reply["OrdID"]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+            order_reply,
+            "Comparing Status of Care order",
+        )
+        alloc_account_block = order_reply["PreTradeAllocationBlock"]["PreTradeAllocationList"][
+            "PreTradeAllocAccountBlock"
+        ]
+        self.__compare_alloc_accounts(alloc_account_block, str(float(self.qty) / 2), "1")
         # endregion
 
-    def __check_alloc_details(self, field:str, expected_res:str, numb_row:int = 1, filter:list=None):
-        all_details = self.order_book.set_filter(filter).extract_2lvl_fields(SecondLevelTabs.pre_trade_alloc_tab.value,
-                                                               [field], [numb_row])
-        self.order_book.compare_values({field: expected_res},
-                                       {field: all_details[0][field]},
-                                       "Check Trade Allocation")
+        # region Step 2 - Splitting Care order and checking allocation accounts for a child order
+        self.submit_request.set_default_child_dma(ord_id)
+        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {"ExecutionPolicy": "DMA"})
+        self.submit_request.remove_parameters(["CDOrdAssignInstructionsBlock"])
+        self.submit_request.remove_fields_from_component("NewOrderSingleBlock", ["BookingType"])
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        print_message("Split Care order", responses)
+        # endregion
 
+        # Comparing values of Child DMA after Split
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            "OrdReplyBlock"
+        ]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+            order_reply,
+            "Step 2 - Comparing Status of Child DMA after Split",
+        )
 
+        alloc_account_block = order_reply["PreTradeAllocationBlock"]["PreTradeAllocationList"][
+            "PreTradeAllocAccountBlock"
+        ]
+        self.__compare_alloc_accounts(alloc_account_block, str(float(self.qty) / 2), "2")
+        # endregion
 
-    def __check_alloc_details_of_child(self, field:str, expected_res:str, filter:dict=None, row:int = 1):
-        all_details =  self.child_book.get_child_order_sub_lvl_value(row,field,
-                                                                               ChildOrderBookColumns.pre_all_tab.value,
-                                                                               filter)
-        self.order_book.compare_values({field: expected_res},
-                                       {field: all_details},
-                                       "Check Trade Allocation")
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    def __compare_alloc_accounts(self, alloc_account_block, alloc_qty: str, step_number: str):
+        if self.alloc_account_1 in alloc_account_block[0].values():
+            self.java_api_manager.compare_values(
+                {"AllocAccountID": self.alloc_account_1, "AllocQty": alloc_qty},
+                alloc_account_block[0],
+                f"Step {step_number} - Checking first allocation account",
+            )
+            self.java_api_manager.compare_values(
+                {"AllocAccountID": self.alloc_account_2, "AllocQty": alloc_qty},
+                alloc_account_block[1],
+                f"Step {step_number} - Checking second allocation account",
+            )
+        else:
+            self.java_api_manager.compare_values(
+                {"AllocAccountID": self.alloc_account_1, "AllocQty": alloc_qty},
+                alloc_account_block[1],
+                f"Step {step_number} - Checking first allocation account",
+            )
+            self.java_api_manager.compare_values(
+                {"AllocAccountID": self.alloc_account_2, "AllocQty": alloc_qty},
+                alloc_account_block[0],
+                f"Step {step_number} - Checking second allocation account",
+            )

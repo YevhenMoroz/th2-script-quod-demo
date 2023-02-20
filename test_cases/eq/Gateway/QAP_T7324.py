@@ -84,7 +84,8 @@ class QAP_T7324(TestCase):
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_filled(self.fix_message)
         execution_report.remove_parameter('SecondaryOrderID')
-        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc']
+        list_of_ignored_fields = ['MiscFeesGrp', 'CommissionData', 'SecurityDesc', 'GatingRuleCondName',
+                                  'GatingRuleName']
         execution_report.remove_parameter('SecondaryExecID'). \
             remove_parameter('SettlCurrency').remove_parameter('LastExecutionPolicy').change_parameters(
             {'VenueType': 'O', 'LastMkt': '*', 'TradeReportingIndicator': '6', 'TradePublishIndicator': '*'})

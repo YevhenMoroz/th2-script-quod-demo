@@ -66,6 +66,7 @@ class QAP_T7227(TestCase):
         # endregion
 
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=["GatingRuleCondName",
+                                                                                           "GatingRuleName"])
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

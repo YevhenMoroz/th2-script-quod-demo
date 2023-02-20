@@ -27,12 +27,11 @@ class QAP_T7036(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.fix_message.update_fields_in_component("Instrument", {"ProductComplex": "SimpleInstrument"})
         venue_client_account = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         ord_id = response[0].get_parameter("OrderID")
         self.fix_message.change_parameters(
             {"Account": venue_client_account, "ClOrdID": ord_id})
-        self.fix_message.remove_fields_from_component("Instrument", ["SecurityDesc"])
-        ignored_fields = ["TransactTime", "Parties", "SettlDate"]
+        self.fix_message.remove_fields_from_component("Instrument", ["SecurityDesc","SecurityExchange"])
+        ignored_fields = ["TransactTime", "Parties", "SettlDate","GatingRuleCondName", "GatingRuleName"]
         self.fix_verifier.check_fix_message_fix_standard(self.fix_message, ["ClOrdID"], ignored_fields=ignored_fields)

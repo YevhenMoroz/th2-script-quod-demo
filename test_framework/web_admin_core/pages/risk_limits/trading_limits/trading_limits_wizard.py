@@ -37,3 +37,6 @@ class TradingLimitsWizard(CommonPage):
             return True
         else:
             return False
+
+    def get_footer_warning_text(self):
+        return self.find_by_xpath(TradingLimitsConstants.FOOTER_WARNING_TEXT_XPATH).text

@@ -6,6 +6,7 @@ from test_framework.configurations.component_configuration import ComponentConfi
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3352 import QAP_T3352
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3404 import QAP_T3404
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3406 import QAP_T3406
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3412 import QAP_T3412
@@ -34,6 +35,8 @@ class RunPositions:
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
 
+            QAP_T3352(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3404(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3406(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

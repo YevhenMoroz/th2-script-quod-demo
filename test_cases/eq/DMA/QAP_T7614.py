@@ -77,6 +77,8 @@ class QAP_T7614(TestCase):
             "Price",
             "SettlDate",
             "OrigClOrdID",
+             "GatingRuleCondName",
+            "GatingRuleName"
         ]
 
         # Depends on Weekend Day settings on Venue

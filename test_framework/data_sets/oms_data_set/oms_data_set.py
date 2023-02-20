@@ -9,7 +9,7 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSCommonVenueSecAccountNamesOfAcc, OMSClearingAccountTypes, VenueAccountIDSource, \
     OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID, OMSISINSecurityAltIDs, \
     OMSSecurityIDSourceForListings, OMS_SymbolForListingsFromWebAdmin, OMSTickSizeProfile, OmsJavaApiInstruments, \
-    OMSCounterPartyIDs_FIX, OMSCounterPartyIDs_JavaAPI
+    OMSCounterPartyIDs_FIX, OMSCounterPartyIDs_JavaAPI, OMSVenueClientAccountName, OMSGatingRuleIDs
 
 
 class OmsDataSet(BaseDataSet):
@@ -73,4 +73,6 @@ class OmsDataSet(BaseDataSet):
     java_api_instruments = OmsJavaApiInstruments
     counterpart_id_fix = OMSCounterPartyIDs_FIX
     counterpart_id_java_api = OMSCounterPartyIDs_JavaAPI
+    venue_client_account_name = OMSVenueClientAccountName
+    gating_rule_ids = OMSGatingRuleIDs
 

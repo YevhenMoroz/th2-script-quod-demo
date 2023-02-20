@@ -102,3 +102,9 @@ class VenuesDefaultSubWizard(CommonPage):
 
     def is_generate_quote_id_selected(self):
         self.is_checkbox_selected(VenuesConstants.DEFAULT_TAB_GENERATE_QUOTE_ID_CHECKBOX_XPATH)
+
+    def set_settlement_time(self, value):
+        self.set_text_by_xpath(VenuesConstants.DEFAULT_TAB_SETTLEMENT_TIME_XPATH, value)
+
+    def get_settlement_time(self):
+        return self.get_text_by_xpath(VenuesConstants.DEFAULT_TAB_SETTLEMENT_TIME_XPATH)

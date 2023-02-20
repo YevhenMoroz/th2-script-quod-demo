@@ -1,18 +1,18 @@
 import logging
 from pathlib import Path
+
+from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7432(TestCase):
@@ -20,48 +20,45 @@ class QAP_T7432(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
+        super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.route = self.data_set.get_route('route_2')
-        self.client_id = self.fix_message.get_parameter('ClOrdID')
-        self.user = environment.get_list_fe_environment()[0].user_1
-        self.route = self.data_set.get_route("route_2")
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.client = self.data_set.get_client_by_name("client_1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create first CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id1 = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order()
+        # region step 1: create CO orders
+        orders_ids = []
+        desk_id = self.environment.get_list_fe_environment()[0].desk_ids[0]
+        for counter in range(3):
+            self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                     desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                     role=SubmitRequestConst.USER_ROLE_1.value)
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {"ClOrdID": bca.client_orderid(9)})
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            orders_ids.append(order_reply[JavaApiFields.OrdID.value])
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply, 'Verifying that CO order created (step 1)')
+
         # endregion
-        # region create first CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id2 = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order()
-        # endregion
-        # region create first CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id3 = response[0].get_parameters()['OrderID']
-        self.client_inbox.accept_order()
-        # endregion
-        # region direct 3 CO
-        self.order_book.direct_child_care_order("100", self.user, self.route, selected_rows=[1,2,3], filter_dict={OrderBookColumns.cl_ord_id.value: self.client_id})
-        # endregion
-        # region check child and order fields
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_second_lvl_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-        # region check child and order fields
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_second_lvl_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
-        # region check child and order fields
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id3]).check_order_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id3]).check_second_lvl_fields_list({OrderBookColumns.sts.value: ExecSts.open.value})
+
+        # region step 2-4: Create Child CO orders via Direct Child Care
+        for order_id in orders_ids:
+            self.order_submit.set_default_direct_child_care(order_id, desk=desk_id)
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
+                JavaApiFields.OrdUpdateBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}, ord_update,
+                f'Check that parent order: {order_id} is open (step 4)')
+            cd_ord_notif = self.java_api_manager.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[JavaApiFields.CDOrdNotifBlock.value]
+            self.java_api_manager.compare_values({JavaApiFields.TransStatus.value:OrderReplyConst.TransStatus_SEN.value}, cd_ord_notif[JavaApiFields.OrdNotificationBlock.value],
+                                                 f'Check that child order of {order_id} has Send status (step 4)')
+
         # endregion

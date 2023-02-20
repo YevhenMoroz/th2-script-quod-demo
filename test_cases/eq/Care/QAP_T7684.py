@@ -1,72 +1,98 @@
 import logging
+from datetime import datetime
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
-from th2_grpc_hand import rhbatch_pb2
-from stubs import Stubs
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from test_framework.win_gui_wrappers.fe_trading_constant import TimeInForce, OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
-from win_gui_modules.utils import close_fe, set_session_id
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
+from test_framework.java_api_wrappers.java_api_constants import OrderReplyConst, JavaApiFields, SubmitRequestConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
+seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T7684(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
+        # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.client = self.data_set.get_client_by_name('client_co_1')
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
-        self.qty = "900"
+        self.qty = "100"
         self.price = "20"
-        self.order_type = "Limit"
-        self.fe_env = environment.get_list_fe_environment()[0]
-        self.session_id2 = set_session_id(self.fe_env.target_server_win)
-        self.base_window = BaseMainWindow(self.test_id, self.session_id)
-        self.base_window2 = BaseMainWindow(self.test_id, self.session_id2)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.order_book2 = OMSOrderBook(self.test_id, self.session_id2)
-        self.client_inbox2 = OMSClientInbox(self.test_id, self.session_id2)
-        self.username2 = self.fe_env.user_2
+        self.client = self.data_set.get_client("client_2")  # CLIENT2
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.accept_request = CDOrdAckBatchRequest()
+        self.java_api_connectivity2 = self.environment.get_list_java_api_environment()[0].java_api_conn_user2
+        self.java_api_manager2 = JavaApiManager(self.java_api_connectivity2, self.test_id)
+        self.submit_request = OrderSubmitOMS(self.data_set)
+        self.recipient_user = self.environment.get_list_fe_environment()[0].user_1
+        self.user_id = self.environment.get_list_fe_environment()[0].user_2
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declarations
-        # endregion
-        # region Open FE
-        self.base_window2.open_fe(self.report_id, fe_env=self.fe_env, user_num=2, is_open=False)
-        self.base_window.switch_user()
-        # endregion
-        # region Create CO
-        self.order_ticket.set_order_details(client=self.client, limit=self.price, qty=self.qty,
-                                            order_type=self.order_type,
-                                            tif=TimeInForce.DAY.value, instrument=self.lookup, recipient=self.username2)
-        self.order_ticket.create_order(lookup=self.lookup)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        # endregion
-        # region Check values in OrderBook
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: "Sent"})
-        # endregion
-        # region switch to user2
-        self.base_window2.switch_user()
-        # endregion
-        # region Accept CO
-        self.client_inbox2.accept_order({OrderBookColumns.order_id.value: order_id})
-        # endregion
-        # region Check values in OrderBook after Accept
-        self.order_book2.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
+        # region Step 1-6 - Create CO order
+        self.submit_request.set_default_care_limit(
+            recipient=self.environment.get_list_fe_environment()[0].user_1,
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+            role=SubmitRequestConst.USER_ROLE_1.value,
+        )
+        self.submit_request.update_fields_in_component(
+            "NewOrderSingleBlock",
+            {"OrdQty": self.qty, "Price": self.price, "AccountGroupID": self.client},
+        )
+        responses = self.java_api_manager2.send_message_and_receive_response(self.submit_request)
+        print_message("CREATE", responses)
+        cd_order_notif_message = self.java_api_manager2.get_last_message(CSMessageType.CDOrdNotif.value)
+        cd_order_notif_id = cd_order_notif_message.get_parameter("CDOrdNotifBlock")["CDOrdNotifID"]
+        order_notif_message = self.java_api_manager2.get_last_message(
+            ORSMessageType.OrdNotification.value
+        ).get_parameters()[JavaApiFields.OrderNotificationBlock.value]
+        ord_id = order_notif_message["OrdID"]
+        cl_ord_id = order_notif_message["ClOrdID"]
+        desk_id = order_notif_message["RecipientDeskID"]
+        self.java_api_manager2.compare_values(
+            {
+                JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value,
+                "UserID": self.user_id,
+                "RecipientUserID": self.recipient_user,
+            },
+            order_notif_message,
+            "Step 6 - Comparing Status of Care order",
+        )
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        close_fe(self.test_id, self.session_id2)
+        # region Step 7-10 Accept CO order in Client Inbox by User2
+        self.accept_request.set_default(ord_id, cd_order_notif_id, desk_id)
+        responses = self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        print_message("Accept order", responses)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value
+        ]
+        self.java_api_manager.compare_values(
+            {
+                JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                "UserID": self.user_id,
+                "RecipientUserID": self.recipient_user,
+            },
+            order_reply,
+            "Step 10 - Comparing Status of Care order after Accept by User2",
+        )
+        # endregion
+
+        logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

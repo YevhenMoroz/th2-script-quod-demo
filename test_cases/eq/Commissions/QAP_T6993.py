@@ -144,8 +144,8 @@ class QAP_T6993(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         print_message('Trade DMA  order (Partially filled)', responses)
         execution_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
         exec_id_first = execution_report[JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value}, execution_report,
@@ -166,7 +166,8 @@ class QAP_T6993(TestCase):
         execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                   ExecutionReportConst.ExecType_TRD.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
-        actually_result.update({JavaApiFields.TransExecStatus.value: execution_report[JavaApiFields.TransExecStatus.value]})
+        actually_result.update(
+            {JavaApiFields.TransExecStatus.value: execution_report[JavaApiFields.TransExecStatus.value]})
         exec_id_second = execution_report[JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, actually_result,
@@ -196,7 +197,7 @@ class QAP_T6993(TestCase):
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',
                                   'Price', 'Instrument', 'BookID', 'QuodTradeQualifier', 'NoParty', 'ExDestination',
-                                  'Side']
+                                  'Side', 'GatingRuleCondName', 'GatingRuleName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.change_parameters({
             'ClOrdID': cl_ord_id,
@@ -362,7 +363,7 @@ class QAP_T6993(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
-                                       'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType'])
+                                       'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType', 'tag11245'])
         confirmation_report.change_parameters({'NoOrders': [{
             'ClOrdID': cl_ord_id,
             'OrderID': order_id
@@ -371,10 +372,12 @@ class QAP_T6993(TestCase):
             confirmation_report.change_parameters(
                 {'AvgPx': new_avg_px, 'Currency': self.currency_post_trade,
                  'tag5120': '*'})
-            confirmation_report.change_parameters({'AllocQty': list_of_qty[list_of_security_accounts.index(sec_account)],
-                                                   'AllocAccount': sec_account,
-                                                   'NoMiscFees': '#'})
-            self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'AllocAccount'],
+            confirmation_report.change_parameters(
+                {'AllocQty': list_of_qty[list_of_security_accounts.index(sec_account)],
+                 'AllocAccount': sec_account,
+                 'NoMiscFees': '#'})
+            self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
+                                                             ['ClOrdID', 'AllocAccount', 'tag11245'],
                                                              ignored_fields=list_of_ignored_fields)
         # endregion
 

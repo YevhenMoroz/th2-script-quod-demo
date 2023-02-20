@@ -2,6 +2,7 @@ from th2_grpc_common.common_pb2 import ConnectionID
 from th2_grpc_sim_fix_quod.sim_pb2 import RequestMDRefID
 
 from stubs import Stubs
+from test_framework.data_sets.constants import TradingPhases
 from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import FixMessageMarketDataIncrementalRefresh
 from datetime import datetime
 
@@ -68,6 +69,24 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         super().change_parameters(base_parameters)
         return self
 
+    def set_market_data_close_price(self) -> FixMessageMarketDataIncrementalRefresh:
+        base_parameters = {
+            'MDReqID': '555',
+            'NoMDEntriesIR': [
+                {
+                    'MDUpdateAction': '0',
+                    'MDEntryType': '5',
+                    'MDEntryPx': '40',
+                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
+                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
+                    'TradingSessionSubID': '5',
+                    'SecurityTradingStatus': '3',
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def check_MDReqID(self, symbol: str, session_alias: str):
         list_MDRefID = Stubs.simulator_algo.getAllMDRefID(request=RequestMDRefID(
             symbol=symbol,
@@ -86,8 +105,23 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         self.change_parameter("MDReqID", md_req_id)
         return self
 
-    def set_phase(self, phase: str) -> FixMessageMarketDataIncrementalRefresh:
-        super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", phase)
+    def set_phase(self, phase: TradingPhases) -> FixMessageMarketDataIncrementalRefresh:
+        str_phase = ""
+        if phase == TradingPhases.PreClosed:
+            str_phase = '4'
+        elif phase == TradingPhases.PreOpen:
+            str_phase = '2'
+        elif phase == TradingPhases.Open:
+            str_phase = '3'
+        elif phase == TradingPhases.Closed:
+            str_phase = '1'
+        elif phase == TradingPhases.AtLast:
+            str_phase = '5'
+        elif phase == TradingPhases.Expiry:
+            str_phase = '9'
+        elif phase == TradingPhases.Auction:
+            str_phase = '6'
+        super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", str_phase)
         return self
 
     def set_market_data_incr_refresh_open_px(self) -> FixMessageMarketDataIncrementalRefresh:
