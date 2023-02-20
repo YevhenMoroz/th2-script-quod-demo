@@ -35,7 +35,7 @@ class QAP_T8189(TestCase):
         self.order_submit = OrderSubmitOMS(data_set)
         self.desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         self.exec_policy = self.data_set.get_exec_policy('execution_policy_C')
-        self.wash_book_acc = self.data_set.get_washbook_account_by_name('washbook_account_4')
+        self.wash_book_acc = self.data_set.get_washbook_account_by_name('washbook_account_5')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
