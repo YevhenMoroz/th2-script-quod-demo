@@ -155,3 +155,7 @@ class QAP_T7050(TestCase):
         for position_record in request_for_position_ack:
             if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
                 return position_record
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
