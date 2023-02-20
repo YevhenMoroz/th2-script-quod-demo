@@ -36,7 +36,7 @@ class FixQuoteRequestFX(JavaApiMessage):
                         "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                         "OrdType": "PreviouslyQuoted",
-                        "OrdQty": "24456778",
+                        "OrdQty": "1000000",
                         "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
                         "LiveQuoteID": bca.client_orderid(9),
