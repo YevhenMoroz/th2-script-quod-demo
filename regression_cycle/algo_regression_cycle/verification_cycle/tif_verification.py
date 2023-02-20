@@ -1,3 +1,5 @@
+import time
+
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
@@ -26,6 +28,7 @@ def test_run(parent_id= None, version = None):
         # else:
         #     get_opened_fe(report_id, session_id, work_dir)
         configuration = ComponentConfiguration("TimeInForce")
+        time.sleep(5)
         QAP_T4208(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4224(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4207(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
