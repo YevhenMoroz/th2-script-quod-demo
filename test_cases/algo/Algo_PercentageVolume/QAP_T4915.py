@@ -36,8 +36,9 @@ class QAP_T4915(TestCase):
         self.order_type = constants.OrderType.Limit.value
         self.qty = 2000
         self.pct = 0.1
-        self.price_ask = 40
-        self.price = self.price_bid = 30
+        self.price_ask = 30
+        self.price_bid = 20
+        self.price = 30
         self.qty_bid = self.qty_ask = 1_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
@@ -86,7 +87,7 @@ class QAP_T4915(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
@@ -123,7 +124,7 @@ class QAP_T4915(TestCase):
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid + self.child_1_qty)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
@@ -161,7 +162,7 @@ class QAP_T4915(TestCase):
         # region Check child DMA order 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 2", self.test_id))
         self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order_2.change_parameters(dict(OrderQty=self.child_2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        self.dma_order_2.change_parameters(dict(OrderQty=self.child_2_qty, Price=self.price_bid, Instrument='*', TimeInForce=self.tif_day))
 
         self.fix_verifier_buy.check_fix_message(self.dma_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2')
 
@@ -177,7 +178,6 @@ class QAP_T4915(TestCase):
         # region Cancel Algo Order
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
-        self.fix_verifier_buy.set_case_id(case_id_3)
 
         cancel_request_pov_order = FixMessageOrderCancelRequest(self.POV_order)
 
@@ -187,6 +187,7 @@ class QAP_T4915(TestCase):
         time.sleep(5)
 
         # region check cancel child DMA slice 2
+        self.fix_verifier_buy.set_case_id(case_id_3)
         cancel_dma_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(cancel_dma_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Cancel Child DMA 2")
         # endregion

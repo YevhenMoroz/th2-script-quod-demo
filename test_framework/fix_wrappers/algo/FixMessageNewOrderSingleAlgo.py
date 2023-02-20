@@ -1391,9 +1391,9 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Currency': 'EUR',
             'TargetStrategy': '1009',
             'PegInstructions': {
-                'PegOffsetValue': '1', #float
-                'PegPriceType': '1', #int
-                'PegOffsetType': '0', #int
+                'PegOffsetValue': '1',
+                'PegPriceType': '1',
+                'PegOffsetType': '0',
             }
         }
         super().change_parameters(base_parameters)
@@ -1425,6 +1425,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
                     'StrategyParameterValue': 'true'
                 },
             ]
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Triggering_params(self):
+        base_parameters = {
+            'Account': "CLIENT2",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '1000',
+            'TimeInForce': "0",
+            'OrdType': 2,
+            'Price': 1,
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            'TargetStrategy': '1020',
+            'TriggeringInstruction': {
+                'TriggerType': 4,
+                'TriggerAction': 1,
+            }
         }
         super().change_parameters(base_parameters)
         return self
