@@ -146,6 +146,37 @@ def check_quote_request_id(quote_request):
             connection.close()
             print("PostgreSQL connection is closed")
 
+
+def check_quote_status(quote_request):
+    """
+    Get QuoteStatus from DB using quote_id from fix request
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        quote_id = quote_request.get_parameter("QuoteID")
+        query = f"SELECT quotestatus  FROM quote WHERE clientquoteid ='{quote_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        print(f"Extraction is successful! Quote status is {response}.")
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 def extract_freenotes(quote_request):
     """
     Get freenotes from DB using quote_req_id from fix request
