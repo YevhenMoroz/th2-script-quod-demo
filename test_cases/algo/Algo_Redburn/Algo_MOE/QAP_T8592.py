@@ -1,7 +1,6 @@
 import os
 import sched
 import time
-import datetime
 
 from pathlib import Path
 
@@ -19,13 +18,10 @@ from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageO
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
-from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
-from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4486(TestCase):
+class QAP_T8592(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -45,11 +41,12 @@ class QAP_T4486(TestCase):
 
         # region order parameters
         self.qty = 1000
-        self.indicative_volume = 1000
-        self.percentage = 10
-        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
+        self.indicative_volume = 0
+        self.percentage = 100
+        self.child_qty = self.qty
         self.price = 30
-        self.tif_ato = TimeInForce.AtTheOpening.value
+
+        self.tif_gtx = TimeInForce.GoodTillCrossing.value
         # endregion
 
         # region Gateway Side
@@ -60,6 +57,7 @@ class QAP_T4486(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
+        self.status_rejected = Status.Reject
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -97,24 +95,21 @@ class QAP_T4486(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price)
-        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic)
-        cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.mic, True)
-        self.rule_list = [nos_rule, ocr_rule, ocrr_rule,  cancel_rule]
+        cancel_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
+        self.rule_list = [nos_rule, cancel_rule]
         # endregion
 
-
         # region Update Trading Phase
-
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_previous_phase(TradingPhases.PreOpen)
+        trading_phases = AFM.get_timestamps_for_next_phase(TradingPhases.Expiry)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-
         # region Send MarketDate
-        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send Close trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.Closed)
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Expiry", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative()\
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume)\
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Expiry)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -122,7 +117,7 @@ class QAP_T4486(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOO_params()
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_MOE_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage))
@@ -132,63 +127,56 @@ class QAP_T4486(TestCase):
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.change_parameters(dict(TimeInForce=self.tif_ato))
+        er_pending_new.change_parameters(dict(TimeInForce=self.tif_gtx))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        er_new.change_parameters(dict(TimeInForce=self.tif_ato))
+        er_new.change_parameters(dict(TimeInForce=self.tif_gtx))
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        scheduler = sched.scheduler(time.time, time.sleep)
-        start_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=True) / 1000
-        release_time = AFM.change_datetime_from_epoch_to_normal(start_time).astimezone(pytz.utc).isoformat()[:-6]
-
-
-
-
-        case_id_3 = bca.create_event("Send PreOpen phase", self.test_id)
-        self.fix_manager_feed_handler.set_case_id(case_id_3)
-
+        # region check child order
         case_id_2 = bca.create_event("Check child order", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
-        self.fix_verifier_sell.set_case_id(case_id_2)
 
+        scheduler = sched.scheduler(time.time, time.sleep)
+        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=False) + 1
+        start_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Expiry, start_time=True) - 2
+        release_time = AFM.change_datetime_from_epoch_to_normal(start_time).astimezone(pytz.utc).isoformat()[:-6]
+        release_time_end = AFM.change_datetime_from_epoch_to_normal(start_time + 1).astimezone(pytz.utc).isoformat()[:-6]
 
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
 
+        self.open_phase = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
+        scheduler.enterabs(end_time, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.open_phase))
 
-
-        self.incremental_refresh_pre_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
-        scheduler.enterabs(start_time, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_open))
-
-        # region Check child orders
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_ato))
+        self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce='A', Instrument=self.instrument))
         self.dma_order.change_parameter("TransactTime", ">" + release_time)
 
-        scheduler.enterabs(start_time + 3, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
+        self.dma_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        self.dma_order2.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce='A', Instrument=self.instrument))
+        self.dma_order2.change_parameter("TransactTime", "<" + release_time_end)
+
+
+        scheduler.enterabs(end_time + 3, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
+        scheduler.enterabs(end_time + 3, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
 
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(start_time + 3, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
+        scheduler.enterabs(end_time + 3, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(start_time + 3, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
+        scheduler.enterabs(end_time + 3, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
         # endregion
 
         scheduler.run()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
+        case_id_2 = bca.create_event("Check that Algo Order is Canceled", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
-        cancel_request_auction_order = FixMessageOrderCancelRequest(self.auction_algo)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_2)
-        # endregion
-
-        time.sleep(3)
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
@@ -199,6 +187,8 @@ class QAP_T4486(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
+        time.sleep(5)
+
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_ato))
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_gtx, LastMkt=self.mic, Text="reached uncross")).remove_parameter('OrigClOrdID')
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
