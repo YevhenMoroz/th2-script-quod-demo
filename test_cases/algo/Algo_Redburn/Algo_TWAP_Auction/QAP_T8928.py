@@ -21,7 +21,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T8553(TestCase):
+class QAP_T8928(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -42,10 +42,10 @@ class QAP_T8553(TestCase):
         # region order parameters
         self.qty = 1200
         self.waves = 5
-        self.indicative_volume = 1000
+        self.indicative_volume = 0
         self.percentage = 10
-        self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
-        self.child_qty_twap = self.qty / self.waves + 1
+        self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves + 1)
+        self.child_qty_twap = AFM.get_next_twap_slice(self.qty, self.waves + 1)
         self.price = 30
         self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
 
@@ -126,7 +126,7 @@ class QAP_T8553(TestCase):
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_auction_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(ParticipateInOpeningAuctions="Y", MaxParticipationOpen=self.percentage, Waves=self.waves)))
+        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(ParticipateInOpeningAuctions="Y", Waves=self.waves)))
         self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         # region Check Sell side
