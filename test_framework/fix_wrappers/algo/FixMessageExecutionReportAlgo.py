@@ -1438,8 +1438,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price=new_order_single.get_parameter("Price"))
         if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
             temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
-        if new_order_single.get_parameter("TargetStrategy") in ['1012', '1014', '1015']:
-            temp.update(OrigClOrdID=new_order_single.get_parameter('ClOrdID'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -1467,6 +1465,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             NoStrategyParameters='*',
             NoParty='*',
             SecAltIDGrp='*',
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID')
         )
         super().change_parameters(temp)
         return self
