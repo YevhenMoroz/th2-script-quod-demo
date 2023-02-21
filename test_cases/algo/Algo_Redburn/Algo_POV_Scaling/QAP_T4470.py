@@ -62,7 +62,7 @@ class QAP_T4470(TestCase):
 
         self.qty = 1_000_000
 
-        self.scaling_child_order_qty = '%^([1-2][5,8]|[6-9])\d{3}$'  # fisrt number 10-12 or 7-9 and any 3 number
+        self.scaling_child_order_qty = '%^([1-2][0-2,5]|[6-9])\d{3}$'  # fisrt number 10-12 or 7-9 and any 3 number
         self.scaling_child_order_price = '%^1(10|0[2-4]|0[2-4].[5])$'  # the first number 100 or 102-104 with step 0.5
 
         self.side_sell = OrderSide.Sell.value
