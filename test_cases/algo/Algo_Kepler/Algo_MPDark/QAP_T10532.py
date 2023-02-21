@@ -43,7 +43,7 @@ class QAP_T10532(TestCase):
         self.price = 20
         self.delay_for_trade = 0
         self.delay_for_rfq = 10000
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_2.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_1.value
         # endregion
 
         # region Gateway Side
