@@ -1,107 +1,57 @@
-import logging
-import time
 from pathlib import Path
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2, spo
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-
-client = 'Argentina1'
-account = 'Argentina1_1'
-client_tier = 'Argentina'
-symbol = "EUR/USD"
-security_type_swap = "FXSWAP"
-security_type_fwd = "FXFWD"
-security_type_spo = "FXSPO"
-settle_date_spo = spo()
-settle_date_w1 = wk1()
-settle_date_w2 = wk2()
-settle_type_spo = "0"
-settle_type_w1 = "W1"
-settle_type_w2 = "W2"
-currency = "EUR"
-settle_currency = "USD"
-qty = '1000000'
-side = "1"
-leg1_side = "2"
-leg2_side = "1"
-venue_msr = 'MSR'
-mic_msr = 'MS-RFQ'
-venue_ms = 'MS'
-mic_ms = 'MS-SW'
-api = Stubs.api_service
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
+from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
 
 
-def change_venue_status_ms(case_id, health, metric):
-    modify_venue_params = {
-        "venueID": "MS",
-        "alive": 'true',
-        "venueStatusMetric": [
-            {
-                "venueMetricType": "LUP",
-                "enableMetric": health,
-                "metricErrorThreshold": metric,
-                "metricWarningThreshold": metric
-            }
-        ]
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(
-            message=bca.message_to_grpc('ModifyVenueStatus', modify_venue_params, 'rest_wa314luna'),
-            parent_event_id=case_id))
+class QAP_T2589(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.quote_adjustment = QuoteAdjustmentRequestFX(data_set=self.data_set)
+        self.quote_request = FixQuoteRequestFX()
+        self.client_tier = self.data_set.get_client_by_name("client_mm_3")
+        self.client_tier_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.aud_usd = self.data_set.get_symbol_by_name("symbol_16")
+        self.usd = self.data_set.get_currency_by_name("currency_usd")
+        self.aud = self.data_set.get_currency_by_name("currency_aud")
+        self.instr_type_spot = self.data_set.get_fx_instr_type_ja("fx_spot")
+        self.instr_type_fwd = self.data_set.get_fx_instr_type_ja("fx_fwd")
+        self.tenor_tom_java = self.data_set.get_tenor_java_api_by_name("tenor_tom")
+        self.tenor_1w_java = self.data_set.get_tenor_java_api_by_name("tenor_1w")
+        self.tenor_2w_java = self.data_set.get_tenor_java_api_by_name("tenor_2w")
+        self.settle_type_tom_java = self.data_set.get_settle_type_ja_by_name("tomorrow")
+        self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
+        self.settle_type_2w_java = self.data_set.get_settle_type_ja_by_name("wk2")
+        self.tenor_spot_java = self.data_set.get_tenor_java_api_by_name("tenor_spot")
+        self.settle_type_spot_java = self.data_set.get_settle_type_ja_by_name("spot")
+        self.expected_notes = "not a private quote request (unknown tier)"
+        self.expected_quoting = "N"
 
-
-def change_venue_status_msr(case_id, health, metric):
-    modify_venue_params = {
-        "venueID": "MSR",
-        "alive": 'true',
-        "venueStatusMetric": [
-            {
-                "venueMetricType": "LUP",
-                "enableMetric": health,
-                "metricErrorThreshold": metric,
-                "metricWarningThreshold": metric
-            }
-        ]
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(
-            message=bca.wrap_message(modify_venue_params, 'ModifyVenueStatus', 'rest_wa314luna'),
-            parent_event_id=case_id))
-
-
-def send_swap_and_filled(case_id):
-    # Precondition
-    change_venue_status_ms(case_id, 'true', '-1')
-    change_venue_status_msr(case_id, 'true', '-1')
-    time.sleep(3)
-    params_swap = CaseParamsSellRfq(client, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                    orderqty=qty, leg1_ordqty=qty, leg2_ordqty=qty,
-                                    currency=currency, settlcurrency=settle_currency,
-                                    leg1_settltype=settle_type_w1, leg2_settltype=settle_type_w2,
-                                    settldate=settle_date_spo, leg1_settldate=settle_date_w1,
-                                    leg2_settldate=settle_date_w2,
-                                    symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                    securitytype=security_type_swap, leg1_securitytype=security_type_fwd,
-                                    leg2_securitytype=security_type_fwd,
-                                    securityid=symbol, account=account)
-    # Step 1
-    rfq = FixClientSellRfq(params_swap)
-    rfq.send_request_for_quote_swap()
-    # Step 2
-    rfq.verify_quote_reject(text="no bid forward points for client tier `2600011' on EUR/USD WK2 on QUODFX")
-
-    change_venue_status_ms(case_id, 'false', '0')
-    change_venue_status_msr(case_id, 'false', '0')
-
-
-def execute(report_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    try:
-        send_swap_and_filled(case_id)
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 2
+        self.quote_request.set_rfq_params_swap()
+        self.quote_request.change_instr_symbol(self.aud_usd, self.aud, self.usd)
+        self.quote_request.update_near_leg(settle_type=self.settle_type_1w_java,
+                                           tenor=self.tenor_1w_java, instr_type=self.instr_type_fwd)
+        self.quote_request.update_far_leg(settle_type=self.settle_type_2w_java,
+                                          tenor=self.tenor_2w_java)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        # # region Step 3
+        received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
+        self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
+        self.verifier.compare_values("AutomaticQuoting", self.expected_quoting, received_quoting)
+        self.verifier.verify()
+        # endregion
