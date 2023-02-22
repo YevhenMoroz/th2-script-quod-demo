@@ -91,7 +91,7 @@ class QAP_T7581(TestCase):
         result_of_position_for_washbook = self._extract_cum_values_for_account(self.wash_book)
         # endregion
 
-        # region step 3: Amend execution ,which was done via house_fill
+        # region step 3-4: Amend execution ,which was done via house_fill
         self.trade_entry.get_parameters().clear()
         new_qty = '70'
         self.trade_entry.set_default_amend_house_fill(order_id_second, new_qty, self.price_of_second_order,
@@ -107,22 +107,22 @@ class QAP_T7581(TestCase):
                 JavaApiFields.PositionBlock.value][0]
         # endregion
 
-        # region step 4: Check PositQty of security account
+        # region step 5: Check PositQty of security account
         decreased_qty = str(float(self.qty_of_second_order) - float(new_qty))
         posit_qty_before = result_of_position_for_security_account[JavaApiFields.PositQty.value]
         posit_qty_after = security_account_posit_request[JavaApiFields.PositQty.value]
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
                                        {'DecreasingQty': str(abs(float(posit_qty_before) - float(posit_qty_after)))},
-                                       f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.source_acc} (step 4)')
+                                       f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.source_acc} (step 5)')
 
         # endregion
 
-        # region step 5: Check PositQty of washbook
+        # region step 6: Check PositQty of washbook
         posit_qty_before = result_of_position_for_washbook[JavaApiFields.PositQty.value]
         posit_qty_after = wash_book_posit_request[JavaApiFields.PositQty.value]
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
                                        {'DecreasingQty': str(abs(float(posit_qty_before) - float(posit_qty_after)))},
-                                       f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.wash_book} (step 5)')
+                                       f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.wash_book} (step 6)')
         # endregion
 
     def _create_orders(self, dictionary_with_needed_tags):
