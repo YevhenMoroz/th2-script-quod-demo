@@ -29,7 +29,7 @@ class QAP_T2443(TestCase):
         self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
         self.tenor_spot_java = self.data_set.get_tenor_java_api_by_name("tenor_spot")
         self.settle_type_spot_java = self.data_set.get_settle_type_ja_by_name("spot")
-        self.expected_notes = "WK1 is not being priced or not executable over this client tier"
+        self.expected_notes = "tomorrow is spot date, prices are indicative - manual intervention required"
         self.expected_quoting = "N"
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -43,9 +43,9 @@ class QAP_T2443(TestCase):
         self.quote_request.update_far_leg(settle_type=self.settle_type_1w_java,
                                           tenor=self.tenor_1w_java)
         response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
-        # region Step 3
-        received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
-        received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        # # region Step 3
+        received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
         self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
@@ -62,8 +62,8 @@ class QAP_T2443(TestCase):
                                           tenor=self.tenor_spot_java, instr_type=self.instr_type_spot)
         response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
         # region Step 3
-        received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
-        received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
         self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
