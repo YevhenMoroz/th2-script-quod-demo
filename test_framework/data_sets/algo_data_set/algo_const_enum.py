@@ -283,7 +283,7 @@ class AlgoFixInstruments(Enum):
     )
 
     instrument_36 = dict(
-        Symbol='QTINST00',
+        Symbol='QTINSTRUMENT00',
         SecurityID='QTINST00',
         SecurityIDSource='8',
         SecurityExchange='QLV1',
@@ -303,6 +303,14 @@ class AlgoFixInstruments(Enum):
         SecurityID='BE0003680916',
         SecurityIDSource='4',
         SecurityExchange='XBRU',
+        SecurityType='CS'
+    )
+
+    instrument_39 = dict(
+        Symbol='AGTA',
+        SecurityID='CH0008853209',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
         SecurityType='CS'
     )
 
@@ -344,6 +352,9 @@ class AlgoAccounts(Enum):
     account_19 = "XAMS_CLIENT3"
     account_20 = "DKP1_CLIENT2"
     account_21 = "XBRU_CLIENT3"
+    account_22 = "QLV1_CLIENT2"
+    account_23 = "QLV2_CLIENT2"
+    account_24 = "QLV3_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -473,6 +484,7 @@ class AlgoListingId(Enum):
     listing_56 = "2025020511"       # Euronext Paris for QUODTESTQA08
     listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
     listing_58 = "383"       # Brussel for BE0003680916
+    listing_59 = "496"       # AGTA for XPAR @ Columbia
 
 
 class AlgoCurrency(Enum):
