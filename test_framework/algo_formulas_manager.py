@@ -268,7 +268,7 @@ class AlgoFormulasManager:
     def get_timestamps_for_previous_phase(phase: TradingPhases):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
-            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + datetime.timedelta(minutes=4)
+            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + datetime.timedelta(minutes=2)
             opn_start = pop_start + timedelta(minutes=4)
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
