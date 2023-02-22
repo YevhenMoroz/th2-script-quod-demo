@@ -633,7 +633,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             TransactTime="*",
             AvgPx="*",
             ExecID="*",
-            LastPx="*",
             OrderID="*",
             LastMkt="XQFX",
             TradeDate=datetime.today().strftime("%Y%m%d"),
@@ -645,7 +644,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().change_parameters(temp)
         instrument = dict(
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
-            Product="9"
+            Product="9",
+            SecurityType="FOR"
         )
         super().update_fields_in_component("Instrument", instrument)
         return self
@@ -682,7 +682,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx="*",
             ExecID="*",
             LastMkt="*",
-            LastPx="*",
             OrderID="*",
             SettlDate="*",
             TradeDate=datetime.today().strftime("%Y%m%d"),
@@ -693,7 +692,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
         instrument = dict(
-            SecurityType=data_set.get_security_type_by_name("fx_spot"),
+            SecurityType="FOR",
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
             Product="4",
         )

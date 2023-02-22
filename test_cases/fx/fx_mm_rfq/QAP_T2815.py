@@ -1,149 +1,76 @@
-import logging
-import time
-from datetime import date
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.client_pricing_wrappers import ModifyRatesTileRequest, SelectRowsRequest
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
+from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
+from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_T2815(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.quote_request = FixQuoteRequestFX()
+        self.client_tier_id = self.data_set.get_client_tier_id_by_name("client_tier_id_3")
+        self.client_tier = self.data_set.get_client_by_name("client_mm_3")
+        self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
+        self.tenor_1w = self.data_set.get_tenor_java_api_by_name("tenor_1w")
+        self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
+        self.manual_request = QuoteManualSettingsRequestFX()
+        self.quote_adjustment = QuoteAdjustmentRequestFX(data_set=self.data_set)
+        self.quote_adj_entry = {
+            "QuoteAdjustmentEntryBlock":
+                [{"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "IND",
+                  "IndiceUpperQty": "1"},
 
+                 {"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "IND",
+                  "IndiceUpperQty": "2"},
 
-def modify_rates_tile(base_request, service, instrument, client):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(instrument)
-    modify_request.set_client_tier(client)
-    call(service.modifyRatesTile, modify_request.build())
+                 {"BidMargin": "0", "OfferMargin": "0", "MDQuoteType": "IND",
+                  "IndiceUpperQty": "3"}
 
+                 ]}
+        self.expected_notes = "request exceeds quantity threshold for instrument over this client tier"
+        self.expected_quoting = "N"
 
-def select_rows(base_tile_details, cp_service, row_numbers):
-    request = SelectRowsRequest(base_tile_details)
-    request.set_row_numbers(row_numbers)
-    call(cp_service.selectRows, request.build())
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_adjustment.set_defaults(). \
+            update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                       {"InstrSymbol": self.eur_usd,
+                                        "ClientTierID": self.client_tier_id,
+                                        "Tenor": self.settle_type_1w_java,
+                                        "QuoteAdjustmentEntryList": self.quote_adj_entry})
+        self.java_api_manager.send_message(self.quote_adjustment)
+        self.sleep(2)
+        # endregion
+        # region Step 2
+        self.quote_request.set_rfq_params_fwd()
+        self.quote_request.change_client(self.client_tier)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        # region Step 3
+        received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
+        self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
+        self.verifier.compare_values("AutomaticQuoting", self.expected_quoting, received_quoting)
+        self.verifier.verify()
+        # endregion
 
-
-def press_executable(base_request, service):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.press_executable()
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty, "CreationTime", creation_time])
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
-    qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
-    qrb.add_extraction_details([qrb_status, qrb_auto_quoting, qr_id])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Status", status, response[qrb_status.name])
-    verifier.compare_values("AutomaticQuoting", auto_q, response[qrb_auto_quoting.name])
-    verifier.verify()
-    quote_id = response[qr_id.name]
-    return quote_id
-
-
-def check_dealer_intervention(base_request, service, case_id, quote_id):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Id": quote_id})
-
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_id = bca.client_orderid(8)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
-
-    response = call(service.getUnassignedRFQDetails, extraction_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check quote request in DI")
-    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
-    verifier.verify()
-
-
-def close_dmi_window(base_request, dealer_interventions_service):
-    call(dealer_interventions_service.closeWindow, base_request)
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    cp_service = Stubs.win_act_cp_service
-    ar_service = Stubs.win_act_aggregated_rates_service
-    dealer_service = Stubs.win_act_dealer_intervention_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_details = BaseTileDetails(base=case_base_request)
-    instrument = "GBP/USD-Spot"
-    client_tier = "Iridium1"
-    qty_5m = "5000000"
-    qty_1m = "1000000"
-    symbol = "GBP/USD"
-    security_type_fwd = "FXFWD"
-    settle_date = wk1()
-    settle_type = "W1"
-    currency = "GBP"
-    today = date.today()
-    today = today.today().strftime('%m/%d/%Y')
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_details, cp_service)
-        modify_rates_tile(base_details, cp_service, instrument, client_tier)
-        select_rows(base_details, cp_service, [2, 3])
-        press_executable(base_details, cp_service)
-        # Step 2
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_5m, symbol=symbol,
-                                   securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_no_reply()
-        # Step 3
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_5m, today)
-        # Step 4
-        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        close_dmi_window(case_base_request, dealer_service)
-        # Step 5
-        params = CaseParamsSellRfq(client_tier, case_id, orderqty=qty_1m, symbol=symbol,
-                                   securitytype=security_type_fwd, settldate=settle_date, settltype=settle_type,
-                                   currency=currency,
-                                   account=client_tier)
-        #
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote()
-        rfq.verify_quote_pending()
-        check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_1m, today)
-        time.sleep(120)
-        check_quote_request_b(case_base_request, ar_service, case_id, "Terminated", "Yes", qty_1m, today)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            press_executable(base_details, cp_service)
-            call(cp_service.closeRatesTile, base_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.quote_adjustment.set_defaults().update_fields_in_component("QuoteAdjustmentRequestBlock",
+                                                                        {"InstrSymbol": self.eur_usd,
+                                                                         "ClientTierID": self.client_tier_id,
+                                                                         "Tenor": self.settle_type_1w_java})
+        self.java_api_manager.send_message(self.quote_adjustment)
+        self.sleep(2)
