@@ -90,7 +90,6 @@ class FixQuoteRequestFX(JavaApiMessage):
                     "QuoteReqBlock": [{
                         "InstrumentBlock": {
                             "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                            "ProductType": "CURRENCY",
                             "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_swap"),
                         },
                         "QuoteReqInstrumentLegList": {
@@ -112,13 +111,10 @@ class FixQuoteRequestFX(JavaApiMessage):
                                     "LegOrderQty": "1000000",
                                     "LegSettlType": self.get_data_set().get_settle_type_ja_by_name("wk1"),}]},
                         "QuoteType": "Tradeable",
-                        "SettlType": self.get_data_set().get_settle_type_ja_by_name("wk1"),
-                        "SettlDate": self.get_data_set().get_settle_date_by_name("wk1_java_api"),
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
-                        "OrdType": "PreviouslyQuoted",
+                        "QuoteRequestType": "Automatic",
                         "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
-                        "LiveQuoteID": bca.client_orderid(9),
                     }]
                 }
             }
