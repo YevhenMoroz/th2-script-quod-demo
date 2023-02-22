@@ -55,7 +55,7 @@ class QAP_T8032(TestCase):
         # region Step 1
         self.quote_request.set_deposit_and_loan_param()
         self.quote_request.update_repeating_group_by_index("NoRelatedSym", index=0, SettlDate=self.settle_date_spot,
-                                                           MaturityDate=self.settle_date_wk1, OrderQty="8000000")
+                                                           MaturityDate=self.settle_date_wk1)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region step 2
