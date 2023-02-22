@@ -236,6 +236,14 @@ class JavaApiFields(Enum):
     InstrID = 'InstrID'
     CumBuyQty = 'CumBuyQty'
     CumSellQty = 'CumSellQty'
+    GrossWeightedAvgPx = 'GrossWeightedAvgPx'
+    NetWeightedAvgPx = 'NetWeightedAvgPx'
+    DailyAgentFeeAmt = 'DailyAgentFeeAmt'
+    DailyClientCommission = 'DailyClientCommission'
+    QuarterToDateClientComm = 'QuarterToDateClientComm'
+    DailyRealizedNetPL = 'DailyRealizedNetPL'
+    DailyRealizedGrossPL = 'DailyRealizedGrossPL'
+    VenueAccountName = 'VenueAccountName'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
