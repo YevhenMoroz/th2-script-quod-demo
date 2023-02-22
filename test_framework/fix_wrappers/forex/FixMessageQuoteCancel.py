@@ -23,7 +23,7 @@ class FixMessageQuoteCancelFX(FixMessage):
         elif quote_request.get_message_type() is java_api_request:
             temp = dict(
                 QuoteReqID=quote_request.get_parameter("QuoteRequestBlock")["ClientQuoteReqID"],
-                QuoteID=quote.get_parameter("QuoteID"),
+                QuoteID=quote_request.get_parameter("QuoteRequestBlock")["QuoteReqList"]["QuoteReqBlock"][0]["LiveQuoteID"],
                 QuoteCancelType="5"
             )
         else:
@@ -32,16 +32,28 @@ class FixMessageQuoteCancelFX(FixMessage):
         super().change_parameters(temp)
         return self
 
-
-    def set_params_for_receive(self, quote_request: FixMessageQuoteRequestFX):
-        temp = dict(
-            QuoteReqID=quote_request.get_parameter("QuoteReqID"),
-            QuoteID="*",
-            QuoteCancelType="5",
-            NoQuoteEntries=[{
-                "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]
-            }]
-        )
+    def set_params_for_receive(self, quote_request):
+        fix_request = FIXMessageType.QuoteRequest.value
+        java_api_request = ORSMessageType.QuoteRequest.value
+        if quote_request.get_message_type() is fix_request:
+            temp = dict(
+                QuoteReqID=quote_request.get_parameter("QuoteReqID"),
+                QuoteID="*",
+                QuoteCancelType="5",
+                NoQuoteEntries=[{
+                    "Instrument": quote_request.get_parameter("NoRelatedSymbols")[0]["Instrument"]
+                }]
+            )
+        elif quote_request.get_message_type() is java_api_request:
+            temp = dict(
+                QuoteReqID=quote_request.get_parameter("QuoteRequestBlock")["ClientQuoteReqID"],
+                QuoteID="*",
+                QuoteCancelType="5",
+                NoQuoteEntries="*"
+            )
+        else:
+            err = str(type(quote_request)).rsplit(".")[-1].replace("\'>", "")
+            raise AttributeError(f"\"FixMessageQuoteCancelFX\" doesn\'t support \"{err}\" object")
         super().change_parameters(temp)
         return self
 

@@ -1,18 +1,12 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
-from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
-from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.win_gui_wrappers.forex.rfq_tile import RFQTile
-from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns as qrb
-from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
+from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
 class QAP_T2443(TestCase):
@@ -20,63 +14,59 @@ class QAP_T2443(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
-        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
-        self.quote_request_book = FXQuoteRequestBook(self.test_id, self.session_id)
-        self.rfq_tile = RFQTile(self.test_id, self.session_id)
-
-        self.freenotes = "tomorrow is spot date, prices are indicative - manual intervention required"
-        self.account = self.data_set.get_client_by_name("client_mm_3")
-        self.symbol = self.data_set.get_symbol_by_name("symbol_12")
-        self.qty1 = random_qty(1, 3, 7)
-        self.qty2 = random_qty(1, 3, 7)
-        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
-        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
-        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
-        self.settle_type_tomorrow = self.data_set.get_settle_type_by_name("tomorrow")
-        self.settle_type_wk1 = self.data_set.get_settle_type_by_name("wk1")
-        self.settle_date_spo = self.data_set.get_settle_date_by_name("spot")
-        self.settle_date_tom = self.data_set.get_settle_date_by_name("tomorrow")
-        self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1")
-        self.instrument = {
-            "Symbol": self.symbol,
-            "SecurityType": self.security_type_swap
-        }
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.quote_request = FixQuoteRequestFX()
+        self.client_tier = self.data_set.get_client_by_name("client_mm_3")
+        self.usd_cad = self.data_set.get_symbol_by_name("symbol_12")
+        self.usd = self.data_set.get_currency_by_name("currency_usd")
+        self.cad = self.data_set.get_currency_by_name("currency_cad")
+        self.instr_type_spot = self.data_set.get_fx_instr_type_ja("fx_spot")
+        self.instr_type_fwd = self.data_set.get_fx_instr_type_ja("fx_fwd")
+        self.tenor_tom_java = self.data_set.get_tenor_java_api_by_name("tenor_tom")
+        self.tenor_1w_java = self.data_set.get_tenor_java_api_by_name("tenor_1w")
+        self.settle_type_tom_java = self.data_set.get_settle_type_ja_by_name("tomorrow")
+        self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
+        self.tenor_spot_java = self.data_set.get_tenor_java_api_by_name("tenor_spot")
+        self.settle_type_spot_java = self.data_set.get_settle_type_ja_by_name("spot")
+        self.expected_notes = "WK1 is not being priced or not executable over this client tier"
+        self.expected_quoting = "N"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-
-
-        # Step 1
-        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
-        quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
-                                      settle_type=self.settle_type_tomorrow,
-                                      settle_date=self.settle_date_tom, leg_qty=self.qty1)
-        quote_request.update_far_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
-                                     settle_type=self.settle_type_wk1,
-                                     settle_date=self.settle_date_wk1, leg_qty=self.qty1)
-        quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                      Currency="USD", Instrument=self.instrument)
-
-        self.fix_manager_gtw.send_message(quote_request)
-
-        self.quote_request_book.set_filter(
-            [qrb.qty.value, self.qty1]).check_quote_book_fields_list(
-            {qrb.free_notes.value: self.freenotes})
-
-        # Step 2
-        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
-        quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
-                                      settle_type=self.settle_type_tomorrow,
-                                      settle_date=self.settle_date_tom, leg_qty=self.qty2)
-        quote_request.update_far_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_spot, settle_type=self.settle_type_spot,
-                                     settle_date=self.settle_date_spo, leg_qty=self.qty2)
-        quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
-                                                      Currency="USD", Instrument=self.instrument)
-        self.fix_manager_gtw.send_message(quote_request)
-
-        self.quote_request_book.set_filter(
-            [qrb.qty.value, self.qty2]).check_quote_book_fields_list(
-            {qrb.free_notes.value: self.freenotes})
+        # region Step 2
+        self.quote_request.set_rfq_params_swap()
+        self.quote_request.change_client(self.client_tier)
+        self.quote_request.change_instr_symbol(self.usd_cad, self.usd, self.cad)
+        self.quote_request.update_near_leg(settle_type=self.settle_type_tom_java,
+                                           tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
+        self.quote_request.update_far_leg(settle_type=self.settle_type_1w_java,
+                                          tenor=self.tenor_1w_java)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        # region Step 3
+        received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
+        self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
+        self.verifier.compare_values("AutomaticQuoting", self.expected_quoting, received_quoting)
+        self.verifier.verify()
+        # endregion
+        # region Step 2
+        self.quote_request.set_rfq_params_swap()
+        self.quote_request.change_client(self.client_tier)
+        self.quote_request.change_instr_symbol(self.usd_cad, self.usd, self.cad)
+        self.quote_request.update_near_leg(settle_type=self.settle_type_tom_java,
+                                           tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
+        self.quote_request.update_far_leg(settle_type=self.settle_type_spot_java,
+                                          tenor=self.tenor_spot_java, instr_type=self.instr_type_spot)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        # region Step 3
+        received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
+        received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
+        self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
+        self.verifier.compare_values("AutomaticQuoting", self.expected_quoting, received_quoting)
+        self.verifier.verify()
+        # endregion
