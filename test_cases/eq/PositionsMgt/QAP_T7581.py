@@ -98,11 +98,11 @@ class QAP_T7581(TestCase):
                                                       self.source_acc, exec_id)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         wash_book_posit_request = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.wash_book).get_parameters()[
+            self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.wash_book).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         security_account_posit_request = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+            self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         # endregion
@@ -112,8 +112,8 @@ class QAP_T7581(TestCase):
         posit_qty_before = result_of_position_for_security_account[JavaApiFields.PositQty.value]
         posit_qty_after = security_account_posit_request[JavaApiFields.PositQty.value]
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
-                                       {'DecreasingQty': str(abs(float(posit_qty_before) - float(posit_qty_after)))},
-                                       f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.source_acc} (step 5)')
+                                       {'DecreasingQty': str(abs(float(posit_qty_after) - float(posit_qty_before)))},
+                                       f'Verifying that {JavaApiFields.PositQty.value} increased by 30 for {self.source_acc} (step 5)')
 
         # endregion
 
@@ -121,7 +121,7 @@ class QAP_T7581(TestCase):
         posit_qty_before = result_of_position_for_washbook[JavaApiFields.PositQty.value]
         posit_qty_after = wash_book_posit_request[JavaApiFields.PositQty.value]
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
-                                       {'DecreasingQty': str(abs(float(posit_qty_before) - float(posit_qty_after)))},
+                                       {'DecreasingQty': str(float(posit_qty_before) - float(posit_qty_after))},
                                        f'Verifying that {JavaApiFields.PositQty.value} decreased by 30 for {self.wash_book} (step 6)')
         # endregion
 
