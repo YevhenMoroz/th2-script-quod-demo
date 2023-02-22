@@ -1,71 +1,66 @@
 import logging
 from pathlib import Path
+
+from custom import basic_custom_actions as bca
+from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.FixManager import FixManager
-from rule_management import RuleManager, Simulators
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
-    FixMessageOrderCancelReplaceRequestOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, Suspended
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
+from test_framework.java_api_wrappers.ors_messages.CancelOrderRequest import CancelOrderRequest
+from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
+from test_framework.java_api_wrappers.ors_messages.SuspendOrderManagementRequest import SuspendOrderManagementRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+seconds, nanos = timestamps()
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7288(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.qty = "1000"
-        self.price = "500"
-        self.qty_to_change = "400"
-        self.price_to_change = "200"
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.fix_message.change_parameters({'OrderQtyData': {'OrderQty': self.qty}, "Price": self.price})
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.rule_manager = RuleManager(Simulators.equity)
-        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
-        self.cl_ord_id = self.fix_message.get_parameter("ClOrdID")
+        self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.ord_sub_message = OrderSubmitOMS(self.data_set)
+        self.ord_sub_message2 = OrderSubmitOMS(self.data_set)
+        self.suspend_request = SuspendOrderManagementRequest()
+        self.ord_mod_request = OrderModificationRequest()
+        self.trd_request = TradeEntryOMS(self.data_set)
+        self.cancel_request = CancelOrderRequest()
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create CO order
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
-        self.client_inbox.accept_order()
+        # region Precondition
+        self.ord_sub_message.set_default_care_limit(self.environment.get_list_fe_environment()[0].user_1,
+                                                    self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                    SubmitRequestConst.USER_ROLE_1.value)
+        self.java_api_manager.send_message_and_receive_response(self.ord_sub_message)
+        order_id = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameter(
+            JavaApiFields.OrdReplyBlock.value)["OrdID"]
         # endregion
-        # region suspend order
-        self.order_book.suspend_order(filter_dict={OrderBookColumns.cl_ord_id.value: self.cl_ord_id})
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.suspend.value: Suspended.yes.value})
-        fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set).set_default(self.fix_message)
-        fix_message_cancel_replace.change_parameters(
-            {'OrderQtyData': {'OrderQty': self.qty_to_change}, "Price": self.price_to_change})
-        self.fix_manager.send_message_fix_standard(fix_message_cancel_replace)
+        # region Step 1
+        self.suspend_request.set_default(order_id)
+        self.java_api_manager.send_message_and_receive_response(self.suspend_request)
+        suspend_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.SuspendOrderManagementReply.value).get_parameter(
+            JavaApiFields.SuspendOrderManagementReplyBlock.value)
+        self.java_api_manager.compare_values({"OrdID": order_id, "SuspendedCare": "Y"}, suspend_reply, "Check suspend")
         # endregion
-        # region accept modification
-        self.client_inbox.accept_modify_plus_child()
-        self.order_book.set_filter([OrderBookColumns.cl_ord_id.value, self.cl_ord_id]).check_order_fields_list(
-            {OrderBookColumns.qty.value: self.qty_to_change, OrderBookColumns.limit_price.value: self.price_to_change})
-        execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_replaced(self.fix_message)
-        execution_report.change_parameters(
-            {'OrderQtyData': {'OrderQty': self.qty_to_change}, "SettlDate": "*", "SettlType": "*",
-             "Price": self.price_to_change})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        # region Step 2-3
+        new_price = "50.0"
+        new_qty = "400.0"
+        self.ord_mod_request.set_default(self.data_set, order_id).update_fields_in_component(
+            "OrderModificationRequestBlock", {"Price": new_price, "OrdQty": new_qty})
+        self.java_api_manager.send_message_and_receive_response(self.ord_mod_request)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.java_api_manager.compare_values({"Price": new_price, "OrdQty": new_qty}, order_reply,
+                                             'Checking that order have new price and qty')
         # endregion

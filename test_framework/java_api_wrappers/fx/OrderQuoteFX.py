@@ -63,39 +63,6 @@ class OrderQuoteFX(JavaApiMessage):
                                                 "OrderQty"]})
         return self
 
-    def set_params_for_swap_quote(self, quote_request: FixMessageQuoteRequestFX,
-                                  action_reply: QuoteRequestActionReplyFX):
-        self.prepare_params(action_reply)
-        estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
-        if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
-            self.update_fields_in_component("QuoteBlock", {"OfferPx": estimation_block["OfferPx"]})
-            self.update_fields_in_component("QuoteBlock", {"BidPx": estimation_block["BidPx"]})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0][
-                                                "OrderQty"]})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0][
-                                                "OrderQty"]})
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "1":
-            self.update_fields_in_component("QuoteBlock", {"OfferPx": estimation_block["OfferPx"]})
-            self.update_fields_in_component("QuoteBlock", {"BidPx": "0"})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"]
-                                             [0]["LegOrderQty"]})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"]
-                                             [1]["LegOrderQty"]})
-        elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
-            self.update_fields_in_component("QuoteBlock", {"OfferPx": "0"})
-            self.update_fields_in_component("QuoteBlock", {"BidPx": estimation_block["BidPx"]})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"OfferSize": quote_request.get_parameter("NoRelatedSymbols")[0][
-                                                "LegOrderQty"]})
-            self.update_fields_in_component("QuoteBlock",
-                                            {"BidSize": quote_request.get_parameter("NoRelatedSymbols")[0][
-                                                "LegOrderQty"]})
-        return self
-
     def set_params_for_quote_ccy2(self, quote_request: FixMessageQuoteRequestFX,
                                   action_reply: QuoteRequestActionReplyFX):
         self.prepare_params(action_reply)
@@ -165,9 +132,41 @@ class OrderQuoteFX(JavaApiMessage):
 
     # endregion Quotes
     # region Swaps
-    def set_params_for_swap(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
-        self.set_params_for_swap_quote(quote_request, action_reply)
+    def prepare_params_swap(self, action_reply: QuoteRequestActionReplyFX):
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
+        params_for_request = {
+            "SEND_SUBJECT": "QUOD.QS_RFQ_FIX_TH2.FE",
+            "REPLY_SUBJECT": "QUOD.FE.QS_RFQ_FIX_TH2",
+            "QuoteBlock": {
+                "QuoteRequestID": action_reply.get_parameter("QuoteRequestActionReplyBlock")["QuoteRequestID"],
+                "InstrID": estimation_block["InstrID"],
+                "ListingID": estimation_block["ListingID"],
+                "AccountGroupID": estimation_block["AccountGroupID"],
+                "QuoteTTL": "120",
+                "AutomaticHedging": "Y",
+                "LegQuoteList": {
+                    "LegQuoteBlock": [
+                        {}, {}
+                    ]}
+            }
+        }
+
+        super().change_parameters(params_for_request)
+        return self
+
+    def set_params_for_swap_for_dealer(self, quote_request: FixMessageQuoteRequestFX,
+                                       action_reply: QuoteRequestActionReplyFX):
+        self.prepare_params_swap(action_reply)
+        estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
+        reply_leg_quote_block = estimation_block["LegQuoteList"]["LegQuoteBlock"]
+        self.update_fields_in_component("QuoteBlock", {"AutomaticHedging": "N"})
+        self.get_parameter("QuoteBlock")["LegQuoteList"]["LegQuoteBlock"][0] = reply_leg_quote_block[0]
+        self.get_parameter("QuoteBlock")["LegQuoteList"]["LegQuoteBlock"][1] = reply_leg_quote_block[1]
+        self.update_fields_in_component("QuoteBlock", {"BidSpotRate": estimation_block["BidSpotRate"]})
+        self.update_fields_in_component("QuoteBlock", {"OfferSpotRate": estimation_block["OfferSpotRate"]})
+        self.update_fields_in_component("QuoteBlock", {"BidSwapPoints": estimation_block["BidSwapPoints"]})
+        self.update_fields_in_component("QuoteBlock", {"OfferSwapPoints": estimation_block["OfferSwapPoints"]})
+
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
             self.update_fields_in_component("QuoteBlock", {"BidSpotRate": estimation_block["BidSpotRate"]})
             self.update_fields_in_component("QuoteBlock", {"OfferSpotRate": estimation_block["OfferSpotRate"]})
@@ -181,4 +180,6 @@ class OrderQuoteFX(JavaApiMessage):
         elif quote_request.get_parameter("NoRelatedSymbols")[0]["Side"] == "2":
             self.update_fields_in_component("QuoteBlock", {"BidSpotRate": estimation_block["BidSpotRate"]})
             self.update_fields_in_component("QuoteBlock", {"BidForwardPoints": estimation_block["BidForwardPoints"]})
+    # endregion
+
     # endregion

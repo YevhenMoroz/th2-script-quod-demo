@@ -46,7 +46,7 @@ class QAP_T4072(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -110,7 +110,7 @@ class QAP_T4072(TestCase):
         case_id_1 = bca.create_event("Create SynthMinQty Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_params()
+        self.synthMinQty_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SynthMinQty_Kepler_params()
         self.synthMinQty_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.synthMinQty_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, MinQty=self.min_qty))
 

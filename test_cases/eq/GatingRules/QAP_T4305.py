@@ -10,15 +10,22 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.oms.RestApiDisableGatingRuleMessage import RestApiDisableGatingRuleMessage
 from test_framework.rest_api_wrappers.oms.RestApiModifyGatingRuleMessage import RestApiModifyGatingRuleMessage
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
+
+
+def print_message(message, responses):
+    logger.info(message)
+    for i in responses:
+        logger.info(i)
+        logger.info(i.get_parameters())
 
 
 class QAP_T4305(TestCase):
@@ -37,38 +44,38 @@ class QAP_T4305(TestCase):
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")  # XPAR_CLIENT1
         self.exec_destination = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set).set_default_param()
-        self.disable_rule_message = RestApiDisableGatingRuleMessage(self.data_set).set_default_param()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        class_name = QAP_T4305
         # region Enabling GatingRule
         self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         # Set "Not In" to the condition of GatingRule
         param[0]["gatingRuleCondExp"] = "VenueID NOT IN(CHIX)"
-        set_value_params: dict = {"alive": 'true',
-                                  "gatingRuleResultIndice": 1,
-                                  "splitRatio": 0,
-                                  "holdOrder": 'true',
-                                  "gatingRuleResultProperty": "APP",
-                                  "gatingRuleResultAction": "VAL",
-                                  "gatingRuleResultRejectType": "HRD"}
-        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
+        set_value_params: dict = {
+            "alive": "true",
+            "gatingRuleResultIndice": 1,
+            "splitRatio": 0,
+            "holdOrder": "true",
+            "gatingRuleResultProperty": "APP",
+            "gatingRuleResultAction": "VAL",
+        }
+        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue to Results
         param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
+        param[0]["gatingRuleResult"][1]["holdOrder"] = "true"
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
 
-        # region Create DMA order
+        # region Step 1 - Create DMA order
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.venue_client_names, self.exec_destination, float(price)
             )
             responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            class_name.print_message("CREATE", responses)
+            print_message("CREATE", responses)
         except Exception as e:
             logger.info(f"Your Exception is {e}")
         finally:
@@ -76,14 +83,20 @@ class QAP_T4305(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         # endregion
 
-        # region Check that the Gating rule with 'In' condition is applied to the order
+        # region Step 2 - Check that the Gating rule with 'Not In' condition is applied to the order
         order_notification = self.java_api_manager.get_last_message(
             ORSMessageType.OrdNotification.value
-        ).get_parameters()["OrdNotificationBlock"]
+        ).get_parameters()[JavaApiFields.OrderNotificationBlock.value]
         self.java_api_manager.compare_values(
-            {"GatingRuleCondName": "Cond1", "OrdStatus": "HLD", "OrdQty": "200.0"},
+            {
+                JavaApiFields.GatingRuleCondName.value: "All Orders",
+                JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name("main_rule_id"),
+                JavaApiFields.OrdStatus.value: "HLD",
+                JavaApiFields.OrdQty.value: "200.0",
+                JavaApiFields.ExecutionPolicy.value: "D",
+            },
             order_notification,
-            "Check that the Gating rule with 'In' condition is applied to the order",
+            "Step 2 - Check that the Gating rule with 'Not In' condition is applied to the order",
         )
         # endregion
 
@@ -91,11 +104,4 @@ class QAP_T4305(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
-
-    @staticmethod
-    def print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())

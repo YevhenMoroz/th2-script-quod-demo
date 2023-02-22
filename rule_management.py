@@ -25,7 +25,8 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateNewOrdSingleExecutionReportEliminateFixStandard, \
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
-    TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty
+    TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, \
+    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -36,7 +37,7 @@ from google.protobuf.empty_pb2 import Empty
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, ]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
     algo = {"core": Stubs.core_algo, "sim": Stubs.simulator_algo, "default_rules": [1, 2, 3]}
 
@@ -438,6 +439,13 @@ class RuleManager:
                                                               exdestination=ex_destination,
                                                               price=price
                                                               ))
+    def add_NewOrderSingle_ExecutionReport_RejectFX(self, session: str, account: str, ex_destination:str):
+        return self.sim.createTemplateFXOrderReject(
+            request=TemplateFXOrderReject(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination
+                                                              ))
+
 
     def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str,
                                                             price: float, reason: int, text: str = "QATestReject",

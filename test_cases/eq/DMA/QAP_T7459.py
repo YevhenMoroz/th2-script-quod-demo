@@ -71,7 +71,8 @@ class QAP_T7459(TestCase):
         # region check exec report
         self.exec_report.set_default_filled(self.fix_message)
         ignored_fields = ['SettlCurrency', 'LastExecutionPolicy', 'TradeDate', 'TradeReportingIndicator', 'LastMkt',
-                          'SecurityDesc', 'SecondaryExecID', 'ExDestination', 'GrossTradeAmt']
+                          'SecurityDesc', 'SecondaryExecID', 'ExDestination', 'GrossTradeAmt', "GatingRuleCondName",
+                          "GatingRuleName"]
         self.exec_report.change_parameters({"ExecType": "3",
                                             "OrdStatus": "1"})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ['ExecType'], ignored_fields=ignored_fields)

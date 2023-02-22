@@ -43,7 +43,7 @@ class QAP_T4908(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -105,7 +105,7 @@ class QAP_T4908(TestCase):
         case_id_1 = bca.create_event("Create SORPING LitDark Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_LitDark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_params()
+        self.SORPING_LitDark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multiple_Emulation_Kepler_params()
         self.SORPING_LitDark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_LitDark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side, ClientAlgoPolicyID=self.algopolicy))
 
@@ -127,7 +127,7 @@ class QAP_T4908(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_params()
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_Multiple_Emulation_Kepler_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_citadel, OrderQty=self.qty, Price=self.price_ask, Instrument=self.instrument, Side=self.side, TimeInForce=self.tif_ioc))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 

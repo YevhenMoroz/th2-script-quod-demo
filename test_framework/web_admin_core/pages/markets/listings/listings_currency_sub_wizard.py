@@ -13,6 +13,9 @@ class ListingsCurrencySubWizard(CommonPage):
     def get_currency(self):
         return self.get_text_by_xpath(ListingsConstants.CURRENCY_TAB_CURRENCY_XPATH)
 
+    def is_currency_field_enabled(self):
+        return self.is_field_enabled(ListingsConstants.CURRENCY_TAB_CURRENCY_XPATH)
+
     def set_instr_currency(self, value):
         self.set_combobox_value(ListingsConstants.CURRENCY_TAB_INSTR_CURRENCY_XPATH, value)
 

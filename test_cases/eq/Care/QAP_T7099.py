@@ -7,14 +7,15 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType, CSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
-    FixMessageOrderCancelReplaceRequestOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderType, SecondLevelTabs, OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-from test_framework.win_gui_wrappers.oms.oms_order_ticket import OMSOrderTicket
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
+from test_framework.java_api_wrappers.java_api_constants import ExecutionPolicyConst, JavaApiFields, OrderReplyConst
+from test_framework.java_api_wrappers.oms.ors_messges.FixNewOrderSingleOMS import FixNewOrderSingleOMS
+from test_framework.java_api_wrappers.oms.ors_messges.FixOrderModificationRequestOMS import \
+    FixOrderModificationRequestOMS
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,73 +26,112 @@ class QAP_T7099(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-        self.order_ticket = OMSOrderTicket(self.test_id, self.session_id)
-        self.fix_manager = FixManager(environment.get_list_fix_environment()[0].sell_side)
-        self.bs_connectivity = environment.get_list_fix_environment()[0].buy_side
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
-        self.price = self.fix_message.get_parameter('Price')
-        self.order_type = OrderType.limit.value
-        self.lookup = self.data_set.get_lookup_by_name('lookup_1')
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.fix_manager = FixManager(self.fix_env.sell_side)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_connectivity2 = self.environment.get_list_java_api_environment()[0].java_api_conn_user2
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.java_api_manager2 = JavaApiManager(self.java_api_connectivity2, self.test_id)
+        self.order_cancel_replace_request = FixOrderModificationRequestOMS(self.data_set)
+        self.new_order_single = FixNewOrderSingleOMS(self.data_set)
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.accept_request = CDOrdAckBatchRequest()
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name('client_2_venue_1')
+        self.client = self.data_set.get_client_by_name('client_2')
+        self.exec_destination = self.data_set.get_mic_by_name('mic_1')
+        self.responses = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region create CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameters()['OrderID']
-        filter_dict = {OrderBookColumns.order_id.value: order_id}
-        filter_list = [OrderBookColumns.order_id.value, order_id]
+        # region step 1: create CO order
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        self.new_order_single.set_default_care_limit()
+        self.new_order_single.update_fields_in_component('NewOrderSingleBlock', {'ClientAccountGroupID': self.client})
+        qty = self.new_order_single.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][
+            JavaApiFields.OrdQty.value]
+        price = self.new_order_single.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][
+            JavaApiFields.Price.value]
+        self.java_api_manager2.send_message_and_receive_response(self.new_order_single)
+        cd_ord_notif = self.java_api_manager2.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
+            JavaApiFields.CDOrdNotifBlock.value]
+        order_id = cd_ord_notif[JavaApiFields.OrdID.value]
+        cd_ord_notif_id = cd_ord_notif[JavaApiFields.CDOrdNotifID.value]
+        self.accept_request.set_default(order_id, cd_ord_notif_id, desk)
+        self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
+        self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                                             order_reply, f'Check that {order_id} is open (step 1)')
         # endregion
-        self.client_inbox.accept_order(filter_dict)
-        # region split order
+
+        # region step 2: Split CO order
+        listing = self.data_set.get_listing_id_by_name("listing_3")
+        instrument = self.data_set.get_instrument_id_by_name("instrument_2")
+        nos_rule = child_ord_id = None
         try:
-            rule_manager = RuleManager(sim=Simulators.equity)
-            nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
-                                                                                             self.data_set.get_venue_client_names_by_name(
-                                                                                                 'client_1_venue_1'),
-                                                                                             self.data_set.get_mic_by_name(
-                                                                                                 'mic_1'),
-                                                                                             float(self.price))
-
-            self.order_ticket.set_order_details(self.data_set.get_client_by_name('client_1'), limit=self.price,
-                                                qty=self.qty,
-                                                order_type=self.order_type)
-            self.order_ticket.split_limit_order()
-        except Exception as E:
-            logger.error(f'{E}')
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side,
+                self.client_for_rule,
+                self.exec_destination,
+                float(price))
+            self.order_submit.set_default_child_dma(order_id)
+            route_params = {'RouteBlock': [{'RouteID': self.data_set.get_route_id_by_name("route_1")}]}
+            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'OrdQty': qty,
+                                                                                 'ExecutionPolicy': ExecutionPolicyConst.DMA.value,
+                                                                                 'RouteList': route_params,
+                                                                                 'InstrID': instrument,
+                                                                                 'AccountGroupID': self.client,
+                                                                                 'ListingList': {'ListingBlock':
+                                                                                     [{
+                                                                                         'ListingID': listing}]}
+                                                                                 })
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            child_ord_id = order_reply[JavaApiFields.OrdID.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                 JavaApiFields.ExecutionPolicy.value: ExecutionPolicyConst.DMA.value}, order_reply,
+                'Verifying that Child DMA order created (step 2)')
         finally:
-            time.sleep(1)
-            rule_manager.remove_rule(nos_rule)
+            time.sleep(3)
+            self.rule_manager.remove_rule(nos_rule)
         # endregion
 
-        # region send modify request
+        # region step 3: Send CancelReplaceRequest
+        new_qty = '50'
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        self.order_cancel_replace_request.set_modify_order_limit(cl_ord_id, new_qty, price)
+        self.java_api_manager2.send_message_and_receive_response(self.order_cancel_replace_request)
+        # endregion
+
+        # region step 4: Accept Modification + Child
+        cd_ord_notif_message = self.java_api_manager2.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters() \
+            [JavaApiFields.CDOrdNotifBlock.value]
+        cd_ord_notif_id = cd_ord_notif_message[JavaApiFields.CDOrdNotifID.value]
+        modification_rule = None
         try:
-            rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.bs_connectivity,
-                                                                   self.data_set.get_venue_client_names_by_name(
-                                                                       'client_1_venue_1'),
-                                                                   self.data_set.get_mic_by_name('mic_1'), True)
-            fix_message_cancer_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set,
-                                                                                self.fix_message.get_parameters())
-            fix_message_cancer_replace.change_parameter('OrderQtyData', {'OrderQty': '50'})
-            fix_message_cancer_replace.add_tag({'OrigClOrdID': self.fix_message.get_parameter("ClOrdID")})
-            self.fix_manager.send_message_fix_standard(fix_message_cancer_replace)
-            # region accept modify
-            self.client_inbox.accept_modify_plus_child(filter_dict)
-            # endregion
-        except Exception as E:
-            logger.debug('Error Message' + {E})
+            modification_rule = self.rule_manager.add_OrderCancelReplaceRequest_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.client_for_rule,
+                                                                                            self.exec_destination,
+                                                                                            True)
+            self.accept_request.set_default(order_id, cd_ord_notif_id, desk, 'M')
+            self.accept_request.update_fields_in_component('CDOrdAckBatchRequestBlock', {'ModifyChildren': 'Y'})
+            self.java_api_manager.send_message_and_receive_response(self.accept_request, {order_id: order_id,
+                                                                                          child_ord_id: child_ord_id})
+            parent_order_reply = \
+                self.java_api_manager.get_last_message_by_multiple_filter(ORSMessageType.OrdReply.value, [order_id, str(float(new_qty))]).get_parameters()[
+                    JavaApiFields.OrdReplyBlock.value]
+            expected_result = {JavaApiFields.OrdQty.value: str(float(new_qty))}
+            self.java_api_manager.compare_values(expected_result, parent_order_reply, f'Verifying that qty = {new_qty} for {order_id} (step 4)')
+            child_order_reply = \
+                self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value, child_ord_id).get_parameters()[
+                    JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(expected_result, child_order_reply,
+                                                 f'Verifying that qty = {new_qty} for {child_ord_id} (step 4)')
         finally:
-            time.sleep(1)
-
-        # endregion
-
-        # region verify order
-        self.order_book.set_filter(filter_list)
-        self.order_book.check_order_fields_list({OrderBookColumns.qty.value: '50'})
-        result = self.order_book.extract_sub_lvl_fields([OrderBookColumns.qty.value, OrderBookColumns.sts.value],
-                                                        [SecondLevelTabs.child_tab.value], filter_dict)
-        self.order_book.compare_values({OrderBookColumns.qty.value: '50', OrderBookColumns.sts.value: ExecSts.open.value},
-                                       result, 'Comparing Values Child')
+            time.sleep(3)
+            self.rule_manager.remove_rule(modification_rule)
         # endregion

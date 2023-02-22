@@ -68,7 +68,7 @@ class QAP_T8089(TestCase):
 
         # region check message 35=8 54=5 150 = 0
         ignored_list_new = ['Parties', 'QuodTradeQualifier', 'BookID', 'NoParty', 'SecondaryOrderID', 'tag5120', 'LastMkt',
-                        'Text', 'ExecBroker']
+                        'Text', 'ExecBroker', "GatingRuleName"]
         self.execution_report.set_default_new(self.fix_message)
         self.execution_report.change_parameters({'Side': '5', 'OrderID': order_id})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=ignored_list_new)
@@ -77,14 +77,14 @@ class QAP_T8089(TestCase):
         # region check messgae 35=8 54=5 150=F
         ignored_list_exec = ['M_PreAllocGrp', 'Parties', 'QuodTradeQualifier', 'BookID', 'SettlCurrency',
                              'TradeReportingIndicator', 'NoParty', 'tag5120', 'LastMkt',
-                             'Text', 'ExecBroker', 'SecurityDesc']
+                             'Text', 'ExecBroker', 'SecurityDesc', "GatingRuleName"]
         self.execution_report.set_default_filled(self.fix_message)
         self.execution_report.change_parameters({'Side': '5', 'OrderID': order_id})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=ignored_list_exec)
         # endregion
 
         # check 35=J 54=5 626=5 message
-        ignored_list_alloc = ['Account', 'tag5120', 'OrderAvgPx', 'IndividualAllocID']
+        ignored_list_alloc = ['Account', 'tag5120', 'OrderAvgPx', 'IndividualAllocID', "tag11245"]
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'Side': '5'})
@@ -92,7 +92,7 @@ class QAP_T8089(TestCase):
         # endregion
 
         # region check 35=AK message
-        ignored_list_conf = ['OrderAvgPx', 'tag5120']
+        ignored_list_conf = ['OrderAvgPx', 'tag5120', "tag11245"]
         confirmation_message = FixMessageConfirmationReportOMS(self.data_set)
         confirmation_message.set_default_confirmation_new(self.fix_message)
         confirmation_message.change_parameters({'Side': '5'})

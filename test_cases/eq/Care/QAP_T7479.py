@@ -1,71 +1,62 @@
 import logging
 from pathlib import Path
+
+from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from custom import basic_custom_actions as bca
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, ExecutionReportConst
+from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossRequest import ManualOrderCrossRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-timeouts = True
+
 
 @try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7479(TestCase):
 
-    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.qty = "200"
-        self.price = "10"
-        self.price_mc = "8"
-        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
-        self.fix_message.change_parameter('OrderQtyData', {'OrderQty': self.qty})
-        self.fix_message.change_parameter("Price", self.price)
-        self.last_mkt = "XASE"
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
-
-
+        self.order_submit = OrderSubmitOMS(self.data_set)
+        self.order_submit2 = OrderSubmitOMS(self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.cross_request = ManualOrderCrossRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Declaration
-        # region create first CO order
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id1 = response[0].get_parameters()['OrderID']
-        # endregion
-        # region accept first CO order
-        self.client_inbox.accept_order()
-        # endregion
-        # region create second CO order
-        self.fix_message.change_parameter("Side", "2")
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id2 = response[0].get_parameters()['OrderID']
-        # endregion
-        # region accept second CO order
-        self.client_inbox.accept_order()
-        # endregion
-        # region manual cross
-        self.order_book.manual_cross_orders([1,2], qty=self.qty, price=self.price_mc, last_mkt=self.last_mkt)
-        # endregion
-        # region check fields
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.filled.value, OrderBookColumns.avg_price.value: self.price_mc})
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: ExecSts.filled.value, OrderBookColumns.avg_price.value: self.price_mc})
-        # endregion
-        # region check child fields
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id1]).check_second_lvl_fields_list(
-            {OrderBookColumns.last_market.value: self.last_mkt, OrderBookColumns.qty.value: self.qty, OrderBookColumns.exec_price.value: self.price_mc})
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id2]).check_second_lvl_fields_list(
-            {OrderBookColumns.last_market.value: self.last_mkt, OrderBookColumns.qty.value: self.qty,
-             OrderBookColumns.exec_price.value: self.price_mc})
+        # region Step 1
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        ord_id_care = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
+
+        self.order_submit2.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                  desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                                  role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit2.update_fields_in_component("NewOrderSingleBlock", {'Side': 'Sell'})
+        self.java_api_manager.send_message_and_receive_response(self.order_submit2)
+        ord_id_care2 = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         # endregion
 
+        # region Step 3
+        self.cross_request.set_default(self.data_set, ord_id_care, ord_id_care2)
+        self.java_api_manager.send_message_and_receive_response(self.cross_request)
+        exec_rep = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ord_id_care) \
+                .get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        exec_rep2 = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ord_id_care2) \
+            .get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values({
+            JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, exec_rep,
+            'Check execution')
+        self.java_api_manager.compare_values({
+            JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, exec_rep2,
+            'Check execution2')
+        # endregion

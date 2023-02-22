@@ -1,0 +1,60 @@
+import sys
+import time
+import traceback
+
+from custom import basic_custom_actions
+from test_framework.web_admin_core.pages.login.login_page import LoginPage
+from test_framework.web_admin_core.pages.markets.listings.listings_validations_sub_wizard import \
+    ListingsValidationsSubWizard
+from test_framework.web_admin_core.pages.markets.listings.nested_wizards.listings_tick_size_profile_sub_wizard import \
+    ListingsTickSizeProfileSubWizard
+from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
+from test_framework.web_admin_core.pages.root.side_menu import SideMenu
+from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
+from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
+
+
+class QAP_T9418(CommonTestCase):
+
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+        super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
+                         environment=environment)
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.lookup_symbol = 'a'
+
+    def precondition(self):
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_listings_page()
+
+    def test_context(self):
+
+        try:
+            self.precondition()
+
+            main_page = ListingsPage(self.web_driver_container)
+            main_page.load_listing_from_global_filter(self.lookup_symbol)
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
+            validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
+            validations_tab.click_on_manage_tick_size_profile()
+            time.sleep(0.5)
+            tick_size_profile_wizard = ListingsTickSizeProfileSubWizard(self.web_driver_container)
+            if tick_size_profile_wizard.is_tick_size_profile_lookup_displayed():
+                tick_size_profile_wizard.load_tick_size_profile_by_lookup("t")
+                time.sleep(1)
+                self.verify("Tick Size Profile displayed", True,
+                            tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())
+            else:
+                time.sleep(1)
+                self.verify("Tick Size Profile displayed", True,
+                            tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())
+
+        except Exception:
+            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)

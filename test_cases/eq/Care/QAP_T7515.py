@@ -88,7 +88,7 @@ class QAP_T7515(TestCase):
                                  'AvgPx', 'QuodTradeQualifier', 'BookID', 'Currency',
                                  'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty',
                                  'CumQty', 'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
-                                 'ExecBroker', 'Price', 'QtyType', 'OrderCapacity', 'OrderID']
+                                 'ExecBroker', 'Price', 'QtyType', 'OrderCapacity', 'OrderID', 'GatingRuleCondName', 'GatingRuleName']
         change_parameters = None
         for cl_ord_id in list_of_cl_ord_id:
             change_parameters = {

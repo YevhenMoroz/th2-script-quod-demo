@@ -27,6 +27,7 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Market_Orders import MOO_MKT_LSE, MOC_MKT_LSE, MOC_MKT_MIL, MOO_MKT_SIX, MOO_MKT_MIL, \
     MOC_MKT_SIX, TWAP_AUC_MKT_LSE, TWAP_AUC_MKT_SIX, TWAP_AUC_MKT_XETRA, VWAP_AUC_MKT_LSE, VWAP_AUC_MKT_SIX, \
     VWAP_AUC_MKT_XETRA, POV_AUC_MKT_LSE, POV_AUC_MKT_SIX, POV_AUC_MKT_XETRA
+from test_cases.algo.Algo_Redburn.AuctionVolumeCheck import VOL_POV_AUC_LMT_LSE, VOL_POV_AUC_LMT_MILAN, VOL_POV_AUC_LMT_XETRA, VOL_POV_AUC_MKT_LSE, VOL_POV_AUC_MKT_MILAN, VOL_POV_AUC_MKT_XETRA, VOL_TWAP_AUC_LMT_LSE, VOL_TWAP_AUC_LMT_MILAN, VOL_TWAP_AUC_LMT_XETRA, VOL_TWAP_AUC_MKT_LSE, VOL_TWAP_AUC_MKT_MILAN, VOL_TWAP_AUC_MKT_XETRA, VOL_VWAP_AUC_LMT_LSE, VOL_VWAP_AUC_LMT_MILAN, VOL_VWAP_AUC_LMT_XETRA, VOL_VWAP_AUC_MKT_LSE, VOL_VWAP_AUC_MKT_MILAN, VOL_VWAP_AUC_MKT_XETRA
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -266,6 +267,27 @@ def test_run():
         POV_AUC_MKT_LSE.execute(report_id)
         POV_AUC_MKT_SIX.execute(report_id)
         POV_AUC_MKT_XETRA.execute(report_id)
+        # endregion
+
+        # region Auction market volume check
+        VOL_POV_AUC_LMT_LSE.execute(report_id)
+        VOL_POV_AUC_LMT_MILAN.execute(report_id)
+        VOL_POV_AUC_LMT_XETRA.execute(report_id)
+        VOL_POV_AUC_MKT_LSE.execute(report_id)
+        VOL_POV_AUC_MKT_MILAN.execute(report_id)
+        VOL_POV_AUC_MKT_XETRA.execute(report_id)
+        VOL_TWAP_AUC_LMT_LSE.execute(report_id)
+        VOL_TWAP_AUC_LMT_MILAN.execute(report_id)
+        VOL_TWAP_AUC_LMT_XETRA.execute(report_id)
+        VOL_TWAP_AUC_MKT_LSE.execute(report_id)
+        VOL_TWAP_AUC_MKT_MILAN.execute(report_id)
+        VOL_TWAP_AUC_MKT_XETRA.execute(report_id)
+        VOL_VWAP_AUC_LMT_LSE.execute(report_id)
+        VOL_VWAP_AUC_LMT_MILAN.execute(report_id)
+        VOL_VWAP_AUC_LMT_XETRA.execute(report_id)
+        VOL_VWAP_AUC_MKT_LSE.execute(report_id)
+        VOL_VWAP_AUC_MKT_MILAN.execute(report_id)
+        VOL_VWAP_AUC_MKT_XETRA.execute(report_id)
         # endregion
 
 

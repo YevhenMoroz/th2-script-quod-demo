@@ -23,10 +23,10 @@ class QAP_T9406(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.trade_request.set_default_params()
-        self.java_api_manager.send_message(self.trade_request)
+        # self.java_api_manager.send_message(self.trade_request)
         # TODO check response
-        # response:list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        # print(response)
+        response:list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        print(response[0].get_parameters())
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

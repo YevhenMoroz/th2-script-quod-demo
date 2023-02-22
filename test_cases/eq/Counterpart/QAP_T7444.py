@@ -65,7 +65,8 @@ class QAP_T7444(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields = ['Account', 'PartyRoleQualifier', 'ReplyReceivedTime','OrderAvgPx']
+        list_of_ignored_fields = ['Account', 'PartyRoleQualifier', 'ReplyReceivedTime', 'OrderAvgPx',
+                                  'GatingRuleCondName', 'GatingRuleName']
         party_stub_dict = {'PartyRole': "*",
                            'PartyID': "*",
                            'PartyIDSource': "*"}
@@ -74,7 +75,7 @@ class QAP_T7444(TestCase):
                 {'PartyRole': "67",
                  'PartyID': "InvestmentFirm - ClCounterpart_3",
                  'PartyIDSource': "C"},
-                 party_stub_dict,
+                party_stub_dict,
                 party_stub_dict,
                 party_stub_dict,
                 party_stub_dict
@@ -107,7 +108,7 @@ class QAP_T7444(TestCase):
         # region Check ExecutionReports
         time.sleep(6)
         self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2,ignored_fields=list_of_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
         no_party = [
@@ -123,8 +124,8 @@ class QAP_T7444(TestCase):
             party_stub_dict,
             {'PartyRole': "*",
              'NoPartySubIDs': "*",
-            'PartyID': "*",
-            'PartyIDSource': "*"},
+             'PartyID': "*",
+             'PartyIDSource': "*"},
             {'PartyRole': "*",
              'NoPartySubIDs': "*",
              'PartyID': "*",
@@ -140,9 +141,9 @@ class QAP_T7444(TestCase):
             {"NoParty": no_party_alloc, "Account": self.client, "tag5120": "*", 'NoAllocs': alloc_grp})
         # endregion
         # region Check Book & Allocation
-        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report,ignored_fields=list_of_ignored_fields)
+        self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=list_of_ignored_fields)
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters({'tag5120': "*", "Account": self.client})
-        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report,ignored_fields=list_of_ignored_fields)
+        self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_of_ignored_fields)
         # endregion

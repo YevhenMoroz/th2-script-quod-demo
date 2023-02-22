@@ -29,9 +29,9 @@
             <limits>false</limits>
         </underlying>
         <scope>root</scope> <!-- root, leaf, or firstNonCare -->
-        <virtual>false</virtual>
-        <external>false</external>
-		<maintainOnConfirmation>false</maintainOnConfirmation>
+        <virtual>true</virtual>
+        <external>true</external>
+		<maintainOnConfirmation>true</maintainOnConfirmation>
     </positions>
     <washbook>
 	<enabled>true</enabled>

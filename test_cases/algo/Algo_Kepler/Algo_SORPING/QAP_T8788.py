@@ -54,7 +54,7 @@ class QAP_T8788(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -143,7 +143,7 @@ class QAP_T8788(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_params()
+        self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Side=self.sell, Instrument=self.instrument))
 
@@ -178,7 +178,7 @@ class QAP_T8788(TestCase):
         # region Check Lit child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order", self.test_id))
 
-        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_params()
+        self.dma_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price, Side=self.sell, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
@@ -192,14 +192,19 @@ class QAP_T8788(TestCase):
         self.fix_verifier_buy.check_fix_message(er_partial_fill_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PartialFill Child DMA 1 order')
         # endregion
 
-        time.sleep(5)
+        # region Check partial fill the parent order
+        er_partial_fill_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_partial_fill)
+        self.fix_verifier_sell.check_fix_message(er_partial_fill_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport PartialFill')
+        # endregion
+
+        time.sleep(10)
 
         # region Check reject replace child (recycling eliminated qty)
         er_reject_replaced_dma_qdl1_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_qdl1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_reject_replaced_dma_qdl1_order_params, self.key_params_ER_cancel_reject_child, self.ToQuod, 'Buy Side OrderCancelRejectReport Child DMA order')
 
         er_reject_replaced_SORPING_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_new)
-        er_reject_replaced_SORPING_order_params.change_parameters(dict(CxlRejResponseTo='2', Text="*"))
+        er_reject_replaced_SORPING_order_params.change_parameters(dict(CxlRejResponseTo='2', Text="*", OrdStatus=1))
         self.fix_verifier_sell.check_fix_message(er_reject_replaced_SORPING_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell Side OrderCancelRejectReport')
         # endregion
 
