@@ -247,6 +247,7 @@ class JavaApiFields(Enum):
     DailyRealizedNetPL = 'DailyRealizedNetPL'
     DailyRealizedGrossPL = 'DailyRealizedGrossPL'
     VenueAccountName = 'VenueAccountName'
+    BuyAvgPx = 'BuyAvgPx'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -338,7 +339,6 @@ class JavaApiFields(Enum):
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
 
-    ManualOrderCrossReplyBlock = "ManualOrderCrossReplyBlock"
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'
