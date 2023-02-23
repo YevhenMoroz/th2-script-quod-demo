@@ -34,7 +34,7 @@ class QAP_T9292(TestCase):
         # region order parameters
         self.qty = 10000
         self.price = 20
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_12.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_1.value
         self.reason = 99
         # endregion
 

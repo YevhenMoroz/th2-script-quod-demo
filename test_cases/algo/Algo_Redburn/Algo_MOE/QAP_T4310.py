@@ -7,7 +7,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -43,6 +43,8 @@ class QAP_T4310(TestCase):
         self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
         self.price = 30
         self.offset = 100
+
+        self.tif_gtx = TimeInForce.GoodTillCrossing.value
         # endregion
 
         # region Gateway Side
@@ -58,7 +60,7 @@ class QAP_T4310(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -68,8 +70,8 @@ class QAP_T4310(TestCase):
 
         # region venue param
         self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_19")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
+        self.account = self.data_set.get_account_by_name("account_3")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
         # region Key parameters
@@ -79,8 +81,8 @@ class QAP_T4310(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
@@ -115,11 +117,11 @@ class QAP_T4310(TestCase):
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.change_parameters(dict(TimeInForce=5))
+        er_pending_new.change_parameters(dict(TimeInForce=self.tif_gtx))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_rejected = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_rejected)
-        er_rejected.change_parameters(dict(TimeInForce=5, Text='missing LimitPriceReference'))
+        er_rejected.change_parameters(dict(TimeInForce=self.tif_gtx, Text='missing LimitPriceReference'))
         self.fix_verifier_sell.check_fix_message(er_rejected, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Rejected')
         # endregion
 

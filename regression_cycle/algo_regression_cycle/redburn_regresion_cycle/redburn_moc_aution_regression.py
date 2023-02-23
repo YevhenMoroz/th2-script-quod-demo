@@ -17,6 +17,9 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4482 import QAP_T4482
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4483 import QAP_T4483
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9085 import QAP_T9085
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9086 import QAP_T9086
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9088 import QAP_T9088
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9096 import QAP_T9096
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9101 import QAP_T9101
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9332 import QAP_T9332
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9339 import QAP_T9339
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9340 import QAP_T9340
@@ -76,6 +79,9 @@ def test_run(parent_id=None, version=None):
         # region Bi-Lateral
         QAP_T9085(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9086(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9096(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9101(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
