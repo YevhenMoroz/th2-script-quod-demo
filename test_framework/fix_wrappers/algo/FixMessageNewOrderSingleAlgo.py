@@ -1447,7 +1447,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TriggeringInstruction': {
                 'TriggerType': 4,
                 'TriggerAction': 1,
-            }
+            },
         }
         super().change_parameters(base_parameters)
         return self
