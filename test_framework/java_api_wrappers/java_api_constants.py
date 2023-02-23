@@ -9,6 +9,7 @@ class ExecutionReportConst(Enum):
     ExecType_CAN = 'CAN'
     ExecType_DFD = 'DFD'
     ExecType_ACT = 'ACT'
+    ExecType_POS = 'POS'
     PostTradeExecStatus_NAL = 'NAL'
 
 
@@ -16,6 +17,7 @@ class BasketMessagesConst(Enum):
     ListExecutionPolicy_C = 'C'
     ListOrderStatus_EXE = 'EXE'
     ListOrderStatus_REJ = 'REJ'
+    ListOrderStatus_DON = 'DON'
 
 
 class BagMessagesConst(Enum):
@@ -126,8 +128,10 @@ class CommissionAmountTypeConst(Enum):
 
 class OrdListNotificationConst(Enum):
     ListOrderStatus_EXE = 'EXE'
+    ListOrderStatus_DON = 'DON'
     OrderListWaveStatus_TER = 'TER'
     OrderListWaveStatus_NEW = 'NEW'
+    OrderListWaveStatus_CXL = 'CXL'
 
 
 class QtyPercentageProfile(Enum):
@@ -231,6 +235,19 @@ class JavaApiFields(Enum):
     GatingRuleID = 'GatingRuleID'
     GatingRuleCondName = 'GatingRuleCondName'
     ParentOrdrList = 'ParentOrdrList'
+    RequestForPositionsAckBlock = 'RequestForPositionsAckBlock'
+    InstrID = 'InstrID'
+    CumBuyQty = 'CumBuyQty'
+    CumSellQty = 'CumSellQty'
+    GrossWeightedAvgPx = 'GrossWeightedAvgPx'
+    NetWeightedAvgPx = 'NetWeightedAvgPx'
+    DailyAgentFeeAmt = 'DailyAgentFeeAmt'
+    DailyClientCommission = 'DailyClientCommission'
+    QuarterToDateClientComm = 'QuarterToDateClientComm'
+    DailyRealizedNetPL = 'DailyRealizedNetPL'
+    DailyRealizedGrossPL = 'DailyRealizedGrossPL'
+    VenueAccountName = 'VenueAccountName'
+    BuyAvgPx = 'BuyAvgPx'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -317,9 +334,11 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
+    ManualOrderCrossReplyBlock = 'ManualOrderCrossReplyBlock'
+    ExecQty = 'ExecQty'
+    OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
 
-    ManualOrderCrossReplyBlock = "ManualOrderCrossReplyBlock"
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
     OrderWaveStatus = 'OrderWaveStatus'
@@ -368,9 +387,20 @@ class OrderBagConst(Enum):
     OrderBagStatus_NEW = 'NEW'
     OrderBagStatus_CXL = 'CXL'
     OrderWaveStatus_TER = 'TER'
+    OrderWaveStatus_NEW = 'NEW'
     OrderBagStatus_TER = 'TER'
 
 
 class CDResponsesConst(Enum):
     CDRequestType_MOD = 'MOD'
     CDRequestType_CAN = 'CAN'
+
+
+# enums for Position
+
+class SubscriptionRequestTypes(Enum):
+    SubscriptionRequestType_SUB = 'SUB'
+
+
+class PosReqTypes(Enum):
+    PosReqType_POS = 'POS'

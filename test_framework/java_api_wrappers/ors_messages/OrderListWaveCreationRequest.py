@@ -25,3 +25,16 @@ class OrderListWaveCreationRequest(JavaApiMessage):
             }
         }
         super().change_parameters(base_parameters)
+
+    def set_list_wave_with_bag(self, list_id, order_bag_id, percent_qty="1", profile=QtyPercentageProfile.RemainingQty.value):
+        base_parameters = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'OrderListWaveCreationRequestBlock': {
+                'OrderListID': list_id,
+                'PercentQtyToRelease': percent_qty,
+                'QtyPercentageProfile': profile,
+                'OrderBagID': order_bag_id
+            }
+        }
+        super().change_parameters(base_parameters)

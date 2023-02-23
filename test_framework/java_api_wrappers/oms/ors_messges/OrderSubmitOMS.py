@@ -139,7 +139,7 @@ class OrderSubmitOMS(OrderSubmit):
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
-                                         'ClOrdID': cl_ord_id})
+                                         'ClOrdID': cl_ord_id, 'ExecutionPolicy': 'DMA'})
         algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
                                                "ScenarioID": "101",
                                                "AlgoPolicyID": "1000131"},
