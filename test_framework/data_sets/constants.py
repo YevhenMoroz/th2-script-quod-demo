@@ -73,7 +73,7 @@ class Connectivity(Enum):
 
 class FrontEnd(Enum):
     # 317 site
-    USERS_317 = [""]
+    USERS_317 = ["JavaApiUser", "JavaApiUser2"]
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
