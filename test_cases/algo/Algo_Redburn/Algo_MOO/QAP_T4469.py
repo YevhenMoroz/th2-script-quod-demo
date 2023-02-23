@@ -168,7 +168,7 @@ class QAP_T4469(TestCase):
         end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) + 1
 
         self.checkpoint = end_time + 5
-        would_time = AFM.change_datetime_from_epoch_to_normal(end_time - 2).astimezone(pytz.utc)
+        would_time = AFM.change_datetime_from_epoch_to_normal(end_time - 1).astimezone(pytz.utc)
         would_time_from = would_time.isoformat()[:-6]
         would_time_to = (would_time + datetime.timedelta(milliseconds=100)).isoformat()[:-6]
         scheduler = sched.scheduler(time.time, time.sleep)
@@ -176,7 +176,7 @@ class QAP_T4469(TestCase):
         case_id_3 = bca.create_event("Check would order", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_3)
 
-        self.would_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
+        self.would_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         self.would_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.would_qty, Price=self.would_price, TimeInForce=self.tif_ato))
         self.would_order.change_parameter("TransactTime", ">" + would_time_from)
         scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.would_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle would child more checkpoint'))

@@ -36,12 +36,8 @@ def test_run(parent_id=None):
             multilisted_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Peg']").attrib["run"]):
             pass
-        if eval(root.find(".//component[@name='Stop']").attrib["run"]):
-            pass
         if eval(root.find(".//component[@name='Lit_dark']").attrib["run"]):
             litdark_regression.test_run(report_id, version)
-        if eval(root.find(".//component[@name='Block']").attrib["run"]):
-            pass
         if eval(root.find(".//component[@name='Gating_rules']").attrib["run"]):
             pass
         if eval(root.find(".//component[@name='Web_admin']").attrib["run"]):
