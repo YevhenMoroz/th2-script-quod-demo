@@ -4,6 +4,7 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4332
 from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T8553 import QAP_T8553
 from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T8928 import QAP_T8928
+from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T9061 import QAP_T9061
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -22,6 +23,7 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfigurationAlgo("Twap")
         QAP_T8928(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8553(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9061(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         pass
 
     except Exception:
