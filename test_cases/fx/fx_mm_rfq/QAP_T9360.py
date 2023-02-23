@@ -1,32 +1,18 @@
-import time
-from random import randint
 from pathlib import Path
-from datetime import datetime
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_automatic_quoting, extract_freenotes
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.constants import Status
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
-    FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
 from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, QuoteRequestBookColumns
-from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
 
 class QAP_T9360(TestCase):
