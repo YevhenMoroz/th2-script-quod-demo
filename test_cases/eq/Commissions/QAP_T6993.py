@@ -333,7 +333,8 @@ class QAP_T6993(TestCase):
                                        'BookingType', 'RootSettlCurrency', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'AllocTransType', 'RootSettlCurrFxRate', 'RootSettlCurrAmt',
                                        'GrossTradeAmt', 'AllocSettlCurrAmt', 'AllocSettlCurrency',
-                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx'])
+                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx',
+                                       'OrderAvgPx'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
                                              'AllocType': '5'})
