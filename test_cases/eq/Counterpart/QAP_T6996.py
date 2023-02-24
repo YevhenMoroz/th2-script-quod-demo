@@ -3,6 +3,9 @@ import os
 import time
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -45,7 +48,7 @@ class QAP_T6996(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.api_message = RestApiSettlementModelMessages(self.data_set)
-        self.local_path = os.path.abspath("../../test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -71,7 +74,7 @@ class QAP_T6996(TestCase):
         tree.write("temp.xml")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(40)
+        time.sleep(60)
         # endregion
 
         # region precondition and step 1
@@ -127,7 +130,7 @@ class QAP_T6996(TestCase):
 
         fix_execution_report.add_tag(no_party)
         list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier',
-                                  'GatingRuleCondName', 'GatingRuleName']
+                                  'GatingRuleCondName', 'GatingRuleName','PartyRoleQualifier']
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
         # endregion
@@ -138,5 +141,5 @@ class QAP_T6996(TestCase):
         self.rest_api_manager.send_post_request(self.api_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(40)
+        time.sleep(60)
         os.remove("temp.xml")
