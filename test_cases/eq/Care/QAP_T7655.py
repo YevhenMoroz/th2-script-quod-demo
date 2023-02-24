@@ -64,7 +64,7 @@ class QAP_T7655(TestCase):
         self.java_api_manager2.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
             order_notif_message,
-            "Step 6 - Comparing Status of Care order",
+            "Comparing Status of Care order",
         )
         # endregion
 
