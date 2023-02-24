@@ -121,6 +121,37 @@ class FixMessageQuoteRequestSynergyFX(FixMessageQuoteRequestFX):
         super().change_parameters(quote_request_params)
         return self
 
+    def set_swap_synergy_params(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NumOfCompetitors": "1",
+            "InCompetition": "N",
+            "VenueType": "M",
+            "NoRelatedSym": [{
+                "Instrument": {
+                    "SymbolSfx": "SP/1W",
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "SecurityType": "FOR",
+                    "Product": "4"
+                },
+                "NoPartyIDs": [
+                    {
+                        "PartyID": self.get_data_set().get_client_by_name("client_mm_10"),
+                        "PartyIDSource": "D",
+                        "PartyRole": "1"
+                    }
+                ],
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+                "SettlDate2": self.get_data_set().get_settle_date_by_name("wk1"),
+                "OrderQty": "1000000",
+                "OrderQty2": "1000000",
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
+        return self
+
     def change_client(self, client: str):
         new_party = [
             {
