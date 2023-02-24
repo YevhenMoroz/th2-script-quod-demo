@@ -152,21 +152,25 @@ class QAP_T7494(TestCase):
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message('Split Booking', responses)
-        list_of_records = [f"'Qty': '{first_booking_qty}'", f"'Qty': '{second_booking_qty}'"]
-        list_of_qty = [first_booking_qty, second_booking_qty]
         allocation_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.AllocationInstructionQtyList.value).get_parameters()[
-            JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.AllocationInstructionQtyList.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocReportType.value: AllocationReportConst.AllocReportType_ACC.value,
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value},
-        allocation_report, 'Check Status and MatchStatus (part of step 5)')
-        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
-                                            'Check that SummaryStatus is empty (part of step 5)')
-        self.java_api_manager.compare_values(give_up_contra_firm, allocation_report[JavaApiFields.CounterpartList.value][JavaApiFields.CounterpartBlock.value][0],
+            allocation_report, 'Check Status and MatchStatus (part of step 5)')
+        alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+        self.java_api_manager.compare_values({'AllocSummaryStatusIsAbsent': True},
+                                             {'AllocSummaryStatusIsAbsent': alloc_summary_status_is_absent},
+                                             'Check that SummaryStatus is empty (part of step 5)')
+        self.java_api_manager.compare_values(give_up_contra_firm,
+                                             allocation_report[JavaApiFields.CounterpartList.value][
+                                                 JavaApiFields.CounterpartBlock.value][0],
                                              "Check that Give Up broker present (part of step 5)")
 
-        allocation_instruction_qty_list = allocation_report[JavaApiFields.AllocationInstructionQtyList.value][JavaApiFields.AllocationInstructionQtyBlock.value]
+        allocation_instruction_qty_list = allocation_report[JavaApiFields.AllocationInstructionQtyList.value][
+            JavaApiFields.AllocationInstructionQtyBlock.value]
         for split_group in allocation_instruction_qty_list:
             if split_group[JavaApiFields.BookingQty.value] == first_booking_qty:
                 self.java_api_manager.compare_values({JavaApiFields.BookingQty.value: first_booking_qty}, split_group,
