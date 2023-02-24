@@ -40,6 +40,7 @@ class QAP_T9362(TestCase):
         # region Step 1
         self.quote_request.set_rfq_synergy_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSym", 0, QuoteRequestType="1")
+        self.quote_request.change_client(self.iridium)
         response = self.fix_manager_rfq.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
         # region Step 2
         self.sleep(2)
@@ -70,9 +71,10 @@ class QAP_T9362(TestCase):
         # region Step 4
         self.quote_request.set_rfq_synergy_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSym", 0, QuoteRequestType="2")
+        self.quote_request.change_client(self.iridium)
         self.response: list = self.fix_manager_rfq.send_message_and_receive_response(self.quote_request)
         self.quote_2.set_params_for_quote(self.quote_request)
-        self.fix_verifier.check_fix_message(self.quote)
+        self.fix_verifier.check_fix_message(self.quote_2)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
