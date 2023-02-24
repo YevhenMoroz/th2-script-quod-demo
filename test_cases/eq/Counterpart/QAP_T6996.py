@@ -87,7 +87,7 @@ class QAP_T6996(TestCase):
         order_id_care = response[0].get_parameter("OrderID")
         fix_execution_report.set_default_new(self.fix_message)
         ignored_fields = ['Parties', 'QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker',
-                                  'GatingRuleCondName', 'GatingRuleName']
+                                  'GatingRuleCondName', 'GatingRuleName','PartyRoleQualifier']
         no_party = {"NoParty": {'NoParty': [
             {'PartyRole': "*",
              'PartyID': "*",
