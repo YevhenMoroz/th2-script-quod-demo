@@ -59,14 +59,6 @@ class QAP_T8587(TestCase):
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
         self.qty_6m = "6000000"
         self.qty_10m = "10000000"
-
-        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
-        self.free_notes_column = OrderBookColumns.free_notes.value
-        self.qty_column = OrderBookColumns.qty.value
-        self.client_column = QuoteRequestBookColumns.client.value
-        self.presence_event = "Order presence check"
-        self.expected_free_notes = "not enough quantity available through volume bands - manual intervention required"
-
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.aud_gbp = self.data_set.get_symbol_by_name("symbol_18")
         self.aud = self.data_set.get_currency_by_name("currency_aud")

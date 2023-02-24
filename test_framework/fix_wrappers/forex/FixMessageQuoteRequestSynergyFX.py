@@ -120,3 +120,13 @@ class FixMessageQuoteRequestSynergyFX(FixMessageQuoteRequestFX):
         }
         super().change_parameters(quote_request_params)
         return self
+
+    def change_client(self, client: str):
+        new_party = [
+            {
+                "PartyID": client,
+                "PartyIDSource": "D",
+                "PartyRole": "1"
+            }
+        ]
+        self.update_repeating_group_by_index("NoRelatedSym", 0, NoPartyIDs=new_party)
