@@ -73,7 +73,7 @@ class QAP_T9360(TestCase):
                                                            QuoteRequestType="2")
         self.fix_manager_rfq.send_message_and_receive_response(self.quote_request)
         self.quote_2.set_params_for_quote(self.quote_request)
-        self.fix_verifier.check_fix_message(self.quote)
+        self.fix_verifier.check_fix_message(self.quote_2)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
