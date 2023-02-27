@@ -80,7 +80,7 @@ class QAP_T7155(TestCase):
         execution_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report1.change_parameters({'Parties': '#'})
         self.fix_verifier.check_fix_message_fix_standard(execution_report1,
-                                                         ignored_fields=['GatingRuleCondName'
+                                                         ignored_fields=['GatingRuleCondName',
                                                                          'GatingRuleName', 'TrdSubType',
                                                                          'SettlCurrency', 'LastExecutionPolicy',
                                                                          'TrdType', 'LastCapacity',
