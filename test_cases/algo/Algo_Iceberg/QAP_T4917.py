@@ -171,7 +171,7 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        cancel_iceberg_order_params.change_parameters(dict(Price=self.dec_price, SettlType='*')).remove_parameters(['SecondaryAlgoPolicyID', 'NoStrategyParameters'])
+        cancel_iceberg_order_params.change_parameters(dict(Price=self.dec_price, SettlType='*'))
         self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
         # endregion
 

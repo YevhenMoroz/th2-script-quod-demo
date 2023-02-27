@@ -73,6 +73,8 @@ from test_cases.algo.Algo_Multilisted.QAP_T4092 import QAP_T4092
 from test_cases.algo.Algo_Multilisted.QAP_T4876 import QAP_T4876
 from test_cases.algo.Algo_Multilisted.QAP_T8431 import QAP_T8431
 from test_cases.algo.Algo_Multilisted.QAP_T8432 import QAP_T8432
+from test_cases.algo.Algo_Multilisted.QAP_T4100 import QAP_T4100
+from test_cases.algo.Algo_Multilisted.QAP_T4101 import QAP_T4101
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -135,13 +137,16 @@ def test_run(parent_id=None, version=None):
         QAP_T4092(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4116(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4876(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8432(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8431(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4876(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8142(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4058(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4059(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4140(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4100(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4101(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
     except Exception:
         logging.error("Error execution", exc_info=True)
 

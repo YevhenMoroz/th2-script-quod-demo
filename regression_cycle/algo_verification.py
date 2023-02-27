@@ -15,7 +15,7 @@ def test_run(parent_id=None):
         #     pass
         # else:
         #     rule_manager.add_MDRule("fix-fh-310-columbia")
-        # rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
+        rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
         rule_manager.print_active_rules()
         logging.getLogger().setLevel(logging.WARN)
         report_id = bca.create_event('Algo verification_cycle', parent_id)
@@ -42,12 +42,8 @@ def test_run(parent_id=None):
             multilisted_verification.test_run(report_id, version)
         # if eval(root.find(".//component[@name='Peg']").attrib["run"]):
         #     pass
-        # if eval(root.find(".//component[@name='Stop']").attrib["run"]):
-        #     pass
         if eval(root.find(".//component[@name='Lit_dark']").attrib["run"]):
             litdark_verification.test_run(report_id, version)
-        # if eval(root.find(".//component[@name='Block']").attrib["run"]):
-        #     pass
         # if eval(root.find(".//component[@name='Gating_rules']").attrib["run"]):
         #     pass
         # if eval(root.find(".//component[@name='Web_admin']").attrib["run"]):
