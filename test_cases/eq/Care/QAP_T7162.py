@@ -63,7 +63,6 @@ class QAP_T7162(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.nos_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
-        print(order_reply)
         self.java_api_manager.compare_values({JavaApiFields.AllocAccountID.value: self.expected_sec_account},
                                              order_reply[JavaApiFields.PreTradeAllocationBlock.value][
                                                  JavaApiFields.PreTradeAllocationList.value][
