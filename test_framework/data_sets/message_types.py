@@ -24,6 +24,7 @@ class FIXMessageType(Enum):
     BusinessMessageReject = "BusinessMessageReject"
     Reject = 'Reject'
     Allocation = "Allocation"
+    RequestForPositions = "RequestForPositions"
 
 
 class ORSMessageType(Enum):
