@@ -293,6 +293,6 @@ class QAP_T7331(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart CS")
-        # os.remove('temp.xml')
+        os.remove('temp.xml')
         time.sleep(80)
         self.ssh_client.close()
