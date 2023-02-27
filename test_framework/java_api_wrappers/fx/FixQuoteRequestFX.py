@@ -123,6 +123,7 @@ class FixQuoteRequestFX(JavaApiMessage):
         return self
 
     def change_client(self, client):
+        """Tip: use client_mm for this method"""
         params = self.get_parameters()
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
         return self
@@ -130,8 +131,8 @@ class FixQuoteRequestFX(JavaApiMessage):
     def change_instr_symbol(self, symbol: str, currency: str, quote_currency: str = None):
         params = self.get_parameters()
         if self.swap is False:
-            params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["QuoteReqInstrumentLegList"][
-                "QuoteReqInstrumentLegBlock"][0]["InstrumentLegBlock"] = symbol
+            params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"][
+                "InstrSymbol"] = symbol
             params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
         else:
             params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"][
