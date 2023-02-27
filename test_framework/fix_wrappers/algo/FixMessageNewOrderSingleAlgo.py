@@ -72,9 +72,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
-            "TargetStrategy": "1005",
-            'NoStrategyParameters': [
-            ]
+            "TargetStrategy": "1005"
         }
         super().change_parameters(base_parameters)
         return self
