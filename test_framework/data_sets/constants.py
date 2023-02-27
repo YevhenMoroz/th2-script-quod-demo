@@ -384,6 +384,12 @@ class SshClientEnv(Enum):
     PASSWORD_317 = ""
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
+    HOST_310 = "10.0.22.31"
+    PORT_310 = 22
+    USER_310 = ""
+    PASSWORD_310 = ""
+    SU_USER_310 = "quod310"
+    SU_PASSWORD_310 = "quod310"
 
 class DataBaseEnv(Enum):
     # 317 site
