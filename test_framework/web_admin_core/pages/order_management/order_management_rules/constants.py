@@ -1,6 +1,6 @@
 class Constants:
     class MainPage:
-        TITLE = "//span[@class='title left'][text()='Order Management Rules']"
+        TITLE = "//span[@class='entity-title left'][text()='Order Management Rules']"
 
         GLOBAL_FILTER = '//nb-card-header//*[@placeholder="Filter"]'
         DOWNLOAD_CSV_BUTTON = '//*[@nbtooltip="Download CSV"]//a'
@@ -18,6 +18,9 @@ class Constants:
         SEARCHED_ENTITY = '//*[text() = "{}"]'
         ENTITY_NAME = '//*[@col-id="gatingRuleName" and @tabindex]//*[@ref="eValue"]'
         ENTITY_STATUS = '//*[@col-id="alive" and @tabindex]//input'
+
+        CONDITION_NAME = '//*[@class="condition-name"]'
+        CONDITION_PERCENTAGE = '//*[@class="condition-name"][normalize-space()="{}"]//..//*[@class="percent-indicator"]//div'
 
         # DROP_DOWN_ENTITY_XPATH = "//*[@class='option-list']//span"
         # ERROR_MESSAGE_XPATH = "//*[@outline='danger']"

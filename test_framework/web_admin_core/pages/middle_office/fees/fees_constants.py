@@ -1,5 +1,5 @@
 class FeesConstants:
-    FEES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Fees ']"
+    FEES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Fees']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -48,6 +48,8 @@ class FeesConstants:
     # Order fee profile sub wizard
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH = '//*[normalize-space()="Commission Profile Name"]//*[@placeholder="Filter"]'
+    ORDER_FEE_PROFILE_COMMISSION_PROFILE_ENTITY_XPATH = '//*[normalize-space()="Commission Profile Name"]//..//span[@class="ng-star-inserted"][normalize-space()="{}"]'
+    ORDER_FEE_PROFILE_COMMISSION_PROFILE_PREVIEW_XPATH = '//*[@class="form-table-details-wrapper ng-star-inserted"]'
     ORDER_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
     ORDER_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
     ORDER_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
