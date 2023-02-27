@@ -59,14 +59,14 @@ class QAP_T7331(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region prepare pre-precondition:
-        # tree = ET.parse(self.local_path)
-        # cs = tree.getroot().find("cs/fixAutoAcknowledge")
-        # cs.text = 'false'
-        # tree.write("temp.xml")
-        # self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
-        # self.ssh_client.put_file(self.remote_path, "temp.xml")
-        # self.ssh_client.send_command("qrestart CS")
-        # time.sleep(200)
+        tree = ET.parse(self.local_path)
+        cs = tree.getroot().find("cs/fixAutoAcknowledge")
+        cs.text = 'false'
+        tree.write("temp.xml")
+        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart CS")
+        time.sleep(80)
         # endergion
         # region precondition - step 1: create CO order via FIX
         desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
@@ -289,10 +289,10 @@ class QAP_T7331(TestCase):
 
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.ssh_client.put_file(self.remote_path, self.local_path)
-    #     self.ssh_client.send_command("qrestart CS")
-    #     # os.remove('temp.xml')
-    #     time.sleep(200)
-    #     self.ssh_client.close()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.send_command("qrestart CS")
+        # os.remove('temp.xml')
+        time.sleep(80)
+        self.ssh_client.close()
