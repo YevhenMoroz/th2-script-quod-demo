@@ -44,6 +44,10 @@ class MainPage(CommonPage):
     def set_name_filter(self, value):
         self.set_text_by_xpath(Constants.MainPage.NAME_FILTER, value)
 
+    def select_rule_by_name(self, rule_name):
+        self.find_by_xpath(Constants.MainPage.SEARCHED_ENTITY.format(rule_name)).click()
+        self.find_by_xpath(Constants.MainPage.SEARCHED_ENTITY.format(rule_name)).click()
+
     def set_enabled_filter(self, value):
         self.select_value_from_dropdown_list(Constants.MainPage.ENABLED_FILTER, value)
 
@@ -52,3 +56,13 @@ class MainPage(CommonPage):
 
     def get_all_statuses(self):
         return self.get_all_checkboxes_statuses_from_table_column(Constants.MainPage.ENTITY_STATUS)
+
+    def get_conditions_names_and_percentage(self) -> dict:
+        names = self.find_elements_by_xpath(Constants.MainPage.CONDITION_NAME)
+        names_list = [_.text.strip() for _ in names]
+        conditions = {}
+        for i in names_list:
+            percentage = self.find_elements_by_xpath(Constants.MainPage.CONDITION_PERCENTAGE.format(i))
+            percentage_list = [_.text.strip() for _ in percentage]
+            conditions.update({f"{i}": ', '.join(percentage_list)})
+        return conditions
