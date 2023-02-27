@@ -269,7 +269,7 @@ class QAP_T7331(TestCase):
         list_ignored_fields = [
             'Account', 'OrderQtyData', 'OrdType', 'ClOrdID', 'OrderCapacity', 'OrderID',
             'TransactTime', 'Side', 'Parties', 'Price', 'SettlCurrency', 'Currency',
-            'TimeInForce', 'PositionEffect', 'Instrument', 'HandlInst', 'ExDestination', 'trailer'
+            'TimeInForce', 'PositionEffect', 'Instrument', 'HandlInst', 'ExDestination', 'trailer',
                                                                                          'header']
         order_modification_request_fix = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         order_modification_request_fix.change_parameters({
