@@ -33,7 +33,8 @@ class QAP_T2537(TestCase):
         self.settle_type_2w_java = self.data_set.get_settle_type_ja_by_name("wk2")
         self.tenor_spot_java = self.data_set.get_tenor_java_api_by_name("tenor_spot")
         self.settle_type_spot_java = self.data_set.get_settle_type_ja_by_name("spot")
-        self.expected_notes = "no forward points for client tier '2600011' on GBP/USD WK1 on QUODFX"
+        self.expected_notes = "no forward points for client tier '2600011' on GBP/USD WK1 on QUODFX - " \
+                              "manual intervention required"
         self.expected_quoting = "N"
 
     @try_except(test_id=Path(__file__).name[:-3])
