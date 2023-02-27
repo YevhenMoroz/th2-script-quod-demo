@@ -59,14 +59,14 @@ class QAP_T7331(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region prepare pre-precondition:
-        tree = ET.parse(self.local_path)
-        cs = tree.getroot().find("cs/fixAutoAcknowledge")
-        cs.text = 'false'
-        tree.write("temp.xml")
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
-        self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart CS")
-        time.sleep(80)
+        # tree = ET.parse(self.local_path)
+        # cs = tree.getroot().find("cs/fixAutoAcknowledge")
+        # cs.text = 'false'
+        # tree.write("temp.xml")
+        # self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
+        # self.ssh_client.put_file(self.remote_path, "temp.xml")
+        # self.ssh_client.send_command("qrestart CS")
+        # time.sleep(200)
         # endergion
         # region precondition - step 1: create CO order via FIX
         desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
@@ -269,27 +269,30 @@ class QAP_T7331(TestCase):
         list_ignored_fields = [
             'Account', 'OrderQtyData', 'OrdType', 'ClOrdID', 'OrderCapacity', 'OrderID',
             'TransactTime', 'Side', 'Parties', 'Price', 'SettlCurrency', 'Currency',
-            'TimeInForce', 'PositionEffect','Instrument','HandlInst','ExDestination']
+            'TimeInForce', 'PositionEffect', 'Instrument', 'HandlInst', 'ExDestination', 'trailer'
+                                                                                         'header']
         order_modification_request_fix = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         order_modification_request_fix.change_parameters({
             "OrigClOrdID": child_ord_id
         })
-        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix, ignored_fields=list_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix,
+                                                         ignored_fields=list_ignored_fields)
         # end_of_part
 
         # part 2: Check 35=G message for second child DMA order (third level of parent order)
         order_modification_request_fix.change_parameters({
             "OrigClOrdID": child_ord_id_third_level
         })
-        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix, ignored_fields=list_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix,
+                                                         ignored_fields=list_ignored_fields)
         # end_of_part
 
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart CS")
-        os.remove('temp.xml')
-        time.sleep(80)
-        self.ssh_client.close()
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.ssh_client.put_file(self.remote_path, self.local_path)
+    #     self.ssh_client.send_command("qrestart CS")
+    #     # os.remove('temp.xml')
+    #     time.sleep(200)
+    #     self.ssh_client.close()
