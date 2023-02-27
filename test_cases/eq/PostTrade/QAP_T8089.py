@@ -68,7 +68,7 @@ class QAP_T8089(TestCase):
 
         # region check message 35=8 54=5 150 = 0
         ignored_list_new = ['Parties', 'QuodTradeQualifier', 'BookID', 'NoParty', 'SecondaryOrderID', 'tag5120', 'LastMkt',
-                        'Text', 'ExecBroker', "GatingRuleName"]
+                        'Text', 'ExecBroker', "GatingRuleName",'GatingRuleCondName']
         self.execution_report.set_default_new(self.fix_message)
         self.execution_report.change_parameters({'Side': '5', 'OrderID': order_id})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=ignored_list_new)
@@ -77,7 +77,8 @@ class QAP_T8089(TestCase):
         # region check messgae 35=8 54=5 150=F
         ignored_list_exec = ['M_PreAllocGrp', 'Parties', 'QuodTradeQualifier', 'BookID', 'SettlCurrency',
                              'TradeReportingIndicator', 'NoParty', 'tag5120', 'LastMkt',
-                             'Text', 'ExecBroker', 'SecurityDesc', "GatingRuleName"]
+                             'Text', 'ExecBroker', 'SecurityDesc', "GatingRuleName",
+                             'GatingRuleCondName']
         self.execution_report.set_default_filled(self.fix_message)
         self.execution_report.change_parameters({'Side': '5', 'OrderID': order_id})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=ignored_list_exec)
