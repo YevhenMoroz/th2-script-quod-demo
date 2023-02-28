@@ -5,18 +5,23 @@ class WebAdminUsers(Enum):
     user_1 = "adm03"
     user_2 = "adm_loca"
     user_3 = "adm_desk"
-    user_4 = "adm01"
-    user_5 = "adm02"
+    user_4 = "adm_zone"
+    user_5 = "adm_inst"
     user_6 = "acameron"
     user_7 = "gbarrett"
     user_8 = "QA1"
     user_9 = "adm08"
     user_10 = "adm07"
+    user_11 = "adm01"
+    user_12 = "adm02"
 
 
 class WebAdminPasswords(Enum):
     password_1 = "adm03"
-    password_2 = "adm02"
+    password_2 = "adm_loca"
+    password_3 = "adm_desk"
+    password_4 = "adm_zone"
+    password_5 = "adm_inst"
 
 
 # region WaGeneral
@@ -52,6 +57,7 @@ class WebAdminLocations(Enum):
 class WebAdminZones(Enum):
     zone_1 = "WEST-ZONE"
     zone_2 = "EAST-ZONE"
+    zone_3 = "NORTH-ZONE"
 
 
 # endregion
@@ -374,3 +380,7 @@ class WebAdminPartyRole(Enum):
     party_role_2 = "GiveupClearingFirm"
 
 # endregion
+
+
+class WebAdminCounterpart(Enum):
+    counterpart_1 = "TCOther"
