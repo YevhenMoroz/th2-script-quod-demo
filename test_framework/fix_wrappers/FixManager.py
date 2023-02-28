@@ -17,8 +17,10 @@ from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import 
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelRejectReport import FixMessageOrderCancelRejectReport
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.FixMessagePositionReport import FixMessagePositionReport
 from test_framework.fix_wrappers.FixMessageReject import FixMessageReject
 from test_framework.fix_wrappers.FixMessageRequestForPositions import FixMessageRequestForPositions
+from test_framework.fix_wrappers.FixMessageRequestForPositionsAck import FixMessageRequestForPositionsAck
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
@@ -217,6 +219,10 @@ class FixManager:
                 response_fix_message = FixMessageBusinessMessageRejectReport()
             elif message_type == FIXMessageType.RequestForPositions.value:
                 response_fix_message = FixMessageRequestForPositions()
+            elif message_type == FIXMessageType.RequestForPositionsAck.value:
+                response_fix_message = FixMessageRequestForPositionsAck()
+            elif message_type == FIXMessageType.PositionReport.value:
+                response_fix_message = FixMessagePositionReport()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)
