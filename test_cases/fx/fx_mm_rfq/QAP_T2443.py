@@ -44,11 +44,11 @@ class QAP_T2443(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=10000)
         # region Step 3
         received_notes = \
-        self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
-            "FreeNotes"]
+            self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+                "FreeNotes"]
         received_quoting = \
-        self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
-            "AutomaticQuoting"]
+            self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+                "AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
         self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
