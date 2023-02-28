@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle.redburn_regresion_cycle import redburn_twap_regression, redburn_twap_navigator_regression, redburn_twap_aution_regression, redburn_twap_additional_features_regression, redburn_vwap_regression, redburn_vwap_navigator_regression, redburn_vwap_aution_regression, redburn_vwap_additional_features_regression, redburn_pov_regression, redburn_pov_navigator_regression, redburn_pov_aution_regression, redburn_pov_additional_features_regression, redburn_moo_regression, redburn_exa_auction_regression, redburn_moc_aution_regression, redburn_auction_scaling_regression, redburn_pov_scaling_regression
+from regression_cycle.algo_regression_cycle.redburn_regresion_cycle import redburn_twap_regression, redburn_twap_navigator_regression, redburn_twap_aution_regression, redburn_twap_additional_features_regression, redburn_vwap_regression, redburn_vwap_navigator_regression, redburn_vwap_aution_regression, redburn_vwap_additional_features_regression, redburn_pov_regression, redburn_pov_navigator_regression, redburn_pov_aution_regression, redburn_pov_additional_features_regression, redburn_moo_regression, redburn_exa_auction_regression, redburn_moc_aution_regression, redburn_auction_scaling_regression, redburn_pov_scaling_regression, redburn_multilisting_regression
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -43,6 +43,8 @@ def test_run():
             redburn_pov_aution_regression.test_run(parent_id=report_id, version=version)
         if eval(root.find(".//component[@name='Participation']").attrib["run"]):
             redburn_pov_additional_features_regression.test_run(parent_id=report_id, version=version)
+        if eval(root.find(".//component[@name='Multilisted']").attrib["run"]):
+            redburn_multilisting_regression.test_run(parent_id=report_id, version=version)
         if eval(root.find(".//component[@name='PreOpen_Auction']").attrib["run"]):
             redburn_moo_regression.test_run(parent_id=report_id, version=version)
         if eval(root.find(".//component[@name='Expiry_Auction']").attrib["run"]):
