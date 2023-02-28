@@ -29,7 +29,9 @@ def test_run(parent_id=None):
             basket_regression.test_run(report_id)
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
             gateway_regression.test_run(report_id)
-        if eval(root.find(".//component[@name='AcceptanceList']").attrib["run"]):
+        if eval(root.find(".//component[@name='Positions']").attrib["run"]):
+            oms_acceptance_list.test_run(report_id)
+        if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
             oms_acceptance_list.test_run(report_id)
 
     except Exception:
