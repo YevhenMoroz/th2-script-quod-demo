@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterpart Analysis | {version}",
+    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterpart | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Counterpart")

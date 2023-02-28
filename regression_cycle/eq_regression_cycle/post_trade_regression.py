@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"PostTrade Analysis" if version is None else f"PostTrade Analysis | {version}",
+    report_id = bca.create_event(f"PostTrade Analysis" if version is None else f"PostTrade | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("PostTrade")
