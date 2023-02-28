@@ -43,7 +43,7 @@ class QAP_T2817(TestCase):
         # region Step 2
         self.quote_request.set_rfq_params_fwd()
         self.quote_request.change_client(self.client_tier)
-        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=25000)
         # region Step 3
         received_notes = response[0].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
         received_quoting = response[0].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
