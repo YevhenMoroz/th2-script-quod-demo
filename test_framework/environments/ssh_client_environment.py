@@ -31,6 +31,32 @@ class SshClientEnvironment(BaseEnvironment):
                 )
                 SshClientEnvironment.environment_instances.update({EnvironmentType.quod317_ssh_client.value: site_environment})
             return SshClientEnvironment.environment_instances[EnvironmentType.quod317_ssh_client.value]
+        elif env.value == EnvironmentType.quod310_ssh_client.value:
+            if EnvironmentType.quod310_ssh_client.value not in SshClientEnvironment.environment_instances.keys():
+                site_environment = SshClientEnvironment(
+                    environment_type=EnvironmentType.quod310_fe.value,
+                    host=SshClientEnv.HOST_310.value,
+                    port=SshClientEnv.PORT_310.value,
+                    user=SshClientEnv.USER_310.value,
+                    password=SshClientEnv.PASSWORD_310.value,
+                    su_user=SshClientEnv.SU_USER_310.value,
+                    su_password=SshClientEnv.SU_PASSWORD_310.value,
+                )
+                SshClientEnvironment.environment_instances.update({EnvironmentType.quod310_ssh_client.value: site_environment})
+            return SshClientEnvironment.environment_instances[EnvironmentType.quod310_ssh_client.value]
+        elif env.value == EnvironmentType.quod316_ssh_client.value:
+            if EnvironmentType.quod316_ssh_client.value not in SshClientEnvironment.environment_instances.keys():
+                site_environment = SshClientEnvironment(
+                    environment_type=EnvironmentType.quod316_fe.value,
+                    host=SshClientEnv.HOST_316.value,
+                    port=SshClientEnv.PORT_316.value,
+                    user=SshClientEnv.USER_316.value,
+                    password=SshClientEnv.PASSWORD_316.value,
+                    su_user=SshClientEnv.SU_USER_316.value,
+                    su_password=SshClientEnv.SU_PASSWORD_316.value,
+                )
+                SshClientEnvironment.environment_instances.update({EnvironmentType.quod316_ssh_client.value: site_environment})
+            return SshClientEnvironment.environment_instances[EnvironmentType.quod316_ssh_client.value]
         else:
             raise Exception('No such environment')
 
