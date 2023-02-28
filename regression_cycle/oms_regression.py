@@ -1,11 +1,11 @@
+import logging
 from xml.etree import ElementTree
 
-from regression_cycle import oms_acceptance_list
-from regression_cycle.eq_regression_cycle import counterparts_regression, dma_regression, post_trade_regression, \
-    commission_regression, care_regression, basket_regression, gateway_regression
-from stubs import Stubs, ROOT_DIR
-import logging
 from custom import basic_custom_actions as bca
+from regression_cycle.eq_regression_cycle import counterparts_regression, dma_regression, post_trade_regression, \
+    commission_regression, care_regression, basket_regression, gateway_regression, gating_rule_regression, \
+    positions_regression
+from stubs import Stubs, ROOT_DIR
 
 
 def test_run(parent_id=None):
@@ -32,9 +32,9 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
             gateway_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            oms_acceptance_list.test_run(report_id, version)
+            positions_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
-            oms_acceptance_list.test_run(report_id, version)
+            gating_rule_regression.test_run(report_id, version)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
