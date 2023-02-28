@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"Care Analysis" if version is None else f"Care Analysis | {version}", parent_id)
+    report_id = bca.create_event(f"Care Analysis" if version is None else f"Care | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Care")
     fe_env = configuration.environment.get_list_fe_environment()[0]
