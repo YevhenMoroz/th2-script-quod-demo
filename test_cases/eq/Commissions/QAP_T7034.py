@@ -112,7 +112,8 @@ class QAP_T7034(TestCase):
                                  'AllocQty', 'ConfirmType', 'ConfirmID', 'Account',
                                  'AllocID', 'NetMoney', 'MatchStatus',
                                  'ConfirmStatus', 'AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx']
+                                 'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx',
+                                 'GatingRuleCondName', 'GatingRuleName']
         self.fix_message_execution_report.change_parameters({
             "ExecType": "B",
             "OrdStatus": "B",

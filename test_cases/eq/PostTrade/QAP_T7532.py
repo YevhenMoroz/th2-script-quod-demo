@@ -138,8 +138,10 @@ class QAP_T7532(TestCase):
 
         self.java_api_manager.compare_values(expected_result, allocation_report,
                                              'Check Status and Match Status (part of step 1)')
-        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
-                                            'Check that AllocSummaryStatus is missed (part of step 1)')
+        alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+        self.java_api_manager.compare_values({'AllocSummaryStatusIsAbsent': True},
+                                             {'AllocSummaryStatusIsAbsent': alloc_summary_status_is_absent},
+                                             'Check that AllocSummaryStatus is missed (part of step 1)')
         # the end
         # endregion
 

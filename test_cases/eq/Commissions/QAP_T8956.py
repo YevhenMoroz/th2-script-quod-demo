@@ -60,6 +60,7 @@ class QAP_T8956(TestCase):
         self.conf_block = ConfirmationOMS(self.data_set)
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -80,7 +81,7 @@ class QAP_T8956(TestCase):
         self.__send_fix_orders()
         order_id = self.response[0].get_parameter("OrderID")
         cl_order_id = self.response[0].get_parameter("ClOrdID")
-        exec_id = self.response[2].get_parameter("ExecID")
+        exec_id = self._get_fix_message({'ExecType': '2'})[JavaApiFields.ExecID.value]
         # endregion
 
         # region check order is create
@@ -197,3 +198,10 @@ class QAP_T8956(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.clear_commissions()
+
+    def _get_fix_message(self, parameter: dict):
+        for i in range(len(self.response)):
+            print(self.response[i].get_parameters())
+            for j in parameter.keys():
+                if self.response[i].get_parameters()[j] == parameter[j]:
+                    return self.response[i].get_parameters()

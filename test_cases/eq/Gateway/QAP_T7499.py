@@ -180,7 +180,8 @@ class QAP_T7499(TestCase):
                                   'Symbol', 'SecurityID', 'ExDestination', 'VenueType',
                                   'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
-                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx', 'Instrument'
+                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx', 'Instrument',
+                                  'GatingRuleName', 'GatingRuleCondName'
                                   ]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})

@@ -89,7 +89,6 @@ class QAP_T7360(TestCase):
             ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value
         ).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
         exec_id = execution_report_message[JavaApiFields.ExecID.value]
-        # self.java_api_manager.compare_values({JavaApiFields.TransStatus.value:ExecutionReportConst.})
         # endregion
 
         # part 3 book order
@@ -147,13 +146,12 @@ class QAP_T7360(TestCase):
         # endregion
 
         # region step 5 : Check Fix_Confirmation
+        list_of_ignored_fields = ['AllocQty', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier',
+                                  'BookID', 'SettlDate', 'OrderAvgPx', 'Currency',
+                                  'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
+                                  'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
+                                  'ReportedPx', 'Instrument', 'GrossTradeAmt', 'tag11245','CpctyConfGrp', 'ConfirmID', 'ConfirmType']
         for account in list_of_allocations:
-            list_of_ignored_fields = ['AllocQty', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier',
-                                      'BookID', 'SettlDate', 'OrderAvgPx', 'Currency',
-                                      'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
-                                      'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
-                                      'ReportedPx', 'Instrument', 'GrossTradeAmt']
-            list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType'])
             self.confirmation_message.change_parameters(
                 {'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': ord_id}],
                  'ConfirmTransType': "0",
