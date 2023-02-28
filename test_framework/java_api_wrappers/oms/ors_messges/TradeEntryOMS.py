@@ -55,6 +55,13 @@ class TradeEntryOMS(TradeEntryRequest):
                                         {"OrdID": order_id, "ExecPrice": exec_price, 'ExecQty': exec_qty,
                                          'TradeEntryTransType': 'REP', 'ExecRefID': exec_id})
 
+    def set_default_house_fill(self, ord_id, source_account, exec_price="10", exec_qty="100", ):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('TradeEntryRequestBlock',
+                                        {"OrdID": ord_id, "ExecPrice": exec_price, 'ExecQty': exec_qty,
+                                         'SourceAccountID': source_account})
+        return self
+
     def set_default_amend_house_fill(self, order_id, qty, price, source_account, exec_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('TradeEntryRequestBlock',
