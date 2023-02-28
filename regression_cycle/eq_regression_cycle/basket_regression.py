@@ -16,9 +16,9 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"Basket Analysis" if version is None else f"Basket | {version}", parent_id)
+    report_id = bca.create_event(f"Basket Analysis" if version is None else f"BasketTrading | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
-    configuration = ComponentConfiguration("Basket")
+    configuration = ComponentConfiguration("BasketTrading")
     fe_env = configuration.environment.get_list_fe_environment()[0]
     session_id = None  #set_session_id(fe_env.target_server_win)
     data_set = configuration.data_set
