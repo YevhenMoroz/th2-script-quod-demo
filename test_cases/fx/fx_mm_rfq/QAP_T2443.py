@@ -6,7 +6,6 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
-from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 
 
 class QAP_T2443(TestCase):
@@ -42,10 +41,14 @@ class QAP_T2443(TestCase):
                                            tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
         self.quote_request.update_far_leg(settle_type=self.settle_type_1w_java,
                                           tenor=self.tenor_1w_java)
-        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
-        # # region Step 3
-        received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
-        received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=10000)
+        # region Step 3
+        received_notes = \
+        self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+            "FreeNotes"]
+        received_quoting = \
+        self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+            "AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
         self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
@@ -60,10 +63,14 @@ class QAP_T2443(TestCase):
                                            tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
         self.quote_request.update_far_leg(settle_type=self.settle_type_spot_java,
                                           tenor=self.tenor_spot_java, instr_type=self.instr_type_spot)
-        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=25000)
         # region Step 3
-        received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
-        received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
+        received_notes = \
+            self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+                "FreeNotes"]
+        received_quoting = \
+            self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
+                "AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check FreeNotes and AutomaticQuoting")
         self.verifier.compare_values("Free notes", self.expected_notes, received_notes)
