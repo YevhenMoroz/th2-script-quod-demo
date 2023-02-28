@@ -44,6 +44,7 @@ class QAP_T4258(TestCase):
         self.waves = 5
         self.child_min_val = 300
         self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
+        self.aggressivity = constants.Aggressivity.Neutral.value
         # endregion
 
         # region Gateway Side
@@ -111,7 +112,8 @@ class QAP_T4258(TestCase):
 
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
         self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time), dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time),
-                                                                                 dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves), dict(StrategyParameterName='ChildMinValue', StrategyParameterType='6', StrategyParameterValue=self.child_min_val)])
+                                                                                 dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves), dict(StrategyParameterName='ChildMinValue', StrategyParameterType='6', StrategyParameterValue=self.child_min_val),
+                                                                                 dict(StrategyParameterName='Aggressivity', StrategyParameterType='1', StrategyParameterValue=self.aggressivity)])
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, case_id_1)

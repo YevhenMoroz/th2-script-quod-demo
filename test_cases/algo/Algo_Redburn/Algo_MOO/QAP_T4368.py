@@ -145,7 +145,7 @@ class QAP_T4368(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_2)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
-        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Auction_Child_params()
+        self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=self.tif_ato))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child')
 

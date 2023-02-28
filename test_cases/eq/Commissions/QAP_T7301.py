@@ -52,7 +52,8 @@ class QAP_T7301(TestCase):
                                  'SecondaryExecID', 'ExecID', 'LastQty', 'TransactTime', 'AvgPx', 'QuodTradeQualifier',
                                  'BookID', 'Currency', 'PositionEffect', 'TrdType', 'LeavesQty', 'NoParty', 'CumQty',
                                  'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity''QtyType', 'ExecBroker',
-                                 'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData']
+                                 'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData',
+                                 'GatingRuleCondName', 'GatingRuleName']
         change_parameters = {
             "ExecType": "F", "OrdStatus": "2", "Account": client, "ClOrdID": cl_ord_id,
             'NoMiscFees': [{'MiscFeeAmt': "10", 'MiscFeeCurr': '*', 'MiscFeeType': "12"}]

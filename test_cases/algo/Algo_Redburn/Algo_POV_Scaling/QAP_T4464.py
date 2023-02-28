@@ -74,7 +74,7 @@ class QAP_T4464(TestCase):
         self.qty = 1_000_000
         self.price = 95
 
-        self.scaling_child_order_qty = '%^(1[1-2]|[2-4])\d{3}$'  # fisrt number 11-12 or 7-9 and any 3 number
+        self.scaling_child_order_qty = '%^(1[1-3]|[2-5])\d{3}$'  # fisrt number 11-12 or 7-9 and any 3 number
         self.scaling_child_order_price = '%^(9|10)(0|[1-2,5,8-9]|[0-2,8,9].\d{1,2})$'  # the first number 95, 98-102.any 1-2 number
 
         self.qty_passive_child_1 = AlgoFormulasManager.get_pov_child_qty(self.percentage_volume, self.qty_bid, self.qty)

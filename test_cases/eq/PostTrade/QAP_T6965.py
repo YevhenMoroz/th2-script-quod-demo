@@ -204,9 +204,12 @@ class QAP_T6965(TestCase):
                  JavaApiFields.ConfirmationService.value: AllocationReportConst.ConfirmationService_MAN.value},
                 allocation_report,
                 f'Checking expected and actually result for block with {alloc_id} (step 7)')
-            self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
-                                                f'Checking that {JavaApiFields.AllocSummaryStatus.value} is '
-                                                f'empty for block {alloc_id}')
+            alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+            self.java_api_manager.compare_values({'AllocationStatusSummaryIsAbsent': True},
+                                                 {'AllocationStatusSummaryIsAbsent': alloc_summary_status_is_absent},
+                                                 f'Checking that {JavaApiFields.AllocSummaryStatus.value} is '
+                                                 f'empty for block {alloc_id}'
+                                                 )
             confirmation_report = \
                 self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
                                                        alloc_id).get_parameters()[

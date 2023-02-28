@@ -268,7 +268,7 @@ class AlgoFormulasManager:
     def get_timestamps_for_previous_phase(phase: TradingPhases):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
-            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + datetime.timedelta(minutes=4)
+            pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + datetime.timedelta(minutes=2)
             opn_start = pop_start + timedelta(minutes=4)
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
@@ -448,14 +448,14 @@ class AlgoFormulasManager:
                 "tradingPhase": "CLO",
                 "standardTradingPhase": "CLO",
             },
-           {
-               "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-               "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-               "submitAllowed": "True",
-               "tradingPhase": "EXA",
-               "standardTradingPhase": "EXA",
-               "expiryCycle": "EVM",
-           }
+            {
+                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                "submitAllowed": "True",
+                "tradingPhase": "EXA",
+                "standardTradingPhase": "EXA",
+                "expiryCycle": "EVM",
+            }
         ]
 
     @staticmethod
@@ -479,6 +479,14 @@ class AlgoFormulasManager:
             pcl_end = pcl_start + timedelta(minutes=5)
             pop_start = opn_start - timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.Expiry:
+            opn_start = tm - datetime.timedelta(minutes=10, seconds=tm.second, microseconds=tm.microsecond)
+            pcl_start = opn_start + timedelta(minutes=20)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
+            exa_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + timedelta(minutes=2)
+            exa_end = exa_start + timedelta(minutes=5)
 
         return [
             {
@@ -515,6 +523,14 @@ class AlgoFormulasManager:
                 "submitAllowed": "True",
                 "tradingPhase": "CLO",
                 "standardTradingPhase": "CLO",
+            },
+            {
+                "beginTime": exa_start,
+                "endTime": exa_end,
+                "submitAllowed": "True",
+                "tradingPhase": "EXA",
+                "standardTradingPhase": "EXA",
+                "expiryCycle": "EVM",
             }
         ]
 

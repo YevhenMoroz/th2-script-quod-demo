@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4307 import QAP_T4307
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4310 import QAP_T4310
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8592 import QAP_T8592
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8625 import QAP_T8625
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8672 import QAP_T8672
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T9063 import QAP_T9063
@@ -24,6 +25,7 @@ def test_run(parent_id=None, version=None):
         # region General
         QAP_T8625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8672(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8592(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region WouldPrice

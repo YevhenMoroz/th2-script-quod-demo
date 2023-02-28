@@ -77,6 +77,7 @@ class QAP_T9085(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_eliminate = Status.Eliminate
         # endregion
 
         # region instrument
@@ -243,8 +244,8 @@ class QAP_T9085(TestCase):
         case_id_2 = bca.create_event("Check that algo order is canceled", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).change_parameters(dict(TimeInForce=self.time_in_force_ATC, Text=self.reached_uncross, LastMkt=self.mic)).remove_parameter('OrigClOrdID')
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_eliminate)
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.time_in_force_ATC, Text=self.reached_uncross))
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

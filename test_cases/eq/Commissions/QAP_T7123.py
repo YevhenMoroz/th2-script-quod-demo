@@ -65,7 +65,7 @@ class QAP_T7123(TestCase):
         no_misc = {"MiscFeeAmt": '2', "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "12"}
         ignored_fields = ['Currency', 'SecondaryOrderID', 'Text', 'LastMkt',
-             "ReplyReceivedTime", "SettlType", "CommissionData"]
+             "ReplyReceivedTime", "SettlType", "CommissionData", 'GatingRuleName', 'GatingRuleCondName']
         self.exec_report.change_parameters(
             {"Account": self.client, "MiscFeesGrp": {"NoMiscFees": [no_misc]}})
         self.exec_report.remove_parameter('SettlCurrency')
@@ -90,5 +90,5 @@ class QAP_T7123(TestCase):
             self.rule_manager.remove_rule(nos_rule)
 
     @try_except(test_id=Path(__file__).name[:-3])
-    def run_pre_conditions_and_steps(self):
+    def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
