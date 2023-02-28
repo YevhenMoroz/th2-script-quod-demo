@@ -15,24 +15,26 @@ def test_run(parent_id=None):
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
+        version = root.find(".//version").text
+
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
-            dma_regression.test_run(report_id)
+            dma_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
-            care_regression.test_run(report_id)
+            care_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
-            counterparts_regression.test_run(report_id)
+            counterparts_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
-            post_trade_regression.test_run(report_id)
+            post_trade_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
-            commission_regression.test_run(report_id)
+            commission_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
-            basket_regression.test_run(report_id)
+            basket_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
-            gateway_regression.test_run(report_id)
+            gateway_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            oms_acceptance_list.test_run(report_id)
+            oms_acceptance_list.test_run(report_id, version)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
-            oms_acceptance_list.test_run(report_id)
+            oms_acceptance_list.test_run(report_id, version)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
