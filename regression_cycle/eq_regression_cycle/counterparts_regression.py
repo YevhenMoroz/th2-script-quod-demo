@@ -16,10 +16,10 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterpart | {version}",
+    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterparts | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
-    configuration = ComponentConfiguration("Counterpart")
+    configuration = ComponentConfiguration("Counterparts")
     fe_env = configuration.environment.get_list_fe_environment()[0]
     session_id = None  #set_session_id(fe_env.target_server_win)
     data_set = configuration.data_set
