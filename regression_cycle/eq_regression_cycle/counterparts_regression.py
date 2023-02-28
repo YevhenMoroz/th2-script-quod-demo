@@ -1,3 +1,4 @@
+import importlib
 import logging
 import os
 from datetime import datetime
@@ -27,9 +28,8 @@ def test_run(parent_id=None, version=None):
     try:
         tests = os.listdir(root_path(ignore_cwd=True) + '\\test_cases\\eq\\Counterpart')
         for test in tests:
-            exec(f"from test_cases.eq.Counterpart.{test[:-3]} import {test[:-3]}")
-            exec(f"{test[:-3]}(report_id=report_id, session_id=session_id, data_set=data_set,\
-             environment=configuration.environment).execute()")
+            class_ = getattr(importlib.import_module(f"test_cases.eq.Counterpart.{test[:-3]}"), test[:-3])
+            class_(report_id, session_id, data_set, configuration.environment).execute()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
