@@ -9,7 +9,6 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from stubs import Stubs
 from test_framework.configurations.component_configuration import ComponentConfiguration
-from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ def test_run(parent_id=None, version=None):
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Basket")
     fe_env = configuration.environment.get_list_fe_environment()[0]
-    session_id = set_session_id(fe_env.target_server_win)
+    session_id = None  #set_session_id(fe_env.target_server_win)
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     try:
