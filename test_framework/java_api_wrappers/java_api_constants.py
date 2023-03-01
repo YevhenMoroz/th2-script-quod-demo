@@ -11,6 +11,9 @@ class ExecutionReportConst(Enum):
     ExecType_ACT = 'ACT'
     ExecType_POS = 'POS'
     PostTradeExecStatus_NAL = 'NAL'
+    MiscFeeType_EXC = 'EXC'
+    MiscFeeBasis_P = 'P'
+    MiscFeeBasis_A = 'A'
 
 
 class BasketMessagesConst(Enum):
@@ -334,7 +337,6 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
-    ManualOrderCrossReplyBlock = 'ManualOrderCrossReplyBlock'
     ExecQty = 'ExecQty'
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
