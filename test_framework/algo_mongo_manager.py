@@ -23,7 +23,6 @@ class AlgoMongoManager:
 
         mongo_list = []
         current_time = pop_end
-        now = datetime.datetime.now()
         # region add POP curve
         mongo_list.append({
             "LastTradedTime": pop_start,
@@ -59,6 +58,36 @@ class AlgoMongoManager:
         })
 
         return mongo_list
+
+    @staticmethod
+    def get_repeated_curve_for_mongo(phases: list, volume_list: list, price: float = 35.0) -> list:
+        if type(price) != float:
+            raise ValueError("Price should be float type")
+
+        pop_end = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreOpen, start_time=False)).replace(tzinfo=None) - timedelta(days=1)
+        pcl_start = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreClosed, start_time=True)).replace(tzinfo=None) - timedelta(days=1)
+
+        mongo_list = []
+        current_time = pop_end
+
+        # region add OPN curve
+        n = 0
+        while current_time < pcl_start:
+            a = {
+                "LastTradedTime": current_time,
+                "LastAuctionPhase": "",
+                "LastTradedPrice": 35.0,
+                "MDTime": current_time,
+                "creationTime": current_time
+            }
+            a["LastTradedQty"] = volume_list[n]
+            mongo_list.append(a)
+            current_time += timedelta(minutes=1)
+            n += 1
+            n %= len(volume_list)
+
+        return mongo_list
+
 
     @staticmethod
     def connect_to_mongo(host="localhost", port=27017):
