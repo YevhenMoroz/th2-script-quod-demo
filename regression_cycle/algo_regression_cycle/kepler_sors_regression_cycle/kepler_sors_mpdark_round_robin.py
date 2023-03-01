@@ -10,6 +10,10 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10531 import QAP_T10531
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10532 import QAP_T10532
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10533 import QAP_T10533
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10534 import QAP_T10534
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10536 import QAP_T10536
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10541 import QAP_T10541
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10542 import QAP_T10542
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10543 import QAP_T10543
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -33,6 +37,10 @@ def test_run(parent_id=None, version=None):
         QAP_T10532(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10533(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10534(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10536(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10541(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10542(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10543(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
