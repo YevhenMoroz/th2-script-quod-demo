@@ -1414,7 +1414,6 @@ pipeline {
                     echo "Run test script stage"
                     export PATH=$PATH:$WORKSPACE/.local/bin/ && \\
                     export PYTHONPATH=$PYTHONPATH:/release/jenkins-loki/workspace/qa-tests.pipeline-anybranch/ && \\
-                    echo $PYTHONPATH
                     export HOME=$WORKSPACE && \\
                     cat /var/th2/config/log_config.conf && \\
                     pip install psycopg2-binary --user && \\
