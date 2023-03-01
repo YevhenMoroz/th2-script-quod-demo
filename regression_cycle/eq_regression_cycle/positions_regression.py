@@ -26,7 +26,7 @@ def test_run(parent_id=None, version=None):
     data_set = configuration.data_set
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     try:
-        tests = os.listdir(root_path(ignore_cwd=True) + '\\test_cases\\eq\\Positions')
+        tests = os.listdir(root_path(ignore_cwd=True) + '/test_cases/eq/Positions')
         for test in tests:
             class_ = getattr(importlib.import_module(f"test_cases.eq.Positions.{test[:-3]}"), test[:-3])
             class_(report_id, session_id, data_set, configuration.environment).execute()
