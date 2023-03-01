@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_Multilisting.QAP_T4054 import QAP_T4054
+from test_cases.algo.Algo_Redburn.Algo_Multilisting.QAP_T4055 import QAP_T4055
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -19,6 +20,7 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfigurationAlgo("Multilisted")
         # region Check Reject
         QAP_T4054(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4055(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:
