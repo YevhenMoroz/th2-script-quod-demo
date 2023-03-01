@@ -27,6 +27,7 @@ class QAP_T8437(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.fix_message.remove_parameter('Currency')
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.bs_connectivity = self.fix_env.buy_side
         self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_1_venue_1')  # MOClient_PARIS
@@ -44,19 +45,19 @@ class QAP_T8437(TestCase):
     def run_pre_conditions_and_steps(self):
         # region set configuration on backend (precondition)
         tree = ET.parse(self.local_path)
-        element = ET.fromstring("<idGen>><instrument><instrCurrency>true</instrCurrency></instrument></idGen>")
+        element = ET.fromstring("<idGen><instrument><instrCurrency>true</instrCurrency></instrument></idGen>")
         quod = tree.getroot()
         quod.append(element)
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(20)
+        time.sleep(60)
         # endregion
         # region Step 1
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"OrdStatus": "8", "Currency": self.data_set.get_currency_by_name("currency_1")}
+        self.fix_manager.compare_values({"OrdStatus": "A", "Currency": self.data_set.get_currency_by_name("currency_1")}
                                         ,exec_rep, "Check OrdStatus and Currency")
         # endregion
 
@@ -64,5 +65,5 @@ class QAP_T8437(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(20)
+        time.sleep(60)
         os.remove("temp.xml")

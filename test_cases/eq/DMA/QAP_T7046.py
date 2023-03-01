@@ -93,6 +93,6 @@ class QAP_T7046(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.put_file(self.remote_path2, self.local_path2)
         self.ssh_client.send_command("qrestart ORS FIXBACKOFFICE_TH2")
-        time.sleep(20)
+        time.sleep(40)
         os.remove("temp.xml")
         os.remove("temp2.xml")
