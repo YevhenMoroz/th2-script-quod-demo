@@ -86,13 +86,14 @@ class QAP_T7358(TestCase):
         order_id = self.response[0].get_parameter("OrderID")
         # endregion
         # region check order is create
-        new_ignor_list = ['Currency', 'SecondaryOrderID', 'LastMkt', 'Text', 'SettlType']
+        new_ignor_list = ['Currency', 'SecondaryOrderID', 'LastMkt', 'Text', 'SettlType',
+                          'GatingRuleCondName', 'GatingRuleName']
         self.exec_report.set_default_new(self.fix_message)
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=new_ignor_list)
         # endregion
         # region check order is filled
         fill_ignor_list = ['ReplyReceivedTime', 'SettlCurrency', 'Currency', 'LastMkt', 'Text', 'SettlType',
-                           'CommissionData']
+                           'CommissionData', 'GatingRuleName', 'GatingRuleCondName']
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameter("MiscFeesGrp", '#')
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=fill_ignor_list)

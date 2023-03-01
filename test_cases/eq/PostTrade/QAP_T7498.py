@@ -260,11 +260,17 @@ class QAP_T7498(TestCase):
             "Comparing values in MO after Amend",
         )
 
-        self.java_api_manager.key_is_absent(
-            "ClientCommissionList", alloc_report_reply_amend, "Checking that ClientCommissionList is absent"
+        client_commission_is_absent = not JavaApiFields.ClientCommissionList.value in alloc_report_reply_amend
+        self.java_api_manager.compare_values(
+            {"ClientCommissionIsAbsent": True},
+            {"ClientCommissionIsAbsent": client_commission_is_absent},
+            f"Checking that {JavaApiFields.ClientCommission.value} is absent"
         )
-        self.java_api_manager.key_is_absent(
-            "RootMiscFeesList", alloc_report_reply_amend, "Checking that RootMiscFeesList is absent"
+        root_misc_fees_is_absent = not JavaApiFields.RootMiscFeesList.value in alloc_report_reply_amend
+        self.java_api_manager.compare_values(
+            {"RootMiscFeesIsAbsent": True},
+            {"RootMiscFeesIsAbsent": root_misc_fees_is_absent},
+            "Checking that RootMiscFeesList is absent"
         )
         # endregion
 

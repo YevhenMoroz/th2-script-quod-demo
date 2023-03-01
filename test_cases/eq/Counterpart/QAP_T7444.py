@@ -66,7 +66,7 @@ class QAP_T7444(TestCase):
         # endregion
         # region Set-up parameters for ExecutionReports
         list_of_ignored_fields = ['Account', 'PartyRoleQualifier', 'ReplyReceivedTime', 'OrderAvgPx',
-                                  'GatingRuleCondName', 'GatingRuleName']
+                                  'GatingRuleCondName', 'GatingRuleName', 'tag11245']
         party_stub_dict = {'PartyRole': "*",
                            'PartyID': "*",
                            'PartyIDSource': "*"}

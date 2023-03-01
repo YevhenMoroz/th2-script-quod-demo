@@ -59,6 +59,10 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        if new_order_single.is_parameter_exist('PegInstructions'):
+            temp.update(PegInstructions=new_order_single.get_parameter('PegInstructions'))
+        if new_order_single.is_parameter_exist('TriggeringInstruction'):
+            temp.update(TriggeringInstruction='*')
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),

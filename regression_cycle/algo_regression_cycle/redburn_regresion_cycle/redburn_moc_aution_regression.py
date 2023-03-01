@@ -1,6 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T10674 import QAP_T10674
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4201 import QAP_T4201
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4202 import QAP_T4202
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4256 import QAP_T4256
@@ -15,6 +16,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4480 import QAP_T4480
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4481 import QAP_T4481
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4482 import QAP_T4482
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4483 import QAP_T4483
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T8725 import QAP_T8725
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9085 import QAP_T9085
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9086 import QAP_T9086
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9088 import QAP_T9088
@@ -47,6 +49,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4479(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4477(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4483(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10674(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Auction Volume
@@ -82,6 +85,10 @@ def test_run(parent_id=None, version=None):
         QAP_T9096(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9101(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region splitThreshold
+        QAP_T8725(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

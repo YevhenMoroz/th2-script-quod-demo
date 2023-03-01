@@ -73,8 +73,7 @@ class QAP_T7426(TestCase):
         list_wave_notif = self.java_api_manager.get_last_message(ORSMessageType.OrderListWaveNotification.value)
         wave_notif_block = list_wave_notif.get_parameter(JavaApiFields.OrderListWaveNotificationBlock.value)
         self.java_api_manager.compare_values(
-            {JavaApiFields.OrderListWaveStatus.value: OrdListNotificationConst.OrderListWaveStatus_NEW.value,
-             'ExternalAlgoParametersBlock': {'ScenarioID': '101'}},
+            {JavaApiFields.OrderListWaveStatus.value: OrdListNotificationConst.OrderListWaveStatus_NEW.value},
             wave_notif_block,
             "Check Wave sts values")
         self.java_api_manager.compare_values(

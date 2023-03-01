@@ -491,6 +491,7 @@ class OMSVenueAccountNamesOfSecurityAccounts(Enum):
     venue_account_name_of_security_acc_1_eurex = "MOClient_SA1_EUREX"
     venue_account_name_of_security_acc_1_jse = "MOClient_SA1_JSE"
     venue_account_name_of_security_acc_1_paris = "MOClient_SA1_PARIS"
+    venue_account_name_of_prop_account_paris = '49403'
 
 
 class OMSVenueSecAccountNames(Enum):

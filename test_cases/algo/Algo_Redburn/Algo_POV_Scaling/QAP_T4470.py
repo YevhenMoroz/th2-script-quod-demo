@@ -62,7 +62,7 @@ class QAP_T4470(TestCase):
 
         self.qty = 1_000_000
 
-        self.scaling_child_order_qty = '%^([1-2][5,8]|[6-9])\d{3}$'  # fisrt number 10-12 or 7-9 and any 3 number
+        self.scaling_child_order_qty = '%^([1-2][0-2,5]|[6-9])\d{3}$'  # fisrt number 10-12 or 7-9 and any 3 number
         self.scaling_child_order_price = '%^1(10|0[2-4]|0[2-4].[5])$'  # the first number 100 or 102-104 with step 0.5
 
         self.side_sell = OrderSide.Sell.value
@@ -144,7 +144,7 @@ class QAP_T4470(TestCase):
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Side=self.side_sell, OrdType=self.order_type))
         self.pov_order.remove_parameter('Price')
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
+        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(MaxPercentageVolume=self.percentage_volume, PricePoint1Price=self.pp1_price, PricePoint1Participation=self.pp1_participation, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_participation, NumberOfLevels=self.number_of_levels))
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, case_id_1)
 
         time.sleep(3)
