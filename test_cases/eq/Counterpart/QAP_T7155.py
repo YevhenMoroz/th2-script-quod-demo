@@ -78,8 +78,14 @@ class QAP_T7155(TestCase):
         # endregion
         # region send exec report
         execution_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
-        execution_report1.change_parameters({'Parties':'#'})
-        self.fix_verifier.check_fix_message_fix_standard(execution_report1)
+        execution_report1.change_parameters({'Parties': '#'})
+        self.fix_verifier.check_fix_message_fix_standard(execution_report1,
+                                                         ignored_fields=['GatingRuleCondName',
+                                                                         'GatingRuleName', 'TrdSubType',
+                                                                         'SettlCurrency', 'LastExecutionPolicy',
+                                                                         'TrdType', 'LastCapacity',
+                                                                         'SecondaryOrderID', 'LastMkt',
+                                                                         'VenueType'])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

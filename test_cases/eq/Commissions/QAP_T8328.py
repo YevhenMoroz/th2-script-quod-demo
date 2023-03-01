@@ -82,14 +82,12 @@ class QAP_T8328(TestCase):
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
         self.rest_commission_sender.clear_fees()
-        time.sleep(10)
         on_calculated_exec_scope = self.data_set.get_fee_exec_scope_by_name('all_exec')
         self.rest_commission_sender.set_modify_fees_message(fee_type=agent_fee_type, comm_profile=commission_profile,
                                                             fee=fee)
         self.rest_commission_sender.change_message_params(
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
-        time.sleep(10)
         instrument_id = self.data_set.get_instrument_id_by_name("instrument_3")
         # endregion
 
@@ -200,7 +198,7 @@ class QAP_T8328(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Allocation Instruction", responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = deepcopy(allocation_report[JavaApiFields.ClientAllocID.value])
         actually_result = \
@@ -244,3 +242,4 @@ class QAP_T8328(TestCase):
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
         time.sleep(80)
         self.rest_commission_sender.clear_fees()
+        self.ssh_client.close()

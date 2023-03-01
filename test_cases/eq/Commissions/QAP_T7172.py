@@ -18,7 +18,7 @@ from test_framework.java_api_wrappers.java_api_constants import (
     OrderReplyConst,
     AllocationReportConst,
     ConfirmationReportConst,
-    CommissionAmountTypeConst, CommissionBasisConst,
+    CommissionAmountTypeConst, CommissionBasisConst, JavaApiFields,
 )
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
@@ -227,7 +227,10 @@ class QAP_T7172(TestCase):
         )
 
         # Check that Allocation has no commissions
-        self.java_api_manager.key_is_absent("ClientCommission", conf_report_message, "Check ClientCommission field")
+        commission_is_absent = not JavaApiFields.ClientCommission.value in conf_report_message
+        self.java_api_manager.compare_values({"ClientCommissionIsAbsent": True},
+                                             {'ClientCommissionIsAbsent': commission_is_absent},
+                                             "Check ClientCommission field")
 
         # Comparing statuses for Block after Allocate block
         allocation_report_message = self.java_api_manager.get_last_message(

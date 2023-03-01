@@ -157,8 +157,11 @@ class QAP_T7531(TestCase):
         # endregion
 
         # region Step 3 - Checking that Allocation was not created in Allocations
-        self.java_api_manager.key_is_absent(
-            JavaApiFields.AllocSummaryStatus.value, alloc_report_reply, "Checking that Summary Status is absent"
+        alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in alloc_report_reply
+        self.java_api_manager.compare_values(
+            {JavaApiFields.AllocSummaryStatus.value: True},
+            {JavaApiFields.AllocSummaryStatus.value: alloc_summary_status_is_absent},
+            "Checking that Summary Status is absent"
         )
         # endregion
 

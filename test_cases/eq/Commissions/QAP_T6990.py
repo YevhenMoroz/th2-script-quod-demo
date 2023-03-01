@@ -53,10 +53,6 @@ class QAP_T6990(TestCase):
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
@@ -79,12 +75,6 @@ class QAP_T6990(TestCase):
         self.rest_commission_sender.change_message_params(
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
-        # endregion
-
-        # region set up configuration on BackEnd(precondition)
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(90)
         # endregion
 
         # region create CO  precondition
@@ -169,18 +159,20 @@ class QAP_T6990(TestCase):
             'Compare actually and expected results  from step 3 for Confirmation')
 
         # verify that allocation report doesn`t have Total Fee
-        self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value,
-                                            self.java_api_manager.get_last_message(
-                                                ORSMessageType.AllocationReport.value).get_parameters()[
-                                                JavaApiFields.AllocationReportBlock.value],
-                                            f'Check that Agent fee doesn`t apply to {ORSMessageType.AllocationReport.value}')
+        fee_is_absent = not JavaApiFields.MiscFeesList.value in self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values({"AgentFeesIsAbsent": True},
+                                             {"AgentFeesIsAbsent": fee_is_absent},
+                                             f'Check that Agent fee does not apply to {ORSMessageType.AllocationReport.value}')
 
         # verify that confirmation report doesn`t have Total Fee
-        self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value,
-                                            self.java_api_manager.get_last_message(
+        fee_is_absent = not JavaApiFields.MiscFeesList.value in self.java_api_manager.get_last_message(
                                                 ORSMessageType.ConfirmationReport.value).get_parameters()[
-                                                JavaApiFields.ConfirmationReportBlock.value],
-                                            f'Check that Agent fee doesn`t apply to {ORSMessageType.ConfirmationReport.value}')
+                                                JavaApiFields.ConfirmationReportBlock.value]
+        self.java_api_manager.compare_values({"AgentFeesIsAbsent": True},
+                                             {"AgentFeesIsAbsent": fee_is_absent},
+                                             f'Check that Agent fee does not apply to {ORSMessageType.ConfirmationReport.value}')
         # endregion
 
         # region step 4
@@ -270,4 +262,3 @@ class QAP_T6990(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.ssh_client.close()

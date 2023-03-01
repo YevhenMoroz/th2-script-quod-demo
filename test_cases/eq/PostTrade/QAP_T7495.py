@@ -330,11 +330,17 @@ class QAP_T7495(TestCase):
             "Comparing values for Allocation after Amend",
         )
 
-        self.java_api_manager.key_is_absent(
-            "ClientCommissionList", conf_report_message, "Checking that ClientCommissionList is absent"
+        client_commission_is_absent = not JavaApiFields.ClientCommissionList.value in conf_report_message
+        self.java_api_manager.compare_values(
+            {"ClientCommissionIsAbsent": True},
+            {"ClientCommissionIsAbsent": client_commission_is_absent},
+            f"Checking that {JavaApiFields.ClientCommission.value} is absent"
         )
-        self.java_api_manager.key_is_absent(
-            "RootMiscFeesList", conf_report_message, "Checking that RootMiscFeesList is absent"
+        root_misc_fees_is_absent = not JavaApiFields.RootMiscFeesList.value in conf_report_message
+        self.java_api_manager.compare_values(
+            {"RootMiscFeesIsAbsent": True},
+            {"RootMiscFeesIsAbsent": root_misc_fees_is_absent},
+            "Checking that RootMiscFeesList is absent"
         )
         # endregion
 
