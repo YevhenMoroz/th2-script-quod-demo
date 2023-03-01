@@ -20,7 +20,7 @@ from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo im
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 
 
-class QAP_T10536(TestCase):
+class QAP_T10740(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
