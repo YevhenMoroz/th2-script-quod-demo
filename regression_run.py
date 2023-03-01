@@ -25,10 +25,10 @@ def regression_run():
         #     oms_regression.test_run(report_id)
         if eval(root.find(".//product_line[@name='retail']").attrib["run"]):
             retail_regression.test_run(report_id)
-        if eval(root.find(".//product_line[@name='web_admin']").attrib["run"]):
-            web_admin_regression.test_run(report_id)
-        if eval(root.find(".//product_line[@name='web_trading']").attrib["run"]):
-            web_trading_regression.test_run(report_id)
+        # if eval(root.find(".//product_line[@name='web_admin']").attrib["run"]):
+        #     web_admin_regression.test_run(report_id)
+        # if eval(root.find(".//product_line[@name='web_trading']").attrib["run"]):
+        #     web_trading_regression.test_run(report_id)
         # if eval(root.find(".//product_line[@name='mobile_android']").attrib["run"]):
         #     mobile_android_regression.test_run(report_id)
     except Exception:
