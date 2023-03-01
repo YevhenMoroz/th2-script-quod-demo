@@ -337,6 +337,7 @@ class JavaApiFields(Enum):
     DiscloseExec = 'DiscloseExec'
     DayAvgPrice = 'DayAvgPrice'
     SuspendedCare = "SuspendedCare"
+    ManualOrderCrossReplyBlock = 'ManualOrderCrossReplyBlock'
     ExecQty = 'ExecQty'
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
