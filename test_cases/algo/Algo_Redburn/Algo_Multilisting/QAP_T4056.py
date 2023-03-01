@@ -20,7 +20,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T4054(TestCase):
+class QAP_T4056(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -37,12 +37,12 @@ class QAP_T4054(TestCase):
         # endregion
 
         # region order parameters
-        self.order_type = constants.OrderType.Limit.value
+        self.order_type_market = constants.OrderType.Market.value
         self.tif_day = constants.TimeInForce.Day.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
 
         self.price_ask = 40
-        self.price_ask_2 = 45
+        self.price_ask_2 = self.qty_ask_2 = 0
         self.qty_ask = 1_000_000
 
         self.price_bid = 30
@@ -154,7 +154,8 @@ class QAP_T4054(TestCase):
 
         self.multilisting_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multilisting_RB_params()
         self.multilisting_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.multilisting_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, OrdType=self.order_type_market))
+        self.multilisting_order.remove_parameter('Price')
         self.fix_manager_sell.send_message_and_receive_response(self.multilisting_order, case_id_1)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
@@ -164,13 +165,13 @@ class QAP_T4054(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot setup MarketDepth on PARIS", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask_2)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental setup LastTrade on TURQUOISE", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask_2)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 

@@ -393,8 +393,8 @@ class SshClientEnv(Enum):
 
     HOST_316 = "10.0.22.35"
     PORT_316 = 22
-    USER_316 = "mziuban"
-    PASSWORD_316 = "1DfXtWYOF9"
+    USER_316 = ""
+    PASSWORD_316 = ""
     SU_USER_316 = "quod316"
     SU_PASSWORD_316 = "quod316"
 
