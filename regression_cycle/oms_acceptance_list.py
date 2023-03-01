@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -39,7 +38,8 @@ def test_run(parent_id=None, version=None):
     data_set = configuration.data_set
     fe_env = configuration.environment.get_list_fe_environment()[0]
     session_id = None #set_session_id(fe_env.target_server_win)
-    test_id = bca.create_event(Path(__file__).name[:-3], report_id)
+    # test_id = bca.create_event(Path(__file__).name[:-3], report_id)
+
 
     try:
         QAP_T4930(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -104,7 +104,7 @@ def test_run(parent_id=None, version=None):
         logging.error("Error execution", exc_info=True)
     finally:
         logger.info(f"Acceptance list was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
-        Stubs.win_act.unregister(session_id)
+        # Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':
