@@ -61,15 +61,17 @@ class SshClient:
             self.client.close()
             self.client = None
 
-    def get_and_update_file(self, component_config: str, config_xpath: str, config_value: str):
+    def get_and_update_file(self, component_config: str, config_xpath: str, config_value: str) -> str:
         self.get_file(f"/home/{self.su_user}/quod/cfg/{component_config}", f"{ROOT_DIR}/test_resources/temp_config.xml")
         tree = ET.parse(f"{ROOT_DIR}/test_resources/temp_config.xml")
         quod = tree.getroot()
+        base_config = quod.find(config_xpath).text
         quod.find(config_xpath).text = config_value
         tree.write(f"{ROOT_DIR}/test_resources/temp_config.xml")
         self.send_command("~/quod/script/site_scripts/change_permission_script")
         self.put_file(f"/home/{self.su_user}/quod/cfg/client_sats.xml", f"{ROOT_DIR}/test_resources/temp_config.xml")
         os.remove(f"{ROOT_DIR}/test_resources/temp_config.xml")
+        return base_config
 
 if __name__ == "__main__":
     client = SshClient(host='', port=22, username='', password='', su_user='', su_pass='')
