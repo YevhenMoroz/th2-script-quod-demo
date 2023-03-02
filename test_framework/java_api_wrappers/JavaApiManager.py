@@ -455,7 +455,7 @@ class JavaApiManager:
                     response_fix_message = class_()
             for cs_message_type in CSMessageType:
                 if message_type == cs_message_type.value:
-                    class_ = getattr(importlib.import_module(f"{module_path}cs_messages.{cs_message_type.name}"),
+                    class_ = getattr(importlib.import_module(f"{module_path}cs_message.{cs_message_type.name}"),
                                      cs_message_type.name)
                     response_fix_message = class_()
             for es_message_type in ESMessageType:
