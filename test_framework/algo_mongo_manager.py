@@ -144,4 +144,3 @@ class AlgoMongoManager:
 # # insert data into mongoDB
 # AlgoMongoManager.insert_many_to_mongodb_with_drop(curve, "filteredQuoteDB", "Q48", host="10.0.22.35", port=27316)
 # region
-# test commit
