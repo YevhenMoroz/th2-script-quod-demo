@@ -17,6 +17,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Vwap" run="True">
