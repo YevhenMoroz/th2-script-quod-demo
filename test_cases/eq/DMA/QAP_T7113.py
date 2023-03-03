@@ -122,4 +122,5 @@ class QAP_T7113(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ESBUYTH2TEST")
+        time.sleep(90)
         os.remove("temp.xml")
