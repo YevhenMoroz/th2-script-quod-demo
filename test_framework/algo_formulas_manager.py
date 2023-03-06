@@ -273,6 +273,12 @@ class AlgoFormulasManager:
             pcl_start = opn_start + timedelta(minutes=5)
             pcl_end = pcl_start + timedelta(minutes=5)
             clo_start = pcl_end + timedelta(minutes=5)
+        elif phase == TradingPhases.PreClosed:
+            pcl_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + datetime.timedelta(minutes=2)
+            opn_start = pcl_start - timedelta(minutes=5)
+            pop_start = opn_start - timedelta(minutes=5)
+            pcl_end = pcl_start + timedelta(minutes=5)
+            clo_start = pcl_end + timedelta(minutes=5)
         return [
             {
                 "beginTime": pop_start,
