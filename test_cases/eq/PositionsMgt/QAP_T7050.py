@@ -59,7 +59,6 @@ class QAP_T7050(TestCase):
         # end_of_part
 
         # part 2: Create CO orders
-        time.sleep(10)
         order_id_first = self._create_orders(self.source_acc, SubmitRequestConst.Side_Buy.value)
         order_id_second = self._create_orders(self.source_acc_second, SubmitRequestConst.Side_Sell.value)
         result_for_first_account = self._extract_cum_values_for_account(self.source_acc)
