@@ -123,7 +123,7 @@ class QAP_T7050(TestCase):
                                         'IncreasingSellQty': str(
                                             float(cum_sell_qty_after) - float(cum_sell_qty_before))},
                                        f'Verifying that {JavaApiFields.CumBuyQty.value} for {self.source_acc} and '
-                                       f'{JavaApiFields.CumSellQty.value} increased on {self.qty} (step 3)')
+                                       f'{JavaApiFields.CumSellQty.value} increased on {self.qty} for {self.source_acc_second} (step 3)')
         # endregion
 
     def _create_orders(self, alloc_account, side):
