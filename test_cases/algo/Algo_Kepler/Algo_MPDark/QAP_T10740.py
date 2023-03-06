@@ -20,7 +20,7 @@ from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo im
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
 
 
-class QAP_T10536(TestCase):
+class QAP_T10740(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -39,7 +39,7 @@ class QAP_T10536(TestCase):
         self.qty = 3000000
         self.inc_qty = 5000
         self.price = 20
-        self.delay_for_rfq = 4000
+        self.delay_for_rfq = 3000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_2.value
         # endregion
 
@@ -74,7 +74,7 @@ class QAP_T10536(TestCase):
         self.client = self.data_set.get_client_by_name("client_4")
         self.account_chixdelta = self.data_set.get_client_by_name("client_6")
         # endregion
-        
+
         # region Key parameters
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
@@ -153,7 +153,7 @@ class QAP_T10536(TestCase):
         er_replaced_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
         self.fix_verifier_sell.check_fix_message(er_replaced_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport Replace Request')
         # endregion
-        
+
         # region Check that the RFQ on the CHIXLIS was accepted
         case_id_3 = bca.create_event("RFQ accepted on CHIXLIS", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_3)

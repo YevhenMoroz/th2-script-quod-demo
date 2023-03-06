@@ -18,9 +18,10 @@ from test_framework.data_sets import constants
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4054(TestCase):
+class QAP_T4051(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -41,15 +42,18 @@ class QAP_T4054(TestCase):
         self.tif_day = constants.TimeInForce.Day.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
 
-        self.price_ask = 40
-        self.price_ask_2 = 45
-        self.qty_ask = 1_000_000
+        self.price_ask = 125.6
+        self.price_ask_2 = self.price_child = 125.58
+        self.price_ask_3 = 125.56
+        self.qty_ask = 1_000
 
         self.price_bid = 30
         self.qty_bid = 1_000_000
 
-        self.qty = 1_000_000
-        self.price = 41
+        self.qty = 100_000
+        self.price = 127
+
+        self.qty_child = 50_000
 
         self.check_order_sequence = False
         # endregion
@@ -96,16 +100,27 @@ class QAP_T4054(TestCase):
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file("client_sats.xml", ".//MultiListing/maxDepth", "2")
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule_xpar = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, 0, self.price_ask)
-        nos_ioc_rule_trqx = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, False, 0, self.price)
-        nos_ioc_rule_trqx_2 = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, False, 0, self.price_ask)
-        nos_passive_rule_xpar = rule_manager.add_NOS(self.fix_env1.buy_side, account=self.account_xpar)
+        nos_aggressive_rule_xpar = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, False, 0, self.price_ask_2)
+        nos_aggressive_rule_trqx = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_trqx, self.ex_destination_trqx, False, 0, self.price_ask_2)
+        nos_passive_rule_xpar = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_xpar, self.ex_destination_xpar, self.price)
         ocr_rule_xpar = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_ioc_rule_xpar, nos_ioc_rule_trqx, nos_ioc_rule_trqx_2, nos_passive_rule_xpar, ocr_rule_xpar]
+        self.rule_list = [nos_aggressive_rule_xpar, nos_aggressive_rule_trqx, nos_passive_rule_xpar, ocr_rule_xpar]
         # endregion
 
         # region Update Trading Phase
@@ -120,7 +135,9 @@ class QAP_T4054(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot setup MarketDepth on PARIS", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask, MDEntryPositionNo=0)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=self.price_ask_3, MDEntrySize=self.qty_ask, MDEntryPositionNo=2)])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental setup LastTrade on PARIS", case_id_0))
@@ -133,7 +150,9 @@ class QAP_T4054(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental setup LastTrade on TURQUOISE", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask, MDEntryPositionNo=0)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=self.price_ask_3, MDEntrySize=self.qty_ask, MDEntryPositionNo=2)])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental setup LastTrade on TURQUOISE", case_id_0))
@@ -164,13 +183,17 @@ class QAP_T4054(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot setup MarketDepth on PARIS", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=0)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=1)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=2)])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental setup LastTrade on TURQUOISE", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_2, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=0)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=1)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=1, MDEntryPx=0, MDEntrySize=0, MDEntryPositionNo=2)])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
@@ -186,27 +209,44 @@ class QAP_T4054(TestCase):
         self.fix_verifier_sell.check_fix_message(new_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Aggressive XPAR order
-        case_id_2 = bca.create_event("Check child order", self.test_id)
+        # region Check aggressive PAR order
+        case_id_2 = bca.create_event("Check aggressive PAR child order", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
-        ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.qty, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
+        self.aggressive_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
+        self.aggressive_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.qty_child, Price=self.price_child, Instrument='*', ExDestination=self.ex_destination_xpar, TimeInForce=self.tif_ioc))
 
-        pending_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Aggressive Child DMA order')
+        pending_aggressive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_par_1, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_aggressive_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Pasiive Child DMA order')
 
-        new_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Aggressive Child DMA order')
-
-        eliminate_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_par_1, self.gateway_side_buy, self.status_eliminated)
+        new_aggressive_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_par_1, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_aggressive_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Pasiive Child DMA order')
+        
+        eliminate_ioc_child_order_par_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_par_1, self.gateway_side_buy, self.status_eliminated)
         self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_par_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Aggressive Child DMA 2 order')
+        # endregion
+
+        # region Check aggressive TRQX order
+        case_id_3 = bca.create_event("Check aggressive TRQX child order", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_3)
+
+        self.aggressive_child_order_trqx_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
+        self.aggressive_child_order_trqx_1.change_parameters(dict(Account=self.account_trqx, OrderQty=self.qty_child, Price=self.price_child, Instrument='*', ExDestination=self.ex_destination_trqx, TimeInForce=self.tif_ioc))
+
+        pending_aggressive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_trqx_1, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_aggressive_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Pasiive Child DMA order')
+
+        new_aggressive_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_trqx_1, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_aggressive_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Pasiive Child DMA order')
+
+        eliminate_ioc_child_order_trqx_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.aggressive_child_order_trqx_1, self.gateway_side_buy, self.status_eliminated)
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_trqx_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Aggressive Child DMA 2 order')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Check eliminated Algo Order
-
+        time.sleep(5)
         case_id_5 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_5)
         # endregion
@@ -224,6 +264,13 @@ class QAP_T4054(TestCase):
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
+        print(self.default_config_value)
+        # region config reset
+        self.ssh_client.get_and_update_file("client_sats.xml", ".//MultiListing/maxDepth", self.default_config_value)
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        self.ssh_client.close()
+        # endregion
 
         # region check cancellation parent POV order
         cancel_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_cancel)
