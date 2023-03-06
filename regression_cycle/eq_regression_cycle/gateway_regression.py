@@ -1,13 +1,11 @@
+import logging
 import os
+from datetime import datetime
 from pathlib import Path
 
-from custom.basic_custom_actions import timestamps
-
-from stubs import Stubs
-import logging
 from custom import basic_custom_actions as bca
-from datetime import datetime
-
+from custom.basic_custom_actions import timestamps
+from stubs import Stubs
 from test_cases.eq.Gateway.QAP_T7015 import QAP_T7015
 from test_cases.eq.Gateway.QAP_T7106 import QAP_T7106
 from test_cases.eq.Gateway.QAP_T7167 import QAP_T7167
@@ -31,7 +29,6 @@ from test_cases.eq.Gateway.QAP_T7515 import QAP_T7515
 from test_cases.eq.Gateway.QAP_T7516 import QAP_T7516
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
-from win_gui_modules.utils import set_session_id
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -41,12 +38,12 @@ channels = dict()
 
 
 def test_run(parent_id=None, version='5.1.166.179'):
-    report_id = bca.create_event(f"Gateway Analysis" if version is None else f"Gateway Analysis | {version}", parent_id)
+    report_id = bca.create_event(f"Gateway Analysis" if version is None else f"Gateway | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Gateway")
     data_set = configuration.data_set
     fe_env = configuration.environment.get_list_fe_environment()[0]
-    session_id = set_session_id(fe_env.target_server_win)
+    session_id = None  #set_session_id(fe_env.target_server_win)
     test_id = bca.create_event(Path(__file__).name[:-3], report_id)
     base_main_window = BaseMainWindow(test_id, session_id)
     layout_path = os.path.abspath("regression_cycle\eq_regression_cycle\layouts")

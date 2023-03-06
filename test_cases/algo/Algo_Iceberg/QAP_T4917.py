@@ -119,7 +119,7 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        new_iceberg_order_params.change_parameter('NoParty', '*').remove_parameter('SecondaryAlgoPolicyID')
+        new_iceberg_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 

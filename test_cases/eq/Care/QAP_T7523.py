@@ -116,13 +116,16 @@ class QAP_T7523(TestCase):
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value
         ]
-        self.java_api_manager.key_is_absent(
-            JavaApiFields.PostTradeStatus.value,
-            order_reply,
+        post_trade_status_is_empty = not JavaApiFields.PostTradeStatus.value in order_reply
+        self.java_api_manager.compare_values(
+            {"PostTradeStatusIsEmpty": True},
+            {"PostTradeStatusIsEmpty": post_trade_status_is_empty},
             "Step 10 - Comparing that PostTradeStatus=empty after Uncomplete",
         )
-        self.java_api_manager.key_is_absent(
-            JavaApiFields.DoneForDay.value, order_reply, "Step 10 - Comparing that DoneForDay=empty after Uncomplete"
+        done_for_day_is_empty = not JavaApiFields.DoneForDay.value in order_reply
+        self.java_api_manager.compare_values(
+            {"DoneForDayIsEmpty": True},
+            {"DoneForDayIsEmpty": done_for_day_is_empty},"Step 10 - Comparing that DoneForDay=empty after Uncomplete"
         )
         # endregion
 

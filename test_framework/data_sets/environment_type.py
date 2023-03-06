@@ -57,6 +57,8 @@ class EnvironmentType(Enum):
 
     # region ssh client
     quod317_ssh_client = "quod317_ssh_client"
+    quod310_ssh_client = "quod310_ssh_client"
+    quod316_ssh_client = "quod316_ssh_client"
     # endregion
 
     # region data base
