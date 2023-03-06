@@ -44,7 +44,7 @@ class QAP_T9196(TestCase):
         self.exec_rep.set_default_trade(ord_rep["OrdID"])
         self.exec_rep.update_fields_in_component("ExecutionReportBlock", {"LastVenueOrdID": last_venue_ord_id})
         self.ja_manager.send_message_and_receive_response(self.exec_rep)
-        posit = self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, ).get_parameters()[
+        posit = self.ja_manager.get_first_message(PKSMessageType.PositionReport.value).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         exp_posit_qty = str(float(posit_qty) + 100)
