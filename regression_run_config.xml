@@ -400,7 +400,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="oms" run="False">
+        <product_line name="oms" run="True">
             <components>
             <component name="AcceptanceList" run="True">
                     <data_set>OmsDataSet</data_set>
@@ -660,7 +660,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="True">
+        <product_line name="retail" run="False">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>
@@ -918,7 +918,7 @@
                 </component>
              </components>
         </product_line>
-        <product_line name="web_admin" run="True">
+        <product_line name="web_admin" run="False">
             <components>
                 <component name="WA_General" run="True">
                     <data_set>WebAdminDataSet</data_set>

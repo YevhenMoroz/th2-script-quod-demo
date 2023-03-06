@@ -27,8 +27,9 @@ def test_run(parent_id=None, version=None):
     try:
         tests = os.listdir(root_path(ignore_cwd=True) + '/test_cases/eq/Basket')
         for test in tests:
-            class_ = getattr(importlib.import_module(f"test_cases.eq.Basket.{test[:-3]}"), test[:-3])
-            class_(report_id, session_id, data_set, configuration.environment).execute()
+            if test.find("QAP_T")==0:
+                class_ = getattr(importlib.import_module(f"test_cases.eq.Basket.{test[:-3]}"), test[:-3])
+                class_(report_id, session_id, data_set, configuration.environment).execute()
 
     except Exception:
         logging.error("Error execution", exc_info=True)
