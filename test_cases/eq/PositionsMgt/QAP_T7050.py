@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -58,6 +59,7 @@ class QAP_T7050(TestCase):
         # end_of_part
 
         # part 2: Create CO orders
+        time.sleep(10)
         order_id_first = self._create_orders(self.source_acc, SubmitRequestConst.Side_Buy.value)
         order_id_second = self._create_orders(self.source_acc_second, SubmitRequestConst.Side_Sell.value)
         result_for_first_account = self._extract_cum_values_for_account(self.source_acc)
@@ -81,10 +83,10 @@ class QAP_T7050(TestCase):
             self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value, order_id_second).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         position_report_for_first_account = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value]
         position_report_for_second_account = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc_second).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc_second, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value]
         list_execuiton_report = [execution_report_first, execution_report_second]
         for message in list_execuiton_report:
