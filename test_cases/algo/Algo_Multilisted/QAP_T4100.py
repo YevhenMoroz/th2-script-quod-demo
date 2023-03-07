@@ -146,7 +146,6 @@ class QAP_T4100(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_3)
 
         eliminate_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_multilisting_order_params.change_parameters(dict(LastMkt='*', Text='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport eliminate')
         # endregion
 

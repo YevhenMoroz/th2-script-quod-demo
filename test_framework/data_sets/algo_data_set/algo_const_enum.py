@@ -521,6 +521,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
     verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
+    verifier_key_parameters_OCR_child = ['ExDestination', 'OrderQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_updating_status_with_order_id = ['OrderId', 'OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
@@ -615,6 +616,10 @@ class AlgoPreFilter(Enum):
 
     pre_filter_with_the_order_id = {
         'OrderId': ('*', "EQUAL")
+    }
+
+    pre_filter_with_client_order_id = {
+        'ClOrdID': ('*', "EQUAL")
     }
 
 class AlgoTradingPhaseProfile(Enum):

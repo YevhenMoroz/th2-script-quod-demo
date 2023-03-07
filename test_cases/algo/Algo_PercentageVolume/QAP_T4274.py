@@ -47,7 +47,7 @@ class QAP_T4274(TestCase):
         self.child_qty_2 = self.qty - self.child_qty_1
         self.price_ask = 11
         self.price_bid = 10
-        self.qty_bid = self.qty_ask = 1_000_000
+        self.qty_bid = self.qty_ask = 1_000
         # endregion
 
         # region Gateway Side
@@ -136,7 +136,7 @@ class QAP_T4274(TestCase):
 
         self.POV_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.POV_order)
         self.POV_order_replace_params.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time_mod),
-                                                                                dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time_mod)])
+                                                                                               dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time_mod)])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order_replace_params, case_id_1)
         time.sleep(5)
         self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
