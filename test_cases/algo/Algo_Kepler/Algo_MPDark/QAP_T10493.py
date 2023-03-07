@@ -137,6 +137,11 @@ class QAP_T9292(TestCase):
         self.fix_verifier_buy.check_fix_message(er_partial_fill_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Partial fill Child DMA 1 order')
         # endregion
 
+        # region Check that the 1st child order didn't eliminate after the partial fill
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that the 1st child order didn't eliminate after the partial fill", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params, er_partial_fill_dma_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter)
+        # endregion
+
         time.sleep(7)
 
         # region Check that the 1st child expires
@@ -189,11 +194,6 @@ class QAP_T9292(TestCase):
 
         er_cancel_dma_cboe_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboe_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_cboe_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 3 order')
-        # endregion
-
-        # region Check those are no child orders on the venue which were discarded
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no child orders on the venue which were discarded", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order, self.dma_cboe_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Check that parent order eliminated
