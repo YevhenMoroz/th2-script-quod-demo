@@ -227,7 +227,7 @@ class OrderQuoteFX(JavaApiMessage):
         self.prepare_params_swap(action_reply)
 
     def set_params_for_swap(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
-        self.set_params_for_swap_quote(quote_request, action_reply)
+        self.prepare_params_swap(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         reply_leg_quote_block = estimation_block["LegQuoteList"]["LegQuoteBlock"]
         self.update_fields_in_component("QuoteBlock", {"AutomaticHedging": "N"})
@@ -237,6 +237,9 @@ class OrderQuoteFX(JavaApiMessage):
         self.update_fields_in_component("QuoteBlock", {"OfferSpotRate": estimation_block["OfferSpotRate"]})
         self.update_fields_in_component("QuoteBlock", {"BidSwapPoints": estimation_block["BidSwapPoints"]})
         self.update_fields_in_component("QuoteBlock", {"OfferSwapPoints": estimation_block["OfferSwapPoints"]})
+        self.update_fields_in_component("QuoteBlock", {"OfferPx": estimation_block["OfferPx"]})
+        self.update_fields_in_component("QuoteBlock", {"BidPx": estimation_block["BidPx"]})
+        # self.update_fields_in_component("QuoteBlock", {"QuoteType": "1"})
 
         # if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
         #     self.update_fields_in_component("QuoteBlock", {"BidSpotRate": estimation_block["BidSpotRate"]})

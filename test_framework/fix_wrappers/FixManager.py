@@ -17,7 +17,10 @@ from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import 
 from stubs import Stubs
 from test_framework.fix_wrappers.FixMessageOrderCancelRejectReport import FixMessageOrderCancelRejectReport
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
+from test_framework.fix_wrappers.FixMessagePositionReport import FixMessagePositionReport
 from test_framework.fix_wrappers.FixMessageReject import FixMessageReject
+from test_framework.fix_wrappers.FixMessageRequestForPositions import FixMessageRequestForPositions
+from test_framework.fix_wrappers.FixMessageRequestForPositionsAck import FixMessageRequestForPositionsAck
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
@@ -149,6 +152,16 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == FIXMessageType.RequestForPositions.value:
+            response = self.act.placeRequestForPositionsFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send Request for Positions ",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.RequestForPositions.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
@@ -204,6 +217,12 @@ class FixManager:
                 response_fix_message = FixMessageOrderCancelRejectReport()
             elif message_type == FIXMessageType.BusinessMessageReject.value:
                 response_fix_message = FixMessageBusinessMessageRejectReport()
+            elif message_type == FIXMessageType.RequestForPositions.value:
+                response_fix_message = FixMessageRequestForPositions()
+            elif message_type == FIXMessageType.RequestForPositionsAck.value:
+                response_fix_message = FixMessageRequestForPositionsAck()
+            elif message_type == FIXMessageType.PositionReport.value:
+                response_fix_message = FixMessagePositionReport()
             response_fix_message.change_parameters(fields)
 
             response_messages.append(response_fix_message)

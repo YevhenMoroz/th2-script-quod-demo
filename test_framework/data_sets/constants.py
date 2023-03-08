@@ -35,6 +35,7 @@ class Connectivity(Enum):
     Luna_314_wa = "rest_wa314luna"
     Luna_314_ja = "314_java_api"
     Luna_314_ev = "fix-buy-extern-314-stand"
+    Luna_314_ss_pks = "fix-sell-pks-314luna"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -69,6 +70,7 @@ class Connectivity(Enum):
     Kratos_309_wa = "rest_wa309kratos"
     Kratos_309_ja = "309_java_api"
     Kratos_309_ev = "fix-buy-extern-309-stand"
+    Kratos_309_ss_pks = "fix-sell-pks-309kratos"
 
 
 class FrontEnd(Enum):
