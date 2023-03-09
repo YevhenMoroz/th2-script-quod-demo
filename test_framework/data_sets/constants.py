@@ -148,6 +148,7 @@ class Status(Enum):
     CancelReplace = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+    ReachedUncross = "ReachedUncross"
 
 
 class OrdStatus(Enum):
