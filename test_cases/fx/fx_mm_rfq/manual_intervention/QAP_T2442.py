@@ -81,6 +81,8 @@ class QAP_T2442(TestCase):
         self.java_quote.set_params_for_fwd(self.quote_request, estimation_reply[0])
         self.java_api_manager.send_message(self.java_quote)
         self.quote.set_params_for_dealer_fwd(self.quote_request)
+        self.quote.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
+        self.fix_verifier.check_fix_message(self.quote)
         next(response)
         # endregion
 
