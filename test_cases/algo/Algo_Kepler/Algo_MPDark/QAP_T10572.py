@@ -100,10 +100,8 @@ class QAP_T10572(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price, self.reason)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_cboe, self.ex_destination_cboe, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_cboe, self.ex_destination_cboe, True)
-        self.rule_list = [nos_reject_rule, nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule]
+        self.rule_list = [nos_reject_rule, nos_1_rule, ocr_1_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
