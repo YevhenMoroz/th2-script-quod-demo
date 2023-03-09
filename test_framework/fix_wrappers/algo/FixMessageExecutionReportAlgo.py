@@ -633,28 +633,26 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.is_parameter_exist('Price'):
+        if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
-        if new_order_single.is_parameter_exist('StopPx'):
-            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
         if new_order_single.is_parameter_exist('ExpireDate'):
-            temp.update(ExpireDate='*')
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
-            AvgPx='*',
+            Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
-            CumQty='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='*',
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="5",
+            OrdStatus="0",
+            CumQty='0',
             ExecID='*',
             OrderID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdType=new_order_single.get_parameter('OrdType'),
-            OrdStatus=0,
-            TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            OrigClOrdID='*',
-            Side=new_order_single.get_parameter('Side'),
-            Text='*',
+            LeavesQty='*',
             TransactTime='*',
-            ExecType=5,
-            LeavesQty="*"
+            AvgPx='*',
         )
         super().change_parameters(temp)
         return self
