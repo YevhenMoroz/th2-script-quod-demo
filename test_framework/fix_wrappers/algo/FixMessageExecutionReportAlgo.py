@@ -638,7 +638,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
-            Account=new_order_single.get_parameter("Account"),
             ClOrdID='*',
             OrdType=new_order_single.get_parameter('OrdType'),
             OrderQty=new_order_single.get_parameter("OrderQty"),
@@ -653,6 +652,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LeavesQty='*',
             TransactTime='*',
             AvgPx='*',
+            OrigClOrdID='*',
         )
         super().change_parameters(temp)
         return self
