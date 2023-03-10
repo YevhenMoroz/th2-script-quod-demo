@@ -670,12 +670,11 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager(Simulators.algo)
-    rule_manager.remove_rules_by_alias('fix-buy-side-319-kepler')
-    # rule_manager.remove_rules_by_alias('fix-bs-310-columbia')
+    rule_manager = RuleManager()
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
     # print("_________________________")
     # rule_manager_eq.print_active_rules()
     Stubs.factory.close()
+
