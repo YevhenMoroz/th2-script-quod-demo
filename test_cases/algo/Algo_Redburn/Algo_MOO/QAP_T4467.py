@@ -163,9 +163,9 @@ class QAP_T4467(TestCase):
         # region check Would child
 
         end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) + 1
-        would_time = AFM.change_datetime_from_epoch_to_normal(end_time - 1).astimezone(pytz.utc)
+        would_time = AFM.change_datetime_from_epoch_to_normal(end_time - 2).astimezone(pytz.utc)
         would_time_from = would_time.isoformat()[:-6]
-        would_time_to = (would_time + datetime.timedelta(milliseconds=100)).isoformat()[:-6]
+        would_time_to = (would_time + datetime.timedelta(seconds=1, milliseconds=100)).isoformat()[:-6]
 
         self.checkpoint = end_time + 5
         scheduler = sched.scheduler(time.time, time.sleep)
