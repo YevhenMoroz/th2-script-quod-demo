@@ -559,12 +559,13 @@ class RuleManager:
                                                       venue=venue))
 
     def add_OrderCancelRequestRFQExecutionReport(self, session: str, account: str, ex_destination: str,
-                                                 acceptCancel: bool):
+                                                 acceptCancel: bool, delay: int = 0):
         return self.sim.createOrderCancelRequestRFQExecutionReport(
             request=TemplateOrderCancelRFQRequest(connection_id=ConnectionID(session_alias=session),
                                                   account=account,
                                                   exdestination=ex_destination,
-                                                  acceptCancel=acceptCancel
+                                                  acceptCancel=acceptCancel,
+                                                  delay=delay
                                                   ))
 
     def add_NewOrdSingleExecutionReportEliminateFixStandard(self, session: str, account: str, ex_destination: str,
@@ -669,7 +670,9 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager()
+    rule_manager = RuleManager(Simulators.algo)
+    rule_manager.remove_rules_by_alias('fix-buy-side-319-kepler')
+    # rule_manager.remove_rules_by_alias('fix-bs-310-columbia')
     rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
     # rule_manager_eq = RuleManager(Simulators.equity)
