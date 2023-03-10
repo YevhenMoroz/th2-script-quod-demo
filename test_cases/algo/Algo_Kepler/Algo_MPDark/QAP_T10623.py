@@ -205,6 +205,8 @@ class QAP_T10623(TestCase):
         self.fix_verifier_buy.check_fix_message(self.nos_2_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side 2nd RFQ on TQLIS')
         # endregion
 
+        time.sleep(7)
+
         # region Check that the 1st child expires
         order_cancel_request_dma_chix_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_chix_order)
         self.fix_verifier_buy.check_fix_message(order_cancel_request_dma_chix_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 1 order')
