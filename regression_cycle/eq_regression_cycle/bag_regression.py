@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"Bag Analysis" if version is None else f"Bag | {version}", parent_id)
+    report_id = bca.create_event(f"Bag Analysis" if version is None else f"Bag  Analysis | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Bag")
     fe_env = configuration.environment.get_list_fe_environment()[0]
