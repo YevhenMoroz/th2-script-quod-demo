@@ -98,6 +98,8 @@ class QAP_T7180(TestCase):
 
         # region  execute DMA order (precondition)
         self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
+        self.trade_entry_request.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
+            JavaApiFields.LastMkt.value: self.data_set.get_mic_by_name('mic_2')})
         responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
         self.__return_result(responses, ORSMessageType.ExecutionReport.value)
         exec_id = self.result.get_parameter(JavaApiFields.ExecutionReportBlock.value)['ExecID']
@@ -152,7 +154,7 @@ class QAP_T7180(TestCase):
             {JavaApiFields.ConfirmationService.value: AllocationInstructionConst.ConfirmationService_MAN.value},
             self.result.get_parameter(JavaApiFields.AllocationReportBlock.value),
             'Check block ConfirmationService')
-        alloc_instr_id = self.result.get_parameter(JavaApiFields.AllocationReportBlock.value)[
+        alloc_instr_id = self.result.get_parameter(JavaApiFields.AllocationReportBlock.value, JavaApiFields.BookingAllocInstructionID.value)[
             JavaApiFields.ClientAllocID.value]
         # endregion
 
