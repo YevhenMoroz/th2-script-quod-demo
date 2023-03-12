@@ -101,7 +101,7 @@ class QAP_T7180(TestCase):
         self.trade_entry_request.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
             JavaApiFields.LastMkt.value: self.data_set.get_mic_by_name('mic_2')})
         responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
-        exec_id = self.java_api_manager.get_last_message(JavaApiFields.ExecutionReportBlock.value,
+        exec_id = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                          ExecutionReportConst.ExecType_TRD.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         # endregion
@@ -184,7 +184,7 @@ class QAP_T7180(TestCase):
                                                                            "InstrID": instrument_id,
                                                                            "AllocQty": self.qty,
                                                                            })
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation)
+        self.java_api_manager.send_message_and_receive_response(self.confirmation)
         # endregion
 
         # check result after step 5
@@ -197,7 +197,6 @@ class QAP_T7180(TestCase):
              'ClientCommissionList': comm_list_exp},
             allocation_report,
             'Check block sts in the Allocation')
-        self.java_api_manager.send_message_and_receive_response(self.confirmation)
         confirmation = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
             JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values(
