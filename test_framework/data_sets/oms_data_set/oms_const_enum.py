@@ -560,7 +560,7 @@ class OMSCounterPartyIDs_FIX(Enum):
                                                          'PartyRoleQualifier': '12',
                                                          'PartyID': 'InvestorID - ClCounterpart_SA1',
                                                          'PartyIDSource': "C"}
-    counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyID': 'CustodianUser2', 'PartyRoleQualifier': '24',
+    counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyRoleQualifier': '24','PartyID': 'CustodianUser2',
                                        'PartyIDSource': 'C'}
     counterpart_id_custodian_user = {'PartyRole': '28', 'PartyRoleQualifier': '12', 'PartyID': 'CustodianUser',
                                      'PartyIDSource': 'C'}

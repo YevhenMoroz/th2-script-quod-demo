@@ -125,9 +125,11 @@ class QAP_T7444(TestCase):
                 'PartySubID': 'quod@quodfinancial.com'
             }
         ]}})
+        custodian_user_2 = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+        market_maker_th2_route = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         no_party_alloc = [
-            party_stub_dict,
-            party_stub_dict,
+            market_maker_th2_route,
+            custodian_user_2,
             regulatory_body,
             investment_firm_client_counterpart
         ]
