@@ -153,7 +153,6 @@ class QAP_T9390(TestCase):
             'NoParty': [party_stup,
                         last_user_conterpart,
                         party_stup,
-                        party_stup,
                         party_stup],
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
