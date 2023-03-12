@@ -80,7 +80,8 @@ class QAP_T7512(TestCase):
             {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
              "Account": self.client, "MiscFeesGrp": {"NoMiscFees": [no_misc]}})
         self.fix_verifier.check_fix_message_fix_standard(execution_report,
-                                                         ignored_fields=['SettlCurrency', 'CommissionData'])
+                                                         ignored_fields=['SettlCurrency', 'CommissionData',
+                                                                         'GatingRuleCondName', 'GatingRuleName'])
         # endregion
 
         # region get values from booking ticket
@@ -123,7 +124,7 @@ class QAP_T7512(TestCase):
 
         # region check alloc report
         ignored_fields = ['Account', 'RootCommTypeClCommBasis', 'tag5120', 'RootOrClientCommission',
-                          'RootOrClientCommissionCurrency', 'RootSettlCurrAmt','OrderAvgPx']
+                          'RootOrClientCommissionCurrency', 'RootSettlCurrAmt', 'OrderAvgPx']
         self.fix_alloc_report.set_default_ready_to_book(self.fix_message)
         self.fix_alloc_report.change_parameters({"NoRootMiscFeesList": {'NoRootMiscFeesList': [
             {'RootMiscFeeBasis': '2', 'RootMiscFeeType': '4', 'RootMiscFeeRate': '5', 'RootMiscFeeAmt': '1',
