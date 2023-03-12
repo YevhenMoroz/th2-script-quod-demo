@@ -90,7 +90,7 @@ class QAP_T7299(TestCase):
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
-        expected_result = {'RootMiscFeeBasis': 'P', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '5',
+        expected_result = {'RootMiscFeeBasis': 'P', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '5.0',
                            'RootMiscFeeAmt': '100.0', 'RootMiscFeeCurr': 'GBP'}
         self.java_api_manager.compare_values(expected_result,
                                              compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"][0],
