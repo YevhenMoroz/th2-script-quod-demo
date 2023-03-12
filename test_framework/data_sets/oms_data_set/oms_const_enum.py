@@ -418,7 +418,7 @@ class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
     synthetic = 'Synth'
-    execution_policy_C =' C'
+    execution_policy_C = ' C'
 
 
 class OMSTimeInForce(Enum):
@@ -553,24 +553,28 @@ class OMSTickSizeProfile(Enum):
 class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
-    counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyID': "MarketMaker - TH2Route",
+    counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
+                                             'PartyID': "MarketMaker - TH2Route",
                                              'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart_sa1 = {'PartyRole': "5",
                                                          'PartyID': 'InvestorID - ClCounterpart_SA1',
                                                          'PartyIDSource': "C"}
     counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyID': 'CustodianUser2', 'PartyRoleQualifier': '24',
                                        'PartyIDSource': 'C'}
-    counterpart_id_custodian_user = {'PartyRole': '28', 'PartyID': 'CustodianUser', 'PartyRoleQualifier': '24',
+    counterpart_id_custodian_user = {'PartyRole': '28', 'PartyRoleQualifier': '12', 'PartyID': 'CustodianUser',
                                      'PartyIDSource': 'C'}
     counter_part_id_contra_firm = {'PartyRole': "17", 'PartyID': 'ContraFirm', 'PartyIDSource': "C"}
     counter_part_id_contra_firm_2 = {'PartyRole': "17", 'PartyID': 'ContraFirm2', 'PartyIDSource': "C"}
     counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
-    counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
+    counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyRoleQualifier': '12',
+                                                     'PartyID': "InvestmentFirm - ClCounterpart",
                                                      'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart_sa3 = {'PartyRole': "67",
+                                                         'PartyRoleQualifier': '12',
                                                          'PartyID': "InvestmentFirm - ClCounterpart_SA3",
                                                          'PartyIDSource': "C"}
     counterpart_id_regulatory_body_venue_paris = {'PartyRole': "34",
+                                                  'PartyRoleQualifier': '12',
                                                   'PartyID': "RegulatoryBody - Venue(Paris)",
                                                   'PartyIDSource': "C"}
     counterpart_id_settlement_location = {'PartyRole': '10',
@@ -582,6 +586,12 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_java_api_user = {'PartyRole': '36',
                                  'PartyID': "JavaApiUser",
                                  'PartyIDSource': "D"}
+    entering_firm = {
+        'PartyRole': '7',
+        'PartyRoleQualifier': '12',
+        'PartyID': 'EnteringFirm',
+        'PartyIDSource': 'C'
+    }
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
