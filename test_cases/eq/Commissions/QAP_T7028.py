@@ -106,6 +106,7 @@ class QAP_T7028(TestCase):
         time.sleep(5)
         exec_report = self.__get_fix_message({'ExecType': 'F'})
         order_id = exec_report["OrderID"]
+        print(exec_report)
         cl_order_id = exec_report['ClOrdID']
         vat_amt = str(float(self.qty)/10000)
         stamp_rate = str(5)
@@ -113,7 +114,7 @@ class QAP_T7028(TestCase):
         exec_id = exec_report["ExecID"]
         self.java_api_manager.compare_values(
             {'ExecType': exec_report["ExecType"], 'OrdStatus': exec_report["OrdStatus"],
-             'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
+             'MiscFeesGrp': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
             exec_report,
             "Check the execution of order")
         # endregion
