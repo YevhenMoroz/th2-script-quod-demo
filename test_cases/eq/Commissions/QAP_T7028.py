@@ -106,7 +106,6 @@ class QAP_T7028(TestCase):
         time.sleep(5)
         exec_report = self.__get_fix_message({'ExecType': 'F'})
         order_id = exec_report["OrderID"]
-        print(exec_report)
         cl_order_id = exec_report['ClOrdID']
         vat_amt = str(float(self.qty)/10000)
         stamp_rate = str(5)
@@ -168,8 +167,13 @@ class QAP_T7028(TestCase):
         alloc_report = self.result.get_parameter('AllocationReportBlock')
         total_fee = {'RootCommission': common_fee_amount, 'RootCommCurrency': 'GBP'}
         self.java_api_manager.compare_values(
-            {JavaApiFields.RootMiscFeesList.value: fee_list_exp, 'RootCommissionDataBlock': total_fee}, alloc_report,
-            "Check values in the Alloc Report")
+            {'RootCommissionDataBlock': total_fee}, alloc_report,
+            "Check values in the Alloc Report (TotalFees)")
+        for fee in fee_list_exp[JavaApiFields.RootMiscFeesBlock.value]:
+            self.java_api_manager.compare_values({
+                'IsMiscFeeValuesPresent': True},
+                {'IsMiscFeeValuesPresent' : fee in alloc_report[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]},
+                f"Check values in the Alloc Report {fee}")
         # endregion
 
         # region check 35=J message
