@@ -38,5 +38,5 @@ def test_run(parent_id=None, version=None):
 
 
 if __name__ == '__main__':
-    test_run()
+    test_run(version="5.1.175.188")
     Stubs.factory.close()
