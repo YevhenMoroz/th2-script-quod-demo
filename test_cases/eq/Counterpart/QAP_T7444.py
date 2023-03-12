@@ -126,10 +126,6 @@ class QAP_T7444(TestCase):
              'NoPartySubIDs': "*",
              'PartyID': "*",
              'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'NoPartySubIDs': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"}
         ]
         alloc_grp = {'NoAllocs': [{'IndividualAllocID': "*",
                                    'AllocNetPrice': self.price,
