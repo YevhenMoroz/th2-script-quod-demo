@@ -557,6 +557,7 @@ class OMSCounterPartyIDs_FIX(Enum):
                                              'PartyID': "MarketMaker - TH2Route",
                                              'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart_sa1 = {'PartyRole': "5",
+                                                         'PartyRoleQualifier': '12',
                                                          'PartyID': 'InvestorID - ClCounterpart_SA1',
                                                          'PartyIDSource': "C"}
     counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyID': 'CustodianUser2', 'PartyRoleQualifier': '24',
