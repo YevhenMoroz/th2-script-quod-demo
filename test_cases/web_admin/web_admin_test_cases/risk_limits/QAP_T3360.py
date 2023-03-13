@@ -47,6 +47,7 @@ class QAP_T3360(CommonTestCase):
             dimensions_tab.set_accounts_dimension(self.accounts_dimensions)
             dimensions_tab.set_clients(self.client)
             dimensions_tab.set_users_dimension(self.users_dimension)
+            time.sleep(1)
             dimensions_tab.set_desks(self.desk)
 
             wizard = MainWizard(self.web_driver_container)
