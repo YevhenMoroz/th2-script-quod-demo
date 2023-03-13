@@ -197,7 +197,7 @@ class ListingsConstants:
 
     # Status tab
     STATUS_TAB_TRADING_PHASE_XPATH = '//*[@id="tradingPhase"]'
-    STATUS_TAB_TRADING_SESSION_XPATH = 'id="tradingSession"'
+    STATUS_TAB_TRADING_SESSION_XPATH = '//*[@id="tradingSession"]'
     STATUS_TAB_TRADING_STATUS_XPATH = '//*[@id="tradingStatus"]'
     STATUS_TAB_EXTERNAL_TRADING_STATUS_PHASE_XPATH = '//*[@id="externalTradingStatus"]'
 
