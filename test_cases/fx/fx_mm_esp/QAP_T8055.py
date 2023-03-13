@@ -48,18 +48,18 @@ class QAP_T8055(TestCase):
             "SettlType": self.settle_type_spot, }]
         self.md_req_id = f"{self.gbp_usd}:SPO:REG:{self.hsbc}"
 
-        self.initial_ask = "1.19655"
-        self.initial_bid = "1.19979"
+        self.initial_bid = "1.19959"
+        self.initial_ask = "1.1998"
 
         self.correct_no_md_entries = [
             {"MDEntryType": "0",
-             "MDEntryPx": self.initial_ask,
+             "MDEntryPx": self.initial_bid,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": self.initial_bid,
+             "MDEntryPx": self.initial_ask,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
@@ -88,8 +88,10 @@ class QAP_T8055(TestCase):
         self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(4)
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
@@ -110,7 +112,7 @@ class QAP_T8055(TestCase):
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*"], response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request, "Unsubscribe")
@@ -122,3 +124,4 @@ class QAP_T8055(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
