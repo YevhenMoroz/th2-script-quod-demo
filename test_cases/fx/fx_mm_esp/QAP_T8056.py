@@ -39,6 +39,15 @@ class QAP_T8056(TestCase):
         self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.hsbc = "HSBC"
+        self.gbp_usd_spot = {"Symbol": self.gbp_usd,
+                             "SecurityType": self.sec_type_spot}
+        self.no_related_symbols_spot = [{
+            "Instrument": {
+                "Symbol": self.gbp_usd,
+                "SecurityType": self.sec_type_spot,
+                "Product": "4", },
+            "SettlType": self.settle_type_spot, }]
+        self.md_req_id_spot = f"{self.gbp_usd}:SPO:REG:{self.hsbc}"
         self.gbp_usd_fwd = {"Symbol": self.gbp_usd,
                             "SecurityType": self.sec_type_fwd}
         self.no_related_symbols = [{
@@ -49,21 +58,37 @@ class QAP_T8056(TestCase):
             "SettlType": self.settle_type_fwd, }]
         self.md_req_id = f"{self.gbp_usd}:FXF:WK1:{self.hsbc}"
 
-        self.initial_ask = "1.19655"
-        self.initial_bid = "1.19979"
+        self.initial_bid = "1.19996"
+        self.initial_ask = "1.19998"
 
-        self.correct_no_md_entries = [
+        self.correct_no_md_entries_spot = [
             {"MDEntryType": "0",
+             "MDEntryPx": self.initial_bid,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "1",
              "MDEntryPx": self.initial_ask,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
-             'SettlDate': self.settle_date_fwd,
-             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
-            {"MDEntryType": "1",
+             'SettlDate': self.settle_date_spot,
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
+
+        self.correct_no_md_entries = [
+            {"MDEntryType": "0",
              "MDEntryPx": self.initial_bid,
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_fwd,
+             "MDEntryForwardPoints": "0.0000001",
+             "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
+            {"MDEntryType": "1",
+             "MDEntryPx": self.initial_ask,
+             "MDEntrySize": 1000000,
+             "MDEntryPositionNo": 1,
+             'SettlDate': self.settle_date_fwd,
+             "MDEntryForwardPoints": "0.0000001",
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
         # region incorrect
         self.incorrect_no_md_entries = [
@@ -85,18 +110,29 @@ class QAP_T8056(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1-2
         self.md_request.set_md_req_parameters_maker(). \
+            update_repeating_group("NoRelatedSymbols", self.no_related_symbols_spot)
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries_spot)
+        self.fix_md.update_MDReqID(self.md_req_id_spot, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+
+        self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_fwd)
+        self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(4)
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.initial_bid)
-        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.initial_ask)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx="1.1999601")
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx="1.1999801")
         self.fix_verifier.check_fix_message(self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request, "Unsubscribe")
@@ -124,3 +160,8 @@ class QAP_T8056(TestCase):
         self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_fwd)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.fix_md.set_market_data()
+        self.fix_md.update_fields_in_component("Instrument", self.gbp_usd_spot)
+        self.fix_md.update_MDReqID(self.md_req_id_spot, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
