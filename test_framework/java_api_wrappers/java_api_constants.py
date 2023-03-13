@@ -11,6 +11,9 @@ class ExecutionReportConst(Enum):
     ExecType_ACT = 'ACT'
     ExecType_POS = 'POS'
     PostTradeExecStatus_NAL = 'NAL'
+    MiscFeeType_EXC = 'EXC'
+    MiscFeeBasis_P = 'P'
+    MiscFeeBasis_A = 'A'
 
 
 class BasketMessagesConst(Enum):

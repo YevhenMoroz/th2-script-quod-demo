@@ -98,3 +98,4 @@ class QAP_T6919(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
         os.remove("temp.xml")
+        time.sleep(60)

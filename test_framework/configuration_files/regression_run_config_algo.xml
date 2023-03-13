@@ -45,6 +45,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="True">
@@ -61,6 +64,15 @@
                         <fix_environments>
                             <fix_environment>quod316_ganymede_redburn</fix_environment>
                         </fix_environments>
+                        <data_base_environments>
+                            <data_base_environment>quod316_data_base_mongo</data_base_environment>
+                        </data_base_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Peg" run="True">

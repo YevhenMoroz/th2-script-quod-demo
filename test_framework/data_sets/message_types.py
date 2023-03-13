@@ -96,7 +96,7 @@ class ORSMessageType(Enum):
     BlockUnallocateBatchRequest = 'Order_BlockUnallocateBatchRequest'
     ForceAllocInstructionStatusBatchReply = 'Order_ForceAllocInstructionStatusBatchReply'
     BlockUnallocateBatchReply = 'Order_BlockUnallocateBatchReply'
-    OrderUnMatchReply = 'Order_UnMatchReply'
+    UnMatchReply = 'Order_UnMatchReply'
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
     NewOrderReply = 'Gateway_NewOrderReply'

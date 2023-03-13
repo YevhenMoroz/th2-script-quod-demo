@@ -118,7 +118,7 @@ class QAP_T7063(TestCase):
         self.accept_request.update_fields_in_component('CDOrdAckBatchRequestBlock', {'CancelChildren': 'Y'})
         self.java_api_manager.send_message_and_receive_response(self.accept_request,
                                                                 {order_id: order_id, child_ord_id: child_ord_id})
-        order_reply = self.java_api_manager2.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.ExecType.value: OrderReplyConst.ExecType_PCA.value},
                                              order_reply, 'Verifying that Parent order has PCA status')
         # endregion
