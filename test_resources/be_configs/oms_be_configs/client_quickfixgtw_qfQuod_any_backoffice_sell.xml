@@ -52,6 +52,7 @@
                     <CheckLatency>N</CheckLatency>
                 </setting>
                 <setting>
+                    <DBName>BOSELL</DBName>
                     <NAME>SESSION</NAME>
                     <BeginString>FIXT.1.1</BeginString>
                     <DefaultApplVerID>FIX.5.0SP2</DefaultApplVerID>
@@ -74,7 +75,7 @@
                     </sentinels-->
             </persistence>
             <fix_sessions>
-                    <fix_session db_name="BOSELL">FIXT.1.1:QUOD_S->QUOD_T</fix_session>
+                    <!--fix_session db_name="BOSELL">FIXT.1.1:QUOD_S->QUOD_T</fix_session-->
             </fix_sessions>
             <executionReportExecBroker>true</executionReportExecBroker>
             <acceptor>true</acceptor>

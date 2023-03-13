@@ -208,8 +208,6 @@ class QAP_T10532(TestCase):
         self.fix_verifier_sell.check_fix_message(er_partial_fill_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
-        # TODO Waiting for the expected result: on which venue algo should send the new child
-
         # region Check the 2nd dark child order
         self.fix_verifier_buy.set_case_id(bca.create_event("2nd dark child order", self.test_id))
 

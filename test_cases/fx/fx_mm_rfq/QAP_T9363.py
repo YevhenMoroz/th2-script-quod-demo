@@ -39,7 +39,7 @@ class QAP_T9363(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_swap_synergy_params()
-        self.quote_request.update_repeating_group_by_index("NoRelatedSym", 0, QuoteRequestType="2")
+        self.quote_request.update_repeating_group_by_index("NoRelatedSym", 0, QuoteRequestType="1")
         self.quote_request.change_client(self.iridium)
         response = self.fix_manager_rfq.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
         # region Step 2

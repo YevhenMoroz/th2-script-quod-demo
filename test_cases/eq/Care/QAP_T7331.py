@@ -269,19 +269,22 @@ class QAP_T7331(TestCase):
         list_ignored_fields = [
             'Account', 'OrderQtyData', 'OrdType', 'ClOrdID', 'OrderCapacity', 'OrderID',
             'TransactTime', 'Side', 'Parties', 'Price', 'SettlCurrency', 'Currency',
-            'TimeInForce', 'PositionEffect','Instrument','HandlInst','ExDestination']
+            'TimeInForce', 'PositionEffect', 'Instrument', 'HandlInst', 'ExDestination', 'trailer',
+                                                                                         'header']
         order_modification_request_fix = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         order_modification_request_fix.change_parameters({
             "OrigClOrdID": child_ord_id
         })
-        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix, ignored_fields=list_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix,
+                                                         ignored_fields=list_ignored_fields)
         # end_of_part
 
         # part 2: Check 35=G message for second child DMA order (third level of parent order)
         order_modification_request_fix.change_parameters({
             "OrigClOrdID": child_ord_id_third_level
         })
-        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix, ignored_fields=list_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(order_modification_request_fix,
+                                                         ignored_fields=list_ignored_fields)
         # end_of_part
 
         # endregion

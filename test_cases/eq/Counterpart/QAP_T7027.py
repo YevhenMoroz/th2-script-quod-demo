@@ -55,7 +55,8 @@ class QAP_T7027(TestCase):
                                'Parties', 'QuodTradeQualifier', 'BookID',
                                'SettlCurrency', 'LastExecutionPolicy',
                                'TradeReportingIndicator', 'SecondaryOrderID',
-                               'LastMkt', 'ExecBroker', 'VenueType', 'SecondaryExecID', 'tag5120']
+                               'LastMkt', 'ExecBroker', 'VenueType', 'SecondaryExecID', 'tag5120',
+                               'NoMiscFees', 'CommissionData']
         route_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         custodian_user_2 = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
         custodian_user = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')

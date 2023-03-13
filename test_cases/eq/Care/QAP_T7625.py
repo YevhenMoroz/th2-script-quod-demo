@@ -81,12 +81,13 @@ class QAP_T7625(TestCase):
         # region step 9 - 10: Direct_MOC Care order
         self.order_submit.get_parameters().clear()
         self.order_submit.set_default_direct_moc(order_id)
-        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'OrdQty': str(float(self.qty)),
+        float_qty = str(float(self.qty))
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'OrdQty': float_qty,
                                                                              'ExecutionPolicy':ExecutionPolicyConst.DMA.value})
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
-        self.java_api_manager.compare_values({JavaApiFields.OrdQty.value: self.qty,
+        self.java_api_manager.compare_values({JavaApiFields.OrdQty.value: float_qty,
                                               JavaApiFields.TimeInForce.value: TimeInForces.ATC.value,
                                               JavaApiFields.OrdType.value: OrdTypes.Market.value},
                                              order_reply,

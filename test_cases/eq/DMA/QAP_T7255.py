@@ -40,7 +40,7 @@ class QAP_T7255(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
-        self.client = self.data_set.get_client('client_pt_1')  # MOClient
+        self.client = self.data_set.get_client_by_name('client_pt_1')  # MOClient
         self.fix_message = FixNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.fix_message.update_fields_in_component('NewOrderSingleBlock', {'ClientAccountGroupID': self.venue_client_names})
         self.fix_verifier_dc = FixVerifier(self.dc_connectivity, self.test_id)
@@ -96,4 +96,5 @@ class QAP_T7255(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        time.sleep(90)
         os.remove("temp.xml")
