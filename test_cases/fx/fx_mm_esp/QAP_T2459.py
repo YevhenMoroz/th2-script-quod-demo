@@ -62,10 +62,8 @@ class QAP_T2459(TestCase):
         number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
         for i in range(int(number_of_bands)):
             self.bands_eur_usd.append("*")
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, published=False)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, published=False, response=response[0])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
@@ -80,11 +78,9 @@ class QAP_T2459(TestCase):
         for i in range(int(number_of_bands)):
             self.bands_nok_sek.append("*")
         # endregion
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False, response=response[0])
         self.fix_md_snapshot.update_value_in_repeating_group("NoMDEntries", "MDEntryPositionNo", "*")
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
@@ -104,10 +100,8 @@ class QAP_T2459(TestCase):
         for i in range(int(number_of_bands)):
             self.bands_eur_usd.append("*")
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, response=response[0])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion
@@ -116,11 +110,9 @@ class QAP_T2459(TestCase):
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_nok_sek)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek)
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, response=response[0])
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         # endregion

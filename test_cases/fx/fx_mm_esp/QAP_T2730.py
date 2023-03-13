@@ -59,9 +59,10 @@ class QAP_T2730(TestCase):
         # region Step 2
         self.md_request.set_md_req_parameters_maker()
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False,
+                                                    response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 

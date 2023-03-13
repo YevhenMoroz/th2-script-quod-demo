@@ -50,7 +50,7 @@ class QAP_T2448(TestCase):
         self.quote_request.set_rfq_params_fwd()
         self.quote_request.change_client(self.account)
         self.quote_request.change_instr_symbol(self.symbol, self.currency)
-        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=25000)
         received_notes = response[-1].get_parameter("QuoteRequestNotifBlock")["FreeNotes"]
         received_quoting = response[-1].get_parameter("QuoteRequestNotifBlock")["AutomaticQuoting"]
         self.verifier.set_parent_id(self.test_id)

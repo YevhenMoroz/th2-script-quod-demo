@@ -12,8 +12,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
     def set_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX,
                                    no_md_entries_count: list = ["*", "*", "*"],
                                    published=True, ndf=False,
-                                   priced=True, band_not_pub: list = None, band_not_priced=None):
-        self.prepare_params_for_md_response(md_request)
+                                   priced=True, band_not_pub: list = None, band_not_priced=None, response=None):
+        self.prepare_params_for_md_response(md_request, response=response)
         if len(no_md_entries_count) > 0:
             band = 0
             row_pub = 0
@@ -124,8 +124,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
     def set_params_for_empty_md_response(self, md_request: FixMessageMarketDataRequestFX,
                                    no_md_entries_count: list = ["*", "*", "*"],
                                    published=True, ndf=False,
-                                   priced=True, band_not_pub=None, band_not_priced=None):
-        self.prepare_params_for_empty_md_response(md_request)
+                                   priced=True, band_not_pub=None, band_not_priced=None, response=None):
+        self.prepare_params_for_empty_md_response(md_request, response=response)
         if len(no_md_entries_count) > 0:
             # band = 0
             # row_pub = 0
@@ -295,7 +295,7 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                     })
                     md_entry_type += 1
 
-    def prepare_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX):
+    def prepare_params_for_md_response(self, md_request: FixMessageMarketDataRequestFX, response=None):
         temp = dict(
             MDReqID=md_request.get_parameter("MDReqID"),
             OrigMDArrivalTime="*",
@@ -307,6 +307,9 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                 dict()
             ]
         )
+        if response:
+            if "CachedUpdate" in response.get_parameters():
+                temp.update({"CachedUpdate": "Y"})
         if "MarketID" in md_request.get_parameters()["NoRelatedSymbols"][0].keys():
             temp.update({"MarketID": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
             temp.update({"MDStreamID": "*"})
@@ -316,7 +319,7 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
         super().change_parameters(temp)
         return self
 
-    def prepare_params_for_empty_md_response(self, md_request: FixMessageMarketDataRequestFX):
+    def prepare_params_for_empty_md_response(self, md_request: FixMessageMarketDataRequestFX, response=None):
         temp = dict(
             MDReqID=md_request.get_parameter("MDReqID"),
             LastUpdateTime="*",
@@ -325,6 +328,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                 dict()
             ]
         )
+        if "CachedUpdate" in response.get_parameters():
+            temp.update({"CachedUpdate": "Y"})
         if "MarketID" in md_request.get_parameters()["NoRelatedSymbols"][0].keys():
             temp.update({"MarketID": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
             temp.update({"MDStreamID": "*"})

@@ -166,8 +166,8 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_2).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=1.18410)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=1.19909)
         self.fix_verifier.check_fix_message(self.md_snapshot)
@@ -180,8 +180,8 @@ class QAP_T2547(TestCase):
                                                                        self.no_related_symbols_2).change_parameter(
             "BookType", "1").change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
             "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
@@ -195,8 +195,8 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_3).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
             "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
@@ -212,9 +212,9 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_4).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["1000000", "*", "*"], published=False,
-                                                    band_not_pub=["1000000", "pub", "pub"])
+                                                    band_not_pub=["1000000", "pub", "pub"], response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)

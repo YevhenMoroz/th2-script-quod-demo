@@ -91,12 +91,11 @@ class QAP_T2497(TestCase):
         # region step 1
         self.md_request.set_md_req_parameters_maker()
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"], response=response[0])
         self.md_snapshot.change_parameter("OrigQuoteEntryID", "*")
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

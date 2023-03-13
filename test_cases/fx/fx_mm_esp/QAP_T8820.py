@@ -129,7 +129,7 @@ class QAP_T8820(TestCase):
                                                                        self.no_related_symbols).change_parameter(
             "SenderSubID", self.palladium2)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 

@@ -93,8 +93,8 @@ class QAP_T8056(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.md_request.set_md_req_parameters_maker(). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.initial_bid)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.initial_ask)
         self.fix_verifier.check_fix_message(self.md_snapshot)

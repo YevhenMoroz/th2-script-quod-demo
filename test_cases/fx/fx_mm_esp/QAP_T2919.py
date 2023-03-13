@@ -93,7 +93,7 @@ class QAP_T2919(TestCase):
         bid_pts = float(response[-1].get_parameters()["NoMDEntries"][0]["MDEntryForwardPoints"])
         expected_ask_px = str(round(float(self.ask_spot_without_int + ask_pts), 5))
         expected_bid_px = str(round(float(self.bid_spot_without_int + bid_pts), 5))
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=expected_bid_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=expected_ask_px)
 
