@@ -25,9 +25,10 @@ class TradeEntryRequestFX(JavaApiMessage):
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
                 "AccountGroupID": "CLIENT_TEST_EXT",
-                "ListingID": "506403761", # EUR/USD
-                # "ListingID": "506404433", # GBP/USD
+                # "ListingID": "506403761", # EUR/USD
+                "ListingID": "506404433", # GBP/USD
                 # "ListingID": "506409971", # USD/PHP
+                # "ListingID": "506403285", # EUR/GBP
                 "SettlCurrFxRate": "0",
                 "OrdrMiscBlock": {
                     "OrdrMisc2": "test"
