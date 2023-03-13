@@ -310,6 +310,9 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
         if response:
             if "CachedUpdate" in response.get_parameters():
                 temp.update({"CachedUpdate": "Y"})
+            else:
+                if "CachedUpdate" in self.get_parameters():
+                    self.get_parameters().pop("CachedUpdate")
         if "MarketID" in md_request.get_parameters()["NoRelatedSymbols"][0].keys():
             temp.update({"MarketID": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
             temp.update({"MDStreamID": "*"})
