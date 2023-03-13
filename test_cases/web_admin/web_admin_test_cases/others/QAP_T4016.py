@@ -33,7 +33,7 @@ class QAP_T4016(CommonTestCase):
         self.venue_counterpart_id = "2"
         self.party_role = self.data_set.get_party_role("party_role_1")
         self.party_role_qualifier = "Bank"
-        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.venue = self.data_set.get_venue_by_name("venue_10")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

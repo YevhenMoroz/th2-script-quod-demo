@@ -35,7 +35,7 @@ class CounterpartsConstants:
     NAME_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Name *"]'
     PARTY_ID_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Party ID *"]'
     EXT_ID_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Ext ID Client *"]'
-    PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@placeholder="Party Sub ID Type *"]'
+    PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[@id="partySubIDType"]'
     # --FILTERS--
     NAME_FILTER_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[contains(@class,"subCounterpartName")]//*[@placeholder="Filter"]'
     PARTY_ID_FILTER_AT_SUB_COUNTERPARTS_TAB_XPATH = '//*[contains(@class,"SubCounterpartID ")]//*[@placeholder="Filter"]'
@@ -49,11 +49,11 @@ class CounterpartsConstants:
 
     # ----------PARTY_ROLES_TAB---------
     PLUS_BUTTON_AT_PARTY_ROLES_TAB_XPATH = '//nb-accordion//nb-accordion-item[3]//*[@data-name="plus"]'
-    PARTY_ID_SOURCE_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Party ID Source *"]'
+    PARTY_ID_SOURCE_AT_PARTY_ROLES_TAB_XPATH = '//*[@id="partyIDSource"]'
     VENUE_COUNTERPART_ID_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Venue Counterpart ID *"]'
-    PARTY_ROLE_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Party Role *"]'
+    PARTY_ROLE_AT_PARTY_ROLES_TAB_XPATH = '//*[@id="partyRole"]'
     EXT_ID_CLIENT_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Ext ID Client *"]'
-    PARTY_ROLE_QUALIFIER_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Party Role Qualifier"]'
+    PARTY_ROLE_QUALIFIER_AT_PARTY_ROLES_TAB_XPATH = '//*[@id="partyRoleQualifier"]'
     VENUE_AT_PARTY_ROLES_TAB_XPATH = '//*[@placeholder="Venue"]'
     # --FILTERS--
     PARTY_ID_SOURCE_FILTER_AT_PARTY_ROLES_TAB_XPATH = '(//*[text()=" Party roles "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
