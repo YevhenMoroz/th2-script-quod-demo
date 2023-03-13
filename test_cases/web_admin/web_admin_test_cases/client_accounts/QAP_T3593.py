@@ -65,7 +65,7 @@ class QAP_T3593(CommonTestCase):
         try:
             self.precondition()
 
-            actual_result = [values_sub_wizard.get_id(), values_sub_wizard.get_name(),
+            actual_result = [values_sub_wizard.get_id().replace("\n", " "), values_sub_wizard.get_name(),
                              values_sub_wizard.get_disclose_exec(), assignments_sub_wizard.get_desk()]
             time.sleep(1)
             expected_pdf_content = ["Clients | " + self.id, self.name, self.disclose_exec, self.desk]
