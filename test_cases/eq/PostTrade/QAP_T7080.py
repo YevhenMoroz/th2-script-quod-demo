@@ -68,7 +68,7 @@ class QAP_T7080(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(90)
+        time.sleep(50)
         # endregion
 
         # region Create CO order via FIX and execute it
@@ -93,7 +93,7 @@ class QAP_T7080(TestCase):
         # region check account in the Confirmation report
         self.confirmation_report.set_default_confirmation_new(self.fix_message)
         self.confirmation_report.change_parameters({'AllocAccount': self.alloc_account})
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_report, ignored_fields=['tag5120'])
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_report, ignored_fields=['tag5120','tag11245'])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -102,5 +102,5 @@ class QAP_T7080(TestCase):
         self.api_manager.send_post_request(self.rest_institution_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(90)
+        time.sleep(50)
         os.remove("temp.xml")

@@ -42,7 +42,7 @@ class QAP_T2549(TestCase):
         self.settle_type = self.data_set.get_settle_type_by_name("wk3")
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
 
-        self.qty = random_qty(9)
+        self.qty = random_qty(9, len=9)
 
         self.instrument = {
             "Symbol": self.symbol,

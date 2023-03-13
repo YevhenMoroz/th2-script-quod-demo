@@ -1,6 +1,7 @@
 import logging
 import time
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -11,7 +12,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
-    OrderReplyConst, SubmitRequestConst, ConfirmationReportConst
+    OrderReplyConst, SubmitRequestConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
@@ -21,7 +22,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS impo
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.ssh_wrappers.ssh_client import SshClient
@@ -99,7 +99,7 @@ class QAP_T7038(TestCase):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
+        time.sleep(90)
         # endregion
 
         # region create DMA order (precondition)
@@ -169,7 +169,9 @@ class QAP_T7038(TestCase):
         print_message("send ComputeBookingCommissionFeesRequest (part of step 1)", responses)
         compute_booking_misc_fee_response = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()
-        self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, compute_booking_misc_fee_response,
+        root_misc_fee_list_is_absent = not JavaApiFields.RootMiscFeesList.value in compute_booking_misc_fee_response
+        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value:True},
+                                             {JavaApiFields.RootMiscFeesList.value:root_misc_fee_list_is_absent},
                                             'Check that ComputeMiscFeeCommissionReply doesn`t have Agent Fees (part of step 1)')
         # the end
 
@@ -204,7 +206,9 @@ class QAP_T7038(TestCase):
             {JavaApiFields.TransExecStatus.value: actually_exec_sts,
              JavaApiFields.PostTradeStatus.value: actually_post_trade_status},
             'Comparing expected and actually results from step 1')
-        self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, allocation_report,
+        root_misc_fee_list_is_absent = not JavaApiFields.RootMiscFeesList.value in allocation_report
+        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value: True},
+                                             {JavaApiFields.RootMiscFeesList.value: root_misc_fee_list_is_absent},
                                             'Check that Block doesn`t has Agent Fees (part of step 1)')
         # the end
         # endregion
@@ -228,8 +232,10 @@ class QAP_T7038(TestCase):
         confirmation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
-        self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value, confirmation_report,
-                                            'Check that Agent Fees is absent for allocation (step 2)')
+        root_misc_fee_list_is_absent = not JavaApiFields.RootMiscFeesList.value in confirmation_report
+        self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value: True},
+                                             {JavaApiFields.RootMiscFeesList.value: root_misc_fee_list_is_absent},
+                                            'Check that Agent Fees is absent for confirmation (step 2)')
         # the end
 
         # endregion
@@ -239,5 +245,5 @@ class QAP_T7038(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
+        time.sleep(90)
         self.ssh_client.close()

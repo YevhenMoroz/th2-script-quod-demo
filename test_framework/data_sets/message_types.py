@@ -87,6 +87,7 @@ class ORSMessageType(Enum):
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
+    QuoteCancel = "Fix_QuoteCancel"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
     BookingCancelReply = "Order_BookingCancelReply"
@@ -185,6 +186,7 @@ class PKSMessageType(Enum):
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
     PositionReport = "Order_PositionReport"
+    RequestForPositionsAck = "Order_RequestForPositionsAck"
 
 
 class QSMessageType(Enum):

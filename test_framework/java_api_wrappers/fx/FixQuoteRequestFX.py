@@ -90,7 +90,6 @@ class FixQuoteRequestFX(JavaApiMessage):
                     "QuoteReqBlock": [{
                         "InstrumentBlock": {
                             "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-                            "ProductType": "CURRENCY",
                             "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_swap"),
                         },
                         "QuoteReqInstrumentLegList": {
@@ -112,13 +111,10 @@ class FixQuoteRequestFX(JavaApiMessage):
                                     "LegOrderQty": "1000000",
                                     "LegSettlType": self.get_data_set().get_settle_type_ja_by_name("wk1"),}]},
                         "QuoteType": "Tradeable",
-                        "SettlType": self.get_data_set().get_settle_type_ja_by_name("wk1"),
-                        "SettlDate": self.get_data_set().get_settle_date_by_name("wk1_java_api"),
                         "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
-                        "OrdType": "PreviouslyQuoted",
+                        "QuoteRequestType": "Automatic",
                         "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_3"),
                         "QuotingSessionID": "10",
-                        "LiveQuoteID": bca.client_orderid(9),
                     }]
                 }
             }
@@ -127,6 +123,7 @@ class FixQuoteRequestFX(JavaApiMessage):
         return self
 
     def change_client(self, client):
+        """Tip: use client_mm for this method"""
         params = self.get_parameters()
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
         return self
@@ -134,8 +131,8 @@ class FixQuoteRequestFX(JavaApiMessage):
     def change_instr_symbol(self, symbol: str, currency: str, quote_currency: str = None):
         params = self.get_parameters()
         if self.swap is False:
-            params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["QuoteReqInstrumentLegList"][
-                "QuoteReqInstrumentLegBlock"][0]["InstrumentLegBlock"] = symbol
+            params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"][
+                "InstrSymbol"] = symbol
             params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
         else:
             params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"][

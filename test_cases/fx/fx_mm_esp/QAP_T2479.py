@@ -35,19 +35,16 @@ class QAP_T2479(TestCase):
         self.execution_report = FixMessageExecutionReportFX()
         self.status_fill = Status.Fill
         self.maturity_date = tsd.custom(5)
-        self.no_related_symbols = [{
-            "Instrument": {
-                "Symbol": self.symbol,
-                "SecurityType": self.security_type,
-                "Product": "4", },
-            "SettlType": self.settle_type,
-        }]
         self.instrument = {
             "Symbol": self.symbol,
             "SecurityType": self.security_type,
             "Product": "4",
             "MaturityDate": self.maturity_date
         }
+        self.no_related_symbols = [{
+            "Instrument": self.instrument,
+            "SettlType": self.settle_type,
+        }]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

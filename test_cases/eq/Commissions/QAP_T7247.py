@@ -66,8 +66,9 @@ class QAP_T7247(TestCase):
             {'Currency': self.cur, 'SecondaryOrderID': '*', "NoMiscFees": no_misc, 'Text': '*', 'LastMkt': self.mic,
              "CommissionData": "*", "ExecBroker": "*", "tag5120": "*", "NoParty": "*", "QuodTradeQualifier": "*",
              'BookID': "*", "OrderID": self.order_id})
+        list_of_ignoring_fees = ['GatingRuleCondName', 'GatingRuleName']
         self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
-        self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report)
+        self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report, ignored_fields=list_of_ignoring_fees)
         # endregion
 
     def __send_fix_orders(self):

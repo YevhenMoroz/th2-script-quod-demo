@@ -47,12 +47,14 @@ class QAP_T2801(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("BookType", "1")
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], published=False)
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
-            "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
-            "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+        self.md_snapshot.get_parameter("NoMDEntries").pop(7)
+        self.md_snapshot.get_parameter("NoMDEntries").pop(6)
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
+        #     "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
+        #     "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
+        #     "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
+        #     "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
         self.fix_verifier.check_fix_message(self.md_snapshot)
 
         self.md_request.set_md_uns_parameters_maker()
@@ -69,12 +71,14 @@ class QAP_T2801(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("BookType", "1")
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], priced=False)
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
-            "SettlType", "MDEntryTime", "MDEntryPx", "QuoteCondition", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
-            "SettlType", "MDEntryTime", "MDEntryPx", "QuoteCondition", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+        self.md_snapshot.get_parameter("NoMDEntries").pop(7)
+        self.md_snapshot.get_parameter("NoMDEntries").pop(6)
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
+        #     "SettlType", "MDEntryTime", "MDEntryPx", "QuoteCondition", "MDQuoteType", "MDOriginType", "MDEntryID",
+        #     "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
+        #     "SettlType", "MDEntryTime", "MDEntryPx", "QuoteCondition", "MDQuoteType", "MDOriginType", "MDEntryID",
+        #     "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
         self.fix_verifier.check_fix_message(self.md_snapshot)
 
         self.md_request.set_md_uns_parameters_maker()

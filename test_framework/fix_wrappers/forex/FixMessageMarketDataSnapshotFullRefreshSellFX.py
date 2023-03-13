@@ -132,7 +132,8 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
             # row_prc = 0
             # check_pub = 0
             # check_price = 0
-            self.get_parameter("NoMDEntries").clear()
+            self.remove_parameter("NoMDEntries")
+            # self.get_parameter("NoMDEntries").clear()
             # md_entry_position = 1
             # for qty in no_md_entries_count:
             #     md_entry_type = 0

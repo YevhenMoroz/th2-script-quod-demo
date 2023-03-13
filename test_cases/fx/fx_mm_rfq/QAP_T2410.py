@@ -61,6 +61,7 @@ class QAP_T2410(TestCase):
         self.modify_client_tier.clear_message_params().modify_client_tier().set_params(self.msg_prams) \
             .change_params({"TODStartTime": self.timestamp_2, "TODEndTime": self.timestamp_1})
         self.rest_manager.send_post_request(self.modify_client_tier)
+        self.sleep(4)
         # endregion
         # region step 2
         self.quote_request.set_rfq_params_fwd()

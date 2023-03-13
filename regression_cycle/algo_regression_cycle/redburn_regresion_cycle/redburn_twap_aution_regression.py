@@ -2,7 +2,8 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4332
-from test_cases.algo.Algo_TWAP import QAP_T4692, QAP_T4693, QAP_T4694, QAP_T4695, QAP_T4557, QAP_T4696, QAP_T4572, QAP_T4697, QAP_T4579, QAP_T4698, QAP_T4600, QAP_T4699, QAP_T4605, QAP_T4700, QAP_T4655, QAP_T4701, QAP_T4664, QAP_T4702, QAP_T4665, QAP_T4666, QAP_T4687, QAP_T4690, QAP_T4691
+from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T8553 import QAP_T8553
+from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T8928 import QAP_T8928
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -19,7 +20,8 @@ def test_run(parent_id=None, version=None):
         # region Iceberg: Route/Venue
         # configuration = ComponentConfiguration("Twap")
         configuration = ComponentConfigurationAlgo("Twap")
-        # QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8928(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8553(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         pass
 
     except Exception:

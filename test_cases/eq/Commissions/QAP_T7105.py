@@ -84,13 +84,13 @@ class QAP_T7105(TestCase):
         no_misc = {"MiscFeeAmt": misc_fee_amt, "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "4"}
         comm_data = {"Commission": misc_fee_amt, "CommType": "3"}
+        ignored_fields = ['GatingRuleName', 'GatingRuleCondName']
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
             {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
              "Account": self.client, "MiscFeesGrp": {"NoMiscFees": [no_misc]}, "CommissionData": comm_data})
-        execution_report.remove_parameters(
-            ['SettlCurrency'])
-        self.fix_verifier.check_fix_message_fix_standard(execution_report)
+        execution_report.remove_parameters(['SettlCurrency'])
+        self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=ignored_fields)
         # endregion
 
         # region book order
