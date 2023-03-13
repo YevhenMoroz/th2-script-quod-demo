@@ -102,9 +102,11 @@ class QAP_T4051(TestCase):
 
         # region SSH
         self.config_file = "client_sats.xml"
+        self.xpath = ".//MultiListing/maxDepth"
+        self.new_config_value = '2'
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
-        self.default_config_value = self.ssh_client.get_and_update_file("client_sats.xml", ".//MultiListing/maxDepth", "2")
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, self.xpath, self.new_config_value)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -264,9 +266,9 @@ class QAP_T4051(TestCase):
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
-        print(self.default_config_value)
+
         # region config reset
-        self.ssh_client.get_and_update_file("client_sats.xml", ".//MultiListing/maxDepth", self.default_config_value)
+        self.ssh_client.get_and_update_file(self.config_file, self.xpath, self.default_config_value)
         self.ssh_client.send_command("qrestart SATS")
         time.sleep(35)
         self.ssh_client.close()

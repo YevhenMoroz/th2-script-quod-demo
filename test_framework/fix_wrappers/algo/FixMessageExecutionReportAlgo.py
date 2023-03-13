@@ -62,6 +62,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_rb_sell(new_order_single)
             elif status is Status.Eliminate:
                 self.__set_eliminate_rb_sell(new_order_single)
+            elif status is Status.ReachedUncross:
+                self.__set_reached_uncross_rb_sell(new_order_single)
             else:
                 raise Exception(f'Incorrect Status')
         if side is GatewaySide.RBBuy:
@@ -633,28 +635,26 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
 
     def __set_cancel_replace_buy(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.is_parameter_exist('Price'):
+        if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
-        if new_order_single.is_parameter_exist('StopPx'):
-            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
         if new_order_single.is_parameter_exist('ExpireDate'):
-            temp.update(ExpireDate='*')
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
-            AvgPx='*',
             ClOrdID='*',
-            CumQty='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='*',
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="5",
+            OrdStatus="0",
+            CumQty='0',
             ExecID='*',
             OrderID='*',
-            OrderQty=new_order_single.get_parameter('OrderQty'),
-            OrdType=new_order_single.get_parameter('OrdType'),
-            OrdStatus=0,
-            TimeInForce=new_order_single.get_parameter('TimeInForce'),
-            OrigClOrdID='*',
-            Side=new_order_single.get_parameter('Side'),
-            Text='*',
+            LeavesQty='*',
             TransactTime='*',
-            ExecType=5,
-            LeavesQty="*"
+            AvgPx='*',
+            OrigClOrdID='*',
         )
         super().change_parameters(temp)
         return self
@@ -1288,8 +1288,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
             temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
-        if new_order_single.get_parameter("TargetStrategy") in ['1012', '1014', '1015']:
-            temp.update(OrigClOrdID=new_order_single.get_parameter('ClOrdID'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             AvgPx='*',
@@ -1493,6 +1491,44 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             NoParty='*',
             SecAltIDGrp='*',
             OrigClOrdID=new_order_single.get_parameter('ClOrdID')
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_reached_uncross_rb_sell(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter("TargetStrategy") not in ['1012', '1014', '1015']:
+            temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            QtyType='*',
+            Instrument='*',
+            NoStrategyParameters='*',
+            NoParty='*',
+            SecAltIDGrp='*',
+            Text='reached uncross',
         )
         super().change_parameters(temp)
         return self

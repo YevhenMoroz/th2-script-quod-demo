@@ -559,12 +559,13 @@ class RuleManager:
                                                       venue=venue))
 
     def add_OrderCancelRequestRFQExecutionReport(self, session: str, account: str, ex_destination: str,
-                                                 acceptCancel: bool):
+                                                 acceptCancel: bool, delay: int = 0):
         return self.sim.createOrderCancelRequestRFQExecutionReport(
             request=TemplateOrderCancelRFQRequest(connection_id=ConnectionID(session_alias=session),
                                                   account=account,
                                                   exdestination=ex_destination,
-                                                  acceptCancel=acceptCancel
+                                                  acceptCancel=acceptCancel,
+                                                  delay=delay
                                                   ))
 
     def add_NewOrdSingleExecutionReportEliminateFixStandard(self, session: str, account: str, ex_destination: str,
@@ -676,3 +677,4 @@ if __name__ == '__main__':
     # print("_________________________")
     # rule_manager_eq.print_active_rules()
     Stubs.factory.close()
+

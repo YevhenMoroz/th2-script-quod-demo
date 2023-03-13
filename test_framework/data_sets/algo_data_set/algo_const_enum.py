@@ -618,6 +618,10 @@ class AlgoPreFilter(Enum):
         'OrderId': ('*', "EQUAL")
     }
 
+    pre_filter_with_client_order_id = {
+        'ClOrdID': ('*', "EQUAL")
+    }
+
 class AlgoTradingPhaseProfile(Enum):
     trading_phase_profile1 = "PreClose Auction Phase (QA)"
     trading_phase_profile2 = "Auction Phase QA2"
