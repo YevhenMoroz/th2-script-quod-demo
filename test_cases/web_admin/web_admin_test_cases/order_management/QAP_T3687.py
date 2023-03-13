@@ -24,7 +24,7 @@ class QAP_T3687(CommonTestCase):
         self.condition_name = ['test1', 'test2']
         self.split = ['100', '50']
         self.condition_criteria = 'Venue'
-        self.venue = 'BATS'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.action = ['Reject', 'SendDirect', 'SendCare']
 
     def precondition(self):
@@ -38,7 +38,6 @@ class QAP_T3687(CommonTestCase):
 
         login_page.login_to_web_admin(self.login, self.password)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        side_menu.wait_for_button_to_become_active()
 
         main_page.click_on_new_button()
         values_tab.set_name(self.rule_name)

@@ -28,7 +28,6 @@ class QAP_T3569(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        side_menu.wait_for_button_to_become_active()
 
     def test_context(self):
 
@@ -45,7 +44,6 @@ class QAP_T3569(CommonTestCase):
             conditions_tab.set_split(self.split)
             conditions_tab.click_on_save_checkmark_at_result()
 
-            conditions_tab.click_on_plus_button()
             conditions_tab.click_on_plus_button_at_result()
             conditions_tab.set_action(self.action)
             conditions_tab.set_execution_strategy(self.execution_strategy)

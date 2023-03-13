@@ -149,8 +149,6 @@ class RunOrderManagement:
                       environment=configuration.environment).run()
             QAP_T4003(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T4004(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
             QAP_T4005(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T4006(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

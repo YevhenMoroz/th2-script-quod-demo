@@ -28,7 +28,6 @@ class QAP_T3689(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        side_menu.wait_for_button_to_become_active()
 
     def test_context(self):
         wizard = MainWizard(self.web_driver_container)

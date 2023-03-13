@@ -44,6 +44,7 @@ class QAP_T4003(CommonTestCase):
         values_tab.set_name(self.name)
         conditions_tab.click_on_plus_button()
         conditions_tab.set_name(self.condition_name[0])
+        conditions_tab.click_on_add_condition_button()
         conditions_tab.set_condition_criteria(self.condition_criteria[0])
         conditions_tab.set_condition_value(self.venue)
         conditions_tab.click_on_plus_button_at_result()
@@ -75,6 +76,7 @@ class QAP_T4003(CommonTestCase):
 
             conditions_tab.click_on_plus_button()
             conditions_tab.set_name(self.condition_name[1])
+            conditions_tab.click_on_add_condition_button()
             conditions_tab.set_condition_criteria(self.condition_criteria[1])
             conditions_tab.set_condition_value(self.client)
             conditions_tab.click_on_plus_button_at_result()

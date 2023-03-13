@@ -62,10 +62,10 @@ class ResultTable(CommonPage):
         self.find_by_xpath(Constants.ResultsTable.DELETE_BUTTON).click()
 
     def set_action_filter(self, value):
-        self.set_text_by_xpath(Constants.ResultsTable.ACTION, value)
+        self.set_text_by_xpath(Constants.ResultsTable.ACTION_FILTER, value)
 
     def set_action(self, value):
-        self.set_combobox_value(Constants.ResultsTable.ACTION, value)
+        self.select_value_from_dropdown_list(Constants.ResultsTable.ACTION, value)
 
     def get_action(self):
         self.get_text_by_xpath(Constants.ResultsTable.ACTION)
@@ -77,7 +77,7 @@ class ResultTable(CommonPage):
         return self.get_text_by_xpath(Constants.ResultsTable.RULE)
 
     def set_rejection_type(self, value):
-        self.set_combobox_value(Constants.ResultsTable.REJECTION_TYPE, value)
+        self.select_value_from_dropdown_list(Constants.ResultsTable.REJECTION_TYPE, value)
 
     def get_rejection_type(self):
         return self.get_text_by_xpath(Constants.ResultsTable.REJECTION_TYPE)
@@ -89,16 +89,16 @@ class ResultTable(CommonPage):
         return self.get_text_by_xpath(Constants.ResultsTable.SPLIT)
 
     def set_price_origin(self, value):
-        self.set_combobox_value(Constants.ResultsTable.PRICE_ORIGIN, value)
+        self.select_value_from_dropdown_list(Constants.ResultsTable.PRICE_ORIGIN, value)
 
     def get_price_origin(self):
         return self.get_text_by_xpath(Constants.ResultsTable.PRICE_ORIGIN)
 
     def set_split_qty_precision(self, value):
-        self.set_text_by_xpath(Constants.ResultsTable.PRICE_ORIGIN, value)
+        self.set_text_by_xpath(Constants.ResultsTable.SPLIT_QTY_PRECISION, value)
 
     def get_split_qty_precision(self):
-        return self.get_text_by_xpath(Constants.ResultsTable.PRICE_ORIGIN)
+        return self.get_text_by_xpath(Constants.ResultsTable.SPLIT_QTY_PRECISION)
 
     def set_venue(self, value):
         self.set_combobox_value(Constants.ResultsTable.VENUE, value)
@@ -113,7 +113,7 @@ class ResultTable(CommonPage):
         return self.get_text_by_xpath(Constants.ResultsTable.ROUTE)
 
     def set_execution_strategy(self, value):
-        self.set_combobox_value(Constants.ResultsTable.EXECUTION_STRATEGY, value)
+        self.select_value_from_dropdown_list(Constants.ResultsTable.EXECUTION_STRATEGY, value)
 
     def get_execution_strategy(self):
         return self.get_text_by_xpath(Constants.ResultsTable.EXECUTION_STRATEGY)
