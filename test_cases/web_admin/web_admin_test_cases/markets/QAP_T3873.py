@@ -31,8 +31,8 @@ class QAP_T3873(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.venue_name = self.data_set.get_venue_by_name("venue_5")
-        self.feed_source = self.data_set.get_feed_source("feed_source_8")
+        self.venue_name = self.data_set.get_venue_by_name("venue_10")
+        self.feed_source = self.data_set.get_feed_source("feed_source_1")
         self.sub_venue_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.venue_name
         self.listing_group_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

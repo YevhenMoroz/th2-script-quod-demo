@@ -22,7 +22,7 @@ class QAP_T4013(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.symbol = self.data_set.get_symbol_by_name("symbol_6")
-        self.user = self.data_set.get_user("user_5")
+        self.user = self.data_set.get_user("user_12")
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.md_source = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 

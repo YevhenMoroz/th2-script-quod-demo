@@ -24,7 +24,6 @@ class QAP_T3698(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = [
-            self.data_set.get_instr_type("instr_type_2"),
             self.data_set.get_instr_type("instr_type_3"),
             self.data_set.get_instr_type("instr_type_4"),
             self.data_set.get_instr_type("instr_type_5"),

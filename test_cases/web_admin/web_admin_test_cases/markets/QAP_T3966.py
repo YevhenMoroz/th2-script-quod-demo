@@ -23,7 +23,8 @@ class QAP_T3966(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.default_scenario = "Custom one"
+        self.default_scenario = "Quod Financial Lit SOR"
+        self.strategy_type = ["Lit SOR", "Split Manager"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -33,24 +34,15 @@ class QAP_T3966(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_routes_page()
-        time.sleep(2)
         routes_main_menu = RoutesPage(self.web_driver_container)
         routes_main_menu.click_on_new_button()
         routes_wizard = RoutesWizard(self.web_driver_container)
-        time.sleep(2)
         routes_wizard.set_name_at_values_tab(self.name)
-        time.sleep(2)
         strategy_type_sub_wizard = RoutesStrategyTypeSubWizard(self.web_driver_container)
-        strategy_type = ["Custom one", "External CUSTOM1"]
-        strategy_type_sub_wizard.click_on_strategy_type_at_strategy_type_tab()
-        time.sleep(2)
-        strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(strategy_type)
-        time.sleep(2)
+        strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(self.strategy_type)
         strategy_type_sub_wizard.click_on_default_scenario()
         strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
-        time.sleep(2)
         routes_wizard.click_on_save_changes()
-        time.sleep(2)
         routes_main_menu.set_name_at_filter(self.name)
         time.sleep(1)
 
@@ -61,7 +53,7 @@ class QAP_T3966(CommonTestCase):
             self.verify("New Default Scenario after saved", self.default_scenario,
                         routes_main_menu.get_default_strategy_type_value())
             routes_main_menu.click_on_more_actions()
-            expected_pdf_content = [self.name, "Custom one"]
+            expected_pdf_content = [self.name, self.default_scenario]
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         routes_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
             routes_main_menu.click_on_more_actions()

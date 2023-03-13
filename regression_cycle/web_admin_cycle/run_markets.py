@@ -28,6 +28,7 @@ from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3450 import QAP_T345
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3451 import QAP_T3451
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3484 import QAP_T3484
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3485 import QAP_T3485
+from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3525 import QAP_T3525
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3545 import QAP_T3545
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3550 import QAP_T3550
 from test_cases.web_admin.web_admin_test_cases.markets.QAP_T3573 import QAP_T3573
@@ -146,6 +147,8 @@ class RunMarkets:
                       environment=configuration.environment).run()
             QAP_T3485(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3525(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3545(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3550(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -188,10 +191,8 @@ class RunMarkets:
                       environment=configuration.environment).run()
             QAP_T3862(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            # Need refactoring
             QAP_T3873(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            # Need refactoring
             QAP_T3874(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3875(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
