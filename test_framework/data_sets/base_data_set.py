@@ -68,6 +68,8 @@ class BaseDataSet:
     isin_security_alt_ids = None
     security_id_source = None
     hierarchical_levels = None
+    venue_client_account_name = None
+    gating_rule_ids = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -134,6 +136,7 @@ class BaseDataSet:
     pre_filter = None
     reference_price = None
     java_api_instruments = None
+    venue_account_name = None
     # endregion
 
     # region fields added by Web Trading team
@@ -923,4 +926,19 @@ class BaseDataSet:
         if hasattr(self.contra_firm, name):
             return getattr(self.contra_firm, name).value
         return ValueError(f"{self.contra_firm} not found!")
+
+    def get_venue_client_account_name(self, name: str):
+        if hasattr(self.venue_client_account_name, name):
+            return getattr(self.venue_client_account_name, name).value
+        return ValueError(f"{self.venue_client_account_name} not found!")
+
+    def get_venue_gating_rule_id_by_name(self, name: str):
+        if hasattr(self.gating_rule_ids, name):
+            return getattr(self.gating_rule_ids, name).value
+        return ValueError(f"{self.gating_rule_ids} not found!")
+
+    def get_venue_account_name(self, name: str):
+        if hasattr(self.venue_account_name, name):
+            return getattr(self.venue_account_name, name).value
+        return ValueError(f"{self.venue_account_name} not found!")
     # endregion

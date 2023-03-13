@@ -1,10 +1,13 @@
 import os
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
 
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
@@ -41,11 +44,19 @@ class QAP_T4181(TestCase):
         self.px_for_incr = 0
         self.qty_for_incr = 0
         self.delay = 0
+        self.tif_gtd = constants.TimeInForce.GoodTillDate.value
+
+        now = datetime.today() - timedelta(hours=3)
+        delta = 5
+        expire_date = (now + timedelta(days=delta))
+        self.ExpireDate_for_sending = expire_date.strftime("%Y%m%d")
+        shift = AlgoFormulasManager.make_expire_date_friday_if_it_is_on_weekend(expire_date)
+        self.ExpireDate = (expire_date - timedelta(days=shift)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_sell = GatewaySide.KeplerSell
         # endregion
 
         # region Status
@@ -57,7 +68,7 @@ class QAP_T4181(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_9")
         # endregion
 
         # region Direction
@@ -66,10 +77,10 @@ class QAP_T4181(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_qdl1 = self.data_set.get_mic_by_name("mic_10")
+        self.ex_destination_qdl1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
+        self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_6")
         # endregion
 
         # region Key parameters
@@ -111,11 +122,13 @@ class QAP_T4181(TestCase):
         case_id_1 = bca.create_event("Create Iceberg Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Kepler_Iceberg_params()
+        self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_params_specific_tags()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, TimeInForce=self.tif_gtd, ExDestination=self.ex_destination_qdl1, DisplayInstruction=dict(DisplayQty=self.display_qty))).add_tag(dict(ExpireDate=self.ExpireDate_for_sending))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
+
+        self.Iceberg_order.change_parameters(dict(ExpireDate=self.ExpireDate))
 
         rule_manager.remove_rule(self.nos_trade_rule)
 
@@ -135,8 +148,8 @@ class QAP_T4181(TestCase):
         # region Check 1st child of Iceberg order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
-        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Kepler_Iceberg_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(misc5='*'))
+        self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params_specific_tags()
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(misc5='*', ExpireDate=self.ExpireDate))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
@@ -158,8 +171,8 @@ class QAP_T4181(TestCase):
         # endregion
 
         # region Check 2nd child of Iceberg order
-        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Kepler_Iceberg_params()
-        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(misc5='*'))
+        self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params_specific_tags()
+        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(misc5='*', ExpireDate=self.ExpireDate))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)

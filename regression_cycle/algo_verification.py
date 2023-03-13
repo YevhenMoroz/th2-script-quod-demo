@@ -1,5 +1,5 @@
 from xml.etree import ElementTree
-from regression_cycle.algo_regression_cycle.verification_cycle import iceberg_verification, twap_verification, multilisted_verification, participation_verification, tif_verification, litdark_verification, block_verification, stop_verification
+from regression_cycle.algo_regression_cycle.verification_cycle import iceberg_verification, twap_verification, multilisted_verification, participation_verification, tif_verification, litdark_verification, block_verification, stop_verification, peg_verification, triggering_verification
 # from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_mpdark_other_regression, kepler_sors_iceberg_regression, kepler_sors_multiple_emulation_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression
 from stubs import Stubs, ROOT_DIR
 import logging
@@ -15,7 +15,7 @@ def test_run(parent_id=None):
         #     pass
         # else:
         #     rule_manager.add_MDRule("fix-fh-310-columbia")
-        # rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
+        rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
         rule_manager.print_active_rules()
         logging.getLogger().setLevel(logging.WARN)
         report_id = bca.create_event('Algo verification_cycle', parent_id)
@@ -40,14 +40,12 @@ def test_run(parent_id=None):
             stop_verification.test_run(report_id, version)
         if eval(root.find(".//component[@name='Multilisted']").attrib["run"]):
             multilisted_verification.test_run(report_id, version)
-        # if eval(root.find(".//component[@name='Peg']").attrib["run"]):
-        #     pass
-        # if eval(root.find(".//component[@name='Stop']").attrib["run"]):
-        #     pass
+        if eval(root.find(".//component[@name='Peg']").attrib["run"]):
+            peg_verification.test_run(report_id, version)
+        if eval(root.find(".//component[@name='Triggering']").attrib["run"]):
+            triggering_verification.test_run(report_id, version)
         if eval(root.find(".//component[@name='Lit_dark']").attrib["run"]):
             litdark_verification.test_run(report_id, version)
-        # if eval(root.find(".//component[@name='Block']").attrib["run"]):
-        #     pass
         # if eval(root.find(".//component[@name='Gating_rules']").attrib["run"]):
         #     pass
         # if eval(root.find(".//component[@name='Web_admin']").attrib["run"]):

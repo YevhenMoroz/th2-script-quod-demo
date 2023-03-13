@@ -44,13 +44,14 @@ class QAP_T7340(TestCase):
         # endregion
 
         # region Set-up parameters for ExecutionReports
+        list_of_ignored_fields = ['SettlDate', 'SettlType', 'Account', 'GatingRuleCondName', 'GatingRuleName', 'Text']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message)
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message, 1)
         # endregion
 
         # region Check ExecutionReports
-        self.fix_verifier.check_fix_message_fix_standard(exec_report1)
-        self.fix_verifier.check_fix_message_fix_standard(exec_report2)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report1, ignored_fields=list_of_ignored_fields)
+        self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region Send OrderCancelReplaceRequest
@@ -65,5 +66,5 @@ class QAP_T7340(TestCase):
         exec_report3.change_parameters({'Price': self.new_price, 'OrigClOrdID': cl_ord_id1})
         self.fix_verifier.check_fix_message_fix_standard(exec_report3,
                                                          key_parameters=['ClOrdID', 'OrdStatus', 'ExecType', 'Price'],
-                                                         ignored_fields=['SettlDate', 'SettlType', 'Account'])
+                                                         ignored_fields=list_of_ignored_fields)
         # endregion

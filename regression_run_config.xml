@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 184v</name>
-    <version>5.1.171.184</version>
+    <name>Regression 186v</name>
+    <version>5.1.173.186</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -33,6 +33,9 @@
                         <fe_environments>
                             <fe_environment>quod310_fe</fe_environment>
                         </fe_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="True">
@@ -52,17 +55,20 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod310_columbia_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
-                <component name="Peg" run="False">
+                <component name="Peg" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Stop" run="true">
+                <component name="Stop" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -79,6 +85,14 @@
                     </environments>
                 </component>
                 <component name="Block" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
+                <component name="Triggering" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -386,7 +400,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="oms" run="False">
+        <product_line name="oms" run="True">
             <components>
             <component name="AcceptanceList" run="True">
                     <data_set>OmsDataSet</data_set>
@@ -432,6 +446,9 @@
                         <ssh_client_environments>
                             <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
                         </ssh_client_environments>
+                        <data_baase_environments>
+                            <data_base_environment>quod317_data_base</data_base_environment>>
+                        </data_baase_environments>>
                     </environments>
                 </component>
                 <component name="Counterparts" run="True">
@@ -596,6 +613,29 @@
                     </environments>
                 </component>
                 <component name="Gateway" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod317_fe</fe_environment>
+                        </fe_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                    </environments>
+                </component>
+                <component name="GatingRules" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -878,7 +918,7 @@
                 </component>
              </components>
         </product_line>
-        <product_line name="web_admin" run="True">
+        <product_line name="web_admin" run="False">
             <components>
                 <component name="WA_General" run="True">
                     <data_set>WebAdminDataSet</data_set>

@@ -191,7 +191,7 @@ class QAP_T7415(TestCase):
             {"ClientCommission": conf_report_message["ClientCommissionDataBlock"]["ClientCommission"]},
             "Comparing Client Commission after Allocate block",
         )
-
+        self.rest_commission_sender.clear_commissions()
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 
     @staticmethod

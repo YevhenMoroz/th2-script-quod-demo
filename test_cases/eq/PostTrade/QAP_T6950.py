@@ -65,9 +65,10 @@ class QAP_T6950(TestCase):
         tree = ET.parse(self.local_path)
         tree.getroot().find("connectivity/mapClientAccountGroupIDForTavira").text = 'true'
         tree.write("temp.xml")
+        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart FIXBACKOFFICE_TH2")
-        time.sleep(70)
+        time.sleep(30)
         # end of part
 
         # part 2 : Create DMA order
@@ -183,13 +184,13 @@ class QAP_T6950(TestCase):
                                   'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
                                   'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
                                   'ReportedPx', 'Instrument', 'GrossTradeAmt']
-        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount'])
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount','tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': ord_id}],
              'ConfirmTransType': "0",
              'Account': client,
              'AllocID': alloc_id})
-        self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report,
+        self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report, ['ConfirmTransType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
@@ -197,5 +198,5 @@ class QAP_T6950(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart FIXBACKOFFICE_TH2")
-        time.sleep(70)
+        time.sleep(30)
         self.ssh_client.close()

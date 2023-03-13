@@ -22,6 +22,11 @@ class FIXMessageType(Enum):
     OrderCancelReject = "OrderCancelReject"
     QuoteCancel = "QuoteCancel"
     BusinessMessageReject = "BusinessMessageReject"
+    Reject = 'Reject'
+    Allocation = "Allocation"
+    RequestForPositions = "RequestForPositions"
+    RequestForPositionsAck = "RequestForPositionsAck"
+    PositionReport = "PositionReport"
 
 
 class ORSMessageType(Enum):
@@ -53,7 +58,6 @@ class ORSMessageType(Enum):
     NewOrderListReply = 'Order_NewOrderListReply'
     OrdListNotification = 'Order_OrdListNotification'
     OrderListWaveNotification = 'Order_OrderListWaveNotification'
-    PositionReport = 'Order_PositionReport'
     ManualOrderCrossReply = 'Order_ManualOrderCrossReply'
     OrderModificationReply = 'Order_OrderModificationReply'
     OrderBagCreationRequest = 'Order_OrderBagCreationRequest'
@@ -76,11 +80,14 @@ class ORSMessageType(Enum):
     OrderReply = 'Order_OrdReply'
     SuspendOrderManagementRequest = "Order_SuspendOrderManagementRequest"
     PositionTransferInstruction = 'Order_PositionTransferInstruction'
+    PositionTransferCancelRequest = "Order_PositionTransferCancelRequest"
+    PositionTransferCancelReply = "Order_PositionTransferCancelReply"
     PositionTransferReport = 'Order_PositionTransferReport'
     ComputeBookingFeesCommissionsRequest = 'Order_ComputeBookingFeesCommissionsRequest'
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
+    QuoteCancel = "Fix_QuoteCancel"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
     BookingCancelReply = "Order_BookingCancelReply"
@@ -89,7 +96,7 @@ class ORSMessageType(Enum):
     BlockUnallocateBatchRequest = 'Order_BlockUnallocateBatchRequest'
     ForceAllocInstructionStatusBatchReply = 'Order_ForceAllocInstructionStatusBatchReply'
     BlockUnallocateBatchReply = 'Order_BlockUnallocateBatchReply'
-    OrderUnMatchReply = 'Order_UnMatchReply'
+    UnMatchReply = 'Order_UnMatchReply'
     FixConfirmation = 'Fix_Confirmation'
     MassConfirmation = 'Order_MassConfirmation'
     NewOrderReply = 'Gateway_NewOrderReply'
@@ -107,6 +114,22 @@ class ORSMessageType(Enum):
     AddOrdersToOrderListReply = 'Order_AddOrdersToOrderListReply'
     OrderListWaveModificationRequest = 'Order_OrderListWaveModificationRequest'
     OrderListWaveModificationReply = 'Order_OrderListWaveModificationReply'
+    OrderActionRequest = 'Order_OrderActionRequest'
+    OrderActionReply = 'Order_OrderActionReply'
+    TradeEntryBatchRequest = 'Order_TradeEntryBatchRequest'
+    TradeEntryBatchReply = 'Order_TradeEntryBatchReply'
+    SuspendOrderManagementReply = 'Order_SuspendOrderManagementReply'
+    TradeEntryReply = "Order_TradeEntryReply"
+    OrderSubmitReply = "Order_OrderSubmitReply"
+    OrdRejectedNotif = 'Order_OrdRejectedNotif'
+    FixOrderModificationRequest = "Fix_OrderModificationRequest"
+    FixOrderCancelRequest = "Fix_OrderCancelRequest"
+    OrderListWaveNotificationBlock = "OrderListWaveNotificationBlock"
+    OrderListWaveCancelRequest = "Order_OrderListWaveCancelRequest"
+    OrderListWaveCancelReply = 'Order_OrderListWaveCancelReply'
+    NewOrderMultiLeg = "Order_NewOrderMultiLeg"
+    FixNewOrderReply = "Fix_NewOrderReply"
+    FixAllocationInstruction = 'Fix_AllocationInstruction'
 
 
 class TradingRestApiMessageType(Enum):
@@ -162,6 +185,8 @@ class PKSMessageType(Enum):
     FixRequestForPositions = "Fix_RequestForPositions"
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
+    PositionReport = "Order_PositionReport"
+    RequestForPositionsAck = "Order_RequestForPositionsAck"
 
 
 class QSMessageType(Enum):
@@ -177,8 +202,31 @@ class ReadLogMessageType(Enum):
 class CSMessageType(Enum):
     CDOrdAckBatchRequest = "Order_CDOrdAckBatchRequest"
     CDOrdNotif = "Order_CDOrdNotif"
+    ManualMatchExecToParentOrdersRequest = "Order_ManualMatchExecToParentOrdersRequest"
+    ManualMatchExecToParentOrdersReply = "Order_ManualMatchExecToParentOrdersReply"
+    ManualMatchExecsToParentOrderRequest = 'Order_ManualMatchExecsToParentOrderRequest'
+    ManualMatchExecsToParentOrderReply = "Order_ManualMatchExecsToParentOrderReply"
+    CDOrdAckBatchReply = "Order_CDOrdAckBatchReply"
+    CDTransferRequest = "Order_CDTransferRequest"
+    CDTransferReply = "Order_CDTransferReply"
+    CDTransferNotif = 'Order_CDTransferNotif'
+    CDTransferAck = 'Order_CDTransferAck'
+    CDTransferAckReply = 'Order_CDTransferAckReply'
+    CDOrdAssign = 'Order_CDOrdAssign'
+    CDAssignReply = 'Order_CDAssignReply'
+    UnMatchRequest = 'Internal_UnMatchRequest'
 
 
 class MDAMessageType(Enum):
     MarketDataRequest = "Market_MarketDataRequest"
     MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
+
+
+class AQSMessageType(Enum):
+    FrontendQuery = 'Order_FrontendQuery'
+    FrontendQueryReply = 'Order_FrontendQueryReply'
+
+
+class StoredProcedureNamesForAqs(Enum):
+    FEExecutionTransferList = 'FE_ExecutionTransfer_List'
+    FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'

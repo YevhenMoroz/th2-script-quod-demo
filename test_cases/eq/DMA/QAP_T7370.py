@@ -1,54 +1,51 @@
 import logging
-from datetime import datetime, date, timedelta
+import time
+from pathlib import Path
 
-import test_framework.old_wrappers.eq_fix_wrappers
-
-from custom.basic_custom_actions import create_event, timestamps
-
-from rule_management import RuleManager
-from test_framework.old_wrappers import eq_wrappers
-from stubs import Stubs
-from test_framework.old_wrappers.eq_wrappers import open_fe
-from win_gui_modules.utils import get_base_request
-from win_gui_modules.wrappers import set_base
+from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
 
 
-# need to modify
-def execute(report_id, session_id):
-    case_name = "QAP_T7370"
-    seconds, nanos = timestamps()  # Store case start time
-    # region Declarations
-    act = Stubs.win_act_order_book
-    common_act = Stubs.win_act
-    qty = "800"
-    price = 30
-    client = 'CLIENT4'
-    expireDate = date.today() + timedelta(2)
-    time = datetime.utcnow().isoformat()
-    # endregion
+class QAP_T7370(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.nos = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
+        self.ocr = FixMessageOrderCancelRequestOMS()
+        self.rule_manager = RuleManager(Simulators.equity)
+        self.fix_env = self.environment.get_list_fix_environment()[0]
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
+        self.price = self.nos.get_parameter("Price")
 
-    # region Open FE
-    case_id = create_event(case_name, report_id)
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    work_dir = Stubs.custom_config['qf_trading_fe_folder']
-    username = Stubs.custom_config['qf_trading_fe_user']
-    password = Stubs.custom_config['qf_trading_fe_password']
-    open_fe(session_id, report_id, case_id, work_dir, username)
-    # endregion
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.nos.update_fields_in_component("Instrument", {"Symbol": "TestValue"})
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
+                                                                                                  self.venue_client_names,
+                                                                                                  self.mic,
+                                                                                                  int(self.price))
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.nos)
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(nos_rule)
 
-    # region Create order via FIX
-    try:
-        rule_manager = RuleManager()
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(
-            test_framework.old_wrappers.eq_fix_wrappers.get_buy_connectivity(),
-            client + "_PARIS", 'XPAR', float(price))
-        fix_message = test_framework.old_wrappers.eq_fix_wrappers.create_order_via_fix(case_id, 2, 1, client, 2, qty, 0, price, )
-    finally:
-        rule_manager.remove_rule(nos_rule)
-    # endregion
-    eq_wrappers.verify_order_value(base_request, case_id, 'Symbol', 'VETO', False)
+        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+        self.fix_manager.compare_values({"OrdStatus": "0"}, exec_rep, "Check OrdStatus")
+        self.fix_manager.compare_values({"Symbol": "TestValue"}, exec_rep["Instrument"], "Check Symbol")
+        # endregion

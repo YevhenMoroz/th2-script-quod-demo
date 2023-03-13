@@ -3,14 +3,11 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.fix_wrappers.DataSet import Connectivity
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
     FixMessageOrderCancelReplaceRequestOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -18,7 +15,6 @@ logger.setLevel(logging.INFO)
 timeouts = True
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7674(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -33,7 +29,6 @@ class QAP_T7674(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_care_limit()
         self.fix_message_cancel_replace = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         self.fix_message_cancel = FixMessageOrderCancelRequestOMS()
@@ -41,38 +36,34 @@ class QAP_T7674(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region send Fix Message
-        self.fix_manager.send_message_fix_standard(self.fix_message)
-        order_id = self.order_book.extract_field(OrderBookColumns.order_id.value)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        exec_report_new = response[0].get_parameters()
         # endregion
-        # region Accept CO order
-        self.client_inbox.accept_order()
+
+        # region check order has open status
+        self.order_book.compare_values({'ExecType': '0'}, exec_report_new, 'Check Order sts')
         # endregion
-        # region check order status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.open.value})
-        # endregion
+
         # region amend order by Fix
         self.fix_message_cancel_replace.set_default(self.fix_message)
-        self.fix_message_cancel_replace.change_parameter('OrderQtyData', {'OrderQty': self.qty2})
-        self.fix_message_cancel_replace.change_parameter("Price", self.price2)
-        self.fix_manager.send_message_fix_standard(self.fix_message_cancel_replace)
+        self.fix_message_cancel_replace.change_parameters({'OrderQtyData': {'OrderQty': self.qty2}, "Price":
+            self.price2})
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel_replace)
         # endregion
-        # region accept modify
-        self.client_inbox.accept_modify_plus_child()
-        # endregion
+
         # region check changed values
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.qty.value: self.qty2, OrderBookColumns.limit_price.value: self.price2})
+        exec_report_replaced = response[0].get_parameters()
+        self.order_book.compare_values({'ExecType': '5', 'Price': self.price2, 'OrderQtyData': {'OrderQty': self.qty2}},
+                                       exec_report_replaced, 'Check replaced values ')
         # endregion
+
         # region cancel order by Fix
         self.fix_message_cancel.set_default(self.fix_message)
-        # fix_message_cancel = FixMessageOrderCancelRequest(self.fix_message)
-        self.fix_manager.send_message_fix_standard(self.fix_message_cancel)
+        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel)
         # endregion
-        # region accept cancel
-        self.client_inbox.accept_and_cancel_children()
-        # endregion
+
         # region check cancelled status
-        self.order_book.set_filter([OrderBookColumns.order_id.value, order_id]).check_order_fields_list(
-            {OrderBookColumns.sts.value: ExecSts.cancelled.value})
+        exec_report_cancelled = response[0].get_parameters()
+        self.order_book.compare_values({'ExecType': '4'},
+                                       exec_report_cancelled, 'Check replaced values ')
         # endregion

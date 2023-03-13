@@ -7,7 +7,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -42,11 +42,13 @@ class QAP_T8625(TestCase):
         self.percentage = 10
         self.child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage, self.qty)
         self.price = 30
+
+        self.tif_gtx = TimeInForce.GoodTillCrossing.value
         # endregion
 
         # region Gateway Side
-        self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.Sell
+        self.gateway_side_buy = GatewaySide.RBBuy
+        self.gateway_side_sell = GatewaySide.RBSell
         # endregion
 
         # region Status
@@ -57,7 +59,7 @@ class QAP_T8625(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -67,8 +69,8 @@ class QAP_T8625(TestCase):
 
         # region venue param
         self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_19")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
+        self.account = self.data_set.get_account_by_name("account_3")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
         # region Key parameters
@@ -78,8 +80,8 @@ class QAP_T8625(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
@@ -97,7 +99,7 @@ class QAP_T8625(TestCase):
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase("3")
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -109,26 +111,22 @@ class QAP_T8625(TestCase):
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.auction_algo.update_fields_in_component("QuodFlatParameters", dict(MaxParticipation=self.percentage))
-        responce = self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)[0]
+        self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        er_pending_new.remove_parameters(['Account', 'SettlDate', 'TargetStrategy']).change_parameters(dict(NoStrategyParameters='*', TimeInForce=5, NoParty='*', SecAltIDGrp='*'))
+        er_pending_new.change_parameters(dict(TimeInForce=self.tif_gtx))
         self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        er_new.change_parameters(dict(TimeInForce=5, NoParty='*', SecAltIDGrp='*')).remove_parameter('TargetStrategy')
+        er_new.change_parameters(dict(TimeInForce=self.tif_gtx))
         self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        time.sleep(2)
-
         case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
         cancel_request_auction_order = FixMessageOrderCancelRequest(self.auction_algo)
@@ -136,13 +134,12 @@ class QAP_T8625(TestCase):
         # endregion
         time.sleep(3)
 
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.add_tag(dict(SettlDate='*')).add_tag(dict(NoParty='*', SecAltIDGrp='*')).change_parameters(dict(TimeInForce=5)).remove_parameters(["CxlQty", 'TargetStrategy'])
-        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-
-
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
+
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_gtx))
+        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

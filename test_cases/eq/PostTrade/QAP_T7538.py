@@ -92,7 +92,8 @@ class QAP_T7538(TestCase):
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         execution_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                   ExecutionReportConst.ExecType_TRD.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         exec_id = execution_report[JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
@@ -139,8 +140,10 @@ class QAP_T7538(TestCase):
 
         self.java_api_manager.compare_values(expected_result, allocation_report,
                                              'Check Status and Match Status (part of step 1)')
-        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
-                                            'Check that AllocSummaryStatus is missed (part of step 1)')
+        alloc_summary_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+        self.java_api_manager.compare_values({'AllocSummaryIsAbsent': True},
+                                             {'AllocSummaryIsAbsent': alloc_summary_is_absent},
+                                             'Check that AllocSummaryStatus is missed (part of step 1)')
         # the end
         # endregion
 
@@ -149,8 +152,8 @@ class QAP_T7538(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
         print_message('Approve Block', responses)
         allocation_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
-            JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
         expected_result.update({JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
                                 JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
                                 JavaApiFields.AllocSummaryStatus.value: AllocationReportConst.AllocSummaryStatus_MAG.value})
@@ -159,7 +162,9 @@ class QAP_T7538(TestCase):
         # endregion
 
         # region step 3
-        confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
+        confirmation_report = \
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
         expected_result.clear()
         expected_result.update({JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
                                 JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,

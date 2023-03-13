@@ -12,7 +12,6 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -69,21 +68,24 @@ class QAP_T6913(TestCase):
             self.rule_manager.remove_rule(new_order_single_rule)
 
         # region check 35=8, 39=0 message(step 2)
-        ignored_list = ['Parties', 'ReplyReceivedTime', 'SecondaryOrderID', 'LastMkt', 'Text']
+        ignored_list = ['Parties', 'ReplyReceivedTime', 'SecondaryOrderID', 'LastMkt', 'Text', "GatingRuleCondName",
+                        "GatingRuleName"]
         self.fix_execution_report.set_default_new(self.fix_message)
         # self.fix_execution_report.add_tag({'LastLiquidityInd': '1'})
         self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_report, ignored_fields=ignored_list)
         # endregion
 
         # region check 35=8, 39=2 message(step 3)
-        ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc']
+        ignored_list = ['ReplyReceivedTime', 'Account', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc',
+                        "GatingRuleCondName", "GatingRuleName"]
         self.fix_execution_report.set_default_filled(self.fix_message)
         self.fix_verifier.check_fix_message_fix_standard(self.fix_execution_report, ignored_fields=ignored_list)
         # endregion
 
         # region check 35=8, 39=2 message(step 4)
         ignored_list = ['Parties', 'QuodTradeQualifier', 'BookID', 'SettlCurrency', 'TradeReportingIndicator',
-                        'NoParty', 'tag5120', 'LastMkt', 'Text', 'ExecBroker', 'SecurityDesc']
+                        'NoParty', 'tag5120', 'LastMkt', 'Text', 'ExecBroker', 'SecurityDesc',"GatingRuleCondName",
+                        "GatingRuleName"]
         self.fix_execution_report.set_default_filled(self.fix_message)
         self.fix_execution_report.add_tag({'LastLiquidityInd': '1'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.fix_execution_report, ignored_fields=ignored_list)

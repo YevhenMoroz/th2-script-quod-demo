@@ -83,7 +83,8 @@ class QAP_T7046(TestCase):
         self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.remove_parameters(['TradeReportingIndicator', 'Parties', 'SettlCurrency'])
-        ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker"]
+        ignored_fields = ["QuodTradeQualifier", "BookID", "NoParty", "tag5120", "LastMkt", "Text", "ExecBroker",
+                          "GatingRuleCondName", "GatingRuleName"]
         self.fix_verifier_dc.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_fields)
         # endregion
 
@@ -92,6 +93,6 @@ class QAP_T7046(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.put_file(self.remote_path2, self.local_path2)
         self.ssh_client.send_command("qrestart ORS FIXBACKOFFICE_TH2")
-        time.sleep(20)
+        time.sleep(40)
         os.remove("temp.xml")
         os.remove("temp2.xml")

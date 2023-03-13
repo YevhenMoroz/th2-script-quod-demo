@@ -66,3 +66,12 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
         if instr:
             self.change_parameters({"Instrument": self.data_set.get_fix_instrument_by_name(instr)})
         return self
+
+    def set_fix42_dma_limit(self):
+        self.change_parameters(self.base_parameters)
+        instr = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.change_parameters({"OrdType": "2", "HandlInst": "1", "Price": "20", "OrderQty": "100",
+                                "Symbol": instr["Symbol"], "SecurityID": instr["SecurityID"],
+                                "IDSource": instr["SecurityIDSource"], "SecurityExchange": instr["SecurityExchange"]})
+        self.remove_parameters(["Instrument","OrderCapacity","OrderQtyData"])
+        return self

@@ -173,7 +173,7 @@ class QAP_T4269(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_POV_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_POV_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        er_cancel_request_POV_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single_for_DMA(self.POV_order, self.status_cancel)
+        er_cancel_request_POV_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
         er_cancel_request_POV_order.change_parameters(dict(NoParty='*', NoStrategyParameters='*', TargetStrategy='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_request_POV_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion

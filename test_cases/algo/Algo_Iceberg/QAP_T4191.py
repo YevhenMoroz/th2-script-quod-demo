@@ -133,7 +133,6 @@ class QAP_T4191(TestCase):
         self.fix_verifier_sell.check_fix_message(er_pending_new_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        er_new_iceberg_order_params.remove_parameter('SecondaryAlgoPolicyID')
         self.fix_verifier_sell.check_fix_message(er_new_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -178,7 +177,7 @@ class QAP_T4191(TestCase):
 
         # region Check that child has new Price and old Qty, LeavesQty
         er_replaced_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
-        er_replaced_dma_order.change_parameters(dict(LeavesQty='*', Price=self.inc_price)) # LeavesQty=self.child_leaves_qty
+        er_replaced_dma_order.change_parameters(dict(LeavesQty='*', Price=self.inc_price))
         self.fix_verifier_buy.check_fix_message(er_replaced_dma_order, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Replaced DMA child')
         # endregion
 
@@ -195,7 +194,7 @@ class QAP_T4191(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        cancel_iceberg_order_params.change_parameters(dict(Price=self.inc_price, SettlType='*')).remove_parameters(['SecondaryAlgoPolicyID', 'NoStrategyParameters'])
+        cancel_iceberg_order_params.change_parameters(dict(Price=self.inc_price, SettlType='*'))
         self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

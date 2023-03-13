@@ -13,7 +13,6 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -80,10 +79,10 @@ class QAP_T7472(TestCase):
                         ]
         }
         ignor_list_new_ord = ['QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker', 'Parties', 'SecondaryOrderID',
-                              'LastMkt', 'Text']
+                              'LastMkt', 'Text', 'GatingRuleCondName', 'GatingRuleName', 'PartyRoleQualifier']
         ignor_list_filled_ord = ['NoMiscFees', 'CommissionData', 'ExecBroker', 'tag5120', 'M_PreAllocGrp', 'Parties',
                                  'QuodTradeQualifier', 'BookID', 'SettlCurrency', 'TradeReportingIndicator', 'LastMkt',
-                                 'Text']
+                                 'Text', 'GatingRuleCondName', 'GatingRuleName', 'PartyRoleQualifier']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new(self.fix_message).change_parameters(
             {"NoParty": parties, "Currency": self.cur})
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
@@ -104,7 +103,8 @@ class QAP_T7472(TestCase):
                         ]
         }
         alloc_list_ignor = ['AvgPx', 'Currency', 'tag5120', 'RootOrClientCommission', 'RootOrClientCommissionCurrency',
-                            'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'OrderAvgPx']
+                            'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'OrderAvgPx',
+                            'PartyRoleQualifier']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(self.fix_message)
         alloc_report.change_parameters({'NoParty': parties})
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=alloc_list_ignor)
@@ -118,7 +118,8 @@ class QAP_T7472(TestCase):
                         ]
         }
         conf_list_ignor = ['AvgPx', 'Currency', 'tag5120', 'RootOrClientCommission', 'RootOrClientCommissionCurrency',
-                           'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'NoMiscFees', 'CommissionData', 'OrderAvgPx']
+                           'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'NoMiscFees', 'CommissionData',
+                           'OrderAvgPx', 'tag11245', 'PartyRoleQualifier']
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters({'NoParty': parties})

@@ -65,7 +65,8 @@ class QAP_T7613(TestCase):
         # endregion
 
         # region Set-up parameters for ExecutionReports and chack it
-        ignored_list = ['ReplyReceivedTime', 'ReplyReceivedTime', 'Text', 'LastMkt', 'SecondaryOrderID']
+        ignored_list = ['ReplyReceivedTime', 'ReplyReceivedTime', 'Text', 'LastMkt', 'SecondaryOrderID'
+                        ,"GatingRuleCondName", "GatingRuleName"]
         self.exec_report.set_default_new(self.fix_message)
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)
         # endregion
@@ -87,7 +88,7 @@ class QAP_T7613(TestCase):
 
         # region ExecReport Replaced
         ignored_list = ['ReplyReceivedTime', 'ReplyReceivedTime', 'Text', 'LastMkt', 'SecondaryOrderID', 'SettlType',
-                        'SecurityDesc']
+                        'SecurityDesc',"GatingRuleCondName", "GatingRuleName","ProductComplex"]
         self.exec_report.set_default_replaced(self.fix_message)
         self.exec_report.change_parameter('Price', self.price_amend)
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)
@@ -109,7 +110,7 @@ class QAP_T7613(TestCase):
 
         # region ExecReport Cancelled
         ignored_list = ['ReplyReceivedTime', 'ReplyReceivedTime', 'Text', 'LastMkt', 'SecondaryOrderID', 'SettlType',
-                        'SecurityDesc', 'CxlQty']
+                        'SecurityDesc', 'CxlQty',"GatingRuleCondName", "GatingRuleName","ProductComplex"]
         self.exec_report.set_default_canceled(self.fix_message)
         self.exec_report.change_parameter('Price', self.price_amend)
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)

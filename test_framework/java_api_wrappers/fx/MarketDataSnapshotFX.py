@@ -14,3 +14,9 @@ class MarketDataSnapshotFX(JavaApiMessage):
     def set_default(self) -> None:
         base_parameters = {}
         super().change_parameters(base_parameters)
+
+    def get_timestamps(self):
+        orig_venue_id = self.get_parameter("OrigVenueID")
+        orig_md_time = self.get_parameter("OrigMDTime")
+        orig_md_arrival_time = self.get_parameter("OrigMDArrivalTime")
+        return [orig_venue_id, orig_md_time, orig_md_arrival_time]

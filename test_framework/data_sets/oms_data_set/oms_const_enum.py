@@ -24,6 +24,12 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    instrument_4 = dict(
+        Symbol='CS-SHA-M15-2200/2600',  # MultyLeg
+        SecurityID='CS-SHA-M15-2200/2600',
+        SecurityIDSource='4',
+        SecurityExchange='TOMX'
+    )
     instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
@@ -70,6 +76,8 @@ class OmsInstrumentId(Enum):
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
+    instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
+    instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
 
 
 class OmsListingId(Enum):
@@ -77,6 +85,7 @@ class OmsListingId(Enum):
     listing_2 = '9500000049'
     listing_3 = "704"
     listing_4 = "2259"
+    listing_5 = "16734"  # MultyLeg
 
 
 class OmsVenues(Enum):
@@ -140,6 +149,8 @@ class OmsVenueClientNames(Enum):
     client_2_venue_1 = "XPAR_CLIENT2"
     client_1_venue_2 = "XEUR_CLIENT1"
     client_3_venue_1 = "XPAR_CLIENT3"
+    client_4_venue_1 = "CLIENT4_PARIS"
+    client_4_venue_2 = "CLIENT4_EUREX"
     """PostTrade"""
     client_pt_1_venue_1 = "MOClient_PARIS"
     client_pt_1_venue_2 = "MOClient_EUREX"
@@ -259,6 +270,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
@@ -268,6 +280,7 @@ class OmsCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "GBX"
 
 
 class OmsRoutes(Enum):
@@ -300,6 +313,8 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp = 12
     perc_rounding_to_whole_number = 800020
     abs_amt_gbp_small = 800021
+    amt_plus_client = 600020
+    sixbps = 800024
 
 
 class OMSFeeType(Enum):
@@ -403,11 +418,13 @@ class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
     synthetic = 'Synth'
+    execution_policy_C =' C'
 
 
 class OMSTimeInForce(Enum):
     time_in_force_1 = "Day"
     time_in_force_2 = "GoodTillDate"
+    time_in_force_3 = "AtTheClose"
 
 
 class OMSOrdType(Enum):
@@ -474,6 +491,7 @@ class OMSVenueAccountNamesOfSecurityAccounts(Enum):
     venue_account_name_of_security_acc_1_eurex = "MOClient_SA1_EUREX"
     venue_account_name_of_security_acc_1_jse = "MOClient_SA1_JSE"
     venue_account_name_of_security_acc_1_paris = "MOClient_SA1_PARIS"
+    venue_account_name_of_prop_account_paris = '49403'
 
 
 class OMSVenueSecAccountNames(Enum):
@@ -513,6 +531,7 @@ class OMSClearingAccountTypes(Enum):
 
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+    test_auto = 7
 
 
 class OMSISINSecurityAltIDs(Enum):
@@ -570,3 +589,16 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
+    counterpart_market_maker_th2_route = {'PartyRole': "MMA", 'CounterpartID': '200007'}
+    counterpart_custodian_user = {'PartyRole': "CUS", 'CounterpartID': '1'}
+    counterpart_investor_firm_cl_counterpart = {'PartyRole': "IVF", 'CounterpartID': '600006'}
+    counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
+    counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
+
+
+class OMSVenueClientAccountName(Enum):
+    venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSGatingRuleIDs(Enum):
+    main_rule_id = '2200035'

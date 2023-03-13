@@ -121,7 +121,7 @@ class QAP_T4919(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        new_iceberg_order_params.change_parameter('NoParty', '*').remove_parameter('SecondaryAlgoPolicyID')
+        new_iceberg_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -184,7 +184,7 @@ class QAP_T4919(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_cancel)
-        cancel_iceberg_order_params.change_parameters(dict(SettlType='*', NoParty='*', DisplayInstruction=dict(DisplayQty=self.inc_display_qty))).remove_parameters(['NoStrategyParameters', 'SecondaryAlgoPolicyID'])
+        cancel_iceberg_order_params.change_parameters(dict(SettlType='*', NoParty='*', DisplayInstruction=dict(DisplayQty=self.inc_display_qty)))
         self.fix_verifier_sell.check_fix_message(cancel_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
         # endregion
 

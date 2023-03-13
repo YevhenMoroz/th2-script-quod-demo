@@ -11,15 +11,15 @@ class CancelOrderRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.OrderCancelRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, order_id) -> None:
+    def set_default(self, order_id, force_cancel="N", cancel_child="N") -> None:
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'OrderCancelRequestBlock': {
                 'OrdID': order_id,
                 'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
-                'ForcedCancel': 'N',
-                'CancelChildren': 'N'
+                'ForcedCancel': force_cancel,
+                'CancelChildren': cancel_child
             }
         }
         super().change_parameters(base_parameters)

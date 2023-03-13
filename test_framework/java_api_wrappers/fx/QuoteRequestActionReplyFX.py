@@ -1,12 +1,10 @@
-from test_framework.data_sets.message_types import ORSMessageType
-from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+from test_framework.java_api_wrappers.ors_messages.QuoteRequestActionReply import QuoteRequestActionReply
 
 
-class QuoteRequestActionReplyFX(JavaApiMessage):
+class QuoteRequestActionReplyFX(QuoteRequestActionReply):
 
     def __init__(self, parameters: dict = None):
-        super().__init__(message_type=ORSMessageType.QuoteRequestActionReply.value)
-        super().change_parameters(parameters)
+        super().__init__(parameters)
 
     def set_default(self) -> None:
         base_parameters = {

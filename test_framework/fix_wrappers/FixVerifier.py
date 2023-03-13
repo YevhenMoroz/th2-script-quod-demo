@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
@@ -29,6 +30,7 @@ class FixVerifier:
     def check_fix_message(self, fix_message: FixMessage, key_parameters: list = None,
                           direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, ignored_fields: list = None):
         if fix_message.is_parameter_exist('TransactTime') and fix_message.get_parameter('TransactTime')[0] not in ('!', '%', '<', '>', '%'):
+            fix_message = deepcopy(fix_message)
             fix_message.change_parameter('TransactTime', "*")
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
             if key_parameters is None:
@@ -407,6 +409,20 @@ class FixVerifier:
                     "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.AllocationInstruction.value,
                                                                      fix_message.get_parameters(), key_parameters,ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
+            if key_parameters is None:
+                key_parameters = ['OrigClOrdID']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    'Check OrderCancelReplaceRequest',
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                                                        key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

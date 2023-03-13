@@ -1,7 +1,7 @@
 from enum import Enum
 
 from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
-    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api
+    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api, tom_java_api
 
 
 class FxInstruments(Enum):
@@ -20,6 +20,7 @@ class FxVenues(Enum):
     venue_7 = "EBS"
     venue_8 = "GS"
     venue_9 = "D3"
+    venue_10 = "BNP"
 
     venue_rfq_1 = "CITIR"
     venue_rfq_2 = "HSBCR"
@@ -73,6 +74,7 @@ class FxClients(Enum):
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
     client_mm_12 = "Konstantin1"  # For Java API testing
+    client_mm_13 = "CLIENT_TEST_EXT"  # For another ClientTier testing
 
 
 class FxAccounts(Enum):
@@ -118,13 +120,14 @@ class FxClientTiersID(Enum):
     client_tier_id_1 = "2200009"  # For ESP_MM testing Silver
     client_tier_id_2 = "2600011"  # For MM_RFQ testing - Explicitly Request Swap Points Argentina1
     client_tier_id_3 = "2400009"  # For MM_RFQ testing Iridium1
-    client_tier_id_4 = "2000010"  # For ESP_MM testing
-    client_tier_id_5 = "2000011"  # For ESP_MM testing
-    client_tier_id_6 = "2600010"  # For AutoHedger testing
-    client_tier_id_7 = "2600009"  # For MM_Positions testing
-    client_tier_id_8 = "2600012"  # For AutoHedger testing
-    client_tier_id_11 = "3200016"  # For Margin Format testing
-    client_tier_id_12 = "2800013"  # For Margin Format testing
+    client_tier_id_4 = "2000010"  # For ESP_MM testing Palladium1
+    client_tier_id_5 = "2000011"  # For ESP_MM testing Palladium2
+    client_tier_id_6 = "2600010"  # For AutoHedger testing Osmium
+    client_tier_id_7 = "2600009"  # For MM_Positions testing Argentum
+    client_tier_id_8 = "2600012"  # For AutoHedger testing Aurum
+    client_tier_id_11 = "3200016"  # For Margin Format testing Platinum1
+    client_tier_id_12 = "2800013"  # For Margin Format testing Konstantin1
+    client_tier_id_13 = "3000013"
 
 
 class FxSecurityTypes(Enum):
@@ -134,6 +137,7 @@ class FxSecurityTypes(Enum):
     fx_ndf = "FXNDF"
     fx_nds = "FXNDS"
     fx_mleg = "MLEG"
+    fx_for = "FOR"
 
 
 class FxInstrTypeWA(Enum):
@@ -209,6 +213,7 @@ class FxSettleDates(Enum):
     today = today()
     today_java_api = today_java_api()
     tomorrow = tom()
+    tomorrow_java_api = tom_java_api()
     spot = spo()
     spot_java_api = spo_java_api()
     wk1_java_api = wk1_java_api()
@@ -279,6 +284,8 @@ class FxCurrencies(Enum):
     currency_sek = "SEK"
     currency_jpy = "JPY"
     currency_nok = "NOK"
+    currency_mxn = "MXN"
+    currency_thb = "THB"
 
 
 class FxRecipients(Enum):

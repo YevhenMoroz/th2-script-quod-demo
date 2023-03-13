@@ -54,7 +54,8 @@ class QAP_T7563(TestCase):
             self.rule_manager.remove_rule(nos_rule)
 
         # region check TradeData in the exec report
-        ignored_list = ['ReplyReceivedTime', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc', 'SecondaryOrderID']
+        ignored_list = ['ReplyReceivedTime', 'SettlCurrency', 'LastMkt', 'Text', 'SecurityDesc', 'SecondaryOrderID',
+                        "GatingRuleCondName", "GatingRuleName"]
         self.exec_report.set_default_new(self.fix_message)
         self.exec_report.change_parameters({'OrderCapacity': 'A', 'Account': self.client})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list)

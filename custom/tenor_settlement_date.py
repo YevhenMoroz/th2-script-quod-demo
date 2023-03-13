@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 def tom():
     return (tm(datetime.utcnow().isoformat()) + bd(n=1)).date().strftime('%Y%m%d')
 
+def tom_java_api():
+    return (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S')
 
 def broken_1():
     return (tm(datetime.utcnow().isoformat()) + bd(n=3)).date().strftime('%Y%m%d')

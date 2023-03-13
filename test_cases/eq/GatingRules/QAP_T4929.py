@@ -6,6 +6,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiDisableGatingRuleMessage import RestApiDisableGatingRuleMessage
@@ -26,14 +27,13 @@ class QAP_T4929(TestCase):
         self.ja_manager = JavaApiManager(environment.get_list_java_api_environment()[0].java_api_conn, self.test_id)
         self.order_submit = OrderSubmitOMS(data_set).set_default_care_limit(
             self.data_set.get_recipient_by_name("recipient_user_1"), "1")
-        self.disable_rule_message = RestApiDisableGatingRuleMessage(self.data_set).set_default_param()
+        self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
-        modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set)
-        modify_rule_message.set_default_param()
-        param = modify_rule_message.get_parameter("gatingRuleCondition")
+        self.modify_rule_message.set_default_param()
+        param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         set_value_params: dict = {"alive": 'true',
                                   "gatingRuleResultIndice": 1,
                                   "splitRatio": 0,
@@ -43,15 +43,19 @@ class QAP_T4929(TestCase):
                                   "gatingRuleResultRejectType": "HRD"}
         param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue above
         param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
+        param[0]["gatingRuleResult"][1]["gatingRuleResultAction"] = "DMA"
         param[0]["gatingRuleCondExp"] = "AND(ExecutionPolicy=Care,OrdQty<1000)"
-        modify_rule_message.update_parameters({"gatingRuleCondition": param})
-        self.rest_api_manager.send_post_request(modify_rule_message)
+        self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
+        self.rest_api_manager.send_post_request(self.modify_rule_message)
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         act_res = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            "OrdNotificationBlock"]
-        self.ja_manager.compare_values({"GatingRuleCondName": "Cond1", "OrdStatus": "HLD", "ExecutionPolicy": "D"},
-                                       act_res, "check result")
+            JavaApiFields.OrderNotificationBlock.value]
+        self.ja_manager.compare_values(
+            {JavaApiFields.GatingRuleCondName.value: "All Orders", JavaApiFields.OrdStatus.value: "HLD",
+             JavaApiFields.ExecutionPolicy.value: "D",
+             JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name('main_rule_id')},
+            act_res, "check result")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())

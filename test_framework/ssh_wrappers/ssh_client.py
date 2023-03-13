@@ -1,13 +1,17 @@
+import os
 import time
-
 import paramiko
+import psycopg2
+import xml.etree.ElementTree as ET
+from stubs import ROOT_DIR
 
 
 class SshClient:
     """A wrapper of paramiko.SSHClient"""
     TIMEOUT = 1
 
-    def __init__(self, host, port, username, password, su_user=None, su_pass=None):
+    def __init__(self, host, port, username, password, su_user=None, su_pass=None, db_host=None, db_name=None,
+                 db_user=None, db_pass=None):
         self.username = username
         self.password = password
         self.client = paramiko.SSHClient()
@@ -16,11 +20,19 @@ class SshClient:
         self.sftp_client = self.client.open_sftp()
         self.channel = self.client.invoke_shell()
         self.channel_data = str()
+        self.su_user = su_user
         if su_user and su_pass:
             self.channel.send(f"su {su_user}\n")
             time.sleep(self.TIMEOUT)
             self.channel.send(f"{su_pass}\n")
             time.sleep(self.TIMEOUT)
+        self.db_host = db_host
+        self.db_name = db_name
+        self.db_user = db_user
+        self.db_pass = db_pass
+
+    def __del__(self):
+        self.sftp_client.close()
 
     def get_file(self, remote_path, local_path):
         self.sftp_client.get(remote_path, local_path)
@@ -50,11 +62,29 @@ class SshClient:
                 'err': stderr.readlines(),
                 'retval': stdout.channel.recv_exit_status()}
 
+    def execute_sql(self, sql_request):
+        conn = psycopg2.connect(dbname=self.db_name, user=self.db_user, password=self.db_pass, host=self.db_host)
+        cursor = conn.cursor()
+        cursor.execute(sql_request)
+        records = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return records
+
     def close(self):
         if self.client is not None:
             self.client.close()
             self.client = None
 
+    def get_and_update_file(self, component_config: str, config_xpath: str, config_value: str):
+        self.get_file(f"/home/{self.su_user}/quod/cfg/{component_config}", f"{ROOT_DIR}/test_resources/temp_config.xml")
+        tree = ET.parse(f"{ROOT_DIR}/test_resources/temp_config.xml")
+        quod = tree.getroot()
+        quod.find(config_xpath).text = config_value
+        tree.write(f"{ROOT_DIR}/test_resources/temp_config.xml")
+        self.send_command("~/quod/script/site_scripts/change_permission_script")
+        self.put_file(f"/home/{self.su_user}/quod/cfg/client_sats.xml", f"{ROOT_DIR}/test_resources/temp_config.xml")
+        os.remove(f"{ROOT_DIR}/test_resources/temp_config.xml")
 
 if __name__ == "__main__":
     client = SshClient(host='', port=22, username='', password='', su_user='', su_pass='')

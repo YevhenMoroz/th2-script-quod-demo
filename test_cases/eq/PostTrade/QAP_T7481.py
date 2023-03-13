@@ -184,7 +184,7 @@ class QAP_T7481(TestCase):
         als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": "100",
                             'TradeDate': trade_date})
         self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
-                                                      timeout=50000)
+                                                      timeout=100000)
         # endregion
 
         # region step 7 (unallocate block)
@@ -199,7 +199,9 @@ class QAP_T7481(TestCase):
              JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value},
             allocation_report,
             'Check expected and actually results (part of step 7)')
-        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report,
+        alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+        self.java_api_manager.compare_values({'AllocSummaryStatusIsAbsent': True},
+                                            {'AllocSummaryStatusIsAbsent': alloc_summary_status_is_absent},
                                             f'Check that {JavaApiFields.AllocSummaryStatus.value}'
                                             f' is empty (part of step 7)')
         # endregion
@@ -207,7 +209,7 @@ class QAP_T7481(TestCase):
         # region step 8 Check ALS logs Status Canceled
         als_message.update({"ConfirmStatus": "Cancel"})
         self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'TradeDate'],
-                                                      timeout=60000)
+                                                      timeout=10000)
         time.sleep(10)
         # endregion
 
