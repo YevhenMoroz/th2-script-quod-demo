@@ -21,7 +21,7 @@ class QAP_T8140(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.reference_venues = str
-        self.venue = 'AMEX'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.symbol = 'AUD/BRL'
 
     def precondition(self):
