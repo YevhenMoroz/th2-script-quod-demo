@@ -40,8 +40,8 @@ class QAP_T3590(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.login = self.data_set.get_user("user_5")
-        self.password = self.data_set.get_password("password_5")
+        self.login = self.data_set.get_user("user_14")
+        self.password = self.data_set.get_password("password_14")
 
         self.institution_name = self.data_set.get_institution("institution_1")
         self.new_ctm_bic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
