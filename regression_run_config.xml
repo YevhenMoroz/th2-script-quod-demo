@@ -620,7 +620,7 @@
                 </component>
             </components>
         </product_line>
-        <product_line name="retail" run="True">
+        <product_line name="retail" run="False">
             <components>
                 <component name="PRET_FETrading_Display" run="True">
                     <data_set>RetDataSet</data_set>
@@ -885,6 +885,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -893,6 +894,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -901,6 +903,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -909,6 +912,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -917,6 +921,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -925,6 +930,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -933,6 +939,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -941,6 +948,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -949,6 +957,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -957,6 +966,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -965,6 +975,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
@@ -973,6 +984,7 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>
