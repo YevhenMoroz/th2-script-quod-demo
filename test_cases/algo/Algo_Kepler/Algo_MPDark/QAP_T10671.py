@@ -17,7 +17,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T10664(TestCase):
+class QAP_T10671(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
