@@ -23,7 +23,7 @@ class QAP_T3948(CommonTestCase):
         self.instr_type = self.data_set.get_instr_type("instr_type_9")
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_1")
         self.client = self.data_set.get_client("client_1")
-        self.user = self.data_set.get_user("user_4")
+        self.user = self.data_set.get_user("user_11")
         self.desk = self.data_set.get_desk("desk_1")
         self.institution = self.data_set.get_institution("institution_1")
         self.account = ''
