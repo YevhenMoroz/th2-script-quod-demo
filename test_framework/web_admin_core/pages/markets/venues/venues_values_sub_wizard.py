@@ -31,7 +31,7 @@ class VenuesValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(VenuesConstants.VALUES_TAB_VERY_SHORT_NAME_XPATH)
 
     def set_type(self, value):
-        self.set_combobox_value(VenuesConstants.VALUES_TAB_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(VenuesConstants.VALUES_TAB_TYPE_XPATH, value)
 
     def set_type_custom_value(self, value):
         self.set_text_by_xpath(VenuesConstants.VALUES_TAB_TYPE_XPATH, value)
@@ -52,7 +52,7 @@ class VenuesValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(VenuesConstants.VALUES_TAB_ID_XPATH)
 
     def set_category(self, value):
-        self.set_text_by_xpath(VenuesConstants.VALUES_TAB_CATEGORY_XPATH, value)
+        self.select_value_from_dropdown_list(VenuesConstants.VALUES_TAB_CATEGORY_XPATH, value)
 
     def get_category(self):
         self.get_text_by_xpath(VenuesConstants.VALUES_TAB_CATEGORY_XPATH)

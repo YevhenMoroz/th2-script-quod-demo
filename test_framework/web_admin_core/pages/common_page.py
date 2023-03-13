@@ -83,6 +83,8 @@ class CommonPage:
             return value_from_element
         elif "multiselect" in self.find_by_xpath(xpath).get_attribute("class"):
             return self.find_by_xpath(xpath + CommonConstants.MULTISELECT_ENTITIES).text
+        elif "appearance-outline" in self.find_by_xpath(xpath).get_attribute("class"):
+            return self.find_by_xpath(xpath + CommonConstants.ENUM_DROP_DOWN).text
         else:
             element = self.find_by_xpath(xpath)
             value_from_clipboard = pyperclip.paste()
@@ -139,13 +141,15 @@ class CommonPage:
             time.sleep(0.2)
             self.find_by_xpath(CommonConstants.MULTISELECT_ITEM_XPATH.format(i)).click()
         self.find_by_xpath(field_xpath).click()
+        time.sleep(1)
 
     def select_value_from_dropdown_list(self, xpath: str, value: str):
         """
         Method was created for select value from dropdown list
         if if there is no input field
         """
-        self.find_by_xpath(xpath).click()
+        if not self.is_element_present(CommonConstants.GENERAL_DROP_DOWN):
+            self.find_by_xpath(xpath).click()
         time.sleep(1)
         self.find_by_xpath(xpath + CommonConstants.DROP_MENU_OPTION_PATTERN_XPATH.format(value, value)).click()
 
