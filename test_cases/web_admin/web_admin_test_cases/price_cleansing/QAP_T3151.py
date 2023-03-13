@@ -25,7 +25,7 @@ class QAP_T3151(CommonTestCase):
         self.price_deviation = random.randint(1, 100)
         self.price_deviation_format = 'ExactPrice'
         self.reference_price = 'BidAndAsk'
-        self.venue = 'AMEX'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.listing = 'ARMX'
         self.instr_type = 'Equity'
         self.symbol = 'AUD/BRL'
