@@ -10,7 +10,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce, RBCustomTags
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce, RBCustomTags, Reference
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -23,7 +23,7 @@ from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 
 
-class QAP_T10278(TestCase):
+class QAP_T4348(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -42,7 +42,7 @@ class QAP_T10278(TestCase):
 
         # region order parameters
         self.qty = 1_000_000
-        self.price = 130
+        self.price = 100
         self.indicative_volume = 0
         self.indicative_price = 0
         self.historical_volume = 1000000.0
@@ -50,12 +50,12 @@ class QAP_T10278(TestCase):
         self.percentage_volume = 10
 
         self.pp1_percentage = 12
-        self.pp1_price = 120
+        self.pp1_price = 99
         self.pp2_percentage = 30
-        self.pp2_price = 117
+        self.pp2_price = 98.9
 
         self.scaling_child_order_qty = '%^(1[6-9])\d{3}|20{4}|10{5}$'  # fisrt number 100000, 20000, 17-19K and any 3 number
-        self.scaling_child_order_price = '%^1(20|30|1[7-9].[1-9]|17)$'  # the first number 130, 120, 117 or 119.7-117.3 with step 3
+        self.scaling_child_order_price = '%^(100|99|98.9[0-9]|98.9)$'  # the first number 130, 120, 117 or 119.7-117.3 with step 3
 
         self.check_order_sequence = False
 
@@ -104,17 +104,17 @@ class QAP_T10278(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-        nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 120)
-        nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.7)
-        nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.4)
-        nos_rule_5 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.1)
-        nos_rule_6 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.8)
-        nos_rule_7 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.5)
-        nos_rule_8 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 118.2)
-        nos_rule_9 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.9)
-        nos_rule_10 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.6)
-        nos_rule_11 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117.3)
-        nos_rule_12 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 117)
+        nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 99)
+        nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.99)
+        nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.98)
+        nos_rule_5 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.97)
+        nos_rule_6 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.96)
+        nos_rule_7 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.95)
+        nos_rule_8 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.94)
+        nos_rule_9 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.93)
+        nos_rule_10 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.92)
+        nos_rule_11 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.91)
+        nos_rule_12 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 98.9)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_1, True)
@@ -169,7 +169,7 @@ class QAP_T10278(TestCase):
 
         # region Aggressive Scaling order
         scaling_dma_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        scaling_dma_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, Instrument='*', TimeInForce=self.tif_ato))
+        scaling_dma_child_order.change_parameters(dict(Account=self.account, OrderQty=self.scaling_child_order_qty, Price=self.scaling_child_order_price, Instrument='*', TimeInForce=self.tif_ato, ExDestination=self.ex_destination_1))
 
         pending_scaling_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(scaling_dma_child_order, self.gateway_side_buy, self.status_pending)
 
