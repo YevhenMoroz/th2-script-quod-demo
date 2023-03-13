@@ -10,13 +10,13 @@ class FeesDimensionsSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_instr_type(self, value):
-        self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH, value)
 
     def get_instr_type(self):
         return self.get_text_by_xpath(FeesConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH)
 
     def set_side(self, value):
-        self.set_combobox_value(FeesConstants.DIMENSIONS_TAB_SIDE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.DIMENSIONS_TAB_SIDE_XPATH, value)
 
     def get_side(self):
         return self.get_text_by_xpath(FeesConstants.DIMENSIONS_TAB_SIDE_XPATH)

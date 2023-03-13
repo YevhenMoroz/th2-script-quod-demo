@@ -20,7 +20,8 @@ class FeesConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
+    FOOTER_WARNING_XPATH = '//nb-card-footer//*[@outline="danger"]//span'
 
     # Main page
 
@@ -91,7 +92,7 @@ class FeesConstants:
     EXEC_FEE_PROFILE_DISPLAYED_PROFILE_XPATH = '//*[normalize-space()="{}"]'
 
     EXEC_FEE_PROFILE_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
-    EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'
+    EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]/button'
     EXEC_FEE_PROFILE_VENUE_COMMISSION_PROFILE_ID_XPATH = '//*[@formcontrolname = "venueCommissionProfileID"]'
     EXEC_FEE_PROFILE_COMM_TYPE_XPATH = '//*[@id = "commType"]'
     EXEC_FEE_PROFILE_COMM_ALGORITHM_XPATH = '//*[@id = "commAlgorithm"]'
