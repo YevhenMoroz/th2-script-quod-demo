@@ -62,7 +62,8 @@ class QAP_T2459(TestCase):
         number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
         for i in range(int(number_of_bands)):
             self.bands_eur_usd.append("*")
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, published=False, response=response[0])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, published=False,
+                                                        response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
@@ -78,7 +79,8 @@ class QAP_T2459(TestCase):
         for i in range(int(number_of_bands)):
             self.bands_nok_sek.append("*")
         # endregion
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False, response=response[0])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_nok_sek, published=False,
+                                                        response=response[0])
         self.fix_md_snapshot.update_value_in_repeating_group("NoMDEntries", "MDEntryPositionNo", "*")
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
@@ -99,7 +101,7 @@ class QAP_T2459(TestCase):
         self.bands_eur_usd.clear()
         for i in range(int(number_of_bands)):
             self.bands_eur_usd.append("*")
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd, response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
