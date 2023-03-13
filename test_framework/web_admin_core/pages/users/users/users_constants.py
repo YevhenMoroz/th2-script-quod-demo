@@ -104,7 +104,7 @@ class UsersConstants:
     DATE_OF_BIRTH = '//*[text()="Date of Birth"]/preceding-sibling::input'
 
     # Assignments
-    DESKS_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Desks']/parent::div//input"
+    DESKS_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@id="Desks"]'
     DESKS_CHECKBOX_LIST_AT_ASSIGNMENTS_SUB_WIZARD = '//*[@class="cdk-overlay-container"]//*[text()="{}"]'
     LOCATION_AT_ASSIGNMENTS_SUB_WIZARD = '//*[text()="Location"]/preceding-sibling::input'
     ZONE_AT_ASSIGNMENTS_SUB_WIZARD = "//*[text()='Zone']/preceding-sibling::input"
@@ -117,7 +117,7 @@ class UsersConstants:
     # Role
     PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD = '//*[text()="Group"]/preceding-sibling::input'
-    PERM_OP_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Op"]/preceding-sibling::input'
+    PERM_OP_AT_ROLE_SUB_WIZARD = '//*[@id="permOp"]'
 
     # Must not be visible
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
@@ -129,7 +129,7 @@ class UsersConstants:
     EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
     DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
     CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
-    TYPE_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Type *"]'
+    TYPE_AT_CLIENT_SUB_WIZARD = '//*[@id="userRoleAccountGroupType"]'
     CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
     TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
 
