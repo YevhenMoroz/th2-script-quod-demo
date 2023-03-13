@@ -129,7 +129,9 @@ class QAP_T5124(TestCase):
         self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request, ['*'])
+        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request, ['*'])
+        self.fix_md_snapshot.change_parameters({"OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+        self.fix_md_snapshot.change_parameter("PriceCleansingReason", "5")
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
