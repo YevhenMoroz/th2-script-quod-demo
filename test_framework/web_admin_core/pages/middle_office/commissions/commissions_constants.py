@@ -20,7 +20,7 @@ class CommissionsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[text()="Name"]//following::*[contains(@style, "left: 0px;")]//input'

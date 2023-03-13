@@ -35,7 +35,7 @@ class QAP_T3840(CommonTestCase):
         self.client_group = self.data_set.get_client_group("client_group_1")
         self.account = "DEMO_MO1"
         self.client = self.data_set.get_client("client_1")
-        self.venue = self.data_set.get_venue_by_name("venue_8")
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.instrument = self.data_set.get_instrument("instrument_2")
         self.instrument_group = self.data_set.get_instrument_group("instrument_group_1")
 
@@ -48,7 +48,7 @@ class QAP_T3840(CommonTestCase):
         self.new_client_group = self.data_set.get_client_group("client_group_2")
         self.new_account = "DEMO_MO2"
         self.new_client = self.data_set.get_client("client_2")
-        self.new_venue = self.data_set.get_venue_by_name("venue_5")
+        self.new_venue = self.data_set.get_venue_by_name("venue_6")
         self.new_instrument = self.data_set.get_instrument("instrument_1")
         self.new_instrument_group = self.data_set.get_instrument_group("instrument_group_2")
 

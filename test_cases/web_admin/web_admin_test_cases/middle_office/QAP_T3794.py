@@ -30,7 +30,7 @@ class QAP_T3794(CommonTestCase):
         self.comm_type = 'AbsoluteAmount'
         self.comm_algorithm = 'SlidingScale'
         self.comm_xunit = 'Amount'
-        self.base_value = ['1', '10']
+        self.base_value = ['1', '5', '10']
         self.min_commission = '35'
         self.upper_limit = '50'
         self.slope = '7'
@@ -55,6 +55,10 @@ class QAP_T3794(CommonTestCase):
         commission_profile_points.click_on_plus()
         commission_profile_points.set_base_value(self.base_value[0])
         commission_profile_points.click_on_checkmark()
+        time.sleep(0.5)
+        commission_profile_points.click_on_plus()
+        commission_profile_points.set_base_value(self.base_value[1])
+        commission_profile_points.click_on_checkmark()
         commission_profile.click_on_checkmark()
         wizard = FeesWizard(self.web_driver_container)
         wizard.click_on_go_back()
@@ -72,7 +76,7 @@ class QAP_T3794(CommonTestCase):
             time.sleep(1)
             commission_profile.click_on_edit()
             commission_profile_points.click_on_edit()
-            commission_profile_points.set_base_value(self.base_value[1])
+            commission_profile_points.set_base_value(self.base_value[2])
             commission_profile_points.set_min_commission(self.min_commission)
             commission_profile_points.set_upper_limit(self.upper_limit)
             commission_profile_points.set_slope(self.slope)
@@ -84,7 +88,7 @@ class QAP_T3794(CommonTestCase):
             commission_profile.click_on_edit()
             commission_profile_points.click_on_edit()
 
-            expected_result = [self.base_value[1], self.min_commission, self.upper_limit, self.slope]
+            expected_result = [self.base_value[2], self.min_commission, self.upper_limit, self.slope]
             actual_result = [commission_profile_points.get_base_value(), commission_profile_points.get_min_commission(),
                              commission_profile_points.get_upper_limit(), commission_profile_points.get_slope()]
 

@@ -27,26 +27,30 @@ class CommissionsValuesSubWizard(CommonPage):
         return self.is_checkbox_selected(CommissionsConstants.VALUES_TAB_RE_CALCULATE_FOR_ALLOCATIONS_XPATH)
 
     def set_commission_amount_type(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH, value)
 
     def get_commission_amount_type(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH)
 
     def get_all_commission_amount_type_from_drop_menu(self):
-        self.set_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH, '')
+        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH).click()
         time.sleep(1)
-        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        items = self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH).click()
+        return items
 
     def set_commission_amount_sub_type(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH, value)
 
     def get_commission_amount_sub_type(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH)
 
     def get_all_commission_amount_sub_type_from_drop_menu(self):
-        self.set_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH, '')
+        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH).click()
         time.sleep(1)
-        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        items = self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
+        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH).click()
+        return items
 
     def set_commission_profile(self, value):
         self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH, value)

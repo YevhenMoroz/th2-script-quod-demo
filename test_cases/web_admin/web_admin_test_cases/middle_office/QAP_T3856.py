@@ -27,7 +27,7 @@ class QAP_T3856(CommonTestCase):
         self.misc_fee_type = 'Agent'
         self.exec_fee_profile = 'UK stamp'
         self.instr_type = 'Equity'
-        self.venue = 'BATS'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
