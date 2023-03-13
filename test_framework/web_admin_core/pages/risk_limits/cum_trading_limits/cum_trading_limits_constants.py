@@ -1,5 +1,5 @@
 class CumTradingLimitsConstants:
-    CUM_TRADING_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Cum Trading Limits ']"
+    CUM_TRADING_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Cum Trading Limits']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"

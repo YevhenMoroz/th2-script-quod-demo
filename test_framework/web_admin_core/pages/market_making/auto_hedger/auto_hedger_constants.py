@@ -1,6 +1,6 @@
 class AutoHedgerConstants:
 
-    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Auto Hedgers ']"
+    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space(text())='Auto Hedgers']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
