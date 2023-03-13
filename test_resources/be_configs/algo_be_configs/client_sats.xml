@@ -1,0 +1,99 @@
+<!--
+$HeadURL$
+$LastChangedDate$
+$LastChangedRevision$
+$LastChangedBy$
+
+Copyright Quod Financial
+-->
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}routing.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}marketdata.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}gateways.xml</include>
+        <include>${CFG_DEFAULT}/sats.xml</include>
+    </includes>
+	<sats>
+	   <bpsOffsets>true</bpsOffsets>
+	   <priority>
+			<enabled>false</enabled>
+	   </priority>
+       <mktData>
+            <closingTime>21:59:59</closingTime>
+            <childMask>
+                <enabled>false</enabled>
+                <quote>false</quote>
+                <depth>false</depth>
+            </childMask>
+        </mktData>
+		<manualResume>true</manualResume>
+		<tifAliasing>true</tifAliasing>
+		<loadedAlgo>
+			<MultiListing>
+				<tolerance>1</tolerance>
+				<delayMktData>0</delayMktData>
+                <maxDepth>5</maxDepth>
+			</MultiListing>
+			<PairTrading>
+				<timeoutMktData>1000</timeoutMktData>
+				<timeoutMktReply>1000</timeoutMktReply>
+				<pauseDuration>60</pauseDuration>
+				<usePoV>false</usePoV>
+				<thresholdPoV>0.1</thresholdPoV>
+				<forwardCxlRej>false</forwardCxlRej>
+			</PairTrading>
+			<Participate>
+				<levels>2</levels>
+				<bpsOffsets>true</bpsOffsets>
+			    <!--delay>0.5</delay-->
+			    <timeoutMktReply>1000</timeoutMktReply>
+			    <timeoutMktData>1000</timeoutMktData>
+				<tolerance>1</tolerance>
+				<ignoreNullPhaseVolume>true</ignoreNullPhaseVolume>
+				<strictMin>true</strictMin> <!--was true-->
+				<fileName>concur.so</fileName><!--PALGO-141 participate.so|orig concur.so-->
+				<bookAuctionFallback>true</bookAuctionFallback>
+			</Participate>
+			<SyntheticIceberg>
+				<timeoutMktReply>10</timeoutMktReply>
+				<pauseDuration>60</pauseDuration>
+				<forwardCxlRej>false</forwardCxlRej>
+				<partialRefill>false</partialRefill>
+			</SyntheticIceberg>
+			<SyntheticPegged>
+				<timeoutMktReply>1000</timeoutMktReply>
+				<pauseDuration>60</pauseDuration>
+				<forwardCxlRej>false</forwardCxlRej>
+				<tolerance>1</tolerance>
+			</SyntheticPegged>
+			<TWAP>
+				<useSubslices>true</useSubslices>
+				<minSlices>2</minSlices>
+                <timeoutMktReply>1000</timeoutMktReply>
+                <pauseDuration>60</pauseDuration>
+                <forwardCxlRej>false</forwardCxlRej>
+				<tolerance>1</tolerance>
+				<strictMin>false</strictMin>
+				<sliceDurations>1;2;3;5</sliceDurations>
+				<usePeg>false</usePeg>
+			</TWAP>
+			<VWAP>
+				<tolerance>1</tolerance>
+				<sliceDurations>1;2;3;5</sliceDurations>
+			</VWAP>
+			<BestEffortPegged>
+                <forwardCxlRej>false</forwardCxlRej>
+			</BestEffortPegged>
+			<Triggering>
+				<timeoutMktReply>1000</timeoutMktReply>
+				<forwardCxlRej>false</forwardCxlRej>
+			</Triggering>
+			 <LitDark>
+                <timeoutMktReply>1000</timeoutMktReply>
+				<timeoutMktData>5</timeoutMktData>
+			 </LitDark>
+		</loadedAlgo>
+	</sats>
+</quod>
