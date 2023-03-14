@@ -67,13 +67,11 @@ class QAP_T2732(TestCase):
         # endregion
 
         self.quote_request.set_rfq_params()
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.client,
-                                                           Instrument=self.instrument, Currency=self.currency,
-                                                           OrderQty=self.qty)
         self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region Step 2
         automatic_quoting = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check quote presence in DI")
         self.verifier.compare_values("Check quote presence in DI", "N",  automatic_quoting)
         self.verifier.verify()
