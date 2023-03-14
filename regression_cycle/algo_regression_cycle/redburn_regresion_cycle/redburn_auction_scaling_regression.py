@@ -5,6 +5,7 @@ from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10278 import QAP_T10
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10273 import QAP_T10273
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4348 import QAP_T4348
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4450 import QAP_T4450
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4451 import QAP_T4451
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4460 import QAP_T4460
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4389 import QAP_T4389
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10476 import QAP_T10476
@@ -75,6 +76,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4348(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4463(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4450(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4451(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:
