@@ -23,7 +23,7 @@ from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 
 
-class QAP_T4388(TestCase):
+class QAP_T4463(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -103,7 +103,8 @@ class QAP_T4388(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule_1 = rule_manager.add_NewOrdSingle_MarketAuction(self.fix_env1.buy_side, self.account, self.ex_destination_1)
+        nos_rule_mkt = rule_manager.add_NewOrdSingle_MarketAuction(self.fix_env1.buy_side, self.account, self.ex_destination_1)
+        nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 120)
         nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.7)
         nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.4)
         nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, 119.1)
@@ -117,7 +118,7 @@ class QAP_T4388(TestCase):
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_1, True)
-        self.rule_list = [nos_rule_1, nos_rule_2, nos_rule_3, nos_rule_4, nos_rule_5, nos_rule_6, nos_rule_7, nos_rule_8, nos_rule_9, nos_rule_10, nos_rule_12, ocr_rule, ocrr_rule, cancel_rule]
+        self.rule_list = [nos_rule_mkt, nos_rule_1, nos_rule_2, nos_rule_3, nos_rule_4, nos_rule_5, nos_rule_6, nos_rule_7, nos_rule_8, nos_rule_9, nos_rule_10, nos_rule_12, ocr_rule, ocrr_rule, cancel_rule]
         # endregion
 
         # region Update Trading Phase
@@ -147,7 +148,6 @@ class QAP_T4388(TestCase):
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, OrdType=self.order_type_market, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.auction_algo.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume, PricePoint1Participation=self.pp1_percentage, PricePoint1Price=self.pp1_price, PricePoint2Price=self.pp2_price, PricePoint2Participation=self.pp2_percentage))
         self.auction_algo.remove_parameter('Price')
-        self.auction_algo.remove_fields_from_component('QuodFlatParameters', ['PricePoint1Participation'])
         self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
         time.sleep(10)
@@ -195,13 +195,13 @@ class QAP_T4388(TestCase):
         # endregion
 
         # region Check Scaling child orders
-        self.fix_verifier_buy.check_fix_message_sequence([scaling_market_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([scaling_market_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order, scaling_dma_child_order], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_D'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Pending New", self.case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_market_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side Pending New", self.case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([pending_scaling_market_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params, pending_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new'), check_order=self.check_order_sequence)
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side New", self.case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_market_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check 12 Scaling child orders Buy Side New", self.case_id_2))
+        self.fix_verifier_buy.check_fix_message_sequence([new_scaling_market_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params, new_scaling_dma_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_new'), check_order=self.check_order_sequence)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -231,7 +231,7 @@ class QAP_T4388(TestCase):
 
         # region Check cancellation of the Scaling child orders
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 11 Scaling child orders Buy Side Cancel", self.case_id_2))
-        self.fix_verifier_buy.check_fix_message_sequence([self.cancel_scaling_market_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
+        self.fix_verifier_buy.check_fix_message_sequence([self.cancel_scaling_market_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params, self.cancel_scaling_child_order_params], [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, pre_filter=self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate'), check_order=self.check_order_sequence)
         # endregion
 
         # region check cancellation parent Auction order
