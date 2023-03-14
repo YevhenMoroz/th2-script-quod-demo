@@ -770,7 +770,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
