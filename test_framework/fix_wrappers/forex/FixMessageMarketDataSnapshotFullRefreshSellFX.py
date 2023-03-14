@@ -331,8 +331,13 @@ class FixMessageMarketDataSnapshotFullRefreshSellFX(FixMessageMarketDataSnapshot
                 dict()
             ]
         )
-        if "CachedUpdate" in response.get_parameters():
-            temp.update({"CachedUpdate": "Y"})
+        orig_tags_to_remove = ["OrigMDArrivalTime", "OrigClientVenueID", "OrigMDTime"]
+        for i in orig_tags_to_remove:
+            if i in self.get_parameters():
+                self.get_parameters().pop(i)
+        if response:
+            if "CachedUpdate" in response.get_parameters():
+                temp.update({"CachedUpdate": "Y"})
         if "MarketID" in md_request.get_parameters()["NoRelatedSymbols"][0].keys():
             temp.update({"MarketID": md_request.get_parameters()["NoRelatedSymbols"][0]["MarketID"]})
             temp.update({"MDStreamID": "*"})
