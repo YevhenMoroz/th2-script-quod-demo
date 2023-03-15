@@ -132,6 +132,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_rep_partial_fill_kepler_sell(order_cancel_replace)
             elif status is Status.Fill:
                 self.__set_cancel_rep_fill_kepler_sell(order_cancel_replace)
+            elif status is Status.Eliminate:
+                self.__set_cancel_rep_eliminate_kepler_sell(order_cancel_replace)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -2287,6 +2289,56 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SecondaryAlgoPolicyID='*',
             ChildOrderID='*',
             misc5='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rep_eliminate_kepler_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if order_cancel_replace.is_parameter_exist('Price'):
+            temp.update(Price=order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.is_parameter_exist('StopPx'):
+            temp.update(StopPx=order_cancel_replace.get_parameter('StopPx'))
+        if 'DisplayInstruction' in order_cancel_replace.get_parameters():
+            temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
+        if order_cancel_replace.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
+        if order_cancel_replace.is_parameter_exist('MinQty'):
+            temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
+        if order_cancel_replace.is_parameter_exist('NoStrategyParameters'):
+            temp.update(NoStrategyParameters='*')
+        if order_cancel_replace.is_parameter_exist('TargetStrategy'):
+            temp.update(TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'))
+            if order_cancel_replace.get_parameter('TargetStrategy') != '1008' and order_cancel_replace.get_parameter('TargetStrategy') != '1011': # LastMkt should appear after the Trade
+                temp.update(LastMkt='*')
+        temp.update(
+            Account=order_cancel_replace.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            CumQty='*',
+            Currency=order_cancel_replace.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=order_cancel_replace.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=order_cancel_replace.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=order_cancel_replace.get_parameter('OrdType'),
+            Side=order_cancel_replace.get_parameter('Side'),
+            TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
+            QtyType='*',
+            CxlQty='*',
+            Instrument='*',
+            NoParty='*',
+            SecondaryAlgoPolicyID='*',
+            SettlType='*'
         )
         super().change_parameters(temp)
         return self
