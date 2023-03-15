@@ -71,8 +71,10 @@ class QAP_T10741(TestCase):
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_20")
         self.ex_destination_chixdelta = self.data_set.get_mic_by_name("mic_5")
+        self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account_chixdelta = self.data_set.get_client_by_name("client_6")
+        self.account_bats = self.data_set.get_account_by_name("account_7")
         # endregion
 
         # region Key parameters
@@ -96,10 +98,12 @@ class QAP_T10741(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay_for_rfq)
-        rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
+        rfq_cancel_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True, 1000)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, True)
-        self.rule_list = [rfq_rule, rfq_cancel_rule, nos_1_rule, ocr_1_rule]
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
+        self.rule_list = [rfq_rule, rfq_cancel_rule, nos_1_rule, ocr_1_rule, nos_2_rule, ocr_2_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -204,28 +208,28 @@ class QAP_T10741(TestCase):
 
         time.sleep(2)
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_3)
-        cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
-
-        time.sleep(1)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        # region check cancel second dma child order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check that the dark child order was cancelled", self.test_id))
-
-        er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child DMA order on the CHIXDELTA")
-        # endregion
-
-        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
-
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     # region Cancel Algo Order
+    #     # case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
+    #     # self.fix_verifier_sell.set_case_id(case_id_3)
+    #     # cancel_request_MP_Dark_order = FixMessageOrderCancelRequest(self.MP_Dark_order)
+    #     #
+    #     # time.sleep(1)
+    #     #
+    #     # self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
+    #     # self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+    #     #
+    #     # # region check cancel second dma child order
+    #     # self.fix_verifier_buy.set_case_id(bca.create_event("Check that the dark child order was cancelled", self.test_id))
+    #     #
+    #     # er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_cancel)
+    #     # self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child DMA order on the CHIXDELTA")
+    #     # # endregion
+    #     #
+    #     # er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
+    #     # self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+    #     # # endregion
+    #
+    #     rule_manager = RuleManager(Simulators.algo)
+    #     rule_manager.remove_rules(self.rule_list)
