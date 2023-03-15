@@ -66,6 +66,24 @@ class SshClientEnvironment(BaseEnvironment):
                 )
                 SshClientEnvironment.environment_instances.update({EnvironmentType.quod316_ssh_client.value: site_environment})
             return SshClientEnvironment.environment_instances[EnvironmentType.quod316_ssh_client.value]
+        elif env.value == EnvironmentType.quod314_ssh_client.value:
+            if EnvironmentType.quod314_ssh_client.value not in SshClientEnvironment.environment_instances.keys():
+                site_environment = SshClientEnvironment(
+                    environment_type=EnvironmentType.quod314_luna_fe.value,
+                    host=SshClientEnv.HOST_314.value,
+                    port=SshClientEnv.PORT_314.value,
+                    user=SshClientEnv.USER_314.value,
+                    password=SshClientEnv.PASSWORD_314.value,
+                    su_user=SshClientEnv.SU_USER_314.value,
+                    su_password=SshClientEnv.SU_PASSWORD_314.value,
+                    db_host=SshClientEnv.DB_HOST_314.value,
+                    db_user=SshClientEnv.DB_USER_314.value,
+                    db_password=SshClientEnv.DB_PASSWORD_314.value,
+                    db_name=SshClientEnv.DB_NAME_314.value,
+                )
+                SshClientEnvironment.environment_instances.update(
+                    {EnvironmentType.quod314_ssh_client.value: site_environment})
+            return SshClientEnvironment.environment_instances[EnvironmentType.quod314_ssh_client.value]
         else:
             raise Exception('No such environment')
 
