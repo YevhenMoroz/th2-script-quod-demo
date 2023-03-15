@@ -76,7 +76,6 @@ class QAP_T10625(TestCase):
         self.key_params_OCR_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_OCR_child")
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -112,7 +111,7 @@ class QAP_T10625(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(5)
+        time.sleep(2)
 
         # region Check 1st child DMA order on venue CHIX DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA orders", self.test_id))
@@ -142,8 +141,6 @@ class QAP_T10625(TestCase):
         er_new_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
-
-        time.sleep(2)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
