@@ -65,6 +65,7 @@ class QAP_T10623(TestCase):
         # region venue param
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
         self.ex_destination_trql = self.data_set.get_mic_by_name("mic_13")
+        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_20")
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
@@ -80,7 +81,7 @@ class QAP_T10623(TestCase):
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_OCR_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_OCR_child")
         self.key_params_ER_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
-        self.key_params_rfq_cancel = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_RFQ_canceled")
+        self.key_params_rfq_cancel = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_RFQ_ocr")
         # endregion
 
         self.rule_list = []
@@ -90,11 +91,12 @@ class QAP_T10623(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, ocr_1_rule, ocr_2_rule, rfq_ocr_rule]
+        self.rule_list = [nos_1_rule, ocrr_rule, nos_2_rule, ocr_1_rule, ocr_2_rule, rfq_ocr_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -205,7 +207,7 @@ class QAP_T10623(TestCase):
         self.fix_verifier_buy.check_fix_message(self.nos_2_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side 2nd RFQ on TQLIS')
         # endregion
 
-        time.sleep(7)
+        time.sleep(3)
 
         # region Check that the 1st child expires
         order_cancel_request_dma_chix_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_chix_order)
@@ -227,8 +229,6 @@ class QAP_T10623(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
 
-        time.sleep(2)
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
@@ -244,7 +244,7 @@ class QAP_T10623(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 1 order')
         # endregion
 
-        er_cancel_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MPDark_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MPDark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
