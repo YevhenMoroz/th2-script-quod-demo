@@ -349,6 +349,10 @@ class WebAdminClientGroup(Enum):
 class WebAdminInstrument(Enum):
     instrument_1 = "EUR"
     instrument_2 = "INSURANCE"
+    instrument_3 = "USD/KRW"
+    instrument_4 = "USD/TWD"
+    instrument_5 = "BUN-CITQ"
+    instrument_6 = "GBP/BRL"
 
 
 class WebAdminInstrumentGroup(Enum):
