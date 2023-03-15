@@ -17,13 +17,14 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \
     FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
 from datetime import datetime, timedelta
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4668(TestCase):
+class QAP_T4677(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -41,29 +42,28 @@ class QAP_T4668(TestCase):
         # endregion
 
         # region Market data params
-        self.price_ask = 30
+        self.price_ask = 20
         self.qty_ask = 100
 
-        self.price_bid = 20
+        self.price_bid = 10
         self.qty_bid = 100
 
-        self.last_trade_price = 20
+        self.last_trade_price = 17
         self.last_trade_qty = 100
-
-        self.opening_price = 20
         # endregion
 
         # order params
         self.qty = 300
-        self.price = 20
+        self.price = 14
         self.waves = 3
         self.qty_child = AFM.get_next_twap_slice(self.qty, self.waves)
-        self.price_child = 19.99
-        # endregion
+        self.price_child = 15.03
 
         # region Algo params
-        self.limit_price_reference = Reference.Open.value
-        self.limit_price_offset = 2
+        self.passive_reference_price = DataSet.Reference.Mid.value
+        self.passive_offset = 1
+        self.limit_price_reference = DataSet.Reference.Mid.value
+        self.limit_price_offset = 6
         # endregion
 
         # region Venue params
@@ -72,6 +72,7 @@ class QAP_T4668(TestCase):
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name('account_2')
         self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        # endregion
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
@@ -116,10 +117,10 @@ class QAP_T4668(TestCase):
         self.end_date = (self.now + timedelta(minutes=3)).strftime("%Y%m%d-%H:%M:%S")
         self.start_date = self.now.strftime("%Y%m%d-%H:%M:%S")
 
-        # # region precondition: Prepare SATS configuration
+        # region precondition: Prepare SATS configuration
         # self.ssh_client.send_command("qrestart SATS")
         # time.sleep(35)
-        # # endregion
+        # endregion
 
         # region rules
         rule_manager = RuleManager(Simulators.algo)
@@ -136,17 +137,16 @@ class QAP_T4668(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id , self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid,
-                                                                  MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask,
-                                                                  MDEntrySize=self.qty_ask)
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [
-            dict(MDEntryType=2, MDEntryPx=20.0, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [
-            dict(MDEntryType=4, MDEntryPx=20.0, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        time.sleep(5)
+
+        # endregion
+        # region Send MarketDate
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.last_trade_qty).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.last_trade_price)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
         # region send trading phase
@@ -154,21 +154,19 @@ class QAP_T4668(TestCase):
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.last_trade_qty).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.last_trade_price)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
-
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_1)
 
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_Redburn_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-
-        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, StartDate2=self.start_date, EndDate2=self.end_date))
+        self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1, Side="2"))
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price, PassiveOffset=self.passive_offset, StartDate2=self.start_date, EndDate2=self.end_date))
 
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, self.case_id_1)
 
-        time.sleep(5)
         # endregion
+        time.sleep(5)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.twap_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
@@ -180,35 +178,39 @@ class QAP_T4668(TestCase):
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check TWAP child
+        # region Check Buy side
+        # Check TWAP child
         self.case_id_2 = bca.create_event("TWAP DMA child order", self.test_id)
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
         self.twap_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.twap_child.change_parameters(dict(OrderQty=self.qty_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1))
+        #
+        self.twap_child.change_parameters(dict(OrderQty=self.qty_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1, Side="2"))
         self.fix_verifier_buy.check_fix_message(self.twap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child')
 
         pending_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_pending)
+        pending_twap_child_params.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1))
+
         self.fix_verifier_buy.check_fix_message(pending_twap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew TWAP child')
 
         new_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_new)
+
         self.fix_verifier_buy.check_fix_message(new_twap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child')
 
-    # endregion
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region cancel Order
+
         self.case_id_cancel = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
-
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
-
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
@@ -225,8 +227,6 @@ class QAP_T4668(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
-        cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_twap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child')
 
         cancel_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_twap_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
