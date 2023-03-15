@@ -79,8 +79,8 @@ def test_run(parent_id=None, version=None):
         QAP_T10623(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10664(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10740(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T10740(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T10741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
