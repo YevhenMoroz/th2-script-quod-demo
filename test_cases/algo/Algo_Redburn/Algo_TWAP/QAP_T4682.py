@@ -20,18 +20,19 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
 from datetime import datetime, timedelta
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4668(TestCase):
+class QAP_T4682(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
+
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
         self.fix_env1 = self.environment.get_list_fix_environment()[0]
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-
         # region th2 components
         self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
@@ -41,29 +42,29 @@ class QAP_T4668(TestCase):
         # endregion
 
         # region Market data params
-        self.price_ask = 30
+        self.price_ask = 20
         self.qty_ask = 100
 
-        self.price_bid = 20
+        self.price_bid = 10
         self.qty_bid = 100
 
-        self.last_trade_price = 20
+        self.last_trade_price = 17
         self.last_trade_qty = 100
-
-        self.opening_price = 20
         # endregion
 
         # order params
         self.qty = 300
-        self.price = 20
+        self.price = 10
         self.waves = 3
         self.qty_child = AFM.get_next_twap_slice(self.qty, self.waves)
-        self.price_child = 19.99
+        self.price_child = 9.994
         # endregion
 
         # region Algo params
-        self.limit_price_reference = Reference.Open.value
-        self.limit_price_offset = 2
+        self.passive_reference_price = Reference.Primary.value
+        self.passive_offset = 1
+        self.limit_price_reference = Reference.Primary.value
+        self.limit_price_offset = 6
         # endregion
 
         # region Venue params
@@ -72,6 +73,7 @@ class QAP_T4668(TestCase):
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name('account_2')
         self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        # endregion
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
@@ -96,7 +98,6 @@ class QAP_T4668(TestCase):
         self.FromQuod = DirectionEnum.FromQuod
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
-
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
         self.rule_list = []
@@ -109,7 +110,6 @@ class QAP_T4668(TestCase):
         # self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
         # self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
         # # endregion
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.now = datetime.utcnow()
@@ -136,17 +136,11 @@ class QAP_T4668(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id , self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid,
-                                                                  MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask,
-                                                                  MDEntrySize=self.qty_ask)
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [
-            dict(MDEntryType=2, MDEntryPx=20.0, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [
-            dict(MDEntryType=4, MDEntryPx=20.0, MDEntrySize=self.qty_ask, MDEntryPositionNo=1)])
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(
+            self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        time.sleep(5)
         # endregion
 
         # region send trading phase
@@ -162,9 +156,16 @@ class QAP_T4668(TestCase):
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_Redburn_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
+        # self.twap_order.add_fields_into_repeating_group('NoStrategyParameters', self.strategy_parameters_values)
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price, PassiveOffset=self.passive_offset, StartDate2=self.start_date, EndDate2=self.end_date))
 
-        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, StartDate2=self.start_date, EndDate2=self.end_date))
-
+        # self.twap_order.add_tag(
+        #     {'QuodFlatParameters': dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference,
+        #                                 LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price,
+        #                                 StartDate2=datetime.utcnow().strftime("%Y%m%d-%H:%M:%S"),
+        #                                 EndDate2=(datetime.utcnow() + timedelta(minutes=3)).strftime(
+        #                                     "%Y%m%d-%H:%M:%S"))})
+        # self.twap_order.add_fields_into_repeating_group_algo('NoStrategyParameters', [['PassiveOffset', 1, 1]])
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, self.case_id_1)
 
         time.sleep(5)
@@ -194,7 +195,7 @@ class QAP_T4668(TestCase):
         new_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_twap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child')
 
-    # endregion
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -206,6 +207,7 @@ class QAP_T4668(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
 
         time.sleep(3)
+
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
@@ -213,7 +215,7 @@ class QAP_T4668(TestCase):
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # endregion
+        # end region
 
         # # region config reset
         # self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
