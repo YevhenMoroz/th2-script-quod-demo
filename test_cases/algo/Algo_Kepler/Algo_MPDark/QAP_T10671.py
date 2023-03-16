@@ -35,8 +35,8 @@ class QAP_T10671(TestCase):
         # region order parameters
         self.qty = 4000000
         self.price = 20
-        self.delay_for_rfq_accept = 4000
-        self.delay_for_rfq_cancel = 3000
+        self.delay_for_rfq_accept = 14000
+        self.delay_for_rfq_cancel = 7000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_1.value
         # endregion
 
@@ -80,6 +80,7 @@ class QAP_T10671(TestCase):
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_OCR_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_OCR_child")
         self.key_params_ER_RFQ = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_RFQ")
+        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
         # endregion
 
         # region Read log verifier params
@@ -95,11 +96,10 @@ class QAP_T10671(TestCase):
         
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # TODO Need to add delay in RFQ cancel rule
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply, self.delay_for_rfq_accept)
-        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
+        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True, self.delay_for_rfq_cancel)
         nos_eliminate_1_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
         nos_eliminate_2_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         nos_eliminate_3_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account_cboe, self.ex_destination_cboe, self.price)
@@ -129,7 +129,7 @@ class QAP_T10671(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(5)
+        time.sleep(30)
 
         # region Check RFQs
         case_id_2 = bca.create_event("Create RFQs on buy side", self.test_id)
@@ -152,8 +152,8 @@ class QAP_T10671(TestCase):
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        er_eliminate_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
+        er_eliminate_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_chix_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
@@ -161,8 +161,8 @@ class QAP_T10671(TestCase):
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
-        er_eliminate_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 2 order')
+        er_eliminate_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_bats_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_bats_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 2 order')
         # endregion
 
         # region Check child DMA order on venue CBOE DARKPOOL EU
@@ -170,8 +170,8 @@ class QAP_T10671(TestCase):
         self.dma_cboe_order.change_parameters(dict(Account=self.account_cboe, ExDestination=self.ex_destination_cboe, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_cboe_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
-        er_eliminate_dma_cboe_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboe_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_cboe_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 3 order')
+        er_eliminate_dma_cboe_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_cboe_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_cboe_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 3 order')
         # endregion
 
         # region Check that parent order eliminated
@@ -202,7 +202,7 @@ class QAP_T10671(TestCase):
 
         # region Check those are no unexpected childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no unexpected childs", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order, self.dma_cboe_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order, self.dma_cboe_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child , self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
