@@ -12,12 +12,11 @@ from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMe
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.fix_wrappers import DataSet
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \
     FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
 from datetime import datetime, timedelta
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
@@ -60,10 +59,10 @@ class QAP_T4669(TestCase):
         self.qty_child = AFM.get_next_twap_slice(self.qty, self.waves)
 
         # region Algo params
-        self.limit_price_reference = DataSet.Reference.Mid.value
+        self.limit_price_reference = Reference.Mid.value
         self.limit_price_offset = 0
         self.passive_offset = 1
-        self.passive_reference_price = DataSet.Reference.Market.value
+        self.passive_reference_price = Reference.Market.value
         # endregion
 
         # region Venue params
@@ -194,7 +193,9 @@ class QAP_T4669(TestCase):
         self.case_id_cancel = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
+
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
 
@@ -213,8 +214,6 @@ class QAP_T4669(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
         # # endregion
-
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
         cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_cancel)

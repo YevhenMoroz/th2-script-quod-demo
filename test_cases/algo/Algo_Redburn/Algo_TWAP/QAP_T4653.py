@@ -140,12 +140,7 @@ class QAP_T4653(TestCase):
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        # market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', 4, MDEntryPx=self.opening_price)
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=7, MDEntryPx=25.0, MDEntrySize=self.qty_ask, MDEntryPositionNo=4)])
-        # market_data_snap_shot_par.add_fields_into_repeating_group()
-        # market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 4, MDEntryPx=self.opening_price,
-        #                                                           MDEntrySize=self.qty_ask)
-        # market_data_snap_shot_par.add_fields_into_repeating_group_algo('NoMDEntries', [['OpeningPrice', 4, self.opening_price]])
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
         time.sleep(5)
@@ -205,6 +200,7 @@ class QAP_T4653(TestCase):
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
@@ -222,8 +218,6 @@ class QAP_T4653(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
         # # endregion
-
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
         cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_cancel)

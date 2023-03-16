@@ -207,6 +207,7 @@ class QAP_T4654(TestCase):
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
@@ -223,9 +224,9 @@ class QAP_T4654(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
 
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
-
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
+        cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_twap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child')
 
         cancel_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_twap_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')

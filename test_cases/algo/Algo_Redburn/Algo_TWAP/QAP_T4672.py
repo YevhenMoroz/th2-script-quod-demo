@@ -158,12 +158,6 @@ class QAP_T4672(TestCase):
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.last_trade_price, LimitPriceOffset=self.limit_price_offset, StartDate2=self.start_date, EndDate2=self.end_date))
 
-        # self.twap_order.add_tag(
-        #     {'QuodFlatParameters': dict(Waves=self.waves, LimitPriceReference=self.last_trade_price,
-        #                                 LimitPriceOffset=self.limit_price_offset,
-        #                                 StartDate2=datetime.utcnow().strftime("%Y%m%d-%H:%M:%S"),
-        #                                 EndDate2=(datetime.utcnow() + timedelta(minutes=3)).strftime(
-        #                                     "%Y%m%d-%H:%M:%S"))})
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order, self.case_id_1)
 
         # endregion
@@ -201,7 +195,9 @@ class QAP_T4672(TestCase):
         self.case_id_cancel = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
+        
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
@@ -218,8 +214,6 @@ class QAP_T4672(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
         # # endregion
-
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
         cancel_twap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child, self.gateway_side_buy, self.status_cancel)

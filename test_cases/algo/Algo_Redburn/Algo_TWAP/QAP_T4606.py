@@ -8,7 +8,7 @@ from rule_management import RuleManager, Simulators
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference, FreeNotesReject
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
@@ -59,6 +59,8 @@ class QAP_T4606(TestCase):
         self.limit_price_reference = Reference.Primary.value
         self.limit_price_offset = -2
         # endregion
+        
+        self.text_rejection = FreeNotesReject.CouldNotDetermineLimitPriceFromPrimary.value
 
         # region Venue params
         self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
@@ -96,7 +98,6 @@ class QAP_T4606(TestCase):
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
         self.rule_list = []
-        self.text_parameter = 'could not determine Limit price from Primary'
         # # region SSH
         # self.config_file = "client_sats.xml"
         # self.xpath = ".//bpsOffsets"
@@ -117,14 +118,6 @@ class QAP_T4606(TestCase):
         # time.sleep(35)
         # endregion
 
-        # region rules
-        rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child)
-        # ocrr = rule_manager.add_OCRR(self.fix_env1.buy_side)
-        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_rule, ocr_rule]
-        # endregion
-
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
@@ -133,8 +126,7 @@ class QAP_T4606(TestCase):
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(
-            self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
@@ -168,9 +160,9 @@ class QAP_T4606(TestCase):
         new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
 
-        eliminate_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_reached_uncross)
-        eliminate_twap_order_params.change_parameter('Text', self.text_parameter)
-        self.fix_verifier_sell.check_fix_message(eliminate_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side Eliminate')
+        reject_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_reached_uncross)
+        reject_twap_order_params.change_parameter('Text', self.text_rejection)
+        self.fix_verifier_sell.check_fix_message(reject_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side Eliminate')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -178,8 +170,6 @@ class QAP_T4606(TestCase):
         # region cancel Order
 
         time.sleep(3)
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
