@@ -26,7 +26,7 @@ def execute(report_id):
             'OrderQty': 10000000,
             'TimeInForce': 0,
             'OrdType': 2,
-            'Price': 50,
+            'Price': 46,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
