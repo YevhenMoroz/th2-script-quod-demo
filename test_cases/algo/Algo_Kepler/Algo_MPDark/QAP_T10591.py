@@ -15,8 +15,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
-from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
-from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T10591(TestCase):
@@ -67,6 +65,7 @@ class QAP_T10591(TestCase):
         # region venue param
         self.ex_destination_chixlis = self.data_set.get_mic_by_name("mic_12")
         self.ex_destination_trql = self.data_set.get_mic_by_name("mic_13")
+        self.ex_destination_tqlis = self.data_set.get_mic_by_name("mic_20")
         self.ex_destination_trqx = self.data_set.get_mic_by_name("mic_2")
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_chix = self.data_set.get_mic_by_name("mic_5")
@@ -91,15 +90,16 @@ class QAP_T10591(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # TODO Change tolerance parameter to 3
-
+        # TODO Add nos_reject_rule for 1 time
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         self.nos_reject_rule = rule_manager.add_NewOrderSingle_ExecutionReport_RejectWithReason(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price, self.reason)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
         rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
-        self.rule_list = [nos_2_rule, ocr_1_rule, ocr_2_rule, rfq_ocr_rule]
+        self.rule_list = [ocrr_rule, nos_2_rule, ocr_1_rule, ocr_2_rule, rfq_ocr_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -112,11 +112,11 @@ class QAP_T10591(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.MPDark_order, case_id_1)
 
-        self.nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
-
-        time.sleep(1)
+        time.sleep(5)
 
         rule_manager.remove_rule(self.nos_reject_rule)
+
+        self.nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
 
         time.sleep(3)
         # endregion
@@ -130,8 +130,6 @@ class QAP_T10591(TestCase):
         er_new_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MPDark_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(er_new_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
-
-        time.sleep(5)
 
         # region Check RFQs
         case_id_2 = bca.create_event("Create RFQs on buy side", self.test_id)
@@ -170,7 +168,7 @@ class QAP_T10591(TestCase):
         # endregion
 
         # region Check all childs on the venue DARKPOOL UK
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_2_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Modify parent MP Dark order
@@ -194,6 +192,9 @@ class QAP_T10591(TestCase):
         self.dma_2_chix_order.change_parameters(dict(OrderQty=self.inc_qty))
 
         # region Check replace first dma child order
+        ocrr_dma_2_chix_order = FixMessageOrderCancelReplaceRequestAlgo(self.dma_2_chix_order)
+        ocrr_dma_2_chix_order.change_parameters(dict(OrderQty=self.inc_qty))
+
         er_cancel_replace_dma_2_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_chix_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_cancel_replace_dma_2_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport CancelReplace child DMA 2 order on venue CHIX DARKPOOL UK")
         # endregion
@@ -227,6 +228,11 @@ class QAP_T10591(TestCase):
         # region check that RFQ send to TURQUOISE LIS
         self.nos_2_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.inc_qty, ExDestination=self.ex_destination_trql, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.nos_2_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side 2nd RFQ on TQLIS')
+        # endregion
+
+        # region Check order of the messages
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check order of the messages", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order, ocrr_dma_2_chix_order, ocr_rfq_canceled_trqx, ocr_rfq_canceled_chix, self.nos_2_chixlis_rfq, self.nos_2_trql_rfq], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check that the 1st child expires
