@@ -34,6 +34,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Participation" run="True">
@@ -181,6 +184,9 @@
                         <data_base_environments>
                             <data_base_environment>quod316_data_base_mongo</data_base_environment>
                         </data_base_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Expiry_Auction" run="True">
@@ -195,6 +201,9 @@
                         <data_base_environments>
                             <data_base_environment>quod316_data_base_mongo</data_base_environment>
                         </data_base_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="PreClose_Auction" run="True">
@@ -209,6 +218,9 @@
                         <data_base_environments>
                             <data_base_environment>quod316_data_base_mongo</data_base_environment>
                         </data_base_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Scaling" run="True">
@@ -223,6 +235,9 @@
                         <data_base_environments>
                             <data_base_environment>quod316_data_base_mongo</data_base_environment>
                         </data_base_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="POV_Scaling" run="True">
@@ -234,6 +249,12 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod316_ganymede_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <data_base_environments>
+                            <data_base_environment>quod316_data_base_mongo</data_base_environment>
+                        </data_base_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod316_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
             </components>
