@@ -135,7 +135,7 @@ class QAP_T10490(TestCase):
         counterpart_block = confirmation_report[JavaApiFields.CounterpartList.value][JavaApiFields.CounterpartBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value},
-            allocation_report, 'Verifying that confirmation created (step 3)')
+            confirmation_report, 'Verifying that confirmation created (step 3)')
         self.java_api_manager.compare_values({"CounterpartPresent": True},
                                              {'CounterpartPresent': agent_counterpart in counterpart_block},
                                              'Verify that Agent counterpart  present for confirmation (step 3)')
