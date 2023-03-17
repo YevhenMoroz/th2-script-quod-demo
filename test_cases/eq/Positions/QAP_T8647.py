@@ -143,7 +143,7 @@ class QAP_T8647(TestCase):
         self.rest_commission_sender.clear_commissions()
 
     def _precondition(self, quater_client_commission):
-        self.db_manager.update_query(
+        self.db_manager.update_insert_query(
             f"UPDATE posit  SET quartertodateclientcomm = {quater_client_commission}  WHERE  instrid = '{self.instrument_id}' AND accountid = '{self.wash_book}';")
         self.ssh_client.send_command("qrestart QUOD.PKS")
         self.db_manager.close_connection()

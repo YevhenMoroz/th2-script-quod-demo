@@ -1,3 +1,5 @@
+import psycopg2
+
 from test_framework.db_wrapper.db_connector import DBConnector
 from test_framework.environments.data_base_environment import DataBaseEnvironment
 from test_framework.environments.full_environment import FullEnvironment
@@ -20,8 +22,11 @@ class DBManager:
         for value in self.my_db: out += (value,)
         return out
 
-    def update_query(self, query):
-        self.my_db.execute(query)
+    def update_insert_query(self, query):
+        try:
+            self.my_db.execute(query)
+        except (Exception, psycopg2.Error) as error:
+            raise ValueError('Something go wrong {}'.format(error))
 
     def get_collection(self, collection_name):
         if self.db_type != "mongo":
