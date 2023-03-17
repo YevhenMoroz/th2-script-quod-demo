@@ -139,6 +139,7 @@ class OmsClients(Enum):
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
     client_counterpart_3 = "CLIENT_COUNTERPART_3"
+    client_counterpart_4 = "CLIENT_COUNTERPART4"
     """ClientAccountGroupID"""
     client_2_ext_id = "CLIENT2ExtID"
 
@@ -178,6 +179,7 @@ class OmsVenueClientNames(Enum):
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
     client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
     client_counterpart_3_venue_1 = "CLIENT_COUNTERPART_3_PARIS"
+    client_counterpart_4_venue_1 = "CLIENT_COUNTERPART4_PARIS"
 
 
 class OmsAccounts(Enum):
@@ -227,6 +229,7 @@ class OmsAccounts(Enum):
     client_counterpart_1_acc_3 = "CLIENT_COUNTERPART_SA3"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
     client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
+    client_counterpart_4_acc_1 = 'CLIENT_COUNTERPART4_SA1'
 
 
 class AlgoParametersExternal(Enum):
@@ -605,6 +608,7 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_investor_firm_cl_counterpart = {'PartyRole': "IVF", 'CounterpartID': '600006'}
     counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
+    counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
 
 
 class OMSVenueClientAccountName(Enum):
