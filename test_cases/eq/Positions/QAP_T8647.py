@@ -146,4 +146,5 @@ class QAP_T8647(TestCase):
         self.db_manager.update_query(
             f"UPDATE posit  SET quartertodateclientcomm = {quater_client_commission}  WHERE  instrid = '{self.instrument_id}' AND accountid = '{self.wash_book}';")
         self.ssh_client.send_command("qrestart QUOD.PKS")
+        self.db_manager.close_connection()
         time.sleep(30)
