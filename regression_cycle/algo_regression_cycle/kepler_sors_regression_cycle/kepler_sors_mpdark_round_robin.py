@@ -31,6 +31,9 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10623 import QAP_T10623
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10624 import QAP_T10624
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10625 import QAP_T10625
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10664 import QAP_T10664
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10671 import QAP_T10671
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10691 import QAP_T10691
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10694 import QAP_T10694
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10740 import QAP_T10740
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10741 import QAP_T10741
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T9292 import QAP_T9292
@@ -63,7 +66,7 @@ def test_run(parent_id=None, version=None):
         QAP_T10523(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10526(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10527(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10528(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10528(report_id=report_id, data_et=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10529(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10530(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10531(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -79,8 +82,11 @@ def test_run(parent_id=None, version=None):
         QAP_T10623(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10664(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_T10740(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_T10741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10671(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10691(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10694(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10740(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
