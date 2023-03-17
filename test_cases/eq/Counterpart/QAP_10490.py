@@ -15,8 +15,8 @@ from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import 
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.FixNewOrderSingleOMS import FixNewOrderSingleOMS
-from test_framework.java_api_wrappers.ors_messages.ForceAllocInstructionStatusRequest import \
-    ForceAllocInstructionStatusRequest
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -41,7 +41,7 @@ class QAP_T10490(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_conn, self.test_id)
         self.execution_report = ExecutionReportOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
-        self.approve = ForceAllocInstructionStatusRequest()
+        self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirmation = ConfirmationOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -124,7 +124,7 @@ class QAP_T10490(TestCase):
         # endregion
 
         # region step 3: Approve and Allocate block:
-        self.approve.set_default(allocation_id)
+        self.approve.set_default_approve(allocation_id)
         self.java_api_manager.send_message(self.approve)
         self.confirmation.set_default_allocation(allocation_id)
         self.confirmation.update_fields_in_component('ConfirmationBlock', {
