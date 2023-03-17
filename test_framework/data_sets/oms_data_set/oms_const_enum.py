@@ -609,7 +609,7 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
     counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
-    counterpart_entering_firm = {'CounterpartID': '1200012' 'ENF'}
+    counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole':'ENF'}
 
 
 class OMSVenueClientAccountName(Enum):
