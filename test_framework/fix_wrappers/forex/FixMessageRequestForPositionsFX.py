@@ -19,11 +19,12 @@ class FixMessageRequestForPositionsFX(FixMessageRequestForPositions):
             "TransactTime": datetime.utcnow().isoformat(),
             "Account": self.get_data_set().get_client_by_name("client_mm_1"),
             "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
-            "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spot"),
-            "Instrument": {
-                "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
-                "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
-            },
+            # "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spot"),
+            # "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+            # "Instrument": {
+            #     "SecurityType": self.get_data_set().get_security_type_by_name("fx_spot"),
+            #     "Symbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+            # },
             #     "Parties": {"NoPartyIDs":[{
             #         "PartyID": self.get_data_set().get_account_by_name("account_mm_1"),
             #         "PartyIDSource": "POS",
