@@ -125,8 +125,8 @@ class QAP_T7473(TestCase):
                                'AllocTransType', 'ReportedPx', 'RootSettlCurrFxRate',
                                'RootSettlCurrAmt', 'tag11245', 'CpctyConfGrp', 'GrossTradeAmt',
                                'ConfirmID', 'ConfirmStatus', 'MatchStatus', 'ConfirmType',
-                               'AllocQty','SettlCurrAmt', 'SettlCurrFxRateCalc',
-                               'SettlCurrFxRate','NoAllocs']
+                               'AllocQty', 'SettlCurrAmt', 'SettlCurrFxRateCalc',
+                               'SettlCurrFxRate', 'NoAllocs']
         self.fix_verifier_dc.check_fix_message_fix_standard(exec_report,
                                                             ignored_fields=list_ignored_fields)
         self.fix_verifier_dc.check_fix_message_fix_standard(exec_report,
@@ -142,8 +142,12 @@ class QAP_T7473(TestCase):
              })
         # endregion
         # region Check Book & Allocation
-        del parties.get('NoParty')[len(parties.get('NoParty'))-1]
-        parties.get('NoParty').append(self.data_set.get_counterpart_id_fix('counterpart_id_euro_clear'))
+        del parties.get('NoParty')[len(parties.get('NoParty')) - 1]
+        parties.get('NoParty').append({
+            'PartyRole': '*',
+            'PartyID': '*',
+            'PartyIDSource': '*'
+        })
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_ignored_fields)
         # endregion
 
@@ -157,13 +161,13 @@ class QAP_T7473(TestCase):
         confirmation_id = confirmation_report[JavaApiFields.ConfirmationID.value]
         new_price = '20'
         self.confirmation.set_default_amend_allocation(confirmation_id, alloc_id, price=new_price)
-        self.confirmation.update_fields_in_component('ConfirmationBlock', { "AllocAccountID": self.account,
-                                                                            'InstrID': self.data_set.get_instrument_id_by_name("instrument_3")})
+        self.confirmation.update_fields_in_component('ConfirmationBlock', {"AllocAccountID": self.account,
+                                                                           'InstrID': self.data_set.get_instrument_id_by_name(
+                                                                               "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.confirmation)
         conf_report = FixMessageConfirmationReportOMS(self.data_set).change_parameters(
             {"NoParty": parties, "Account": self.client, "AllocAccount": self.account,
              "AvgPx": new_price, 'ConfirmTransType': "1",
-
              'NoOrders': [{'ClOrdID': cl_ord_id}]})
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=list_ignored_fields)
         # endregion
