@@ -85,7 +85,7 @@ class QAP_T7155(TestCase):
                                                                          'SettlCurrency', 'LastExecutionPolicy',
                                                                          'TrdType', 'LastCapacity',
                                                                          'SecondaryOrderID', 'LastMkt',
-                                                                         'VenueType'])
+                                                                         'VenueType','SecondaryExecID'])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

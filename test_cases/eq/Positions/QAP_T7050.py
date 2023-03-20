@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -81,10 +82,10 @@ class QAP_T7050(TestCase):
             self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value, order_id_second).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         position_report_for_first_account = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value]
         position_report_for_second_account = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc_second).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc_second, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value]
         list_execuiton_report = [execution_report_first, execution_report_second]
         for message in list_execuiton_report:
@@ -122,7 +123,7 @@ class QAP_T7050(TestCase):
                                         'IncreasingSellQty': str(
                                             float(cum_sell_qty_after) - float(cum_sell_qty_before))},
                                        f'Verifying that {JavaApiFields.CumBuyQty.value} for {self.source_acc} and '
-                                       f'{JavaApiFields.CumSellQty.value} increased on {self.qty} (step 3)')
+                                       f'{JavaApiFields.CumSellQty.value} increased on {self.qty} for {self.source_acc_second} (step 3)')
         # endregion
 
     def _create_orders(self, alloc_account, side):

@@ -95,7 +95,7 @@ class QAP_T8123(TestCase):
         last_excution_trade = self.__get_fix_message(expected_result)
         self.java_api_manager.compare_values(expected_result, last_excution_trade,
                                              'Check that ExecSts = F (part of step 2)', VerificationMethod.CONTAINS)
-        last_execution_calculated = self.__get_fix_message({'ExecType': 'B'})
+        last_execution_calculated = self.__get_fix_message({'OrdStatus': 'B'})
         print(last_execution_calculated)
         list_of_ignored_fields = ['SettlType', 'GatingRuleName', 'GatingRuleCondName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)

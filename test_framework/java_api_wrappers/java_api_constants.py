@@ -250,6 +250,8 @@ class JavaApiFields(Enum):
     DailyRealizedNetPL = 'DailyRealizedNetPL'
     DailyRealizedGrossPL = 'DailyRealizedGrossPL'
     VenueAccountName = 'VenueAccountName'
+    TradeEntryRequestBlock = 'TradeEntryRequestBlock'
+    LastMkt = 'LastMkt'
     BuyAvgPx = 'BuyAvgPx'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'

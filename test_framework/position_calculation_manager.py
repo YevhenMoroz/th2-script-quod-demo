@@ -15,15 +15,10 @@ class PositionCalculationManager:
     def calculate_today_gross_pl_buy_side(daily_realized_gross_pl: str, posit_qty: str, exec_qty: str, exec_price: str,
                                           gross_weighted_avg_px: str, cross_rate=1):
         if float(posit_qty) < 0:
-            print('calculation')
-            print(posit_qty)
-            print(gross_weighted_avg_px)
-            print(exec_price)
-            print(daily_realized_gross_pl)
-            daily_realized_gross_pl_after = float(daily_realized_gross_pl) - (
-                    min(abs(float(posit_qty)), float(exec_qty)) * (
-                    float(exec_price * cross_rate) - float(gross_weighted_avg_px)))
-            return str(daily_realized_gross_pl_after)
+            daily_realized_gross_pl = float(daily_realized_gross_pl) - \
+                                      (min(float(posit_qty), float(exec_qty)) * (
+                                                  float(exec_price) * float(cross_rate) - float(gross_weighted_avg_px)))
+            return daily_realized_gross_pl
         else:
             return daily_realized_gross_pl
 
@@ -43,16 +38,22 @@ class PositionCalculationManager:
             return daily_realized_net_pl
 
     @staticmethod
-    def calculate_gross_weighted_avg_px(gross_weight_avg_px, posit_qty: str, exec_qty: str, exec_price: str,
-                                        cross_rate=1):
-        if float(posit_qty) < 0:
-            if float(exec_qty) > abs(float(posit_qty)):
-                gross_weight_avg_px_after = float(exec_qty) * float(exec_price) * cross_rate / float(exec_qty)
-                return str(gross_weight_avg_px_after)
+    def calculate_gross_weighted_avg_px_buy_side(gross_weight_avg_px, posit_qty: str, exec_qty: str, exec_price: str,
+                                                 cross_rate=1):
+        if float(posit_qty) >= float(0):
+            gross_weight_avg_px = \
+                (float(gross_weight_avg_px) * float(posit_qty) + float(exec_qty) * float(exec_price) * float(
+                    cross_rate)) / (
+                        float(posit_qty) + float(exec_qty))
+            return str(gross_weight_avg_px)
+        if float(posit_qty) < float(0):
             if float(exec_qty) < abs(float(posit_qty)):
                 return gross_weight_avg_px
+            if float(exec_qty) > abs(float(posit_qty)):
+                gross_weight_avg_px = float(exec_price) * float(cross_rate) * float(exec_qty) / float(exec_qty)
+                return str(gross_weight_avg_px)
             if float(exec_qty) == abs(float(posit_qty)):
-                return '0'
+                return 0
 
     @staticmethod
     def calculate_net_weighted_avg_px(net_weight_avg_px, posit_qty: str, exec_qty: str, exec_price: str,
@@ -88,3 +89,6 @@ class PositionCalculationManager:
                 buy_avg_px = 0
 
         return buy_avg_px
+
+
+
