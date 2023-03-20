@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 
 from pandas import Timestamp as tm
@@ -46,7 +47,7 @@ class OrderSubmitOMS(OrderSubmit):
             params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
         if role:
             params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
-        self.change_parameters(self.base_parameters)
+        self.change_parameters(deepcopy(self.base_parameters))
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
         self.add_tag(params)

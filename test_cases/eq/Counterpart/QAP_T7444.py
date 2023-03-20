@@ -111,25 +111,27 @@ class QAP_T7444(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
         # endregion
         # region Set-up parameters Confirmation report
-        no_party = [
-            party_stub_dict,
-            party_stub_dict,
-            party_stub_dict,
-            party_stub_dict,
-            party_stub_dict,
-            party_stub_dict]
+        regulatory_body = self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris')
+        regulatory_body.update({'NoPartySubIDs': {'M_NoPartySubID': [
+            {
+                'PartySubIDType': '4',
+                'PartySubID': 'SB·-·RegulatoryBody'
+            }
+        ]}})
+        investment_firm_client_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3')
+        investment_firm_client_counterpart.update({'NoPartySubIDs': {'M_NoPartySubID': [
+            {
+                'PartySubIDType': '16',
+                'PartySubID': 'quod@quodfinancial.com'
+            }
+        ]}})
+        custodian_user_2 = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+        market_maker_th2_route = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         no_party_alloc = [
-            party_stub_dict,
-            party_stub_dict,
-            party_stub_dict,
-            {'PartyRole': "*",
-             'NoPartySubIDs': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'NoPartySubIDs': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"}
+            market_maker_th2_route,
+            custodian_user_2,
+            regulatory_body,
+            investment_firm_client_counterpart
         ]
         alloc_grp = {'NoAllocs': [{'IndividualAllocID': "*",
                                    'AllocNetPrice': self.price,
