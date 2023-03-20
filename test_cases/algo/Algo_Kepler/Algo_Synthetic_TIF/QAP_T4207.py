@@ -139,7 +139,7 @@ class QAP_T4207(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).remove_parameter('NoTradingSessions')
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_1_order)
@@ -148,7 +148,7 @@ class QAP_T4207(TestCase):
 
         # region 2nd child DMA order
         self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Synthetic_TIF_Kepler_params()
-        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
+        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit12, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).remove_parameter('NoTradingSessions')
 
         er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
