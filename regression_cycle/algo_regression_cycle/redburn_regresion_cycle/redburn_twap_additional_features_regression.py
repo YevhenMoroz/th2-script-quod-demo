@@ -1,6 +1,8 @@
 import logging
+import time
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4332, QAP_T4286, QAP_T4335
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4606 import QAP_T4606
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4652 import QAP_T4652
@@ -32,8 +34,22 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"TWAP - Additional Features (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region TWAP Additional Featured
+        # region TWAP Additional Featured        
         configuration = ComponentConfigurationAlgo("Twap")
+        # region SSH
+        config_file = "client_sats.xml"
+        xpath = ".//bpsOffsets"
+        new_config_value = "false"
+        ssh_client_env = configuration.environment.get_list_ssh_client_environment()[0]
+        ssh_client = SshClient(ssh_client_env.host, ssh_client_env.port, ssh_client_env.user, ssh_client_env.password, ssh_client_env.su_user, ssh_client_env.su_password)
+        default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})
+        # endregion
+        
+        # region precondition: Prepare SATS configuration
+        ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+        
         QAP_T4606(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4652(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4653(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -50,6 +66,13 @@ def test_run(parent_id=None, version=None):
         QAP_T4680(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4681(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4682(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        
+        # region config reset
+        default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})
+        ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        ssh_client.close()
+        # endregion
         # endregion
 
         # region Needs Refactoring
