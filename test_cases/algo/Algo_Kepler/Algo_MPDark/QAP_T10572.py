@@ -86,7 +86,7 @@ class QAP_T10572(TestCase):
         # endregion
 
         # region Compare message params
-        self.text = "removing CHIXDELTA"
+        self.text = "removing CHIXDELTA (broker count: 3)"
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")

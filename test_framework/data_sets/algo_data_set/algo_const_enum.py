@@ -518,6 +518,7 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_RFQ_with_qty = ['OrdStatus', 'ExecType', 'OrderQty', 'AlgoCst01', "OrdType", "ExDestination"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_RFQ_ocr = ['ExDestination', 'DeliverToCompID']
     verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
     verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']

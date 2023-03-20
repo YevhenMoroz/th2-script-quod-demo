@@ -19,6 +19,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4483 import QAP_T4483
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T8725 import QAP_T8725
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9085 import QAP_T9085
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9086 import QAP_T9086
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9087 import QAP_T9087
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9088 import QAP_T9088
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9096 import QAP_T9096
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9101 import QAP_T9101
@@ -54,6 +55,7 @@ def test_run(parent_id=None, version=None):
 
         # region Auction Volume
         QAP_T9332(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9087(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region AuctionInitialSliceMultiplier

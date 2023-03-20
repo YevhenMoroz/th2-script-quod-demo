@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import time, date, timezone, timedelta
 from datetime import datetime as dt
 from math import ceil
+from decimal import Decimal
 
 from test_framework.data_sets.constants import TradingPhases
 
@@ -220,6 +221,12 @@ class AlgoFormulasManager:
     @staticmethod
     def get_pov_child_qty_for_price_improvement(max_part: float, total_traded_volume: int, ord_qty: int, executed_qty: int = 0) -> int:
         return min(math.ceil((total_traded_volume * (max_part / 100)) - executed_qty), ord_qty)
+
+    @staticmethod
+    def calculate_price_with_currency_conversion(price: float, rate: float, decimal_places: int, offset: float = 0) -> Decimal:
+        number = Decimal(math.floor(price / rate * 10 ** decimal_places) / 10 ** decimal_places - offset)
+        number = number.quantize(Decimal("1.000"))
+        return number
 
     # @staticmethod
     # def change_datetime_from_epoch_to_normal(datetime_epoch) -> datetime:
