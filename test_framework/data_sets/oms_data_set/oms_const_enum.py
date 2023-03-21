@@ -167,6 +167,7 @@ class OmsVenueClientNames(Enum):
     client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
+    client_pos_1_venue_2 = "36ONE_EUREX"
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
