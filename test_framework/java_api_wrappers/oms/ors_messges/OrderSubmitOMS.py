@@ -50,20 +50,20 @@ class OrderSubmitOMS(OrderSubmit):
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
         self.add_tag(params)
-        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                               "ScenarioID": "101",
-                                               "AlgoPolicyID": "1000131"},
-                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
-                           {"ExternalAlgoParameterBlock": [
-                               {'AlgoParameterName': "StrategyTag",
-                                "AlgoParamString": "TWAP",
-                                'VenueScenarioParameterID': "7505"}]},
-                           'ScenarioID': "101",
-                           "ScenarioIdentifier": "8031",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "9682",
-                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
         if external_algo_twap:
+            algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                                   "ScenarioID": "101",
+                                                   "AlgoPolicyID": "1000131"},
+                           "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                               {"ExternalAlgoParameterBlock": [
+                                   {'AlgoParameterName': "StrategyTag",
+                                    "AlgoParamString": "TWAP",
+                                    'VenueScenarioParameterID': "7505"}]},
+                               'ScenarioID': "101",
+                               "ScenarioIdentifier": "8031",
+                               "VenueScenarioID": "TWAP",
+                               "VenueScenarioVersionID": "9682",
+                               "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
@@ -112,69 +112,61 @@ class OrderSubmitOMS(OrderSubmit):
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
                                          'ClOrdID': basic_custom_actions.client_orderid(9),
                                          "ParentOrdrList": parent_params})
-        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                               "ScenarioID": "101",
-                                               "AlgoPolicyID": "1000131"},
-                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
-                           {"ExternalAlgoParameterBlock": [
-                               {'AlgoParameterName': "StrategyTag",
-                                "AlgoParamString": "TWAP",
-                                'VenueScenarioParameterID': "7505"}]},
-                           'ScenarioID': "101",
-                           "ScenarioIdentifier": "8031",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "9682",
-                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
         if external_algo_twap:
+            algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                                   "ScenarioID": "101",
+                                                   "AlgoPolicyID": "1000131"},
+                           "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                               {"ExternalAlgoParameterBlock": [
+                                   {'AlgoParameterName': "StrategyTag",
+                                    "AlgoParamString": "TWAP",
+                                    'VenueScenarioParameterID': "7505"}]},
+                               'ScenarioID': "101",
+                               "ScenarioIdentifier": "8031",
+                               "VenueScenarioID": "TWAP",
+                               "VenueScenarioVersionID": "9682",
+                               "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         self.add_tag(params)
         return self
 
     def set_default_child_dma(self, parent_id: str = None, client_order_id: str = None, external_algo_twap=False):
-        if client_order_id:
-            cl_ord_id = client_order_id
-        else:
-            cl_ord_id = basic_custom_actions.client_orderid(9)
+        cl_ord_id = client_order_id or basic_custom_actions.client_orderid(9)
         self.change_parameters(self.base_parameters)
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,
                                          'ClOrdID': cl_ord_id, 'ExecutionPolicy': 'DMA'})
-        algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                               "ScenarioID": "101",
-                                               "AlgoPolicyID": "1000131"},
-                       "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
-                           {"ExternalAlgoParameterBlock": [
-                               {'AlgoParameterName': "StrategyTag",
-                                "AlgoParamString": "TWAP",
-                                'VenueScenarioParameterID': "7505"}]},
-                           'ScenarioID': "101",
-                           "ScenarioIdentifier": "8031",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "9682",
-                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
         if external_algo_twap:
+            algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                                   "ScenarioID": "101",
+                                                   "AlgoPolicyID": "1000131"},
+                           "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                               {"ExternalAlgoParameterBlock": [
+                                   {'AlgoParameterName': "StrategyTag",
+                                    "AlgoParamString": "TWAP",
+                                    'VenueScenarioParameterID': "7505"}]},
+                               'ScenarioID': "101",
+                               "ScenarioIdentifier": "8031",
+                               "VenueScenarioID": "TWAP",
+                               "VenueScenarioVersionID": "9682",
+                               "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
     def set_default_direct_child_care(self, parent_id: str, route: str = None,
                                       desk: str = None, recipient: str = None, role: str = None):
         assign_params = {'CDOrdAssignInstructionsBlock': {}}
-        if desk:
-            assign_params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
-        else:
-            assign_params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = '1'
+        assign_params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk or '1'
         if recipient:
             assign_params["CDOrdAssignInstructionsBlock"]["RecipientUserID"] = recipient
         if role:
             assign_params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
         self.change_parameters(self.base_parameters)
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
-        if route:
-            route_params = {'RouteBlock': [{'RouteID': route}]}
-        else:
+        if not route:
             route = self.data_set.get_route_id_by_name("route_1")
-            route_params = {'RouteBlock': [{'RouteID': route}]}
+        route_params = {'RouteBlock': [{'RouteID': route}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
                                          'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -184,11 +176,9 @@ class OrderSubmitOMS(OrderSubmit):
 
     def set_default_direct_moc(self, parent_id: str, route: str = None):
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
-        if route:
-            route_params = {'RouteBlock': [{'RouteID': route}]}
-        else:
+        if not route:
             route = self.data_set.get_route_id_by_name("route_1")
-            route_params = {'RouteBlock': [{'RouteID': route}]}
+        route_params = {'RouteBlock': [{'RouteID': route}]}
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {'ClOrdID': basic_custom_actions.client_orderid(9),
@@ -197,11 +187,9 @@ class OrderSubmitOMS(OrderSubmit):
 
     def set_default_direct_algo_iceberg(self, parent_id, display_qty, route_id: str = None):
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
-        if route_id:
-            route_params = {'RouteBlock': [{'RouteID': route_id}]}
-        else:
+        if not route_id:
             route_id = self.data_set.get_route_id_by_name("route_1")
-            route_params = {'RouteBlock': [{'RouteID': route_id}]}
+        route_params = {'RouteBlock': [{'RouteID': route_id}]}
         self.change_parameters(self.base_parameters)
         algo_param = {'AlgoType': "SyntheticIceberg", 'ScenarioID': '26', 'AlgoPolicyID': '26'}
         display_instruction_param = {'DisplayQty': display_qty, 'DisplayMethod': "Initial"}

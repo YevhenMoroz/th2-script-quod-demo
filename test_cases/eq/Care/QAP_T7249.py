@@ -9,6 +9,7 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -48,9 +49,7 @@ class QAP_T7249(TestCase):
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password, self.ssh_client_env.db_host,
-                                    self.ssh_client_env.db_name, self.ssh_client_env.db_user,
-                                    self.ssh_client_env.db_password)
+                                    self.ssh_client_env.su_password)
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
@@ -62,6 +61,7 @@ class QAP_T7249(TestCase):
         self.confirm = ConfirmationOMS(self.data_set)
         self.future_date = datetime.now() + timedelta(days=2)
         self.expire_date = datetime.strftime(self.future_date, "%Y%m%d")
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -138,7 +138,7 @@ class QAP_T7249(TestCase):
         # endregion
         # region Step 6
         self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
-        status = self.ssh_client.execute_sql(f"select ordstatus from ordr where ordid='{order_id}';")[0][0]
+        status = self.db_manager.execute_query(f"select ordstatus from ordr where ordid='{order_id}';")[0][0]
         self.java_api_manager.compare_values({"Sts": "EXP"}, {"Sts": status}, "Check order status")
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
