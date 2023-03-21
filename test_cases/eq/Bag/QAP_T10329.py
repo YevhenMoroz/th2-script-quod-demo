@@ -32,8 +32,8 @@ class QAP_T10329(TestCase):
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.order_submit2 = OrderSubmitOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.qty1 = '300'
-        self.qty2 = '200'
+        self.qty2 = '300'
+        self.qty1 = '200'
         self.qty_create_order_1 = '250'
         self.qty_create_order_2 = '100'
         self.qty_create_order_3 = '150'
@@ -73,7 +73,7 @@ class QAP_T10329(TestCase):
         bag_name = 'QAP_T10329'
 
         # region Step 2
-        self.bag_creation_request.set_default(BagChildCreationPolicy.First_to_Last.value, bag_name, orders_id)
+        self.bag_creation_request.set_default(BagChildCreationPolicy.Last_to_First.value, bag_name, orders_id)
         self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
         order_bag_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameter(
@@ -89,11 +89,11 @@ class QAP_T10329(TestCase):
 
         # region check orders sts after trade
         # first CO
-        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_PFL.value, self.qty_create_order_1 + '.0')
+        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_PFL.value, self.qty_create_order_1 + '.0', 4)
 
         # second CO
         exec_for_order_2 = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value,
-                                                                  ord_id2).get_parameter(
+                                                                  ord_id).get_parameter(
             JavaApiFields.OrdUpdateBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.CumQty.value: '0.0'}, exec_for_order_2,
@@ -101,7 +101,7 @@ class QAP_T10329(TestCase):
 
         # sliced order
         self.__check_order_sts(sliced_ord_id_1, ExecutionReportConst.TransExecStatus_FIL.value,
-                               self.qty_create_order_1 + '.0')
+                               self.qty_create_order_1 + '.0', 4)
         # endregion
 
         # region Step 5-6
@@ -109,14 +109,14 @@ class QAP_T10329(TestCase):
 
         # region check orders sts after trade
         # first CO
-        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_FIL.value, self.qty1 + '.0')
+        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_FIL.value, self.qty2 + '.0', 6)
 
         # second CO
-        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_PFL.value, '50.0')
+        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_PFL.value, '50.0', 6)
 
         # sliced order
         self.__check_order_sts(sliced_ord_id_2, ExecutionReportConst.TransExecStatus_FIL.value,
-                               self.qty_create_order_2 + '.0')
+                               self.qty_create_order_2 + '.0', 6)
         # endregion
 
         # region Step 7-8
@@ -124,11 +124,11 @@ class QAP_T10329(TestCase):
 
         # region check orders sts after trade
         # first CO
-        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_FIL.value, self.qty2 + '.0')
+        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_FIL.value, self.qty1 + '.0', 8)
 
         # sliced order
         self.__check_order_sts(sliced_ord_id_3, ExecutionReportConst.TransExecStatus_FIL.value,
-                               self.qty_create_order_3 + '.0')
+                               self.qty_create_order_3 + '.0', 8)
         # endregion
 
     def __create_order_action(self, bag_order_id, qty):
@@ -157,11 +157,11 @@ class QAP_T10329(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         return slice_order_id
 
-    def __check_order_sts(self, order_id, sts, cum_qty):
+    def __check_order_sts(self, order_id, sts, cum_qty, step):
         exec_for_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                 order_id).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: sts,
              JavaApiFields.CumQty.value: cum_qty}, exec_for_order,
-            f'Check {sts} for {order_id} after sliced order trade')
+            f'Check {sts} for {order_id} after sliced order trade (step {step})')
