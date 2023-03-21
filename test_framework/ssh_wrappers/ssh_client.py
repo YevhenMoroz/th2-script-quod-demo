@@ -2,7 +2,6 @@ import os
 import time
 
 import paramiko
-import psycopg2
 import xml.etree.ElementTree as ET
 from stubs import ROOT_DIR
 
@@ -47,7 +46,7 @@ class SshClient:
         """use for: "ls -l /home" etc."""
         feed_password = False
         if sudo and self.username != "root":
-            command = "sudo -S -p '' %s" % command
+            command = f"sudo -S -p '' {command}"
             feed_password = self.password is not None and len(self.password) > 0
         stdin, stdout, stderr = self.client.exec_command(command)
         if feed_password:
@@ -70,8 +69,9 @@ class SshClient:
         quod.find(config_xpath).text = config_value
         tree.write(f"{ROOT_DIR}/test_resources/temp_config.xml")
         self.send_command("~/quod/script/site_scripts/change_permission_script")
-        self.put_file(f"/home/{self.su_user}/quod/cfg/client_sats.xml", f"{ROOT_DIR}/test_resources/temp_config.xml")
+        self.put_file(f"/home/{self.su_user}/quod/cfg/{component_config}", f"{ROOT_DIR}/test_resources/temp_config.xml")
         os.remove(f"{ROOT_DIR}/test_resources/temp_config.xml")
+
 
 if __name__ == "__main__":
     client = SshClient(host='', port=22, username='', password='', su_user='', su_pass='')
