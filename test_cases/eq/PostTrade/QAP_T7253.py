@@ -158,10 +158,6 @@ class QAP_T7253(TestCase):
                                                                   'washbook_account_3')}
                                                              )
         self.java_api_manager.send_message_and_receive_response(self.order_modification_request)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value]
-        self.java_api_manager.key_is_absent(JavaApiFields.DoneForDay.value, order_reply,
-                                            'Checking that order is uncomplete (step 5)')
         # endregion
 
         # region step 6

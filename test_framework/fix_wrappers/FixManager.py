@@ -334,53 +334,6 @@ class FixManager:
         self.response = response_messages
         return response_messages
 
-    def parse_response_fix_standard(self, response: PlaceMessageRequest) -> list:
-        response_messages = list()
-        for message in response.response_messages_list:
-            fields = dict()
-            for field in message.fields:
-                # Field
-                if message.fields[field].simple_value != "":
-                    fields.update({field: message.fields[field].simple_value})
-                else:
-                    component_fields = dict()
-                    # Component
-                    for component_field in message.fields[field].message_value.fields:
-                        if message.fields[field].message_value.fields[component_field].simple_value != "":
-                            component_fields.update({component_field: message.fields[field].message_value.fields[
-                                component_field].simple_value})
-                            fields.update({field: component_fields})
-                        else:
-                            # Repeating Group
-                            repeating_group_list = list()
-                            for repeating_group in message.fields[field].message_value.fields[
-                                component_field].list_value.values:
-                                repeating_group_list_field = dict()
-                                for repeating_group_field in repeating_group.message_value.fields:
-                                    repeating_group_list_field.update({repeating_group_field:
-                                                                           repeating_group.message_value.fields[
-                                                                               repeating_group_field].simple_value})
-                                repeating_group_list.append(repeating_group_list_field)
-                            fields.update({field: {component_field: repeating_group_list}})
-            message_type = message.metadata.message_type
-            response_fix_message = None
-
-            if message_type == FIXMessageType.NewOrderSingle.value:
-                response_fix_message = FixMessageNewOrderSingle()
-            elif message_type == FIXMessageType.ExecutionReport.value:
-                response_fix_message = FixMessageExecutionReport()
-            elif message_type == FIXMessageType.ListStatus.value:
-                response_fix_message = FixMessageListStatus()
-            elif message_type == FIXMessageType.OrderCancelReplaceRequest.value:
-                response_fix_message = FixMessageOrderCancelReplaceRequest()
-            elif message_type == FIXMessageType.Reject.value:
-                response_fix_message = FixMessageReject()
-            response_fix_message.change_parameters(fields)
-
-            response_messages.append(response_fix_message)
-        self.response = response_messages
-        return response_messages
-
     def get_case_id(self):
         return self.__case_id
 

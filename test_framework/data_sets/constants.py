@@ -390,10 +390,6 @@ class SshClientEnv(Enum):
     PASSWORD_317 = ""
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
-    DB_HOST_317 = "10.0.22.69"
-    DB_NAME_317 = "quoddb"
-    DB_USER_317 = "quod317prd"
-    DB_PASSWORD_317 = "quod317prd"
 
     HOST_310 = "10.0.22.31"
     PORT_310 = 22

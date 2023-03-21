@@ -144,17 +144,15 @@ class QAP_T9390(TestCase):
 
         # region step 8: Check 35 = J message
         last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
-        party_stup = {'PartyRole': '*',
-                      'PartyRoleQualifier': '*',
-                      'PartyID': '*',
-                      'PartyIDSource': '*'}
+        route_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
+        regulatory_body = self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris')
+        entering_firm = self.data_set.get_counterpart_id_fix('entering_firm')
         change_parameters = {
             'AllocType': 5,
-            'NoParty': [party_stup,
+            'NoParty': [route_counterpart,
                         last_user_conterpart,
-                        party_stup,
-                        party_stup,
-                        party_stup],
+                        regulatory_body,
+                        entering_firm],
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
                 'OrderID': order_id
