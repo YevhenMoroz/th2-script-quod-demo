@@ -439,6 +439,7 @@ class FreeNotesReject(Enum):
     PricePoint2ParticipationMustBeEqualOrHigherThenMaxParticipation = "PricePoint2Participation must be equal or higher than MaxParticipation"
     PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
     ReachedUncross = "reached uncross"
+    CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
 
 
 class TradingPhases(Enum):
