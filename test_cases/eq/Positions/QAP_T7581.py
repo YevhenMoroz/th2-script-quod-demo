@@ -98,11 +98,11 @@ class QAP_T7581(TestCase):
                                                       self.source_acc, exec_id)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         wash_book_posit_request = \
-            self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.wash_book).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.wash_book, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         security_account_posit_request = \
-            self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc, JavaApiFields.PositQty.value]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         # endregion

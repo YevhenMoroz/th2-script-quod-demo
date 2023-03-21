@@ -1,11 +1,16 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_framework.configurations.component_configuration import ComponentConfiguration
-
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10526 import QAP_T10526
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10527 import QAP_T10527
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10528 import QAP_T10528
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10529 import QAP_T10529
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10530 import QAP_T10530
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10531 import QAP_T10531
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10532 import QAP_T10532
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10533 import QAP_T10533
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10534 import QAP_T10534
+from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,6 +27,12 @@ def test_run(parent_id=None, version=None):
         QAP_T10526(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10527(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10528(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10529(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10530(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10531(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10532(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10533(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10534(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

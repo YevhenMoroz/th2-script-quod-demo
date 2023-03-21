@@ -62,7 +62,7 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
         if new_order_single.is_parameter_exist('PegInstructions'):
             temp.update(PegInstructions=new_order_single.get_parameter('PegInstructions'))
         if new_order_single.is_parameter_exist('TriggeringInstruction'):
-            temp.update(TriggeringInstruction='*')
+            temp.update(TriggeringInstruction=new_order_single.get_parameter('TriggeringInstruction'))
         temp.update(
             Account=new_order_single.get_parameter('Account'),
             ClOrdID=new_order_single.get_parameter('ClOrdID'),

@@ -20,7 +20,7 @@ class TradeEntryOMS(TradeEntryRequest):
                 'ExecPrice': "10.000000000",
                 'ExecQty': "100.000000000",
                 'TradeEntryTransType': 'NEW',
-                'TransactTime': (tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S'),
+                'TransactTime': (tm(datetime.utcnow().isoformat())).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'LastMkt': self.data_set.get_mic_by_name("mic_1"),
                 'TradeDate': (tm(datetime.utcnow().isoformat())).date().strftime('%Y-%m-%dT%H:%M:%S'),
                 'SettlDate': (tm(datetime.utcnow().isoformat()) + timedelta(days=2)).date().strftime(
