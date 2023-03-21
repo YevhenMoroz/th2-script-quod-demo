@@ -47,7 +47,7 @@ class QAP_T8790(TestCase):
         self.price_ask_qdl10 = 46
         self.px_for_incr = 0
         self.qty_for_incr = 0
-        self.delay_for_trade = 500
+        self.delay_for_trade = 1000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
         # endregion
@@ -102,7 +102,7 @@ class QAP_T8790(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, False, self.traded_ioc_qty, self.price_ask_qdl8)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit8, False, self.traded_ioc_qty, self.price_ask_qdl8, 1000)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, self.price)
         nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, self.price, self.price, self.passive_qty, self.passive_qty, self.delay_for_trade)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit9, False)
